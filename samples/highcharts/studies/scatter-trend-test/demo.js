@@ -378,11 +378,14 @@ function randomize() {
         }]
     }, true, true, false);
 
-    updateTrends(chart, 1, false);
+    updateTrends(chart, parseFloat(document.getElementById('detail').value), false);
     return updateADL();
 }
 
 let stop = true;
+document.getElementById('detail').onchange = function () {
+    document.getElementById('detailValue').textContent = parseFloat(this.value).toFixed(2);
+};
 document.getElementById('randomize').onclick = randomize;
 document.getElementById('simulation').onclick = function () {
     if (!stop) {
@@ -398,11 +401,13 @@ document.getElementById('simulation').onclick = function () {
     function recurse() {
         setTimeout(() => {
             if (stop) {
+                document.getElementById('simulationNum').textContent = '';
                 const avgADL = (adlTotal / numSimulations).toFixed(2);
                 document.getElementById('output').innerHTML = `Average after ${numSimulations} plots:<br>${avgADL}% ADL`;
             } else {
                 adlTotal += randomize();
                 numSimulations++;
+                document.getElementById('simulationNum').textContent = numSimulations;
                 recurse();
             }
         }, parseFloat(document.getElementById('delay').value));
