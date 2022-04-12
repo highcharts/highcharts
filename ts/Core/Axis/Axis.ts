@@ -3526,7 +3526,9 @@ class Axis {
         );
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
-        if (side === 2) {
+        if (side === 0) {
+            lineHeightCorrection = -axis.labelMetrics().h;
+        } else if (side === 2) {
             lineHeightCorrection = axis.tickRotCorr.y;
         } else {
             lineHeightCorrection = 0;

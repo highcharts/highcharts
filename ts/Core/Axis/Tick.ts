@@ -535,19 +535,17 @@ class Tick {
             ),
             pos = {} as PositionObject;
 
-        let yOffset = labelOptions.y,
+        let yOffset = labelOptions.y || 0,
             line: number;
 
-        if (!defined(yOffset)) {
-            if (axis.side === 0) {
-                yOffset = label.rotation ? -8 : -label.getBBox().height;
-            } else if (axis.side === 2) {
-                yOffset = rotCorr.y + 8;
-            } else {
-                // #3140, #3140
-                yOffset = Math.cos((label.rotation as any) * deg2rad) *
-                    (rotCorr.y - label.getBBox(false, 0).height / 2);
-            }
+        if (axis.side === 0) {
+            yOffset += label.rotation ? -8 : -label.getBBox().height;
+        } else if (axis.side === 2) {
+            yOffset += rotCorr.y + 8;
+        } else {
+            // #3140, #3140
+            yOffset += Math.cos((label.rotation as any) * deg2rad) *
+                (rotCorr.y - label.getBBox(false, 0).height / 2);
         }
 
         x = x +
