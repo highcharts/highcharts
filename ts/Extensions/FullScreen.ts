@@ -443,12 +443,12 @@ addEvent(Chart, 'beforeRender', function (): void {
  * Fires after fullscreen close
  *
  * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
- *         Fullscreen title size change
+ *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenAfterFullscreenCloseCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
- * @requires  modules/exporting
+ * @requires  modules/full-screen
  * @apioption chart.events.afterFullscreenClose
  */
 
@@ -456,12 +456,12 @@ addEvent(Chart, 'beforeRender', function (): void {
  * Fires before fullscreen close
  *
  * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
- *         Fullscreen title size change
+ *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenBeforeFullscreenCloseCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
- * @requires  modules/exporting
+ * @requires  modules/full-screen
  * @apioption chart.events.beforeFullscreenClose
  */
 
@@ -469,12 +469,12 @@ addEvent(Chart, 'beforeRender', function (): void {
  * Fires after fullscreen open
  *
  * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
- *         Fullscreen title size change
+ *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenAfterFullscreenOpenCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
- * @requires  modules/exporting
+ * @requires  modules/full-screen
  * @apioption chart.events.afterFullscreenOpen
  */
 
@@ -482,12 +482,12 @@ addEvent(Chart, 'beforeRender', function (): void {
  * Fires before fullscreen open
  *
  * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
- *         Fullscreen title size change
+ *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenBeforeFullscreenOpenCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
- * @requires  modules/exporting
+ * @requires  modules/full-screen
  * @apioption chart.events.beforeFullscreenOpen
  */
 
