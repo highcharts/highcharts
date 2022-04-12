@@ -142,6 +142,7 @@ namespace WaterfallAxis {
                     yAxis.options.stackLabels as any,
                     false,
                     0,
+                    yAxis,
                     void 0
                 );
 

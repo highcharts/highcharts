@@ -3044,7 +3044,7 @@ namespace AxisDefaults {
              * @product highcharts
              */
             formatter: function (this: Highcharts.StackItemObject): string {
-                const { numberFormatter } = this.axis.chart;
+                const { numberFormatter } = this.yAxis.chart;
                 /* eslint-enable valid-jsdoc */
                 return numberFormatter(this.total, -1);
             },

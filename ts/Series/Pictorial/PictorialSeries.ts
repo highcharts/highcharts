@@ -22,11 +22,13 @@ import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
 
 import PictorialPoint from './PictorialPoint.js';
 import U from '../../Core/Utilities.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import StackItem from '../../Extensions/Stacking.js';
 
 const {
     seriesTypes: {
@@ -37,8 +39,21 @@ const {
 const {
     extend,
     merge,
-    addEvent
+    addEvent,
+    pick
 } = U;
+
+export interface StackBorderOptions {
+    width?: number;
+    enabled?: boolean;
+    color?: ColorType;
+}
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        stackBorder?: StackBorderOptions;
+    }
+}
 
 /* *
  *
@@ -82,9 +97,9 @@ class PictorialSeries extends ColumnSeries {
 
     public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
-        borderWidth: 10,
+        borderWidth: 0,
         tooltip: {
-            pointFormat: 'AAA whatever'
+            // pointFormat: 'AAA whatever'
         }
     } as PictorialSeriesOptions);
 
@@ -185,7 +200,6 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
                         Infinity
                     ) /
                     bBox.height;
-
                 patternPath.setAttribute(
                     'transform',
                     `scale(${scaleX} ${scaleY}) ` +
@@ -194,6 +208,31 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
             }
         }
     });
+});
+
+addEvent(StackItem, 'afterRender', function (): void {
+    const options = this.yAxis.options;
+    const chart = this.yAxis.chart;
+    const stackBorder = this.stackBorder;
+    const top = chart.plotTop;
+    const x1 = this.xAxis.toPixels(this.x - 0.5);
+    const x2 = this.xAxis.toPixels(this.x + 0.5);
+    const x = x1;
+    const y = top;
+    const width = x2 - x1;
+    const height = this.yAxis.height;
+    if (!stackBorder && options.stackBorder && options.stackBorder.enabled) {
+        this.stackBorder = chart.renderer.rect(x, y, width, height)
+            .attr({
+                'stroke-width': pick(options.stackBorder.width, 2),
+                stroke: options.stackBorder.color || 'red'
+            })
+            .add();
+    } else if (stackBorder) {
+        stackBorder.animate({
+            x, y, width, height
+        });
+    }
 });
 
 /* *

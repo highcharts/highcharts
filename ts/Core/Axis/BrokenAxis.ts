@@ -478,6 +478,7 @@ namespace BrokenAxis {
                             (yAxis.options as YAxisOptions).stackLabels as any,
                             false,
                             xRange,
+                            this.xAxis,
                             this.stack
                         );
                         stack.total = 0;

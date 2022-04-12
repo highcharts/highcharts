@@ -23,11 +23,13 @@ Highcharts.chart('container', {
         lineWidth: 0
     },
     yAxis: {
-        visible: false
+        visible: true,
+        endOnTick: false,
+        max: 100
     },
     plotOptions: {
         pictorial: {
-            stacking: 'percent',
+            stacking: 'normal',
 
             /*
             Icon paths from font-awesome, https://fontawesome.com/license,
