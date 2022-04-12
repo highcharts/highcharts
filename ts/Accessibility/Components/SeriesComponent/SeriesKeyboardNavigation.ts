@@ -444,11 +444,8 @@ class SeriesKeyboardNavigation {
                     }]
             ],
 
-            init: function (
-                this: KeyboardNavigationHandler
-            ): number {
-                highlightFirstValidPointInChart(chart);
-                return this.response.success;
+            init: function (this: KeyboardNavigationHandler): number {
+                return keyboardNavigation.onHandlerInit(this);
             },
 
             validate: function (): boolean {
@@ -477,6 +474,32 @@ class SeriesKeyboardNavigation {
             isNext = keyCode === keys.right || keyCode === keys.down;
 
         return this.attemptHighlightAdjacentPoint(handler, isNext);
+    }
+
+
+    /**
+     * When keyboard navigation inits.
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} handler The handler object
+     * @return {number}
+     * response
+     */
+    public onHandlerInit(
+        handler: KeyboardNavigationHandler
+    ): number {
+        const chart = this.chart,
+            kbdNavOptions = chart.options.accessibility.keyboardNavigation;
+
+        if (
+            kbdNavOptions.seriesNavigation.rememberPointFocus &&
+            chart.highlightedPoint
+        ) {
+            chart.highlightedPoint.highlight();
+        } else {
+            highlightFirstValidPointInChart(chart);
+        }
+
+        return handler.response.success;
     }
 
 
@@ -525,7 +548,8 @@ class SeriesKeyboardNavigation {
      * @private
      */
     public onHandlerTerminate(): void {
-        const chart = this.chart;
+        const chart = this.chart,
+            kbdNavOptions = chart.options.accessibility.keyboardNavigation;
 
         if (chart.tooltip) {
             chart.tooltip.hide(0);
@@ -542,7 +566,9 @@ class SeriesKeyboardNavigation {
             chart.highlightedPoint.onMouseOut();
         }
 
-        delete chart.highlightedPoint;
+        if (!kbdNavOptions.seriesNavigation.rememberPointFocus) {
+            delete chart.highlightedPoint;
+        }
     }
 
 
