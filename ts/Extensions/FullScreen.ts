@@ -191,6 +191,8 @@ class Fullscreen {
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
 
+        fireEvent(chart, 'beforeFullscreenClose');
+
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
             fullscreen.isOpen &&
@@ -221,6 +223,8 @@ class Fullscreen {
         fullscreen.isOpen = false;
 
         fullscreen.setButtonText();
+
+        fireEvent(chart, 'afterFullscreenClose');
     }
     /**
      * Displays the chart in fullscreen mode.
@@ -239,6 +243,8 @@ class Fullscreen {
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
 
+        fireEvent(chart, 'beforeFullscreenOpen');
+
         if (optionsChart) {
             fullscreen.origWidthOption = optionsChart.width;
             fullscreen.origHeightOption = optionsChart.height;
@@ -254,16 +260,12 @@ class Fullscreen {
                 function (): void {
                     // Handle lack of async of browser's fullScreenChange event.
                     if (fullscreen.isOpen) {
-                        fireEvent(chart, 'beforeFullscreenClose');
                         fullscreen.isOpen = false;
                         fullscreen.close();
-                        fireEvent(chart, 'afterFullscreenClose');
                     } else {
-                        fireEvent(chart, 'beforeFullscreenOpen');
                         chart.setSize(null, null, false);
                         fullscreen.isOpen = true;
                         fullscreen.setButtonText();
-                        fireEvent(chart, 'afterFullscreenOpen');
                     }
                 }
             );
@@ -288,6 +290,8 @@ class Fullscreen {
                 });
             }
         }
+
+        fireEvent(chart, 'afterFullscreenOpen');
     }
     /**
      * Replaces the exporting context button's text when toogling the
