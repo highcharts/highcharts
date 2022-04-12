@@ -2167,3 +2167,32 @@ QUnit.test('slotWidth', assert => {
         '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
     );
 });
+
+QUnit.test('Week dataTime format for useUTC: false, #16550.', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        chart: {
+            width: 800
+        },
+        xAxis: [{
+            tickInterval: 7 * 24 * 3600 * 1000
+        }],
+        time: {
+            useUTC: false
+        },
+        series: [{
+            data: [{
+                start: new Date("2015-04-12T01:00:00").getTime(),
+                end: new Date("2015-04-22T03:15:00").getTime()
+            }]
+        }]
+    });
+    const axis = chart.xAxis[0],
+        ticks = axis.ticks,
+        tickPositions = axis.tickPositions;
+
+    assert.notEqual(
+        ticks[tickPositions[0]].label.textStr,
+        ticks[tickPositions[1]].label.textStr,
+        'The first two axis labels should not be the same.'
+    );
+});
