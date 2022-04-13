@@ -69,10 +69,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                 objectEach(stack, function (
                     stackItem: Highcharts.StackItem
                 ): void {
-                    if (
-                        stackItem.label &&
-                        stackItem.label.visibility !== 'hidden' // #15607
-                    ) {
+                    if (stackItem.label) {
                         labels.push(stackItem.label);
                     }
                 });

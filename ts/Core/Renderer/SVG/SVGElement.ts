@@ -195,6 +195,7 @@ class SVGElement implements SVGElementLike {
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
+    public visibility?: 'hidden'|'inherit'|'visible';
     // @todo public width?: number;
     public x?: number;
     public y?: number;
@@ -2571,18 +2572,18 @@ class SVGElement implements SVGElementLike {
      *
      */
     public visibilitySetter(
-        value: string,
-        key: string,
+        value: 'hidden'|'inherit'|'visible',
+        key: 'visibility',
         element: SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as AnyRecord)[key] !== value) { // #6747
+        } else if (this[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as AnyRecord)[key] = value;
+        this[key] = value;
     }
 
     /**
