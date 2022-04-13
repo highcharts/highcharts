@@ -440,7 +440,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  * */
 
 /**
- * Fires after a chart closes fullscreen mode
+ * Fires after a fullscreen is closed through the context menu item,
+ * or a fullscreen is closed on the `Escape` button click,
+ * or the `Chart.fullscreen.close` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
@@ -453,7 +455,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires before a chart closes fullscreen mode
+ * Fires before a fullscreen is closed through the context menu item,
+ * or a fullscreen is closed on the `Escape` button click,
+ * or the `Chart.fullscreen.close` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
@@ -466,7 +470,8 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires after a chart opens fullscreen mode
+ * Fires after a fullscreen is opened through the context menu item,
+ * or the `Chart.fullscreen.open` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
@@ -479,7 +484,8 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires before a chart opens fullscreen mode
+ * Fires before a fullscreen is opened through the context menu item,
+ * or the `Chart.fullscreen.open` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
