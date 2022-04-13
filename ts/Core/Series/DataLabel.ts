@@ -195,7 +195,7 @@ namespace DataLabel {
             inverted = this.isCartesian && chart.inverted,
             enabledDataSorting = this.enabledDataSorting,
             plotX = pick(
-                point.dlBox && point.dlBox.centerX,
+                point.dlBox && (point.dlBox as any).centerX,
                 point.plotX
             ),
             plotY = point.plotY,
