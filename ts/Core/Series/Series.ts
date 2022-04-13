@@ -4257,6 +4257,9 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+
+                'processedData', // #17057
+
                 'processedXData',
                 'processedYData',
                 'xIncrement',
