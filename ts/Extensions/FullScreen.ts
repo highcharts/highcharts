@@ -440,9 +440,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  * */
 
 /**
- * Fires after fullscreen close
+ * Fires after a chart closes fullscreen mode
  *
- * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
+ * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenAfterFullscreenCloseCallbackFunction}
@@ -453,9 +453,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires before fullscreen close
+ * Fires before a chart closes fullscreen mode
  *
- * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
+ * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenBeforeFullscreenCloseCallbackFunction}
@@ -466,9 +466,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires after fullscreen open
+ * Fires after a chart opens fullscreen mode
  *
- * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
+ * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenAfterFullscreenOpenCallbackFunction}
@@ -479,9 +479,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Fires before fullscreen open
+ * Fires before a chart opens fullscreen mode
  *
- * @sample highcharts/chart/events-fullscreenopen-fullscreenclose/
+ * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenBeforeFullscreenOpenCallbackFunction}
