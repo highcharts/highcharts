@@ -2224,7 +2224,7 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param {boolean} [inherit=false]
+     * @param {boolean} [inherit=true]
      *        Set the visibility attribute to `inherit` rather than `visible`.
      *        The difference is that an element with `visibility="visible"`
      *        will be visible even if the parent is hidden.
@@ -2232,7 +2232,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit = true): this {
+    public show(inherit: boolean = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
