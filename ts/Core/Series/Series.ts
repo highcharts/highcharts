@@ -3186,10 +3186,10 @@ class Series {
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
-                graph.show(true);
+                graph.show();
             }
             if (area) {
-                area.show(true);
+                area.show();
             }
         }
     }
