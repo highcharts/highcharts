@@ -361,13 +361,13 @@ class AST {
             .split(';')
             .reduce((styles, line): CSSObject => {
                 const pair = line.split(':').map((s): string => s.trim()),
-                    key = pair[0].replace(
+                    key = pair.shift();
+
+                if (key && pair.length) {
+                    (styles as any)[key.replace(
                         /-([a-z])/g,
                         (g): string => g[1].toUpperCase()
-                    );
-
-                if (pair[1]) {
-                    (styles as any)[key] = pair[1];
+                    )] = pair.join(':'); // #17146
                 }
                 return styles;
             }, {} as CSSObject);

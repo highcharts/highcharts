@@ -1,7 +1,7 @@
 ---
- name: Highcharts Demo
- authors:
-   - Paweł Fus
- js_wrap: b
- skipTest: true
+name: Annotations GUI for cypress test
+authors:
+  - Pawel Lysy
+skipTest: true
+js_wrap: b
 ...

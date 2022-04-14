@@ -1367,7 +1367,7 @@ class Navigator {
 
         if (navigatorEnabled) {
             navigator.navigatorGroup.attr({
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             // Place elements
             verb = rendered && !navigator.hasDragged ? 'animate' : 'attr';

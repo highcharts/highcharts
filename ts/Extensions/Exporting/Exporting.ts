@@ -345,10 +345,7 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme,
-            states = attr.states,
-            hover = states && states.hover,
-            select = states && states.select;
+        const attr = btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
@@ -358,8 +355,6 @@ namespace Exporting {
             attr.fill = pick(attr.fill, Palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
-
-        delete attr.states;
 
         if (onclick) {
             callback = function (
@@ -419,9 +414,7 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr,
-                hover,
-                select
+                attr
             )
             .addClass(options.className as any)
             .attr({

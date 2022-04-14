@@ -856,7 +856,9 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         mapView.zoom
     );
 
-    chart.series[0].setData(data);
+    const series = chart.series[0];
+
+    series.setData(data);
 
     const after = Object.assign(
         {},
@@ -868,6 +870,56 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         after,
         before,
         'The view should not change after updating data values'
+    );
+
+    let ruPoint = series.points[148];
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        'rgb(229,234,245)',
+        `The point's color should be correct.`
+    );
+
+    // Remove ru point from data
+    const removedPoint = data.splice(148, 1)[0];
+    series.setData(data);
+
+    ruPoint = series.points[216]; // null point
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked null point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        series.options.nullColor,
+        `The ru null point's color should be correct.`
+    );
+
+    // #17057
+    series.update({}, false);
+    series.addPoint(removedPoint);
+
+    ruPoint = series.points[199];
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        'rgb(229,234,245)',
+        'The ru point should be added correctly (no nullColor), #17057.'
     );
 
     // #15782 Right side
