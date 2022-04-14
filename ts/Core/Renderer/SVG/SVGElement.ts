@@ -2232,7 +2232,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit?: boolean): this {
+    public show(inherit = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
