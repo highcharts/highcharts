@@ -511,6 +511,8 @@ class StackItem {
                 }
             }
         }
+
+        fireEvent(this, 'afterSetOffset', { xOffset, xWidth, defaultX });
     }
 
     /**

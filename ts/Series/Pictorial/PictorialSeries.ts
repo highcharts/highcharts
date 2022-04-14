@@ -29,6 +29,7 @@ import U from '../../Core/Utilities.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
+import Axis from '../../Core/Axis/Axis.js';
 
 const {
     seriesTypes: {
@@ -99,7 +100,7 @@ class PictorialSeries extends ColumnSeries {
 
         borderWidth: 0,
         tooltip: {
-            // pointFormat: 'AAA whatever'
+            pointFormat: 'text'
         }
     } as PictorialSeriesOptions);
 
@@ -210,6 +211,30 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
+function resizeStackBorder(
+    stackBorder: SVGElement,
+    yAxis: Axis,
+    height: number
+): void {
+    const fill = stackBorder && stackBorder.attr('fill') as string;
+    const match = fill && fill.match(/url\(([^)]+)\)/);
+    if (match) {
+        const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
+        if (patternPath) {
+            const bBox = patternPath.getBBox();
+            const scaleX = 1 / bBox.width;
+            const scaleY = yAxis.len /
+               height /
+                bBox.height;
+            patternPath.setAttribute(
+                'transform',
+                `scale(${scaleX} ${scaleY}) ` +
+                `translate(${-bBox.x}, ${-bBox.y})`
+            );
+        }
+    }
+}
+
 addEvent(StackItem, 'afterRender', function (): void {
     const options = this.yAxis.options;
     const chart = this.yAxis.chart;
@@ -217,20 +242,70 @@ addEvent(StackItem, 'afterRender', function (): void {
     const top = chart.plotTop;
     const x1 = this.xAxis.toPixels(this.x - 0.5);
     const x2 = this.xAxis.toPixels(this.x + 0.5);
-    const x = x1;
+    const xCenter = this.xAxis.toPixels(this.x);
+    const x = xCenter;
     const y = top;
     const width = x2 - x1;
     const height = this.yAxis.height;
+    const shape = ((this.yAxis.series[0].options as any).paths || []);
+    const index = this.x % shape.length;
+
     if (!stackBorder && options.stackBorder && options.stackBorder.enabled) {
         this.stackBorder = chart.renderer.rect(x, y, width, height)
             .attr({
-                'stroke-width': pick(options.stackBorder.width, 2),
-                stroke: options.stackBorder.color || 'red'
+                fill: {
+                    pattern: {
+                        path: {
+                            d: shape[index],
+                            fill: options.stackBorder.color || 'red',
+                            strokeWidth: 0
+                        },
+                        x: x,
+                        y: y,
+                        width: width,
+                        height: height,
+                        patternContentUnits: 'objectBoundingBox',
+                        backgroundColor: 'none',
+                        color: 'red'
+                    }
+                }
             })
             .add();
+        resizeStackBorder(this.stackBorder, this.yAxis, height);
     } else if (stackBorder) {
-        stackBorder.animate({
-            x, y, width, height
+        stackBorder.attr({
+            x,
+            y,
+            width,
+            height,
+            fill: {
+                pattern: {
+                    path: {
+                        d: shape[index],
+                        fill: options.stackBorder &&
+                            options.stackBorder.color || 'red',
+                        strokeWidth: 0
+                    },
+                    x: x,
+                    y: y,
+                    width: width,
+                    height: height,
+                    patternContentUnits: 'objectBoundingBox',
+                    backgroundColor: 'none',
+                    color: 'red'
+                }
+            }
+        });
+
+        resizeStackBorder(stackBorder, this.yAxis, height);
+    }
+});
+
+addEvent(StackItem, 'afterSetOffset', function (e): void {
+    if (this.stackBorder) {
+        this.stackBorder.attr({
+            translateX: (e as any).xOffset,
+            width: (e as any).xWidth
         });
     }
 });
