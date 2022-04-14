@@ -296,7 +296,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     series1.points[0].onMouseOver();
     assert.strictEqual(
         series1.xAxis.cross.attr('visibility'),
-        'visible',
+        'inherit',
         'Hover Series 1: crosshair on xAxis of Series 1 is visible (#6420)'
     );
     assert.strictEqual(
@@ -325,7 +325,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     );
     assert.strictEqual(
         series2.xAxis.cross.attr('visibility'),
-        'visible',
+        'inherit',
         'Hover Series 2: crosshair on xAxis of Series 2 is visible (#6420)'
     );
 

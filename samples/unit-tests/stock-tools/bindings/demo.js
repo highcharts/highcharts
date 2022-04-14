@@ -171,12 +171,12 @@ QUnit.test('Bindings general tests', function (assert) {
     assert.strictEqual(
         chart.series[0].lastVisiblePrice &&
             chart.series[0].lastVisiblePrice.visibility,
-        'visible',
+        'inherit',
         'Last price in the range visible.'
     );
     assert.strictEqual(
         chart.series[0].lastPrice && chart.series[0].lastPrice.visibility,
-        'visible',
+        'inherit',
         'Last price in the dataset visible.'
     );
 
