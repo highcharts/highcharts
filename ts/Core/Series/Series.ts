@@ -3845,7 +3845,7 @@ class Series {
 
             series.tracker = renderer.path(trackerPath)
                 .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
+                    visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
                 })
                 .addClass(

@@ -294,7 +294,7 @@ namespace StackingAxis {
                     renderer
                         .g('stack-labels')
                         .attr({
-                            visibility: 'visible',
+                            visibility: 'inherit',
                             zIndex: 6,
                             opacity: 0
                         })
