@@ -1327,9 +1327,23 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null;
+            firstPoint = null,
+            copiedData;
 
-        data = data || [];
+        if (!chart.options.chart.allowMutatingData) { // #4259
+            // Remove old reference
+            if (options.data) {
+                delete series.options.data;
+            }
+            if (series.userOptions.data) {
+                delete series.userOptions.data;
+            }
+            copiedData = merge(true, data);
+
+        }
+        data = copiedData || data || [];
+
+
         const dataLength = data.length;
         redraw = pick(redraw, true);
 
@@ -1340,6 +1354,7 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
+            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&
@@ -4242,6 +4257,9 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+
+                'processedData', // #17057
+
                 'processedXData',
                 'processedYData',
                 'xIncrement',

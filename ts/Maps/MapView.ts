@@ -47,11 +47,9 @@ const {
 
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-import G from '../masters/highcharts.src';
 const {
     addEvent,
     clamp,
-    defined,
     fireEvent,
     isArray,
     isNumber,
@@ -326,7 +324,12 @@ class MapView {
 
                     this.fitToBounds(void 0, void 0, false);
 
-                    if (isNumber(this.userOptions.zoom)) {
+                    if (
+                        // Set zoom only when initializing the chart
+                        // (do not overwrite when zooming in/out, #17082)
+                        !this.chart.hasRendered &&
+                        isNumber(this.userOptions.zoom)
+                    ) {
                         this.zoom = this.userOptions.zoom;
                     }
                     if (this.userOptions.center) {

@@ -1,7 +1,7 @@
 QUnit.test(
-    'Zoom in - zoomout with padding, panning in both directions.',
-    function (assert) {
-        var chart = Highcharts.mapChart('container', {
+    'Zoom in/out with padding, panning in both directions.',
+    assert => {
+        const chart = Highcharts.mapChart('container', {
             chart: {
                 plotBorderWidth: 1,
 
@@ -40,7 +40,7 @@ QUnit.test(
             ]
         });
 
-        var plotLeft = chart.plotLeft,
+        const plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             controller = new TestController(chart);
 
@@ -72,7 +72,6 @@ QUnit.test(
 
         chart.mapZoom(0.2);
 
-
         const [lon, lat] = chart.mapView.center;
 
         controller.pan(
@@ -91,6 +90,22 @@ QUnit.test(
             lat,
             'The chart should pan vertically'
         );
+
+        // #17082 start
+        // Set zoom to a little more than 1, then do zoomBy(-1) twice
+        chart.mapView.update({
+            zoom: chart.mapView.minZoom + 1.1
+        });
+
+        chart.mapView.zoomBy(-1);
+        chart.mapView.zoomBy(-1);
+
+        assert.strictEqual(
+            chart.mapView.zoom,
+            chart.mapView.minZoom,
+            'Chart should be maximally zoomed out (to minZoom), #17082.'
+        );
+        // #17082 end
 
         chart.series[0].remove(false);
 
