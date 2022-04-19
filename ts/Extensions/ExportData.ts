@@ -889,7 +889,9 @@ Chart.prototype.getCSV = function (
             decimalPoint === ',' ? ';' : ','
         ),
         // '\n' isn't working with the js csv data extraction
-        lineDelimiter = csvOptions.lineDelimiter;
+        lineDelimiter = csvOptions.lineDelimiter,
+        // assuming the first row is the header, so all the columns presented
+        columnsNumber = rows.length ? rows[0].length : 0;
 
     // Transform the rows to CSV
     rows.forEach(function (row: Array<(number|string)>, i: number): void {
@@ -908,6 +910,11 @@ Chart.prototype.getCSV = function (
             }
             row[j] = val;
         }
+        // Append empty columns if any
+        for (let k = columnsNumber - row.length; k > 0; k--) {
+            row.push('');
+        }
+
         // Add the values
         csv += row.join(itemDelimiter);
 
