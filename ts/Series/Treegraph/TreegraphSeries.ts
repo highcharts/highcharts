@@ -104,8 +104,8 @@ class TreegraphSeries extends TreemapSeries {
         TreemapSeries.defaultOptions,
         {
             /**
-             * Flips the positions of the nodes along the horizontal axis.
-             * (vertical if chart is inverted)
+             * Flips the positions of the nodes of a treegraph along the
+             * horizontal axis (vertical if chart is inverted).
              *
              * @type {boolean}
              * @since next
