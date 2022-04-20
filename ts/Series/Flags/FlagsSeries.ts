@@ -526,23 +526,22 @@ class FlagsSeries extends ColumnSeries {
             );
 
             points.forEach(function (point): void {
-                const plotX = point.plotX as number;
-                const box = point.graphic && boxesMap[plotX];
+                const plotX = point.plotX as number,
+                    box = point.graphic && boxesMap[plotX],
+                    graphic = point.graphic;
 
-                if (box && point.graphic) {
+                if (box && graphic) {
                     // Hide flag when its box position is not specified
                     // (#8573, #9299)
                     if (!defined(box.pos)) {
-                        point.graphic.hide();
-                        point.graphic.isNew = true;
+                        graphic.hide().isNew = true;
                     } else {
-                        point.graphic[point.graphic.isNew ? 'attr' : 'animate'](
+                        graphic[graphic.isNew ? 'attr' : 'animate'](
                             {
                                 x: box.pos + (box.align || 0) * box.size,
                                 anchorX: point.anchorX
                             }
-                        ).show();
-                        point.graphic.isNew = false;
+                        ).show().isNew = false;
                     }
                 }
             });
