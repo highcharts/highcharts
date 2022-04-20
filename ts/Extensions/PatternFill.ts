@@ -335,17 +335,26 @@ SVGRenderer.prototype.addPattern = function (
     const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
-        patternTransform: 'scale(1, -1)', // #16810 prevents inverted images.
         patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
         width: width,
         height: height,
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
     };
+
+    const chart = H.charts[this.chartIndex];
+    if (chart && chart.mapView) {
+        const mapViewTrans = chart.mapView.getSVGTransform();
+        if (mapViewTrans && mapViewTrans.scaleY < 0) {
+            attrs.patternTransform = ' scale(1, -1)'; // #16810
+        }
+    }
+
     if (options.patternTransform) {
         attrs.patternTransform = attrs.patternTransform +
             ' ' + options.patternTransform; // #16810
     }
+
 
     pattern = this.createElement('pattern').attr(attrs).add(this.defs);
 
