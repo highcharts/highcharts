@@ -513,6 +513,20 @@ addEvent(Chart, 'afterViewData', function (): void {
                 ).forEach((tr: HTMLDOMElement): void => {
                     table.appendChild(tr);
                 });
+
+                thParentArray.forEach((th): void => {
+                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
+                        .forEach((className): void => {
+                            if (th.classList.contains(className)) {
+                                th.classList.remove(className);
+                            }
+                        });
+                });
+
+                const buttonClasName = chart.ascendingOrderInTable ?
+                    'highcharts-sort-ascending' : 'highcharts-sort-descending';
+
+                th.classList.add(buttonClasName);
             });
         });
     }
