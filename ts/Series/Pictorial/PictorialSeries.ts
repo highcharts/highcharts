@@ -30,6 +30,11 @@ import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
 import Axis from '../../Core/Axis/Axis.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
+
+const {
+    animObject
+} = A;
 
 const {
     seriesTypes: {
@@ -40,8 +45,7 @@ const {
 const {
     extend,
     merge,
-    addEvent,
-    pick
+    addEvent
 } = U;
 
 export interface StackBorderOptions {
@@ -127,6 +131,62 @@ class PictorialSeries extends ColumnSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
+     * Animate in the series. Called internally twice. First with the `init`
+     * parameter set to true, which sets up the initial state of the
+     * animation. Then when ready, it is called with the `init` parameter
+     * undefined, in order to perform the actual animation.
+     *
+     * @function Highcharts.Series#animate
+     *
+     * @param {boolean} [init]
+     * Initialize the animation.
+     */
+    public animate(init?: boolean): void {
+        const { chart, group } = this,
+            inverted = chart.inverted,
+            animation = animObject(this.options.animation),
+            // The key for temporary animation clips
+            animationClipKey = [
+                this.getSharedClipKey(),
+                animation.duration,
+                animation.easing,
+                animation.defer
+            ].join(',');
+
+        let animationClipRect = chart.sharedClips[animationClipKey];
+
+        // Initialize the animation. Set up the clipping rectangle.
+        if (init && group) {
+            const clipBox = this.getClipBox();
+            // Create temporary animation clips
+            if (!animationClipRect) {
+                clipBox.y = clipBox.height;
+                clipBox.height = 0;
+
+                if (inverted) {
+                    clipBox.x = chart.plotHeight;
+                }
+                animationClipRect = chart.renderer.clipRect(clipBox);
+                chart.sharedClips[animationClipKey] = animationClipRect;
+            }
+
+            group.clip(animationClipRect);
+
+        // Run the animation
+        } else if (
+            animationClipRect &&
+            // Only first series in this pane
+            !animationClipRect.hasClass('highcharts-animating')
+        ) {
+            const finalBox = this.getClipBox();
+
+            animationClipRect
+                .addClass('highcharts-animating')
+                .animate(finalBox, animation);
+        }
+    }
+
+    /**
      * Draws the targets. For inverted chart, the `series.group` is rotated,
      * so the same coordinates apply. This method is based on column series
      * drawPoints function.
@@ -137,7 +197,7 @@ class PictorialSeries extends ColumnSeries {
     public drawPoints(): void {
         const series = this;
 
-        super.drawPoints.apply(this, arguments);
+        super.drawPoints.apply(series, arguments);
     }
 
     public pointAttribs(
