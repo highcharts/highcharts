@@ -3,6 +3,7 @@ QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
             plotOptions: {
                 series: {
                     dataLabels: {
+                        crop: false,
                         enabled: true,
                         rotation: 270
                     }

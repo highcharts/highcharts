@@ -1496,7 +1496,7 @@ class Legend {
                 translateX: padding,
                 translateY:
                     (clipHeight as any) + this.padding + 7 + this.titleHeight,
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             [this.up, this.upTracker].forEach(function (elem): void {
                 (elem as any).attr({

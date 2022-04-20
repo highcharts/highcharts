@@ -471,6 +471,7 @@ class ArcDiagramSeries extends SankeySeries {
 
         // Pass test in drawPoints
         point.y = point.plotY = 1;
+        point.x = point.plotX = 1;
 
         if (!point.color) {
             point.color = fromNode.color;
