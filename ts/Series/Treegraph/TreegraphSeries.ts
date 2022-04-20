@@ -674,32 +674,11 @@ class TreegraphSeries extends TreemapSeries {
 
 // Handle showing and hiding of the points
 addEvent(TreegraphSeries, 'click', function (e: PointerEvent): void {
-    if (e && e.point && e.point) {
-        const point = e.point as TreegraphPoint,
-            node = point.node;
-        node.point.collapsed = !node.point.collapsed;
-        collapseTreeFromPoint(node, node.point.collapsed);
-        this.redraw();
+    if (e && e.point) {
+        (e.point as TreegraphPoint).collapse();
     }
 });
 
-/**
- * Recurive function, which sets node's  and each nodes' children parameter
- * 'hidden' to be equal to passed `hidden` value.
-
- * @param point {TreegraphNode} point which should be hidden
- * @param hidden {boolean}
- */
-function collapseTreeFromPoint(
-    node: TreegraphNode.Node,
-    hidden: boolean
-): void {
-    node.children.forEach(function (child: TreegraphNode.Node): void {
-        child.point.hidden = hidden;
-        child.point.update({ visible: !hidden }, false);
-        collapseTreeFromPoint(child, child.point.hidden);
-    });
-}
 
 /* *
  *

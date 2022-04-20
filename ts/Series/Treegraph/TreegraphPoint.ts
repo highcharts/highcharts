@@ -50,6 +50,31 @@ class TreegraphPoint extends TreemapPoint {
     shouldDraw(): boolean {
         return super.shouldDraw() && this.visible;
     }
+
+    collapse(): void {
+        const node = this.node;
+        this.collapsed = !this.collapsed;
+        collapseTreeFromPoint(node, this.collapsed);
+        this.series.redraw();
+    }
+}
+/**
+ * Recursive function, which sets node's  and each nodes' children parameter
+ * 'hidden' to be equal to passed `hidden` value, and updates node's point
+ * visibility attr.
+
+ * @param point {TreegraphNode} point which should be hidden
+ * @param hidden {boolean}
+ */
+function collapseTreeFromPoint(
+    node: TreegraphNode.Node,
+    hidden: boolean
+): void {
+    node.children.forEach(function (child: TreegraphNode.Node): void {
+        child.point.hidden = hidden;
+        child.point.update({ visible: !hidden }, false);
+        collapseTreeFromPoint(child, child.point.hidden);
+    });
 }
 
 /* *
