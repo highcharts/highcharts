@@ -527,8 +527,8 @@ class FlagsSeries extends ColumnSeries {
 
             points.forEach(function (point): void {
                 const plotX = point.plotX as number,
-                    box = point.graphic && boxesMap[plotX],
-                    graphic = point.graphic;
+                    graphic = point.graphic,
+                    box = graphic && boxesMap[plotX];
 
                 if (box && graphic) {
                     // Hide flag when its box position is not specified
