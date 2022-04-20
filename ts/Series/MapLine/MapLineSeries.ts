@@ -254,4 +254,12 @@ export default MapLineSeries;
  * @apioption plotOptions.mapline.states.hover.lineWidth
  */
 
+/**
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @excluding borderWidth
+ * @apioption plotOptions.mapline.states.hover
+ */
+
 ''; // adds doclets above to transpiled file
