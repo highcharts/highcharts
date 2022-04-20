@@ -5,21 +5,22 @@ const kingBorderColor = '#cf9700';
 
 Highcharts.chart('container', {
     chart: {
-        inverted: true,
-        borderWidth: 1
+        inverted: true
     },
     title: {
-        text: 'Durin Family Tree'
+        text: 'Durin Family Tree',
+        align: 'left'
     },
     subtitle: {
-        text: 'Dwarfs participating in the Quest to the Lonely Mountain marked in darker color. <br> Dwarf kings marked with golden border.'
+        text: 'Dwarfs participating in the Quest to the Lonely Mountain marked in darker color. <br> Dwarf kings marked with golden border.',
+        align: 'left'
     },
     plotOptions: {
         treegraph: {
             marker: {
                 symbol: 'rect',
-                height: 60,
-                width: 40,
+                height: 70,
+                width: 44,
                 fillColor: markerColor,
                 radius: 30
             },
@@ -271,16 +272,15 @@ Highcharts.chart('container', {
                             },
                             dataLabels: {
                                 style: {
-                                    width: 50,
-                                    textOverflow: 'clip'
+                                    width: '40px',
+                                    textOverflow: 'ellipsis'
                                 },
                                 format: '{point.id}'
                             },
                             marker: {
                                 symbol: 'rect',
-                                height: 50,
-                                width: 30,
-                                radius: 20
+                                height: 40,
+                                width: 30
                             }
                         }
                     }
