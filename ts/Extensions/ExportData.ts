@@ -474,15 +474,11 @@ addEvent(Chart, 'render', function (): void {
 addEvent(Chart, 'afterViewData', function (): void {
     const chart = this,
         dataTableDiv = chart.dataTableDiv,
-        row = document.getElementsByClassName('highcharts-table-sort-row')[0],
-        getCellValue = function (
-            tr: HTMLDOMElement,
-            index: number
-        ): string|null {
-            return tr.children[index].textContent;
-        },
-        comparer = function (index: number, ascending: boolean) {
-            return function (a: HTMLDOMElement, b: HTMLDOMElement): number {
+        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
+        getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
+            tr.children[index].textContent,
+        comparer = (index: number, ascending: boolean) =>
+            (a: HTMLDOMElement, b: HTMLDOMElement): number => {
                 const sort = function (v1: any, v2: any): number {
                     return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
                         v1 - v2 :
@@ -494,7 +490,7 @@ addEvent(Chart, 'afterViewData', function (): void {
                     getCellValue(ascending ? b : a, index)
                 );
             };
-        };
+
 
     if (dataTableDiv) {
         row.childNodes.forEach((th: any): void => {
@@ -502,25 +498,11 @@ addEvent(Chart, 'afterViewData', function (): void {
 
             th.addEventListener('click', function (): void {
                 const thNodeList = dataTableDiv.querySelectorAll(
-                        'tr:not(.highcharts-table-sort-row)'
-                    ),
+                        'tr:not(thead tr)'
+                    ) as unknown as Array<HTMLElement>,
                     thParentNodeList = th.parentNode.children,
-                    thArrayList = [] as Array<HTMLElement>,
-                    thParentArray = [] as Array<HTMLElement>;
-
-
-                [].forEach.call(
-                    thNodeList,
-                    function (node: HTMLElement): void {
-                        thArrayList.push(node);
-                    }
-                );
-                [].forEach.call(
-                    thParentNodeList,
-                    function (node: HTMLElement): void {
-                        thParentArray.push(node);
-                    }
-                );
+                    thArrayList = [...thNodeList],
+                    thParentArray = [...thParentNodeList];
 
                 thArrayList.sort(
                     comparer(
@@ -1214,9 +1196,6 @@ Chart.prototype.getTableAST = function (
                 }
 
                 theadChildren.push({
-                    attributes: {
-                        'class': 'highcharts-table-sort-row'
-                    },
                     tagName: 'tr',
                     children: trChildren
                 });

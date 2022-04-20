@@ -127,7 +127,7 @@ Bullet Series 3</th>
 <th class=\"text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
 Bullet Series 4</th>
 </tr>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 y</th>
 <th class=\"text\" scope=\"col\">
@@ -258,7 +258,7 @@ target</th>
 <caption class=\"highcharts-table-caption\">
 Chart title</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Year</th>
 <th class=\"text\" scope=\"col\">
@@ -417,7 +417,7 @@ QUnit.test('Pie chart', function (assert) {
 <caption class=\"highcharts-table-caption\">
 WEBAIM survey</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -523,7 +523,7 @@ Day</th>
 <th class=\"text highcharts-table-topheading\" scope=\"col\" colspan=\"3\">
 Temperature</th>
 </tr>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"empty\" scope=\"col\">
 </th>
 <th class=\"text\" scope=\"col\">
@@ -639,7 +639,7 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
 <caption class=\"highcharts-table-caption\">
 Chart title</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -783,7 +783,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
 <caption class=\"highcharts-table-caption\">
 Annotation labels in export-data table.</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -938,7 +938,7 @@ Annotation I connected with axis, and having the same point as other annotation.
 <caption class=\"highcharts-table-caption\">
 Annotation labels in export-data table.</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -1049,7 +1049,7 @@ This is my annotation I</td>
 <caption class=\"highcharts-table-caption\">
 Annotation labels in export-data table.</caption>
 <thead>
-<tr class=\"highcharts-table-sort-row\">
+<tr>
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
