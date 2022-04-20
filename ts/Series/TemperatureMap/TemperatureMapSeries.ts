@@ -17,6 +17,7 @@
 
 import type TemperatureMapSeriesOptions from './TemperatureMapSeriesOptions';
 
+import Color from '../../Core/Color/Color.js';
 import MapBubbleSeries from '../MapBubble/MapBubbleSeries.js';
 import TemperatureMapPoint from './TemperatureMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -53,6 +54,76 @@ declare module '../../Core/Series/SeriesOptions' {
  * @augments Highcharts.Series
  */
 class TemperatureMapSeries extends MapBubbleSeries {
+
+    public drawPoints(): void {
+        const series: any = this,
+            pointLength = series.points.length,
+            size = 200,
+            // Make internal color sets
+            inColor: any = series.options.marker.fillColor,
+            colorSets: any = [];
+        let point,
+            i;
+
+        inColor.forEach((color: any, ii: number): void => {
+            colorSets.push({
+                maxSize: (1 - color[0]) * size + 100,
+                fillColor: {
+                    radialGradient: {
+                        cx: 0.5,
+                        cy: 0.5,
+                        r: 0.5
+                    },
+                    stops: [
+                        [ii === inColor.length - 1 ? 0 : 0.5, color[1]],
+                        [1, (new Color(color[1])).setOpacity(0).get('rgba')]
+                    ]
+                }
+            });
+        });
+
+        colorSets.forEach((
+            { maxSize, fillColor }: any,
+            iter: number
+        ): void => {
+            // Options from point level not supported - API says it should,
+            // but visually is it useful at all?
+            series.options.marker.fillColor = fillColor;
+            series.options.maxSize = maxSize;
+            series.getRadii(); // recalc. radii
+            series.translateBubble(); // use radii
+
+            super.drawPoints.apply(series);
+
+            i = 0;
+            while (i < pointLength) {
+                point = series.points[i];
+
+                point.graphic.attr({
+                    zIndex: iter
+                });
+
+                point['graphic' + iter] = point.graphic;
+
+                // Set up next or loop back to the start
+                point.graphic =
+                    point['graphic' + ((iter + 1) % colorSets.length)];
+                i++;
+            }
+        });
+
+        // Clean up for animation (else the first color is as small as the last)
+        series.options.marker.fillColor = colorSets[0].fillColor;
+        series.options.maxSize = colorSets[0].maxSize;
+        series.getRadii(); // recalc. radii
+        series.translateBubble(); // use radii
+
+        // Change opacity of the whole series
+        // this should be done in a better place
+        series.group.attr({
+            opacity: 0.75
+        });
+    }
 
     /* *
      *
