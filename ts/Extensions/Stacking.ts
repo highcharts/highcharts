@@ -312,7 +312,7 @@ class StackItem {
      * @function Highcharts.StackItem#destroy
      */
     public destroy(): void {
-        destroyObjectProperties(this, this.yAxis);
+        destroyObjectProperties(this, [this.yAxis, this.xAxis]);
     }
 
     /**

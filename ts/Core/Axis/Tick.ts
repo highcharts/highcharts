@@ -416,7 +416,7 @@ class Tick {
      * @function Highcharts.Tick#destroy
      */
     public destroy(): void {
-        destroyObjectProperties(this, this.axis);
+        destroyObjectProperties(this, [this.axis]);
     }
 
     /**
