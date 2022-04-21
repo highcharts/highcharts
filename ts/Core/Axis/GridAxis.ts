@@ -1446,9 +1446,9 @@ dateFormats.E = function (this: Time, timestamp: number): string {
 dateFormats.W = function (this: Time, timestamp: number): string {
     const time = this,
         d = new this.Date(timestamp),
-        unitsToOmmit = (['Hours', 'Milliseconds', 'Minutes', 'Seconds'] as Array<Time.TimeUnitValue>);
+        unitsToOmit = (['Hours', 'Milliseconds', 'Minutes', 'Seconds'] as Array<Time.TimeUnitValue>);
 
-    unitsToOmmit.forEach(function (format): void { // #16550
+    unitsToOmit.forEach(function (format): void { // #16550
         time.set(format, d, 0);
     }
     );
