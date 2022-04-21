@@ -1247,8 +1247,9 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 
         // Adjust the width of the selection marker
         if (this.zoomHor) {
-            const paneRadRange = Math.abs(startAngleRad) +
-                Math.abs(endAngleRad);
+            const paneRadRange = startAngleRad > 0 ?
+                endAngleRad - startAngleRad :
+                Math.abs(startAngleRad) + Math.abs(endAngleRad);
             let startAngle = Math.atan2(
                     mouseDownY - chart.plotTop - center[1],
                     mouseDownX - chart.plotLeft - center[0]
@@ -1277,9 +1278,9 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
             if (paneRadRange < fullCircle) {
                 const swapAngle = endAngleRad + (fullCircle - paneRadRange) / 2;
 
-                if (endAngle + startAngleRad > swapAngle) {
+                if (startAngleRad + endAngle > swapAngle) {
                     endAngle = startAngle;
-                    startAngle = startAngleRad;
+                    startAngle = startAngleRad <= 0 ? startAngleRad : 0;
                 }
             }
 
