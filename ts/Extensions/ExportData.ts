@@ -478,11 +478,11 @@ addEvent(Chart, 'afterViewData', function (): void {
             tr.children[index].textContent,
         comparer = (index: number, ascending: boolean) =>
             (a: HTMLDOMElement, b: HTMLDOMElement): number => {
-                const sort = function (v1: any, v2: any): number {
-                    return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
+                const sort = (v1: any, v2: any): number => (
+                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
                         v1 - v2 :
-                        v1.toString().localeCompare(v2);
-                };
+                        v1.toString().localeCompare(v2)
+                );
 
                 return sort(
                     getCellValue(ascending ? a : b, index),
@@ -496,16 +496,14 @@ addEvent(Chart, 'afterViewData', function (): void {
             const table = th.closest('table');
 
             th.addEventListener('click', function (): void {
-                const thNodeList = dataTableDiv.querySelectorAll(
+                const rows = [...dataTableDiv.querySelectorAll(
                         'tr:not(thead tr)'
-                    ) as unknown as Array<HTMLElement>,
-                    thParentNodeList = th.parentNode.children,
-                    thArrayList = [...thNodeList],
-                    thParentArray = [...thParentNodeList];
+                    ) as unknown as Array<HTMLElement>],
+                    headers = [...th.parentNode.children];
 
-                thArrayList.sort(
+                rows.sort(
                     comparer(
-                        thParentArray.indexOf(th),
+                        headers.indexOf(th),
                         chart.ascendingOrderInTable =
                             !chart.ascendingOrderInTable
                     )
@@ -513,7 +511,7 @@ addEvent(Chart, 'afterViewData', function (): void {
                     table.appendChild(tr);
                 });
 
-                thParentArray.forEach((th): void => {
+                headers.forEach((th): void => {
                     ['highcharts-sort-ascending', 'highcharts-sort-descending']
                         .forEach((className): void => {
                             if (th.classList.contains(className)) {
@@ -522,10 +520,11 @@ addEvent(Chart, 'afterViewData', function (): void {
                         });
                 });
 
-                const buttonClasName = chart.ascendingOrderInTable ?
-                    'highcharts-sort-ascending' : 'highcharts-sort-descending';
-
-                th.classList.add(buttonClasName);
+                th.classList.add(
+                    chart.ascendingOrderInTable ?
+                        'highcharts-sort-ascending' :
+                        'highcharts-sort-descending'
+                );
             });
         });
     }

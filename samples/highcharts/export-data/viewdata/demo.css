@@ -21,3 +21,11 @@
     border: 1px solid silver;
     padding: 0.5em;
 }
+
+.highcharts-sort-ascending::after {
+    content: " ↑";
+}
+
+.highcharts-sort-descending::after {
+    content: " ↓";
+}
