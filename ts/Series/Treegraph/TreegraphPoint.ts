@@ -45,17 +45,15 @@ class TreegraphPoint extends TreemapPoint {
     public node: TreegraphNode.Node = void 0 as any;
     public level?: number;
     public linkToParent?: TreegraphLink;
-    hidden: boolean = false;
 
     shouldDraw(): boolean {
         return super.shouldDraw() && this.visible;
     }
 
-    collapse(): void {
+    toggleCollapse(newState: boolean): void {
         const node = this.node;
-        this.collapsed = !this.collapsed;
-        collapseTreeFromPoint(node, this.collapsed);
-        this.series.redraw();
+        this.collapsed = newState;
+        collapseTreeFromPoint(node, newState);
     }
 }
 /**
@@ -71,9 +69,8 @@ function collapseTreeFromPoint(
     hidden: boolean
 ): void {
     node.children.forEach(function (child: TreegraphNode.Node): void {
-        child.point.hidden = hidden;
         child.point.update({ visible: !hidden }, false);
-        collapseTreeFromPoint(child, child.point.hidden);
+        collapseTreeFromPoint(child, hidden);
     });
 }
 

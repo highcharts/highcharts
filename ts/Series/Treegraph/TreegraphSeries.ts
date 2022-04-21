@@ -674,8 +674,11 @@ class TreegraphSeries extends TreemapSeries {
 
 // Handle showing and hiding of the points
 addEvent(TreegraphSeries, 'click', function (e: PointerEvent): void {
-    if (e && e.point) {
-        (e.point as TreegraphPoint).collapse();
+    let point = e.point as TreegraphPoint | undefined;
+    if (e && point) {
+        point.toggleCollapse(!point.collapsed);
+
+        point.series.redraw();
     }
 });
 

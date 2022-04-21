@@ -100,7 +100,7 @@ namespace TreegraphNode {
             if (parent) {
                 const children = parent.children;
                 for (let i = 0; i < children.length; i++) {
-                    if (children[i] && !children[i].point.hidden) {
+                    if (children[i] && children[i].point.visible) {
                         return children[i];
                     }
                 }
@@ -114,7 +114,7 @@ namespace TreegraphNode {
 
         public hasChildren(): boolean | undefined {
             for (let i = 0; i < this.children.length; i++) {
-                if (!this.children[i].point.hidden) {
+                if (this.children[i].point.visible) {
                     return true;
                 }
             }
@@ -130,7 +130,7 @@ namespace TreegraphNode {
             if (parent) {
                 const children = parent.children;
                 for (let i = this.relativeXPosition - 1; i >= 0; i--) {
-                    if (children[i] && !children[i].point.hidden) {
+                    if (children[i] && children[i].point.visible) {
                         return children[i];
                     }
                 }
@@ -146,7 +146,7 @@ namespace TreegraphNode {
         public getLeftMostChild(this: Node): Node | undefined {
             const children = this.children;
             for (let i = 0; i < children.length; i++) {
-                if (!children[i].point.hidden) {
+                if (children[i].point.visible) {
                     return children[i];
                 }
             }
@@ -161,7 +161,7 @@ namespace TreegraphNode {
         public getRightMostChild(this: Node): Node | undefined {
             const children = this.children;
             for (let i = children.length - 1; i >= 0; i--) {
-                if (!children[i].point.hidden) {
+                if (children[i].point.visible) {
                     return children[i];
                 }
             }
@@ -185,7 +185,7 @@ namespace TreegraphNode {
          */
         public getFirstChild(this: Node): Node | undefined {
             for (let i = 0; i < this.children.length; i++) {
-                if (!this.children[i].point.hidden) {
+                if (this.children[i].point.visible) {
                     return this.children[i];
                 }
             }
