@@ -290,7 +290,7 @@ class SVGRenderer3D extends SVGRenderer {
 
                 hash.d = path;
                 hash.visibility = (this.enabled && area > 0) ?
-                    'visible' : 'hidden';
+                    'inherit' : 'hidden';
             }
             return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;
