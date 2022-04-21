@@ -597,7 +597,7 @@ class Scrollbar {
             yOffset = 0;
 
         // Make the scrollbar visible when it is repositioned, #15763.
-        scroller.group.show(true);
+        scroller.group.show();
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
         scroller.width = width; // width with buttons
@@ -820,7 +820,7 @@ class Scrollbar {
         if (newSize <= 12) {
             scroller.scrollbarRifles.hide();
         } else {
-            scroller.scrollbarRifles.show(true);
+            scroller.scrollbarRifles.show();
         }
 
         // Show or hide the scrollbar based on the showFull setting

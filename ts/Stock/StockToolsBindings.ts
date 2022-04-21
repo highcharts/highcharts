@@ -871,6 +871,8 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
  * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>}
  * @since        7.0.0
  * @optionparent navigation.bindings
+ *   @sample {highstock} stock/stocktools/custom-stock-tools-bindings
+ *     Custom stock tools bindings
  */
 const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
@@ -1768,6 +1770,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * A fibonacci annotation bindings. Includes `start` and two events in
      * `steps` array (updates second point, then height).
      *
+     *   @sample {highstock} stock/stocktools/custom-stock-tools-bindings
+     *     Custom stock tools bindings
+     *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
@@ -2015,13 +2020,13 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         }
     },
     /**
-     * A vertical arrow annotation bindings. Includes `start` event. On click,
-     * finds the closest point and marks it with an arrow and a label with
-     * value.
+     * A time cycles annotation bindings. Includes `start` event and 1 `step`
+     * event. first click marks the beginning of the circle, and the second one
+     * sets its diameter.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
+     * @default {"className": "highcharts-time-cycles", "start": function() {}, "steps": [function (){}] "annotationsOptions": {}}
      */
     timeCycles: {
         className: 'highcharts-time-cycles',
@@ -2529,7 +2534,6 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @product highstock
      * @default {"className": "highcharts-series-type-hlc", "init": function () {}}
      */
-
     seriesTypeHLC: {
         className: 'highcharts-series-type-hlc',
         init: function (

@@ -464,8 +464,7 @@ addEvent(Chart, 'render', function (): void {
         this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !this.options.chart.forExport &&
-        !this.dataTableDiv
+        !this.options.chart.forExport
     ) {
         this.viewData();
     }
