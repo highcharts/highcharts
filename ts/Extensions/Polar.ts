@@ -1075,7 +1075,7 @@ if (seriesTypes.column) {
                 point.shapeArgs.start === point.shapeArgs.end) {
                 dataLabel.hide();
             } else {
-                dataLabel.show(true);
+                dataLabel.show();
             }
         } else {
             proceed.call(this, point, dataLabel, options, alignTo, isNew);

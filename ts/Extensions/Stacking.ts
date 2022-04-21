@@ -476,7 +476,7 @@ class StackItem {
                 label.show();
             } else {
                 // Move label away to avoid the overlapping issues
-                label.alignAttr.y = -9999;
+                label.hide();
                 isJustify = false;
             }
 
