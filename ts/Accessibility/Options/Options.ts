@@ -149,6 +149,7 @@ declare global {
             onViewDataTableClick?: ScreenReaderClickCallbackFunction;
         }
         interface AccessibilitySeriesOptions {
+            descriptionFormat: string;
             descriptionFormatter?: (
                 ScreenReaderFormatterCallbackFunction<Series>
             );
@@ -404,12 +405,38 @@ const Options: DeepPartial<OptionsType> = {
              * of the series for a screen reader user. If `false` is returned,
              * the default formatter will be used for that series.
              *
+             * @see [series.descriptionFormat](#accessibility.series.descriptionFormat)
              * @see [series.description](#plotOptions.series.description)
              *
              * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
              * @since 8.0.0
              * @apioption accessibility.series.descriptionFormatter
              */
+
+            /**
+             * Format to use for describing the data series group to assistive
+             * technology - including screen readers. The series context is
+             * available as `{series}`.
+             *
+             * {seriesDescription} refers to the automatic description of the
+             * series type and number of points added by Highcharts by default.
+             * {authorDescription} refers to the description added in
+             * [series.description](#plotOptions.series.description) if one is
+             * present. {axisDescription} refers to the description added if
+             * the chart has multiple X or Y axes.
+             *
+             * Note that if [series.descriptionFormatter](#accessibility.series.descriptionFormatter)
+             * is declared it will take precedence, and this option will be
+             * overridden.
+             *
+             * @sample highcharts/accessibility/advanced-accessible
+             *  Accessible low-medium-high chart
+             *
+             * @type      {string}
+             * @since next
+             */
+            descriptionFormat:
+                '{seriesDescription}{authorDescription}{axisDescription}',
 
             /**
              * Whether or not to add series descriptions to charts with a single
