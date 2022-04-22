@@ -95,7 +95,7 @@ QUnit.test('nullInteraction', function (assert) {
 
     assert.strictEqual(
         chart.tooltip.label.attr('visibility'),
-        'visible',
+        'inherit',
         'Tooltip visible'
     );
 });

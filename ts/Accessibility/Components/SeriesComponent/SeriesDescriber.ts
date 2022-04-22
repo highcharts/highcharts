@@ -642,7 +642,9 @@ function describeSeriesElement(
         seriesElement.setAttribute('role', 'img');
     } else if (landmarkVerbosity === 'all') {
         seriesElement.setAttribute('role', 'region');
-    } /* else do not add role */
+    } else {
+        seriesElement.setAttribute('role', 'group');
+    }
 
     seriesElement.setAttribute('tabindex', '-1');
     if (!series.chart.styledMode) {

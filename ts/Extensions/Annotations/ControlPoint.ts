@@ -167,8 +167,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      *
      */
     public setVisibility(visible: boolean): void {
-        this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
-
+        this.graphic[visible ? 'show' : 'hide']();
         this.options.visible = visible as any;
     }
 

@@ -878,8 +878,10 @@ class SankeySeries extends ColumnSeries {
             point.dlBox.y + linkHeight / 2
         ];
 
-        // Pass test in drawPoints
+        // Pass test in drawPoints. plotX/Y needs to be defined for dataLabels.
+        // #15863
         point.y = point.plotY = 1;
+        point.x = point.plotX = 1;
 
         if (!point.color) {
             point.color = fromNode.color;
