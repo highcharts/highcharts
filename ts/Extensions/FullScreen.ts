@@ -191,8 +191,6 @@ class Fullscreen {
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
 
-        fireEvent(chart, 'beforeFullscreenClose');
-
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
             fullscreen.isOpen &&
@@ -224,7 +222,7 @@ class Fullscreen {
 
         fullscreen.setButtonText();
 
-        fireEvent(chart, 'afterFullscreenClose');
+        fireEvent(chart, 'fullscreenClose');
     }
     /**
      * Displays the chart in fullscreen mode.
@@ -242,8 +240,6 @@ class Fullscreen {
         const fullscreen = this,
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
-
-        fireEvent(chart, 'beforeFullscreenOpen');
 
         if (optionsChart) {
             fullscreen.origWidthOption = optionsChart.width;
@@ -291,7 +287,7 @@ class Fullscreen {
             }
         }
 
-        fireEvent(chart, 'afterFullscreenOpen');
+        fireEvent(chart, 'fullscreenOpen');
     }
     /**
      * Replaces the exporting context button's text when toogling the
@@ -385,21 +381,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  * */
 
 /**
- * Gets fired after closing the fullscreen
+ * Gets fired when closing the fullscreen
  *
- * @callback Highcharts.FullScreenAfterFullscreenCloseCallbackFunction
- *
- * @param {Highcharts.Chart} chart
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired before closing the fullscreen
- *
- * @callback Highcharts.FullScreenBeforeFullscreenCloseCallbackFunction
+ * @callback Highcharts.FullScreenFullscreenCloseCallbackFunction
  *
  * @param {Highcharts.Chart} chart
  *        The chart on which the event occured.
@@ -409,21 +393,9 @@ addEvent(Chart, 'beforeRender', function (): void {
  */
 
 /**
- * Gets fired after opening the fullscreen
+ * Gets fired when opening the fullscreen
  *
- * @callback Highcharts.FullScreenAfterFullscreenOpenCallbackFunction
- *
- * @param {Highcharts.Chart} chart
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired before opening the fullscreen
- *
- * @callback Highcharts.FullScreenBeforeFullscreenOpenCallbackFunction
+ * @callback Highcharts.FullScreenFullscreenOpenCallbackFunction
  *
  * @param {Highcharts.Chart} chart
  *        The chart on which the event occured.
@@ -440,61 +412,32 @@ addEvent(Chart, 'beforeRender', function (): void {
  * */
 
 /**
- * Fires after a fullscreen is closed through the context menu item,
+ * Fires when a fullscreen is closed through the context menu item,
  * or a fullscreen is closed on the `Escape` button click,
  * or the `Chart.fullscreen.close` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
- * @type      {Highcharts.FullScreenAfterFullscreenCloseCallbackFunction}
+ * @type      {Highcharts.FullScreenfullscreenCloseCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
- * @apioption chart.events.afterFullscreenClose
+ * @apioption chart.events.fullscreenClose
  */
 
 /**
- * Fires before a fullscreen is closed through the context menu item,
- * or a fullscreen is closed on the `Escape` button click,
- * or the `Chart.fullscreen.close` method.
- *
- * @sample highcharts/chart/events-fullscreen
- *         Title size change on fullscreen open
- *
- * @type      {Highcharts.FullScreenBeforeFullscreenCloseCallbackFunction}
- * @since     next
- * @context   Highcharts.Chart
- * @requires  modules/full-screen
- * @apioption chart.events.beforeFullscreenClose
- */
-
-/**
- * Fires after a fullscreen is opened through the context menu item,
+ * Fires when a fullscreen is opened through the context menu item,
  * or the `Chart.fullscreen.open` method.
  *
  * @sample highcharts/chart/events-fullscreen
  *         Title size change on fullscreen open
  *
- * @type      {Highcharts.FullScreenAfterFullscreenOpenCallbackFunction}
+ * @type      {Highcharts.FullScreenFullscreenOpenCallbackFunction}
  * @since     next
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
- * @apioption chart.events.afterFullscreenOpen
- */
-
-/**
- * Fires before a fullscreen is opened through the context menu item,
- * or the `Chart.fullscreen.open` method.
- *
- * @sample highcharts/chart/events-fullscreen
- *         Title size change on fullscreen open
- *
- * @type      {Highcharts.FullScreenBeforeFullscreenOpenCallbackFunction}
- * @since     next
- * @context   Highcharts.Chart
- * @requires  modules/full-screen
- * @apioption chart.events.beforeFullscreenOpen
+ * @apioption chart.events.fullscreenOpen
  */
 
 (''); // keeps doclets above in transpiled file
