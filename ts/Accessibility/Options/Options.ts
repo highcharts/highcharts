@@ -520,6 +520,8 @@ const Options: DeepPartial<OptionsType> = {
              * to assistive technology - including screen readers.
              * The point context is available as `{point}`.
              *
+             * Other available context variables include `{index}`, `{value}`, and `{xDescription}`.
+             *
              * Additionally, the series name, annotation info, and
              * description added in `point.accessibility.description`
              * is added by default if relevant. To override this, use the
@@ -532,7 +534,7 @@ const Options: DeepPartial<OptionsType> = {
              * @type      {string}
              * @since 8.0.1
              */
-            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
+            valueDescriptionFormat: '{xDescription}{separator}{value}.'
         },
 
         /**
