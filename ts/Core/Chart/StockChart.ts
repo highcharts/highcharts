@@ -814,7 +814,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         text,
         x: posx,
         y: posy,
-        visibility: isInside ? 'visible' : 'hidden'
+        visibility: isInside ? 'inherit' : 'hidden'
     });
 
     crossBox = crossLabel.getBBox();

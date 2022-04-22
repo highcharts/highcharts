@@ -295,7 +295,7 @@ QUnit.test(
         );
         assert.strictEqual(
             chart.annotations[0].graphic.visibility,
-            'visible',
+            'inherit',
             'Initial annotation visible'
         );
 

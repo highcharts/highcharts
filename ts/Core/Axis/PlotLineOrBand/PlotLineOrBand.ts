@@ -242,7 +242,7 @@ class PlotLineOrBand {
             (svgElem as any).attr({ d: path });
         } else if (svgElem) {
             if (path) {
-                svgElem.show(true);
+                svgElem.show();
                 svgElem.animate({ d: path });
             } else if (svgElem.d) {
                 svgElem.hide();

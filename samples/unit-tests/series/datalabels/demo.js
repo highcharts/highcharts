@@ -67,7 +67,7 @@ QUnit.test('Bottom -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.close(
@@ -109,7 +109,7 @@ QUnit.test('Top -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -139,7 +139,7 @@ QUnit.test('Top -90', function (assert) {
         }
     });
     const visibilities = chart.series[0].points.map(p =>
-        p.dataLabel.attr('y') > 0
+        p.dataLabel.attr('visibility') !== 'hidden'
     );
     assert.strictEqual(
         visibilities.some(v => !v),
@@ -153,7 +153,7 @@ QUnit.test('Top -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[13].dataLabel.attr('y') < 0,
+        chart.series[0].points[13].dataLabel.attr('visibility') === 'hidden',
         'Last element should be hidden'
     );
 
@@ -166,7 +166,7 @@ QUnit.test('Top -90', function (assert) {
     assert.deepEqual(
         visibilities,
         chart.series[0].points.map(p =>
-            p.dataLabel.attr('y') > 0
+            p.dataLabel.attr('visibility') !== 'hidden'
         ),
         'Labels should be back to original visibility'
     );
@@ -195,7 +195,7 @@ QUnit.test('Bottom 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -232,7 +232,7 @@ QUnit.test('Top 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
