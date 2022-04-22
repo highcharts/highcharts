@@ -536,6 +536,10 @@ class TreegraphSeries extends TreemapSeries {
 
         }
     }
+    /**
+     * Private method responsible for adjusting the dataLabel options for each
+     * node-point individually.
+     */
     public drawNodeLabels(): void {
         let series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
