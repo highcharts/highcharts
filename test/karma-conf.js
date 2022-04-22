@@ -265,7 +265,24 @@ module.exports = function (config) {
     let options = {
         basePath: '../', // Root relative to this file
         frameworks: frameworks,
-        files: files.concat([
+        files: [
+            // Essentials
+            'test/call-analyzer.js',
+            'test/test-controller.js',
+            'test/test-touch.js',
+            'test/test-utilities.js',
+            'test/json-sources.js',
+
+            // Highcharts
+            ...files,
+
+            // Set up
+            'test/karma-setup.js',
+
+            // Tests
+            ...tests,
+
+            // Samples
             {
                 pattern: 'test/*.png', // testimage.png
                 watched: false,
@@ -278,7 +295,8 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
-            // Test templates
+
+            // Templates
             'test/test-template.js',
             {
                 pattern: 'test/templates/**/*.js',
@@ -288,14 +306,7 @@ module.exports = function (config) {
                 served: true,
                 nocache: false
             },
-
-            // Set up
-            'test/call-analyzer.js',
-            'test/test-controller.js',
-            'test/test-utilities.js',
-            'test/json-sources.js',
-            'test/karma-setup.js'
-        ], tests),
+        ],
 
         // These ones fail
         exclude: argv.oldie ? [] : [
@@ -330,6 +341,7 @@ module.exports = function (config) {
             // Maps
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
+            'samples/maps/plotoptions/series-animation-true/demo.js', // animation
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
@@ -637,7 +649,16 @@ function createVisualTestTemplate(argv, path, js, assertion) {
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
     // Force enableSimulation: false
-    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+    scriptBody = scriptBody.replace(
+        'enableSimulation: true',
+        'enableSimulation: false'
+    );
+
+    // Disable explicit animation
+    scriptBody = scriptBody.replace(
+        /(\s?)animation: /,
+        '$1_animation: '
+    );
 
     let html = getHTML(path);
     let resets = [];

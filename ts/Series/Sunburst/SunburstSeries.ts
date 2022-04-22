@@ -821,7 +821,7 @@ class SunburstSeries extends TreemapSeries {
                 if (s.dataLabelsGroup) {
                     s.dataLabelsGroup.animate({
                         opacity: 1,
-                        visibility: 'visible'
+                        visibility: 'inherit'
                     });
                 }
             };

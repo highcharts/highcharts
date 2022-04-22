@@ -195,6 +195,7 @@ class SVGElement implements SVGElementLike {
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
+    public visibility?: 'hidden'|'inherit'|'visible';
     // @todo public width?: number;
     public x?: number;
     public y?: number;
@@ -1453,12 +1454,17 @@ class SVGElement implements SVGElementLike {
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
-            renderer = wrapper.renderer,
-            element = wrapper.element,
-            styles = wrapper.styles,
-            textStr = wrapper.textStr,
-            cache = renderer.cache,
-            cacheKeys = renderer.cacheKeys,
+            {
+                alignValue,
+                element,
+                renderer,
+                styles,
+                textStr
+            } = wrapper,
+            {
+                cache,
+                cacheKeys
+            } = renderer,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             rotation = pick(rot, wrapper.rotation, 0),
             fontSize = renderer.styledMode ? (
@@ -1468,7 +1474,7 @@ class SVGElement implements SVGElementLike {
                 styles && styles.fontSize
             );
 
-        let bBox: any, // = wrapper.bBox,
+        let bBox: BBoxObject|undefined,
             width,
             height,
             toggleTextShadowShim,
@@ -1493,6 +1499,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
+                alignValue,
                 styles && styles.textOverflow, // #5968
                 styles && styles.fontWeight // #12163
             ].join(',');
@@ -1552,7 +1559,7 @@ class SVGElement implements SVGElementLike {
                 // other condition is for Opera that returns a width of
                 // -Infinity on hidden elements.
                 if (!bBox || bBox.width < 0) {
-                    bBox = { width: 0, height: 0 } as any;
+                    bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
 
@@ -1591,11 +1598,42 @@ class SVGElement implements SVGElementLike {
 
                 // Adjust for rotated text
                 if (rotation) {
-                    const rad = rotation * deg2rad;
-                    bBox.width = Math.abs(height * Math.sin(rad)) +
-                        Math.abs(width * Math.cos(rad));
-                    bBox.height = Math.abs(height * Math.cos(rad)) +
-                        Math.abs(width * Math.sin(rad));
+
+                    const baseline = Number(
+                            element.getAttribute('y') || 0
+                        ) - bBox.y,
+                        alignFactor = ({
+                            'right': 1,
+                            'center': 0.5
+                        } as Record<string, number>)[alignValue || 0] || 0,
+                        rad = rotation * deg2rad,
+                        rad90 = (rotation - 90) * deg2rad,
+                        wCosRad = width * Math.cos(rad),
+                        wSinRad = width * Math.sin(rad),
+                        cosRad90 = Math.cos(rad90),
+                        sinRad90 = Math.sin(rad90),
+
+                        // Find the starting point on the left side baseline of
+                        // the text
+                        pX = bBox.x + alignFactor * (width - wCosRad),
+                        pY = bBox.y + baseline - alignFactor * wSinRad,
+
+                        // Find all corners
+                        aX = pX + baseline * cosRad90,
+                        bX = aX + wCosRad,
+                        cX = bX - height * cosRad90,
+                        dX = cX - wCosRad,
+
+                        aY = pY + baseline * sinRad90,
+                        bY = aY + wSinRad,
+                        cY = bY - height * sinRad90,
+                        dY = cY - wSinRad;
+
+                    // Deduct the bounding box from the corners
+                    bBox.x = Math.min(aX, bX, cX, dX);
+                    bBox.y = Math.min(aY, bY, cY, dY);
+                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
                 }
             }
 
@@ -1660,22 +1698,11 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#hide
      *
-     * @param {boolean} [hideByTranslation=false]
-     *        The flag to determine if element should be hidden by moving out
-     *        of the viewport. Used for example for dataLabels.
-     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public hide(hideByTranslation?: boolean): this {
-
-        if (hideByTranslation) {
-            this.attr({ y: -9999 });
-        } else {
-            this.attr({ visibility: 'hidden' });
-        }
-
-        return this;
+    public hide(): this {
+        return this.attr({ visibility: 'hidden' });
     }
 
     /**
@@ -2197,7 +2224,7 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param {boolean} [inherit=false]
+     * @param {boolean} [inherit=true]
      *        Set the visibility attribute to `inherit` rather than `visible`.
      *        The difference is that an element with `visibility="visible"`
      *        will be visible even if the parent is hidden.
@@ -2205,7 +2232,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit?: boolean): this {
+    public show(inherit: boolean = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
@@ -2545,18 +2572,18 @@ class SVGElement implements SVGElementLike {
      *
      */
     public visibilitySetter(
-        value: string,
-        key: string,
+        value: 'hidden'|'inherit'|'visible',
+        key: 'visibility',
         element: SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as AnyRecord)[key] !== value) { // #6747
+        } else if (this[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as AnyRecord)[key] = value;
+        this[key] = value;
     }
 
     /**

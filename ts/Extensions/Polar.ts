@@ -1073,7 +1073,9 @@ if (seriesTypes.column) {
             // visible y range
             if (this.isRadialBar && point.shapeArgs &&
                 point.shapeArgs.start === point.shapeArgs.end) {
-                dataLabel.hide(true);
+                dataLabel.hide();
+            } else {
+                dataLabel.show();
             }
         } else {
             proceed.call(this, point, dataLabel, options, alignTo, isNew);

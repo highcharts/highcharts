@@ -596,6 +596,8 @@ class Scrollbar {
         let xOffset = height,
             yOffset = 0;
 
+        // Make the scrollbar visible when it is repositioned, #15763.
+        scroller.group.show();
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
         scroller.width = width; // width with buttons
@@ -660,10 +662,12 @@ class Scrollbar {
             options = scroller.options,
             size = scroller.size,
             styledMode = scroller.chart.styledMode,
-            group = renderer.g('scrollbar').attr({
-                zIndex: options.zIndex,
-                translateY: -99999
-            }).add();
+            group = renderer.g('scrollbar')
+                .attr({
+                    zIndex: options.zIndex
+                })
+                .hide() // initially hide the scrollbar #15863
+                .add();
 
         // Draw the scrollbar group
         scroller.group = group;
@@ -816,7 +820,7 @@ class Scrollbar {
         if (newSize <= 12) {
             scroller.scrollbarRifles.hide();
         } else {
-            scroller.scrollbarRifles.show(true);
+            scroller.scrollbarRifles.show();
         }
 
         // Show or hide the scrollbar based on the showFull setting

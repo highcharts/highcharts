@@ -114,6 +114,7 @@ declare global {
             mode?: string;
             pointNavigationEnabledThreshold: (boolean|number);
             skipNullPoints: boolean;
+            rememberPointFocus: boolean;
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
@@ -794,7 +795,17 @@ const Options: DeepPartial<OptionsType> = {
                  * @type  {boolean|number}
                  * @since 8.0.0
                  */
-                pointNavigationEnabledThreshold: false
+                pointNavigationEnabledThreshold: false,
+
+                /**
+                 * Remember which point was focused even after navigating away
+                 * from the series, so that when navigating back to the series
+                 * you start at the last focused point.
+                 *
+                 * @type  {boolean}
+                 * @since next
+                 */
+                rememberPointFocus: false
             }
         },
 
