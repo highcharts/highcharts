@@ -46,7 +46,7 @@ namespace HighContrastDarkTheme {
     const textBright = '#F0F0F3';
 
     export const options: DeepPartial<Options> = {
-         colors: [
+        colors: [
             '#67B9EE',
             '#CEEDA5',
             '#9F6AE1',
@@ -56,7 +56,6 @@ namespace HighContrastDarkTheme {
             '#8D96B7',
             '#ECCA15'
         ],
-        
         chart: {
             backgroundColor: '#1f1f20',
             plotBorderColor: '#606063'
