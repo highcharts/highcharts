@@ -1,20 +1,29 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
 <div class="main">
-<textarea id="input" style="min-width: 500px; min-height: 300px">
+<textarea id="input">
 <h4>{header}</h4>
-Before looping
+Looping strings
 <ul>
-{#foreach items}
-<li>
-Print item {this}
-</li>
-{/foreach}
+    {#foreach items}
+    <li>
+        String item: {this}
+    </li>
+    {/foreach}
 </ul>
-After looping<br>
+
+
+<p>Looping arrays</p>
+<ul>
+    {#foreach persons}
+    <li>
+        Array item: {firstName} {lastName}
+    </li>
+    {/foreach}
+</ul>
 
 {#if condition}
-<div style="color: green">
+<div class="green">
     {#if innerCondition}
     If this is true print header: {header}
     {/if}

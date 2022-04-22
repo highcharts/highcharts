@@ -1,8 +1,9 @@
 // Todo:
 // - {else} tag for if and foreach
-// - Nested context (this.firstName, this.lastName) in #foreach
-// Sub-expressions?
-// Non-block helpers
+// - Error handling (missing helpers, missing config etc. Silent errors?)
+// - Conflicts with the a11y module? How to handle #each?
+// - Sub-expressions?
+// - Non-block helpers
 
 
 const pick = Highcharts.pick;
@@ -93,6 +94,13 @@ helpers.if = function (arg, match) {
 output.innerHTML = format(input, {
     header: 'Hello header',
     items: ['Ein', 'To', 'Tre'],
+    persons: [{
+        firstName: 'Mick',
+        lastName: 'Jagger'
+    }, {
+        firstName: 'Keith',
+        lastName: 'Richards'
+    }],
     condition: true,
     innerCondition: true,
     footer: 'Hello footer'

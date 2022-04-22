@@ -2,7 +2,18 @@
     display: flex;
     margin: 0 -15px;
 }
-#input, #output {
-    min-width: 400px;
+
+#input,
+#output {
+    width: calc(50% - 30px);
     margin: 0 15px;
+}
+
+#input {
+    min-width: 500px;
+    min-height: 300px;
+}
+
+.green {
+    color: green;
 }
