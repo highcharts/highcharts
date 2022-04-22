@@ -255,7 +255,7 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
+            beforeRegionLabel: '',
             afterRegionLabel: '',
 
             /**

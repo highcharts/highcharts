@@ -19,9 +19,7 @@ QUnit.test('Basic map', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
@@ -59,9 +57,7 @@ QUnit.test('Map with series info', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
