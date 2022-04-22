@@ -2,7 +2,7 @@ Highcharts.chart('container', {
 
     chart: {
         events: {
-            beforeFullscreenOpen: function () {
+            fullscreenOpen: function () {
                 this.update({
                     title: {
                         style: {
@@ -16,7 +16,7 @@ Highcharts.chart('container', {
                     }
                 });
             },
-            beforeFullscreenClose: function () {
+            fullscreenClose: function () {
                 this.update({
                     title: {
                         style: {
