@@ -2,7 +2,6 @@
 // - Error handling (missing helpers, missing config etc. Silent errors?)
 // - Conflicts with the a11y module? How to handle #each?
 // - Sub-expressions?
-// - Non-block helpers (like ucfirst)
 
 
 const pick = Highcharts.pick;
@@ -21,20 +20,23 @@ function format(str, ctx) {
 
     // Parse and create tree
     while ((match = regex.exec(str)) !== null) {
-        if (!currentMatch || !currentMatch.fn) {
+        if (!currentMatch || !currentMatch.isBlock) {
             currentMatch = {
                 expression: match[1],
                 find: match[0],
+                isBlock: match[1].charAt(0) === '#',
                 start: match.index,
                 startInner: match.index + match[0].length,
                 length: match[0].length
             };
         }
 
-        // Block helper, only one level at the time
-        if (match[1].charAt(0) === '#') {
-            const fn = match[1].split(' ')[0].replace('#', '');
-            if (fn === currentMatch.fn) {
+        // Identify helpers
+        const fn = match[1].split(' ')[0].replace('#', '');
+        if (helpers[fn]) {
+
+            // Block helper, only 0 level is handled
+            if (currentMatch.isBlock && fn === currentMatch.fn) {
                 depth++;
             }
             if (!currentMatch.fn) {
@@ -45,7 +47,7 @@ function format(str, ctx) {
         // Closing a block helper
         const startingElseSection = match[1] === 'else';
         if (
-            currentMatch.fn && (
+            currentMatch.isBlock && (
                 match[1] === `/${currentMatch.fn}` ||
                 startingElseSection
             )
@@ -79,7 +81,7 @@ function format(str, ctx) {
             }
 
         // Common expression
-        } else if (!currentMatch.fn) {
+        } else if (!currentMatch.isBlock) {
             matches.push(currentMatch);
         }
     }
@@ -89,11 +91,14 @@ function format(str, ctx) {
         const { elseBody, expression, fn } = match;
         let replacement;
         if (fn) {
-            replacement = helpers[fn].call(
-                ctx,
-                ctx[match.expression.split(' ')[1]],
-                match
-            ) || (elseBody && format(elseBody, ctx));
+            // Pass the helpers the amount of arguments given in the template,
+            // then the match as the last argument.
+            const args = match.expression.split(' ')
+                .splice(1)
+                .map(key => pick(ctx[key], key));
+            args.push(match);
+            replacement = helpers[fn].apply(ctx, args) ||
+                (elseBody && format(elseBody, ctx));
 
         // Simple variable replacement
         } else {
@@ -104,6 +109,7 @@ function format(str, ctx) {
     return str;
 }
 
+// Built-in helpers
 helpers.foreach = function (arg, match) {
     return arg.map(item => format(match.body, item)).join('');
 };
@@ -111,6 +117,11 @@ helpers.if = function (arg, match) {
     if (arg) {
         return format(match.body, this);
     }
+};
+
+// Custom, non-block  helper
+helpers.divide = function (value, divisor) {
+    return value / divisor;
 };
 
 
@@ -124,6 +135,7 @@ output.innerHTML = format(input, {
         firstName: 'Keith',
         lastName: 'Richards'
     }],
+    value: 2000,
     condition: true,
     innerCondition: true,
     falseCondition: false,
