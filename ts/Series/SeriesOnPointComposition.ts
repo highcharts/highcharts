@@ -59,8 +59,6 @@ type BubbleZExtremes = { zMin: number; zMax: number };
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         onPoint?: SeriesOnPointComposition.Additions;
-        getConnectorAttributes(): SVGAttributes|void;
-        seriesDrawConnector(): void;
     }
 }
 
@@ -135,11 +133,6 @@ namespace SeriesOnPointComposition {
     ): (typeof SeriesComposition&T) {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
-
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
-            seriesProto.getConnectorAttributes = getConnectorAttributes;
-            seriesProto.seriesDrawConnector = seriesDrawConnector;
 
             const pieProto = pie.prototype;
 
@@ -262,84 +255,10 @@ namespace SeriesOnPointComposition {
         return ret;
     }
 
-    /**
-     * Get connector line path and styles that connects series and point.
-     *
-     * @private
-     *
-     * @return {Highcharts.SVGAttributes} attribs - the path and styles.
-     */
-    function getConnectorAttributes(this: Series): SVGAttributes|void {
-        const chart = this.chart,
-            onPointOptions = this.options.onPoint;
-
-        if (!onPointOptions) {
-            return;
-        }
-
-        const connectorOpts = onPointOptions.connectorOptions || {},
-            position = onPointOptions.position,
-            connectedPoint = chart.get(onPointOptions.id);
-
-        if (
-            !(connectedPoint instanceof Point) ||
-            !position ||
-            !defined(connectedPoint.plotX) ||
-            !defined(connectedPoint.plotY)
-        ) {
-            return;
-        }
-
-        const xFrom = defined(position.x) ? position.x : connectedPoint.plotX,
-            yFrom = defined(position.y) ? position.y : connectedPoint.plotY,
-            xTo = xFrom + (position.offsetX || 0),
-            yTo = yFrom + (position.offsetY || 0),
-            width = connectorOpts.width || 1,
-            color = (connectorOpts as any).color || this.color,
-            dashStyle = (connectorOpts as any).dashStyle;
-
-        let attribs: SVGAttributes = {
-            d: SVGRenderer.prototype.crispLine([
-                ['M', xFrom, yFrom],
-                ['L', xTo, yTo]
-            ], width, 'ceil')
-        };
-
-        attribs['stroke-width'] = width;
-
-        if (!chart.styledMode) {
-            attribs.stroke = color;
-            attribs.dashstyle = dashStyle;
-        }
-
-        return attribs;
-    }
-
-    /**
-     * Draw connector line that connects series and initial point's position.
-     * @private
-     */
-    function seriesDrawConnector(this: Series): void {
-        if (this.onPoint) {
-            if (!this.onPoint.connector) {
-                this.onPoint.connector = this.chart.renderer.path()
-                    .addClass('highcharts-connector-seriesonpoint')
-                    .attr({
-                        zIndex: -1
-                    })
-                    .add(this.markerGroup);
-            }
-
-            const attribs = this.getConnectorAttributes();
-
-            attribs && this.onPoint.connector.attr(attribs);
-        }
-    }
-
     function seriesDrawPoints(this: Series): void {
         drawPointsFunctions[this.type + 'DrawPoints'].call(this);
 
-        this.seriesDrawConnector();
+        this.onPoint && this.onPoint.seriesDrawConnector();
     }
 
     /* *
@@ -423,6 +342,83 @@ namespace SeriesOnPointComposition {
                 // Save z values of all the series
                 series.zData = zData;
             });
+        }
+
+        /**
+         * Get connector line path and styles that connects series and point.
+         *
+         * @private
+         *
+         * @return {Highcharts.SVGAttributes} attribs - the path and styles.
+         */
+        public getConnectorAttributes(): SVGAttributes|void {
+            const chart = this.series.chart,
+                onPointOptions = this.options;
+
+            if (!onPointOptions) {
+                return;
+            }
+
+            const connectorOpts = onPointOptions.connectorOptions || {},
+                position = onPointOptions.position,
+                connectedPoint = chart.get(onPointOptions.id);
+
+            if (
+                !(connectedPoint instanceof Point) ||
+                !position ||
+                !defined(connectedPoint.plotX) ||
+                !defined(connectedPoint.plotY)
+            ) {
+                return;
+            }
+
+            const xFrom = defined(position.x) ?
+                    position.x :
+                    connectedPoint.plotX,
+                yFrom = defined(position.y) ?
+                    position.y :
+                    connectedPoint.plotY,
+                xTo = xFrom + (position.offsetX || 0),
+                yTo = yFrom + (position.offsetY || 0),
+                width = connectorOpts.width || 1,
+                color = (connectorOpts as any).color || this.series.color,
+                dashStyle = (connectorOpts as any).dashStyle;
+
+            let attribs: SVGAttributes = {
+                d: SVGRenderer.prototype.crispLine([
+                    ['M', xFrom, yFrom],
+                    ['L', xTo, yTo]
+                ], width, 'ceil')
+            };
+
+            attribs['stroke-width'] = width;
+
+            if (!chart.styledMode) {
+                attribs.stroke = color;
+                attribs.dashstyle = dashStyle;
+            }
+
+            return attribs;
+        }
+
+        /**
+         * Draw connector line that starts from the initial point's position
+         * and ends in the center of the series.
+         * @private
+         */
+        public seriesDrawConnector(): void {
+            if (!this.connector) {
+                this.connector = this.series.chart.renderer.path()
+                    .addClass('highcharts-connector-seriesonpoint')
+                    .attr({
+                        zIndex: -1
+                    })
+                    .add(this.series.markerGroup);
+            }
+
+            const attribs = this.getConnectorAttributes();
+
+            attribs && this.connector.attr(attribs);
         }
 
         /**
