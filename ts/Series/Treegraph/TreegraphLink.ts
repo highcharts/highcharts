@@ -31,6 +31,7 @@ class LinkPoint extends Point {
 
         if (point) {
             link.fromNode = point.node.parentNode.point;
+            link.visible = point.visible;
             link.toNode = point;
             this.id = link.toNode.id + '-' + link.fromNode.id;
         }
@@ -56,6 +57,7 @@ class LinkPoint extends Point {
             runEvent
         );
 
+        this.visible = this.toNode.visible;
         extend(this, oldOptions);
         if (pick(redraw, true)) {
             this.series.chart.redraw(animation);

@@ -53,7 +53,6 @@ class TreegraphPoint extends TreemapPoint {
     toggleCollapse(newState: boolean): void {
         const node = this.node;
         this.collapsed = newState;
-        collapseTreeFromPoint(node, newState);
     }
 }
 /**

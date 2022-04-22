@@ -402,6 +402,18 @@ class TreegraphSeries extends TreemapSeries {
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
+    public setCollapsedStatus(
+        node: TreegraphNode.Node,
+        visibility: boolean
+    ): void {
+        if (node.point) {
+            node.point.visible = visibility;
+            visibility = visibility === false ? false : !node.point.collapsed;
+        }
+        node.children.forEach((childNode): void => {
+            this.setCollapsedStatus(childNode, visibility);
+        });
+    }
     /**
      * Run pre-translation by generating the nodeColumns.
      * @private
@@ -416,6 +428,7 @@ class TreegraphSeries extends TreemapSeries {
         // Call prototype function
         Series.prototype.translate.call(series);
         tree = series.tree = series.getTree();
+        this.setCollapsedStatus(tree, true);
         series.links = series.getLinks();
         rootNode = series.nodeMap[rootId];
 
@@ -812,8 +825,8 @@ export default TreegraphSeries;
 
 
 /**
- * @sample highcharts/demo/treegraph-chart
- *          Treegraph Chart
+ * @sample highcharts/series-treegraph/level-options
+ *          Treegraph chart with level options applied
  *
  * @excluding layoutStartingDirection, layoutAlgorithm, colorVariation
  * @apioption series.treegraph.levels
@@ -853,5 +866,16 @@ export default TreegraphSeries;
  * @product   highcharts
  * @excluding outgoing, weight, value
  * @apioption series.treegraph.data
+ */
+
+
+/**
+ * If point's children should be initially collapsed
+ *
+ * @sample highcharts/series-treegraph/level-options
+ *          Treegraph chart with initially collapsed children
+ *
+ * @type {boolean}
+ * @apioption series.treegraph.data.collapsed
  */
 ''; // gets doclets above into transpiled version
