@@ -54,7 +54,9 @@ namespace HighContrastDarkTheme {
             '#6BA48F',
             '#EA3535',
             '#8D96B7',
-            '#ECCA15'
+            '#ECCA15',
+            '#20AA09',
+            '#E0C3E4'
         ],
         chart: {
             backgroundColor: '#1f1f20',

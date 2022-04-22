@@ -51,7 +51,9 @@ namespace HighContrastLightTheme {
             '#4C0684',
             '#0FA388',
             '#B7104A',
-            '#AF9023'
+            '#AF9023',
+            '#1A704C',
+            '#B02FDD'
         ],
         navigator: {
             series: {
