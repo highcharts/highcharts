@@ -11,9 +11,13 @@
 
 #input {
     min-width: 500px;
-    min-height: 300px;
+    height: calc(100vh - 150px);
 }
 
 .green {
     color: green;
+}
+
+.red {
+    color: red;
 }

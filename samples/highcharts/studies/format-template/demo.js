@@ -1,9 +1,8 @@
 // Todo:
-// - {else} tag for if and foreach
 // - Error handling (missing helpers, missing config etc. Silent errors?)
 // - Conflicts with the a11y module? How to handle #each?
 // - Sub-expressions?
-// - Non-block helpers
+// - Non-block helpers (like ucfirst)
 
 
 const pick = Highcharts.pick;
@@ -44,16 +43,37 @@ function format(str, ctx) {
         }
 
         // Closing a block helper
-        if (currentMatch.fn && match[1] === `/${currentMatch.fn}`) {
+        const startingElseSection = match[1] === 'else';
+        if (
+            currentMatch.fn && (
+                match[1] === `/${currentMatch.fn}` ||
+                startingElseSection
+            )
+        ) {
             if (!depth) { // === 0
-                const start = currentMatch.startInner;
-                currentMatch.body = str.substr(
-                    start,
-                    match.index - start
-                );
-                currentMatch.find += currentMatch.body + match[0];
-                matches.push(currentMatch);
-                currentMatch = void 0;
+
+                const start = currentMatch.startInner,
+                    body = str.substr(
+                        start,
+                        match.index - start
+                    );
+
+                // Either closing without an else section, or when encountering
+                // an else section
+                if (!currentMatch.body) {
+                    currentMatch.body = body;
+                    currentMatch.startInner = match.index + match[0].length;
+
+                // The body exists already, so this is the else section
+                } else {
+                    currentMatch.elseBody = body;
+                }
+                currentMatch.find += body + match[0];
+
+                if (!startingElseSection) {
+                    matches.push(currentMatch);
+                    currentMatch = void 0;
+                }
             } else {
                 depth--;
             }
@@ -66,15 +86,18 @@ function format(str, ctx) {
 
     // Execute
     matches.forEach(match => {
+        const { elseBody, expression, fn } = match;
         let replacement;
-        if (match.fn) {
-            replacement = helpers[match.fn].call(
+        if (fn) {
+            replacement = helpers[fn].call(
                 ctx,
                 ctx[match.expression.split(' ')[1]],
                 match
-            );
+            ) || (elseBody && format(elseBody, ctx));
+
+        // Simple variable replacement
         } else {
-            replacement = match.expression === 'this' ? ctx : ctx[match.expression];
+            replacement = expression === 'this' ? ctx : ctx[expression];
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
@@ -103,5 +126,6 @@ output.innerHTML = format(input, {
     }],
     condition: true,
     innerCondition: true,
+    falseCondition: false,
     footer: 'Hello footer'
 });

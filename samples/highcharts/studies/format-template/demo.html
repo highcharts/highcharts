@@ -29,6 +29,16 @@ Looping strings
     {/if}
 </div>
 {/if}
+
+{#if falseCondition}
+<div>
+    This should be hidden
+</div>
+{else}
+<div class="red">
+    falseCondition is false
+</div>
+{/if}
 <small>{footer}</small>
 
 </textarea>
