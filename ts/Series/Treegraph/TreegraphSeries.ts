@@ -290,6 +290,7 @@ class TreegraphSeries extends TreemapSeries {
      */
     private getLayoutModifiers(): LayoutModifiers {
         const chart = this.chart,
+            series = this,
             plotSizeX = chart.plotSizeX as number,
             plotSizeY = chart.plotSizeY as number;
         let minX = Infinity,
@@ -301,9 +302,11 @@ class TreegraphSeries extends TreemapSeries {
             maxYSize = 0,
             minYSize = 0;
         this.points.forEach((point: TreegraphPoint): void => {
-            const node = point.node;
-            const markerOptions = merge(
+            const node = point.node,
+                level = series.mapOptionsToLevel[point.node.level] || {},
+                markerOptions = merge(
                     this.options.marker,
+                    level.marker,
                     point.options.marker
                 ),
                 symbol = markerOptions.symbol,
@@ -533,6 +536,39 @@ class TreegraphSeries extends TreemapSeries {
 
         }
     }
+    public drawNodeLabels(): void {
+        let series = this,
+            mapOptionsToLevel = series.mapOptionsToLevel,
+            points = series.points,
+            options,
+            level;
+
+        points.forEach(function (point): void {
+            level = mapOptionsToLevel[point.node.level];
+            // Set options to new object to avoid problems with scope
+            options = { style: {} };
+
+            // If options for level exists, include them as well
+            if (level && level.dataLabels) {
+                options = merge(options, level.dataLabels);
+                series._hasPointLabels = true;
+            }
+
+            // Set dataLabel width to the width of the point shape.
+            if (point.shapeArgs) {
+                (options.style as any).width = point.shapeArgs.width;
+                if (point.dataLabel) {
+                    point.dataLabel.css({
+                        width: point.shapeArgs.width + 'px'
+                    });
+                }
+            }
+
+            // Merge custom options with point options
+            (point as any).dlOptions = merge(options, point.options.dataLabels);
+        });
+        Series.prototype.drawDataLabels.apply(this, arguments);
+    }
     /**
      * Treegraph has two separate collecions of nodes and lines,
      * render dataLabels for both sets.
@@ -549,7 +585,7 @@ class TreegraphSeries extends TreemapSeries {
                     option.textPath
             );
             // Render node labels.
-            Series.prototype.drawDataLabels.apply(this, arguments);
+            this.drawNodeLabels.apply(this, arguments);
 
             // Render link labels.
             const points = this.points;
@@ -582,15 +618,19 @@ class TreegraphSeries extends TreemapSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            attribs = Series.prototype.pointAttribs.call(series, point, state),
             levelOptions =
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
             options = point.options,
             stateOptions =
                 (levelOptions.states &&
                     (levelOptions.states as any)[state as any]) ||
-                {},
-            borderRadius = pick(
+                {};
+        point.options.marker = merge(
+            series.options.marker,
+            levelOptions.marker,
+            point.options.marker
+        );
+        const borderRadius = pick(
                 stateOptions.borderRadius,
                 options.borderRadius,
                 levelOptions.borderRadius,
@@ -607,7 +647,8 @@ class TreegraphSeries extends TreemapSeries {
                 options.link && options.link.lineWidth,
                 levelOptions.link && levelOptions.link.lineWidth,
                 series.options.link && series.options.link.lineWidth
-            );
+            ),
+            attribs = Series.prototype.pointAttribs.call(series, point, state);
 
         if (point.isLink) {
             attribs.stroke = linkColor;
@@ -641,7 +682,12 @@ class TreegraphSeries extends TreemapSeries {
             { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
-            markerOptions = merge(this.options.marker, point.options.marker),
+            level = this.mapOptionsToLevel[node.level] || {},
+            markerOptions = merge(
+                this.options.marker,
+                level.marker,
+                point.options.marker
+            ),
             symbol = markerOptions.symbol,
             height = node.nodeSizeY,
             width = node.nodeSizeX,
@@ -738,8 +784,8 @@ export default TreegraphSeries;
  * @exclude   allowDrillToNode, boostBlending, boostThreshold, curveFactor,
  * centerInCategory, connectEnds, connectNulls, colorAxis, colorKey,
  * dataSorting, dragDrop, findNearestPointBy, getExtremesFromAll, layout,
- * levels, nodePadding,  pointInterval, pointIntervalUnit, pointPlacement,
- * pointStart, relativeXValue, softThreshold, stack, stacking, step,
+ * nodePadding,  pointInterval, pointIntervalUnit, pointPlacement, pointStart,
+ * relativeXValue, softThreshold, stack, stacking, step,
  * traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
  * @requires  modules/treemap.js
@@ -761,6 +807,13 @@ export default TreegraphSeries;
  */
 
 
+/**
+ * @sample highcharts/demo/treegraph-chart
+ *          Treegraph Chart
+ *
+ * @excluding layoutStartingDirection, layoutAlgorithm, colorVariation
+ * @apioption series.treegraph.levels
+ */
 /**
  * An array of data points for the series. For the `treegraph` series type,
  * points can be given in the following ways:
