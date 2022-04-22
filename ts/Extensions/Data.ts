@@ -12,21 +12,26 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import Ajax from '../Extensions/Ajax.js';
-const {
-    ajax
-} = Ajax;
+
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+import G from '../Core/Globals.js';
+const { doc } = G;
+import HU from '../Core/HttpUtilities.js';
+const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 const {
     addEvent,
     defined,
@@ -44,6 +49,7 @@ const {
  * Declarations
  *
  * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         data?: Highcharts.Data;
@@ -99,8 +105,9 @@ declare global {
             endRow?: number;
             error?: Function;
             firstRowAsNames?: boolean;
+            googleAPIKey?: string;
             googleSpreadsheetKey?: string;
-            googleSpreadsheetWorksheet?: string;
+            googleSpreadsheetRange?: string;
             itemDelimiter?: string;
             lineDelimiter?: string;
             parsed?: DataParsedCallbackFunction;
@@ -443,8 +450,27 @@ declare global {
  */
 
 /**
- * The key for a Google Spreadsheet to load. See [general information
- * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+ * The Google Spreadsheet API key required for access generated at [API Services
+ * / Credentials](https://console.cloud.google.com/apis/credentials). See a
+ * comprehensive tutorial for setting up the key at the
+ * [Hands-On Data Visualization](https://handsondataviz.org/google-sheets-api-key.html)
+ * book website.
+ *
+ * @sample {highcharts} highcharts/data/google-spreadsheet/
+ *         Load a Google Spreadsheet
+ *
+ * @type      {string}
+ * @since     9.2.2
+ * @apioption data.googleAPIKey
+ */
+
+/**
+ * The key or `spreadsheetId` value for a Google Spreadsheet to load. See
+ * [developers.google.com](https://developers.google.com/sheets/api/guides/concepts)
+ * for how to find the `spreadsheetId`.
+ *
+ * In order for Google Sheets to load, a valid [googleAPIKey](#data.googleAPIKey)
+ * must also be given.
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
@@ -455,13 +481,32 @@ declare global {
  */
 
 /**
- * The Google Spreadsheet worksheet to use in combination with
- * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
- * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
+ * The Google Spreadsheet `range` to use in combination with
+ * [googleSpreadsheetKey](#data.googleSpreadsheetKey). See
+ * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
+ * for details.
+ *
+ * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
+ * `endRow`.
+ *
+ * @example
+ * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
+ * googleSpreadsheetRange: 'A:Z' // Load columns A to Z
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet
  *
+ * @type      {string|undefined}
+ * @since     9.2.2
+ * @apioption data.googleSpreadsheetRange
+ */
+
+/**
+ * No longer works since v9.2.2, that uses Google Sheets API v4. Instead, use
+ * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
+ * specific sheet.
+ *
+ * @deprecated
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet
@@ -719,7 +764,7 @@ class Data {
     public firstRowAsNames: boolean = void 0 as any;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>> = void 0 as any;
-    public options: Highcharts.DataOptions= void 0 as any;
+    public options: Highcharts.DataOptions = void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
 
     /* *
@@ -733,9 +778,6 @@ class Data {
      *
      * @private
      * @function Highcharts.Data#init
-     * @param {Highcharts.DataOptions} options
-     * @param {Highcharts.Options} [chartOptions]
-     * @param {Highcharts.Chart} [chart]
      */
     public init(
         options: Highcharts.DataOptions,
@@ -775,6 +817,11 @@ class Data {
             new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
         );
 
+        // Always stop old polling when we have new options
+        if (this.liveDataTimeout !== void 0) {
+            clearTimeout(this.liveDataTimeout);
+        }
+
         // This is a two-dimensional array holding the raw, trimmed string
         // values with the same organisation as the columns array. It makes it
         // possible for example to revert from interpreted timestamps to
@@ -784,12 +831,7 @@ class Data {
         // No need to parse or interpret anything
         if (this.columns.length) {
             this.dataFound();
-            hasData = true;
-        }
-
-        if (this.hasURLOption(options)) {
-            clearTimeout(this.liveDataTimeout);
-            hasData = false;
+            hasData = !this.hasURLOption(options);
         }
 
         if (!hasData) {
@@ -985,10 +1027,6 @@ class Data {
      * Parse a CSV input string
      *
      * @function Highcharts.Data#parseCSV
-     *
-     * @param {Highcharts.DataOptions} [inOptions]
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
         let self = this,
@@ -1529,8 +1567,6 @@ class Data {
      * Parse a HTML table
      *
      * @function Highcharts.Data#parseTable
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseTable(): Array<Array<Highcharts.DataValueType>> {
         let options = this.options,
@@ -1745,23 +1781,32 @@ class Data {
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-        let data = this,
+        const data = this,
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
             chart = this.chart,
-            // use sheet 1 as the default rather than od6
-            // as the latter sometimes cause issues (it looks like it can
-            // be renamed in some cases, ref. a fogbugz case).
-            worksheet = options.googleSpreadsheetWorksheet || 1,
-            startRow = options.startRow || 0,
-            endRow = options.endRow || Number.MAX_VALUE,
-            startColumn = options.startColumn || 0,
-            endColumn = options.endColumn || Number.MAX_VALUE,
-            refreshRate = (options.dataRefreshRate || 2) * 1000;
+            refreshRate = Math.max((options.dataRefreshRate || 2) * 1000, 4000);
 
-        if (refreshRate < 4000) {
-            refreshRate = 4000;
-        }
+        /**
+         * Form the `values` field after range settings, unless the
+         * googleSpreadsheetRange option is set.
+         */
+        const getRange = (): string => {
+            if (options.googleSpreadsheetRange) {
+                return options.googleSpreadsheetRange;
+            }
+
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const start = (alphabet.charAt(options.startColumn || 0) || 'A') +
+                ((options.startRow || 0) + 1);
+
+            let end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
+            if (defined(options.endRow)) {
+                end += options.endRow + 1;
+            }
+
+            return `${start}:${end}`;
+        };
 
         /**
          * Fetch the actual spreadsheet using XMLHttpRequest.
@@ -1769,24 +1814,30 @@ class Data {
          */
         function fetchSheet(fn: Function): void {
             const url = [
-                'https://spreadsheets.google.com/feeds/cells',
+                'https://sheets.googleapis.com/v4/spreadsheets',
                 googleSpreadsheetKey,
-                worksheet,
-                'public/values?alt=json'
+                'values',
+                getRange(),
+                '?alt=json&' +
+                'majorDimension=COLUMNS&' +
+                'valueRenderOption=UNFORMATTED_VALUE&' +
+                'dateTimeRenderOption=FORMATTED_STRING&' +
+                'key=' + options.googleAPIKey
+
             ].join('/');
 
             ajax({
-                url: url,
+                url,
                 dataType: 'json',
                 success: function (json: Highcharts.JSONType): void {
                     fn(json);
 
                     if (options.enablePolling) {
-                        setTimeout(
+                        data.liveDataTimeout = setTimeout(
                             function (): void {
                                 fetchSheet(fn);
                             },
-                            (options.dataRefreshRate || 2) * 1000
+                            refreshRate
                         );
                     }
                 },
@@ -1807,81 +1858,27 @@ class Data {
                 json: Highcharts.JSONType
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
-                let columns: Array<Array<Highcharts.DataValueType>> = [],
-                    cells = json.feed.entry,
-                    cell,
-                    cellCount = (cells || []).length,
-                    colCount = 0,
-                    rowCount = 0,
-                    val,
-                    gr,
-                    gc,
-                    cellInner,
-                    i: number;
+                const columns: Array<Array<Highcharts.DataValueType>> =
+                    json.values;
 
-                if (!cells || cells.length === 0) {
+                if (!columns || columns.length === 0) {
                     return false;
                 }
 
-                // First, find the total number of columns and rows that
-                // are actually filled with data
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    colCount = Math.max(colCount, cell.gs$cell.col);
-                    rowCount = Math.max(rowCount, cell.gs$cell.row);
-                }
-
-                // Set up arrays containing the column data
-                for (i = 0; i < colCount; i++) {
-                    if (i >= startColumn && i <= endColumn) {
-                        // Create new columns with the length of either
-                        // end-start or rowCount
-                        columns[i - startColumn] = [];
-                    }
-                }
-
-                // Loop over the cells and assign the value to the right
-                // place in the column arrays
-                for (i = 0; i < cellCount; i++) {
-                    cell = cells[i];
-                    gr = cell.gs$cell.row - 1; // rows start at 1
-                    gc = cell.gs$cell.col - 1; // columns start at 1
-
-                    // If both row and col falls inside start and end set the
-                    // transposed cell value in the newly created columns
-                    if (gc >= startColumn && gc <= endColumn &&
-                        gr >= startRow && gr <= endRow) {
-
-                        cellInner = cell.gs$cell || cell.content;
-
-                        val = null;
-
-                        if (cellInner.numericValue) {
-                            if (cellInner.$t.indexOf('/') >= 0 ||
-                                cellInner.$t.indexOf('-') >= 0) {
-                                // This is a date - for future reference.
-                                val = cellInner.$t;
-                            } else if (cellInner.$t.indexOf('%') > 0) {
-                                // Percentage
-                                val = parseFloat(cellInner.numericValue) * 100;
-                            } else {
-                                val = parseFloat(cellInner.numericValue);
-                            }
-                        } else if (cellInner.$t && cellInner.$t.length) {
-                            val = cellInner.$t;
-                        }
-
-                        columns[gc - startColumn][gr - startRow] = val;
-                    }
-                }
+                // Find the maximum row count in order to extend shorter columns
+                const rowCount = columns.reduce(
+                    (rowCount, column): number => Math.max(
+                        rowCount,
+                        column.length
+                    ),
+                    0
+                );
 
                 // Insert null for empty spreadsheet cells (#5298)
-                columns.forEach(function (
-                    column: Array<Highcharts.DataValueType>
-                ): void {
-                    for (i = 0; i < column.length; i++) {
+                columns.forEach((column): void => {
+                    for (let i = 0; i < rowCount; i++) {
                         if (typeof column[i] === 'undefined') {
-                            column[i] = null as any;
+                            column[i] = null;
                         }
                     }
                 });
@@ -1963,30 +1960,32 @@ class Data {
      *        Column index
      */
     public parseColumn(
-        column: Array<Highcharts.DataValueType>,
+        column: Array<Highcharts.DataValueType> & { name?: string },
         col: number
     ): void {
-        let rawColumns = this.rawColumns,
+        const rawColumns = this.rawColumns,
             columns = this.columns,
-            row = column.length,
-            val: Highcharts.DataValueType,
-            floatVal,
-            trimVal,
-            trimInsideVal,
             firstRowAsNames = this.firstRowAsNames,
             isXColumn = (this.valueCount as any).xColumns.indexOf(col) !== -1,
-            dateVal,
             backup: Array<Highcharts.DataValueType> = [],
-            diff,
             chartOptions = this.chartOptions,
-            descending,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
             forceCategory = isXColumn && ((
                 chartOptions &&
                 chartOptions.xAxis &&
                 splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string');
+            ) || columnType === 'string'),
+            columnHasName = defined(column.name);
+
+        let row = column.length,
+            val: Highcharts.DataValueType,
+            floatVal,
+            trimVal,
+            trimInsideVal,
+            dateVal,
+            diff,
+            descending;
 
         if (!rawColumns[col]) {
             rawColumns[col] = [];
@@ -2005,7 +2004,10 @@ class Data {
 
             // Disable number or date parsing by setting the X axis type to
             // category
-            if (forceCategory || (row === 0 && firstRowAsNames)) {
+            if (
+                forceCategory ||
+                (row === 0 && firstRowAsNames && !columnHasName)
+            ) {
                 column[row] = '' + trimVal;
 
             } else if (+trimInsideVal === floatVal) { // is numeric
@@ -2161,7 +2163,11 @@ class Data {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -2173,10 +2179,6 @@ class Data {
      * `options.parseDate`.
      *
      * @function Highcharts.Data#parseDate
-     *
-     * @param {string} val
-     *
-     * @return {number}
      */
     public parseDate(val: string): number {
         const parseDate = this.options.parseDate;
@@ -2223,7 +2225,10 @@ class Data {
             if (!match) {
                 if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
                     val = val
-                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(
+                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            '$1$2:$3'
+                        )
                         .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
@@ -2254,10 +2259,6 @@ class Data {
      * Reorganize rows into columns.
      *
      * @function Highcharts.Data#rowsToColumns
-     *
-     * @param {Array<Array<Highcharts.DataValueType>>} rows
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>|undefined}
      */
     public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
     ): (Array<Array<Highcharts.DataValueType>>|undefined) {
@@ -2307,8 +2308,6 @@ class Data {
      * A hook for working directly on the parsed columns
      *
      * @function Highcharts.Data#parsed
-     *
-     * @return {boolean|undefined}
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
@@ -2385,7 +2384,13 @@ class Data {
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
                 for (i = 0; i < (columns as any).length; i++) {
-                    (columns as any)[i].name = (columns as any)[i].shift();
+                    const curCol = (columns as any)[i];
+                    if (!defined(curCol.name)) {
+                        curCol.name = pick(
+                            curCol.shift(),
+                            ''
+                        ).toString();
+                    }
                 }
             }
 
@@ -2538,7 +2543,8 @@ class Data {
         options: Highcharts.DataOptions,
         redraw?: boolean
     ): void {
-        const chart = this.chart;
+        const chart = this.chart,
+            chartOptions = chart.options;
 
         if (options) {
             // Set the complete handler
@@ -2563,8 +2569,17 @@ class Data {
                 }
             };
             // Apply it
-            merge(true, chart.options.data, options);
-            this.init(chart.options.data as any);
+            merge(true, chartOptions.data, options);
+
+            // Reset columns if fetching spreadsheet, to force a re-fetch
+            if (
+                chartOptions.data && chartOptions.data.googleSpreadsheetKey &&
+                !options.columns
+            ) {
+                delete chartOptions.data.columns;
+            }
+
+            this.init(chartOptions.data as any);
         }
     }
 }
@@ -2576,21 +2591,13 @@ class Data {
  * Creates a data object to parse data for a chart.
  *
  * @function Highcharts.data
- *
- * @param {Highcharts.DataOptions} dataOptions
- *
- * @param {Highcharts.Options} [chartOptions]
- *
- * @param {Highcharts.Chart} [chart]
- *
- * @return {Highcharts.Data}
  */
-H.data = function (
+G.data = function (
     dataOptions: Highcharts.DataOptions,
     chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
-    return new H.Data(dataOptions, chartOptions, chart);
+    return new G.Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2609,8 +2616,12 @@ addEvent(
         let chart = this, // eslint-disable-line no-invalid-this
             userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
+        const defaultDataOptions = getOptions().data;
 
-        if (userOptions && userOptions.data && !chart.hasDataDef) {
+        if (
+            (defaultDataOptions || userOptions && userOptions.data) &&
+            !chart.hasDataDef
+        ) {
             chart.hasDataDef = true;
             /**
              * The data parser for this chart.
@@ -2618,7 +2629,10 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new H.Data(extend(userOptions.data, {
+
+            const dataOptions = merge(defaultDataOptions, userOptions.data);
+
+            chart.data = new G.Data(extend(dataOptions, {
 
                 afterComplete: function (
                     dataOptions?: Partial<Options>
@@ -2694,10 +2708,6 @@ class SeriesBuilder {
      * from the free columns (this is handled by the ColumnCursor instance).
      *
      * @function SeriesBuilder#populateColumns
-     *
-     * @param {Array<number>} freeIndexes
-     *
-     * @returns {boolean}
      */
     public populateColumns(freeIndexes: Array<number>): boolean {
         let builder = this,
@@ -2733,12 +2743,6 @@ class SeriesBuilder {
      * on the names of the readers.
      *
      * @function SeriesBuilder#read<T>
-     *
-     * @param {Array<Array<T>>} columns
-     *
-     * @param {number} rowIndex
-     *
-     * @returns {Array<T>|Highcharts.Dictionary<T>}
      */
     public read <T>(
         columns: Array<Array<T>>,
@@ -2797,10 +2801,6 @@ class SeriesBuilder {
      * an index when columns are populated.
      *
      * @function SeriesBuilder#addColumnReader
-     *
-     * @param {number} columnIndex
-     *
-     * @param {string} configName
      */
     public addColumnReader(
         columnIndex: (number|undefined),
@@ -2825,8 +2825,6 @@ class SeriesBuilder {
      * reading data.
      *
      * @function SeriesBuilder#getReferencedColumnIndexes
-     *
-     * @returns {Array<number>}
      */
     public getReferencedColumnIndexes(): Array<number> {
         let i,
@@ -2847,10 +2845,6 @@ class SeriesBuilder {
      * Returns true if the builder has a reader for the given configName.
      *
      * @function SeriesBuider#hasReader
-     *
-     * @param {string} configName
-     *
-     * @returns {boolean|undefined}
      */
     public hasReader(configName: string): (boolean|undefined) {
         let i, columnReader;
@@ -2865,5 +2859,5 @@ class SeriesBuilder {
     }
 }
 
-H.Data = Data as any;
-export default H.Data;
+G.Data = Data as any;
+export default G.Data;

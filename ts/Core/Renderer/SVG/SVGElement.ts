@@ -8,11 +8,15 @@
  *
  * */
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from '../AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AlignObject from '../AlignObject';
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
@@ -31,26 +35,25 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
-import A from '../../Animation/AnimationUtilities.js';
-import AST from '../HTML/AST.js';
 
+import A from '../../Animation/AnimationUtilities.js';
 const {
     animate,
     animObject,
     stop
 } = A;
+import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    hasTouch,
     noop,
     svg,
     SVG_NS,
     win
 } = H;
-import palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -192,6 +195,7 @@ class SVGElement implements SVGElementLike {
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
+    public visibility?: 'hidden'|'inherit'|'visible';
     // @todo public width?: number;
     public x?: number;
     public y?: number;
@@ -241,7 +245,6 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public _defaultSetter(
         value: string,
@@ -433,7 +436,8 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            alignTo === 'scrollablePlotBox' ?
+                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -544,11 +548,15 @@ class SVGElement implements SVGElementLike {
                 }
             }, deferTime);
         } else {
-            this.attr(params, void 0, complete);
+            this.attr(params, void 0, complete || animOptions.complete);
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
+                    animOptions.step.call(
+                        this,
+                        val,
+                        { prop: prop, pos: 1, elem: this }
+                    );
                 }
             }, this);
         }
@@ -617,7 +625,10 @@ class SVGElement implements SVGElementLike {
             // Remove shadows from previous runs.
             this.removeTextOutline();
 
-            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            const outline = doc.createElementNS(
+                SVG_NS,
+                'tspan'
+            ) as DOMElementType;
             attr(outline, {
                 'class': 'highcharts-text-outline',
                 fill: color,
@@ -808,7 +819,8 @@ class SVGElement implements SVGElementLike {
                     if (
                         !this.styledMode &&
                         this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)
+                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
+                            .test(key)
                     ) {
                         this.updateShadows(key, val, setter);
                     }
@@ -1053,28 +1065,21 @@ class SVGElement implements SVGElementLike {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element,
-            // These CSS properties are interpreted internally by the SVG
-            // renderer, but are not supported by SVG and should not be added to
-            // the DOM. In styled mode, no CSS should find its way to the DOM
-            // whatsoever (#6173, #6474).
-            svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
+            elem = this.element;
 
         let textWidth,
-            serializedCss = '',
-            hyphenate: Function,
             hasNew = !oldStyles;
 
         // convert legacy
-        if (styles && styles.color) {
+        if (styles.color) {
             styles.fill = styles.color;
         }
 
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
-            objectEach(styles, function (style, n): void {
-                if (oldStyles && oldStyles[n] !== style) {
-                    (newStyles as any)[n] = style;
+            objectEach(styles, function (value, n: keyof CSSObject): void {
+                if (oldStyles && oldStyles[n] !== value) {
+                    (newStyles as any)[n] = value;
                     hasNew = true;
                 }
             });
@@ -1090,18 +1095,16 @@ class SVGElement implements SVGElementLike {
             }
 
             // Get the text width from style
-            if (styles) {
-                // Previously set, unset it (#8234)
-                if (styles.width === null || styles.width as any === 'auto') {
-                    delete this.textWidth;
+            // Previously set, unset it (#8234)
+            if (styles.width === null || styles.width as any === 'auto') {
+                delete this.textWidth;
 
-                // Apply new
-                } else if (
-                    elem.nodeName.toLowerCase() === 'text' &&
-                    styles.width
-                ) {
-                    textWidth = this.textWidth = pInt(styles.width);
-                }
+            // Apply new
+            } else if (
+                elem.nodeName.toLowerCase() === 'text' &&
+                styles.width
+            ) {
+                textWidth = this.textWidth = pInt(styles.width);
             }
 
             // store object
@@ -1111,37 +1114,36 @@ class SVGElement implements SVGElementLike {
                 delete styles.width;
             }
 
-            // Serialize and set style attribute
-            if (elem.namespaceURI === this.SVG_NS) { // #7633
-                hyphenate = function (a: string, b: string): string {
-                    return '-' + b.toLowerCase();
-                };
-                objectEach(styles, function (style, n): void {
-                    if (svgPseudoProps.indexOf(n) === -1) {
-                        serializedCss +=
-                        n.replace(/([A-Z])/g, hyphenate as any) + ':' +
-                        style + ';';
-                    }
-                });
-                if (serializedCss) {
-                    attr(elem, 'style', serializedCss); // #1881
-                }
-            } else {
-                css(elem, styles);
-            }
+            const stylesToApply = merge(styles);
+            if (elem.namespaceURI === this.SVG_NS) {
 
+                // These CSS properties are interpreted internally by the SVG
+                // renderer, but are not supported by SVG and should not be
+                // added to the DOM. In styled mode, no CSS should find its way
+                // to the DOM whatsoever (#6173, #6474).
+                (
+                    ['textOutline', 'textOverflow', 'width'] as
+                    ('textOutline'|'textOverflow'|'width')[]
+                ).forEach(
+                    (key): boolean|undefined => (
+                        stylesToApply &&
+                        delete stylesToApply[key]
+                    )
+                );
+            }
+            css(elem, stylesToApply);
 
             if (this.added) {
 
                 // Rebuild text after added. Cache mechanisms in the buildText
                 // will prevent building if there are no significant changes.
                 if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this as any);
+                    this.renderer.buildText(this);
                 }
 
                 // Apply text outline after added
-                if (styles && styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline as any);
+                if (styles.textOutline) {
+                    this.applyTextOutline(styles.textOutline);
                 }
             }
         }
@@ -1219,8 +1221,9 @@ class SVGElement implements SVGElementLike {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el: SVGDOMElement): void {
-                    if ((el.getAttribute('clip-path') as any).indexOf(clipPath.element.id) > -1
-                    ) {
+                    if ((el.getAttribute('clip-path') as any).indexOf(
+                        clipPath.element.id
+                    ) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
@@ -1286,7 +1289,6 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#destroyShadows
      *
-     * @return {void}
      */
     public destroyShadows(): void {
         (this.shadows || []).forEach(function (
@@ -1452,12 +1454,17 @@ class SVGElement implements SVGElementLike {
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
-            renderer = wrapper.renderer,
-            element = wrapper.element,
-            styles = wrapper.styles,
-            textStr = wrapper.textStr,
-            cache = renderer.cache,
-            cacheKeys = renderer.cacheKeys,
+            {
+                alignValue,
+                element,
+                renderer,
+                styles,
+                textStr
+            } = wrapper,
+            {
+                cache,
+                cacheKeys
+            } = renderer,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             rotation = pick(rot, wrapper.rotation, 0),
             fontSize = renderer.styledMode ? (
@@ -1467,7 +1474,7 @@ class SVGElement implements SVGElementLike {
                 styles && styles.fontSize
             );
 
-        let bBox: any, // = wrapper.bBox,
+        let bBox: BBoxObject|undefined,
             width,
             height,
             toggleTextShadowShim,
@@ -1492,6 +1499,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
+                alignValue,
                 styles && styles.textOverflow, // #5968
                 styles && styles.fontWeight // #12163
             ].join(',');
@@ -1551,7 +1559,7 @@ class SVGElement implements SVGElementLike {
                 // other condition is for Opera that returns a width of
                 // -Infinity on hidden elements.
                 if (!bBox || bBox.width < 0) {
-                    bBox = { width: 0, height: 0 } as any;
+                    bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
 
@@ -1582,8 +1590,7 @@ class SVGElement implements SVGElementLike {
                             '11px,17': 14,
                             '13px,20': 16
                         } as Record<string, number>)[
-                            (styles as any) &&
-                            (styles as any).fontSize + ',' + Math.round(height)
+                            `${fontSize || ''},${Math.round(height)}`
                         ] ||
                         height
                     );
@@ -1591,17 +1598,48 @@ class SVGElement implements SVGElementLike {
 
                 // Adjust for rotated text
                 if (rotation) {
-                    const rad = rotation * deg2rad;
-                    bBox.width = Math.abs(height * Math.sin(rad)) +
-                        Math.abs(width * Math.cos(rad));
-                    bBox.height = Math.abs(height * Math.cos(rad)) +
-                        Math.abs(width * Math.sin(rad));
+
+                    const baseline = Number(
+                            element.getAttribute('y') || 0
+                        ) - bBox.y,
+                        alignFactor = ({
+                            'right': 1,
+                            'center': 0.5
+                        } as Record<string, number>)[alignValue || 0] || 0,
+                        rad = rotation * deg2rad,
+                        rad90 = (rotation - 90) * deg2rad,
+                        wCosRad = width * Math.cos(rad),
+                        wSinRad = width * Math.sin(rad),
+                        cosRad90 = Math.cos(rad90),
+                        sinRad90 = Math.sin(rad90),
+
+                        // Find the starting point on the left side baseline of
+                        // the text
+                        pX = bBox.x + alignFactor * (width - wCosRad),
+                        pY = bBox.y + baseline - alignFactor * wSinRad,
+
+                        // Find all corners
+                        aX = pX + baseline * cosRad90,
+                        bX = aX + wCosRad,
+                        cX = bX - height * cosRad90,
+                        dX = cX - wCosRad,
+
+                        aY = pY + baseline * sinRad90,
+                        bY = aY + wSinRad,
+                        cY = bY - height * sinRad90,
+                        dY = cY - wSinRad;
+
+                    // Deduct the bounding box from the corners
+                    bBox.x = Math.min(aX, bX, cX, dX);
+                    bBox.y = Math.min(aY, bY, cY, dY);
+                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
                 }
             }
 
             // Cache it. When loading a chart in a hidden iframe in Firefox and
             // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
-            if (cacheKey && bBox.height > 0) {
+            if (cacheKey && (textStr === '' || bBox.height > 0)) {
 
                 // Rotate (#4681)
                 while (cacheKeys.length > 250) {
@@ -1660,22 +1698,11 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#hide
      *
-     * @param {boolean} [hideByTranslation=false]
-     *        The flag to determine if element should be hidden by moving out
-     *        of the viewport. Used for example for dataLabels.
-     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public hide(hideByTranslation?: boolean): this {
-
-        if (hideByTranslation) {
-            this.attr({ y: -9999 });
-        } else {
-            this.attr({ visibility: 'hidden' });
-        }
-
-        return this;
+    public hide(): this {
+        return this.attr({ visibility: 'hidden' });
     }
 
     /**
@@ -1979,7 +2006,7 @@ class SVGElement implements SVGElementLike {
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeType === win.Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
                         textPathElement.appendChild(childNode);
@@ -2100,7 +2127,7 @@ class SVGElement implements SVGElementLike {
             element = this.element,
             oldShadowOptions = this.oldShadowOptions,
             defaultShadowOptions: ShadowOptionsObject = {
-                color: palette.neutralColor100,
+                color: Palette.neutralColor100,
                 offsetX: this.parentInverted ? -1 : 1,
                 offsetY: this.parentInverted ? -1 : 1,
                 opacity: 0.15,
@@ -2154,7 +2181,7 @@ class SVGElement implements SVGElementLike {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        palette.neutralColor100
+                        Palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
@@ -2197,7 +2224,7 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param {boolean} [inherit=false]
+     * @param {boolean} [inherit=true]
      *        Set the visibility attribute to `inherit` rather than `visible`.
      *        The difference is that an element with `visibility="visible"`
      *        will be visible even if the parent is hidden.
@@ -2205,7 +2232,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit?: boolean): this {
+    public show(inherit: boolean = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
@@ -2412,12 +2439,13 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#translate
      *
      * @param {number} x
-     *        The x value.
+     * The x value.
      *
      * @param {number} y
-     *        The y value.
+     * The y value.
      *
      * @return {Highcharts.SVGElement}
+     * Translated element.
      */
     public translate(
         x: number,
@@ -2542,30 +2570,25 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public visibilitySetter(
-        value: string,
-        key: string,
+        value: 'hidden'|'inherit'|'visible',
+        key: 'visibility',
         element: SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as AnyRecord)[key] !== value) { // #6747
+        } else if (this[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as AnyRecord)[key] = value;
+        this[key] = value;
     }
 
     /**
      * @private
      * @function Highcharts.SVGElement#xGetter
-     *
-     * @param {string} key
-     *
-     * @return {number|string|null}
      */
     public xGetter(key: string): (number|string|null) {
         if (this.element.nodeName === 'circle') {
@@ -2581,9 +2604,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#zIndexSetter
-     * @param {number} [value]
-     * @param {string} [key]
-     * @return {boolean}
      */
     public zIndexSetter(
         value?: number,
@@ -2680,9 +2700,12 @@ class SVGElement implements SVGElementLike {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface SVGElement extends SVGElementLike {
     // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
@@ -2721,6 +2744,12 @@ SVGElement.prototype.verticalAlignSetter = function (
     this.doTransform = true;
 };
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace SVGElement {
 
     export interface ElementSetterFunction<T> {
@@ -2736,6 +2765,12 @@ namespace SVGElement {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGElement;
 
@@ -2909,4 +2944,4 @@ export default SVGElement;
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
-''; // detach doclets above
+''; // keeps doclets above in JS file

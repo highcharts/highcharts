@@ -23,6 +23,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
 } from './SeriesType';
+
 import H from '../Globals.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
@@ -44,7 +45,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
@@ -59,7 +60,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
@@ -174,8 +175,10 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass =
-                extendClass(Point, pointProto);
+            seriesTypes[type].prototype.pointClass = extendClass(
+                Point,
+                pointProto
+            ) as any;
         }
 
         return seriesTypes[type] as unknown as T;
@@ -187,15 +190,7 @@ namespace SeriesRegistry {
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
-
-/* *
- *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -5,12 +5,14 @@
         "alwaysStrict": false,
         "declaration": false,
         "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
         "keyofStringsOnly": true,
         "noEmitOnError": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitThis": true,
         "strict": true,
         "module": "es6",
+        "moduleResolution": "node",
         "outDir": "../js",
         "rootDir": ".",
         "target": "es5",
@@ -19,7 +21,8 @@
             "es5"
         ],
         "types": [
-            "jquery"
+            "jquery",
+            "trusted-types"
         ]
     },
     "include": [

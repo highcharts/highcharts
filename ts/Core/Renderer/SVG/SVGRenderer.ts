@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
+import type ButtonThemeObject from './ButtonThemeObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
 import type {
@@ -49,7 +50,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -154,7 +155,15 @@ class SVGRenderer implements SVGRendererLike {
         allowHTML?: boolean,
         styledMode?: boolean
     ) {
-        this.init(container, width, height, style, forExport, allowHTML, styledMode);
+        this.init(
+            container,
+            width,
+            height,
+            style,
+            forExport,
+            allowHTML,
+            styledMode
+        );
     }
 
     /* *
@@ -439,7 +448,9 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = (
+                    hitElement && hitElement.id
+                ) === 'hitme';
                 doc.body.removeChild(svg);
             }
 
@@ -512,6 +523,7 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#destroy
      *
      * @return {null}
+     * Pass through value.
      */
     public destroy(): null {
         const renderer = this,
@@ -647,7 +659,7 @@ class SVGRenderer implements SVGRendererLike {
      * @param {Highcharts.SVGAttributes} [hoverState]
      * SVG attributes for the hover state.
      *
-     * @param {Highcharts.SVGAttributes} [pressedState]
+     * @param {Highcharts.SVGAttributes} [selectState]
      * SVG attributes for the pressed state.
      *
      * @param {Highcharts.SVGAttributes} [disabledState]
@@ -667,9 +679,9 @@ class SVGRenderer implements SVGRendererLike {
         x: number,
         y: number,
         callback: EventCallback<SVGElement>,
-        theme?: SVGAttributes,
+        theme?: ButtonThemeObject,
         hoverState?: SVGAttributes,
-        pressedState?: SVGAttributes,
+        selectState?: SVGAttributes,
         disabledState?: SVGAttributes,
         shape?: SymbolKey,
         useHTML?: boolean
@@ -685,14 +697,24 @@ class SVGRenderer implements SVGRendererLike {
                 void 0,
                 'button'
             ),
-            styledMode = this.styledMode;
+            styledMode = this.styledMode,
+            states = (theme && theme.states) || {};
+
+        if (theme) {
+            delete theme.states;
+        }
 
         let curState = 0,
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
-            normalState = theme ? merge(theme) : {};
+            normalState: SVGAttributes = theme ? merge(theme) : {};
 
-        const userNormalStyle = normalState && normalState.style || {};
+        const normalStyle = merge({
+            color: Palette.neutralColor80,
+            cursor: 'pointer',
+            fontWeight: 'normal'
+        }, normalState.style);
+        delete normalState.style;
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -700,11 +722,11 @@ class SVGRenderer implements SVGRendererLike {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
-        // Presentational
-        let normalStyle: any,
-            hoverStyle: any,
-            pressedStyle: any,
-            disabledStyle: any;
+        // Presentational. The string type is a mistake, it is just for
+        // compliance with SVGAttribute and is not used in button theme.
+        let hoverStyle: CSSObject|string|undefined,
+            selectStyle: CSSObject|string|undefined,
+            disabledStyle: CSSObject|string|undefined;
 
         if (!styledMode) {
 
@@ -712,42 +734,35 @@ class SVGRenderer implements SVGRendererLike {
             normalState = merge({
                 fill: Palette.neutralColor3,
                 stroke: Palette.neutralColor20,
-                'stroke-width': 1,
-                style: {
-                    color: Palette.neutralColor80,
-                    cursor: 'pointer',
-                    fontWeight: 'normal'
-                }
-            }, {
-                style: userNormalStyle
+                'stroke-width': 1
             }, normalState);
-            normalStyle = normalState.style;
-            delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
                 fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || {}));
+            }, AST.filterUserAttributes(hoverState || states.hover || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
-            pressedState = merge(normalState, {
+            selectState = merge(normalState, {
                 fill: Palette.highlightColor10,
                 style: {
                     color: Palette.neutralColor100,
                     fontWeight: 'bold'
                 }
-            }, AST.filterUserAttributes(pressedState || {}));
-            pressedStyle = pressedState.style;
-            delete pressedState.style;
+            }, AST.filterUserAttributes(selectState || states.select || {}));
+            selectStyle = selectState.style;
+            delete selectState.style;
 
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
                     color: Palette.neutralColor20
                 }
-            }, AST.filterUserAttributes(disabledState || {}));
+            }, AST.filterUserAttributes(
+                disabledState || states.disabled || {}
+            ));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -791,15 +806,18 @@ class SVGRenderer implements SVGRendererLike {
                     .attr([
                         normalState,
                         hoverState,
-                        pressedState,
+                        selectState,
                         disabledState
-                    ][state || 0])
-                    .css([
-                        normalStyle,
-                        hoverStyle,
-                        pressedStyle,
-                        disabledStyle
                     ][state || 0]);
+                const css = [
+                    normalStyle,
+                    hoverStyle,
+                    selectStyle,
+                    disabledStyle
+                ][state || 0];
+                if (isObject(css)) {
+                    label.css(css);
+                }
             }
         };
 
@@ -1248,8 +1266,7 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes =
-            { preserveAspectRatio: 'none' },
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1267,15 +1284,20 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
-        // optional properties
-        if (arguments.length > 1) {
-            extend(attribs, {
-                x: x,
-                y: y,
-                width: width,
-                height: height
-            });
+        // Optional properties (#11756)
+        if (isNumber(x)) {
+            attribs.x = x;
         }
+        if (isNumber(y)) {
+            attribs.y = y;
+        }
+        if (isNumber(width)) {
+            attribs.width = width;
+        }
+        if (isNumber(height)) {
+            attribs.height = height;
+        }
+
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
@@ -1332,6 +1354,7 @@ class SVGRenderer implements SVGRendererLike {
      * Additional options, depending on the actual symbol drawn.
      *
      * @return {Highcharts.SVGElement}
+     * SVG symbol.
      */
     public symbol(
         symbol: SymbolKey,
@@ -1631,7 +1654,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,
@@ -1640,10 +1663,14 @@ class SVGRenderer implements SVGRendererLike {
                 const tspans = element.getElementsByTagName('tspan'),
                     parentVal = element.getAttribute(key);
 
-                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
+                for (
+                    let i = 0, tspan: SVGTSpanElement;
+                    i < tspans.length;
+                    i++
+                ) {
                     tspan = tspans[i];
-                    // If the x values are equal, the tspan represents a
-                    // linebreak
+                    // If the x values are equal, the tspan represents a line
+                    // break
                     if (tspan.getAttribute(key) === parentVal) {
                         tspan.setAttribute(key, value);
                     }
@@ -1720,14 +1747,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#rotCorr
-     *
-     * @param {number} baseline
-     *
-     * @param {number} rotation
-     *
-     * @param {boolean} [alterY]
-     *
-     * @param {Highcharts.PositionObject}
      */
     public rotCorr(
         baseline: number,
@@ -2071,7 +2090,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#alignElements
-     * @return {void}
      */
     public alignElements(): void {
         this.alignedObjects.forEach((el): SVGElement => el.align());

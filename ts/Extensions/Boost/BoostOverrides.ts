@@ -137,10 +137,6 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
- *
- * @param {Highcharts.Chart} target
- *
- * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
     const clipBox = {
@@ -154,7 +150,11 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
         const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
         if (verticalAxes.length <= 1) {
             clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+            clipBox.height = (
+                verticalAxes[0].pos -
+                this.plotTop +
+                verticalAxes[0].len
+            );
         } else {
             clipBox.height = this.plotHeight;
         }
@@ -384,10 +384,9 @@ wrap(Series.prototype, 'processData', function (
     this: Series,
     proceed: Function
 ): void {
+    const series = this;
 
-    let series = this,
-        dataToMeasure = this.options.data,
-        firstPoint: (PointOptions|PointShortOptions);
+    let dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -432,6 +431,7 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
+            let firstPoint;
             if (this.options.data && this.options.data.length) {
                 firstPoint = this.getFirstValidPoint(this.options.data);
                 if (!isNumber(firstPoint) && !isArray(firstPoint)) {
@@ -524,10 +524,6 @@ Series.prototype.exitBoost = function (): void {
 /**
  * @private
  * @function Highcharts.Series#hasExtremes
- *
- * @param {boolean} checkX
- *
- * @return {boolean}
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
     const options = this.options,
@@ -578,7 +574,9 @@ Series.prototype.destroyGraphics = function (): void {
     });
 
     if ((this as any).getZonesGraphs) {
-        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        const props: string[][] = (this as any).getZonesGraphs(
+            [['graph', 'highcharts-graph']]
+        );
         props.forEach((prop): void => {
             const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {

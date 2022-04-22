@@ -1,9 +1,10 @@
 #container {
-    height: 400px; 
-    min-width: 310px; 
-    max-width: 600px; 
+    height: 400px;
+    min-width: 310px;
+    max-width: 600px;
     margin: 0 auto;
 }
+
 .form {
     max-width: 600px;
     margin: 0 auto;

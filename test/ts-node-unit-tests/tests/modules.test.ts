@@ -54,6 +54,7 @@ export function testStockSeries() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags'
@@ -158,15 +159,15 @@ export function testHighchartsMoreSeries() {
         'pie',
         'arearange',
         'areasplinerange',
+        'boxplot',
+        'bubble',
         'columnrange',
         'columnpyramid',
-        'gauge',
-        'boxplot',
         'errorbar',
-        'waterfall',
+        'gauge',
+        'packedbubble',
         'polygon',
-        'bubble',
-        'packedbubble'
+        'waterfall'
     ];
 
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
@@ -215,10 +216,12 @@ export function testStockIndicators() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags',
         'sma',
+        'ema',
         'ad',
         'ao',
         'aroon',
@@ -229,7 +232,6 @@ export function testStockIndicators() {
         'cmf',
         'dmi',
         'dpo',
-        'ema',
         'chaikin',
         'cmo',
         'dema',

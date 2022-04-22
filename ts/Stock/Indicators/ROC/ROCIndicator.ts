@@ -176,7 +176,7 @@ class ROCIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 interface ROCIndicator {

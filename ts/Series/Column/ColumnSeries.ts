@@ -27,6 +27,7 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -36,8 +37,8 @@ const {
     hasTouch,
     noop
 } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -66,6 +67,12 @@ declare module '../../Core/Series/SeriesLike' {
         pointXOffset?: number;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The column series type.
@@ -390,7 +397,7 @@ class ColumnSeries extends Series {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -399,7 +406,7 @@ class ColumnSeries extends Series {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         },
 
@@ -474,7 +481,7 @@ class ColumnSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor
+        borderColor: Palette.backgroundColor
 
     });
 
@@ -531,7 +538,9 @@ class ColumnSeries extends Series {
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY';
+            translateProp: 'translateX'|'translateY' = inverted ?
+                'translateX' :
+                'translateY';
         let translateStart: number,
             translatedThreshold;
 
@@ -606,7 +615,6 @@ class ColumnSeries extends Series {
      *
      * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
-     * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this,
@@ -641,7 +649,10 @@ class ColumnSeries extends Series {
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
-                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
+                    if (
+                        otherOptions.stacking &&
+                        otherOptions.stacking !== 'group'
+                    ) {
                         stackKey = otherSeries.stackKey;
                         if (
                             typeof stackGroups[stackKey as any] ===
@@ -782,14 +793,15 @@ class ColumnSeries extends Series {
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            let indexInCategory = 0;
-            let totalInCategory = 0;
+            const reversedStacks = this.yAxis.options.reversedStacks;
+            let indexInCategory = 0,
+                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
 
-            // Loop over all the stacks on the Y axis. When stacking is
-            // enabled, these are real point stacks. When stacking is not
-            // enabled, but `centerInCategory` is true, there is one stack
-            // handling the grouping of points in each category. This is
-            // done in the `setGroupedPoints` function.
+            // Loop over all the stacks on the Y axis. When stacking is enabled,
+            // these are real point stacks. When stacking is not enabled, but
+            // `centerInCategory` is true, there is one stack handling the
+            // grouping of points in each category. This is done in the
+            // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
                 (stack: Record<string, Highcharts.StackItem>): void => {
@@ -797,23 +809,26 @@ class ColumnSeries extends Series {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[this.index as any],
+                            const pointValues = stackItem.points[
+                                    this.index as any
+                                ],
                                 total = stackItem.total;
 
-                            // If true `stacking` is enabled, count the
-                            // total number of non-null stacks in the
-                            // category, and note which index this point is
-                            // within those stacks.
+                            // If true `stacking` is enabled, count the total
+                            // number of non-null stacks in the category, and
+                            // note which index this point is within those
+                            // stacks.
                             if (stacking) {
                                 if (pointValues) {
                                     indexInCategory = totalInCategory;
                                 }
                                 if (stackItem.hasValidPoints) {
-                                    totalInCategory++;
+                                    reversedStacks ? // #16169
+                                        totalInCategory++ : totalInCategory--;
                                 }
 
-                            // If `stacking` is not enabled, look for the
-                            // index and total of the `group` stack.
+                            // If `stacking` is not enabled, look for the index
+                            // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
                                 indexInCategory = pointValues[1];
                                 totalInCategory = total || 0;
@@ -944,7 +959,12 @@ class ColumnSeries extends Series {
 
             // Adjust for null or missing points
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
             }
 
             // Cache for access in polar
@@ -1312,7 +1332,7 @@ extend(ColumnSeries.prototype, {
      * @param {Highcharts.Series|Highcharts.Point} item
      *        The series (this) or point
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: noop,
 
@@ -1338,7 +1358,7 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -1509,4 +1529,4 @@ export default ColumnSeries;
  * @apioption series.column.states.select
  */
 
-''; // includes above doclets in transpilat
+''; // keeps doclets above in JS file

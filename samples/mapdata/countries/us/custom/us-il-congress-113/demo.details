@@ -1,5 +1,5 @@
 ---
- name: Illinois congressional districts - Highmaps
- description: Highmaps demo
+ name: Illinois congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

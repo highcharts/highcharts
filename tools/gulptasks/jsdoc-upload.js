@@ -105,11 +105,13 @@ function delay(milliseconds) {
 /**
  * Converts an array of items into chunks of sub-arrays with 100 items.
  *
- * @param {Array<*>} items
+ * @param {Array<T>} items
  * Array to split into chunks.
  *
- * @return {Array<Array<*>>}
+ * @return {Array<Array<T>>}
  * Array of chunks.
+ *
+ * @template T
  */
 function getChunks(items) {
     items = items.slice();
@@ -551,7 +553,7 @@ function jsdocUpload() {
                         test
                     )
                 ) :
-                sync ?
+                sync && !sourceItem.endsWith('zips') ?
                     synchronizeFolder(
                         sourceItem,
                         targetStorage,

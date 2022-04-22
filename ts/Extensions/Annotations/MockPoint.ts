@@ -24,14 +24,21 @@ declare module './MockPointOptions' {
 declare global {
     namespace Highcharts {
         interface AnnotationMockLabelOptionsObject {
-            x: (number|null);
+            x: (number|undefined);
             y: (number|null);
             point: MockPoint;
         }
         class AnnotationMockPoint {
-            public static fromPoint(point: AnnotationPoint): AnnotationMockPoint;
-            public static pointToOptions(point: AnnotationPointType): MockPointOptions;
-            public static pointToPixels(point: AnnotationPointType, paneCoordinates?: boolean): PositionObject;
+            public static fromPoint(
+                point: AnnotationPoint
+            ): AnnotationMockPoint;
+            public static pointToOptions(
+                point: AnnotationPointType
+            ): MockPointOptions;
+            public static pointToPixels(
+                point: AnnotationPointType,
+                paneCoordinates?: boolean
+            ): PositionObject;
             public constructor(
                 chart: AnnotationChart,
                 target: (AnnotationControllable|null),
@@ -61,7 +68,12 @@ declare global {
             public scale(cx: number, cy: number, sx: number, sy: number): void;
             public setAxis(options: MockPointOptions, xOrY: ('x'|'y')): void;
             public toAnchor(): Array<number>;
-            public translate(cx: (number|undefined), cy: (number|undefined), dx: number, dy: number): void
+            public translate(
+                cx: (number|undefined),
+                cy: (number|undefined),
+                dx: number,
+                dy: number
+            ): void;
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
@@ -327,7 +339,7 @@ class MockPoint {
     public target: (Highcharts.AnnotationControllable|null);
     public ttBelow?: boolean = void 0 as any;
     public visible?: boolean;
-    public x: (number|null) = void 0 as any;
+    public x: (number|undefined) = void 0 as any;
     public y: (number|null) = void 0 as any;
 
     /* *
@@ -483,7 +495,7 @@ class MockPoint {
             this.x = options.x;
             this.plotX = xAxis.toPixels(options.x, true);
         } else {
-            this.x = null;
+            this.x = void 0;
             this.plotX = options.x;
         }
 

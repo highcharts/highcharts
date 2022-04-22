@@ -42,7 +42,11 @@ class Tick3D {
      */
     public static compose(TickClass: typeof Tick): void {
 
-        addEvent(TickClass, 'afterGetLabelPosition', Tick3D.onAfterGetLabelPosition);
+        addEvent(
+            TickClass,
+            'afterGetLabelPosition',
+            Tick3D.onAfterGetLabelPosition
+        );
 
         const tickProto = TickClass.prototype as Tick3D;
 

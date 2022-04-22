@@ -1,5 +1,5 @@
 ---
- name: Papua New Guinea - Highmaps
- description: Highmaps demo
+ name: Papua New Guinea - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

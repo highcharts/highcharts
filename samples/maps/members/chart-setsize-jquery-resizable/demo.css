@@ -1,4 +1,4 @@
-@import 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+@import "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css";
 
 #resizer {
     border: 1px solid silver;
@@ -6,9 +6,11 @@
     min-height: 200px;
     width: 800px;
 }
+
 #inner-resizer { /* make room for the resize handle */
     padding: 10px;
 }
+
 .loading {
     margin-top: 10em;
     text-align: center;

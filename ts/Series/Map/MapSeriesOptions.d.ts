@@ -14,6 +14,7 @@
  *
  * */
 
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
@@ -31,8 +32,9 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface MapSeriesOptions extends Highcharts.ColorSeriesOptions, ScatterSeriesOptions
+export interface MapSeriesOptions extends ColorAxisComposition.SeriesCompositionOptions, ScatterSeriesOptions
 {
+    affectsMapView?: boolean;
     data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
     nullColor?: ColorType;
     nullInteraction?: boolean;

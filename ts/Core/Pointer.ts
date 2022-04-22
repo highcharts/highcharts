@@ -19,11 +19,13 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
+import type NodesComposition from '../Series/NodesComposition';
 import type Options from './Options';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
+
 import Color from './Color/Color.js';
 const { parse: color } = Color;
 import H from './Globals.js';
@@ -31,7 +33,7 @@ const {
     charts,
     noop
 } = H;
-import Palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
@@ -246,7 +248,9 @@ class Pointer {
                 Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
             }
             if (Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = Pointer.unbindDocumentTouchEnd();
+                Pointer.unbindDocumentTouchEnd = (
+                    Pointer.unbindDocumentTouchEnd()
+                );
             }
         }
 
@@ -326,7 +330,7 @@ class Pointer {
 
             // make a selection
             if (
-                chart.hasCartesianSeries &&
+                (chart.hasCartesianSeries || chart.mapView) &&
                 (this.zoomX || this.zoomY) &&
                 clickedInside &&
                 !panKey
@@ -411,26 +415,27 @@ class Pointer {
             hasPinched = this.hasPinched;
 
         if (this.selectionMarker) {
-            const selectionData = {
-                    originalEvent: e, // #4890
-                    xAxis: [],
-                    yAxis: []
-                },
-                selectionBox = this.selectionMarker,
-                selectionLeft = selectionBox.attr ?
-                    selectionBox.attr('x') :
-                    selectionBox.x,
-                selectionTop = selectionBox.attr ?
-                    selectionBox.attr('y') :
-                    selectionBox.y,
-                selectionWidth = selectionBox.attr ?
+            let selectionBox = this.selectionMarker,
+                x = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
+                y = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
+                width = selectionBox.attr ?
                     selectionBox.attr('width') :
                     selectionBox.width,
-                selectionHeight = selectionBox.attr ?
+                height = selectionBox.attr ?
                     selectionBox.attr('height') :
-                    selectionBox.height;
-
-            let runZoom;
+                    selectionBox.height,
+                selectionData = {
+                    originalEvent: e, // #4890
+                    xAxis: [],
+                    yAxis: [],
+                    x,
+                    y,
+                    width,
+                    height
+                },
+                // Start by false runZoom, unless when we have a mapView, in
+                // which case the zoom will be handled in the selection event.
+                runZoom = Boolean(chart.mapView);
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -450,23 +455,19 @@ class Pointer {
                                 'zoomY'
                             )>)[axis.coll]]
                         ) &&
-                        isNumber(selectionLeft) &&
-                        isNumber(selectionTop)
+                        isNumber(x) &&
+                        isNumber(y)
                     ) { // #859, #3569
                         const horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
                                 0, // #1207, #3075
                             selectionMin = axis.toValue(
-                                (horiz ? selectionLeft : selectionTop) +
-                                minPixelPadding
+                                (horiz ? x : y) + minPixelPadding
                             ),
                             selectionMax = axis.toValue(
-                                (
-                                    horiz ?
-                                        selectionLeft + selectionWidth :
-                                        selectionTop + selectionHeight
-                                ) - minPixelPadding
+                                (horiz ? x + width : y + height) -
+                                minPixelPadding
                             );
 
                         (selectionData as any)[axis.coll].push({
@@ -633,7 +634,7 @@ class Pointer {
             let y = point.plotY || 0;
 
             if (
-                (point as Highcharts.NodesPoint).isNode &&
+                (point as NodesComposition.PointComposition).isNode &&
                 shapeArgs &&
                 isNumber(shapeArgs.x) &&
                 isNumber(shapeArgs.y)
@@ -709,6 +710,7 @@ class Pointer {
      * Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
+     * Axis coordinates.
      */
     public getCoordinates(e: PointerEvent): Pointer.AxesCoordinatesObject {
 
@@ -751,7 +753,7 @@ class Pointer {
      * @param {Highcharts.PointerEventObject} [e]
      * The triggering event, containing chart coordinates of the pointer.
      *
-     * @return {object}
+     * @return {Object}
      * Object containing resulting hover data: hoverPoint, hoverSeries, and
      * hoverPoints.
      */
@@ -911,10 +913,11 @@ class Pointer {
         element: DOMElementType,
         className: string
     ): (boolean|undefined) {
-        let elemClassName;
+        let elem: DOMElementType|null = element,
+            elemClassName;
 
-        while (element) {
-            elemClassName = attr(element, 'class');
+        while (elem) {
+            elemClassName = attr(elem, 'class');
             if (elemClassName) {
                 if (elemClassName.indexOf(className) !== -1) {
                     return true;
@@ -923,7 +926,7 @@ class Pointer {
                     return false;
                 }
             }
-            element = element.parentNode as any;
+            elem = elem.parentElement;
         }
     }
 
@@ -974,6 +977,9 @@ class Pointer {
      * Takes a browser event object and extends it with custom Highcharts
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
+     *
+     * On map charts, the properties `lon` and `lat` are added to the event
+     * object given that the chart has projection information.
      *
      * @function Highcharts.Pointer#normalize
      *
@@ -1119,6 +1125,14 @@ class Pointer {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
+        // #14434: tooltip.options.outside
+        if (tooltip && tooltip.shouldStickOnContact() && this.inClass(
+            e.relatedTarget as any,
+            'highcharts-tooltip-container'
+        )) {
+            return;
+        }
+
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
@@ -1131,10 +1145,8 @@ class Pointer {
             chart.pointer.chartPosition = void 0;
         }
 
-        if ( // #11635, Firefox wheel scroll does not fire out events consistently
-            tooltip &&
-            !tooltip.isHidden
-        ) {
+        // #11635, Firefox wheel scroll does not fire out events consistently
+        if (tooltip && !tooltip.isHidden) {
             this.reset();
         }
     }
@@ -1304,11 +1316,20 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
+        } else if (touchesLength === 1 && this.followTouchMove) {
+            // #16119: Prevent blocking scroll when single-finger panning is
+            // not enabled
+            self.initiated = false;
         }
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
+        if (
+            hasZoom &&
+            self.initiated &&
+            !fireClickEvent &&
+            e.cancelable !== false
+        ) {
             e.preventDefault();
         }
 
@@ -1371,31 +1392,33 @@ class Pointer {
         } else if (pinchDown.length) { // can be 0 when releasing, if touchend
             // fires first
 
+            fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
-            // Set the marker
-            if (!selectionMarker) {
-                // @todo It's a mock object, so maybe we need a separate
-                // interface
-                self.selectionMarker = selectionMarker = extend({
-                    destroy: noop,
-                    touch: true
-                }, chart.plotBox as any) as any;
-            }
+                // Set the marker
+                if (!selectionMarker) {
+                    // @todo It's a mock object, so maybe we need a separate
+                    // interface
+                    self.selectionMarker = selectionMarker = extend({
+                        destroy: noop,
+                        touch: true
+                    }, chart.plotBox as any) as any;
+                }
 
-            self.pinchTranslate(
-                pinchDown,
-                touches as any,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch
-            );
+                self.pinchTranslate(
+                    pinchDown,
+                    touches as any,
+                    transform,
+                    selectionMarker,
+                    clip,
+                    lastValidTouch
+                );
 
-            self.hasPinched = hasZoom;
+                self.hasPinched = hasZoom;
 
-            // Scale and translate the groups to provide visual feedback during
-            // pinching
-            self.scaleGroups(transform, clip as any);
+                // Scale and translate the groups to provide visual feedback
+                // during pinching
+                self.scaleGroups(transform, clip as any);
+            });
 
             if (self.res) {
                 self.res = false;
@@ -1534,7 +1557,8 @@ class Pointer {
             clip[xy] = clipXY - plotLeftTop;
             clip[wh] = selectionWH;
         }
-        const scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+        const scaleKey = inverted ?
+            (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
         const transformScale = inverted ? 1 / scale : scale;
 
         selectionMarker[wh] = selectionWH;
@@ -1652,8 +1676,8 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @fires Highcharts.Point#event:mouseOut
-     * @fires Highcharts.Point#event:mouseOver
+     * @emits Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e: PointerEvent, p?: Point): void {
         const pointer = this,
@@ -1762,12 +1786,13 @@ class Pointer {
              * The mouseOver event should be triggered when hoverPoint
              * is correct.
              */
-            hoverPoint.firePointEvent('mouseOver');
+            hoverPoint.firePointEvent('mouseOver', void 0, () : void => {
 
-            // Draw tooltip if necessary
-            if (tooltip) {
-                tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
-            }
+                // Draw tooltip if necessary
+                if (tooltip && hoverPoint) {
+                    tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
+                }
+            });
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
             const anchor = tooltip.getAnchor([{} as any], e);
@@ -1809,7 +1834,7 @@ class Pointer {
                 point = chart.hoverPoint; // #13002
                 if (!point || (point.series as any)[axis.coll] !== axis) {
                     point = find(points, (p: Point): boolean =>
-                        (p.series as any)[axis.coll] === axis
+                        p.series && (p.series as any)[axis.coll] === axis
                     );
                 }
             }
@@ -1837,7 +1862,13 @@ class Pointer {
         // Scale each series
         chart.series.forEach(function (series): void {
             const seriesAttribs = attribs || series.getPlotBox(); // #1701
-            if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
+            if (
+                series.group &&
+                (
+                    (series.xAxis && series.xAxis.zoomEnabled) ||
+                    chart.mapView
+                )
+            ) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
                     series.markerGroup.attr(seriesAttribs);
@@ -1937,7 +1968,9 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+            hoverChart.pointer.onContainerMouseLeave(
+                { relatedTarget: chart.container } as any
+            );
         }
 
         if (

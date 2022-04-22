@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/DarkBlue.js';
+import H from '../../Core/Globals.js';
+import DarkBlueTheme from '../../Extensions/Themes/DarkBlue.js';
+H.theme = DarkBlueTheme.options;
+DarkBlueTheme.apply();

@@ -1,5 +1,5 @@
 ---
- name: Burkina Faso - Highmaps
- description: Highmaps demo
+ name: Burkina Faso - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

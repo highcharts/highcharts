@@ -39,7 +39,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -117,7 +117,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends PointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends PointOptions, NodesComposition.PointCompositionOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -126,7 +126,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesComposition.SeriesCompositionOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -135,26 +135,28 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesPoint {
-            public className: NodesPoint['className'];
+        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.PointComposition {
+            public className: NodesComposition.PointComposition['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
-            public formatPrefix: NodesPoint['formatPrefix'];
-            public from: NodesPoint['from'];
+            public formatPrefix: NodesComposition.PointComposition[
+                'formatPrefix'
+            ];
+            public from: NodesComposition.PointComposition['from'];
             public fromNode: NetworkgraphPoint;
-            public getSum: NodesPoint['getSum'];
-            public hasShape: NodesPoint['hasShape'];
-            public isNode: NodesPoint['isNode'];
+            public getSum: NodesComposition.PointComposition['getSum'];
+            public hasShape: NodesComposition.PointComposition['hasShape'];
+            public isNode: NodesComposition.PointComposition['isNode'];
             public isValid: () => boolean;
             public linksFrom: Array<NetworkgraphPoint>;
             public linksTo: Array<NetworkgraphPoint>;
-            public mass: NodesPoint['mass'];
-            public offset: NodesPoint['offset'];
+            public mass: NodesComposition.PointComposition['mass'];
+            public offset: NodesComposition.PointComposition['offset'];
             public options: NetworkgraphPointOptions;
             public radius: number;
             public series: NetworkgraphSeries;
-            public setNodeState: NodesMixin['setNodeState'];
-            public to: NodesPoint['to'];
+            public setNodeState: NodesComposition.PointComposition['setState'];
+            public to: NodesComposition.PointComposition['to'];
             public toNode: NetworkgraphPoint;
             public destroy(): void;
             public getDegree(): number;
@@ -166,7 +168,7 @@ declare global {
                 series: NetworkgraphSeries,
                 options: (NetworkgraphPointOptions|PointShortOptions),
                 x?: number
-            ): Highcharts.NetworkgraphPoint;
+            ): NetworkgraphPoint;
             public redrawLink(): void;
             public remove(redraw?: boolean, animation?: boolean): void;
             public renderLink(): void;
@@ -226,7 +228,7 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, Highcharts.NodesSeries {
+class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.SeriesComposition {
 
     /* *
      *
@@ -653,13 +655,13 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, H
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface NetworkgraphSeries {
     chart: Highcharts.NetworkgraphChart;
-    createNode: Highcharts.NodesMixin['createNode'];
+    createNode: NodesComposition.SeriesComposition['createNode'];
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
@@ -668,7 +670,7 @@ interface NetworkgraphSeries {
     hasDraggableNodes: boolean;
     isCartesian: boolean;
     layout: Highcharts.NetworkgraphLayout;
-    nodeLookup: Highcharts.NodesSeries['nodeLookup'];
+    nodeLookup: NodesComposition.SeriesComposition['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
@@ -723,7 +725,7 @@ extend(NetworkgraphSeries.prototype, {
      * links.
      * @private
      */
-    createNode: NodesMixin.createNode,
+    createNode: NodesComposition.createNode,
     destroy: function (this: NetworkgraphSeries): void {
         if (this.layout) {
             this.layout.removeElementFromCollection(
@@ -731,7 +733,7 @@ extend(NetworkgraphSeries.prototype, {
                 this.layout.series
             );
         }
-        NodesMixin.destroy.call(this);
+        NodesComposition.destroy.call(this);
     },
 
     /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -773,13 +775,15 @@ extend(NetworkgraphSeries.prototype, {
         let node,
             i;
 
-        NodesMixin.generatePoints.apply(this, arguments as any);
+        NodesComposition.generatePoints.apply(this, arguments as any);
 
         // In networkgraph, it's fine to define stanalone nodes, create
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
-                function (nodeOptions: Highcharts.NodesPointOptions): void {
+                function (
+                    nodeOptions: NodesComposition.PointCompositionOptions
+                ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
                         this.nodeLookup[nodeOptions.id as any] =
                             this.createNode(nodeOptions.id as any);
@@ -1101,7 +1105,7 @@ extend(NetworkgraphSeries.prototype, {
 
 class NetworkgraphPoint
     extends Series.prototype.pointClass
-    implements Highcharts.DragNodesPoint, Highcharts.NodesPoint {
+    implements Highcharts.DragNodesPoint, NodesComposition.PointComposition {
 
     /* *
      *
@@ -1127,24 +1131,24 @@ class NetworkgraphPoint
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface NetworkgraphPoint {
-    className: Highcharts.NodesPoint['className'];
+    className: NodesComposition.PointComposition['className'];
     fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
-    formatPrefix: Highcharts.NodesPoint['formatPrefix'];
-    from: Highcharts.NodesPoint['from'];
+    formatPrefix: NodesComposition.PointComposition['formatPrefix'];
+    from: NodesComposition.PointComposition['from'];
     fromNode: NetworkgraphPoint;
-    getSum: Highcharts.NodesPoint['getSum'];
-    hasShape: Highcharts.NodesPoint['hasShape'];
-    isNode: Highcharts.NodesPoint['isNode'];
+    getSum: NodesComposition.PointComposition['getSum'];
+    hasShape: NodesComposition.PointComposition['hasShape'];
+    isNode: NodesComposition.PointComposition['isNode'];
     isValid: () => boolean;
-    mass: Highcharts.NodesPoint['mass'];
-    offset: Highcharts.NodesPoint['offset'];
-    setNodeState: Highcharts.NodesMixin['setNodeState'];
-    to: Highcharts.NodesPoint['to'];
+    mass: NodesComposition.PointComposition['mass'];
+    offset: NodesComposition.PointComposition['offset'];
+    setNodeState: NodesComposition.PointComposition['setState'];
+    to: NodesComposition.PointComposition['to'];
     destroy(): void;
     getDegree(): number;
     getLinkAttributes(): SVGAttributes;
@@ -1161,7 +1165,7 @@ interface NetworkgraphPoint {
     renderLink(): void;
 }
 extend(NetworkgraphPoint.prototype, {
-    setState: NodesMixin.setNodeState,
+    setState: NodesComposition.setNodeState,
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.
@@ -1192,7 +1196,6 @@ extend(NetworkgraphPoint.prototype, {
      * Return degree of a node. If node has no connections, it still has
      * deg=1.
      * @private
-     * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
         const deg = this.isNode ?
@@ -1205,7 +1208,6 @@ extend(NetworkgraphPoint.prototype, {
     /**
      * Get presentational attributes of link connecting two nodes.
      * @private
-     * @return {Highcharts.SVGAttributes}
      */
     getLinkAttributes: function (
         this: Highcharts.NetworkgraphPoint
@@ -1375,7 +1377,6 @@ extend(NetworkgraphPoint.prototype, {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
      *        Whether to apply animation, and optionally animation
      *        configuration.
-     * @return {void}
      */
     remove: function (
         this: Highcharts.NetworkgraphPoint,
@@ -1472,7 +1473,6 @@ extend(NetworkgraphPoint.prototype, {
      * Destroy point. If it's a node, remove all links coming out of this
      * node. Then remove point from the layout.
      * @private
-     * @return {void}
      */
     destroy: function (this: Highcharts.NetworkgraphPoint): void {
         if (this.isNode) {
@@ -1559,7 +1559,7 @@ export default NetworkgraphSeries;
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array|Number>}
+ * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,draDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/

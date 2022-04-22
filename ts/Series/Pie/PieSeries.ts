@@ -20,13 +20,14 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
-const { getStartAndEndRadians } = CenteredSeriesMixin;
+
+import CU from '../CenteredUtilities.js';
+const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -40,8 +41,6 @@ const {
     pick,
     relativeLength
 } = U;
-
-import '../../Core/DefaultOptions.js';
 
 /* *
  *
@@ -443,6 +442,18 @@ class PieSeries extends Series {
          */
 
         /**
+         * Thickness describing the ring size for a donut type chart,
+         * overriding [innerSize](#plotOptions.pie.innerSize).
+         *
+         * @type      {number}
+         * @default   undefined
+         * @product   highcharts
+         * @since     next
+         * @apioption plotOptions.pie.thickness
+         * @private
+         */
+
+        /**
          * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
          * this option tells whether the series shall be redrawn as if the
          * hidden point were `null`.
@@ -471,7 +482,7 @@ class PieSeries extends Series {
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.
          * Percentages are relative to the pie size. Pixel values are given as
-         * integers.
+         * integers. Setting overridden by thickness.
          *
          *
          * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
@@ -614,7 +625,7 @@ class PieSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor,
+        borderColor: Palette.backgroundColor,
 
         /**
          * The width of the border surrounding each slice.
@@ -637,7 +648,7 @@ class PieSeries extends Series {
         borderWidth: 1,
 
         /**
-         * @ignore-options
+         * @ignore-option
          * @private
          */
         lineWidth: void 0, // #12222
@@ -744,11 +755,11 @@ class PieSeries extends Series {
      * @private
      */
     public drawEmpty(): void {
-        let centerX,
-            centerY,
-            start = this.startAngleRad,
+        const start = this.startAngleRad,
             end = this.endAngleRad,
             options = this.options;
+        let centerX,
+            centerY;
 
         // Draw auxiliary graph if there're no visible points.
         if (this.total === 0 && this.center) {
@@ -779,7 +790,7 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || palette.neutralColor20
+                    stroke: options.color || Palette.neutralColor20
                 });
             }
 
@@ -834,18 +845,16 @@ class PieSeries extends Series {
         left: boolean,
         point: PiePoint
     ): number {
-        let center = this.center,
+        const center = this.center,
             // Variable pie has individual radius
             radius = this.radii ?
                 this.radii[point.index as any] || 0 :
-                center[2] / 2,
-            angle,
-            x;
+                center[2] / 2;
 
-        angle = Math.asin(
+        const angle = Math.asin(
             clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
         );
-        x = center[0] +
+        const x = center[0] +
         (left ? -1 : 1) *
         (Math.cos(angle) * (radius + point.labelDistance)) +
         (
@@ -871,14 +880,14 @@ class PieSeries extends Series {
      * @private
      */
     public redrawPoints(): void {
-        let series = this,
+        const series = this,
             chart = series.chart,
             renderer = chart.renderer,
-            groupTranslation,
+            shadow = series.options.shadow;
+        let groupTranslation,
             graphic,
             pointAttr: SVGAttributes,
-            shapeArgs: (SVGAttributes|undefined),
-            shadow = series.options.shadow;
+            shapeArgs: (SVGAttributes|undefined);
 
         this.drawEmpty();
 
@@ -985,17 +994,12 @@ class PieSeries extends Series {
     public translate(positions?: Array<number>): void {
         this.generatePoints();
 
-        let series = this,
-            cumulative = 0,
+        const series = this,
             precision = 1000, // issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             connectorOffset =
                 (slicedOffset as any) + (options.borderWidth || 0),
-            finalConnectorOffset,
-            start,
-            end,
-            angle,
             radians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -1004,14 +1008,19 @@ class PieSeries extends Series {
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
             points = series.points,
+            labelDistance = (options.dataLabels as any).distance,
+            ignoreHiddenPoint = options.ignoreHiddenPoint,
+            len = points.length;
+        let finalConnectorOffset,
+            start,
+            end,
+            angle,
             // the x component of the radius vector for a given point
             radiusX,
             radiusY,
-            labelDistance = (options.dataLabels as any).distance,
-            ignoreHiddenPoint = options.ignoreHiddenPoint,
             i,
-            len = points.length,
-            point;
+            point,
+            cumulative = 0;
 
         // Get positions - either an integer or a percentage string must be
         // given. If positions are passed as a parameter, we're in a
@@ -1151,12 +1160,12 @@ class PieSeries extends Series {
      * @private
      */
     public updateTotals(): void {
-        let i,
-            total = 0,
-            points = this.points,
+        const points = this.points,
             len = points.length,
-            point,
             ignoreHiddenPoint = this.options.ignoreHiddenPoint;
+        let i,
+            point,
+            total = 0;
 
         // Get the total sum
         for (i = 0; i < len; i++) {
@@ -1187,13 +1196,14 @@ class PieSeries extends Series {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface PieSeries {
     drawGraph: undefined;
-    getCenter: typeof CenteredSeriesMixin['getCenter'];
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
@@ -1204,11 +1214,11 @@ extend(PieSeries.prototype, {
 
     drawGraph: void 0,
 
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     drawTracker: ColumnSeries.prototype.drawTracker,
 
-    getCenter: CenteredSeriesMixin.getCenter,
+    getCenter: CU.getCenter,
 
     getSymbol: noop,
 

@@ -1,162 +1,169 @@
-// Load the data from a Google Spreadsheet
-// https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
-Highcharts.data({
-    googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
+(async () => {
 
-    // Custom handler for columns
-    parsed: function (columns) {
+    const mapData = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    ).then(response => response.json());
 
-        /**
-         * Event handler for clicking points. Use jQuery UI to pop up
-         * a pie chart showing the details for each state.
-         */
-        function pointClick() {
-            var row = this.options.row,
-                $div = $('<div></div>')
-                    .dialog({
-                        title: this.name,
-                        width: 320,
-                        height: 300
-                    });
+    // Load the data from a Google Spreadsheet
+    // https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
+    Highcharts.data({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
 
-            window.chart = new Highcharts.Chart({
-                chart: {
-                    renderTo: $div[0],
-                    type: 'pie',
-                    width: 290,
-                    height: 240
-                },
-                title: {
-                    text: null
-                },
-                series: [{
-                    name: 'Votes',
-                    data: [{
-                        name: 'Trump',
-                        color: '#C40401',
-                        y: parseInt(columns[3][row], 10)
-                    }, {
-                        name: 'Clinton',
-                        color: '#0200D0',
-                        y: parseInt(columns[2][row], 10)
-                    }],
-                    dataLabels: {
-                        format: '<b>{point.name}</b> {point.percentage:.1f}%'
-                    }
-                }]
-            });
-        }
+        // Custom handler for columns
+        parsed: function (columns) {
 
-        // Make the columns easier to read
+            /**
+             * Event handler for clicking points. Use jQuery UI to pop up
+             * a pie chart showing the details for each state.
+             */
+            function pointClick() {
+                var row = this.options.row,
+                    $div = $('<div></div>')
+                        .dialog({
+                            title: this.name,
+                            width: 320,
+                            height: 300
+                        });
 
-        var keys = columns[0],
-            names = columns[1],
-            percent = columns[7],
-            mapData = Highcharts.maps['countries/us/us-all'],
-            // Build the chart options
-            options = {
-                chart: {
-                    type: 'map',
-                    map: mapData,
-                    renderTo: 'container',
-                    borderWidth: 1
-                },
-
-                title: {
-                    text: 'US presidential election 2016 results'
-                },
-                subtitle: {
-                    text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>'
-                },
-
-                legend: {
-                    align: 'right',
-                    verticalAlign: 'top',
-                    x: -100,
-                    y: 70,
-                    floating: true,
-                    layout: 'vertical',
-                    valueDecimals: 0,
-                    backgroundColor: ( // theme
-                        Highcharts.defaultOptions &&
-                        Highcharts.defaultOptions.legend &&
-                        Highcharts.defaultOptions.legend.backgroundColor
-                    ) || 'rgba(255, 255, 255, 0.85)'
-                },
-
-                mapNavigation: {
-                    enabled: true,
-                    enableButtons: false
-                },
-
-                colorAxis: {
-                    dataClasses: [{
-                        from: -100,
-                        to: 0,
-                        color: '#0200D0',
-                        name: 'Clinton'
-                    }, {
-                        from: 0,
-                        to: 100,
-                        color: '#C40401',
-                        name: 'Trump'
+                window.chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: $div[0],
+                        type: 'pie',
+                        width: 290,
+                        height: 240
+                    },
+                    title: {
+                        text: null
+                    },
+                    series: [{
+                        name: 'Votes',
+                        data: [{
+                            name: 'Trump',
+                            color: '#C40401',
+                            y: parseInt(columns[3][row], 10)
+                        }, {
+                            name: 'Clinton',
+                            color: '#0200D0',
+                            y: parseInt(columns[2][row], 10)
+                        }],
+                        dataLabels: {
+                            format: '<b>{point.name}</b> {point.percentage:.1f}%'
+                        }
                     }]
-                },
-
-                series: [{
-                    data: [],
-                    joinBy: 'postal-code',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#FFFFFF',
-                        format: '{point.postal-code}',
-                        style: {
-                            textTransform: 'uppercase'
-                        }
-                    },
-                    name: 'Republicans margin',
-                    point: {
-                        events: {
-                            click: pointClick
-                        }
-                    },
-                    tooltip: {
-                        ySuffix: ' %'
-                    },
-                    cursor: 'pointer'
-                }, {
-                    name: 'Separators',
-                    type: 'mapline',
-                    nullColor: 'silver',
-                    showInLegend: false,
-                    enableMouseTracking: false
-                }]
-            };
-        keys = keys.map(function (key) {
-            return key.toUpperCase();
-        });
-        Highcharts.each(mapData.features, function (mapPoint) {
-            if (mapPoint.properties['postal-code']) {
-                var postalCode = mapPoint.properties['postal-code'],
-                    i = $.inArray(postalCode, keys);
-                options.series[0].data.push(Highcharts.extend({
-                    value: parseFloat(percent[i]),
-                    name: names[i],
-                    'postal-code': postalCode,
-                    row: i
-                }, mapPoint));
+                });
             }
-        });
 
-        // Initiate the chart
+            // Make the columns easier to read
 
-        window.chart = new Highcharts.Map(options);
-    },
+            var keys = columns[0],
+                names = columns[1],
+                percent = columns[7],
+                // Build the chart options
+                options = {
+                    chart: {
+                        type: 'map',
+                        map: mapData,
+                        renderTo: 'container',
+                        borderWidth: 1
+                    },
 
-    error: function () {
-        $('#container').html('<div class="loading">' +
-            '<i class="icon-frown icon-large"></i> ' +
-            '<p>Error loading data from Google Spreadsheets</p>' +
-            '</div>');
-    }
-});
+                    title: {
+                        text: 'US presidential election 2016 results'
+                    },
+                    subtitle: {
+                        text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>'
+                    },
+
+                    legend: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: -100,
+                        y: 70,
+                        floating: true,
+                        layout: 'vertical',
+                        valueDecimals: 0,
+                        backgroundColor: ( // theme
+                            Highcharts.defaultOptions &&
+                            Highcharts.defaultOptions.legend &&
+                            Highcharts.defaultOptions.legend.backgroundColor
+                        ) || 'rgba(255, 255, 255, 0.85)'
+                    },
+
+                    mapNavigation: {
+                        enabled: true,
+                        enableButtons: false
+                    },
+
+                    colorAxis: {
+                        dataClasses: [{
+                            from: -100,
+                            to: 0,
+                            color: '#0200D0',
+                            name: 'Clinton'
+                        }, {
+                            from: 0,
+                            to: 100,
+                            color: '#C40401',
+                            name: 'Trump'
+                        }]
+                    },
+
+                    series: [{
+                        data: [],
+                        joinBy: 'postal-code',
+                        dataLabels: {
+                            enabled: true,
+                            color: '#FFFFFF',
+                            format: '{point.postal-code}',
+                            style: {
+                                textTransform: 'uppercase'
+                            }
+                        },
+                        name: 'Republicans margin',
+                        point: {
+                            events: {
+                                click: pointClick
+                            }
+                        },
+                        tooltip: {
+                            ySuffix: ' %'
+                        },
+                        cursor: 'pointer'
+                    }, {
+                        name: 'Separators',
+                        type: 'mapline',
+                        nullColor: 'silver',
+                        showInLegend: false,
+                        enableMouseTracking: false
+                    }]
+                };
+            keys = keys.map(function (key) {
+                return key.toUpperCase();
+            });
+            mapData.objects.default.geometries.forEach(function (geometry) {
+                if (geometry.properties['postal-code']) {
+                    var postalCode = geometry.properties['postal-code'],
+                        i = $.inArray(postalCode, keys);
+                    options.series[0].data.push(Highcharts.extend({
+                        value: parseFloat(percent[i]),
+                        name: names[i],
+                        'postal-code': postalCode,
+                        row: i
+                    }, geometry));
+                }
+            });
+
+            // Initialize the chart
+            window.chart = new Highcharts.Map(options);
+        },
+
+        error: function () {
+            $('#container').html('<div class="loading">' +
+                '<i class="icon-frown icon-large"></i> ' +
+                '<p>Error loading data from Google Spreadsheets</p>' +
+                '</div>');
+        }
+    });
+
+})();

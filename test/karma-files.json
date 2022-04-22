@@ -41,6 +41,7 @@
 	"code/modules/pattern-fill.src.js",
 	"code/modules/price-indicator.src.js",
 	"code/modules/sankey.src.js",
+	"code/modules/arc-diagram.src.js",
 	"code/modules/dependency-wheel.src.js",
 	"code/modules/series-label.src.js",
 	"code/modules/solid-gauge.src.js",
@@ -64,6 +65,8 @@
 	"code/modules/organization.src.js",
 	"code/modules/dotplot.src.js",
 	"code/modules/marker-clusters.src.js",
+	"code/modules/hollowcandlestick.src.js",
+	"code/modules/heikinashi.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

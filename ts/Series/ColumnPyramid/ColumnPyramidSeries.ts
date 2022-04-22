@@ -200,16 +200,19 @@ class ColumnPyramidSeries extends ColumnSeries {
             // topXwidth and bottomXwidth = width of lines from the center
             // calculated from tanges proportion.
             // Can not be a NaN #12514
-            topXwidth = stackHeight ? (barW * (barY - topPointY)) / stackHeight : 0;
+            topXwidth = stackHeight ?
+                (barW * (barY - topPointY)) / stackHeight : 0;
             // like topXwidth, but with height of point
-            bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
+            bottomXwidth = stackHeight ?
+                (barW * (barY + barH - topPointY)) / stackHeight :
+                0;
 
             /*
                     /\
-                    /  \
+                   /  \
             x1,y1,------ x2,y1
-                    /      \
-                ----------
+                /      \
+               ----------
             x4,y2        x3,y2
             */
 
@@ -228,9 +231,9 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // inverted chart
             if (chart.inverted) {
-                invBarPos = chart.plotWidth - barY;
-                stackHeight = (topPointY -
-                (chart.plotWidth - (translatedThreshold as any)));
+                invBarPos = yAxis.width - barY;
+                stackHeight =
+                    topPointY - (yAxis.width - (translatedThreshold as any));
 
                 // proportion tanges
                 topXwidth = (barW *

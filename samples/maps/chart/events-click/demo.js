@@ -1,21 +1,30 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initiate the chart
+    const mapData = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
+
+    const click = function (e) {
+        // `this` is either Series or Chart
+        const chart = this.chart || this;
+
+        const p = { lon: e.lon, lat: e.lat };
+
+        p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
+
+        // Add point
+        chart.get('clicks').addPoint(p);
+    };
+
+    // Initialize the chart
     Highcharts.mapChart('container', {
 
         chart: {
             events: {
-                click: function (e) {
-                    var x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value),
-                        latLon = this.fromPointToLatLon({ x: x, y: y });
-
-                    this.get('clicks').addPoint({
-                        x: x,
-                        y: y,
-                        name: '[N' + latLon.lat.toFixed(2) + ', E' + latLon.lon.toFixed(2) + ']'
-                    });
-                }
+                click
             }
         },
 
@@ -30,6 +39,12 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         },
 
+        mapView: {
+            projection: {
+                name: 'EqualEarth'
+            }
+        },
+
         colorAxis: {
             min: 1,
             max: 1000,
@@ -37,8 +52,8 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
+            data,
+            mapData,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             states: {
@@ -48,6 +63,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             },
             tooltip: {
                 valueSuffix: '/km²'
+            },
+            events: {
+                click
             }
         }, {
             colorAxis: false,
@@ -57,4 +75,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             data: []
         }]
     });
-});
+})();

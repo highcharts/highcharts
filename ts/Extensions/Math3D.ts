@@ -146,7 +146,10 @@ function perspective3D(
     origin: Position3DObject,
     distance: number
 ): PositionObject {
-    const projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
+    const projection = (
+        (distance > 0) &&
+        (distance < Number.POSITIVE_INFINITY)
+    ) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
 
@@ -187,11 +190,13 @@ function perspective(
     useInvertedPersp?: boolean
 ): Array<Position3DObject> {
     const options3d = chart.options.chart.options3d as any,
-        /* The useInvertedPersp argument is used for
-         * inverted charts with already inverted elements,
-         * such as dataLabels or tooltip positions.
+        /* The useInvertedPersp argument is used for inverted charts with
+         * already inverted elements, such as dataLabels or tooltip positions.
          */
-        inverted = pick(useInvertedPersp, insidePlotArea ? chart.inverted : false),
+        inverted = pick(
+            useInvertedPersp,
+            insidePlotArea ? chart.inverted : false
+        ),
         origin = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
@@ -270,9 +275,18 @@ function pointCameraDistance(
         },
         // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
-            Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
-            Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
-            Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2)
+            Math.pow(
+                cameraPosition.x - pick(coordinates.plotX, coordinates.x),
+                2
+            ) +
+            Math.pow(
+                cameraPosition.y - pick(coordinates.plotY, coordinates.y),
+                2
+            ) +
+            Math.pow(
+                cameraPosition.z - pick(coordinates.plotZ, coordinates.z),
+                2
+            )
         );
 
     return distance;

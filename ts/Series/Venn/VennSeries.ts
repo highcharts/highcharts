@@ -22,41 +22,34 @@
  *  Imports
  *
  * */
+
+import type CircleObject from '../../Core/Geometry/CircleObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type VennPointOptions from './VennPointOptions';
 import type VennSeriesOptions from './VennSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
-import GeometryMixin from '../../Mixins/Geometry.js';
+import CU from '../../Core/Geometry/CircleUtilities.js';
 const {
-    getCenterOfPoints,
-    getDistanceBetweenPoints
-} = GeometryMixin;
-import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
-const {
-    getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
-    getCircleCircleIntersection,
     getCirclesIntersectionPolygon,
-    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
     isCircle1CompletelyOverlappingCircle2,
     isPointInsideAllCircles,
-    isPointInsideCircle,
     isPointOutsideAllCircles
-} = GeometryCirclesModule;
-import NelderMeadMixin from '../../Mixins/NelderMead.js';
-const { nelderMead } = NelderMeadMixin;
-import palette from '../../Core/Color/Palette.js';
+} = CU;
+import GU from '../../Core/Geometry/GeometryUtilities.js';
+const { getCenterOfPoints } = GU;
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -82,15 +75,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof DrawPointMixin.drawPoint;
-            public isValid: () => boolean;
-            public options: VennPointOptions;
-            public series: VennSeries;
-            public sets: Array<string>;
-            public value: number;
-            public shouldDraw(): boolean;
-        }
         interface VennLabelPositionObject {
             point: PositionObject;
             margin: number;
@@ -111,43 +95,6 @@ declare global {
             circle: CircleObject;
             sets: Array<string>;
             value: number;
-        }
-        interface VennUtilsObject {
-            geometry: GeometryMixin;
-            geometryCircles: object;
-            nelderMead: NelderMeadMixin;
-            addOverlapToSets(
-                relations: Array<VennRelationObject>
-            ): Array<VennRelationObject>;
-            getDistanceBetweenCirclesByOverlap(
-                r1: number,
-                r2: number,
-                overlap: number
-            ): number;
-            getLabelWidth(
-                pos: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            getMarginFromCircles(
-                point: PositionObject,
-                internal: Array<CircleObject>,
-                external: Array<CircleObject>
-            ): number;
-            layoutGreedyVenn(
-                relations: Array<VennRelationObject>
-            ): Record<string, CircleObject>;
-            loss(
-                mapOfIdToCircle: Record<string, CircleObject>,
-                relations: Array<VennRelationObject>
-            ): number;
-            processVennData(
-                data: Array<VennPointOptions>
-            ): Array<VennRelationObject>;
-            sortByTotalOverlap(
-                a: VennRelationObject,
-                b: VennRelationObject
-            ): number;
         }
     }
 }
@@ -198,7 +145,7 @@ class VennSeries extends ScatterSeries {
      * @optionparent plotOptions.venn
      */
     public static defaultOptions: VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
         brighten: 0,
@@ -225,14 +172,14 @@ class VennSeries extends ScatterSeries {
              */
             hover: {
                 opacity: 1,
-                borderColor: palette.neutralColor80
+                borderColor: Palette.neutralColor80
             },
             /**
              * @excluding halo
              */
             select: {
-                color: palette.neutralColor20,
-                borderColor: palette.neutralColor100,
+                color: Palette.neutralColor20,
+                borderColor: Palette.neutralColor100,
                 animation: false
             },
             inactive: {
@@ -265,51 +212,58 @@ class VennSeries extends ScatterSeries {
      * Returns the found position.
      */
     public static getLabelPosition(
-        internal: Array<Highcharts.CircleObject>,
-        external: Array<Highcharts.CircleObject>
+        internal: Array<CircleObject>,
+        external: Array<CircleObject>
     ): PositionObject {
         // Get the best label position within the internal circles.
-        let best = internal.reduce(function (
-            best: Highcharts.VennLabelPositionObject,
-            circle: Highcharts.CircleObject
-        ): Highcharts.VennLabelPositionObject {
-            const d = circle.r / 2;
+        let best = internal.reduce(
+            (best, circle): Highcharts.VennLabelPositionObject => {
+                const d = circle.r / 2;
 
-            // Give a set of points with the circle to evaluate as the best
-            // label position.
-            return [
-                { x: circle.x, y: circle.y },
-                { x: circle.x + d, y: circle.y },
-                { x: circle.x - d, y: circle.y },
-                { x: circle.x, y: circle.y + d },
-                { x: circle.x, y: circle.y - d }
-            ]
-                // Iterate the given points and return the one with the largest
-                // margin.
-                .reduce(function (
-                    best: Highcharts.VennLabelPositionObject,
-                    point: PositionObject
-                ): Highcharts.VennLabelPositionObject {
-                    const margin = VennUtils.getMarginFromCircles(point, internal, external);
+                // Give a set of points with the circle to evaluate as the best
+                // label position.
+                return [
+                    { x: circle.x, y: circle.y },
+                    { x: circle.x + d, y: circle.y },
+                    { x: circle.x - d, y: circle.y },
+                    { x: circle.x, y: circle.y + d },
+                    { x: circle.x, y: circle.y - d }
+                ]
+                    // Iterate the given points and return the one with the
+                    // largest margin.
+                    .reduce((
+                        best,
+                        point
+                    ): Highcharts.VennLabelPositionObject => {
+                        const margin = VennUtils.getMarginFromCircles(
+                            point,
+                            internal,
+                            external
+                        );
 
-                    // If the margin better than the current best, then update
-                    // sbest.
-                    if (best.margin < margin) {
-                        best.point = point;
-                        best.margin = margin;
-                    }
-                    return best;
-                }, best);
-        }, {
-            point: void 0 as any,
-            margin: -Number.MAX_VALUE
-        }).point;
+                        // If the margin better than the current best, then
+                        // update sbest.
+                        if (best.margin < margin) {
+                            best.point = point;
+                            best.margin = margin;
+                        }
+                        return best;
+                    }, best);
+            }, {
+                point: void 0 as any,
+                margin: -Number.MAX_VALUE
+            }
+        ).point;
 
         // Use nelder mead to optimize the initial label position.
-        const optimal = nelderMead(
+        const optimal = VennUtils.nelderMead(
             function (p: Array<number>): number {
                 return -(
-                    VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
+                    VennUtils.getMarginFromCircles(
+                        { x: p[0], y: p[1] },
+                        internal,
+                        external
+                    )
                 );
             },
             [best.x, best.y] as any
@@ -360,22 +314,21 @@ class VennSeries extends ScatterSeries {
     ): Highcharts.VennLabelValuesObject {
         const sets = relation.sets;
         // Create a list of internal and external circles.
-        const data = setRelations.reduce(function (
-            data: Record<string, (Array<Highcharts.CircleObject>)>,
-            set: Highcharts.VennRelationObject
-        ): Record<string, Array<Highcharts.CircleObject>> {
-            // If the set exists in this relation, then it is internal,
-            // otherwise it will be external.
-            const isInternal = sets.indexOf(set.sets[0]) > -1;
-            const property = isInternal ? 'internal' : 'external';
+        const data = setRelations.reduce(
+            (data, set): Record<string, Array<CircleObject>> => {
+                // If the set exists in this relation, then it is internal,
+                // otherwise it will be external.
+                const isInternal = sets.indexOf(set.sets[0]) > -1;
+                const property = isInternal ? 'internal' : 'external';
 
-            // Add the circle to the list.
-            data[property].push(set.circle);
-            return data;
-        }, {
-            internal: [],
-            external: []
-        });
+                // Add the circle to the list.
+                data[property].push(set.circle);
+                return data;
+            }, {
+                internal: [],
+                external: []
+            } as Record<string, Array<CircleObject>>
+        );
 
         // Filter out external circles that are completely overlapping all
         // internal
@@ -388,9 +341,16 @@ class VennSeries extends ScatterSeries {
         );
 
         // Calulate the label position.
-        const position = VennSeries.getLabelPosition(data.internal, data.external);
+        const position = VennSeries.getLabelPosition(
+            data.internal,
+            data.external
+        );
         // Calculate the label width
-        const width = VennUtils.getLabelWidth(position, data.internal, data.external);
+        const width = VennUtils.getLabelWidth(
+            position,
+            data.internal,
+            data.external
+        );
 
         return {
             position,
@@ -413,46 +373,38 @@ class VennSeries extends ScatterSeries {
     public static layout(
         relations: Array<Highcharts.VennRelationObject>
     ): ({
-            mapOfIdToShape: Record<string, (
-                Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
-            )>;
-            mapOfIdToLabelValues: Record<string, (
-                Highcharts.VennLabelValuesObject
-            )>;
+            mapOfIdToShape: Record<string, (CircleObject|IntersectionObject)>;
+            mapOfIdToLabelValues: Record<string, (Highcharts.VennLabelValuesObject)>;
         }) {
-        const mapOfIdToShape: Record<string, (
-            Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
-        )> = {};
-        const mapOfIdToLabelValues: Record<string, (
-            Highcharts.VennLabelValuesObject
-        )> = {};
+        const mapOfIdToShape: Record<string, (CircleObject|IntersectionObject)> = {};
+        const mapOfIdToLabelValues: Record<string, (Highcharts.VennLabelValuesObject)> = {};
 
         // Calculate best initial positions by using greedy layout.
         if (relations.length > 0) {
             const mapOfIdToCircles = VennUtils.layoutGreedyVenn(relations);
             const setRelations = relations.filter(VennUtils.isSet);
 
-            relations
-                .forEach(function (relation: Highcharts.VennRelationObject): void {
-                    const sets = relation.sets;
-                    const id = sets.join();
+            relations.forEach(function (
+                relation: Highcharts.VennRelationObject
+            ): void {
+                const sets = relation.sets;
+                const id = sets.join();
 
-                    // Get shape from map of circles, or calculate intersection.
-                    const shape = VennUtils.isSet(relation) ?
-                        mapOfIdToCircles[id] :
-                        getAreaOfIntersectionBetweenCircles(
-                            sets.map((set): Highcharts.CircleObject =>
-                                mapOfIdToCircles[set])
-                        );
+                // Get shape from map of circles, or calculate intersection.
+                const shape = VennUtils.isSet(relation) ?
+                    mapOfIdToCircles[id] :
+                    getAreaOfIntersectionBetweenCircles(
+                        sets.map((set): CircleObject => mapOfIdToCircles[set])
+                    );
 
-                    // Calculate label values if the set has a shape
-                    if (shape) {
-                        mapOfIdToShape[id] = shape;
-                        mapOfIdToLabelValues[id] = VennSeries.getLabelValues(
-                            relation, setRelations
-                        );
-                    }
-                });
+                // Calculate label values if the set has a shape
+                if (shape) {
+                    mapOfIdToShape[id] = shape;
+                    mapOfIdToLabelValues[id] = VennSeries.getLabelValues(
+                        relation, setRelations
+                    );
+                }
+            });
         }
         return { mapOfIdToShape, mapOfIdToLabelValues };
     }
@@ -475,7 +427,7 @@ class VennSeries extends ScatterSeries {
     public static getScale(
         targetWidth: number,
         targetHeight: number,
-        field: Highcharts.PolygonBoxObject
+        field: PolygonBoxObject
     ): Record<string, number> {
         const height = field.bottom - field.top, // top is smaller than bottom
             width = field.right - field.left,
@@ -506,9 +458,9 @@ class VennSeries extends ScatterSeries {
      * Returns a modified field object.
      */
     public static updateFieldBoundaries(
-        field: Highcharts.PolygonBoxObject,
-        circle: Highcharts.CircleObject
-    ): Highcharts.PolygonBoxObject {
+        field: PolygonBoxObject,
+        circle: CircleObject
+    ): PolygonBoxObject {
         const left = circle.x - circle.r,
             right = circle.x + circle.r,
             bottom = circle.y + circle.r,
@@ -542,7 +494,7 @@ class VennSeries extends ScatterSeries {
 
     public options: VennSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.VennPoint> = void 0 as any;
+    public points: Array<VennPoint> = void 0 as any;
 
     /* *
      *
@@ -607,7 +559,7 @@ class VennSeries extends ScatterSeries {
             renderer = chart.renderer;
 
         // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point: Highcharts.VennPoint): void {
+        points.forEach(function (point: VennPoint): void {
             const attribs = {
                     zIndex: isArray(point.sets) ? point.sets.length : 0
                 },
@@ -649,7 +601,7 @@ class VennSeries extends ScatterSeries {
      * Returns the calculated attributes.
      */
     public pointAttribs(
-        point: Highcharts.VennPoint,
+        point: VennPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
@@ -688,7 +640,10 @@ class VennSeries extends ScatterSeries {
         const relations = VennUtils.processVennData(this.options.data as any);
 
         // Calculate the positions of each circle.
-        const { mapOfIdToShape, mapOfIdToLabelValues } = VennSeries.layout(relations);
+        const {
+            mapOfIdToShape,
+            mapOfIdToLabelValues
+        } = VennSeries.layout(relations);
 
         // Calculate the scale, and center of the plot area.
         const field = Object.keys(mapOfIdToShape)
@@ -698,21 +653,25 @@ class VennSeries extends ScatterSeries {
                     return shape && isNumber((shape as any).r);
                 })
                 .reduce(function (
-                    field: Highcharts.PolygonBoxObject,
+                    field: PolygonBoxObject,
                     key: string
-                ): Highcharts.PolygonBoxObject {
+                ): PolygonBoxObject {
                     return VennSeries.updateFieldBoundaries(
                         field,
                         mapOfIdToShape[key] as any
                     );
                 }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scaling = VennSeries.getScale(chart.plotWidth, chart.plotHeight, field),
+            scaling = VennSeries.getScale(
+                chart.plotWidth,
+                chart.plotHeight,
+                field
+            ),
             scale = scaling.scale,
             centerX = scaling.centerX,
             centerY = scaling.centerY;
 
         // Iterate all points and calculate and draw their graphics.
-        this.points.forEach(function (point: Highcharts.VennPoint): void {
+        this.points.forEach(function (point: VennPoint): void {
             let sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
@@ -790,7 +749,7 @@ class VennSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

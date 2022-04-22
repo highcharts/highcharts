@@ -1,5 +1,5 @@
 ---
- name: Gabon - Highmaps
- description: Highmaps demo
+ name: Gabon - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

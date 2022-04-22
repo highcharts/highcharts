@@ -138,7 +138,7 @@ QUnit.test('Paddings and extremes', function (assert) {
     chart.series[0].setData([2, 1, 2, 1, 2, 2], false);
     chart.xAxis[0].setExtremes(null, null);
 
-    Highcharts.each([15, 120, 135, 225, 285, 300], function (startAngle) {
+    [15, 120, 135, 225, 285, 300].forEach(startAngle => {
         chart.update({
             pane: {
                 startAngle: startAngle

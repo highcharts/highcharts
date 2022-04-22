@@ -192,7 +192,7 @@ declare global {
     }
 }
 
-const langOptions: LangOptions = {
+const langOptions: DeepPartial<LangOptions> = {
 
     /**
      * Configure the accessibility strings in the chart. Requires the
@@ -255,7 +255,7 @@ const langOptions: LangOptions = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information.',
+            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
             afterRegionLabel: '',
 
             /**
@@ -265,9 +265,13 @@ const langOptions: LangOptions = {
              */
             annotations: {
                 heading: 'Chart annotations summary',
-                descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
-                descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
-                    '{ Also related to, #each(additionalAnnotationPoints)}',
+                descriptionSinglePoint: (
+                    '{annotationText}. Related to {annotationPoint}'
+                ),
+                descriptionMultiplePoints: (
+                    '{annotationText}. Related to {annotationPoint}' +
+                    '{ Also related to, #each(additionalAnnotationPoints)}'
+                ),
                 descriptionNoPoints: '{annotationText}'
             },
 
@@ -295,7 +299,7 @@ const langOptions: LangOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
             legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
@@ -434,12 +438,12 @@ const langOptions: LangOptions = {
             xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
             yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}.',
-            timeRangeDays: 'Range: {range} days.',
-            timeRangeHours: 'Range: {range} hours.',
-            timeRangeMinutes: 'Range: {range} minutes.',
-            timeRangeSeconds: 'Range: {range} seconds.',
-            rangeFromTo: 'Range: {rangeFrom} to {rangeTo}.',
-            rangeCategories: 'Range: {numCategories} categories.'
+            timeRangeDays: 'Data range: {range} days.',
+            timeRangeHours: 'Data range: {range} hours.',
+            timeRangeMinutes: 'Data range: {range} minutes.',
+            timeRangeSeconds: 'Data range: {range} seconds.',
+            rangeFromTo: 'Data ranges from {rangeFrom} to {rangeTo}.',
+            rangeCategories: 'Data range: {numCategories} categories.'
         }, /* eslint-enable max-len */
 
         /**
@@ -449,8 +453,7 @@ const langOptions: LangOptions = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu',
-            exportRegionLabel: 'Chart menu'
+            menuButtonLabel: 'View chart menu, {chartTitle}'
         },
 
         /**

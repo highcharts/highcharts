@@ -92,6 +92,13 @@ Rules to differentiate between up or down points in Highcharts Stock candlestick
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
 
+    .highcharts-hollowcandlestick-series .highcharts-point-down
+    .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up
+    .highcharts-hollowcandlestick-series .highcharts-point-up
+
+Rules to differentiate between up or down points in Highcharts Stock hollow candlesticks.
+
+[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/hollow-candlestick/).
 
     .highcharts-color-{n}
 
@@ -247,7 +254,7 @@ Replaces [axis.minorGridLineColor](https://api.highcharts.com/highcharts/xAxis.
     .highcharts-navigator-handle-left
     .highcharts-navigator-handle-left
 
-Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock#navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock#navigator.handles.borderColor).
+Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock/navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock/navigator.handles.borderColor).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -255,14 +262,14 @@ Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navi
     .highcharts-navigator-mask-outside
     .highcharts-navigator-mask-inside
 
-Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock#navigator.maskFill).
+Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock/navigator.maskFill).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-navigator-outline
 
-Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock#navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock#navigator.outlineWidth).
+Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock/navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock/navigator.outlineWidth).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -286,7 +293,7 @@ Styles for the label shown when no data is present in the chart (requires the _
 
     .highcharts-null-point
 
-Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps#plotOptions.map.nullColor).
+Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps/plotOptions.map.nullColor).
 
 
     .highcharts-ohlc-series .highcharts-point-up
@@ -366,21 +373,21 @@ Style the plot line labels. Use the _className_ option on each line to disting
 
     .highcharts-range-input text
 
-Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock#rangeSelector.inputStyle).
+Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock/rangeSelector.inputStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-label
 
-Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock#rangeSelector.labelStyle).
+Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock/rangeSelector.labelStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-selector-buttons
 
-Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock#rangeSelector.buttonTheme).
+Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock/rangeSelector.buttonTheme).
 
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 

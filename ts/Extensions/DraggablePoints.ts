@@ -47,9 +47,11 @@ const {
     seriesTypes
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import { CursorValue } from '../Core/Renderer/CSSObject';
 const {
     addEvent,
     clamp,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -150,7 +152,7 @@ declare global {
         interface DragDropHandleOptionsObject {
             className?: string;
             color?: ColorType;
-            cursor?: string;
+            cursor?: CursorValue;
             lineColor?: ColorString;
             lineWidth?: number;
             pathFormatter?: Function;
@@ -513,7 +515,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -545,7 +549,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -1078,7 +1084,6 @@ if (seriesTypes.xrange) {
      * @private
      * @param {string} type
      *        Unsupported series type
-     * @return {void}
      */
     function (type: string): void {
         if (seriesTypes[type]) {
@@ -1193,11 +1198,11 @@ const defaultGuideBoxOptions: (
 
 
 /**
- * Options for the drag handles.
+ * Options for the drag handles available in column series.
  *
  * @declare      Highcharts.DragDropHandleOptionsObject
  * @since        6.2.0
- * @optionparent plotOptions.series.dragDrop.dragHandle
+ * @optionparent plotOptions.column.dragDrop.dragHandle
  *
  * @private
  */
@@ -1210,7 +1215,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {Function}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.pathFormatter
+     * @apioption plotOptions.column.dragDrop.dragHandle.pathFormatter
      */
     // pathFormatter: null,
 
@@ -1221,7 +1226,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {string}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.cursor
+     * @apioption plotOptions.column.dragDrop.dragHandle.cursor
      */
     // cursor: null,
 
@@ -1682,7 +1687,7 @@ function hasDraggedPastSensitivity(
  * @param {Highcharts.SVGElement} [guideBox]
  *        The guide box to take snapshot of.
  *
- * @return {object}
+ * @return {Object}
  *         Snapshot object. Point properties are placed in a hashmap with IDs as
  *         keys.
  */
@@ -1801,29 +1806,29 @@ function resizeRect(
     let resizeAttrs;
 
     switch (updateSide) {
-    case 'left':
-        resizeAttrs = {
-            x: (rect.attr('x') as any) + update.x,
-            width: Math.max(1, (rect.attr('width') as any) - update.x)
-        };
-        break;
-    case 'right':
-        resizeAttrs = {
-            width: Math.max(1, (rect.attr('width') as any) + update.x)
-        };
-        break;
-    case 'top':
-        resizeAttrs = {
-            y: (rect.attr('y') as any) + update.y,
-            height: Math.max(1, (rect.attr('height') as any) - update.y)
-        };
-        break;
-    case 'bottom':
-        resizeAttrs = {
-            height: Math.max(1, (rect.attr('height') as any) + update.y)
-        };
-        break;
-    default:
+        case 'left':
+            resizeAttrs = {
+                x: (rect.attr('x') as any) + update.x,
+                width: Math.max(1, (rect.attr('width') as any) - update.x)
+            };
+            break;
+        case 'right':
+            resizeAttrs = {
+                width: Math.max(1, (rect.attr('width') as any) + update.x)
+            };
+            break;
+        case 'top':
+            resizeAttrs = {
+                y: (rect.attr('y') as any) + update.y,
+                height: Math.max(1, (rect.attr('height') as any) - update.y)
+            };
+            break;
+        case 'bottom':
+            resizeAttrs = {
+                height: Math.max(1, (rect.attr('height') as any) + update.y)
+            };
+            break;
+        default:
     }
     rect.attr(resizeAttrs);
 }
@@ -1879,7 +1884,7 @@ function initDragDrop(
  * @private
  * @function getNewPoints
  *
- * @param {object} dragDropData
+ * @param {Object} dragDropData
  *        A chart's dragDropData with drag/drop origin information, and info on
  *        which points are being dragged.
  *
@@ -2149,7 +2154,7 @@ Chart.prototype.setGuideBoxState = function (
  * @private
  * @function Highcharts.Point#getDropValues
  *
- * @param {object} origin
+ * @param {Object} origin
  *        Mouse position (chartX/Y) and point props at current data values.
  *        Point props should be organized per point.id in a hashmap.
  *
@@ -2285,14 +2290,49 @@ Series.prototype.getGuideBox = function (
 
     // Find bounding box of all points
     points.forEach(function (point: Point): void {
-        const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
+        const bBox = (
+            point.graphic && point.graphic.getBBox() || point.shapeArgs
+        );
 
-        if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
+        if (bBox) {
+            let plotX2;
+            const x2 = (point as XRangePoint).x2;
+            if (isNumber(x2)) {
+                plotX2 = point.series.xAxis.translate(
+                    x2,
+                    false,
+                    false,
+                    false,
+                    true
+                );
+            }
+
+            // Avoid a 0 min when some of the points being dragged are
+            // completely outside the plot
+            const skipBBox = !(bBox.width || bBox.height || bBox.x || bBox.y);
+
             changed = true;
-            minX = Math.min(point.plotX || 0, bBox.x || 0, minX);
-            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
-            minY = Math.min(point.plotY || 0, bBox.y || 0, minY);
-            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
+            minX = Math.min(
+                point.plotX || 0,
+                plotX2 || 0,
+                skipBBox ? Infinity : bBox.x || 0,
+                minX
+            );
+            maxX = Math.max(
+                point.plotX || 0,
+                plotX2 || 0,
+                (bBox.x || 0) + (bBox.width || 0),
+                maxX
+            );
+            minY = Math.min(
+                point.plotY || 0,
+                skipBBox ? Infinity : bBox.y || 0,
+                minY
+            );
+            maxY = Math.max(
+                (bBox.y || 0) + (bBox.height || 0),
+                maxY
+            );
         }
     });
 
@@ -2465,14 +2505,16 @@ Point.prototype.showDragHandles = function (): void {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            if (!path || pos.x < 0 || pos.y < 0) {
+            // Correct left edge value depending on the xAxis' type, #16596
+            const minEdge = point.series.xAxis.categories ? -0.5 : 0;
+            if (!path || pos.x < minEdge || pos.y < 0) {
                 return;
             }
 
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
-                (val.axis === 'x') !== !!chart.inverted ?
-                'ew-resize' : 'ns-resize';
+                ((val.axis === 'x') !== !!chart.inverted ?
+                    'ew-resize' : 'ns-resize');
 
             // Create and add the handle element if it doesn't exist
             handle = (chart.dragHandles as any)[val.optionName];
@@ -2548,7 +2590,7 @@ Chart.prototype.hideDragHandles = function (): void {
  * @private
  * @function countProps
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The object to count.
  *
  * @return {number}

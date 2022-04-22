@@ -1,6 +1,6 @@
 {
     "name": "highcharts",
-    "version": "9.1.2",
+    "version": "10.0.0",
     "description": "JavaScript charting framework",
     "main": "lib/highcharts.js",
     "authors": [
@@ -30,7 +30,6 @@
         "tools",
         "utils",
         ".gitignore",
-        "ant",
         "build.md",
         "build.properties",
         "build.xml"
