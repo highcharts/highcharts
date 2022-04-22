@@ -60,22 +60,6 @@ declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         onPoint?: SeriesOnPointComposition.Additions;
         getConnectorAttributes(): SVGAttributes|void;
-        getRadii(
-            zMin: number,
-            zMax: number,
-            minSize: number,
-            maxSize: number
-        ): void;
-        getRadius(
-            zMin: number,
-            zMax: number,
-            minSize: number,
-            maxSize: number,
-            value: (number|null|undefined),
-            yValue?: (number|null|undefined)
-        ): (number|null);
-        getPxExtremes(): BubblePxExtremes;
-        getZExtremes(): BubbleZExtremes|undefined;
         seriesDrawConnector(): void;
     }
 }
@@ -152,8 +136,7 @@ namespace SeriesOnPointComposition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            const seriesProto = SeriesClass.prototype as SeriesComposition,
-                bubbleProto = bubble.prototype;
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getConnectorAttributes = getConnectorAttributes;
             seriesProto.seriesDrawConnector = seriesDrawConnector;
@@ -165,10 +148,6 @@ namespace SeriesOnPointComposition {
             pieProto.translate = seriesTranslate;
             pieProto.bubblePadding = true;
             pieProto.useMapGeometry = true;
-            pieProto.getRadius = bubbleProto.getRadius;
-            pieProto.getRadii = bubbleProto.getRadii;
-            pieProto.getZExtremes = bubbleProto.getZExtremes;
-            pieProto.getPxExtremes = bubbleProto.getPxExtremes;
 
             if (sunburst) {
                 const sunburstProto = sunburst.prototype;
@@ -178,10 +157,6 @@ namespace SeriesOnPointComposition {
                 sunburstProto.translate = seriesTranslate;
                 sunburstProto.bubblePadding = true;
                 sunburstProto.useMapGeometry = true;
-                sunburstProto.getRadius = bubbleProto.getRadius;
-                sunburstProto.getRadii = bubbleProto.getRadii;
-                sunburstProto.getZExtremes = bubbleProto.getZExtremes;
-                sunburstProto.getPxExtremes = bubbleProto.getPxExtremes;
             }
 
             addEvent(SeriesClass, 'afterInit', afterInit);
@@ -228,7 +203,7 @@ namespace SeriesOnPointComposition {
      * @function Highcharts.Series#translate
     */
     function seriesTranslate(this: Series): void {
-        this.getRadii(0, 0, 0, 0);
+        this.onPoint && this.onPoint.getRadii();
 
         translateFunctions[this.type + 'Translate'].call(this);
     }
@@ -403,6 +378,34 @@ namespace SeriesOnPointComposition {
         public connector?: SVGElement;
 
         public options?: OnPoint;
+
+        /**
+         * @ignore
+         */
+        public getRadii(): void {
+            bubble.prototype.getRadii.call(this.series);
+        }
+
+        /**
+         * @ignore
+         */
+        public getRadius(): (number|null) {
+            return bubble.prototype.getRadius.apply(this.series, arguments);
+        }
+
+        /**
+         * @ignore
+         */
+        public getPxExtremes(): BubblePxExtremes {
+            return bubble.prototype.getPxExtremes.call(this.series);
+        }
+
+        /**
+         * @ignore
+         */
+        public getZExtremes(): BubbleZExtremes|undefined {
+            return bubble.prototype.getZExtremes.call(this.series);
+        }
 
         /**
          * @ignore

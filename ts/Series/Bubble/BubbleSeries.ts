@@ -448,7 +448,7 @@ class BubbleSeries extends ScatterSeries {
             value,
             zExtremes = this.chart.bubbleZExtremes;
 
-        const { minPxSize, maxPxSize } = this.getPxExtremes();
+        const { minPxSize, maxPxSize } = (this.onPoint || this).getPxExtremes();
 
         // Get the collective Z extremes of all bubblish series. The chart-level
         // `bubbleZExtremes` are only computed once, and reset on `updatedData`
@@ -464,7 +464,10 @@ class BubbleSeries extends ScatterSeries {
                         !this.chart.options.chart.ignoreHiddenSeries
                     )
                 ) {
-                    const zExtremes = (otherSeries as any).getZExtremes();
+                    const zExtremes = (
+                        otherSeries.onPoint || (otherSeries as any)
+                    ).getZExtremes();
+
                     if (zExtremes) {
                         zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
                         zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
@@ -484,7 +487,7 @@ class BubbleSeries extends ScatterSeries {
         for (i = 0, len = zData.length; i < len; i++) {
             value = zData[i];
             // Separate method to get individual radius for bubbleLegend
-            radii.push(this.getRadius(
+            radii.push((this.onPoint || this).getRadius(
                 zExtremes.zMin,
                 zExtremes.zMax,
                 minPxSize,
@@ -748,7 +751,7 @@ Axis.prototype.beforePadding = function (): void {
             const data = (series as any)[dataKey];
 
             if (isXAxis) {
-                (series as any).getRadii(0, 0, series);
+                (series.onPoint || (series as any)).getRadii(0, 0, series);
             }
 
             if (range > 0) {
