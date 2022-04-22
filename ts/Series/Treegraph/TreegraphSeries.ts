@@ -739,8 +739,7 @@ class TreegraphSeries extends TreemapSeries {
 addEvent(TreegraphSeries, 'click', function (e: PointerEvent): void {
     let point = e.point as TreegraphPoint | undefined;
     if (e && point) {
-        point.toggleCollapse(!point.collapsed);
-
+        point.collapsed = !point.collapsed;
         point.series.redraw();
     }
 });
