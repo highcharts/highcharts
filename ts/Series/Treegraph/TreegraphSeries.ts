@@ -869,6 +869,12 @@ export default TreegraphSeries;
 
 
 /**
+ * Options used for button, which toggles the clllapse status of the node.
+ *
+ *
+ * @apioption series.treegraph.data.collapseButton
+ */
+/**
  * If point's children should be initially collapsed
  *
  * @sample highcharts/series-treegraph/level-options
