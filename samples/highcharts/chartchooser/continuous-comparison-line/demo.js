@@ -16,19 +16,14 @@ Highcharts.chart("container", {
             enabled: false
         }
     },
+
     tooltip: {
-        shared: true,
-        xDateFormat: "%Y-%m",
-        crosshairs: true,
-        useHTML: true,
-        headerFormat: '<table><tr><th colspan="2">{point.key}</th></tr>',
-        pointFormat:
-        "<tr><td>{series.name} </td>" +
-        '<td style="text-align: right"><b>{point.y}</b></td></tr>',
-        footerFormat: "</table>"
+        split: true,
+        xDateFormat: "%B %Y",
+        crosshairs: true
     },
 
     data: {
-        csvURL: "https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/operating-systems-trends.csv"
+        csvURL: "https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e340a13/samples/data/operating-systems-trends.csv"
     }
 });
