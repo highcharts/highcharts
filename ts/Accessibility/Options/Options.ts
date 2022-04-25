@@ -415,14 +415,21 @@ const Options: DeepPartial<OptionsType> = {
 
             /**
              * Format to use for describing the data series group to assistive
-             * technology - including screen readers. The series context is
-             * available as `{series}`.
+             * technology - including screen readers.
              *
-             * {seriesDescription} refers to the automatic description of the
+             * The series context and its subproperties are available under the
+             * variable `{series}`, for example `{series.name}` for the series
+             * name, and `{series.points.length}` for the number of data points.
+             *
+             * The chart context and its subproperties are available under the
+             * variable `{chart}`, for example `{chart.series.length}` for the
+             * number of series in the chart.
+             *
+             * `{seriesDescription}` refers to the automatic description of the
              * series type and number of points added by Highcharts by default.
-             * {authorDescription} refers to the description added in
+             * `{authorDescription}` refers to the description added in
              * [series.description](#plotOptions.series.description) if one is
-             * present. {axisDescription} refers to the description added if
+             * present. `{axisDescription}` refers to the description added if
              * the chart has multiple X or Y axes.
              *
              * Note that if [series.descriptionFormatter](#accessibility.series.descriptionFormatter)
