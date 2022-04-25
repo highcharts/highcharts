@@ -204,14 +204,82 @@ QUnit.test('Axes zoom', function (assert) {
         );
     });
 
+
+    // Tests checking if swap angles are calculated correctly
+    chart.update({
+        pane: {
+            startAngle: 0,
+            endAngle: 180
+        }
+    });
+
+    let initialXMin = chart.xAxis[0].getExtremes().min,
+        initialXMax;
+
+    controller.mouseDown(xPos + diameter / 4, yPos);
+    controller.mouseMove(xPos - diameter / 2, yPos - 1);
+    controller.mouseUp();
+
+    let xMin = chart.xAxis[0].getExtremes().min;
+
+    initialXMax = chart.xAxis[0].getExtremes().max;
+
+    controller.mouseDown(xPos + diameter / 4, yPos);
+    controller.mouseMove(xPos - diameter / 2, yPos + 1);
+    controller.mouseUp();
+
+    let xMax = chart.xAxis[0].getExtremes().max;
+
+    assert.deepEqual(
+        [xMin, xMax],
+        [initialXMin, initialXMax],
+        'Right semi circle (0deg, 180deg) should have correct swap angle'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: 180,
+            endAngle: 360
+        }
+    });
+
+    initialXMin = chart.xAxis[0].getExtremes().min;
+
+    controller.mouseDown(xPos - diameter / 4, yPos);
+    controller.mouseMove(xPos + diameter / 2, yPos + 1);
+    controller.mouseUp();
+
+    xMin = chart.xAxis[0].getExtremes().min;
+
+    initialXMax = chart.xAxis[0].getExtremes().max;
+
+    controller.mouseDown(xPos - diameter / 4, yPos);
+    controller.mouseMove(xPos + diameter / 2, yPos - 1);
+    controller.mouseUp();
+
+    xMax = chart.xAxis[0].getExtremes().max;
+
+    assert.deepEqual(
+        [initialXMin, initialXMax],
+        [xMin, xMax],
+        'Left semi circle (180deg, 360deg) should have correct swap angle'
+    );
+
     chart.update({
         chart: {
             inverted: true
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360
         },
         xAxis: {
             max: 7
         }
     });
+
+    chart.xAxis[0].setExtremes();
+    chart.yAxis[0].setExtremes();
 
     minX = 0;
     maxX = 5;
