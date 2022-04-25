@@ -597,14 +597,17 @@ function defaultSeriesDescriptionFormatter(
         ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
+        index = series.index + 1,
+        numSeries = chart.series && chart.series.length,
+        numPoints = series.points && series.points.length,
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),
         yAxisInfo = getSeriesAxisDescriptionText(series, 'yAxis'),
         summaryContext = {
             name: series.name || '',
-            ix: (series.index as any) + 1,
-            numSeries: chart.series && chart.series.length,
-            numPoints: series.points && series.points.length,
-            series: series
+            ix: index,
+            numSeries,
+            numPoints,
+            series
         },
         combinationSuffix = chartTypes.length > 1 ? 'Combination' : '',
         summary = chart.langFormat(
@@ -613,13 +616,24 @@ function defaultSeriesDescriptionFormatter(
         ) || chart.langFormat(
             'accessibility.series.summary.default' + combinationSuffix,
             summaryContext
-        );
+        ),
+        axisDescription = (
+            shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo + '.' : ''
+        ) + (
+            shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
+        ),
+        formatStr = chart.options.accessibility.series.descriptionFormat || '';
 
-    return summary + (description ? ' ' + description : '') + (
-        shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo : ''
-    ) + (
-        shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo : ''
-    );
+    return format(formatStr, {
+        seriesDescription: summary,
+        authorDescription: (description ? ' ' + description : ''),
+        axisDescription,
+        series,
+        numSeries,
+        numPoints,
+        chart,
+        index
+    }, void 0);
 }
 
 
