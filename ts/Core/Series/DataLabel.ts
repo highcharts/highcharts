@@ -404,7 +404,7 @@ namespace DataLabel {
             dataLabel.hide();
             dataLabel.placed = false; // don't animate back in
         } else {
-            dataLabel.show(true);
+            dataLabel.show();
         }
     }
 
@@ -512,7 +512,7 @@ namespace DataLabel {
                 const group = series.dataLabelsGroup;
                 if (group) {
                     if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show(true);
+                        dataLabelsGroup.show();
                     }
                     (group[
                         seriesOptions.animation ? 'animate' : 'attr'

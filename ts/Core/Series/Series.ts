@@ -3186,10 +3186,10 @@ class Series {
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
-                graph.show(true);
+                graph.show();
             }
             if (area) {
-                area.show(true);
+                area.show();
             }
         }
     }
@@ -3845,7 +3845,7 @@ class Series {
 
             series.tracker = renderer.path(trackerPath)
                 .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
+                    visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
                 })
                 .addClass(
