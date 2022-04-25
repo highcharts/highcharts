@@ -922,9 +922,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             });
         }
 
-        const lastBreadcrumb = list[list.length - 1];
+        drilldownLevels.forEach(function (level, i): void {
+            const lastBreadcrumb = list[list.length - 1];
 
-        drilldownLevels.forEach(function (level): void {
             // If level is already added to breadcrumbs list,
             // don't add it again- drilling categories
             // + 1 because of the wrong levels numeration

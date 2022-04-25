@@ -255,7 +255,7 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         screenReaderSection: {
-            beforeRegionLabel: 'Chart screen reader information, {chartTitle}.',
+            beforeRegionLabel: '',
             afterRegionLabel: '',
 
             /**
@@ -438,12 +438,12 @@ const langOptions: DeepPartial<LangOptions> = {
             xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
             yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}.',
-            timeRangeDays: 'Range: {range} days.',
-            timeRangeHours: 'Range: {range} hours.',
-            timeRangeMinutes: 'Range: {range} minutes.',
-            timeRangeSeconds: 'Range: {range} seconds.',
-            rangeFromTo: 'Range: {rangeFrom} to {rangeTo}.',
-            rangeCategories: 'Range: {numCategories} categories.'
+            timeRangeDays: 'Data range: {range} days.',
+            timeRangeHours: 'Data range: {range} hours.',
+            timeRangeMinutes: 'Data range: {range} minutes.',
+            timeRangeSeconds: 'Data range: {range} seconds.',
+            rangeFromTo: 'Data ranges from {rangeFrom} to {rangeTo}.',
+            rangeCategories: 'Data range: {numCategories} categories.'
         }, /* eslint-enable max-len */
 
         /**

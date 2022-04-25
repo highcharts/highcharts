@@ -435,6 +435,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
 
     /**
+     * Apply a11y attributes to a screen reader info section
      * @private
      * @param {Highcharts.HTMLDOMElement} sectionDiv The section element
      * @param {string} regionKey Name/key of the region we are setting attrs for
@@ -443,31 +444,28 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sectionDiv: HTMLDOMElement,
         regionKey: string
     ): void {
-        const labelLangKey = (
-                'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
-            ),
-            chart = this.chart,
+        const chart = this.chart,
             labelText = chart.langFormat(
-                labelLangKey,
+                'accessibility.screenReaderSection.' + regionKey +
+                    'RegionLabel',
                 { chart: chart, chartTitle: getChartTitle(chart) }
             ),
-            sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
-                chart.index;
+            sectionId = `highcharts-screen-reader-region-${regionKey}-${chart.index}`;
 
         attr(sectionDiv, {
             id: sectionId,
-            'aria-label': labelText
+            'aria-label': labelText || void 0
         });
 
         // Sections are wrapped to be positioned relatively to chart in case
         // elements inside are tabbed to.
         sectionDiv.style.position = 'relative';
 
-        if (
-            chart.options.accessibility.landmarkVerbosity === 'all' &&
-            labelText
-        ) {
-            sectionDiv.setAttribute('role', 'region');
+        if (labelText) {
+            sectionDiv.setAttribute('role',
+                chart.options.accessibility.landmarkVerbosity === 'all' ?
+                    'region' : 'group'
+            );
         }
     }
 
