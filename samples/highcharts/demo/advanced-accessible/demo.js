@@ -79,7 +79,7 @@ var chart = Highcharts.chart('container', {
         },
 
         series: {
-            descriptionFormat: '{series.name}, series {index} of {numSeries} with {numPoints} data points.'
+            descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
         },
 
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
