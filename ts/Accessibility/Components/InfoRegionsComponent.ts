@@ -783,7 +783,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
             },
             hasNoMap = !!chart.types &&
                 chart.types.indexOf('map') < 0 &&
-                chart.types.indexOf('treemap') < 0,
+                chart.types.indexOf('treemap') < 0 &&
+                chart.types.indexOf('tilemap') < 0,
             hasCartesian = !!chart.hasCartesianSeries,
             showXAxes = shouldDescribeColl(
                 'xAxis', !chart.angular && hasCartesian && hasNoMap
