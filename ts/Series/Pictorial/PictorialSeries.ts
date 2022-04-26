@@ -200,6 +200,9 @@ class PictorialSeries extends ColumnSeries {
         super.drawPoints.apply(series, arguments);
     }
 
+    public animateDrilldown(): void {}
+    public animateDrillupFrom(): void {}
+
     public pointAttribs(
         point?: PictorialPoint,
         selected?: StatesOptionsKey
@@ -381,10 +384,6 @@ interface PictorialSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof PictorialPoint;
 }
-extend(PictorialSeries.prototype, {
-    parallelArrays: ['x', 'y', 'target'],
-    pointArrayMap: ['y', 'target']
-});
 
 PictorialSeries.prototype.pointClass = PictorialPoint;
 
