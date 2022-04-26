@@ -162,11 +162,13 @@ function getTypeDescription(
 ): string {
     const firstType = types[0],
         firstSeries = chart.series && chart.series[0] || {},
+        mapTitle = chart.mapView && chart.mapView.geoMap &&
+            chart.mapView.geoMap.title,
         formatContext: InfoRegionsComponent.TypeDescFormatContextObject = {
             numSeries: chart.series.length,
             numPoints: firstSeries.points && firstSeries.points.length,
-            chart: chart,
-            mapTitle: firstSeries.mapTitle
+            chart,
+            mapTitle
         };
 
     if (!firstType) {

@@ -1,26 +1,27 @@
 QUnit.test('Basic map', function (assert) {
     var chart = Highcharts.mapChart('container', {
-        chart: {
-            map: 'custom/europe'
-        },
-        series: [
-            {
-                data: [
-                    ['no', 1],
-                    ['se', 2],
-                    ['fi', 3],
-                    ['gb', 4],
-                    ['fr', 5],
-                    ['it', 6]
-                ]
-            }
-        ]
-    });
+            chart: {
+                map: 'custom/europe'
+            },
+            series: [
+                {
+                    data: [
+                        ['no', 1],
+                        ['se', 2],
+                        ['fi', 3],
+                        ['gb', 4],
+                        ['fr', 5],
+                        ['it', 6]
+                    ]
+                }
+            ]
+        }),
+        description = chart.accessibility.components.infoRegions
+            .screenReaderSections.before.element.textContent;
 
     assert.ok(
-        chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.textContent.length,
-        'There be screen reader region'
+        description.indexOf('Europe') > 0,
+        'There is a screen reader region, and it contains "Europe"'
     );
 });
 

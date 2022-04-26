@@ -516,7 +516,8 @@ function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
         copyrightUrl: topology.copyrightUrl,
         features,
         'hc-recommended-mapview': object['hc-recommended-mapview'],
-        bbox: topology.bbox
+        bbox: topology.bbox,
+        title: topology.title
     };
 
     object['hc-decoded-geojson'] = geojson;
