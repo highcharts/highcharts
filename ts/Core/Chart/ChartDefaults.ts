@@ -999,11 +999,11 @@ const ChartDefaults: ChartOptions = {
      */
     zoomBySingleTouch: false,
 
-        /**
+    /**
      * Chart zooming options.
      * @since next
      */
-         zooming: {
+    zooming: {
 
         /**
          * Enables zooming by a single touch, in combination with
@@ -1047,7 +1047,6 @@ const ChartDefaults: ChartOptions = {
          */
 
     },
-    
     /**
      * An explicit width for the chart. By default (when `null`) the width
      * is calculated from the offset width of the containing element.
