@@ -135,7 +135,10 @@
                         type: 'mapline',
                         nullColor: 'silver',
                         showInLegend: false,
-                        enableMouseTracking: false
+                        enableMouseTracking: false,
+                        accessibility: {
+                            enabled: false
+                        }
                     }]
                 };
             keys = keys.map(function (key) {
