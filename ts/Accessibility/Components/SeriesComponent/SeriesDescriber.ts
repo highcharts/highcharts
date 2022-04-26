@@ -103,15 +103,22 @@ function findFirstPointWithGraphic(
 
 
 /**
+ * Whether or not we should add a dummy point element in
+ * order to describe a point that has no graphic.
  * @private
  */
 function shouldAddDummyPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.is('sunburst'),
-        isNull = point.isNull;
+    const series = point.series,
+        chart = series && series.chart,
+        isSunburst = series && series.is('sunburst'),
+        isNull = point.isNull,
+        shouldDescribeNull = chart &&
+            (chart as Accessibility.ChartComposition)
+                .options.accessibility.point.describeNull;
 
-    return isNull && !isSunburst;
+    return isNull && !isSunburst && shouldDescribeNull;
 }
 
 
@@ -550,19 +557,26 @@ function describePointsInSeries(
     series: Accessibility.SeriesComposition
 ): void {
     const setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series),
-        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
+        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series),
+        shouldDescribeNullPoints = series.chart.options.accessibility
+            .point.describeNull;
 
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach((point): void => {
             const pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint(point) && addDummyPointElement(point);
-            const pointA11yDisabled = (
-                point.options &&
-                point.options.accessibility &&
-                point.options.accessibility.enabled === false
-            );
+                    shouldAddDummyPoint(point) && addDummyPointElement(point),
+                pointA11yDisabled = (
+                    point.options &&
+                    point.options.accessibility &&
+                    point.options.accessibility.enabled === false
+                );
 
             if (pointEl) {
+                if (point.isNull && !shouldDescribeNullPoints) {
+                    pointEl.setAttribute('aria-hidden', true);
+                    return;
+                }
+
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
@@ -698,7 +712,7 @@ function describeSeries(
         if (shouldDescribeSeriesElement(series)) {
             describeSeriesElement(series, seriesEl);
         } else {
-            seriesEl.setAttribute('aria-label', '');
+            seriesEl.removeAttribute('aria-label');
         }
     }
 }

@@ -133,6 +133,7 @@ declare global {
         interface AccessibilityPointOptions {
             dateFormat?: string;
             dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
+            describeNull: boolean;
             descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
             valueDecimals?: number;
             valueDescriptionFormat: string;
@@ -568,7 +569,19 @@ const Options: DeepPartial<OptionsType> = {
              * @type      {string}
              * @since 8.0.1
              */
-            valueDescriptionFormat: '{xDescription}{separator}{value}.'
+            valueDescriptionFormat: '{xDescription}{separator}{value}.',
+
+            /**
+             * Whether or not to describe points with the value `null` to
+             * assistive technology, such as screen readers.
+             *
+             * @sample {highmaps} maps/demo/all-areas-as-null
+             *         Accessible map with null points
+             *
+             * @type      {boolean}
+             * @since next
+             */
+            describeNull: true
         },
 
         /**

@@ -160,10 +160,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         '-1',
         'There be tabindex on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There be empty ARIA on series'
+        'There is no aria-label on series'
     );
 
     point.series.addPoint(4);
@@ -172,10 +171,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         getPointAriaLabel(point.series.points[6]),
         'There still be ARIA on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There still be ARIA on series'
+        'There is still no aria-label on series'
     );
 });
 

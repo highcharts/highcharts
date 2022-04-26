@@ -19,6 +19,13 @@
             text: 'Demo of drawing all areas in the map, only highlighting partial data'
         },
 
+        accessibility: {
+            typeDescription: 'Map of Europe.',
+            point: {
+                describeNull: false
+            }
+        },
+
         legend: {
             enabled: false
         },
