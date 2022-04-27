@@ -18,7 +18,8 @@ const discipline = [{
 
 
 async function getData() {
-    const response = await fetch("https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/olympic2012.json"
+    const response = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/olympic2012.json'
     );
     return response.json();
 }
