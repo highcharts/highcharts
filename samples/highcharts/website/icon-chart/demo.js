@@ -138,9 +138,7 @@ const iceberg = {
         },
         landmarkVerbosity: 'disabled',
         series: {
-            descriptionFormatter: function (series) {
-                return series.options.accessibility.description;
-            }
+            descriptionFormat: '{authorDescription}'
         },
         keyboardNavigation: {
             focusBorder: {
