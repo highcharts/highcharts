@@ -1,8 +1,5 @@
 #container {
     max-width: 500px;
     height: 600px;
-    position: absolute;
     margin: auto;
-    right: 0;
-    left: 0;
 }
