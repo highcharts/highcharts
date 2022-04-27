@@ -1073,7 +1073,9 @@ Chart.prototype.drillUp = function (): void {
 
     this.redraw();
 
-    (this.ddDupes as any).length = []; // #3315
+    if (this.ddDupes) {
+        this.ddDupes.length = 0; // #3315
+    } // #8324
 
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
