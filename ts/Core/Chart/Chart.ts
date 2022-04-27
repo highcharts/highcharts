@@ -2781,12 +2781,13 @@ class Chart {
                 opts && !this.accessibility &&
                 !(opts.accessibility && opts.accessibility.enabled === false)
             ) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    'Highcharts: Consider including the "accessibility.js" ' +
-                    'module to make your chart more usable for people with ' +
-                    'disabilities. Set the "accessibility.enabled" option ' +
-                    'to false to remove this warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.'
+                error(
+                    'Highcharts warning: Consider including the ' +
+                    '"accessibility.js" module to make your chart more ' +
+                    'usable for people with disabilities. Set the ' +
+                    '"accessibility.enabled" option to false to remove this ' +
+                    'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
+                    false, this
                 );
             }
         }, 100);
