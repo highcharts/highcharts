@@ -20,7 +20,6 @@ import '../../Extensions/PatternFill.js';
 
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type ColorType from '../../Core/Color/ColorType.js';
 
@@ -29,8 +28,8 @@ import U from '../../Core/Utilities.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
-import Axis from '../../Core/Axis/Axis.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
+import PictorialUtilities from './PictorialUtilities.js';
 
 const {
     animObject
@@ -47,6 +46,10 @@ const {
     merge,
     addEvent
 } = U;
+
+const {
+    rescalePatternFill
+} = PictorialUtilities;
 
 export interface StackBorderOptions {
     width?: number;
@@ -259,30 +262,6 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
         }
     });
 });
-
-function rescalePatternFill(
-    element: SVGElement,
-    yAxis: Axis,
-    height: number
-): void {
-    const fill = element && element.attr('fill') as string;
-    const match = fill && fill.match(/url\(([^)]+)\)/);
-    if (match) {
-        const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
-        if (patternPath) {
-            const bBox = patternPath.getBBox();
-            const scaleX = 1 / bBox.width;
-            const scaleY = yAxis.len /
-               height /
-                bBox.height;
-            patternPath.setAttribute(
-                'transform',
-                `scale(${scaleX} ${scaleY}) ` +
-                `translate(${-bBox.x}, ${-bBox.y})`
-            );
-        }
-    }
-}
 
 addEvent(StackItem, 'afterRender', function (): void {
     const options = this.yAxis.options;

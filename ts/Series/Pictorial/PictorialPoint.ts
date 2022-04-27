@@ -11,11 +11,17 @@
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PictorialUtilities from './PictorialUtilities.js';
+
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
+
+const {
+    rescalePatternFill
+} = PictorialUtilities;
 
 /* *
  *
@@ -38,6 +44,19 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
+
+    public setState(): void {
+        const point = this;
+
+        super.setState.apply(point, arguments);
+        if (point.graphic && point.shapeArgs) {
+            rescalePatternFill(
+                point.graphic,
+                point.series.yAxis,
+                point.shapeArgs.height || Infinity
+            );
+        }
+    }
 
 }
 
