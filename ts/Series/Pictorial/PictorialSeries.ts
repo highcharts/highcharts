@@ -250,36 +250,22 @@ class PictorialSeries extends ColumnSeries {
 addEvent(PictorialSeries, 'afterRender', function (): void {
     const series = this;
     series.points.forEach(function (point: PictorialPoint): void {
-        const fill = point.graphic && point.graphic.attr('fill') as string;
-        const match = fill && fill.match(/url\(([^)]+)\)/);
-        if (match) {
-            const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
-            if (patternPath) {
-                const bBox = patternPath.getBBox();
-                const scaleX = 1 / bBox.width;
-                const scaleY = series.yAxis.len /
-                    (
-                        point.shapeArgs &&
-                        point.shapeArgs.height ||
-                        Infinity
-                    ) /
-                    bBox.height;
-                patternPath.setAttribute(
-                    'transform',
-                    `scale(${scaleX} ${scaleY}) ` +
-                    `translate(${-bBox.x}, ${-bBox.y})`
-                );
-            }
+        if (point.graphic && point.shapeArgs) {
+            rescalePatternFill(
+                point.graphic,
+                series.yAxis,
+                point.shapeArgs.height || Infinity
+            );
         }
     });
 });
 
-function resizeStackBorder(
-    stackBorder: SVGElement,
+function rescalePatternFill(
+    element: SVGElement,
     yAxis: Axis,
     height: number
 ): void {
-    const fill = stackBorder && stackBorder.attr('fill') as string;
+    const fill = element && element.attr('fill') as string;
     const match = fill && fill.match(/url\(([^)]+)\)/);
     if (match) {
         const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
@@ -334,7 +320,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                 }
             })
             .add();
-        resizeStackBorder(this.stackBorder, this.yAxis, height);
+        rescalePatternFill(this.stackBorder, this.yAxis, height);
     } else if (stackBorder) {
         stackBorder.attr({
             x,
@@ -360,7 +346,7 @@ addEvent(StackItem, 'afterRender', function (): void {
             }
         });
 
-        resizeStackBorder(stackBorder, this.yAxis, height);
+        rescalePatternFill(stackBorder, this.yAxis, height);
     }
 });
 
