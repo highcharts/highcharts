@@ -30,6 +30,13 @@ import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 
 
 export type TreegraphLayoutTypes = 'Walker';
+export interface CollapseButtonOptions {
+    x: number;
+    y: number;
+    enabled: boolean;
+    height: number;
+    width: number;
+}
 export interface TreegraphDataLabelFormatterCallback {
     (
         this: (
@@ -48,6 +55,7 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
 }
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
+    collapseButton: CollapseButtonOptions;
     link: LinkOptions;
     reversed?: boolean;
     marker: PointMarkerOptions;

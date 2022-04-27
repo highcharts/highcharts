@@ -112,7 +112,6 @@ class TreegraphSeries extends TreemapSeries {
              * @default false
              * @product highcharts
              *
-             * @sample highcharts/series-treegraph/reversed-nodes
              *         Treegraph series with reversed nodes.
              */
             reversed: false,
@@ -177,6 +176,13 @@ class TreegraphSeries extends TreemapSeries {
             /**
              * @extends plotOptions.series.tooltip
              */
+            collapseButton: {
+                enabled: true,
+                x: 0,
+                y: 0,
+                height: 3,
+                width: 3
+            },
             tooltip: {
                 /**
                  * The HTML of the point's line in the tooltip. Variables are
