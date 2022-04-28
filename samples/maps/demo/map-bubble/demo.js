@@ -20,6 +20,10 @@
                 text: 'Demo of Highcharts map with bubbles'
             },
 
+            accessibility: {
+                description: 'We see how China and India by far are the countries with the largest population.'
+            },
+
             legend: {
                 enabled: false
             },

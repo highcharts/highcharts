@@ -14,6 +14,9 @@
                 halo: {
                     size: 5
                 }
+            },
+            inactive: {
+                enabled: false
             }
         },
         linkedMap: null, // id of linked map
@@ -149,6 +152,10 @@
             animation: false // Disable animation, especially for zooming
         },
 
+        accessibility: {
+            description: 'Complex map demo showing voting results for US states, where each state has a pie chart overlaid showing the vote distribution.'
+        },
+
         colorAxis: {
             dataClasses: [{
                 from: -1,
@@ -200,6 +207,16 @@
             mapData,
             data: data,
             name: 'States',
+            accessibility: {
+                point: {
+                    descriptionFormatter: function (point) {
+                        var party = point.value > 0 ? 'democrat' : 'republican';
+                        return point.name + ', ' + party + '. Total votes: ' + point.sumVotes +
+                            '. Democrat votes: ' + point.demVotes + '. Republican votes: ' + point.repVotes +
+                            '. Libertarian votes: ' + point.libVotes + '. Green votes: ' + point.grnVotes + '.';
+                    }
+                }
+            },
             borderColor: '#FFF',
             showInLegend: false,
             joinBy: ['name', 'id'],
@@ -241,7 +258,10 @@
             color: 'rgba(130, 130, 130, 0.5)',
             zIndex: 5,
             showInLegend: false,
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            accessibility: {
+                enabled: false
+            }
         }]
     });
 
@@ -287,6 +307,9 @@
         // Add the pie for this state
         chart.addSeries({
             type: 'mappie',
+            accessibility: {
+                enabled: false
+            },
             name: state.id,
             linkedMap: 'us-all',
             zIndex: 6, // Keep pies above connector lines

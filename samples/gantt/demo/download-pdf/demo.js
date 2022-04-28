@@ -8,6 +8,30 @@ Highcharts.ganttChart('container', {
         uniqueNames: true
     },
 
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var completedValue = point.completed ?
+                        point.completed.amount || point.completed : null,
+                    completed = completedValue ?
+                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        '';
+                return Highcharts.format(
+                    '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
+                    { point, completed }
+                );
+            }
+        }
+    },
+
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
+    },
+
     series: [{
         name: 'Project 1',
         data: [{
