@@ -1,5 +1,5 @@
 QUnit.test('Hover state tests', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'pictorial'
         },
@@ -14,23 +14,25 @@ QUnit.test('Hover state tests', function (assert) {
         },
 
         series: [{
-            data: [80, 20],
-            name: 'A'
+            data: [80, 20]
         }, {
-            data: [20, 80],
-            name: 'B'
+            data: [20, 80]
         }]
     });
 
-    const point = chart.series[1].points[0];
-    const controller = new TestController(chart);
-    const x = point.plotX + chart.plotLeft;
-    const y =  point.plotY + chart.plotTop + point.shapeArgs.height / 2;
-    controller.mouseOver(x, y);
-    const patternId = point.graphic.attr('fill').match(/url\(([^)]+)\)/u)[1];
+    const point = chart.series[1].points[0],
+        patternId = point.graphic.attr('fill').match(/url\(([^)]+)\)/u)[1],
+        controller = new TestController(chart);
+
+    controller.mouseOver(
+        point.plotX + chart.plotLeft,
+        point.plotY + chart.plotTop + point.shapeArgs.height / 2
+    );
 
     assert.notEqual(
-        chart.container.querySelector(`${patternId} path`).getAttribute('transform'),
+        chart.container
+            .querySelector(`${patternId} path`)
+            .getAttribute('transform'),
         void 0,
         'Hovered point should have transform'
     );
