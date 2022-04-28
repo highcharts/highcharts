@@ -407,4 +407,20 @@ export default MapPointSeries;
  * @apioption series.mappoint.data.y
  */
 
+/**
+*
+* @type      {number}
+* @product   highmaps
+* @excluding borderColor
+* @apioption plotOptions.mappoint
+*/
+
+/**
+*
+* @type      {number}
+* @product   highmaps
+* @excluding borderWidth
+* @apioption plotOptions.mappoint
+*/
+
 ''; // adds doclets above to transpiled file
