@@ -909,16 +909,11 @@ Chart.prototype.getCSV = function (
             row[j] = val;
         }
 
-        // The first row is the header, so number of all the columns presented
-        const numberOfColumns = rows.length ? rows[0].length : 0;
-
+        // The first row is the header, so number of all the columns presented.
         // Empty columns between not-empty cells are covered in the getDataRows
         // method. Add empty values only to the end of the row so all rows have
         // the same number of columns, #17186
-        const rowLength = row.length;
-        for (let k = 0; k < numberOfColumns - rowLength; k++) {
-            row.push(void 0);
-        }
+        row.length = rows.length ? rows[0].length : 0;
 
         // Add the values
         csv += row.join(itemDelimiter);
