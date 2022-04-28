@@ -1200,7 +1200,7 @@ class Legend {
         }
 
         // hide the border if no items
-        legend.group[display ? 'show' : 'hide']();
+        box[display ? 'show' : 'hide']();
 
         // Open for responsiveness
         if (chart.styledMode && legendGroup.getStyle('display') === 'none') {
