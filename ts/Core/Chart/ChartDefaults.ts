@@ -484,6 +484,7 @@ const ChartDefaults: ChartOptions = {
      * @default    {highstock} x
      * @since      3.0
      * @product    highcharts highstock gantt
+     * @deprecated
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.pinchType
      */
@@ -982,6 +983,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type       {string}
      * @validvalue ["x", "y", "xy"]
+     * @deprecated
      * @apioption  chart.zoomType
      */
 
@@ -992,10 +994,11 @@ const ChartDefaults: ChartOptions = {
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since 9.0.0
+     * @since next
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
+     * @deprecated
      */
     zoomBySingleTouch: false,
 
@@ -1004,12 +1007,28 @@ const ChartDefaults: ChartOptions = {
      * @since next
      */
     zooming: {
+        /**
+         * Equivalent to [type](#chart.zooming.type), but for multitouch
+         * gestures only. By default, the `pinchType` is the same as the
+         * `type` setting. However, pinching can be enabled separately in
+         * some cases, for example in stock charts where a mouse drag pans the
+         * chart, while pinching is enabled. When [tooltip.followTouchMove](
+         * #tooltip.followTouchMove) is true, pinchType only applies to
+         * two-finger touches.
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @default    {highstock} x
+         * @product    highcharts highstock gantt
+         * @validvalue ["x", "y", "xy"]
+         * @apioption  chart.zooming.pinchType
+         */
 
         /**
          * Enables zooming by a single touch, in combination with
-         * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
-         * will still work as set up by [chart.pinchType](#chart.pinchType).
-         * However, `zoomBySingleTouch` will interfere with touch-dragging the
+         * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger pinch
+         * will still work as set up by [chart.zooming.pinchType](#chart.zooming.pinchType).
+         * However, `singleTouch` will interfere with touch-dragging the
          * chart to read the tooltip. And especially when vertical zooming is
          * enabled, it will make it hard to scroll vertically on the page.
          * @sample     highcharts/chart/zoombysingletouch
@@ -1028,23 +1047,6 @@ const ChartDefaults: ChartOptions = {
          * @apioption  chart.zooming.type
          */
         type: 'x'
-
-        /**
-         * Equivalent to [zoomType](#chart.zooming.type), but for multitouch
-         * gestures only. By default, the `pinchType` is the same as the
-         * `zoomType` setting. However, pinching can be enabled separately in
-         * some cases, for example in stock charts where a mouse drag pans the
-         * chart, while pinching is enabled. When [tooltip.followTouchMove](
-         * #tooltip.followTouchMove) is true, pinchType only applies to
-         * two-finger touches.
-         *
-         * @type       {string}
-         * @default    {highcharts} undefined
-         * @default    {highstock} x
-         * @product    highcharts highstock gantt
-         * @validvalue ["x", "y", "xy"]
-         * @apioption  chart.zooming.pinchType
-         */
 
     },
     /**
