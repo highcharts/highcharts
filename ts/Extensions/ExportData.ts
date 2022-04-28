@@ -903,9 +903,10 @@ Chart.prototype.getCSV = function (
             row[j] = val;
         }
 
-        // The first row is the header, so number of all the columns presented.
+        // The first row is the header - it defines the number of columns.
         // Empty columns between not-empty cells are covered in the getDataRows
-        // method. Add empty values only to the end of the row so all rows have
+        // method.
+        // Now add empty values only to the end of the row so all rows have
         // the same number of columns, #17186
         row.length = rows.length ? rows[0].length : 0;
 
