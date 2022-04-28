@@ -521,19 +521,6 @@ class Fx {
             true
         );
     }
-
-    // ...
-    public 'stroke-widthSetter'(): void {
-        this.elem.attr(
-            'stroke-width',
-            (
-                typeof this.start !== typeof this.end ?
-                    this.end : this.now
-            ) as any,
-            void 0,
-            true
-        );
-    }
 }
 
 /* *

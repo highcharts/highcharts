@@ -903,22 +903,40 @@ class MapSeries extends ScatterSeries {
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any, state
             );
+        const strokeWidthOptionName = (
+            this.pointAttrToOptions &&
+            (this.pointAttrToOptions as any)['stroke-width']
+        ) || 'borderWidth';
 
         // Individual stroke width
         let pointStrokeWidth = (point.options as any)[
-            (
-                this.pointAttrToOptions &&
-                (this.pointAttrToOptions as any)['stroke-width']
-            ) || 'borderWidth'
+            strokeWidthOptionName
         ];
+
+        // Handle state specific border or line width
+        if (state) {
+            const stateOptions = merge(
+                (this.options as any).states[state],
+                point.options.states &&
+                (point.options.states as any)[state] ||
+                {}
+            );
+            pointStrokeWidth = stateOptions[strokeWidthOptionName];
+        }
+
         if (pointStrokeWidth && mapView) {
             pointStrokeWidth /= mapView.getScale();
         }
 
         // In order for dash style to avoid being scaled, set the transformed
         // stroke width on the item
-        if (attr.dashstyle && mapView && this.options.borderWidth) {
-            pointStrokeWidth = this.options.borderWidth / mapView.getScale();
+        if (
+            attr.dashstyle &&
+            mapView &&
+            (this.options as any)[strokeWidthOptionName]
+        ) {
+            pointStrokeWidth = (this.options as any)[strokeWidthOptionName] /
+                mapView.getScale();
         }
 
         attr['stroke-width'] = pick(
