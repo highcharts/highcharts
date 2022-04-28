@@ -1,3 +1,13 @@
+/* *
+ *
+ *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import Axis from '../../Core/Axis/Axis.js';
 
