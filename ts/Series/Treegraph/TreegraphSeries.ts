@@ -174,15 +174,39 @@ class TreegraphSeries extends TreemapSeries {
                  */
             },
             /**
-             * @extends plotOptions.series.tooltip
+             * Options applied to the collapse button.
              */
             collapseButton: {
+                onlyOnHover: true,
+                /**
+                 * Whether the button should be visible.
+                 * @default true
+                 */
                 enabled: true,
+                /**
+                 * Offset of the button in the x direction.
+                 * @default 0
+                 */
                 x: 0,
+                /**
+                 * Offset of the button in the y direction.
+                 * @default 0
+                 */
                 y: 0,
+                /**
+                 * Height of the button.
+                 * @default 3
+                 */
                 height: 3,
+                /**
+                 * Width of the button.
+                 * @default 3
+                 */
                 width: 3
             },
+            /**
+             * @extends plotOptions.series.tooltip
+             */
             tooltip: {
                 /**
                  * The HTML of the point's line in the tooltip. Variables are

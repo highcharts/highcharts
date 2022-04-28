@@ -22,7 +22,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
-const { merge } = U;
+const { merge, addEvent } = U;
 const {
     seriesTypes: {
         treemap: {
@@ -73,6 +73,7 @@ class TreegraphPoint extends TreemapPoint {
             return;
         }
 
+        this.options.collapseButton = btnOptions;
         if (!point.collapseButton) {
             if (!point.node.children.length || !btnOptions.enabled) {
                 return;
@@ -99,6 +100,9 @@ class TreegraphPoint extends TreemapPoint {
                 })
                 .add()
                 .toFront();
+            if (btnOptions.onlyOnHover) {
+                point.collapseButton.hide();
+            }
         } else {
             if (!point.node.children.length || !btnOptions.enabled) {
                 point.collapseButton.destroy();
@@ -106,9 +110,13 @@ class TreegraphPoint extends TreemapPoint {
             } else {
                 const { x, y } = this.getCollapseBtnPosition(btnOptions);
                 point.collapseButton
+                    // TODO: Adjust the options to keep the button visible on
+                    // the clicked point.
                     .attr({
                         text: point.collapsed ? '+' : '-',
-                        visibility: point.visible ? 'inherit' : 'hidden'
+                        visibility: point.visible && !btnOptions.onlyOnHover ?
+                            'inherit' :
+                            'hidden'
                     })
                     .animate({ x, y });
             }
@@ -137,7 +145,7 @@ class TreegraphPoint extends TreemapPoint {
         y: number;
     } {
         const point = this,
-            chart = this.series.chart,
+            chart = point.series.chart,
             inverted = chart.inverted,
             plotSizeX = chart.plotSizeX || 0,
             plotSizeY = chart.plotSizeY || 0,
@@ -164,6 +172,20 @@ class TreegraphPoint extends TreemapPoint {
         };
     }
 }
+
+addEvent(TreegraphPoint, 'mouseOut', function (): void {
+    const btn = this.collapseButton,
+        btnOptions = this.options.collapseButton;
+    if (btn && btnOptions && btnOptions.onlyOnHover) {
+        btn.hide();
+    }
+});
+
+addEvent(TreegraphPoint, 'mouseOver', function (): void {
+    if (this.collapseButton) {
+        this.collapseButton.show();
+    }
+});
 /* *
  *
  *  Export Default
