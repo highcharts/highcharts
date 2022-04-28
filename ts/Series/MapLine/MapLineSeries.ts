@@ -25,7 +25,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    defined,
     extend,
     merge
 } = U;
@@ -106,23 +105,11 @@ class MapLineSeries extends MapSeries {
         point: MapLinePoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        const { mapView } = point.series.chart;
         const attr = MapSeries.prototype.pointAttribs.call(
             this,
             point,
             state
         );
-
-        if (state === 'hover') {
-            if (point.series.options.states &&
-                point.series.options.states.hover) {
-                let lineWidth = point.series.options.states.hover.lineWidth;
-
-                if (mapView && defined(lineWidth)) {
-                    attr['stroke-width'] = lineWidth / mapView.getScale();
-                }
-            }
-        }
 
         // The difference from a map series is that the stroke takes the
         // point color
