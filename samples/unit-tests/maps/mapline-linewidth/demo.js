@@ -63,8 +63,8 @@ QUnit.test(
             ];
         }
 
-        const londonPoint = chart.get('one'),
-            belfastPoint = chart.get('two');
+        const pointOne = chart.get('one'),
+            pointTwo = chart.get('two');
 
         chart.addSeries({
             type: 'mapline',
@@ -75,7 +75,7 @@ QUnit.test(
             },
             data: [{
                 id: 'one - two',
-                path: pointsToPath(londonPoint, belfastPoint, true)
+                path: pointsToPath(pointOne, pointTwo, true)
             }]
         }, true, false);
 
