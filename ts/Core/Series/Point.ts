@@ -209,7 +209,13 @@ class Point {
      */
     public series: Series = void 0 as any;
 
-    public shapeArgs?: SVGAttributes;
+    /**
+     * The attributes to control the rendered SVG shape of the point.
+     *
+     * @name Highcharts.Point#shapeArgs
+     * @type {Highcharts.SVGAttributes|undefined}
+     */
+    public shapeArgs?: SVGAttributes = void 0;
 
     public shapeType?: string;
 
