@@ -73,6 +73,10 @@
             animation: false // Disable animation, especially for zooming
         },
 
+        accessibility: {
+            description: 'Complex map demo showing voting results for US states, where each state has a pie chart overlaid showing the vote distribution.'
+        },
+
         colorAxis: {
             dataClasses: [{
                 from: -1,
@@ -130,6 +134,16 @@
             mapData,
             data: data,
             name: 'States',
+            accessibility: {
+                point: {
+                    descriptionFormatter(point) {
+                        const party = point.value > 0 ? 'democrat' : 'republican';
+                        return point.name + ', ' + party + '. Total votes: ' + point.sumVotes +
+                            '. Democrat votes: ' + point.demVotes + '. Republican votes: ' + point.repVotes +
+                            '. Libertarian votes: ' + point.libVotes + '. Green votes: ' + point.grnVotes + '.';
+                    }
+                }
+            },
             borderColor: '#FFF',
             joinBy: ['name', 'id'],
             keys: ['id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
@@ -158,23 +172,30 @@
                             .join('') +
                         '<hr/>Total: ' + Highcharts.numberFormat(this.sumVotes, 0);
                 }
-            },
+            }
         }, {
             name: 'Connectors',
             type: 'mapline',
             color: 'rgba(130, 130, 130, 0.5)',
             zIndex: 5,
-            enableMouseTracking: false
+            showInLegend: false,
+            enableMouseTracking: false,
+            accessibility: {
+                enabled: false
+            }
         }]
     });
 
     // When clicking legend items, also toggle connectors and pies
-    chart.legend.allItems.forEach(function (item) {
+    chart.legend.allItems.forEach(item => {
         const setVisible = item.setVisible;
+
         item.setVisible = function () {
             const legendItem = this;
+
             setVisible.call(legendItem);
-            chart.series[0].points.forEach(function (point) {
+
+            chart.series[0].points.forEach(point => {
                 if (
                     chart.colorAxis[0].dataClasses[point.dataClass].name ===
                     legendItem.name
@@ -183,11 +204,13 @@
                     Highcharts.find(chart.series, function (item) {
                         return item.name === point.id;
                     }).setVisible(legendItem.visible, false);
+
                     // Do the same for the connector point if it exists
                     const connector = Highcharts.find(
                         chart.series[2].points,
                         item => item.name === point.id
                     );
+
                     if (connector) {
                         connector.setVisible(legendItem.visible, false);
                     }
@@ -208,7 +231,7 @@
             maxSize: 55,
             onPoint: {
                 id: state.id,
-                z: (function () {
+                z: (() => {
                     const mapView = chart.mapView,
                         zoomFactor = mapView.zoom / mapView.minZoom;
 
@@ -217,7 +240,15 @@
                         chart.chartWidth /
                         11 * zoomFactor * state.sumVotes / maxVotes
                     );
-                }())
+                })()
+            },
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            },
+            accessibility: {
+                enabled: false
             },
             tooltip: {
                 // Use the state tooltip for the pies as well

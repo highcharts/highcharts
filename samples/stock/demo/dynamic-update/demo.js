@@ -15,6 +15,10 @@ Highcharts.stockChart('container', {
         }
     },
 
+    accessibility: {
+        enabled: false
+    },
+
     time: {
         useUTC: false
     },

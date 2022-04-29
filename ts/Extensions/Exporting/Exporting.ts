@@ -44,6 +44,7 @@ import ExportingSymbols from './ExportingSymbols.js';
 import G from '../../Core/Globals.js';
 const {
     doc,
+    SVG_NS,
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
@@ -1340,10 +1341,14 @@ namespace Exporting {
             visibility: 'hidden'
         });
         doc.body.appendChild(iframe);
-        const iframeDoc: Document = (iframe.contentWindow as any).document;
-        iframeDoc.open();
-        iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-        iframeDoc.close();
+        const iframeDoc = (
+            iframe.contentWindow && iframe.contentWindow.document
+        );
+        if (iframeDoc) {
+            iframeDoc.body.appendChild(
+                iframeDoc.createElementNS(SVG_NS, 'svg')
+            );
+        }
 
         /**
          * Call this on all elements and recurse to children
@@ -1352,9 +1357,11 @@ namespace Exporting {
          *        Element child
              */
         function recurse(node: HTMLDOMElement): void {
+            const filteredStyles: CSSObject = {};
+
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
-                cssText = '',
+                // cssText = '',
                 dummy: Element,
                 styleAttr,
                 blacklisted: (boolean|undefined),
@@ -1421,13 +1428,14 @@ namespace Exporting {
                             }
                         // Styles
                         } else {
-                            cssText += hyphenate(prop) + ':' + val + ';';
+                            (filteredStyles as any)[prop] = val;
                         }
                     }
                 }
             }
 
             if (
+                iframeDoc &&
                 node.nodeType === 1 &&
                 unstyledElements.indexOf(node.nodeName) === -1
             ) {
@@ -1479,6 +1487,7 @@ namespace Exporting {
                 }
 
                 // Apply styles
+                /*
                 if (cssText) {
                     styleAttr = node.getAttribute('style');
                     node.setAttribute(
@@ -1486,6 +1495,8 @@ namespace Exporting {
                         (styleAttr ? styleAttr + ';' : '') + cssText
                     );
                 }
+                */
+                css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)
                 if (node.nodeName === 'svg') {
@@ -1504,7 +1515,7 @@ namespace Exporting {
         /**
          * Remove the dummy objects used to get defaults
          * @private
-             */
+         */
         function tearDown(): void {
             dummySVG.parentNode.removeChild(dummySVG);
             // Remove trash from DOM that stayed after each exporting

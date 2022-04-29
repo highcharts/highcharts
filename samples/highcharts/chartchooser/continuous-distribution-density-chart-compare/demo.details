@@ -1,0 +1,6 @@
+---
+ name: "Kernel Density Estimation: density plot continuous data (2022 fuel consumption ratings in city vs highway)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...
