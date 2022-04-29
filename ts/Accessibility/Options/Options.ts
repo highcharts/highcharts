@@ -451,7 +451,7 @@ const Options: DeepPartial<OptionsType> = {
              *  Accessible low-medium-high chart
              *
              * @type      {string}
-             * @since next
+             * @since 10.1.0
              */
             descriptionFormat:
                 '{seriesDescription}{authorDescription}{axisDescription}',
@@ -589,7 +589,7 @@ const Options: DeepPartial<OptionsType> = {
              *         Accessible map with null points
              *
              * @type      {boolean}
-             * @since next
+             * @since 10.1.0
              */
             describeNull: true
         },
@@ -862,7 +862,7 @@ const Options: DeepPartial<OptionsType> = {
                  * you start at the last focused point.
                  *
                  * @type  {boolean}
-                 * @since next
+                 * @since 10.1.0
                  */
                 rememberPointFocus: false
             }
