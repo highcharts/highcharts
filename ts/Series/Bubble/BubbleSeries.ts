@@ -753,7 +753,7 @@ Axis.prototype.beforePadding = function (): void {
             if (isXAxis) {
                 (series.onPoint || (series as any)).getRadii(0, 0, series);
                 if (series.onPoint) {
-                    series.radii = (series.onPoint as any).radii;
+                    series.radii = series.onPoint.radii;
                 }
             }
 
