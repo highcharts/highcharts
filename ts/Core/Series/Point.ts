@@ -210,15 +210,12 @@ class Point {
     public series: Series = void 0 as any;
 
     /**
-     * The attributes for the rendered SVG shape of the point.
-     *
-     * Changes should only be made during translate events, including
-     * `afterTranslate`, otherwise the rendered SVG shape might not reflect the
-     * latest changes.
+     * The attributes of the rendered SVG shape like in `column` or `pie`
+     * series.
      *
      * @readonly
      * @name Highcharts.Point#shapeArgs
-     * @type {Highcharts.SVGAttributes|undefined}
+     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
      */
     public shapeArgs?: SVGAttributes = void 0;
 
