@@ -25,18 +25,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
-import CU from './CenteredUtilities.js';
-const { getCenter } = CU;
-
-const drawPointsFunctions: { [key: string]: Function; } = {
-    pieDrawPoints: pie.prototype.drawPoints,
-    sunburstDrawPoints: sunburst && sunburst.prototype.drawPoints
-};
-
-const translateFunctions: { [key: string]: Function; } = {
-    pieTranslate: pie.prototype.translate,
-    sunburstTranslate: sunburst && sunburst.prototype.translate
-};
 
 import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
@@ -53,8 +41,8 @@ const {
  *
  * */
 
-type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
-type BubbleZExtremes = { zMin: number; zMax: number };
+type CenterObject = { positions: Array<number> };
+type zData = Array<number|null>;
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -131,134 +119,43 @@ namespace SeriesOnPointComposition {
         SeriesClass: T,
         ChartClass: typeof Chart
     ): (typeof SeriesComposition&T) {
+        const {
+            chartGetZData,
+            seriesAfterInit,
+            seriesAfterRender,
+            seriesGetCenter,
+            seriesShowOrHide,
+            seriesTranslate
+        } = Additions.prototype;
+
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            const pieProto = pie.prototype;
-
-            pieProto.getCenter = seriesGetCenter;
-            pieProto.drawPoints = seriesDrawPoints;
-            pieProto.translate = seriesTranslate;
-            pieProto.bubblePadding = true;
-            pieProto.useMapGeometry = true;
+            addEvent(pie, 'afterInit', seriesAfterInit);
+            addEvent(pie, 'afterRender', seriesAfterRender);
+            addEvent(pie, 'afterGetCenter', seriesGetCenter);
+            addEvent(pie, 'hide', seriesShowOrHide);
+            addEvent(pie, 'show', seriesShowOrHide);
+            addEvent(pie, 'translate', seriesTranslate);
 
             if (sunburst) {
-                const sunburstProto = sunburst.prototype;
-
-                sunburstProto.getCenter = seriesGetCenter;
-                sunburstProto.drawPoints = seriesDrawPoints;
-                sunburstProto.translate = seriesTranslate;
-                sunburstProto.bubblePadding = true;
-                sunburstProto.useMapGeometry = true;
+                addEvent(sunburst, 'afterInit', seriesAfterInit);
+                addEvent(sunburst, 'afterRender', seriesAfterRender);
+                addEvent(sunburst, 'afterGetCenter', seriesGetCenter);
+                addEvent(sunburst, 'hide', seriesShowOrHide);
+                addEvent(sunburst, 'show', seriesShowOrHide);
+                addEvent(sunburst, 'translate', seriesTranslate);
             }
-
-            addEvent(SeriesClass, 'afterInit', afterInit);
-            addEvent(SeriesClass, 'update', update);
-            addEvent(SeriesClass, 'hide', Additions.prototype.showOrHide);
-            addEvent(SeriesClass, 'show', Additions.prototype.showOrHide);
         }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
-            addEvent(ChartClass, 'beforeRender', Additions.prototype.getZData);
-            addEvent(ChartClass, 'beforeRedraw', Additions.prototype.getZData);
+            addEvent(ChartClass, 'beforeRender', chartGetZData);
+            addEvent(ChartClass, 'beforeRedraw', chartGetZData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
-    }
-
-    /**
-     * Clear bubbleZExtremes to reset z calculations on update.
-     *
-     * @ignore
-    */
-    function update(this: Series): void {
-        delete this.chart.bubbleZExtremes;
-    }
-
-    /**
-     * Initialize Series on point on series init.
-     *
-     * @ignore
-    */
-    function afterInit(this: Series): void {
-        if (this.options.onPoint) {
-            this.onPoint = new Additions(this as SeriesComposition);
-        }
-    }
-
-    /**
-     * Fire series.getRadii method to calculate required z data before original
-     * translate.
-     *
-     * @ignore
-     * @function Highcharts.Series#translate
-    */
-    function seriesTranslate(this: Series): void {
-        this.onPoint && this.onPoint.getRadii();
-
-        translateFunctions[this.type + 'Translate'].call(this);
-    }
-
-    /**
-     * Recalculate series.center (x, y and size).
-     *
-     * @ignore
-     * @function Highcharts.Series#getCenter
-    */
-    function seriesGetCenter(this: Series): Array<number> {
-        const onPointOptions = this.options.onPoint;
-
-        let ret = getCenter.call(this);
-
-        if (onPointOptions) {
-            const connectedPoint = this.chart.get(onPointOptions.id);
-
-            if (
-                connectedPoint instanceof Point &&
-                defined(connectedPoint.plotX) &&
-                defined(connectedPoint.plotY)
-            ) {
-                ret[0] = connectedPoint.plotX;
-                ret[1] = connectedPoint.plotY;
-            }
-
-            const position = onPointOptions.position;
-
-            if (position) {
-                if (defined(position.x)) {
-                    ret[0] = position.x;
-                }
-
-                if (defined(position.y)) {
-                    ret[1] = position.y;
-                }
-
-                if (position.offsetX) {
-                    ret[0] += position.offsetX;
-                }
-
-                if (position.offsetY) {
-                    ret[1] += position.offsetY;
-                }
-            }
-        }
-
-        // Get and set the size
-        const radius = this.radii && this.radii[this.index];
-
-        if (isNumber(radius)) {
-            ret[2] = radius * 2;
-        }
-
-        return ret;
-    }
-
-    function seriesDrawPoints(this: Series): void {
-        drawPointsFunctions[this.type + 'DrawPoints'].call(this);
-
-        this.onPoint && this.onPoint.seriesDrawConnector();
     }
 
     /* *
@@ -282,6 +179,7 @@ namespace SeriesOnPointComposition {
          * @private
          */
         public constructor(series: SeriesComposition) {
+            this.chart = series.chart;
             this.series = series;
             this.options = series.options.onPoint;
         }
@@ -292,56 +190,56 @@ namespace SeriesOnPointComposition {
          *
          * */
 
-        public series: SeriesComposition;
+        public chart: Chart;
 
         public connector?: SVGElement;
 
         public options?: OnPoint;
 
-        /**
-         * @ignore
-         */
-        public getRadii(): void {
-            bubble.prototype.getRadii.call(this.series);
-        }
+        public radii?: Array<number>;
+
+        public series: SeriesComposition;
+
+        public zData?: zData;
 
         /**
          * @ignore
          */
-        public getRadius(): (number|null) {
-            return bubble.prototype.getRadius.apply(this.series, arguments);
-        }
+        public getRadii = bubble.prototype.getRadii;
 
         /**
          * @ignore
          */
-        public getPxExtremes(): BubblePxExtremes {
-            return bubble.prototype.getPxExtremes.call(this.series);
-        }
+        public getRadius = bubble.prototype.getRadius;
 
         /**
          * @ignore
          */
-        public getZExtremes(): BubbleZExtremes|undefined {
-            return bubble.prototype.getZExtremes.call(this.series);
-        }
+        public getPxExtremes = bubble.prototype.getPxExtremes;
 
         /**
          * @ignore
          */
-        public getZData(this: Chart): void {
-            const zData: Array<number|null> = [];
+        public getZExtremes = bubble.prototype.getZExtremes;
 
-            this.series.forEach((series: Series): void => {
-                const onPointOpts = series.options.onPoint;
+        /**
+         * Draw connector line that starts from the initial point's position
+         * and ends in the center of the series.
+         * @private
+         */
+        public drawConnector(): void {
+            if (!this.connector) {
+                this.connector = this.series.chart.renderer.path()
+                    .addClass('highcharts-connector-seriesonpoint')
+                    .attr({
+                        zIndex: -1
+                    })
+                    .add(this.series.markerGroup);
+            }
 
-                zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
-            });
+            const attribs = this.getConnectorAttributes();
 
-            this.series.forEach((series: Series): void => {
-                // Save z values of all the series
-                series.zData = zData;
-            });
+            attribs && this.connector.attr(attribs);
         }
 
         /**
@@ -402,29 +300,85 @@ namespace SeriesOnPointComposition {
         }
 
         /**
-         * Draw connector line that starts from the initial point's position
-         * and ends in the center of the series.
-         * @private
-         */
-        public seriesDrawConnector(): void {
-            if (!this.connector) {
-                this.connector = this.series.chart.renderer.path()
-                    .addClass('highcharts-connector-seriesonpoint')
-                    .attr({
-                        zIndex: -1
-                    })
-                    .add(this.series.markerGroup);
+         * Initialize Series on point on series init.
+         *
+         * @ignore
+        */
+        public seriesAfterInit(this: Series): void {
+            if (this.options.onPoint) {
+                this.bubblePadding = true;
+                this.useMapGeometry = true;
+                this.onPoint = new Additions(this as SeriesComposition);
             }
-
-            const attribs = this.getConnectorAttributes();
-
-            attribs && this.connector.attr(attribs);
         }
 
         /**
          * @ignore
          */
-        public showOrHide(this: Series): void {
+        public seriesAfterRender(this: Series): void {
+            // Clear bubbleZExtremes to reset z calculations on update.
+            delete this.chart.bubbleZExtremes;
+
+            this.onPoint && this.onPoint.drawConnector();
+        }
+
+        /**
+         * Recalculate series.center (x, y and size).
+         *
+         * @ignore
+        */
+        public seriesGetCenter(this: Series, e: CenterObject): void {
+            const onPointOptions = this.options.onPoint;
+
+            let center = e.positions;
+
+            if (onPointOptions) {
+                const connectedPoint = this.chart.get(onPointOptions.id);
+
+                if (
+                    connectedPoint instanceof Point &&
+                    defined(connectedPoint.plotX) &&
+                    defined(connectedPoint.plotY)
+                ) {
+                    center[0] = connectedPoint.plotX;
+                    center[1] = connectedPoint.plotY;
+                }
+
+                const position = onPointOptions.position;
+
+                if (position) {
+                    if (defined(position.x)) {
+                        center[0] = position.x;
+                    }
+
+                    if (defined(position.y)) {
+                        center[1] = position.y;
+                    }
+
+                    if (position.offsetX) {
+                        center[0] += position.offsetX;
+                    }
+
+                    if (position.offsetY) {
+                        center[1] += position.offsetY;
+                    }
+                }
+            }
+
+            // Get and set the size
+            const radius = this.radii && this.radii[this.index];
+
+            if (isNumber(radius)) {
+                center[2] = radius * 2;
+            }
+
+            e.positions = center;
+        }
+
+        /**
+         * @ignore
+         */
+        public seriesShowOrHide(this: Series): void {
             const allSeries = this.chart.series;
 
             // When toggling a series visibility, loop through all points
@@ -444,6 +398,39 @@ namespace SeriesOnPointComposition {
                 // Redraw is not needed because it's fired later
                 // after showOrhide event
                 series && series.setVisible(!series.visible, false);
+            });
+        }
+
+        /**
+         * Calculate required radius (z data) before original translate.
+         *
+         * @ignore
+         * @function Highcharts.Series#translate
+        */
+        public seriesTranslate(this: Series): void {
+            if (this.onPoint) {
+                this.onPoint.getRadii();
+                this.radii = this.onPoint.radii;
+            }
+        }
+
+        /**
+         * @ignore
+         */
+        public chartGetZData(this: Chart): void {
+            const zData: zData = [];
+
+            this.series.forEach((series: Series): void => {
+                const onPointOpts = series.options.onPoint;
+
+                zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
+            });
+
+            this.series.forEach((series: Series): void => {
+                // Save z values of all the series
+                if (series.onPoint) {
+                    series.onPoint.zData = series.zData = zData;
+                }
             });
         }
     }

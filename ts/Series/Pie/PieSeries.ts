@@ -822,6 +822,8 @@ class PieSeries extends Series {
                 point.delayedRendering = true;
             }
         });
+
+        fireEvent(this, 'afterDrawPoints');
     }
 
     /**
@@ -992,6 +994,8 @@ class PieSeries extends Series {
      * @private
      */
     public translate(positions?: Array<number>): void {
+        fireEvent(this, 'translate');
+
         this.generatePoints();
 
         const series = this,
