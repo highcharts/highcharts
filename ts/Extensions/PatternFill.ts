@@ -361,8 +361,7 @@ SVGRenderer.prototype.addPattern = function (
     }
 
     if (options.patternTransform) {
-        attrs.patternTransform = attrs.patternTransform +
-            ' ' + options.patternTransform; // #16810
+        attrs.patternTransform = options.patternTransform;
     }
 
 
