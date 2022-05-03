@@ -994,7 +994,7 @@ const ChartDefaults: ChartOptions = {
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since next
+     * @since      9.0.0
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
@@ -1004,7 +1004,7 @@ const ChartDefaults: ChartOptions = {
 
     /**
      * Chart zooming options.
-     * @since next
+     * @since       next
      */
     zooming: {
         /**
@@ -1020,20 +1020,23 @@ const ChartDefaults: ChartOptions = {
          * @default    {highcharts} undefined
          * @default    {highstock} x
          * @product    highcharts highstock gantt
+         * @since      next
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.zooming.pinchType
          */
 
         /**
          * Enables zooming by a single touch, in combination with
-         * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger pinch
-         * will still work as set up by [chart.zooming.pinchType](#chart.zooming.pinchType).
-         * However, `singleTouch` will interfere with touch-dragging the
-         * chart to read the tooltip. And especially when vertical zooming is
-         * enabled, it will make it hard to scroll vertically on the page.
+         * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger
+         * pinch will still work as set up by [chart.zooming.pinchType]
+         * (#chart.zooming.pinchType). However, `singleTouch` will interfere
+         * with touch-dragging the chart to read the tooltip. And especially
+         * when vertical zooming is enabled, it will make it hard to scroll
+         * vertically on the page.
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
          * @product    highcharts highstock gantt
+         * @since      next
          */
         singleTouch: false,
 
@@ -1044,6 +1047,7 @@ const ChartDefaults: ChartOptions = {
          * @type       {string}
          * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
+         * @since      next
          * @apioption  chart.zooming.type
          */
         type: 'x'
