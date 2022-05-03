@@ -16,9 +16,7 @@ QUnit.test('Basic accessible chart', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
@@ -51,9 +49,7 @@ QUnit.test('Empty chart', function (assert) {
     var chart = Highcharts.chart('container', {});
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
@@ -77,9 +73,7 @@ QUnit.test('Accessible pie', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
