@@ -40,6 +40,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     erase,
     merge,
     pick,
@@ -223,6 +224,15 @@ Point.prototype.calculatePatternDimensions = function (
         if (!bBox.width || !bBox.height) {
             pattern._width = 'defer';
             pattern._height = 'defer';
+
+            // Check if map image pattern is flipped (#16810)
+            const scaleY = this.series.chart.mapView &&
+                this.series.chart.mapView.getSVGTransform().scaleY;
+
+            if (defined(scaleY) && scaleY < 0) {
+                pattern._inverted = true;
+            }
+
             return;
         }
 
@@ -341,6 +351,15 @@ SVGRenderer.prototype.addPattern = function (
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
     };
+
+    // Check if map image pattern is flipped (#16810)
+    if (options._inverted) {
+        attrs.patternTransform = 'scale(1, -1)';
+        if (options.patternTransform) {
+            options.patternTransform += ' scale(1, -1)';
+        }
+    }
+
     if (options.patternTransform) {
         attrs.patternTransform = options.patternTransform;
     }
@@ -704,6 +723,7 @@ namespace PatternFill {
     }
 
     export interface PatternOptionsObject {
+        _inverted?: (Boolean);
         _height?: (number|string);
         _width?: (number|string);
         _x?: number;
