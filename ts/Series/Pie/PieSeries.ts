@@ -448,7 +448,7 @@ class PieSeries extends Series {
          * @type      {number}
          * @default   undefined
          * @product   highcharts
-         * @since     next
+         * @since 10.1.0
          * @apioption plotOptions.pie.thickness
          * @private
          */

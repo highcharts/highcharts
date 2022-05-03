@@ -30,6 +30,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             text: 'GeoJSON in Highmaps'
         },
 
+        accessibility: {
+            typeDescription: 'Map of Germany.'
+        },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {

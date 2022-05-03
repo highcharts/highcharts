@@ -165,5 +165,38 @@ Highcharts.ganttChart('container', {
         currentDateIndicator: true,
         min: today - 3 * day,
         max: today + 18 * day
+    },
+    accessibility: {
+        keyboardNavigation: {
+            seriesNavigation: {
+                mode: 'serialize'
+            }
+        },
+        point: {
+            descriptionFormatter: function (point) {
+                var completedValue = point.completed ?
+                        point.completed.amount || point.completed : null,
+                    completed = completedValue ?
+                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        '',
+                    dependency = point.dependency &&
+                        point.series.chart.get(point.dependency).name,
+                    dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+
+                return Highcharts.format(
+                    point.milestone ?
+                        '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}' :
+                        '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}',
+                    { point, completed, dependsOn }
+                );
+            }
+        }
+    },
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
     }
 });
