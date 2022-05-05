@@ -2775,22 +2775,29 @@ class Chart {
      * Emit console warning if the a11y module is not loaded.
      */
     public warnIfA11yModuleNotLoaded():void {
-        setTimeout(():void => {
-            const opts = this && this.options;
-            if (
-                opts && !this.accessibility &&
-                !(opts.accessibility && opts.accessibility.enabled === false)
-            ) {
-                error(
-                    'Highcharts warning: Consider including the ' +
-                    '"accessibility.js" module to make your chart more ' +
-                    'usable for people with disabilities. Set the ' +
-                    '"accessibility.enabled" option to false to remove this ' +
-                    'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
-                    false, this
-                );
+        const opts = this.options;
+        if (
+            opts && !this.accessibility &&
+            !(opts.accessibility && opts.accessibility.enabled === false)
+        ) {
+            const renderer = this.renderer;
+            if (renderer && renderer.boxWrapper) {
+                // Make chart behave as an image with the title as alt text
+                renderer.boxWrapper.attr({
+                    role: 'img',
+                    'aria-label': opts.title && opts.title.text || ''
+                });
             }
-        }, 100);
+
+            error(
+                'Highcharts warning: Consider including the ' +
+                '"accessibility.js" module to make your chart more ' +
+                'usable for people with disabilities. Set the ' +
+                '"accessibility.enabled" option to false to remove this ' +
+                'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
+                false, this
+            );
+        }
     }
 
 
