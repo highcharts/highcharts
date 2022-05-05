@@ -27,6 +27,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 //     }
 // } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ColorType from '../../Core/Color/ColorType';
 const {
     merge,
     extend
@@ -45,7 +46,7 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 /**
- * The temperaturemap2 series type
+ * The temperaturemap series type
  *
  * @private
  * @class
@@ -58,34 +59,25 @@ class TemperatureMapSeries extends MapBubbleSeries {
     public drawPoints(): void {
         const series: any = this,
             pointLength = series.points.length,
-            size = 200,
-            // Make internal color sets
-            inColor: any = series.options.marker.fillColor,
-            colorSets: any = [];
-        let point,
-            i;
+            size = 200;
+        let colors: any = series.options.colors;
+        let i: number;
 
-        inColor.forEach((color: any, ii: number): void => {
-            colorSets.push({
-                maxSize: (1 - color[0]) * size + 100,
-                fillColor: {
+        colors = colors.map((color: ColorType, ii: number): any => {
+            const radiusFactor: number = ii / (colors.length - 1),
+                maxSize = (1 - radiusFactor) * size,
+                fillColor = {
                     radialGradient: {
                         cx: 0.5,
                         cy: 0.5,
                         r: 0.5
                     },
                     stops: [
-                        [ii === inColor.length - 1 ? 0 : 0.5, color[1]],
-                        [1, (new Color(color[1])).setOpacity(0).get('rgba')]
+                        [ii === colors.length - 1 ? 0 : 0.5, color],
+                        [1, (new Color(color)).setOpacity(0).get('rgba')]
                     ]
-                }
-            });
-        });
+                };
 
-        colorSets.forEach((
-            { maxSize, fillColor }: any,
-            iter: number
-        ): void => {
             // Options from point level not supported - API says it should,
             // but visually is it useful at all?
             series.options.marker.fillColor = fillColor;
@@ -97,24 +89,23 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
             i = 0;
             while (i < pointLength) {
-                point = series.points[i];
+                const point = series.points[i];
 
                 point.graphic.attr({
-                    zIndex: iter
+                    zIndex: ii
                 });
 
-                point['graphic' + iter] = point.graphic;
+                point['graphic' + ii] = point.graphic;
 
                 // Set up next or loop back to the start
-                point.graphic =
-                    point['graphic' + ((iter + 1) % colorSets.length)];
+                point.graphic = point['graphic' + ((ii + 1) % colors.length)];
                 i++;
             }
         });
 
         // Clean up for animation (else the first color is as small as the last)
-        series.options.marker.fillColor = colorSets[0].fillColor;
-        series.options.maxSize = colorSets[0].maxSize;
+        series.options.marker.fillColor = colors[0].fillColor;
+        series.options.maxSize = colors[0].maxSize;
         series.getRadii(); // recalc. radii
         series.translateBubble(); // use radii
 
@@ -165,7 +156,7 @@ interface TemperatureMapSeries {
     // type: string;
     // getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
     // pointArrayMap: Array<string>;
-    // pointClass: typeof TemperatureMap2Point;
+    // pointClass: typeof TemperatureMapPoint;
     // setData: typeof MapSeries.prototype['setData'];
     // processData: typeof MapSeries.prototype['processData'];
     // projectPoint: typeof MapPointSeries.prototype['projectPoint'];
