@@ -197,13 +197,13 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Check Chrome
           command: |
             google-chrome --version
             whereis google-chrome
-          name: Check Chrome
       - run:
           name: Run cypress tests (Chrome)
-          command: npx cypress run --browser chrome --headless
+          command: TZ=UTC npx cypress run --browser chrome --headless
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-chrome
@@ -224,7 +224,7 @@ jobs:
           name: Check Chrome
       - run:
           name: Run cypress tests (Firefox)
-          command: npx cypress run --browser firefox --headless
+          command: TZ=UTC npx cypress run --browser firefox --headless
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-firefox
