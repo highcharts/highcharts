@@ -26,6 +26,9 @@ QUnit.test('Accessibility disabled', function (assert) {
             accessibility: {
                 enabled: false
             },
+            title: {
+                text: 'No a11y'
+            },
             series: [
                 {
                     data: [1, 2, 3, 4, 5, 6]
@@ -40,6 +43,18 @@ QUnit.test('Accessibility disabled', function (assert) {
     assert.notOk(
         srSection && screenReaderSectionHasContents(srSection),
         'There be no screen reader region'
+    );
+
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('aria-label'),
+        'No a11y',
+        'SVG root has aria label'
+    );
+
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        'img',
+        'SVG root has img role'
     );
 });
 
@@ -237,6 +252,11 @@ QUnit.test('pointDescriptionFormatter', function (assert) {
 
 QUnit.test('Chart description', function (assert) {
     var chart = Highcharts.chart('container', {
+        lang: {
+            accessibility: {
+                svgContainerLabel: 'Test'
+            }
+        },
         accessibility: {
             description: 'Description: Yo.'
         },
@@ -250,6 +270,16 @@ QUnit.test('Chart description', function (assert) {
         getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') >
             -1,
         'Chart description included in screen reader region'
+    );
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        null,
+        'SVG root has no role'
+    );
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('aria-label'),
+        'Test',
+        'SVG root has aria label from lang'
     );
 
     chart.update({});
