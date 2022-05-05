@@ -1,0 +1,12 @@
+#range {
+    display: none;
+}
+
+#play {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 2rem;
+}
+
+#lightgreen {
+    mix-blend-mode: multiply;
+}

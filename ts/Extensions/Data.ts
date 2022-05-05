@@ -817,6 +817,11 @@ class Data {
             new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
         );
 
+        // Always stop old polling when we have new options
+        if (this.liveDataTimeout !== void 0) {
+            clearTimeout(this.liveDataTimeout);
+        }
+
         // This is a two-dimensional array holding the raw, trimmed string
         // values with the same organisation as the columns array. It makes it
         // possible for example to revert from interpreted timestamps to
@@ -826,12 +831,7 @@ class Data {
         // No need to parse or interpret anything
         if (this.columns.length) {
             this.dataFound();
-            hasData = true;
-        }
-
-        if (this.hasURLOption(options)) {
-            clearTimeout(this.liveDataTimeout);
-            hasData = false;
+            hasData = !this.hasURLOption(options);
         }
 
         if (!hasData) {
@@ -1833,7 +1833,7 @@ class Data {
                     fn(json);
 
                     if (options.enablePolling) {
-                        setTimeout(
+                        data.liveDataTimeout = setTimeout(
                             function (): void {
                                 fetchSheet(fn);
                             },
@@ -1960,30 +1960,32 @@ class Data {
      *        Column index
      */
     public parseColumn(
-        column: Array<Highcharts.DataValueType>,
+        column: Array<Highcharts.DataValueType> & { name?: string },
         col: number
     ): void {
-        let rawColumns = this.rawColumns,
+        const rawColumns = this.rawColumns,
             columns = this.columns,
-            row = column.length,
-            val: Highcharts.DataValueType,
-            floatVal,
-            trimVal,
-            trimInsideVal,
             firstRowAsNames = this.firstRowAsNames,
             isXColumn = (this.valueCount as any).xColumns.indexOf(col) !== -1,
-            dateVal,
             backup: Array<Highcharts.DataValueType> = [],
-            diff,
             chartOptions = this.chartOptions,
-            descending,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
             forceCategory = isXColumn && ((
                 chartOptions &&
                 chartOptions.xAxis &&
                 splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string');
+            ) || columnType === 'string'),
+            columnHasName = defined(column.name);
+
+        let row = column.length,
+            val: Highcharts.DataValueType,
+            floatVal,
+            trimVal,
+            trimInsideVal,
+            dateVal,
+            diff,
+            descending;
 
         if (!rawColumns[col]) {
             rawColumns[col] = [];
@@ -2002,7 +2004,10 @@ class Data {
 
             // Disable number or date parsing by setting the X axis type to
             // category
-            if (forceCategory || (row === 0 && firstRowAsNames)) {
+            if (
+                forceCategory ||
+                (row === 0 && firstRowAsNames && !columnHasName)
+            ) {
                 column[row] = '' + trimVal;
 
             } else if (+trimInsideVal === floatVal) { // is numeric
@@ -2537,7 +2542,8 @@ class Data {
         options: Highcharts.DataOptions,
         redraw?: boolean
     ): void {
-        const chart = this.chart;
+        const chart = this.chart,
+            chartOptions = chart.options;
 
         if (options) {
             // Set the complete handler
@@ -2562,8 +2568,17 @@ class Data {
                 }
             };
             // Apply it
-            merge(true, chart.options.data, options);
-            this.init(chart.options.data as any);
+            merge(true, chartOptions.data, options);
+
+            // Reset columns if fetching spreadsheet, to force a re-fetch
+            if (
+                chartOptions.data && chartOptions.data.googleSpreadsheetKey &&
+                !options.columns
+            ) {
+                delete chartOptions.data.columns;
+            }
+
+            this.init(chartOptions.data as any);
         }
     }
 }

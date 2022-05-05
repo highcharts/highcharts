@@ -11,6 +11,8 @@ const deg2rad = Math.PI / 180,
 
 export default class Orthographic implements ProjectionDefinition {
 
+    antimeridianCutting = false;
+
     bounds = {
         x1: -scale,
         x2: scale,

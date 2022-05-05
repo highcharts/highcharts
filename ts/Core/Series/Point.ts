@@ -209,7 +209,15 @@ class Point {
      */
     public series: Series = void 0 as any;
 
-    public shapeArgs?: SVGAttributes;
+    /**
+     * The attributes of the rendered SVG shape like in `column` or `pie`
+     * series.
+     *
+     * @readonly
+     * @name Highcharts.Point#shapeArgs
+     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+    public shapeArgs?: SVGAttributes = void 0;
 
     public shapeType?: string;
 
@@ -236,7 +244,7 @@ class Point {
      */
     public visible: boolean = true;
 
-    public x: (number|null) = void 0 as any;
+    public x: number = void 0 as any;
 
     public y?: (number|null);
 
@@ -1570,7 +1578,7 @@ namespace Point {
         plural: Array<string>;
     }
     export interface PointLabelObject {
-        x?: string;
+        x?: (number|string);
         y?: (number|null);
         color?: ColorType;
         colorIndex?: number;
@@ -1630,7 +1638,7 @@ export default Point;
  */
 
 /**
- * Configuration hash for the data label and tooltip formatters.
+ * Configuration for the data label and tooltip formatters.
  *
  * @interface Highcharts.PointLabelObject
  *//**
@@ -1672,7 +1680,7 @@ export default Point;
  *//**
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
- * @type {number|undefined}
+ * @type {number|null|undefined}
  */
 
 /**

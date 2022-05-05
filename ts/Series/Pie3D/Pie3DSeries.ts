@@ -262,6 +262,27 @@ class Pie3DSeries extends PieSeries {
         });
     }
 
+    /**
+     * @private
+     */
+    public drawTracker(): void {
+        super.drawTracker.apply(this, arguments);
+
+        // Do not do this if the chart is not 3D
+        if (!this.chart.is3d()) {
+            return;
+        }
+
+        this.points.forEach(function (point): void {
+            if (point.graphic) {
+                ['out', 'inn', 'side1', 'side2'].forEach((face): void => {
+                    if (point.graphic) {
+                        point.graphic[face].element.point = point;
+                    }
+                });
+            }
+        });
+    }
     /* eslint-enable valid-jsdoc */
 
 }

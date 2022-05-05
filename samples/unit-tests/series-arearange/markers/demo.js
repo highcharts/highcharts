@@ -35,7 +35,7 @@ QUnit.test('Markers for arearange.', function (assert) {
         return d;
     }
 
-    Highcharts.each(chart.series[0].points, function (point) {
+    chart.series[0].points.forEach(point => {
         assert.ok(
             point.lowerGraphic !== undefined,
             'Bottom marker for point: x=' + point.x + ' exists.'

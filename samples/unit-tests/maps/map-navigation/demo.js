@@ -1,7 +1,7 @@
 QUnit.test(
-    'Zoom in - zoomout with padding, panning in both directions.',
-    function (assert) {
-        var chart = Highcharts.mapChart('container', {
+    'Zoom in/out with padding, panning in both directions.',
+    assert => {
+        const chart = Highcharts.mapChart('container', {
             chart: {
                 plotBorderWidth: 1,
 
@@ -40,7 +40,7 @@ QUnit.test(
             ]
         });
 
-        var plotLeft = chart.plotLeft,
+        const plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             controller = new TestController(chart);
 
@@ -72,7 +72,6 @@ QUnit.test(
 
         chart.mapZoom(0.2);
 
-
         const [lon, lat] = chart.mapView.center;
 
         controller.pan(
@@ -91,6 +90,22 @@ QUnit.test(
             lat,
             'The chart should pan vertically'
         );
+
+        // #17082 start
+        // Set zoom to a little more than 1, then do zoomBy(-1) twice
+        chart.mapView.update({
+            zoom: chart.mapView.minZoom + 1.1
+        });
+
+        chart.mapView.zoomBy(-1);
+        chart.mapView.zoomBy(-1);
+
+        assert.strictEqual(
+            chart.mapView.zoom,
+            chart.mapView.minZoom,
+            'Chart should be maximally zoomed out (to minZoom), #17082.'
+        );
+        // #17082 end
 
         chart.series[0].remove(false);
 
@@ -189,4 +204,173 @@ QUnit.test('Map navigation button alignment', assert => {
         1.5,
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
     );
+});
+
+QUnit.test('Orthographic map rotation and panning.', assert => {
+
+    const getGraticule = partial => {
+        const data = [];
+        // Meridians
+        for (let x = -180; x <= 180; x += 180) {
+            data.push({
+                geometry: {
+                    type: 'LineString',
+                    coordinates: partial ? [
+                        [x, 90],
+                        [x, 45]
+                    ] : [
+                        [x, 90],
+                        [x, 0],
+                        [x, -90]
+                    ]
+                }
+            });
+        }
+
+        const coordinates = [];
+        for (let x = -180; x <= 180; x += 90) {
+            coordinates.push([x, 0]); // only equator
+        }
+        data.push({
+            geometry: {
+                type: 'LineString',
+                coordinates
+            }
+        });
+
+        return data;
+    };
+
+    let event;
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            animation: false,
+            events: {
+                click: function (e) {
+                    // Assign the global event
+                    event = e;
+                }
+            }
+        },
+
+        title: {
+            text: ''
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        mapNavigation: {
+            enabled: true,
+            enableDoubleClickZoomTo: true,
+            buttonOptions: {
+                verticalAlign: 'top'
+            }
+        },
+
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic',
+                rotation: [0, -90]
+            }
+        },
+
+        colorAxis: {
+            tickPixelInterval: 100,
+            minColor: '#BFCFAD',
+            maxColor: '#31784B',
+            max: 1000
+        },
+
+        tooltip: {
+            pointFormat: '{point.name}: {point.value}'
+        },
+
+        plotOptions: {
+            series: {
+                clip: false,
+                animation: false
+            }
+        },
+
+        series: [{
+            name: 'Graticule',
+            id: 'graticule',
+            type: 'mapline',
+            data: getGraticule(true),
+            nullColor: 'rgba(0, 0, 0, 0.05)'
+        }, {
+            type: 'mappoint',
+            data: [{
+                name: 'A',
+                id: 'A',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [0, 80]
+                }
+            }],
+            color: '#313f77'
+        }]
+    });
+
+    const controller = new TestController(chart),
+        point = chart.get('A'),
+        oldPlotY = point.plotY;
+    let oldRotation = chart.mapView.projection.options.rotation;
+
+    // Test event properties
+    controller.click(350, 300, void 0, true);
+    // No idea why Safari fails this, possibly related to test controller. It
+    // works in practice.
+    assert.close(
+        event.lon,
+        20.4,
+        5,
+        'Longitude should be available on event'
+    );
+
+    assert.close(
+        event.lat,
+        49.2,
+        10,
+        'Latitude should be available on event'
+    );
+
+    // Zoom needed to pan initially.
+    chart.mapView.zoomBy(1);
+
+    controller.pan([305, 50], [350, 150]);
+
+    // eslint-disable-next-line
+    if (!/14\.1\.[0-9] Safari/.test(navigator.userAgent)) {
+        assert.ok(
+            (point.plotY > oldPlotY),
+            'Panning should be activated (#16722).'
+        );
+
+        assert.deepEqual(
+            chart.mapView.projection.options.rotation,
+            oldRotation,
+            'Rotation should not be activated (#16722).'
+        );
+    }
+
+    // Test on fully loaded graticule
+    chart.series[0].update({
+        data: getGraticule(false)
+    });
+    chart.setSize(500, 500); // Note: Otherwise map doesn't update.
+
+    oldRotation = chart.mapView.projection.options.rotation;
+
+    controller.pan([305, 50], [350, 150]);
+
+    assert.notDeepEqual(
+        chart.mapView.projection.options.rotation,
+        oldRotation,
+        'Rotation should be activated (#16722).'
+    );
+
 });

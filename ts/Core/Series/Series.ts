@@ -115,6 +115,13 @@ declare module '../Renderer/SVG/SVGElementLike' {
     }
 }
 
+declare module './PointLike' {
+    interface PointLike {
+        plotX?: number;
+        plotY?: number;
+    }
+}
+
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -1320,9 +1327,23 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null;
+            firstPoint = null,
+            copiedData;
 
-        data = data || [];
+        if (!chart.options.chart.allowMutatingData) { // #4259
+            // Remove old reference
+            if (options.data) {
+                delete series.options.data;
+            }
+            if (series.userOptions.data) {
+                delete series.userOptions.data;
+            }
+            copiedData = merge(true, data);
+
+        }
+        data = copiedData || data || [];
+
+
         const dataLength = data.length;
         redraw = pick(redraw, true);
 
@@ -1333,6 +1354,7 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
+            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&
@@ -1600,7 +1622,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
-            updatingNames = xAxis.categories && !xAxis.names.length;
+            updatingNames = !!(xAxis.categories && !xAxis.names.length);
         }
 
         // optionally filter out points outside the plot area
@@ -2180,8 +2202,16 @@ class Series {
                 point.isNull = true;
             }
 
-            // Get the plotX translation
+            /**
+             * The translated X value for the point in terms of pixels. Relative
+             * to the X axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotX
+             * @type {number|undefined}
+             */
             point.plotX = plotX = correctFloat( // #5236
+                // Get the plotX translation
                 limitedRange((xAxis.translate as any)( // #3923
                     xValue,
                     0,
@@ -2273,6 +2303,14 @@ class Series {
                     yValue, false, true, false, true
                 );
                 if (typeof translated !== 'undefined') {
+                    /**
+                     * The translated Y value for the point in terms of pixels.
+                     * Relative to the Y axis position if the series has one,
+                     * otherwise relative to the plot area. Depending on the
+                     * series type this value might not be defined.
+                     * @name Highcharts.Point#plotY
+                     * @type {number|undefined}
+                     */
                     point.plotY = limitedRange(translated);
                 }
             }
@@ -2300,11 +2338,9 @@ class Series {
             );
 
             // some API data
-            point.category = (
-                categories &&
-                typeof (categories as any)[point.x as any] !== 'undefined' ?
-                    (categories as any)[point.x as any] :
-                    point.x
+            point.category = pick(
+                categories && categories[point.x],
+                point.x as any
             );
 
             // Determine auto enabling of markers (#3635, #5099)
@@ -2758,9 +2794,9 @@ class Series {
             );
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
-            radius = pick(
+            radius: number|undefined = pick(
                 pointMarkerOptions.radius,
-                (seriesMarkerOptions as any).radius
+                seriesMarkerOptions && seriesMarkerOptions.radius
             );
 
         // Handle hover and select states
@@ -2772,7 +2808,7 @@ class Series {
             radius = pick(
                 pointStateOptions && pointStateOptions.radius,
                 seriesStateOptions && seriesStateOptions.radius,
-                radius + (
+                radius && radius + (
                     seriesStateOptions && seriesStateOptions.radiusPlus ||
                     0
                 )
@@ -2784,13 +2820,13 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = {
+        const attribs: SVGAttributes = isNumber(radius) ? {
             // Math.floor for #1843:
             x: seriesOptions.crisp ?
                 Math.floor(point.plotX as any - radius) :
                 (point.plotX as any) - radius,
             y: (point.plotY as any) - radius
-        };
+        } : {};
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -3150,10 +3186,10 @@ class Series {
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
-                graph.show(true);
+                graph.show();
             }
             if (area) {
-                area.show(true);
+                area.show();
             }
         }
     }
@@ -3809,7 +3845,7 @@ class Series {
 
             series.tracker = renderer.path(trackerPath)
                 .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
+                    visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
                 })
                 .addClass(
@@ -4221,6 +4257,9 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+
+                'processedData', // #17057
+
                 'processedXData',
                 'processedYData',
                 'xIncrement',

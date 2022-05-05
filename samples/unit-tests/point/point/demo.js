@@ -431,7 +431,7 @@ QUnit.test('Dynamic point states', function (assert) {
     // Zoom in
     test.pan([topX, topY], [bottomX, bottomY]);
 
-    Highcharts.each(chart.hoverPoints, function (point, index) {
+    chart.hoverPoints.forEach((point, index) => {
         haloBox = point.series.halo.getBBox(true);
 
         assert.close(

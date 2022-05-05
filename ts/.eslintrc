@@ -261,6 +261,7 @@
                 ]
             }
         ],
+        "jsdoc/check-types": 0,
         "jsdoc/require-description": 1,
         "jsdoc/require-jsdoc": 1, // @todo
         "jsdoc/require-param": 0, // @todo

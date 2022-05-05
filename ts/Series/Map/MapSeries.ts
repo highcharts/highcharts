@@ -90,6 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
+        transformGroups?: Array<SVGElement>|undefined;
         useMapGeometry?: boolean;
     }
 }
@@ -164,6 +165,17 @@ class MapSeries extends ScatterSeries {
      * @optionparent plotOptions.map
      */
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
+
+        /**
+         * Whether the MapView takes this series into account when computing the
+         * default zoom and center of the map.
+         *
+         * @sample maps/series/affectsmapview/
+         *         US map with world map backdrop
+         *
+         * @since 10.0.0
+         */
+        affectsMapView: true,
 
         animation: false, // makes the complex shapes slow
 
@@ -576,6 +588,7 @@ class MapSeries extends ScatterSeries {
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
+            delete point.insetIndex;
             delete point.projectedPath;
         });
         delete this.bounds;
@@ -624,18 +637,22 @@ class MapSeries extends ScatterSeries {
         // Set groups that handle transform during zooming and panning in order
         // to preserve clipping on series.group
         this.transformGroups = transformGroups;
-        if (!transformGroups.length) {
-            [mapView].concat(mapView.insets).forEach((view): void => {
-                const transformGroup = renderer.g().add(group);
-                transformGroups.push(transformGroup);
-            });
+        if (!transformGroups[0]) {
+            transformGroups[0] = renderer.g().add(group);
         }
+        mapView.insets.forEach((inset, i): void => {
+            if (!transformGroups[i + 1]) {
+                transformGroups.push(renderer.g().add(group));
+            }
+        });
 
         // Draw the shapes again
         if (this.doFullTranslate()) {
 
             // Individual point actions.
             this.points.forEach((point): void => {
+
+                const { graphic, shapeArgs } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -644,9 +661,15 @@ class MapSeries extends ScatterSeries {
                         0
                 ];
 
+                // When the point has been moved between insets after
+                // MapView.update
+                if (graphic && graphic.parentGroup !== point.group) {
+                    graphic.add(point.group);
+                }
+
                 // Restore state color on update/redraw (#3529)
-                if (point.shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    point.shapeArgs.fill = this.pointAttribs(
+                if (shapeArgs && chart.hasRendered && !chart.styledMode) {
+                    shapeArgs.fill = this.pointAttribs(
                         point,
                         point.state
                     ).fill;
@@ -745,7 +768,7 @@ class MapSeries extends ScatterSeries {
                         scaleY: scaleStep * flipFactor
                     });
 
-                    group.element.setAttribute(
+                    transformGroup.element.setAttribute(
                         'stroke-width',
                         strokeWidth / scaleStep
                     );
@@ -781,8 +804,7 @@ class MapSeries extends ScatterSeries {
     public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds && this.chart.mapView) {
 
-            const MAX_VALUE = Number.MAX_VALUE,
-                { insets, projection } = this.chart.mapView,
+            const { insets, projection } = this.chart.mapView,
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
@@ -907,6 +929,18 @@ class MapSeries extends ScatterSeries {
         );
 
         return attr;
+    }
+
+    /**
+     * @private
+     */
+    public updateData(): boolean {
+        // #16782
+        if (this.processedData) {
+            return false;
+        }
+
+        return super.updateData.apply(this, arguments);
     }
 
     /**

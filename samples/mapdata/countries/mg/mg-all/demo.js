@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['mg-987', 0],
-    ['mg-993', 1],
-    ['mg-7296', 2],
-    ['mg-7287', 3],
-    ['mg-997', 4],
-    ['mg-7285', 5],
-    ['mg-7289', 6],
-    ['mg-7283', 7],
-    ['mg-7290', 8],
-    ['mg-7292', 9],
-    ['mg-7297', 10],
-    ['mg-7294', 11],
-    ['mg-7286', 12],
-    ['mg-995', 13],
-    ['mg-994', 14],
-    ['mg-996', 15],
-    ['mg-7293', 16],
-    ['mg-7284', 17],
-    ['mg-7298', 18],
-    ['mg-7295', 19],
-    ['mg-7288', 20],
-    ['mg-7291', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/mg/mg-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/mg/mg-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['mg-987', 10], ['mg-993', 11], ['mg-7296', 12], ['mg-7287', 13],
+        ['mg-997', 14], ['mg-7285', 15], ['mg-7289', 16], ['mg-7283', 17],
+        ['mg-7290', 18], ['mg-7292', 19], ['mg-7297', 20], ['mg-7294', 21],
+        ['mg-7286', 22], ['mg-995', 23], ['mg-994', 24], ['mg-996', 25],
+        ['mg-7293', 26], ['mg-7284', 27], ['mg-7298', 28], ['mg-7295', 29],
+        ['mg-7288', 30], ['mg-7291', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mg/mg-all.js">Madagascar</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mg/mg-all.topo.json">Madagascar</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -1036,17 +1036,17 @@ class Tooltip {
             options = tooltip.options,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
-            pointConfig = [] as Array<Point.PointLabelObject>,
+            pointConfig = [] as Array<Tooltip.FormatterContextObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
         let textConfig = {} as Tooltip.FormatterContextObject;
 
-        if (!options.enabled) {
+        if (!options.enabled || !point.series) { // #16820
             return;
         }
 
-        U.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1078,14 +1078,14 @@ class Tooltip {
                 x: point.category,
                 y: point.y
             } as any;
-            textConfig.points = pointConfig as any;
+            textConfig.points = pointConfig;
 
         // single point tooltip
         } else {
-            textConfig = point.getLabelConfig() as any;
+            textConfig = point.getLabelConfig();
         }
         this.len = pointConfig.length; // #6128
-        const text: (boolean|string) = (formatter as any).call(
+        const text = formatter.call(
             textConfig,
             tooltip
         );
@@ -1100,7 +1100,7 @@ class Tooltip {
         } else {
             // update text
             if (tooltip.split && tooltip.allowShared) { // #13868
-                this.renderSplit(text as any, points);
+                this.renderSplit(text, points);
             } else {
                 let checkX = x;
                 let checkY = y;
@@ -1867,17 +1867,9 @@ namespace Tooltip {
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
-    export interface FormatterContextObject {
-        color: ColorType;
-        colorIndex?: number;
-        key: number;
-        percentage?: number;
-        point: Point;
+    export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
-        series: Series;
-        total?: number;
-        x: number;
-        y: number;
+
     }
     export interface PositionerCallbackFunction {
         (
@@ -1920,47 +1912,24 @@ export default Tooltip;
  * @callback Highcharts.TooltipFormatterCallbackFunction
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
- *        Context to format
+ * Context to format
  *
  * @param {Highcharts.Tooltip} tooltip
- *        The tooltip instance
+ * The tooltip instance
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
- *         Formatted text or false
+ * Formatted text or false
  */
 
 /**
+ * Configuration for the tooltip formatters.
+ *
  * @interface Highcharts.TooltipFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
- * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#colorIndex
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#key
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
+ * Array of points in shared tooltips.
  * @name Highcharts.TooltipFormatterContextObject#points
  * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#x
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#y
- * @type {number}
  */
 
 /**

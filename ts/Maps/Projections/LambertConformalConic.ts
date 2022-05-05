@@ -29,7 +29,7 @@ export default class LambertConformalConic implements ProjectionDefinition {
         const parallels = (options.parallels || [])
                 .map((n): number => n * deg2rad),
             lat1 = parallels[0] || 0,
-            lat2 = parallels[1] || lat1,
+            lat2 = parallels[1] ?? lat1,
             cosLat1 = Math.cos(lat1);
 
         if (typeof options.projectedBounds === 'object') {

@@ -653,7 +653,7 @@
 
             assert.strictEqual(
                 chart.yAxis[0].grid.columns[0].ticks[3].label.visibility,
-                'visible',
+                'inherit',
                 'Tick marker with index 3 should be visible again.'
             );
         }

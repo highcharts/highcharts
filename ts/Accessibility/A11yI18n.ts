@@ -27,6 +27,7 @@ const { format } = F;
 
 import U from '../Core/Utilities.js';
 const {
+    getNestedProperty,
     pick
 } = U;
 
@@ -130,7 +131,7 @@ namespace A11yI18nComposition {
             indexStart = statement.indexOf('['),
             indexEnd = statement.indexOf(']');
 
-        let arr,
+        let arr: Array<unknown>,
             result;
 
         // Dealing with an each-function?
@@ -145,7 +146,7 @@ namespace A11yI18nComposition {
                 len;
 
             result = '';
-            arr = ctx[eachArguments[0]];
+            arr = getNestedProperty(eachArguments[0], ctx) as unknown[];
             if (arr) {
                 lenArg = isNaN(lenArg) ? arr.length : lenArg;
                 len = lenArg < 0 ?
@@ -153,7 +154,7 @@ namespace A11yI18nComposition {
                     Math.min(lenArg, arr.length); // Overshoot
                 // Run through the array for the specified length
                 for (let i = 0; i < len; ++i) {
-                    result += preEach + arr[i] + postEach;
+                    result += preEach + (arr[i] as string) + postEach;
                 }
             }
             return result.length ? result : '';
@@ -169,7 +170,9 @@ namespace A11yI18nComposition {
                     pluralEnd
                 ),
                 pluralArguments = pluralStatement.split(','),
-                num = Number(ctx[pluralArguments[0]]);
+                num = Number(
+                    getNestedProperty(pluralArguments[0], ctx)
+                );
 
             switch (num) {
                 case 0:
@@ -194,7 +197,7 @@ namespace A11yI18nComposition {
 
             let val;
 
-            arr = ctx[arrayName];
+            arr = getNestedProperty(arrayName, ctx) as unknown[];
             if (!isNaN(ix) && arr) {
                 if (ix < 0) {
                     val = arr[arr.length + ix];
@@ -210,7 +213,7 @@ namespace A11yI18nComposition {
                     }
                 }
             }
-            return typeof val !== 'undefined' ? val : '';
+            return typeof val !== 'undefined' ? (val as string) : '';
         }
 
         // Standard substitution, delegate to format or similar

@@ -16,6 +16,7 @@
  *
  * */
 
+import type CSSObject from '../CSSObject';
 import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
@@ -28,6 +29,7 @@ import U from '../../Utilities.js';
 const {
     attr,
     createElement,
+    css,
     error,
     isFunction,
     isString,
@@ -281,6 +283,35 @@ class AST {
 
     public static emptyHTML = emptyHTML;
 
+    /**
+     * Allow all custom SVG and HTML attributes, references and tags (together
+     * with potentially harmful ones) to be added to the DOM from the chart
+     * configuration. In other words, disable the the allow-listing which is the
+     * primary functionality of the AST.
+     *
+     * WARNING: Setting this property to `true` while allowing untrusted user
+     * data in the chart configuration will expose your application to XSS
+     * security risks!
+     *
+     * Note that in case you want to allow a known set of tags or attributes,
+     * you should allow-list them instead of disabling the filtering totally.
+     * See [allowedAttributes](Highcharts.AST#.allowedAttributes),
+     * [allowedReferences](Highcharts.AST#.allowedReferences) and
+     * [allowedTags](Highcharts.AST#.allowedTags). The `bypassHTMLFiltering`
+     * setting is intended only for those cases where allow-listing is not
+     * practical, and the chart configuration already comes from a secure
+     * source.
+     *
+     * @example
+     * // Allow all custom attributes, references and tags (disable DOM XSS
+     * // filtering)
+     * Highcharts.AST.bypassHTMLFiltering = true;
+     *
+     * @name Highcharts.AST.bypassHTMLFiltering
+     * @static
+     */
+    public static bypassHTMLFiltering = false;
+
     /* *
      *
      *  Static Functions
@@ -316,11 +347,30 @@ class AST {
                 );
             }
             if (!valid) {
-                error(`Highcharts warning: Invalid attribute '${key}' in config`);
+                error(33, false, void 0, {
+                    'Invalid attribute in config': `${key}`
+                });
                 delete attributes[key];
             }
         });
         return attributes;
+    }
+
+    public static parseStyle(style: string): CSSObject {
+        return style
+            .split(';')
+            .reduce((styles, line): CSSObject => {
+                const pair = line.split(':').map((s): string => s.trim()),
+                    key = pair.shift();
+
+                if (key && pair.length) {
+                    (styles as any)[key.replace(
+                        /-([a-z])/g,
+                        (g): string => g[1].toUpperCase()
+                    )] = pair.join(':'); // #17146
+                }
+                return styles;
+            }, {} as CSSObject);
     }
 
     /**
@@ -413,13 +463,18 @@ class AST {
                 const textNode = item.textContent ?
                     H.doc.createTextNode(item.textContent) :
                     void 0;
+                // Whether to ignore the AST filtering totally, #15345
+                const bypassHTMLFiltering = AST.bypassHTMLFiltering;
                 let node: Text|Element|undefined;
 
                 if (tagName) {
                     if (tagName === '#text') {
                         node = textNode;
 
-                    } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                    } else if (
+                        AST.allowedTags.indexOf(tagName) !== -1 ||
+                        bypassHTMLFiltering
+                    ) {
                         const NS = tagName === 'svg' ?
                             SVG_NS :
                             (subParent.namespaceURI || SVG_NS);
@@ -434,6 +489,7 @@ class AST {
                                 key !== 'tagName' &&
                                 key !== 'attributes' &&
                                 key !== 'children' &&
+                                key !== 'style' &&
                                 key !== 'textContent'
                             ) {
                                 (attributes as any)[key] = val;
@@ -441,8 +497,14 @@ class AST {
                         });
                         attr(
                             element as any,
-                            AST.filterUserAttributes(attributes)
+                            bypassHTMLFiltering ?
+                                attributes :
+                                AST.filterUserAttributes(attributes)
                         );
+
+                        if (item.style) {
+                            css(element as any, item.style);
+                        }
 
                         // Add text content
                         if (textNode) {
@@ -454,10 +516,9 @@ class AST {
                         node = element;
 
                     } else {
-                        error(
-                            'Highcharts warning: Invalid tagName ' +
-                            tagName + ' in config'
-                        );
+                        error(33, false, void 0, {
+                            'Invalid tagName in config': tagName
+                        });
                     }
                 }
 
@@ -496,7 +557,11 @@ class AST {
 
         const nodes: Array<AST.Node> = [];
 
-        markup = markup.trim();
+        markup = markup
+            .trim()
+            // The style attribute throws a warning when parsing when CSP is
+            // enabled (#6884), so use an alias and pick it up below
+            .replace(/ style="/g, ' data-style="');
 
         let doc;
         if (hasValidDOMParser) {
@@ -531,7 +596,11 @@ class AST {
             if (parsedAttributes) {
                 const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                    attributes[attrib.name] = attrib.value;
+                    if (attrib.name as string === 'data-style') {
+                        astNode.style = AST.parseStyle(attrib.value);
+                    } else {
+                        attributes[attrib.name] = attrib.value;
+                    }
                 });
                 astNode.attributes = attributes;
             }
@@ -579,6 +648,7 @@ namespace AST {
     export interface Node {
         attributes?: (HTMLAttributes&SVGAttributes);
         children?: Array<Node>;
+        style?: CSSObject;
         tagName?: string;
         textContent?: string;
     }

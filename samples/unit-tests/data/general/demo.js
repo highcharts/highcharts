@@ -364,3 +364,32 @@ QUnit.test('Update column names', function (assert) {
         'Should be able to update series name.'
     );
 });
+
+
+QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    enabled: true
+                }
+            }
+        },
+        data: {
+            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]],
+            firstRowAsNames: true
+        }
+    });
+
+    chart.update({
+        data: {
+            dataRefreshRate: 90
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.data.dataRefreshRate,
+        90,
+        'Should be able to update data options despite using columns and having data grouping options.'
+    );
+});

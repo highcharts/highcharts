@@ -1,5 +1,5 @@
 ---
- name: Norway with Svalbard and Jan Mayen - Highmaps
- description: Highmaps demo
+ name: Norway with Svalbard and Jan Mayen - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

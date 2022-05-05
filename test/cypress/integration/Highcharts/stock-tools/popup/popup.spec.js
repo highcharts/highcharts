@@ -5,7 +5,7 @@ describe('Popup tests, #16234', () => {
     });
 
     before(() => {
-        cy.visit('highcharts/annotations/gui/');
+        cy.visit('/highcharts/cypress/annotations-gui');
     });
     it('Should create Circle Annotation, and check if there are label options', () => {
 

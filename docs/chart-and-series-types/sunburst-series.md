@@ -24,7 +24,7 @@ The tree automatically has one node at the top representing the root node. If a 
 
 The following is an example of how the tree is built in Highcharts:
 
-    
+
     data: [{
         name: 'I have children',
         id: 'id-1'
@@ -37,7 +37,7 @@ The following is an example of how the tree is built in Highcharts:
         parent: 'id-1',
         value: 1
     }]
-    
+
 
 Work with levels
 ----------------
@@ -46,7 +46,7 @@ The levels option gives the ability to set options on a specific level. This com
 
 Below is an example where the first level will use have `colorByPoint: true`, and the rest will default to `colorByPoint: false` and thereby inherit its color from the parent.
 
-    
+
     var chart = new Highcharts.Chart({
         ...
         series: [{
@@ -57,8 +57,15 @@ Below is an example where the first level will use have `colorByPoint: true`, an
            ...
         }],
         ...
-    }); 
+    });
 
 ### Static or dynamic levels
 
 `levelIsConstant` is an option used together with the `levels` and `allowDrillToNode` options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
+
+### Traversing through levels
+
+When the `allowTraversingTree` option is true, clicking on a point will set that point as the rendered root node. To help navigate through levels, breadcrumbs are rendered, showing a single button to the previous level or the full path back to the root node.
+
+Read more about the breadcrumbs [here](https://www.highcharts.com/docs/advanced-chart-features/breadcrumbs).
+

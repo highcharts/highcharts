@@ -23,6 +23,7 @@ import type SankeySeriesType from '../Sankey/SankeySeries';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import DependencyWheelPoint from './DependencyWheelPoint.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -107,7 +108,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options: DependencyWheelSeriesOptions = void 0 as any;
 
-    public nodeColumns: Array<DependencyWheelSeries.ColumnArray> = void 0 as any;
+    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>> = void 0 as any;
 
     public nodes: Array<DependencyWheelPoint> = void 0 as any;
 
@@ -157,7 +158,6 @@ class DependencyWheelSeries extends SankeySeries {
             this,
             id
         ) as DependencyWheelPoint;
-        node.index = this.nodes.length - 1;
 
         /**
          * Return the sum of incoming and outgoing links.
@@ -234,8 +234,8 @@ class DependencyWheelSeries extends SankeySeries {
      * Dependency wheel has only one column, it runs along the perimeter.
      * @private
      */
-    public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
-        const columns = [this.createNodeColumn()];
+    public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition> {
+        const columns = [SankeyColumnComposition.compose([], this)];
         this.nodes.forEach(function (
             node: DependencyWheelPoint
         ): void {
@@ -393,18 +393,6 @@ extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     getCenter: PieSeries.prototype.getCenter
 });
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace DependencyWheelSeries {
-    export interface ColumnArray<T = DependencyWheelPoint> extends SankeySeriesType.ColumnArray<T> {
-        // nothing here yets
-    }
-}
 
 /* *
  *

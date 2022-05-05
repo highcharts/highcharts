@@ -154,7 +154,7 @@ const exporting: ExportingOptions = {
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [jsPDF](https://github.com/yWorks/jsPDF) and
+     * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
      *
@@ -223,6 +223,59 @@ const exporting: ExportingOptions = {
      * @since 2.0
      */
     url: 'https://export.highcharts.com/',
+
+    /**
+     * Settings for a custom font for the exported PDF, when using the
+     * `offline-exporting` module. This is used for languages containing
+     * non-ASCII characters, like Chinese, Russian, Japanese etc.
+     *
+     * As described in the [jsPDF
+     * docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8),
+     * the 14 standard fonts in PDF are limited to the ASCII-codepage.
+     * Therefore, in order to support other text in the exported PDF, one or
+     * more TTF font files have to be passed on to the exporting module.
+     *
+     * See more in [the
+     * docs](https://www.highcharts.com/docs/export-module/client-side-export).
+     *
+     * @sample {highcharts} highcharts/exporting/offline-download-pdffont/
+     *         Download PDF in a language containing non-Latin characters.
+     *
+     * @since 10.0.0
+     * @requires modules/offline-exporting
+     */
+    pdfFont: {
+
+        /**
+         * The TTF font file for normal `font-style`. If font variations like
+         * `bold` or `italic` are not defined, the `normal` font will be used
+         * for those too.
+         *
+         * @type string|undefined
+         */
+        normal: void 0,
+
+        /**
+         * The TTF font file for bold text.
+         *
+         * @type string|undefined
+         */
+        bold: void 0,
+
+        /**
+         * The TTF font file for bold and italic text.
+         *
+         * @type string|undefined
+         */
+        bolditalic: void 0,
+
+        /**
+         * The TTF font file for italic text.
+         *
+         * @type string|undefined
+         */
+        italic: void 0
+    },
 
     /**
      * When printing the chart from the menu item in the burger menu, if

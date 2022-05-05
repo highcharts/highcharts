@@ -3,9 +3,34 @@ Highcharts.ganttChart('container', {
     title: {
         text: 'Gantt Chart with Progress Indicators'
     },
+
     xAxis: {
         min: Date.UTC(2014, 10, 17),
         max: Date.UTC(2014, 10, 30)
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var completedValue = point.completed ?
+                        point.completed.amount || point.completed : null,
+                    completed = completedValue ?
+                        ' Task completed ' + Math.round(completedValue * 1000) / 10 + '%.' :
+                        '';
+                return Highcharts.format(
+                    '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
+                    { point, completed }
+                );
+            }
+        }
+    },
+
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
     },
 
     series: [{

@@ -580,7 +580,7 @@ class GaugeSeries extends Series {
         this.group = this.plotGroup(
             'group',
             'series',
-            this.visible ? 'visible' : 'hidden',
+            this.visible ? 'inherit' : 'hidden',
             this.options.zIndex,
             this.chart.seriesGroup
         );

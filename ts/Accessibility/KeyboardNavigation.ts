@@ -313,6 +313,7 @@ class KeyboardNavigation {
 
             if (chart.focusElement) {
                 chart.focusElement.removeFocusBorder();
+                delete chart.focusElement;
             }
 
             this.keyboardReset = true;
@@ -461,6 +462,10 @@ class KeyboardNavigation {
                     comingInBackwards = !(
                         focusComesFromChart || keyboardNavigation.exiting
                     );
+
+                if (chart.focusElement) {
+                    delete chart.focusElement;
+                }
 
                 if (comingInBackwards) {
                     // Focus the container instead

@@ -24,7 +24,7 @@ declare module './MockPointOptions' {
 declare global {
     namespace Highcharts {
         interface AnnotationMockLabelOptionsObject {
-            x: (number|null);
+            x: (number|undefined);
             y: (number|null);
             point: MockPoint;
         }
@@ -73,7 +73,7 @@ declare global {
                 cy: (number|undefined),
                 dx: number,
                 dy: number
-            ): void
+            ): void;
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
@@ -339,7 +339,7 @@ class MockPoint {
     public target: (Highcharts.AnnotationControllable|null);
     public ttBelow?: boolean = void 0 as any;
     public visible?: boolean;
-    public x: (number|null) = void 0 as any;
+    public x: (number|undefined) = void 0 as any;
     public y: (number|null) = void 0 as any;
 
     /* *
@@ -495,7 +495,7 @@ class MockPoint {
             this.x = options.x;
             this.plotX = xAxis.toPixels(options.x, true);
         } else {
-            this.x = null;
+            this.x = void 0;
             this.plotX = options.x;
         }
 

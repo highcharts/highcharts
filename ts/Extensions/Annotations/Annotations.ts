@@ -708,7 +708,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                 opacity: 0,
                 zIndex: this.options.zIndex,
                 visibility: this.options.visible ?
-                    'visible' :
+                    'inherit' :
                     'hidden'
             })
             .add();
@@ -759,7 +759,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.graphic.attr(
             'visibility',
-            visibility ? 'visible' : 'hidden'
+            visibility ? 'inherit' : 'hidden'
         );
 
         if (!visibility) {

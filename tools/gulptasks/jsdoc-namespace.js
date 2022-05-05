@@ -66,8 +66,9 @@ function jsDocNamespace() {
             jsdoc3Options = {
                 plugins: [
                     path.posix.join(
-                        'node_modules', 'highcharts-documentation-generators',
-                        'jsdoc', 'plugins', 'highcharts.namespace'
+                        'node_modules', '@highcharts',
+                        'highcharts-documentation-generators', 'jsdoc',
+                        'plugins', 'highcharts.namespace'
                     )
                 ]
             };
