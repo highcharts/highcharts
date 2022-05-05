@@ -683,6 +683,49 @@ class MapSeries extends ScatterSeries {
             // Add class names
             this.points.forEach((point): void => {
                 if (point.graphic) {
+
+                    const graphic = point.graphic,
+                        animate = point.graphic.animate;
+
+                    graphic.animate = function (params,
+                        options, complete): SVGElement {
+
+                        let switchBack = false;
+                        // When strokeWidth is animating
+                        if (params['stroke-width']) {
+                            const inheritedStrokeWidth = (
+                                (point.series.options.borderWidth || 0) /
+                                (chart.mapView && chart.mapView.getScale() || 1)
+                            );
+                            // For animating from inherit,
+                            // .attr() reads the property as the starting point
+                            if (graphic['stroke-width'] === 'inherit') {
+                                graphic['stroke-width'] = inheritedStrokeWidth;
+                            }
+                            // For animating to inherit
+                            if (params['stroke-width'] === ('inherit' as any)) {
+                                params['stroke-width'] = inheritedStrokeWidth;
+                                switchBack = true;
+                            }
+                        }
+                        const ret = animate.call(
+                            graphic, params, options,
+                            switchBack ? function (this: SVGElement): void {
+                                // Switch back to "inherit" for zooming
+                                // to work with the existing logic + complete
+                                graphic.attr({
+                                    'stroke-width': ('inherit' as any)
+                                });
+                                // Proceed
+                                if (complete) {
+                                    complete.apply(this, arguments);
+                                }
+                            } : complete);
+                        return ret;
+                    };
+                }
+
+                if (point.graphic) {
                     let className = '';
                     if (point.name) {
                         className +=
