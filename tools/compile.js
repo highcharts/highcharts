@@ -3,7 +3,7 @@
 /* eslint-disable func-style */
 
 // NOPE, YOU CAN NOT FIX IT! The JS compiler is gone and only the Java version
-// is left. (-_-) Keep the old version.
+// is left. NOPE, closure-gun is a Java wrapper. (-_-) Keep the old version.
 const ClosureCompiler = require('google-closure-compiler').jsCompiler;
 
 const statSync = require('fs').statSync;
