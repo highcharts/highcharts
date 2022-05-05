@@ -30,7 +30,8 @@ import U from '../../Core/Utilities.js';
 import ColorType from '../../Core/Color/ColorType';
 const {
     merge,
-    extend
+    extend,
+    relativeLength
 } = U;
 
 /* *
@@ -58,14 +59,14 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
     public drawPoints(): void {
         const series: any = this,
-            pointLength = series.points.length,
-            size = 200;
-        let colors: any = series.options.colors;
-        let i: number;
+            pointLength = series.points.length
+        let colors: any = series.options.colors,
+            i: number;
 
         colors = colors.map((color: ColorType, ii: number): any => {
+            const maxSize2 = relativeLength(series.options.maxSize, 100) // check 100 valid?
             const radiusFactor: number = ii / (colors.length - 1),
-                maxSize = (1 - radiusFactor) * size,
+                maxSize = (1 - radiusFactor) * maxSize2,
                 fillColor = {
                     radialGradient: {
                         cx: 0.5,
@@ -100,6 +101,11 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 // Set up next or loop back to the start
                 point.graphic = point['graphic' + ((ii + 1) % colors.length)];
                 i++;
+            }
+
+            return {
+                maxSize,
+                fillColor
             }
         });
 
