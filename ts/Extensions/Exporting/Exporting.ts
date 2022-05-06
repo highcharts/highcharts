@@ -1427,7 +1427,7 @@ namespace Exporting {
                                 node.setAttribute(hyphenate(prop), val);
                             }
                         // Styles
-                        } else {
+                        } else if (prop !== 'parentRule') {
                             (filteredStyles as any)[prop] = val;
                         }
                     }
