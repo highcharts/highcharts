@@ -909,7 +909,7 @@ class Connection {
             ): void {
                 val.destroy();
             });
-            delete (this as Partial<typeof this>).graphics;
+            delete (this as Partial<this>).graphics;
         }
     }
 }

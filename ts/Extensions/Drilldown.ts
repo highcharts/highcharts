@@ -1295,7 +1295,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete (this as Partial<typeof this>).animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1354,7 +1354,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete (this as Partial<typeof this>).animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
