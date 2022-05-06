@@ -2759,15 +2759,40 @@ class Chart {
         fireEvent(this, 'load');
         fireEvent(this, 'render');
 
-
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
             this.setReflow(this.options.chart.reflow);
         }
 
+        this.warnIfA11yModuleNotLoaded();
+
         // Don't run again
         this.hasLoaded = true;
     }
+
+
+    /**
+     * Emit console warning if the a11y module is not loaded.
+     */
+    public warnIfA11yModuleNotLoaded():void {
+        setTimeout(():void => {
+            const opts = this && this.options;
+            if (
+                opts && !this.accessibility &&
+                !(opts.accessibility && opts.accessibility.enabled === false)
+            ) {
+                error(
+                    'Highcharts warning: Consider including the ' +
+                    '"accessibility.js" module to make your chart more ' +
+                    'usable for people with disabilities. Set the ' +
+                    '"accessibility.enabled" option to false to remove this ' +
+                    'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
+                    false, this
+                );
+            }
+        }, 100);
+    }
+
 
     /**
      * Add a series to the chart after render time. Note that this method should
@@ -3472,7 +3497,6 @@ class Chart {
             lang = defaultOptions.lang,
             btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,
-            states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
@@ -3494,8 +3518,7 @@ class Chart {
                     null as any,
                     null as any,
                     zoomOut,
-                    theme,
-                    states && states.hover
+                    theme
                 )
                 .attr({
                     align: btnOptions.position.align,

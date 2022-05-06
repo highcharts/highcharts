@@ -5,6 +5,10 @@ function getScreenReaderSectionEl(chart) {
     return infoRegions && infoRegions.screenReaderSections.before.element;
 }
 
+function screenReaderSectionHasContents(sectionEl) {
+    return sectionEl.textContent.length > 0;
+}
+
 function getPointAriaLabel(point) {
     return point.graphic.element.getAttribute('aria-label');
 }
@@ -34,7 +38,7 @@ QUnit.test('Accessibility disabled', function (assert) {
     assert.notOk(getPointAriaLabel(point), 'There be no ARIA on point');
 
     assert.notOk(
-        srSection && srSection.getAttribute('aria-label'),
+        srSection && screenReaderSectionHasContents(srSection),
         'There be no screen reader region'
     );
 });
@@ -86,13 +90,13 @@ QUnit.test('No data', function (assert) {
     });
 
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, no series option'
     );
 
@@ -100,7 +104,7 @@ QUnit.test('No data', function (assert) {
         series: []
     });
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, no series items'
     );
 });
@@ -156,10 +160,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         '-1',
         'There be tabindex on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There be empty ARIA on series'
+        'There is no aria-label on series'
     );
 
     point.series.addPoint(4);
@@ -168,10 +171,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         getPointAriaLabel(point.series.points[6]),
         'There still be ARIA on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There still be ARIA on series'
+        'There is still no aria-label on series'
     );
 });
 
