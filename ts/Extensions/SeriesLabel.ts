@@ -453,7 +453,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
     // correctly detected)
     if (
         (this as SplineSeries).getPointSpline &&
-        node.getPointAtLength &&
+        (node.getPointAtLength) &&
         !onArea &&
         // Not performing well on complex series, node.getPointAtLength is too
         // heavy (#9815)

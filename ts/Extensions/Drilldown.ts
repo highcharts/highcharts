@@ -1295,7 +1295,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<typeof this>).animate;
     }
 
 };
@@ -1354,7 +1354,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<typeof this>).animate;
     }
 
 };
@@ -1388,7 +1388,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     });
 
     if (removeGroup) {
-        delete this.group;
+        delete (this as any).group;
     }
 
     this.points.forEach(function (point: Point): void {
@@ -1475,7 +1475,7 @@ if (PieSeries) {
                     }
 
                     // Reset to prototype
-                    delete this.animate;
+                    delete (this as Partial<typeof this>).animate;
                 }
             }
         }

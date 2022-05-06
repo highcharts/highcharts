@@ -151,12 +151,6 @@ declare global {
             categoryDatetimeHeader?: string;
         }
     }
-    interface MSBlobBuilder extends Blob {
-    }
-    interface Window {
-        /** @deprecated */
-        MSBlobBuilder: typeof MSBlobBuilder;
-    }
 }
 
 /**
@@ -1253,7 +1247,7 @@ function getBlobFromContent(
         if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
-            return blob.getBlob('image/svg+xml') as any;
+            return blob.getBlob('image/svg+xml');
         }
 
         // Safari requires data URI since it doesn't allow navigation to blob
