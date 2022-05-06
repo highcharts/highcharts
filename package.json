@@ -35,13 +35,8 @@
     "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
-    "utils": "highcharts-utils"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
-      "pre-commit": "npx lint-staged && npx gulp lint-ts && npx gulp scripts && npx ts-node ./test/ts-node-unit-tests && npx gulp test && npx gulp test-ts"
-    }
+    "utils": "highcharts-utils",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
@@ -79,7 +74,7 @@
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.1",
     "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
-    "husky": "4.3.6",
+    "husky": "^7.0.4",
     "js-yaml": "^3.14.1",
     "jsdom": "^17.0.0",
     "karma": "^6.3.19",
