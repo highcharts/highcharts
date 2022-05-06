@@ -769,8 +769,8 @@ class Pathfinder {
         // Clear obstacles to force recalculation. This must be done on every
         // redraw in case positions have changed. Recalculation is handled in
         // Connection.getPath on demand.
-        delete this.chartObstacles;
-        delete this.lineObstacles;
+        delete (this as Partial<typeof this>).chartObstacles;
+        delete (this as Partial<typeof this>).lineObstacles;
 
         // Draw the pending connections
         pathfinder.renderConnections(deferRender);
