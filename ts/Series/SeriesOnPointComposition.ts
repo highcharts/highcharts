@@ -47,6 +47,7 @@ type zData = Array<number|null>;
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         onPoint?: SeriesOnPointComposition.Additions;
+        onPointSupported?: boolean;
     }
 }
 
@@ -128,24 +129,18 @@ namespace SeriesOnPointComposition {
             seriesTranslate
         } = Additions.prototype;
 
+        pie.prototype.onPointSupported = true;
+        sunburst.prototype.onPointSupported = true;
+
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            addEvent(pie, 'afterInit', seriesAfterInit);
-            addEvent(pie, 'afterRender', seriesAfterRender);
-            addEvent(pie, 'afterGetCenter', seriesGetCenter);
-            addEvent(pie, 'hide', seriesShowOrHide);
-            addEvent(pie, 'show', seriesShowOrHide);
-            addEvent(pie, 'translate', seriesTranslate);
-
-            if (sunburst) {
-                addEvent(sunburst, 'afterInit', seriesAfterInit);
-                addEvent(sunburst, 'afterRender', seriesAfterRender);
-                addEvent(sunburst, 'afterGetCenter', seriesGetCenter);
-                addEvent(sunburst, 'hide', seriesShowOrHide);
-                addEvent(sunburst, 'show', seriesShowOrHide);
-                addEvent(sunburst, 'translate', seriesTranslate);
-            }
+            addEvent(Series, 'afterInit', seriesAfterInit);
+            addEvent(Series, 'afterRender', seriesAfterRender);
+            addEvent(Series, 'afterGetCenter', seriesGetCenter);
+            addEvent(Series, 'hide', seriesShowOrHide);
+            addEvent(Series, 'show', seriesShowOrHide);
+            addEvent(Series, 'translate', seriesTranslate);
         }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
@@ -303,7 +298,7 @@ namespace SeriesOnPointComposition {
          * @ignore
          */
         public seriesAfterInit(this: Series): void {
-            if (this.options.onPoint) {
+            if (this.onPointSupported && this.options.onPoint) {
                 this.bubblePadding = true;
                 this.useMapGeometry = true;
                 this.onPoint = new Additions(this as SeriesComposition);
