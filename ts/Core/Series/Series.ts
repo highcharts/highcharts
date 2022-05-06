@@ -1468,7 +1468,7 @@ class Series {
             // destroy old points
             i = oldDataLength;
             while (i--) {
-                if (oldData[i] && oldData[i].destroy) {
+                if (oldData[i] && (oldData[i].destroy)) {
                     oldData[i].destroy();
                 }
             }
@@ -4009,7 +4009,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && data[0].remove) {
+            if (data[0] && (data[0].remove)) {
                 data[0].remove(false);
             } else {
                 data.shift();
