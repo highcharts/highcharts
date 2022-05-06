@@ -280,16 +280,14 @@ namespace SeriesOnPointComposition {
                 yTo = yFrom + (position.offsetY || 0),
                 width = connectorOpts.width || 1,
                 color = (connectorOpts as any).color || this.series.color,
-                dashStyle = (connectorOpts as any).dashStyle;
-
-            let attribs: SVGAttributes = {
-                d: SVGRenderer.prototype.crispLine([
-                    ['M', xFrom, yFrom],
-                    ['L', xTo, yTo]
-                ], width, 'ceil')
-            };
-
-            attribs['stroke-width'] = width;
+                dashStyle = (connectorOpts as any).dashStyle,
+                attribs: SVGAttributes = {
+                    d: SVGRenderer.prototype.crispLine([
+                        ['M', xFrom, yFrom],
+                        ['L', xTo, yTo]
+                    ], width, 'ceil'),
+                    'stroke-width': width
+                };
 
             if (!chart.styledMode) {
                 attribs.stroke = color;
@@ -303,7 +301,7 @@ namespace SeriesOnPointComposition {
          * Initialize Series on point on series init.
          *
          * @ignore
-        */
+         */
         public seriesAfterInit(this: Series): void {
             if (this.options.onPoint) {
                 this.bubblePadding = true;
@@ -326,11 +324,10 @@ namespace SeriesOnPointComposition {
          * Recalculate series.center (x, y and size).
          *
          * @ignore
-        */
+         */
         public seriesGetCenter(this: Series, e: CenterObject): void {
-            const onPointOptions = this.options.onPoint;
-
-            let center = e.positions;
+            const onPointOptions = this.options.onPoint,
+                center = e.positions;
 
             if (onPointOptions) {
                 const connectedPoint = this.chart.get(onPointOptions.id);
@@ -394,9 +391,8 @@ namespace SeriesOnPointComposition {
                     return id === point.id;
                 });
 
-                // And also toggle series that are on toggled points.
-                // Redraw is not needed because it's fired later
-                // after showOrhide event
+                // And also toggle series that are on toggled points. Redraw is
+                // not needed because it's fired later after showOrhide event
                 series && series.setVisible(!series.visible, false);
             });
         }
@@ -406,7 +402,7 @@ namespace SeriesOnPointComposition {
          *
          * @ignore
          * @function Highcharts.Series#translate
-        */
+         */
         public seriesTranslate(this: Series): void {
             if (this.onPoint) {
                 this.onPoint.getRadii();
@@ -461,7 +457,7 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * Options for the connector in the `Series on point` feature.
+ * Options for the connector in the _Series on point_ feature.
  *
  * In styled mode, the connector can be styled with the
  * `.highcharts-connector-seriesonpoint` class name.
@@ -473,7 +469,7 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * Color of a connector line. By default it's the series' color.
+ * Color of the connector line. By default it's the series' color.
  *
  * @requires    modules/series-on-point
  * @since       next
@@ -482,7 +478,7 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * A name for the dash style to use for connector.
+ * A name for the dash style to use for the connector.
  *
  * @requires    modules/series-on-point
  * @since       next
@@ -491,17 +487,17 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * Pixel width of a connector line.
+ * Pixel width of the connector line.
  *
  * @default     1
  * @requires    modules/series-on-point
  * @type        {number}
  * @since       next
  * @apioption   plotOptions.series.onPoint.connectorOptions.width
-*/
+ */
 
 /**
- * An id of the point that we connect series to. Only points with a given
+ * The `id` of the point that we connect the series to. Only points with a given
  * `plotX` and `plotY` values and map points are valid.
  *
  * @requires   modules/series-on-point
@@ -512,7 +508,7 @@ export default SeriesOnPointComposition;
 
 /**
  * Options allowing to set a position and an offset of the series in the
- * `Series on point` feature.
+ * _Series on point_ feature.
  *
  * @requires    modules/series-on-point
  * @since       next
@@ -541,8 +537,8 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * X position of the series center. By default, the series is displayed on a
- * point that it's connected to.
+ * X position of the series center. By default, the series is displayed on the
+ * point that it is connected to.
  *
  * @requires   modules/series-on-point
  * @since      next
@@ -551,8 +547,8 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * Y position of the series center. By default, the series is displayed on a
- * point that it's connected to.
+ * Y position of the series center. By default, the series is displayed on the
+ * point that it is connected to.
  *
  * @requires   modules/series-on-point
  * @since      next
