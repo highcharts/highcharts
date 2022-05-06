@@ -383,7 +383,7 @@ class PlotLineOrBand {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
 
-        delete (this as Partial<typeof this>).axis;
+        delete (this as Partial<this>).axis;
         destroyObjectProperties(this);
     }
 

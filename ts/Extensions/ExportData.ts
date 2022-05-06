@@ -1247,7 +1247,7 @@ function getBlobFromContent(
         if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
-            return blob.getBlob('image/svg+xml');
+            return blob.getBlob('image/svg+xml') as any;
         }
 
         // Safari requires data URI since it doesn't allow navigation to blob
