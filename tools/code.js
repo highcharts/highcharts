@@ -24,6 +24,11 @@ const extendsPattern = new RegExp([
 
 const fileExtensionPattern = /[^\\\/\.]\.([^\\\/]*)$/u;
 
+const templateConcatsPattern = new RegExp([
+    '("")',
+    '((?:\\.concat\\([^"]+?, "[^"]*?"\\))+)'
+].join(''), 'gsu');
+
 const variablePattern = new RegExp([
     '(^|\\r\\n|\\r|\\n)',
     '([ \\t]+)',
@@ -66,7 +71,7 @@ function getFileExtension(path) {
  * @return {string}
  * Process code content.
  */
-function processExtends4(content) {
+function processExtends(content) {
     return content.replace(extendsPattern, '$1b.hasOwnProperty(p)$2');
 }
 
@@ -74,7 +79,7 @@ function processExtends4(content) {
  * Process files to improve quality.
  *
  * @param {string} filePath
- * File path of content to process.
+ * File path of transpiled content to process.
  *
  * @param {string|Buffer} content
  * Transpiled code content to process.
@@ -103,10 +108,36 @@ function processFile(filePath, content) {
 function processSrcJSFile(content) {
     let code = content.toString();
 
-    code = processExtends4(code);
+    code = processExtends(code);
+    code = processTemplateLiterals(code);
     code = processVariables(code);
 
     return code;
+}
+
+/**
+ * Simplifies template literals transpilation to plus concatination.
+ *
+ * @param {string} content
+ * Code content to process.
+ *
+ * @return {string}
+ * Process code content.
+ */
+function processTemplateLiterals(content) {
+    return content.replace(templateConcatsPattern, function (
+        _match,
+        prefix,
+        concats
+    ) {
+        return [
+            prefix,
+            concats
+                .replace(/\)$/u, '')
+                .replace(/["\)]?\.concat\(([\w\.\[\]]+?), ("[^"]*?")/gu, '+$1+$2')
+                .replace(/["\)]?\.concat\(([^"]+?), ("[^"]*?")/gu, '+($1)+$2')
+        ].join('');
+    });
 }
 
 /**
