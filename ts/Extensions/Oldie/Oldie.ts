@@ -458,19 +458,17 @@ declare global {
         msToBlob: Function;
     }
 
-    // for TypeScript 4.6 needed:
-    // class MSBlobBuilder extends Blob {
-    //     /** @deprecated */
-    //     append: Function;
-    //     /** @deprecated */
-    //     getBlob: Function;
-    // }
+    class MSBlobBuilder extends Blob {
+        /** @deprecated */
+        append: Function;
+        /** @deprecated */
+        getBlob: Function;
+    }
 
-    // for TypeScript 4.6 needed:
-    // interface Navigator {
-    //     /** @deprecated */
-    //     msSaveOrOpenBlob: Function;
-    // }
+    interface Navigator {
+        /** @deprecated */
+        msSaveOrOpenBlob: Function;
+    }
 
     /** @deprecated */
     interface TridentNamespace {
