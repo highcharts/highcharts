@@ -1209,18 +1209,30 @@ addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
     const chart = this.chart;
 
     if (chart.polar && chart.hoverPane) {
-        const center = chart.hoverPane.center;
+        const center = chart.hoverPane.center,
+            linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
 
         let selectionMarker;
 
-        selectionMarker = chart.renderer.arc(
-            center[0] + chart.plotLeft,
-            center[1] + chart.plotTop,
-            center[2] / 2,
-            center[3] / 2,
-            0,
-            Math.PI * 2
-        );
+        if (linearAxis.options.gridLineInterpolation === 'polygon') {
+            const path = (linearAxis as any).getPlotLinePath(
+                { value: linearAxis.toValue(center[2] / 2) }
+            ).concat(linearAxis.getPlotLinePath({
+                value: linearAxis.toValue(center[3] / 2),
+                reverse: true
+            }));
+
+            selectionMarker = chart.renderer.path(path);
+        } else {
+            selectionMarker = chart.renderer.arc(
+                center[0] + chart.plotLeft,
+                center[1] + chart.plotTop,
+                center[2] / 2,
+                center[3] / 2,
+                0,
+                Math.PI * 2
+            );
+        }
 
         (event as any).selectionMarker = selectionMarker;
     }
@@ -1290,6 +1302,7 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 
         // Adjust the height of the selection marker
         if (this.zoomVert) {
+            const linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
 
             let innerR = Math.sqrt(
                     Math.pow(mouseDownX - chart.plotLeft - center[0], 2) +
@@ -1320,6 +1333,23 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 
             attrs.r = r;
             attrs.innerR = innerR;
+
+            if (linearAxis.options.gridLineInterpolation === 'polygon') {
+                const end = linearAxis.toValue(
+                        linearAxis.len + linearAxis.pos - innerR
+                    ),
+                    start = linearAxis.toValue(
+                        linearAxis.len + linearAxis.pos - r
+                    ),
+                    path = (linearAxis as any).getPlotLinePath({
+                        value: start
+                    }).concat(linearAxis.getPlotLinePath({
+                        value: end,
+                        reverse: true
+                    }));
+
+                attrs.d = path;
+            }
         }
 
         (event as any).attrs = attrs;
