@@ -236,7 +236,7 @@ namespace SeriesOnPointComposition {
 
             const attribs = this.getConnectorAttributes();
 
-            attribs && this.connector.attr(attribs);
+            attribs && this.connector.animate(attribs);
         }
 
         /**
