@@ -130,7 +130,9 @@ namespace SeriesOnPointComposition {
         } = Additions.prototype;
 
         pie.prototype.onPointSupported = true;
-        sunburst.prototype.onPointSupported = true;
+        if (sunburst) {
+            sunburst.prototype.onPointSupported = true;
+        }
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
@@ -274,8 +276,8 @@ namespace SeriesOnPointComposition {
                 xTo = xFrom + (position.offsetX || 0),
                 yTo = yFrom + (position.offsetY || 0),
                 width = connectorOpts.width || 1,
-                color = (connectorOpts as any).color || this.series.color,
-                dashStyle = (connectorOpts as any).dashStyle,
+                color = connectorOpts.stroke || this.series.color,
+                dashStyle = connectorOpts.dashstyle,
                 attribs: SVGAttributes = {
                     d: SVGRenderer.prototype.crispLine([
                         ['M', xFrom, yFrom],
@@ -459,7 +461,7 @@ export default SeriesOnPointComposition;
  *
  * @requires    modules/series-on-point
  * @since       next
- * @type        {object}
+ * @type        {Highcharts.SVGAttributes}
  * @apioption   plotOptions.series.onPoint.connectorOptions
  */
 
@@ -469,7 +471,7 @@ export default SeriesOnPointComposition;
  * @requires    modules/series-on-point
  * @since       next
  * @type        {string}
- * @apioption   plotOptions.series.onPoint.connectorOptions.color
+ * @apioption   plotOptions.series.onPoint.connectorOptions.stroke
  */
 
 /**
@@ -478,7 +480,7 @@ export default SeriesOnPointComposition;
  * @requires    modules/series-on-point
  * @since       next
  * @type        {string}
- * @apioption   plotOptions.series.onPoint.connectorOptions.dashStyle
+ * @apioption   plotOptions.series.onPoint.connectorOptions.dashstyle
  */
 
 /**

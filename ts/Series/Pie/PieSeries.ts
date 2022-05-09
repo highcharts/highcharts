@@ -822,8 +822,6 @@ class PieSeries extends Series {
                 point.delayedRendering = true;
             }
         });
-
-        fireEvent(this, 'afterDrawPoints');
     }
 
     /**
