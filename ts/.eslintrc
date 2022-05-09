@@ -104,6 +104,7 @@
         "highcharts/doclet-apioption-last": 2,
         "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
+        "highcharts/no-import-modification": 1, // @todo
         "highcharts/no-mixin": 1, // @todo
         "highcharts/no-optional-chaining": 2,
         "highcharts/no-private-constructor-doclet": 0,
