@@ -3651,9 +3651,7 @@ class Chart {
                         type: 'x'
                     }
             ),
-            chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled;
+            chartOptions = chart.options.chart;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
@@ -3821,7 +3819,6 @@ class Chart {
 
                         if (
                             !chart.resetZoomButton &&
-                            !hasMapNavigation &&
                             // Show reset zoom button only when both newMin and
                             // newMax values are between padded axis range.
                             newMin !== paddedMin &&
