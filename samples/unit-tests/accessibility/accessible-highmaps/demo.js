@@ -1,5 +1,5 @@
 QUnit.test('Basic map', function (assert) {
-    const polishFlagURL =
+    const url =
         'https://upload.wikimedia.org/wikipedia/en/1/12/Flag_of_Poland.svg';
     const chart = Highcharts.mapChart('container', {
             chart: {
@@ -7,10 +7,10 @@ QUnit.test('Basic map', function (assert) {
             },
             series: [
                 {
-                    keys: ['hc-key', 'color.pattern.image'],
+                    keys: ['hc-key', 'val', 'color.pattern.image'],
                     data: [
                         ['no', 1],
-                        ['pl', polishFlagURL, 2],
+                        ['pl', 2, url],
                         ['fi', 3],
                         ['gb', 4],
                         ['fr', 5],

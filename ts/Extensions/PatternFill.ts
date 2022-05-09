@@ -225,7 +225,7 @@ Point.prototype.calculatePatternDimensions = function (
             pattern._width = 'defer';
             pattern._height = 'defer';
 
-            // Check if map image pattern is flipped (#16810)
+            // Mark the pattern to be flipped later if upside down (#16810)
             const scaleY = this.series.chart.mapView &&
                 this.series.chart.mapView.getSVGTransform().scaleY;
 
@@ -352,9 +352,8 @@ SVGRenderer.prototype.addPattern = function (
         y: options._y || options.y || 0
     };
 
-    // Check if map image pattern is flipped (#16810)
     if (options._inverted) {
-        attrs.patternTransform = 'scale(1, -1)';
+        attrs.patternTransform = 'scale(1, -1)'; // (#16810)
         if (options.patternTransform) {
             options.patternTransform += ' scale(1, -1)';
         }
@@ -363,7 +362,6 @@ SVGRenderer.prototype.addPattern = function (
     if (options.patternTransform) {
         attrs.patternTransform = options.patternTransform;
     }
-
 
     pattern = this.createElement('pattern').attr(attrs).add(this.defs);
 
