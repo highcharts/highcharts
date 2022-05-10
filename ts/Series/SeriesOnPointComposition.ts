@@ -129,10 +129,14 @@ namespace SeriesOnPointComposition {
             seriesTranslate
         } = Additions.prototype;
 
+        // We can mark support for pie series here because it's in the core.
+        // But all other series outside the core should be marked in its module.
+        // This is crucial when loading series-on-point before loading a
+        // module, e.g. sunburst.
+        // Supported series types:
+        // - pie
+        // - sunburst
         pie.prototype.onPointSupported = true;
-        if (sunburst) {
-            sunburst.prototype.onPointSupported = true;
-        }
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);

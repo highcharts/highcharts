@@ -1145,6 +1145,8 @@ interface SunburstSeries {
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
     getCenter: getCenter,
+    // Mark that the sunburst is supported by the series on point feature.
+    onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
