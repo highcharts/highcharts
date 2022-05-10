@@ -904,7 +904,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 }
 
                 series.labelBySeries = label = chart.renderer
-                    .label(labelText, 0, -9999, 'connector')
+                    .label(labelText, 0, 0, 'connector')
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
