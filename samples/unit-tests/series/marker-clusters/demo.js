@@ -824,3 +824,60 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
         'optimizedKmeans should use kmeans again when extremes range is greater than on chart init.'
     );
 });
+
+QUnit.test('Maps tests.', function (assert) {
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            map: 'countries/gb/gb-all'
+        },
+        series: [{/* the map in the background */}, {
+            type: 'mappoint',
+            cluster: {
+                enabled: true,
+                layoutAlgorithm: {
+                    type: 'optimalizedKmeans'
+                }
+            },
+            data: [{
+                name: 'Client 1',
+                lat: 52.192001,
+                lon: -2.22
+            }, {
+                name: 'Client 2',
+                lat: 52.192001,
+                lon: -2.22
+            }, {
+                name: 'Client 3',
+                lat: 52.192001,
+                lon: -2.22
+            }]
+        }]
+    });
+
+    chart.series[1].markerClusterInfo.clusters[0].point.firePointEvent('click');
+
+    assert.ok(
+        true,
+        'Click on cluster of same location points should not throw (#17205).'
+    );
+
+    chart.update({
+        mapView: {
+            maxZoom: 10
+        }
+    });
+
+    const scaleBeforeZoom = chart.mapView.getScale();
+    chart.series[1].markerClusterInfo.clusters[0].point.firePointEvent('click');
+
+    assert.notEqual(
+        scaleBeforeZoom,
+        chart.mapView.getScale(),
+        'A cluster should be zoomed after click if mapView.maxZoom is set.'
+    );
+
+    assert.ok(
+        chart.series[1].markerClusterInfo.clusters.length,
+        'A cluster of same location points should remain a cluster after zoom.'
+    );
+});
