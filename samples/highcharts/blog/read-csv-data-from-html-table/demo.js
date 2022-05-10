@@ -1,7 +1,3 @@
-Highcharts.setOptions({
-    colors: ["#058DC7", "#c7058d"]
-});
-
 Highcharts.chart("container", {
     data: {
         table: "datatable"
@@ -31,6 +27,7 @@ Highcharts.chart("container", {
             text: null
         }
     },
+    colors: ["#058DC7", "#c7058d"],
     tooltip: {
         valueSuffix: " %"
     }
