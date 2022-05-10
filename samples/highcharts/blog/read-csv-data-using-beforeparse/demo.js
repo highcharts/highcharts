@@ -1,6 +1,3 @@
-Highcharts.setOptions({
-    colors: ["#058DC7", "#c7058d"]
-});
 Highcharts.chart('container', {
     chart: {
         type: 'column'
@@ -30,7 +27,7 @@ Highcharts.chart('container', {
             return csv.replace(/mg/g, '');
         }
     },
-
+    colors: ["#058DC7", "#c7058d"],
     plotOptions: {
         series: {
             dataLabels: {
