@@ -134,8 +134,8 @@ function processTemplateLiterals(content) {
             prefix,
             concats
                 .replace(/\)$/u, '')
-                .replace(/["\)]?\.concat\(([\w\.\[\]]+?), ("[^"]*?")/gu, '+$1+$2')
-                .replace(/["\)]?\.concat\(([^"]+?), ("[^"]*?")/gu, '+($1)+$2')
+                .replace(/["\)]?\.concat\(([\w\.\[\]]+?), ("[^"]*?")/gu, ' + $1 + $2')
+                .replace(/["\)]?\.concat\(([^"]+?), ("[^"]*?")/gu, ' + ($1) + $2')
         ].join('');
     });
 }
