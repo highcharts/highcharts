@@ -476,28 +476,28 @@ class Chart {
 
             this.callback = callback;
             this.isResizing = 0;
-            
+
             const zooming = optionsChart.zooming;
 
             if (zooming) {
                 optionsChart.pinchType = pick(
                     zooming.pinchType,
                     optionsChart.pinchType
-                ),
+                );
                 optionsChart.zoomBySingleTouch = pick(
                     zooming.singleTouch,
                     optionsChart.zoomBySingleTouch
-                ),
+                );
                 optionsChart.zoomType = pick(
                     zooming.type,
                     optionsChart.zoomType
-                ),
+                );
                 optionsChart.zoomKey = pick(
                     zooming.zoomKey,
                     optionsChart.zoomKey
-                )
-            } 
-            
+                );
+            }
+
             /**
              * The options structure for the chart after merging
              * {@link #defaultOptions} and {@link #userOptions}. It contains
