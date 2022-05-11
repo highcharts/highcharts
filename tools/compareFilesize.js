@@ -1,5 +1,4 @@
 /* eslint-disable func-style, no-confusing-arrow */
-const { getBuildScripts } = require('./build.js');
 const { compile } = require('./compile.js');
 const { sync: gzipSize } = require('gzip-size');
 const { getFile, writeFilePromise: writeFile } =
@@ -113,7 +112,6 @@ const getFileSizes = (files, out) => {
     );
 
     return Promise.resolve()
-        .then(getBuildScripts({ files }).fnFirstBuild)
         .then(() => compile(files, sourceFolder))
         .then(() => getSizeOfSourceCompiledAndGzip(files))
         .then(result => outputResult(result, out));

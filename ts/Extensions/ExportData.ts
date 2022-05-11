@@ -151,12 +151,6 @@ declare global {
             categoryDatetimeHeader?: string;
         }
     }
-    interface MSBlobBuilder extends Blob {
-    }
-    interface Window {
-        /** @deprecated */
-        MSBlobBuilder: typeof MSBlobBuilder;
-    }
 }
 
 /**
