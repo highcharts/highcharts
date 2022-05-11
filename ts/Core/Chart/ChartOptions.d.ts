@@ -178,6 +178,7 @@ export interface ChartZoomingOptions {
     singleTouch: boolean;
     type?: ('x'|'xy'|'y');
     pinchType?: string;
+    zoomKey?: string;
 }
 
 /* *

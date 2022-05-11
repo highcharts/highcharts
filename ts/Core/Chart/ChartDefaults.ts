@@ -1025,6 +1025,31 @@ const ChartDefaults: ChartOptions = {
          * @apioption  chart.zooming.pinchType
          */
 
+                /**
+         * Decides in what dimensions the user can zoom by dragging the mouse.
+         * Can be one of `x`, `y` or `xy`.
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @product    highcharts highstock gantt
+         * @validvalue ["x", "y", "xy"]
+         * @since      next
+         * @apioption  chart.zooming.type
+         */
+
+        /**
+        * Set a key to hold when dragging to zoom the chart. This is useful to avoid
+        * zooming while moving points. Should be set different than
+        * [chart.panKey](#chart.panKey).
+        *
+        * @type       {string}
+        * @default    {highcharts} undefined
+        * @since      next
+        * @validvalue ["alt", "ctrl", "meta", "shift"]
+        * @requires   modules/draggable-points
+        * @apioption  chart.zooming.zoomKey
+        */
+       
         /**
          * Enables zooming by a single touch, in combination with
          * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger
@@ -1039,18 +1064,6 @@ const ChartDefaults: ChartOptions = {
          * @since      next
          */
         singleTouch: false,
-
-        /**
-         * Decides in what dimensions the user can zoom by dragging the mouse.
-         * Can be one of `x`, `y` or `xy`.
-         *
-         * @type       {string}
-         * @product    highcharts highstock gantt
-         * @validvalue ["x", "y", "xy"]
-         * @since      next
-         * @apioption  chart.zooming.type
-         */
-        type: 'x'
 
     },
     /**
