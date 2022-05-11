@@ -1394,6 +1394,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * @type       {string}
  * @since      6.2.0
  * @validvalue ["alt", "ctrl", "meta", "shift"]
+ * @deprecated
  * @requires  modules/draggable-points
  * @apioption  chart.zoomKey
  */
@@ -2907,7 +2908,7 @@ addEvent(Point, 'remove', function (): void {
  */
 Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
-    const chartOptions = this.userOptions.chart || {},
+    const chartOptions = this.options.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
         zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
 
