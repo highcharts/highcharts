@@ -139,13 +139,43 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Check Chrome
           command: |
             google-chrome --version
             whereis google-chrome
-          name: Check Chrome
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
+      - when:
+          condition: << parameters.notify_on_failure >>
+          steps:
+            - slack/status:
+                fail_only: true
+
+  test_oldies:
+    <<: *defaults
+    description: Run tests with old browser configs at BrowserStack
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "Win.IE8"
+      notify_on_failure:
+        type: boolean
+        default: false
+    steps:
+      - << : *load_workspace
+      - run:
+          name: Downgrade karma
+          command: |
+            npm i --no-save karma@4.3.0
+      - run:
+          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --oldie --browsercount 1"
+          no_output_timeout: 20m
+      - run:
+          name: Upgrade karma
+          command: |
+            npm i karma
       - when:
           condition: << parameters.notify_on_failure >>
           steps:
@@ -197,13 +227,13 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Check Chrome
           command: |
             google-chrome --version
             whereis google-chrome
-          name: Check Chrome
       - run:
           name: Run cypress tests (Chrome)
-          command: npx cypress run --browser chrome --headless
+          command: TZ=UTC npx cypress run --browser chrome --headless
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-chrome
@@ -224,7 +254,7 @@ jobs:
           name: Check Chrome
       - run:
           name: Run cypress tests (Firefox)
-          command: npx cypress run --browser firefox --headless
+          command: TZ=UTC npx cypress run --browser firefox --headless
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-firefox
@@ -328,7 +358,7 @@ jobs:
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
       - run:
           name: File size comparison
           command: |
@@ -555,10 +585,10 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [lint]
-      - test_browsers:
+      - test_oldies:
           name: "test-Win.IE8"
           requires: [lint]
-          browsers: "Win.IE8 --oldie"
+          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
           requires: ["test-Win.IE8", "generate_ts_declarations"]
@@ -647,10 +677,10 @@ workflows:
           requires: ["test-Win.Chrome"]
           browsers: "Mac.Firefox"
           notify_on_failure: true
-      - test_browsers:
+      - test_oldies:
           name: "test-Win.IE8"
           requires: ["test-Mac.Firefox"]
-          browsers: "Win.IE8 --oldie"
+          browsers: "Win.IE8"
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]

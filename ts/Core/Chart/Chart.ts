@@ -2775,12 +2775,15 @@ class Chart {
      * Emit console warning if the a11y module is not loaded.
      */
     public warnIfA11yModuleNotLoaded():void {
-        setTimeout(():void => {
-            const opts = this && this.options;
-            if (
-                opts && !this.accessibility &&
-                !(opts.accessibility && opts.accessibility.enabled === false)
-            ) {
+        const opts = this.options;
+        if (opts && !this.accessibility) {
+            // Make chart behave as an image with the title as alt text
+            this.renderer.boxWrapper.attr({
+                role: 'img',
+                'aria-label': opts.title && opts.title.text || ''
+            });
+
+            if (!(opts.accessibility && opts.accessibility.enabled === false)) {
                 error(
                     'Highcharts warning: Consider including the ' +
                     '"accessibility.js" module to make your chart more ' +
@@ -2790,7 +2793,7 @@ class Chart {
                     false, this
                 );
             }
-        }, 100);
+        }
     }
 
 
@@ -3648,9 +3651,7 @@ class Chart {
                         type: 'x'
                     }
             ),
-            chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled;
+            chartOptions = chart.options.chart;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
@@ -3818,7 +3819,6 @@ class Chart {
 
                         if (
                             !chart.resetZoomButton &&
-                            !hasMapNavigation &&
                             // Show reset zoom button only when both newMin and
                             // newMax values are between padded axis range.
                             newMin !== paddedMin &&
