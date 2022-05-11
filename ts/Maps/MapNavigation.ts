@@ -17,12 +17,12 @@
  * */
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type {
     MapNavigationButtonOptions,
     MapNavigationOptions
 } from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -32,7 +32,6 @@ const {
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    defined,
     extend,
     isNumber,
     merge,
@@ -40,7 +39,6 @@ const {
     pick
 } = U;
 import './MapNavigationOptionsDefault.js';
-import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -163,9 +161,6 @@ MapNavigation.prototype.update = function (
         chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         attr: ButtonThemeObject,
-        states: ButtonThemeStatesObject|undefined,
-        hoverStates: SVGAttributes|undefined,
-        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
             e: (Event|AnyRecord)

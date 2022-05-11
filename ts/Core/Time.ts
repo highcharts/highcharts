@@ -286,8 +286,7 @@ class Time {
      *
      */
     public update(options: Time.TimeOptions): void {
-        const useUTC = pick(options && options.useUTC, true) as boolean,
-            time = this;
+        const useUTC = pick(options && options.useUTC, true);
 
         this.options = options = merge(true, this.options || {}, options);
 
