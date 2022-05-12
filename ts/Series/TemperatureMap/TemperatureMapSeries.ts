@@ -21,6 +21,8 @@ import Color from '../../Core/Color/Color.js';
 import MapBubbleSeries from '../MapBubble/MapBubbleSeries.js';
 import TemperatureMapPoint from './TemperatureMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import GradientColorStop from '../../Core/Color/GradientColor';
+
 // const {
 //     seriesTypes: {
 //         mapbubble: MapBubbleSeries
@@ -63,7 +65,11 @@ class TemperatureMapSeries extends MapBubbleSeries {
         let colors: any = series.options.colors,
             i: number;
 
-        colors = colors.map((color: ColorType, ii: number): any => {
+        /* (1) if (colors === typeof Array<GradientColor['stops']>) {
+
+        }*/
+
+        colors = colors.map((color: ColorType | GradientColorStop, ii: number): any => {
             const maxSize2 = relativeLength(series.options.maxSize, 100) // check 100 valid?
             const radiusFactor: number = ii / (colors.length - 1),
                 maxSize = (1 - radiusFactor) * maxSize2,
@@ -73,10 +79,12 @@ class TemperatureMapSeries extends MapBubbleSeries {
                         cy: 0.5,
                         r: 0.5
                     },
-                    stops: [
+                    // TODO, refactor how the array is created.
+                    // There is code that can be shared.
+                    stops: (typeof color === 'string') ? [
                         [ii === colors.length - 1 ? 0 : 0.5, color],
                         [1, (new Color(color)).setOpacity(0).get('rgba')]
-                    ]
+                    ] : [color, [1, new Color((color as any)[1]).setOpacity(0).get('rgba')]]
                 };
 
             // Options from point level not supported - API says it should,
