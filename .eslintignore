@@ -7,9 +7,8 @@ samples/cloud/**/**/*.js
 samples/static/*.js
 samples/highcharts/studies/data-layer/**/*.js
 test/cypress
-test/test-controller.js
-test/test-template.js
-test/test-utilities.js
+test/test-*.*
+test/*.ts
 test/typescript-karma
 tools/eslint-plugin-highcharts/node_modules/**
 tools/jsdoc/storage/**/*.js

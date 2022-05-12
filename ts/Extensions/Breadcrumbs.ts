@@ -705,10 +705,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            buttonTheme = merge(breadcrumbsOptions.buttonTheme),
-            states = buttonTheme.states;
-
-        delete buttonTheme.states;
+            buttonTheme = merge(breadcrumbsOptions.buttonTheme);
 
         const button: SVGElement = chart.renderer
             .button(
@@ -741,10 +738,7 @@ class Breadcrumbs {
                         fireEvent(breadcrumbs, 'up', e);
                     }
                 },
-                buttonTheme,
-                states && states.hover,
-                states && states.select,
-                states && states.disabled
+                buttonTheme
             )
             .addClass('highcharts-breadcrumbs-button')
             .add(breadcrumbs.group);

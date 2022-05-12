@@ -1038,3 +1038,28 @@ QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         );
     });
 });
+
+QUnit.test('Data grouping multiple series on zoom, #17141.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 500
+        },
+        series: [{
+            data: Array.from(Array(5000)).map(() => Math.random() * 10)
+        }, {
+            data: Array.from(Array(5000)).map(() => Math.random() * 10)
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(200, 220);
+    assert.notOk(
+        chart.series[0].hasGroupedData,
+        `After zooming to a point where groupinng is no longer needed, it should
+        not be applied.`
+    );
+    assert.notOk(
+        chart.series[1].hasGroupedData,
+        `After zooming to a point where groupinng is no longer needed, it should
+        not be applied.`
+    );
+});
