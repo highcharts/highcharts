@@ -8,7 +8,6 @@ const gulp = require('gulp');
  */
 const fileUpload = () => {
     const colors = require('colors');
-    const ProgressBar = require('../../progress-bar.js');
     const {
         uploadFiles
     } = require('../../upload.js');
@@ -26,20 +25,11 @@ const fileUpload = () => {
     }
 
     const getUploadConfig = () => {
-        const errors = [];
-        const bar = new ProgressBar({
-            error: '',
-            total: files.length,
-            message: '\n[:bar] - Uploading. Completed :count of :total.:error'
-        });
         const doTick = () => {
-            bar.tick();
+            process.stdout.write('.');
         };
         const onError = err => {
-            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
-            bar.tick({
-                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
-            });
+            process.stdout.write(`\nError: ${err}\n`);
         };
         const params = {
             batchSize,
@@ -60,6 +50,7 @@ const fileUpload = () => {
         .then(result => {
             const { errors } = result;
             if (errors.length) {
+                console.error(`\n${errors.length} file(s) errored:\n${errors.join('\n')}`);
                 const erroredFiles = errors.map(e => e.from);
                 console.log(`Files errored: ${erroredFiles.join(',')}`);
                 commands.push(`gulp upload-files --bucket ${bucket} --files ${erroredFiles.join(',')}`);
