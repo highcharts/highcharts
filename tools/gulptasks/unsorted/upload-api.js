@@ -55,7 +55,7 @@ function updateFileContent(filePath, fileContent) {
             fileContent = Buffer.from(
                 fileContent
                     .toString()
-                    .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+                    .replace(/^(.*<\/head>.*)$/mu, HTML_HEAD_STATIC + '\n$1')
             );
             break;
         default:
@@ -87,6 +87,7 @@ function uploadFilesTest(params) {
                 mkDirP.sync(Path.dirname(to));
                 fs.writeFileSync(to, content);
                 if (callback) {
+                    // eslint-disable-next-line node/callback-return
                     callback();
                 }
             } catch (error) {
@@ -105,7 +106,6 @@ function uploadAPIDocs() {
     } = require('highcharts-assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
-    const ProgressBar = require('../../progress-bar.js');
     const {
         asyncForeach,
         uploadFiles
@@ -126,20 +126,11 @@ function uploadAPIDocs() {
 
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = tag => {
-        const errors = [];
-        const bar = new ProgressBar({
-            error: '',
-            total: files.length,
-            message: !argv.silent ? `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error` : ''
-        });
         const doTick = () => {
-            bar.tick();
+            process.stdout.write('.');
         };
         const onError = err => {
-            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
-            bar.tick({
-                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
-            });
+            process.stdout.write(`\nError: ${err}\n`);
         };
 
         const params = {
