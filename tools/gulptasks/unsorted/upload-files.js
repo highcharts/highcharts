@@ -50,7 +50,6 @@ const fileUpload = () => {
         .then(result => {
             const { errors } = result;
             if (errors.length) {
-                console.error(`\n${errors.length} file(s) errored:\n${errors.join('\n')}`);
                 const erroredFiles = errors.map(e => e.from);
                 console.log(`Files errored: ${erroredFiles.join(',')}`);
                 commands.push(`gulp upload-files --bucket ${bucket} --files ${erroredFiles.join(',')}`);
