@@ -244,3 +244,35 @@ QUnit.test('Null threshold (#7420)', function (assert) {
         'The points should have an extent'
     );
 });
+
+QUnit.test('Negative stack labels in the inverted chart should be properly calculated. (#17116)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true,
+            spacingRight: 200
+        },
+        yAxis: {
+            min: -500,
+            stackLabels: {
+                enabled: true
+            }
+        },
+        series: [{
+            type: 'column',
+            stacking: 'normal',
+            data: [-50]
+        }]
+    });
+
+    const point = chart.series[0].points[0],
+        pointPos = chart.plotWidth + chart.plotLeft - point.plotY,
+        label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label,
+        labelPos = chart.plotLeft + label.x,
+        labelWidth = label.width;
+        
+    assert.strictEqual(
+        pointPos - (labelPos + labelWidth) < 1,
+        true,
+        'The stack label should be in close range'
+    );
+});

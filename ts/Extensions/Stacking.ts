@@ -480,6 +480,12 @@ class StackItem {
                     stackBox
                 );
             }
+
+            // Check if chart is inverted with negative values #17116
+            if (chart.inverted) {
+                label.alignAttr.x += chart.spacing[1] * (isNegative ? 1 : 0);
+            }
+
             label.attr({
                 x: label.alignAttr.x,
                 y: label.alignAttr.y
