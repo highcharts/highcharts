@@ -1,0 +1,127 @@
+h2 {
+    font-size: 1.3rem;
+    font-weight: normal;
+    margin-top: 30px;
+}
+
+.code {
+    font-family: monospace;
+    background-color: #efefef;
+    padding: 1px 4px;
+}
+
+#json {
+    font-family: monospace;
+    background-color: #444;
+    color: #d6eed6;
+    padding: 10px;
+    height: 200px;
+    width: 100%;
+    overflow-y: scroll;
+    resize: none;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.chart {
+    height: 200px;
+}
+
+.masterEnvelopes .chart {
+    width: 250px;
+}
+
+.firstrow {
+    padding-bottom: 25px;
+    margin-bottom: 20px;
+    gap: 30px;
+    border-bottom: 1px solid #ccc;
+}
+
+#masterVolume {
+    display: block;
+    margin-top: 7px;
+}
+
+#intro {
+    font-size: 1.15rem;
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #e1f6fe;
+}
+
+#preset {
+    display: block;
+    width: 150px;
+    height: 1.3rem;
+    margin-top: 5px;
+}
+
+#presets {
+    display: none;
+}
+
+#keyStatus {
+    background-color: #f3f2fc;
+    padding: 7px 20px;
+    margin: 0;
+    margin-left: 10px;
+}
+
+#addOsc {
+    height: 30px;
+    margin-top: 10px;
+}
+
+button {
+    background: none;
+    background-color: #d5f3d5;
+    cursor: pointer;
+    padding: 2px 16px;
+    border-radius: 3px;
+    border: 1px solid #616161;
+}
+
+button:hover {
+    background-color: #e6f2e6;
+    border: 1px solid #455;
+}
+
+button:active {
+    background-color: #dcece9;
+}
+
+.oscillator {
+    display: grid;
+    column-gap: 2px;
+    align-items: center;
+    row-gap: 5px;
+    grid-template-columns: 11rem 6.5rem;
+    background-color: #fafafa;
+    border: 1px solid #d7d7d7;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.oscillator h3 {
+    font-size: 1.4rem;
+}
+
+.oscillator button {
+    background-color: #af1919;
+    color: white;
+    padding: 5px;
+}
+
+.oscillator .chart {
+    margin-top: 20px;
+}
+
+.chartlabel {
+    margin-left: 10px;
+}

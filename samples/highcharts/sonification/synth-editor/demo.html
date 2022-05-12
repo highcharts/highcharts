@@ -1,0 +1,201 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/draggable-points.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+
+<main>
+  <h1>Synth Patch Editor</h1>
+  <p id="intro">Play the synth using the <span class="code">A</span> to <span class="code">L</span> and <span class="code">W</span> to <span class="code">I</span> keys on your keyboard, simulating white and black keys on a piano.</p>
+
+  <div class="row firstrow">
+      <label>Volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
+      <label>Preset <select id="preset"></select></label>
+      <p id="keyStatus">No synth key pressed</p>
+  </div>
+
+  <div class="row masterEnvelopes">
+    <div>
+      <h2>Attack Envelope</h2>
+      <div id="masterAttackEnvChart" class="chart"></div>
+    </div>
+    <div>
+      <h2>Release Envelope</h2>
+      <div id="masterReleaseEnvChart" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>Oscillators</h2>
+    <button id="addOsc">+ Add oscillator</button>
+  </div>
+  <div id="oscillators" class="row">
+  </div>
+
+  <h2>Generated Patch JSON</h2>
+  <textarea readonly id="json">{
+
+}</textarea>
+</main>
+
+
+
+<!-- ----------------------------------------- PRESETS STORED BELOW ------------------------------------------------ -->
+
+<div id="presets">
+  <div id="preset-basic">
+    {
+      "masterVolume": "0.8",
+      "oscillators": [
+       {
+        "type": "sine",
+        "lowpass": {},
+        "highpass": {},
+        "modulateOscillator": null,
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       }
+      ]
+     }
+  </div>
+  <div id="preset-advanced">
+    {
+      "masterVolume": "0.7",
+      "masterAttackEnvelope": [
+       {
+        "t": 0,
+        "vol": 0
+       },
+       {
+        "t": 50,
+        "vol": 0.5
+       },
+       {
+        "t": 100,
+        "vol": 0.9
+       },
+       {
+        "t": 150,
+        "vol": 1
+       }
+      ],
+      "masterReleaseEnvelope": [
+       {
+        "t": 0,
+        "vol": 1
+       },
+       {
+        "t": 50,
+        "vol": 0.9
+       },
+       {
+        "t": 100,
+        "vol": 0.5
+       },
+       {
+        "t": 150,
+        "vol": 0
+       }
+      ],
+      "oscillators": [
+       {
+        "type": "sine",
+        "freqMultiplier": 1,
+        "fixedFrequency": null,
+        "volume": 0.5,
+        "detune": null,
+        "volumePitchTrackingMultiplier": 1,
+        "lowpass": {
+         "frequency": 20000,
+         "Q": 3
+        },
+        "highpass": {
+         "frequency": null,
+         "Q": 3
+        },
+        "modulateOscillator": 1,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 50,
+          "vol": 0.5
+         },
+         {
+          "t": 100,
+          "vol": 0.9
+         },
+         {
+          "t": 150,
+          "vol": 1
+         }
+        ],
+        "releaseEnvelope": [
+         {
+          "t": 0,
+          "vol": 1
+         },
+         {
+          "t": 50,
+          "vol": 0.9
+         },
+         {
+          "t": 100,
+          "vol": 0.5
+         },
+         {
+          "t": 150,
+          "vol": 0
+         }
+        ]
+       },
+       {
+        "type": "triangle",
+        "freqMultiplier": null,
+        "fixedFrequency": 10,
+        "volume": 30,
+        "detune": null,
+        "volumePitchTrackingMultiplier": null,
+        "lowpass": {
+         "frequency": null,
+         "Q": null
+        },
+        "highpass": {
+         "frequency": null,
+         "Q": null
+        },
+        "modulateOscillator": null,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 50,
+          "vol": 0.5
+         },
+         {
+          "t": 484,
+          "vol": 0.93
+         },
+         {
+          "t": 484,
+          "vol": 0.93
+         }
+        ],
+        "releaseEnvelope": [
+         {
+          "t": 0,
+          "vol": 1
+         },
+         {
+          "t": 31,
+          "vol": 0
+         }
+        ]
+       }
+      ]
+     }
+  </div>
+
+</div>
