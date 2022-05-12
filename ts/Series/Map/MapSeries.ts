@@ -675,10 +675,34 @@ class MapSeries extends ScatterSeries {
 
             // Add class names
             this.points.forEach((point): void => {
-                if (point.graphic) {
+                const graphic = point.graphic;
 
-                    const graphic = point.graphic,
-                        animate = point.graphic.animate;
+                if (graphic) {
+                    const animate = graphic.animate;
+                    let className = '';
+                    if (point.name) {
+                        className +=
+                            'highcharts-name-' +
+                            point.name.replace(/ /g, '-').toLowerCase();
+                    }
+                    if (point.properties && point.properties['hc-key']) {
+                        className +=
+                            ' highcharts-key-' +
+                            point.properties['hc-key'].toString().toLowerCase();
+                    }
+                    if (className) {
+                        graphic.addClass(className);
+                    }
+
+                    // In styled mode, apply point colors by CSS
+                    if (chart.styledMode) {
+                        graphic.css(
+                            this.pointAttribs(
+                                point,
+                                point.selected && 'select' || void 0
+                            ) as any
+                        );
+                    }
 
                     graphic.animate = function (params,
                         options, complete): SVGElement {
@@ -686,10 +710,26 @@ class MapSeries extends ScatterSeries {
                         let switchBack = false;
                         // When strokeWidth is animating
                         if (params['stroke-width']) {
-                            const inheritedStrokeWidth = (
-                                (point.series.options.borderWidth || 0) /
-                                (chart.mapView && chart.mapView.getScale() || 1)
-                            );
+
+                            const pointAttrToOptions =
+                                point.series.pointAttrToOptions,
+                                strokeWidth = pick(
+                                    (point.series.options as any)[(
+                                        pointAttrToOptions &&
+                                        (
+                                            pointAttrToOptions as any
+                                        )['stroke-width']
+                                    ) || 'borderWidth'],
+                                    1 // Styled mode
+                                ),
+                                inheritedStrokeWidth = (
+                                    strokeWidth /
+                                    (
+                                        chart.mapView &&
+                                        chart.mapView.getScale() ||
+                                        1
+                                    )
+                                );
                             // For animating from inherit,
                             // .attr() reads the property as the starting point
                             if (graphic['stroke-width'] === 'inherit') {
@@ -717,36 +757,8 @@ class MapSeries extends ScatterSeries {
                         return ret;
                     };
                 }
-
-                if (point.graphic) {
-                    let className = '';
-                    if (point.name) {
-                        className +=
-                            'highcharts-name-' +
-                            point.name.replace(/ /g, '-').toLowerCase();
-                    }
-                    if (point.properties && point.properties['hc-key']) {
-                        className +=
-                            ' highcharts-key-' +
-                            point.properties['hc-key'].toString().toLowerCase();
-                    }
-                    if (className) {
-                        point.graphic.addClass(className);
-                    }
-
-                    // In styled mode, apply point colors by CSS
-                    if (chart.styledMode) {
-                        point.graphic.css(
-                            this.pointAttribs(
-                                point,
-                                point.selected && 'select' || void 0
-                            ) as any
-                        );
-                    }
-                }
             });
         }
-
 
         // Apply the SVG transform
         transformGroups.forEach((transformGroup, i): void => {

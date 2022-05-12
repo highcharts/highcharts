@@ -45,27 +45,6 @@ QUnit.test(
             }]
         });
 
-        // Function to return an SVG path between two points, with an arc
-        function pointsToPath(fromPoint, toPoint, invertArc) {
-            const
-                from = chart.mapView.lonLatToProjectedUnits(fromPoint),
-                to = chart.mapView.lonLatToProjectedUnits(toPoint),
-                curve = 0.05,
-                arcPointX =
-                    (from.x + to.x) /
-                    (invertArc ? 2 + curve : 2 - curve),
-                arcPointY =
-                    (from.y + to.y) /
-                    (invertArc ? 2 + curve : 2 - curve);
-            return [
-                ['M', from.x, from.y],
-                ['Q', arcPointX, arcPointY, to.x, to.y]
-            ];
-        }
-
-        const pointOne = chart.get('one'),
-            pointTwo = chart.get('two');
-
         chart.addSeries({
             type: 'mapline',
             states: {
@@ -75,7 +54,7 @@ QUnit.test(
             },
             data: [{
                 id: 'one - two',
-                path: pointsToPath(pointOne, pointTwo, true)
+                path: [["M", 5, 1], ["Q", 2.9268292682926833, 7.8048780487804885, 1, 15]]
             }]
         }, true, false);
 
