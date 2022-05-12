@@ -29,7 +29,7 @@ const fileUpload = () => {
             process.stdout.write('.');
         };
         const onError = err => {
-            process.stdout.write(`\nError: ${err}\n`);
+            process.stdout.write(`\n${err.message}. ${err.from} -> ${err.to}\n`);
         };
         const params = {
             batchSize,
