@@ -137,6 +137,10 @@ button:active {
     padding: 5px;
 }
 
+.oscillator select {
+    height: 1.4rem;
+}
+
 .oscillator .chart {
     margin-top: 20px;
 }

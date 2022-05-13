@@ -11,7 +11,8 @@ const charts = {}; // Our envelope chart references
 const el = el => document.getElementById(el);
 const presets = {
     basic: el('preset-basic').textContent,
-    advanced: el('preset-advanced').textContent
+    advanced: el('preset-advanced').textContent,
+    whirlwind: el('preset-whirlwind').textContent
 };
 
 // Get envelope options from an envelope chart
@@ -38,7 +39,9 @@ function updatePatch() {
         masterAttackEnvelope: getChartEnvelope('masterAttackEnvChart'),
         masterReleaseEnvelope: getChartEnvelope('masterReleaseEnvChart'),
         oscillators: oscillators.map(osc => {
-            const i = osc.inputs;
+            const i = osc.inputs,
+                modulatesIndex = oscillators
+                    .findIndex(osc => osc.id === intVal(i.modulateOsc));
             return {
                 type: val(i.type),
                 freqMultiplier: floatVal(i.freqMultiplier),
@@ -48,13 +51,18 @@ function updatePatch() {
                 volumePitchTrackingMultiplier: floatVal(i.volPitchTrackingMult),
                 lowpass: {
                     frequency: floatVal(i.lowpassFreq),
+                    frequencyPitchTrackingMultiplier:
+                        floatVal(i.lowpassPitchTrackingMult),
                     Q: floatVal(i.lowpassQ)
                 },
                 highpass: {
                     frequency: floatVal(i.highpassFreq),
+                    frequencyPitchTrackingMultiplier:
+                        floatVal(i.highpassPitchTrackingMult),
                     Q: floatVal(i.highpassQ)
                 },
-                modulateOscillator: intVal(i.modulateOsc) - 1,
+                modulateOscillator: modulatesIndex > -1 ?
+                    modulatesIndex : void 0,
                 attackEnvelope: getChartEnvelope(i.attackEnvChart),
                 releaseEnvelope: getChartEnvelope(i.releaseEnvChart)
             };
@@ -246,14 +254,18 @@ class Oscillator {
                 opts.volume || ''),
             detune: this.addControl('input', 'Detune', 'Detune',
                 opts.detune || ''),
-            volPitchTrackingMult: this.addControl('input', 'VolPitchTrackingMult', 'Pitch tracking volume multiplier',
+            volPitchTrackingMult: this.addControl('input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
                 opts.volPitchTrackingMult || ''),
             lowpassFreq: this.addControl('input', 'lowpassFreq', 'Lowpass frequency',
                 opts.lowpassFreq || ''),
+            lowpassPitchTrackingMult: this.addControl('input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
+                opts.lowpassPitchTrackingMult || ''),
             lowpassQ: this.addControl('input', 'lowpassQ', 'Lowpass Q',
                 opts.lowpassQ || ''),
             highpassFreq: this.addControl('input', 'highpassFreq', 'Highpass frequency',
                 opts.highpassFreq || ''),
+            highpassPitchTrackingMult: this.addControl('input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
+                opts.highpassPitchTrackingMult || ''),
             highpassQ: this.addControl('input', 'highpassQ', 'Highpass Q',
                 opts.highpassQ || ''),
             modulateOsc: this.addControl('select', 'ModulateOsc', 'Modulate oscillator', ''),
@@ -284,6 +296,16 @@ class Oscillator {
 }
 
 
+function playJingle() {
+    if (audioContext && synthPatch) {
+        const t = audioContext.currentTime;
+        [261.63, 329.63, 392, 523.25].forEach(
+            (freq, i) => synthPatch.playFreqAtTime(t + i * 0.1, freq, 150)
+        );
+    }
+}
+
+
 // Apply a preset to UI and patch settings
 function applyPreset(presetId) {
     const options = JSON.parse(presets[presetId]),
@@ -309,8 +331,12 @@ function applyPreset(presetId) {
             detune: opts.detune,
             volPitchTrackingMult: opts.volumePitchTrackingMultiplier,
             lowpassFreq: opts.lowpass.frequency,
+            lowpassPitchTrackingMult: opts.lowpass
+                .frequencyPitchTrackingMultiplier,
             lowpassQ: opts.lowpass.Q,
             highpassFreq: opts.highpass.frequency,
+            highpassPitchTrackingMult: opts.highpass
+                .frequencyPitchTrackingMultiplier,
             highpassQ: opts.highpass.Q
         }));
     });
@@ -329,6 +355,7 @@ function applyPreset(presetId) {
         }
 
         setTimeout(updatePatch, 0);
+        setTimeout(playJingle, 50);
     }, 100);
 }
 
@@ -378,13 +405,7 @@ el('startSynth').onclick = function () {
     el('controls').classList.remove('hidden');
     this.classList.add('hidden');
     el('keyStatus').textContent = 'No synth key pressed';
-    // Jingle
-    setTimeout(() => {
-        const t = audioContext.currentTime;
-        [261.63, 329.63, 392, 523.25].forEach(
-            (freq, i) => synthPatch.playFreqAtTime(t + i * 0.1, freq, 150)
-        );
-    }, 50);
+    setTimeout(playJingle, 50);
 };
 el('masterVolume').onchange = updatePatch;
 el('json').onclick = function () {
