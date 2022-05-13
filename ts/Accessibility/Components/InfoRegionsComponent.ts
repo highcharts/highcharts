@@ -431,7 +431,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             if (sectionDiv.parentNode) {
                 sectionDiv.parentNode.removeChild(sectionDiv);
             }
-            delete region.element;
+            region.element = null;
         }
     }
 

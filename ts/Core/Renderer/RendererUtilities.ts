@@ -52,7 +52,7 @@ namespace RendererUtilities {
     }
 
     export interface DistributedBoxObject extends BoxObject {
-        pos: number;
+        pos?: number;
     }
 
     /* *

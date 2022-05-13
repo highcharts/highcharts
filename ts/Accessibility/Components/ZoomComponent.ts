@@ -77,7 +77,7 @@ function chartHasMapZoom(
     chart: Highcharts.MapNavigationChart
 ): boolean {
     return !!(
-        chart.mapZoom &&
+        (chart.mapZoom) &&
         chart.mapNavigation &&
         chart.mapNavigation.navButtons.length
     );

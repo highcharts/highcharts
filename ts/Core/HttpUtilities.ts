@@ -129,7 +129,9 @@ function ajax(
                         try {
                             res = JSON.parse(res);
                         } catch (e) {
-                            return handleError(r, e);
+                            if (e instanceof Error) {
+                                return handleError(r, e);
+                            }
                         }
                     }
                 }
