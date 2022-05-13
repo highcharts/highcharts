@@ -33,13 +33,17 @@ declare global {
             (request: XMLHttpRequest, error: (string|Error)): void;
         }
         interface AjaxSuccessCallbackFunction {
-            (response: (string|JSONType)): void;
+            (
+                response: (string|JSONType),
+                xhr: XMLHttpRequest
+            ): void;
         }
         interface AjaxSettingsObject {
             data: (string|AnyRecord);
             dataType: string;
             error: AjaxErrorCallbackFunction;
             headers: Record<string, string>;
+            responseType: 'arraybuffer'|'blob'|'document'|'json'|'text';
             success: AjaxSuccessCallbackFunction;
             type: ('get'|'post'|'update'|'delete');
             url: string;
@@ -109,21 +113,29 @@ function ajax(
         r.setRequestHeader(key, val);
     });
 
+    if (options.responseType) {
+        r.responseType = options.responseType;
+    }
+
     // @todo lacking timeout handling
     r.onreadystatechange = function (): void {
         let res;
 
         if (r.readyState === 4) {
             if (r.status === 200) {
-                res = r.responseText;
-                if (options.dataType === 'json') {
-                    try {
-                        res = JSON.parse(res);
-                    } catch (e) {
-                        return handleError(r, e);
+                if (options.responseType !== 'blob') {
+                    res = r.responseText;
+                    if (options.dataType === 'json') {
+                        try {
+                            res = JSON.parse(res);
+                        } catch (e) {
+                            if (e instanceof Error) {
+                                return handleError(r, e);
+                            }
+                        }
                     }
                 }
-                return options.success && options.success(res);
+                return options.success && options.success(res, r);
             }
 
             handleError(r, r.responseText);

@@ -297,9 +297,7 @@ H.layouts.packedbubble = extendClass(
 addEvent(Chart as any, 'beforeRedraw', function (
     this: PackedBubbleChart
 ): void {
-    // eslint-disable-next-line no-invalid-this
     if (this.allDataPoints) {
-        // eslint-disable-next-line no-invalid-this
-        delete this.allDataPoints;
+        delete (this as Partial<typeof this>).allDataPoints;
     }
 });

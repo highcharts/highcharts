@@ -14,24 +14,24 @@ function updateVendor() {
 
     console.log((
         'Note: This task only copies the files into the vendor folder.\n' +
-        'To upgrade, run npm update jspdf-yworks && npm update svg2pdf.js`'
+        'To upgrade, run npm update jspdf && npm update svg2pdf.js`'
     ).yellow);
 
     const promises = [
         [
-            './node_modules/jspdf-yworks/dist/jspdf.debug.js',
+            './node_modules/jspdf/dist/jspdf.umd.js',
             './vendor/jspdf.src.js'
         ],
         [
-            './node_modules/jspdf-yworks/dist/jspdf.min.js',
+            './node_modules/jspdf/dist/jspdf.umd.min.js',
             './vendor/jspdf.js'
         ],
         [
-            './node_modules/svg2pdf.js/dist/svg2pdf.js',
+            './node_modules/svg2pdf.js/dist/svg2pdf.umd.js',
             './vendor/svg2pdf.src.js'
         ],
         [
-            './node_modules/svg2pdf.js/dist/svg2pdf.min.js',
+            './node_modules/svg2pdf.js/dist/svg2pdf.umd.min.js',
             './vendor/svg2pdf.js'
         ]
     ].map(([source, target]) => copyFile(source, target));

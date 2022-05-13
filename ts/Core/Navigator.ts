@@ -1130,20 +1130,23 @@ class Navigator {
             maskInside,
             !maskInside
         ].forEach(function (hasMask: (boolean|undefined), index: number): void {
-            navigator.shades[index] = renderer.rect()
+            const shade = renderer.rect()
                 .addClass('highcharts-navigator-mask' +
                     (index === 1 ? '-inside' : '-outside'))
                 .add(navigatorGroup);
 
             if (!chart.styledMode) {
-                navigator.shades[index]
-                    .attr({
-                        fill: hasMask ?
-                            (navigatorOptions.maskFill as any) :
-                            'rgba(0,0,0,0)'
-                    })
-                    .css(((index === 1) as any) && mouseCursor);
+                shade.attr({
+                    fill: hasMask ?
+                        (navigatorOptions.maskFill as any) :
+                        'rgba(0,0,0,0)'
+                });
+
+                if (index === 1) {
+                    shade.css(mouseCursor);
+                }
             }
+            navigator.shades[index] = shade;
         });
 
         // Create the outline:
@@ -1364,7 +1367,7 @@ class Navigator {
 
         if (navigatorEnabled) {
             navigator.navigatorGroup.attr({
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             // Place elements
             verb = rendered && !navigator.hasDragged ? 'animate' : 'attr';

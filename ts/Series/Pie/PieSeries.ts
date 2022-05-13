@@ -442,6 +442,18 @@ class PieSeries extends Series {
          */
 
         /**
+         * Thickness describing the ring size for a donut type chart,
+         * overriding [innerSize](#plotOptions.pie.innerSize).
+         *
+         * @type      {number}
+         * @default   undefined
+         * @product   highcharts
+         * @since 10.1.0
+         * @apioption plotOptions.pie.thickness
+         * @private
+         */
+
+        /**
          * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
          * this option tells whether the series shall be redrawn as if the
          * hidden point were `null`.
@@ -470,7 +482,7 @@ class PieSeries extends Series {
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.
          * Percentages are relative to the pie size. Pixel values are given as
-         * integers.
+         * integers. Setting overridden by thickness.
          *
          *
          * Note: in Highcharts < 4.1.2, the percentage was relative to the plot

@@ -1,60 +1,57 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['lr-gp', 0],
-    ['lr-bg', 1],
-    ['lr-586', 2],
-    ['lr-cm', 3],
-    ['lr-lf', 4],
-    ['lr-mo', 5],
-    ['lr-mg', 6],
-    ['lr-ni', 7],
-    ['lr-ri', 8],
-    ['lr-gd', 9],
-    ['lr-si', 10],
-    ['lr-rg', 11],
-    ['lr-gk', 12],
-    ['lr-my', 13],
-    ['lr-bm', 14]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/lr/lr-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/lr/lr-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['lr-gp', 10], ['lr-bg', 11], ['lr-586', 12], ['lr-cm', 13],
+        ['lr-lf', 14], ['lr-mo', 15], ['lr-mg', 16], ['lr-ni', 17],
+        ['lr-ri', 18], ['lr-gd', 19], ['lr-si', 20], ['lr-rg', 21],
+        ['lr-gk', 22], ['lr-my', 23], ['lr-bm', 24]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lr/lr-all.js">Liberia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lr/lr-all.topo.json">Liberia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

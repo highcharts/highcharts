@@ -65,6 +65,7 @@ declare global {
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
+            /** @deprecated */
             mapZoom(
                 howMuch?: number,
                 xProjected?: number,
@@ -205,10 +206,6 @@ MapNavigation.prototype.update = function (
                     buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
-                states = attr.states;
-                hoverStates = states && states.hover;
-                selectStates = states && states.select;
-                delete attr.states;
             }
 
             const button = chart.renderer
@@ -218,8 +215,8 @@ MapNavigation.prototype.update = function (
                     0,
                     outerHandler,
                     attr,
-                    hoverStates,
-                    selectStates,
+                    void 0,
+                    void 0,
                     void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
@@ -443,6 +440,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *
      * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
+     * @deprecated
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]

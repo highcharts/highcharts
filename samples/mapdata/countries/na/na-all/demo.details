@@ -1,5 +1,5 @@
 ---
- name: Namibia - Highmaps
- description: Highmaps demo
+ name: Namibia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

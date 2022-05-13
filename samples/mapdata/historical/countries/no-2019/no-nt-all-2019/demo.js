@@ -1,68 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['no-nt-1749', 0],
-    ['no-nt-1755', 1],
-    ['no-nt-1703', 2],
-    ['no-nt-1750', 3],
-    ['no-nt-1719', 4],
-    ['no-nt-1748', 5],
-    ['no-nt-1744', 6],
-    ['no-nt-1718', 7],
-    ['no-nt-1724', 8],
-    ['no-nt-1702', 9],
-    ['no-nt-1725', 10],
-    ['no-nt-1721', 11],
-    ['no-nt-1736', 12],
-    ['no-nt-1740', 13],
-    ['no-nt-1743', 14],
-    ['no-nt-1739', 15],
-    ['no-nt-1742', 16],
-    ['no-nt-1714', 17],
-    ['no-nt-1738', 18],
-    ['no-nt-1711', 19],
-    ['no-nt-1717', 20],
-    ['no-nt-1756', 21],
-    ['no-nt-1751', 22]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/no-2019/no-nt-all-2019'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/no-2019/no-nt-all-2019.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['no-nt-1749', 10], ['no-nt-1755', 11], ['no-nt-1703', 12],
+        ['no-nt-1750', 13], ['no-nt-1719', 14], ['no-nt-1748', 15],
+        ['no-nt-1744', 16], ['no-nt-1718', 17], ['no-nt-1724', 18],
+        ['no-nt-1702', 19], ['no-nt-1725', 20], ['no-nt-1721', 21],
+        ['no-nt-1736', 22], ['no-nt-1740', 23], ['no-nt-1743', 24],
+        ['no-nt-1739', 25], ['no-nt-1742', 26], ['no-nt-1714', 27],
+        ['no-nt-1738', 28], ['no-nt-1711', 29], ['no-nt-1717', 30],
+        ['no-nt-1756', 31], ['no-nt-1751', 32]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-nt-all-2019.js">Nord-Trøndelag (2019)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-nt-all-2019.topo.json">Nord-Trøndelag (2019)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

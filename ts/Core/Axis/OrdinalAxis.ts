@@ -650,9 +650,11 @@ namespace OrdinalAxis {
                 // how many ordinal units did we move?
                 movedUnits = ((mouseDownX as any) - chartX) / pointPixelWidth,
                 // get index of all the chart's points
+                extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
                     ordinal: {
-                        positions: xAxis.ordinal.getExtendedPositions()
+                        positions: extendedOrdinalPositions,
+                        extendedOrdinalPositions: extendedOrdinalPositions
                     }
                 },
                 index2val = xAxis.index2val,
@@ -908,7 +910,7 @@ namespace OrdinalAxis {
         public axis: Composition;
         public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
-        public index: Record<string, Array<number>> = {};
+        public index?: Record<string, Array<number>> = {};
         public offset?: number;
         public overscrollPointsRange?: number;
         public positions?: Array<number>;

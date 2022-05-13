@@ -1,5 +1,5 @@
 ---
- name: North Korea - Highmaps
- description: Highmaps demo
+ name: North Korea - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

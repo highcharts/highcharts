@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
+import type ButtonThemeObject from './ButtonThemeObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
 import type {
@@ -658,7 +659,7 @@ class SVGRenderer implements SVGRendererLike {
      * @param {Highcharts.SVGAttributes} [hoverState]
      * SVG attributes for the hover state.
      *
-     * @param {Highcharts.SVGAttributes} [pressedState]
+     * @param {Highcharts.SVGAttributes} [selectState]
      * SVG attributes for the pressed state.
      *
      * @param {Highcharts.SVGAttributes} [disabledState]
@@ -678,9 +679,9 @@ class SVGRenderer implements SVGRendererLike {
         x: number,
         y: number,
         callback: EventCallback<SVGElement>,
-        theme?: SVGAttributes,
+        theme?: ButtonThemeObject,
         hoverState?: SVGAttributes,
-        pressedState?: SVGAttributes,
+        selectState?: SVGAttributes,
         disabledState?: SVGAttributes,
         shape?: SymbolKey,
         useHTML?: boolean
@@ -696,14 +697,24 @@ class SVGRenderer implements SVGRendererLike {
                 void 0,
                 'button'
             ),
-            styledMode = this.styledMode;
+            styledMode = this.styledMode,
+            states = (theme && theme.states) || {};
+
+        if (theme) {
+            delete theme.states;
+        }
 
         let curState = 0,
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
-            normalState = theme ? merge(theme) : {};
+            normalState: SVGAttributes = theme ? merge(theme) : {};
 
-        const userNormalStyle = normalState && normalState.style || {};
+        const normalStyle = merge({
+            color: Palette.neutralColor80,
+            cursor: 'pointer',
+            fontWeight: 'normal'
+        }, normalState.style);
+        delete normalState.style;
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -711,11 +722,11 @@ class SVGRenderer implements SVGRendererLike {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
-        // Presentational
-        let normalStyle: any,
-            hoverStyle: any,
-            pressedStyle: any,
-            disabledStyle: any;
+        // Presentational. The string type is a mistake, it is just for
+        // compliance with SVGAttribute and is not used in button theme.
+        let hoverStyle: CSSObject|string|undefined,
+            selectStyle: CSSObject|string|undefined,
+            disabledStyle: CSSObject|string|undefined;
 
         if (!styledMode) {
 
@@ -723,42 +734,35 @@ class SVGRenderer implements SVGRendererLike {
             normalState = merge({
                 fill: Palette.neutralColor3,
                 stroke: Palette.neutralColor20,
-                'stroke-width': 1,
-                style: {
-                    color: Palette.neutralColor80,
-                    cursor: 'pointer',
-                    fontWeight: 'normal'
-                }
-            }, {
-                style: userNormalStyle
+                'stroke-width': 1
             }, normalState);
-            normalStyle = normalState.style;
-            delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
                 fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || {}));
+            }, AST.filterUserAttributes(hoverState || states.hover || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
-            pressedState = merge(normalState, {
+            selectState = merge(normalState, {
                 fill: Palette.highlightColor10,
                 style: {
                     color: Palette.neutralColor100,
                     fontWeight: 'bold'
                 }
-            }, AST.filterUserAttributes(pressedState || {}));
-            pressedStyle = pressedState.style;
-            delete pressedState.style;
+            }, AST.filterUserAttributes(selectState || states.select || {}));
+            selectStyle = selectState.style;
+            delete selectState.style;
 
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
                     color: Palette.neutralColor20
                 }
-            }, AST.filterUserAttributes(disabledState || {}));
+            }, AST.filterUserAttributes(
+                disabledState || states.disabled || {}
+            ));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -802,15 +806,18 @@ class SVGRenderer implements SVGRendererLike {
                     .attr([
                         normalState,
                         hoverState,
-                        pressedState,
+                        selectState,
                         disabledState
-                    ][state || 0])
-                    .css([
-                        normalStyle,
-                        hoverStyle,
-                        pressedStyle,
-                        disabledStyle
                     ][state || 0]);
+                const css = [
+                    normalStyle,
+                    hoverStyle,
+                    selectStyle,
+                    disabledStyle
+                ][state || 0];
+                if (isObject(css)) {
+                    label.css(css);
+                }
             }
         };
 

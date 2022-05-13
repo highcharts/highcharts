@@ -1,5 +1,5 @@
 ---
- name: Saint Kitts and Nevis - Highmaps
- description: Highmaps demo
+ name: Saint Kitts and Nevis - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

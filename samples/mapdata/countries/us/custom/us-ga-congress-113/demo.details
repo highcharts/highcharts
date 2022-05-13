@@ -1,5 +1,5 @@
 ---
- name: Georgia congressional districts - Highmaps
- description: Highmaps demo
+ name: Georgia congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

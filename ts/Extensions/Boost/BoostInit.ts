@@ -287,7 +287,7 @@ function init(): void {
 
                             }
                             // Add points and reset
-                            if (clientX !== lastClientX) {
+                            if (!compareX || clientX !== lastClientX) {
                                 // maxI is number too:
                                 if (typeof minI !== 'undefined') {
                                     plotY =
@@ -321,7 +321,7 @@ function init(): void {
                 fireEvent(series, 'renderedCanvas');
 
                 // Go back to prototype, ready to build
-                delete series.buildKDTree;
+                delete (series as Partial<typeof series>).buildKDTree;
                 series.buildKDTree();
 
                 if (boostOptions.debug.timeKDTree) {
@@ -362,14 +362,16 @@ function init(): void {
     /* eslint-disable no-invalid-this */
 
     if (seriesTypes.bubble) {
+        const bubbleProto = seriesTypes.bubble.prototype;
+
         // By default, the bubble series does not use the KD-tree, so force it
         // to.
-        delete seriesTypes.bubble.prototype.buildKDTree;
+        delete (bubbleProto as Partial<typeof bubbleProto>).buildKDTree;
         // seriesTypes.bubble.prototype.directTouch = false;
 
         // Needed for markers to work correctly
         wrap(
-            seriesTypes.bubble.prototype,
+            bubbleProto,
             'markerAttribs',
             function (
                 this: BubbleSeries,

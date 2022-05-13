@@ -1,5 +1,5 @@
 ---
- name: Europe - Highmaps
- description: Highmaps demo
+ name: Europe - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

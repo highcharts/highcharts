@@ -341,11 +341,14 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
             }
             ]
         }],
+        navigation: {
+            breadcrumbs: {
+                buttonSpacing: 0
+            }
+        },
         drilldown: {
             animation: false,
             breadcrumbs: {
-                showFullPath: true,
-                buttonSpacing: 0,
                 theme: {
                     padding: 0
                 },
@@ -422,5 +425,114 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
         chart.plotWidth / 2 + chart.plotLeft,
         3,
         'After each iteration, the breadcrumbs group should stay in the middle.'
+    );
+
+    assert.strictEqual(
+        chart.breadcrumbs.options.buttonSpacing,
+        0,
+        'Options from navigation.breadcrumbs should be handled'
+    );
+});
+
+QUnit.test('Breadcrumbs list when drilling down category, #17188.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Basic drilldown'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            name: '2020',
+            colorByPoint: true,
+            data: [{
+                name: 'Animals',
+                y: 5,
+                drilldown: 'animals'
+            }]
+        }, {
+            name: '2021',
+            colorByPoint: true,
+            data: [{
+                name: 'Animals',
+                y: 1,
+                drilldown: 'animals2'
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: 'animals',
+                name: '2020',
+                data: [{
+                    name: 'Cats',
+                    y: 4,
+                    drilldown: 'cats'
+                },
+                {
+                    name: 'Dogs',
+                    y: 2
+                }]
+            }, {
+                id: 'animals2',
+                name: '2021',
+                data: [{
+                    name: 'Cats',
+                    y: 3,
+                    drilldown: 'cats'
+                },
+                {
+                    name: 'frogs',
+                    y: 5
+                },
+                {
+                    name: 'Cows',
+                    y: 6
+                },
+                {
+                    name: 'Sheep',
+                    y: 2
+                },
+                {
+                    name: 'Pigs',
+                    y: 2
+                }]
+            }, {
+                id: 'cats',
+                name: '2021',
+                data: [{
+                    name: 'Exotic Shorthair Cats',
+                    y: 3
+                },
+                {
+                    name: 'Ragdoll Cats',
+                    y: 5
+                },
+                {
+                    name: 'British Shorthair',
+                    y: 6
+                },
+                {
+                    name: 'Persian Cats',
+                    y: 2
+                },
+                {
+                    name: 'Maine Coon Cats',
+                    y: 2
+                }]
+            }]
+        }
+    });
+
+    chart.xAxis[0].drilldownCategory(0);
+    chart.xAxis[0].drilldownCategory(0);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
+    assert.strictEqual(
+        chart.drilldownLevels.length,
+        2,
+        `When drilling down categories and then drilling up, a correct list
+        should be displayed and the correct level should be shown.`
     );
 });

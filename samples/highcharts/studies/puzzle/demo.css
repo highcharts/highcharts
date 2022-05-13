@@ -2,6 +2,10 @@
     font-family: sans-serif;
 }
 
+#report {
+    min-height: 1rem;
+}
+
 #container {
     border: 1px solid silver;
     height: 500px;

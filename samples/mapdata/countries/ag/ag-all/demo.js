@@ -1,53 +1,55 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ag-6313', 0],
-    ['ag-6598', 1],
-    ['ag-6599', 2],
-    ['ag-6600', 3],
-    ['ag-6601', 4],
-    ['ag-6602', 5],
-    ['ag-6603', 6],
-    ['ag-6604', 7]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ag/ag-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ag/ag-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ag-6313', 10], ['ag-6598', 11], ['ag-6599', 12], ['ag-6600', 13],
+        ['ag-6601', 14], ['ag-6602', 15], ['ag-6603', 16], ['ag-6604', 17]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ag/ag-all.js">Antigua and Barbuda</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ag/ag-all.topo.json">Antigua and Barbuda</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

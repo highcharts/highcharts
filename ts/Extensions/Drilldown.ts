@@ -433,12 +433,12 @@ defaultOptions.drilldown = {
      */
 
     /**
-     * Breadcrumbs options.
+     * Options for the breadcrumbs, the navigation at the top leading the way
+     * up through the drilldown levels.
      *
-     *
-     * @since     next
+     * @since 10.0.0
      * @product   highcharts
-     * @extends breadcrumbs
+     * @extends   navigation.breadcrumbs
      * @optionparent drilldown.breadcrumbs
      */
 
@@ -922,9 +922,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             });
         }
 
-        const lastBreadcrumb = list[list.length - 1];
+        drilldownLevels.forEach(function (level, i): void {
+            const lastBreadcrumb = list[list.length - 1];
 
-        drilldownLevels.forEach(function (level): void {
             // If level is already added to breadcrumbs list,
             // don't add it again- drilling categories
             // + 1 because of the wrong levels numeration
@@ -1073,7 +1073,9 @@ Chart.prototype.drillUp = function (): void {
 
     this.redraw();
 
-    (this.ddDupes as any).length = []; // #3315
+    if (this.ddDupes) {
+        this.ddDupes.length = 0; // #3315
+    } // #8324
 
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
@@ -1191,10 +1193,8 @@ addEvent(H.Breadcrumbs, 'up', function (
 addEvent(Chart, 'afterDrilldown', function (): void {
 
     const chart = this,
-        drilldownOptions = chart.options.drilldown;
-
-    const breadcrumbsOptions = drilldownOptions &&
-        drilldownOptions.breadcrumbs;
+        drilldownOptions = chart.options.drilldown,
+        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
 
     if (!chart.breadcrumbs) {
         chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
@@ -1295,7 +1295,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1354,7 +1354,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1388,7 +1388,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     });
 
     if (removeGroup) {
-        delete this.group;
+        delete (this as any).group;
     }
 
     this.points.forEach(function (point: Point): void {
@@ -1475,7 +1475,7 @@ if (PieSeries) {
                     }
 
                     // Reset to prototype
-                    delete this.animate;
+                    delete (this as Partial<typeof this>).animate;
                 }
             }
         }
