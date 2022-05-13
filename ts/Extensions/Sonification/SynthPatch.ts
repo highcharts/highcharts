@@ -2,7 +2,8 @@
  *
  *  (c) 2009-2022 Øystein Moseng
  *
- *  Class representing a Synth Patch for sonification module.
+ *  Class representing a Synth Patch, used by Instruments in the
+ *  sonification.js module.
  *
  *  License: www.highcharts.com/license
  *
@@ -42,27 +43,11 @@ interface OscOptions {
     volumePitchTrackingMultiplier?: number;
 }
 
-interface ReverbOptions {
-    decay?: number;
-    enabled?: boolean;
-    volume?: number;
-}
-
-interface DelayOptions {
-    enabled?: boolean;
-    feedback?: number;
-    volume?: number;
-}
-
 interface SynthPatchOptions {
-    delay?: DelayOptions;
     masterAttackEnvelope?: Envelope;
     masterReleaseEnvelope?: Envelope;
     masterVolume?: number;
-    maxFrequency?: number;
-    minFrequency?: number;
     oscillators?: Array<OscOptions>;
-    reverb?: ReverbOptions;
 }
 
 
@@ -99,7 +84,7 @@ class Oscillator {
 
     constructor(
         private audioContext: AudioContext,
-        private options: OscOptions,
+        public options: OscOptions,
         destination?: AudioNode
     ) {
         this.modulatesOscillatorIx = options.modulateOscillator;
@@ -186,6 +171,52 @@ class Oscillator {
     getFMTarget(): AudioParam|undefined {
         return this.oscNode && this.oscNode.detune ||
             this.whiteNoise && this.whiteNoise.detune;
+    }
+
+
+    // Schedule one of the osciallator envelopes at a specified time in
+    // seconds (in AudioContext timespace).
+    runEnvelopeAtTime(type: 'attack'|'release', time: number): void {
+        if (!this.gainNode) {
+            return;
+        }
+        const isAtk = type === 'attack',
+            volume = this.options.volume || 1,
+            env = (isAtk ? this.options.attackEnvelope :
+                this.options.releaseEnvelope) || [],
+            gain = this.gainNode.gain;
+
+        gain.cancelScheduledValues(time);
+        if (!env.length) {
+            gain.setValueAtTime(volume, time);
+            return;
+        }
+
+        if (env[0].t > 1) {
+            env.unshift({ t: 0, vol: isAtk ? 0 : 1 });
+        }
+
+        env.forEach((ep, ix): void => {
+            const prev = env[ix - 1],
+                delta = prev ? (ep.t - prev.t) / 1000 : 0,
+                startTime = time + (
+                    prev ? prev.t / 1000 + SynthPatch.stopRampTime : 0
+                );
+            gain.setTargetAtTime(
+                ep.vol * volume,
+                startTime,
+                Math.max(delta, SynthPatch.stopRampTime) / 2
+            );
+        });
+    }
+
+
+    // Cancel any envelopes currently scheduled
+    cancelScheduledEnvelopes(): void {
+        if (this.gainNode) {
+            this.gainNode.gain
+                .cancelScheduledValues(this.audioContext.currentTime);
+        }
     }
 
 
@@ -358,44 +389,36 @@ class SynthPatch {
 
 
     // Mute sound at time (in seconds, in the AudioContext timespace)
+    // Will still run release envelope.
     silenceAtTime(time: number): void {
-        this.miniRampToVolAtTime(time || this.audioContext.currentTime, 0);
-    }
-
-
-    // Play a frequency at time (in seconds, in the AudioContext timespace)
-    // Note duration is given in milliseconds. If note duration is not given,
-    // the note plays indefinitely.
-    playFreqAtTime(
-        time: number, frequency: number, noteDuration?: number|null
-    ): void {
-        const t = time || this.audioContext.currentTime;
-        this.oscillators.forEach((o): void => o.setFreqAtTime(t, frequency));
-        this.miniRampToVolAtTime(t, this.volume);
-
-        if (noteDuration) {
-            this.miniRampToVolAtTime(t + noteDuration / 1000, 0);
-        }
+        this.releaseAtTime(time || this.audioContext.currentTime);
     }
 
 
     // Play a frequency at time (in seconds, in the AudioContext timespace).
-    // Time denotes when the gliding ramp starts. Note duration and glide
+    // Time denotes when the attack ramp/glide starts. Note duration and glide
     // duration is given in milliseconds. If note duration is not given,
-    // the note plays indefinitely.
-    glideToFreqAtTime(
+    // the note plays indefinitely. If glide duration is not given, the note
+    // jumps straight to the set frequency.
+    playFreqAtTime(
         time: number,
         frequency: number,
-        noteDuration: number|null,
-        glideDuration: number
+        noteDuration?: number,
+        glideDuration?: number
     ): void {
         const t = time || this.audioContext.currentTime;
-        this.oscillators.forEach(
-            (o): void => o.glideToFreqAtTime(t, frequency, glideDuration));
+        this.oscillators.forEach((o): void => {
+            if (glideDuration) {
+                o.glideToFreqAtTime(t, frequency, glideDuration);
+            } else {
+                o.setFreqAtTime(t, frequency);
+            }
+            o.runEnvelopeAtTime('attack', t);
+        });
         this.miniRampToVolAtTime(t, this.volume);
 
         if (noteDuration) {
-            this.miniRampToVolAtTime(t + noteDuration / 1000, 0);
+            this.releaseAtTime(t + noteDuration / 1000);
         }
     }
 
@@ -410,6 +433,22 @@ class SynthPatch {
     // Connect the SynthPatch output to an audio node / destination
     connect(destinationNode: AudioNode): AudioNode {
         return this.outputNode.connect(destinationNode);
+    }
+
+
+    // Fade by release envelopes at time
+    private releaseAtTime(time: number): void {
+        let maxReleaseDuration = 0;
+        this.oscillators.forEach((o): void => {
+            const env = o.options.releaseEnvelope;
+            if (env && env.length) {
+                maxReleaseDuration = Math.max(
+                    maxReleaseDuration, env[env.length - 1].t
+                );
+                o.runEnvelopeAtTime('release', time);
+            }
+        });
+        this.miniRampToVolAtTime(time + maxReleaseDuration / 1000, 0);
     }
 
 

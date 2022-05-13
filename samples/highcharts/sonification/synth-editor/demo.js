@@ -91,7 +91,7 @@ function createEnvelopeChart(type, container) {
     function cleanSeriesData(series) {
         const newData = series.points.map(o => [o.x, o.y])
             .sort((a, b) => a[0] - b[0]);
-        if (newData[0] && newData[0][0] !== 0) {
+        if (newData[0] && newData[0][0] > 1) {
             newData.unshift([0, type === 'attack' ? 0 : 1]);
         }
         series.setData(newData);
@@ -377,7 +377,7 @@ document.addEventListener('keydown', e => {
         KeyJ: 493.88,
         KeyK: 523.25 // C5
     }[e.code];
-    if (freq && synthPatch) {
+    if (freq && synthPatch && !synthKeysPressed.has(e.code)) {
         synthKeysPressed.add(e.code);
         el('keyStatus').textContent = 'Synth key pressed';
         synthPatch.playFreqAtTime(0, freq); // Play indefinitely
