@@ -28,31 +28,57 @@ h2 {
     gap: 20px;
 }
 
+.firstrow {
+    align-items: stretch;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.firstrow p {
+    margin: 0;
+}
+
+#intro {
+    font-size: 1.1rem;
+    padding: 20px;
+    background-color: #e1f6fe;
+}
+
+#keyStatus {
+    background-color: #f3f2fc;
+    padding: 20px;
+    text-align: center;
+    flex: 1;
+}
+
 .chart {
     height: 200px;
+}
+
+.hidden {
+    display: none;
 }
 
 .masterEnvelopes .chart {
     width: 250px;
 }
 
-.firstrow {
-    padding-bottom: 25px;
-    margin-bottom: 20px;
-    gap: 30px;
-    border-bottom: 1px solid #ccc;
+#startSynth {
+    background-color: #fafafa;
+    height: 2.5rem;
+}
+
+#startSynth:hover {
+    background-color: #efefef;
+}
+
+#startSynth:active {
+    background-color: #e0e0e0;
 }
 
 #masterVolume {
     display: block;
     margin-top: 7px;
-}
-
-#intro {
-    font-size: 1.15rem;
-    padding: 20px;
-    margin-bottom: 30px;
-    background-color: #e1f6fe;
 }
 
 #preset {
@@ -64,13 +90,6 @@ h2 {
 
 #presets {
     display: none;
-}
-
-#keyStatus {
-    background-color: #f3f2fc;
-    padding: 7px 20px;
-    margin: 0;
-    margin-left: 10px;
 }
 
 #addOsc {

@@ -2,6 +2,7 @@
  * Basic synth patch editor for Highcharts Sonification Instruments
  * */
 
+let audioContext;
 const SynthPatch = Highcharts.sonification.SynthPatch;
 let synthPatch;
 let idCount = 1; // Counter used for oscillator IDs
@@ -67,10 +68,13 @@ function updatePatch() {
     el('json').textContent = JSON.stringify(options, null, ' ');
 
     if (synthPatch) {
-        synthPatch.stopAtTime(0);
+        synthPatch.stop();
     }
-    synthPatch = new SynthPatch(options);
-    synthPatch.startSilently();
+    if (audioContext) {
+        synthPatch = new SynthPatch(audioContext, options);
+        synthPatch.connect(audioContext.destination);
+        synthPatch.startSilently();
+    }
 }
 
 
@@ -284,7 +288,7 @@ class Oscillator {
 function applyPreset(presetId) {
     const options = JSON.parse(presets[presetId]),
         envToChart = (chart, env) => charts[chart].series[0].setData(
-            env.map(o => [o.t, o.vol])
+            (env || []).map(o => [o.t, o.vol])
         );
 
     // Reset first
@@ -329,6 +333,7 @@ function applyPreset(presetId) {
 }
 
 
+const synthKeysPressed = new Set();
 document.addEventListener('keydown', e => {
     const freq = {
         KeyA: 261.63, // C4
@@ -338,26 +343,27 @@ document.addEventListener('keydown', e => {
         KeyD: 329.63,
         KeyF: 349.23,
         KeyT: 369.99,
-        KeyG: 392.00,
+        KeyG: 392,
         KeyY: 415.30,
-        KeyH: 440.00,
+        KeyH: 440,
         KeyU: 466.16,
         KeyJ: 493.88,
-        KeyL: 523.25 // C5
+        KeyK: 523.25 // C5
     }[e.code];
     if (freq && synthPatch) {
+        synthKeysPressed.add(e.code);
         el('keyStatus').textContent = 'Synth key pressed';
-        synthPatch.playFreqAtTime(0, freq, null); // Play indefinitely
-    } else if (synthPatch) {
-        el('keyStatus').textContent = 'No synth key pressed';
-        synthPatch.silenceAtTime(0);
+        synthPatch.playFreqAtTime(0, freq); // Play indefinitely
     }
 });
 
-document.addEventListener('keyup', () => {
-    el('keyStatus').textContent = 'No synth key pressed';
-    if (synthPatch) {
-        synthPatch.silenceAtTime(0);
+document.addEventListener('keyup', e => {
+    synthKeysPressed.delete(e.code);
+    if (!synthKeysPressed.size) {
+        el('keyStatus').textContent = 'No synth key pressed';
+        if (synthPatch) {
+            synthPatch.silenceAtTime(0);
+        }
     }
 });
 
@@ -366,6 +372,20 @@ el('preset').innerHTML = Object.keys(presets)
     .reduce((str, p) => `${str}<option value="${p}">${p}</option>`, '');
 
 el('addOsc').onclick = () => oscillators.push(new Oscillator());
+el('startSynth').onclick = function () {
+    audioContext = new AudioContext();
+    updatePatch();
+    el('controls').classList.remove('hidden');
+    this.classList.add('hidden');
+    el('keyStatus').textContent = 'No synth key pressed';
+    // Jingle
+    setTimeout(() => {
+        const t = audioContext.currentTime;
+        [261.63, 329.63, 392, 523.25].forEach(
+            (freq, i) => synthPatch.playFreqAtTime(t + i * 0.1, freq, 150)
+        );
+    }, 50);
+};
 el('masterVolume').onchange = updatePatch;
 el('json').onclick = function () {
     this.select();
