@@ -17,7 +17,6 @@
  * */
 
 import type MapChart from '../../Core/Chart/MapChart';
-import MapSeries from '../Map/MapSeries.js';
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
