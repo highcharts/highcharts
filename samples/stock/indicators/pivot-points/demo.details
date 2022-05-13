@@ -3,4 +3,5 @@
  authors:
    - Pawel fus
  js_wrap: b
+ use_png_thumbnail: true
 ...
