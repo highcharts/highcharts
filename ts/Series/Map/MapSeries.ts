@@ -20,8 +20,8 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type { GeoJSON, Polygon, TopoJSON } from '../../Maps/GeoJSON';
-import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
+import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -78,13 +78,6 @@ const {
  *  Declarations
  *
  * */
-type SVGTransformType = {
-    scaleX: number;
-    scaleY: number;
-    translateX: number;
-    translateY: number;
-};
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
