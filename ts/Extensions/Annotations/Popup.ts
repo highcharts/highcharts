@@ -746,7 +746,8 @@ H.Popup.prototype = {
                     // Advanced annotations:
                     lang[options.langKey as any] || options.langKey,
                     // Basic shapes:
-                    options.shapes && options.shapes[0].type
+                    options.shapes && options.shapes[0].type,
+                    ''
                 ))
             );
 

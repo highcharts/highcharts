@@ -910,7 +910,7 @@ namespace OrdinalAxis {
         public axis: Composition;
         public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
-        public index: Record<string, Array<number>> = {};
+        public index?: Record<string, Array<number>> = {};
         public offset?: number;
         public overscrollPointsRange?: number;
         public positions?: Array<number>;

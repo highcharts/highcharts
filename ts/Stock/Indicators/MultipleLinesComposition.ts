@@ -73,16 +73,16 @@ namespace MultipleLinesComposition {
      * */
 
     export declare class Composition extends SMAIndicator {
+        areaLinesNames: Array<string>;
         linesApiNames: Array<string>;
+        nextPoints?: Array<SMAPoint>;
         options: Options;
         pointArrayMap: Array<string>;
-        areaLinesNames: Array<string>;
         pointValKey: string;
-        nextPoints: Array<SMAPoint>;
         drawGraph(): void;
         getTranslatedLinesNames(excludedValue?: string): Array<string>;
-        translate(): void;
         toYData(point: Point): Array<number>;
+        translate(): void;
     }
 
     export interface Options {

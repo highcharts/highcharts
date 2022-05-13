@@ -87,7 +87,7 @@ class KeyboardNavigation {
     public components: Accessibility.ComponentsObject = void 0 as any;
     public currentModuleIx: number = NaN;
     public eventProvider: EventProvider = void 0 as any;
-    public exitAnchor: DOMElementType = void 0 as any;
+    public exitAnchor?: DOMElementType = void 0 as any;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
@@ -251,7 +251,7 @@ class KeyboardNavigation {
         // Set focus to chart or exit anchor depending on direction
         this.exiting = true;
         if (direction > 0) {
-            this.exitAnchor.focus();
+            this.exitAnchor && this.exitAnchor.focus();
         } else {
             this.tabindexContainer.focus();
         }
