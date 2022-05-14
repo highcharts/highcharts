@@ -69,6 +69,70 @@ function getPitchTrackedMultiplierVal(
 
 
 /**
+ * Schedule a mini ramp to volume at time - avoid clicks/pops.
+ * @private
+ * @param {Object} gainNode The gain node to schedule for.
+ * @param {number} time The time in seconds to start ramp.
+ * @param {number} vol The volume to ramp to.
+ */
+function miniRampToVolAtTime(
+    gainNode: GainNode, time: number, vol: number
+): void {
+    gainNode.gain.cancelScheduledValues(time);
+    gainNode.gain.setTargetAtTime(
+        vol, time, SynthPatch.stopRampTime / 4
+    );
+    gainNode.gain.setValueAtTime(
+        vol, time + SynthPatch.stopRampTime
+    );
+}
+
+
+/**
+ * Schedule a gain envelope for a gain node.
+ * @private
+ * @param {Array<Object>} envelope The envelope to schedule.
+ * @param {string} type Type of envelope, attack or release.
+ * @param {number} time At what time (in seconds) to start envelope.
+ * @param {Object} gainNode The gain node to schedule on.
+ * @param {number} [volumeMultiplier] Volume multiplier for the envelope.
+ */
+function scheduleGainEnvelope(
+    envelope: Envelope,
+    type: 'attack'|'release',
+    time: number,
+    gainNode: GainNode,
+    volumeMultiplier = 1
+): void {
+    const isAtk = type === 'attack',
+        gain = gainNode.gain;
+
+    gain.cancelScheduledValues(time);
+    if (!envelope.length) {
+        miniRampToVolAtTime(gainNode, time, isAtk ? volumeMultiplier : 0);
+        return;
+    }
+
+    if (envelope[0].t > 1) {
+        envelope.unshift({ t: 0, vol: isAtk ? 0 : 1 });
+    }
+
+    envelope.forEach((ep, ix): void => {
+        const prev = envelope[ix - 1],
+            delta = prev ? (ep.t - prev.t) / 1000 : 0,
+            startTime = time + (
+                prev ? prev.t / 1000 + SynthPatch.stopRampTime : 0
+            );
+        gain.setTargetAtTime(
+            ep.vol * volumeMultiplier,
+            startTime,
+            Math.max(delta, SynthPatch.stopRampTime) / 2
+        );
+    });
+}
+
+
+/**
  * Internal class used by SynthPatch
  * @class
  * @private
@@ -180,34 +244,10 @@ class Oscillator {
         if (!this.gainNode) {
             return;
         }
-        const isAtk = type === 'attack',
-            volume = this.options.volume || 1,
-            env = (isAtk ? this.options.attackEnvelope :
-                this.options.releaseEnvelope) || [],
-            gain = this.gainNode.gain;
-
-        gain.cancelScheduledValues(time);
-        if (!env.length) {
-            gain.setValueAtTime(volume, time);
-            return;
-        }
-
-        if (env[0].t > 1) {
-            env.unshift({ t: 0, vol: isAtk ? 0 : 1 });
-        }
-
-        env.forEach((ep, ix): void => {
-            const prev = env[ix - 1],
-                delta = prev ? (ep.t - prev.t) / 1000 : 0,
-                startTime = time + (
-                    prev ? prev.t / 1000 + SynthPatch.stopRampTime : 0
-                );
-            gain.setTargetAtTime(
-                ep.vol * volume,
-                startTime,
-                Math.max(delta, SynthPatch.stopRampTime) / 2
-            );
-        });
+        const env = (type === 'attack' ? this.options.attackEnvelope :
+            this.options.releaseEnvelope) || [];
+        scheduleGainEnvelope(env, type, time, this.gainNode,
+            this.options.volume);
     }
 
 
@@ -266,7 +306,7 @@ class Oscillator {
 
     private createGain(): void {
         const opts = this.options,
-            needsGainNode = opts.volume ||
+            needsGainNode = defined(opts.volume) ||
                 opts.attackEnvelope && opts.attackEnvelope.length ||
                 opts.releaseEnvelope && opts.releaseEnvelope.length;
         if (needsGainNode) {
@@ -343,13 +383,11 @@ class SynthPatch {
     static stopRampTime = 0.007; // Ramp time to 0 when stopping sound
     private outputNode: GainNode;
     private oscillators: Array<Oscillator>;
-    private volume: number;
 
     constructor(
         private audioContext: AudioContext,
         private options: SynthPatchOptions
     ) {
-        this.volume = options.masterVolume || 1;
         this.outputNode = new GainNode(audioContext);
         this.oscillators = (this.options.oscillators || []).map(
             (oscOpts): Oscillator => new Oscillator(
@@ -382,15 +420,21 @@ class SynthPatch {
 
     // Stop (can't be started again)
     stop(): void {
-        const endTime = this.audioContext.currentTime + SynthPatch.stopRampTime;
-        this.miniRampToVolAtTime(endTime, 0);
+        const curTime = this.audioContext.currentTime,
+            endTime = curTime + SynthPatch.stopRampTime;
+        miniRampToVolAtTime(this.outputNode, curTime, 0);
         this.oscillators.forEach((o): void => o.stopAtTime(endTime));
     }
 
 
     // Mute sound at time (in seconds, in the AudioContext timespace)
-    // Will still run release envelope.
+    // Will still run release envelope. Note: If scheduled multiple times in
+    // succession, the release envelope will run, and that could make sound.
     silenceAtTime(time: number): void {
+        if (!time && this.outputNode.gain.value < 0.01) {
+            this.outputNode.gain.value = 0;
+            return; // Skip if not needed
+        }
         this.releaseAtTime(time || this.audioContext.currentTime);
     }
 
@@ -415,7 +459,13 @@ class SynthPatch {
             }
             o.runEnvelopeAtTime('attack', t);
         });
-        this.miniRampToVolAtTime(t, this.volume);
+        scheduleGainEnvelope(
+            this.options.masterAttackEnvelope || [],
+            'attack',
+            t,
+            this.outputNode,
+            this.options.masterVolume
+        );
 
         if (noteDuration) {
             this.releaseAtTime(t + noteDuration / 1000);
@@ -448,18 +498,21 @@ class SynthPatch {
                 o.runEnvelopeAtTime('release', time);
             }
         });
-        this.miniRampToVolAtTime(time + maxReleaseDuration / 1000, 0);
-    }
 
-
-    // Schedule a mini ramp to volume, starting at time
-    private miniRampToVolAtTime(time: number, vol: number): void {
-        this.outputNode.gain.cancelScheduledValues(time);
-        this.outputNode.gain.setTargetAtTime(
-            vol, time, SynthPatch.stopRampTime / 6
+        const masterEnv = this.options.masterReleaseEnvelope || [];
+        scheduleGainEnvelope(
+            masterEnv,
+            'release',
+            time,
+            this.outputNode,
+            this.options.masterVolume
         );
-        this.outputNode.gain.setValueAtTime(
-            vol, time + SynthPatch.stopRampTime
+        maxReleaseDuration = Math.max(
+            maxReleaseDuration,
+            masterEnv.length ? masterEnv[masterEnv.length - 1].t : 0
+        );
+        miniRampToVolAtTime(
+            this.outputNode, time + maxReleaseDuration / 1000, 0
         );
     }
 }
