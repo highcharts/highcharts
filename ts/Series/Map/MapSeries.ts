@@ -628,8 +628,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        const { chart, group, transformGroups = [] } = this;
-        const { mapView, renderer } = chart;
+        const series = this,
+            { chart, group, transformGroups = [] } = this,
+            { mapView, renderer } = chart;
 
         if (!mapView) {
             return;
@@ -718,15 +719,8 @@ class MapSeries extends ScatterSeries {
                         // When strokeWidth is animating
                         if (params['stroke-width']) {
 
-                            const pointAttrToOptions =
-                                point.series.pointAttrToOptions,
-                                strokeWidth = pick(
-                                    (point.series.options as any)[(
-                                        pointAttrToOptions &&
-                                        (
-                                            pointAttrToOptions as any
-                                        )['stroke-width']
-                                    ) || 'borderWidth'],
+                            const strokeWidth = pick(
+                                    series.getStrokeWidth(series.options),
                                     1 // Styled mode
                                 ),
                                 inheritedStrokeWidth = (
@@ -772,10 +766,7 @@ class MapSeries extends ScatterSeries {
             const view = i === 0 ? mapView : mapView.insets[i - 1],
                 svgTransform = view.getSVGTransform(),
                 strokeWidth = pick(
-                    (this.options as any)[(
-                        this.pointAttrToOptions &&
-                        (this.pointAttrToOptions as any)['stroke-width']
-                    ) || 'borderWidth'],
+                    this.getStrokeWidth(this.options),
                     1 // Styled mode
                 );
 
@@ -934,6 +925,24 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
+     * Return the stroke-width either from a series options or point options
+     * object. This function is used by both the map series where the
+     * `borderWidth` sets the stroke-width, and the mapline series where the
+     * `lineWidth` sets the stroke-width.
+     * @private
+     */
+    private getStrokeWidth(
+        options: MapSeries['options']|MapPoint['options']
+    ): number|undefined {
+        const pointAttrToOptions = this.pointAttrToOptions;
+
+        return (options as any)[
+            pointAttrToOptions &&
+            (pointAttrToOptions as any)['stroke-width'] || 'borderWidth'
+        ];
+    }
+
+    /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
      * @private
@@ -958,15 +967,9 @@ class MapSeries extends ScatterSeries {
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any, state
             );
-        const strokeWidthOptionName = (
-            this.pointAttrToOptions &&
-            (this.pointAttrToOptions as any)['stroke-width']
-        ) || 'borderWidth';
 
         // Individual stroke width
-        let pointStrokeWidth = (point.options as any)[
-            strokeWidthOptionName
-        ];
+        let pointStrokeWidth = this.getStrokeWidth(point.options);
 
         // Handle state specific border or line width
         if (state) {
@@ -976,7 +979,7 @@ class MapSeries extends ScatterSeries {
                 (point.options.states as any)[state] ||
                 {}
             );
-            pointStrokeWidth = stateOptions[strokeWidthOptionName];
+            pointStrokeWidth = this.getStrokeWidth(stateOptions);
         }
 
         if (pointStrokeWidth && mapView) {
@@ -985,16 +988,16 @@ class MapSeries extends ScatterSeries {
 
         // In order for dash style to avoid being scaled, set the transformed
         // stroke width on the item
+        const seriesStrokeWidth = this.getStrokeWidth(this.options);
         if (
             attr.dashstyle &&
             mapView &&
-            (this.options as any)[strokeWidthOptionName]
+            isNumber(seriesStrokeWidth)
         ) {
-            pointStrokeWidth = (this.options as any)[strokeWidthOptionName] /
-                mapView.getScale();
+            pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
-        attr['stroke-width'] = pick(
+        (attr as any)['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
             // point graphics inherit. That way we don't have to iterate over
