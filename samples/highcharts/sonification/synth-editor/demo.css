@@ -32,6 +32,7 @@ h2 {
     align-items: stretch;
     gap: 2px;
     margin-bottom: 20px;
+    max-width: 1500px;
 }
 
 .firstrow p {
@@ -59,8 +60,39 @@ h2 {
     display: none;
 }
 
-.masterEnvelopes .chart {
+#globalControls {
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 30px;
+    background-color: #fcfcfc;
+    border: 1px solid #f0f0f0;
+    padding: 20px;
+    max-width: 750px;
+}
+
+#globalControls h2 {
+    margin-top: 0;
+}
+
+#globalControls h3 {
+    margin-top: 5px;
+    margin-left: 30px;
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+#globalControls .chart {
     width: 250px;
+}
+
+#globalControls input {
+    display: block;
+    margin-top: 5px;
+}
+
+#globalControls label {
+    margin-top: 20px;
+    display: block;
 }
 
 #startSynth {
@@ -81,15 +113,36 @@ h2 {
     margin-top: 7px;
 }
 
+#presetLabel {
+    font-size: 1rem;
+    margin: 10px 5px;
+}
+
 #preset {
-    display: block;
     width: 150px;
-    height: 1.3rem;
-    margin-top: 5px;
+    height: 1.8rem;
+    margin-left: 5px;
 }
 
 #presets {
     display: none;
+}
+
+.help {
+    font-size: 0.8rem;
+    flex: 1;
+    align-self: flex-start;
+    padding: 5px;
+}
+
+.help h2 {
+    font-size: 1rem;
+    text-align: center;
+}
+
+.help p {
+    margin: 0;
+    margin-top: 8px;
 }
 
 #addOsc {

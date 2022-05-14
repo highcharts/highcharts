@@ -5,29 +5,40 @@
 <main>
   <h1>Synth Patch Editor</h1>
   <div class="row firstrow">
-    <p id="intro">Play the synth using the <span class="code">A</span> to <span class="code">K</span> and <span class="code">W</span> to <span class="code">U</span> keys on your keyboard, simulating white and black keys on a piano.</p>
+    <p id="intro">Play the synth using the <span class="code">A</span> to <span class="code">L</span> and <span class="code">W</span> to <span class="code">O</span> keys on your keyboard, simulating white and black keys on a piano.</p>
     <p id="keyStatus">Synth not started</p>
   </div>
 
   <button id="startSynth">Start synth</button>
 
   <div id="controls" class="hidden">
+      <label id="presetLabel">Preset <select id="preset"></select></label>
+      
       <div class="row">
-        <label>Volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
-        <label>Preset <select id="preset"></select></label>
-      </div>
-
-      <div class="row masterEnvelopes">
-        <div>
-          <h2>Attack Envelope</h2>
-          <div id="masterAttackEnvChart" class="chart"></div>
+        <div id="globalControls" class="row">
+          <div>
+            <h2>Global controls</h2>
+            <label>Master volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
+            <label>Glide between notes <input id="glideDuration" type="number" value="0"></label>
+          </div>
+          <div>
+            <h3>Master Attack Envelope</h3>
+            <div id="masterAttackEnvChart" class="chart"></div>
+          </div>
+          <div>
+            <h3>Master Release Envelope</h3>
+            <div id="masterReleaseEnvChart" class="chart"></div>
+          </div>
         </div>
-        <div>
-          <h2>Release Envelope</h2>
-          <div id="masterReleaseEnvChart" class="chart"></div>
+
+        <div class="help">
+          <h2>Help</h2>
+          <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
+          <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete.</p>
+          <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting volume tracking multiplier to 0.01, the volume will be lower at higher notes.</p>
+          <p>The "Modulate oscillator" parameter is used for frequency modulation (FM). Set this parameter to one of the other oscillators to modulate its frequency. You may need to increase volume to hear the effect.</p>
         </div>
       </div>
-
       <div class="row">
         <h2>Oscillators</h2>
         <button id="addOsc">+ Add oscillator</button>

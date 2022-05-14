@@ -172,7 +172,7 @@ function createEnvelopeChart(type, container) {
                     }
                 }
             },
-            data: type === 'attack' ? [0, 0.5, 0.9, 1] : [1, 0.9, 0.5, 0]
+            data: []
         }]
     });
 }
@@ -251,8 +251,8 @@ class Oscillator {
             fixedFrequency: this.addControl('input', 'FixedFreq', 'Fixed frequency',
                 opts.fixedFrequency || ''),
             volume: this.addControl('input', 'Vol', 'Volume',
-                opts.volume || ''),
-            detune: this.addControl('input', 'Detune', 'Detune',
+                opts.volume || '0.5'),
+            detune: this.addControl('input', 'Detune', 'Detune (cents)',
                 opts.detune || ''),
             volPitchTrackingMult: this.addControl('input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
                 opts.volPitchTrackingMult || ''),
@@ -375,12 +375,14 @@ document.addEventListener('keydown', e => {
         KeyH: 440,
         KeyU: 466.16,
         KeyJ: 493.88,
-        KeyK: 523.25 // C5
+        KeyK: 523.25, // C5
+        KeyO: 554.37,
+        KeyL: 587.33
     }[e.code];
     if (freq && synthPatch && !synthKeysPressed.has(e.code)) {
         synthKeysPressed.add(e.code);
         el('keyStatus').textContent = 'Synth key pressed';
-        synthPatch.playFreqAtTime(0, freq); // Play indefinitely
+        synthPatch.playFreqAtTime(0, freq, null, el('glideDuration').value); // Play indefinitely
     }
 });
 
