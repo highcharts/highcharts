@@ -40,8 +40,10 @@ function updatePatch() {
         masterReleaseEnvelope: getChartEnvelope('masterReleaseEnvChart'),
         oscillators: oscillators.map(osc => {
             const i = osc.inputs,
-                modulatesIndex = oscillators
-                    .findIndex(osc => osc.id === intVal(i.modulateOsc));
+                getOscWithId = id => oscillators
+                    .findIndex(osc => osc.id === id),
+                fmIndex = getOscWithId(intVal(i.fmOsc)),
+                vmIndex = getOscWithId(intVal(i.vmOsc));
             return {
                 type: val(i.type),
                 freqMultiplier: floatVal(i.freqMultiplier),
@@ -61,8 +63,8 @@ function updatePatch() {
                         floatVal(i.highpassPitchTrackingMult),
                     Q: floatVal(i.highpassQ)
                 },
-                modulateOscillator: modulatesIndex > -1 ?
-                    modulatesIndex : void 0,
+                fmOscillator: fmIndex > -1 ? fmIndex : void 0,
+                vmOscillator: vmIndex > -1 ? vmIndex : void 0,
                 attackEnvelope: getChartEnvelope(i.attackEnvChart),
                 releaseEnvelope: getChartEnvelope(i.releaseEnvChart)
             };
@@ -185,11 +187,18 @@ function updateModulationLists() {
         '<option value=""></option>'
     );
     oscillators.forEach(o => {
-        const sel = el(o.inputs.modulateOsc),
-            oldVal = sel.value;
-        sel.innerHTML = newList;
-        if (newList.indexOf(`value="${oldVal}"`) > 0) {
-            sel.value = oldVal; // Don't remove existing values if we don't have to
+        const valInList = val => newList.indexOf(`value="${val}"`) > 0,
+            fmSel = el(o.inputs.fmOsc),
+            vmSel = el(o.inputs.vmOsc),
+            oldFMVal = fmSel.value,
+            oldVMVal = vmSel.value;
+        vmSel.innerHTML = fmSel.innerHTML = newList;
+        // Don't remove existing values if we don't have to
+        if (valInList(oldFMVal)) {
+            fmSel.value = oldFMVal;
+        }
+        if (valInList(oldVMVal)) {
+            vmSel.value = oldVMVal;
         }
     });
     updatePatch();
@@ -268,7 +277,8 @@ class Oscillator {
                 opts.highpassPitchTrackingMult || ''),
             highpassQ: this.addControl('input', 'highpassQ', 'Highpass Q',
                 opts.highpassQ || ''),
-            modulateOsc: this.addControl('select', 'ModulateOsc', 'Modulate oscillator', ''),
+            fmOsc: this.addControl('select', 'FMOsc', 'FM oscillator', ''),
+            vmOsc: this.addControl('select', 'VMOsc', 'VM oscillator', ''),
             attackEnvChart: this.addChartContainer('AttackEnv', 'Attack envelope'),
             releaseEnvChart: this.addChartContainer('ReleaseEnv', 'Release envelope')
         };
@@ -284,7 +294,8 @@ class Oscillator {
             }
             createEnvelopeChart('attack', this.inputs.attackEnvChart);
             createEnvelopeChart('release', this.inputs.releaseEnvChart);
-            el(this.inputs.modulateOsc).onchange = function () {
+            el(this.inputs.vmOsc).onchange =
+            el(this.inputs.fmOsc).onchange = function () {
                 if (this.value === '' + oscillator.id) {
                     alert("Oscillator can't modulate itself - please assign to a different oscillator.");
                     this.value = '';
@@ -346,8 +357,10 @@ function applyPreset(presetId) {
         let i = opts.length;
         while (i--) {
             el(oscillators[i].inputs.type).value = opts[i].type;
-            el(oscillators[i].inputs.modulateOsc).value =
-                opts[i].modulateOscillator !== null ? opts[i].modulateOscillator + 1 : '';
+            el(oscillators[i].inputs.fmOsc).value =
+                opts[i].fmOscillator !== null ? opts[i].fmOscillator + 1 : '';
+            el(oscillators[i].inputs.vmOsc).value =
+                opts[i].vmOscillator !== null ? opts[i].vmOscillator + 1 : '';
             envToChart(oscillators[i].inputs.attackEnvChart,
                 opts[i].attackEnvelope);
             envToChart(oscillators[i].inputs.releaseEnvChart,

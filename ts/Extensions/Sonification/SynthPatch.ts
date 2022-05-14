@@ -34,11 +34,12 @@ interface OscOptions {
     detune?: number;
     freqMultiplier?: number;
     fixedFrequency?: number;
+    fmOscillator?: number;
     highpass?: FilterOptions;
     lowpass?: FilterOptions;
-    modulateOscillator?: number;
     releaseEnvelope?: Envelope;
     type?: OscType;
+    vmOscillator?: number;
     volume?: number;
     volumePitchTrackingMultiplier?: number;
 }
@@ -138,10 +139,12 @@ function scheduleGainEnvelope(
  * @private
  */
 class Oscillator {
-    modulatesOscillatorIx?: number;
+    fmOscillatorIx?: number;
+    vmOscillatorIx?: number;
     private oscNode?: OscillatorNode;
     private whiteNoise?: AudioBufferSourceNode;
     private gainNode?: GainNode;
+    private vmNode?: GainNode;
     private volTrackingNode?: GainNode;
     private lowpassNode?: BiquadFilterNode;
     private highpassNode?: BiquadFilterNode;
@@ -151,7 +154,8 @@ class Oscillator {
         public options: OscOptions,
         destination?: AudioNode
     ) {
-        this.modulatesOscillatorIx = options.modulateOscillator;
+        this.fmOscillatorIx = options.fmOscillator;
+        this.vmOscillatorIx = options.vmOscillator;
         this.createSoundSource();
         this.createGain();
         this.createFilters();
@@ -171,6 +175,7 @@ class Oscillator {
             this.lowpassNode,
             this.highpassNode,
             this.volTrackingNode,
+            this.vmNode,
             this.gainNode,
             this.whiteNoise,
             this.oscNode
@@ -235,6 +240,12 @@ class Oscillator {
     getFMTarget(): AudioParam|undefined {
         return this.oscNode && this.oscNode.detune ||
             this.whiteNoise && this.whiteNoise.detune;
+    }
+
+
+    // Get target for volume modulation if another oscillator wants to modulate.
+    getVMTarget(): AudioParam|undefined {
+        return this.vmNode && this.vmNode.gain;
     }
 
 
@@ -314,6 +325,8 @@ class Oscillator {
                 gain: pick(opts.volume, 1)
             });
         }
+        // We always need VM gain, so make that
+        this.vmNode = new GainNode(this.audioContext);
     }
 
 
@@ -393,19 +406,31 @@ class SynthPatch {
             (oscOpts): Oscillator => new Oscillator(
                 audioContext,
                 oscOpts,
-                defined(oscOpts.modulateOscillator) ?
+                defined(oscOpts.fmOscillator) || defined(oscOpts.vmOscillator) ?
                     void 0 : this.outputNode
             ));
 
         // Now that we have all oscillators, connect the ones
-        // that are used for FM.
+        // that are used for modulation.
         this.oscillators.forEach((osc): void => {
-            if (defined(osc.modulatesOscillatorIx)) {
-                const targetOsc = this.oscillators[osc.modulatesOscillatorIx],
-                    fmTarget = targetOsc.getFMTarget();
-                if (targetOsc !== osc && fmTarget) {
-                    osc.connect(fmTarget);
+            const connectTarget = (
+                targetFunc: 'getFMTarget'|'getVMTarget',
+                targetOsc?: Oscillator
+            ): void => {
+                if (targetOsc) {
+                    const target = targetOsc[targetFunc]();
+                    if (target) {
+                        osc.connect(target);
+                    }
                 }
+            };
+            if (defined(osc.fmOscillatorIx)) {
+                connectTarget('getFMTarget',
+                    this.oscillators[osc.fmOscillatorIx]);
+            }
+            if (defined(osc.vmOscillatorIx)) {
+                connectTarget('getVMTarget',
+                    this.oscillators[osc.vmOscillatorIx]);
             }
         });
     }
