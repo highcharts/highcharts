@@ -96,15 +96,25 @@ h2 {
 }
 
 #startSynth {
-    background-color: #fafafa;
     height: 2.5rem;
 }
 
-#startSynth:hover {
+#playWideRange {
+    height: 1.9rem;
+}
+
+#startSynth,
+#playWideRange {
+    background-color: #fafafa;
+}
+
+#startSynth:hover,
+#playWideRange:hover {
     background-color: #efefef;
 }
 
-#startSynth:active {
+#startSynth:active,
+#playWideRange:active {
     background-color: #e0e0e0;
 }
 

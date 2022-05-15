@@ -308,14 +308,22 @@ class Oscillator {
 }
 
 
-function playJingle() {
+function playSequence(notes, durationMultiplier) {
     if (audioContext && synthPatch) {
         const t = audioContext.currentTime;
-        [261.63, 329.63, 392, 523.25].forEach(
-            (freq, i) => synthPatch.playFreqAtTime(t + i * 0.1, freq, 150)
+        notes.forEach(
+            (freq, i) => synthPatch.playFreqAtTime(
+                t + i * 0.1 * durationMultiplier, freq, 150 * durationMultiplier
+            )
         );
     }
 }
+const playJingle = () => playSequence([261.63, 329.63, 392, 523.25], 1);
+const playWideRange = () => playSequence([
+    49.00, 65.41, 82.41, 87.31, 130.81, 174.61, 220.00, 261.63, 329.63,
+    392.00, 493.88, 523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98,
+    1975.53, 2093.00
+], 1.5);
 
 
 // Apply a preset to UI and patch settings
@@ -424,12 +432,14 @@ el('startSynth').onclick = function () {
     el('keyStatus').textContent = 'No synth key pressed';
     setTimeout(playJingle, 50);
 };
+el('playWideRange').onclick = playWideRange;
 el('masterVolume').onchange = el('glideDuration').onchange = updatePatch;
 el('json').onclick = function () {
     this.select();
 };
 el('preset').onchange = function () {
     applyPreset(this.value);
+    this.blur();
 };
 createEnvelopeChart('attack', 'masterAttackEnvChart');
 createEnvelopeChart('release', 'masterReleaseEnvChart');

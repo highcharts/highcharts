@@ -12,8 +12,11 @@
   <button id="startSynth">Start synth</button>
 
   <div id="controls" class="hidden">
-      <label id="presetLabel">Preset <select id="preset"></select></label>
-      
+      <div class="row">
+        <label id="presetLabel">Preset <select id="preset"></select></label>
+        <button id="playWideRange">Play wide range</button>
+      </div>
+
       <div class="row">
         <div id="globalControls" class="row">
           <div>
@@ -35,7 +38,7 @@
           <h2>Help</h2>
           <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
           <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete.</p>
-          <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes (although subtle within the octave this synth can play). The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
+          <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes. The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
           <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume.</p>
         </div>
       </div>
@@ -93,13 +96,13 @@
         "type": "whitenoise",
         "volume": 1,
         "lowpass": {
-         "frequency": 1,
-         "frequencyPitchTrackingMultiplier": 4000,
+         "frequency": 100,
+         "frequencyPitchTrackingMultiplier": 6,
          "Q": 23
         },
         "highpass": {
-         "frequency": 1,
-         "frequencyPitchTrackingMultiplier": 4000
+         "frequency": 100,
+         "frequencyPitchTrackingMultiplier": 6
         }
        },
        {
