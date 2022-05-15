@@ -54,19 +54,19 @@ interface SynthPatchOptions {
 
 
 /**
- * Get the multipler value from a pitch tracked multiplier.
+ * Get the multipler value from a pitch tracked multiplier. The parameter
+ * specifies the multiplier at ca 3200Hz. It is 1 at ca 50Hz. In between
+ * it is mapped logarithmically.
  * @private
  * @param {number} multiplier The multipler to track.
  * @param {number} freq The current frequency.
- * @param {boolean} log Use a more logarithmic-like mapping.
  */
 function getPitchTrackedMultiplierVal(
-    multiplier: number, freq: number, log: boolean = false
+    multiplier: number, freq: number
 ): number {
-    const d = multiplier - 1,
-        f = freq / 5000,
-        diff = log ? d * Math.sqrt(Math.sqrt(f)) : d * f;
-    return 1 + diff;
+    const a = 0.2414 * multiplier - 0.2414,
+        b = (3.5 - 1.7 * multiplier) / 1.8;
+    return a * Math.log(freq) + b;
 }
 
 
@@ -271,8 +271,7 @@ class Oscillator {
         if (this.volTrackingNode) {
             const v = getPitchTrackedMultiplierVal(
                     this.options.volumePitchTrackingMultiplier || 1,
-                    frequency,
-                    true
+                    frequency
                 ),
                 rampTime = glideDuration ? glideDuration / 1000 :
                     SynthPatch.stopRampTime;
