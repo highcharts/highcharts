@@ -36,6 +36,7 @@ function updatePatch() {
         };
     const options = {
         masterVolume: el('masterVolume').value,
+        noteGlideDuration: el('glideDuration').value,
         masterAttackEnvelope: getChartEnvelope('masterAttackEnvChart'),
         masterReleaseEnvelope: getChartEnvelope('masterReleaseEnvChart'),
         oscillators: oscillators.map(osc => {
@@ -331,7 +332,8 @@ function applyPreset(presetId) {
     }
     idCount = 1;
 
-    el('masterVolume').value = options.masterVolume;
+    el('masterVolume').value = options.masterVolume || 1;
+    el('glideDuration').value = options.noteGlideDuration || '';
     envToChart('masterAttackEnvChart', options.masterAttackEnvelope);
     envToChart('masterReleaseEnvChart', options.masterReleaseEnvelope);
     options.oscillators.forEach(opts => {
@@ -341,14 +343,14 @@ function applyPreset(presetId) {
             volume: opts.volume,
             detune: opts.detune,
             volPitchTrackingMult: opts.volumePitchTrackingMultiplier,
-            lowpassFreq: opts.lowpass.frequency,
-            lowpassPitchTrackingMult: opts.lowpass
+            lowpassFreq: opts.lowpass && opts.lowpass.frequency,
+            lowpassPitchTrackingMult: opts.lowpass && opts.lowpass
                 .frequencyPitchTrackingMultiplier,
-            lowpassQ: opts.lowpass.Q,
-            highpassFreq: opts.highpass.frequency,
-            highpassPitchTrackingMult: opts.highpass
+            lowpassQ: opts.lowpass && opts.lowpass.Q,
+            highpassFreq: opts.highpass && opts.highpass.frequency,
+            highpassPitchTrackingMult: opts.highpass && opts.highpass
                 .frequencyPitchTrackingMultiplier,
-            highpassQ: opts.highpass.Q
+            highpassQ: opts.highpass && opts.highpass.Q
         }));
     });
 
@@ -395,7 +397,7 @@ document.addEventListener('keydown', e => {
     if (freq && synthPatch && !synthKeysPressed.has(e.code)) {
         synthKeysPressed.add(e.code);
         el('keyStatus').textContent = 'Synth key pressed';
-        synthPatch.playFreqAtTime(0, freq, null, el('glideDuration').value); // Play indefinitely
+        synthPatch.playFreqAtTime(0, freq); // Play indefinitely
     }
 });
 
@@ -422,7 +424,7 @@ el('startSynth').onclick = function () {
     el('keyStatus').textContent = 'No synth key pressed';
     setTimeout(playJingle, 50);
 };
-el('masterVolume').onchange = updatePatch;
+el('masterVolume').onchange = el('glideDuration').onchange = updatePatch;
 el('json').onclick = function () {
     this.select();
 };

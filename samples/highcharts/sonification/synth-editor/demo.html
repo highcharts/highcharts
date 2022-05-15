@@ -64,7 +64,6 @@
         "type": "sine",
         "lowpass": {},
         "highpass": {},
-        "modulateOscillator": null,
         "attackEnvelope": [],
         "releaseEnvelope": []
        }
@@ -73,10 +72,26 @@
   </div>
   <div id="preset-whirlwind">
     {
-      "masterVolume": "0.8",
+      "masterVolume": "0.75",
+      "noteGlideDuration": "400",
+      "masterReleaseEnvelope": [
+       {
+        "t": 0,
+        "vol": 1
+       },
+       {
+        "t": 124,
+        "vol": 0.24
+       },
+       {
+        "t": 281,
+        "vol": 0
+       }
+      ],
       "oscillators": [
        {
         "type": "whitenoise",
+        "volume": 1,
         "lowpass": {
          "frequency": 1,
          "frequencyPitchTrackingMultiplier": 4000,
@@ -91,9 +106,7 @@
         "type": "sine",
         "freqMultiplier": 0.016,
         "volume": 1000,
-        "modulateOscillator": 0,
-        "lowpass": {},
-        "highpass": {}
+        "fmOscillator": 0
        }
       ]
      }
@@ -121,7 +134,7 @@
         "volume": 2000,
         "lowpass": {},
         "highpass": {},
-        "modulateOscillator": 0,
+        "fmOscillator": 0,
         "attackEnvelope": [],
         "releaseEnvelope": []
        },
@@ -131,7 +144,7 @@
         "volume": 50,
         "lowpass": {},
         "highpass": {},
-        "modulateOscillator": 1,
+        "fmOscillator": 1,
         "attackEnvelope": [],
         "releaseEnvelope": []
        },

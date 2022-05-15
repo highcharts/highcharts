@@ -48,6 +48,7 @@ interface SynthPatchOptions {
     masterAttackEnvelope?: Envelope;
     masterReleaseEnvelope?: Envelope;
     masterVolume?: number;
+    noteGlideDuration?: number;
     oscillators?: Array<OscOptions>;
 }
 
@@ -204,35 +205,27 @@ class Oscillator {
     }
 
 
-    setFreqAtTime(time: number, frequency: number): void {
+    setFreqAtTime(
+        time: number, frequency: number, glideDuration = 0
+    ): void {
         const opts = this.options,
             f = pick(opts.fixedFrequency, frequency) *
                 (opts.freqMultiplier || 1);
         if (this.oscNode) {
             this.oscNode.frequency.cancelScheduledValues(time);
-            this.oscNode.frequency.setValueAtTime(f, time);
+            if (glideDuration) {
+                this.oscNode.frequency.setTargetAtTime(
+                    f, time, glideDuration / 1000 / 5
+                );
+                this.oscNode.frequency.setValueAtTime(
+                    f, time + glideDuration / 1000
+                );
+            } else {
+                this.oscNode.frequency.setValueAtTime(f, time);
+            }
         }
-        this.scheduleVolTrackingChange(f, time);
-        this.scheduleFilterTrackingChange(f, time);
-    }
-
-
-    glideToFreqAtTime(
-        time: number, frequency: number, glideDuration: number
-    ): void {
-        const f = pick(this.options.fixedFrequency, frequency) *
-            (this.options.freqMultiplier || 1);
-        if (this.oscNode) {
-            this.oscNode.frequency.cancelScheduledValues(time);
-            this.oscNode.frequency.setTargetAtTime(
-                f, time, glideDuration / 1000 / 3
-            );
-            this.oscNode.frequency.setValueAtTime(
-                f, time + glideDuration / 1000
-            );
-        }
-        this.scheduleVolTrackingChange(f, time);
-        this.scheduleFilterTrackingChange(f, time);
+        this.scheduleVolTrackingChange(f, time, glideDuration);
+        this.scheduleFilterTrackingChange(f, time, glideDuration);
     }
 
 
@@ -272,45 +265,53 @@ class Oscillator {
 
 
     // Set the pitch dependent volume to fit some frequency at some time
-    private scheduleVolTrackingChange(frequency: number, time: number): void {
+    private scheduleVolTrackingChange(
+        frequency: number, time: number, glideDuration?: number
+    ): void {
         if (this.volTrackingNode) {
             const v = getPitchTrackedMultiplierVal(
-                this.options.volumePitchTrackingMultiplier || 1,
-                frequency,
-                true
-            );
+                    this.options.volumePitchTrackingMultiplier || 1,
+                    frequency,
+                    true
+                ),
+                rampTime = glideDuration ? glideDuration / 1000 :
+                    SynthPatch.stopRampTime;
             this.volTrackingNode.gain.cancelScheduledValues(time);
             this.volTrackingNode.gain.setTargetAtTime(
-                v, time, SynthPatch.stopRampTime / 6
+                v, time, rampTime / 5
             );
             this.volTrackingNode.gain.setValueAtTime(
-                v, time + SynthPatch.stopRampTime);
+                v, time + rampTime);
         }
     }
 
 
     // Set the pitch dependent filter frequency to fit frequency at some time
     private scheduleFilterTrackingChange(
-        frequency: number, time: number
+        frequency: number, time: number, glideDuration?: number
     ): void {
-        const opts = this.options;
+        const opts = this.options,
+            rampTime = glideDuration ? glideDuration / 1000 :
+                SynthPatch.stopRampTime,
+            scheduleFilterTarget = (
+                filterNode: BiquadFilterNode,
+                filterOptions: FilterOptions
+            ): void => {
+                const multiplier = getPitchTrackedMultiplierVal(
+                        filterOptions.frequencyPitchTrackingMultiplier || 1,
+                        frequency
+                    ),
+                    f = (filterOptions.frequency || 1000) * multiplier;
+                filterNode.frequency.cancelScheduledValues(time);
+                filterNode.frequency.setTargetAtTime(f, time, rampTime / 5);
+                filterNode.frequency.setValueAtTime(f, time + rampTime);
+            };
+
         if (this.lowpassNode && opts.lowpass) {
-            const multiplier = getPitchTrackedMultiplierVal(
-                    opts.lowpass.frequencyPitchTrackingMultiplier || 1,
-                    frequency
-                ),
-                f = (opts.lowpass.frequency || 20000) * multiplier;
-            this.lowpassNode.frequency.cancelScheduledValues(time);
-            this.lowpassNode.frequency.setValueAtTime(f, time);
+            scheduleFilterTarget(this.lowpassNode, opts.lowpass);
         }
         if (this.highpassNode && opts.highpass) {
-            const multiplier = getPitchTrackedMultiplierVal(
-                    opts.highpass.frequencyPitchTrackingMultiplier || 1,
-                    frequency
-                ),
-                f = (opts.highpass.frequency || 20000) * multiplier;
-            this.highpassNode.frequency.cancelScheduledValues(time);
-            this.highpassNode.frequency.setValueAtTime(f, time);
+            scheduleFilterTarget(this.highpassNode, opts.highpass);
         }
     }
 
@@ -465,31 +466,25 @@ class SynthPatch {
 
 
     // Play a frequency at time (in seconds, in the AudioContext timespace).
-    // Time denotes when the attack ramp/glide starts. Note duration and glide
-    // duration is given in milliseconds. If note duration is not given,
-    // the note plays indefinitely. If glide duration is not given, the note
-    // jumps straight to the set frequency.
+    // Time denotes when the attack ramp starts. Note duration is given in
+    // milliseconds. If note duration is not given, the note plays indefinitely.
     playFreqAtTime(
         time: number,
         frequency: number,
-        noteDuration?: number,
-        glideDuration?: number
+        noteDuration?: number
     ): void {
-        const t = time || this.audioContext.currentTime;
+        const t = time || this.audioContext.currentTime,
+            opts = this.options;
         this.oscillators.forEach((o): void => {
-            if (glideDuration) {
-                o.glideToFreqAtTime(t, frequency, glideDuration);
-            } else {
-                o.setFreqAtTime(t, frequency);
-            }
+            o.setFreqAtTime(t, frequency, opts.noteGlideDuration);
             o.runEnvelopeAtTime('attack', t);
         });
         scheduleGainEnvelope(
-            this.options.masterAttackEnvelope || [],
+            opts.masterAttackEnvelope || [],
             'attack',
             t,
             this.outputNode,
-            this.options.masterVolume
+            opts.masterVolume
         );
 
         if (noteDuration) {
