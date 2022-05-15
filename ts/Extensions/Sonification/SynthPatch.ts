@@ -401,7 +401,7 @@ class SynthPatch {
         private audioContext: AudioContext,
         private options: SynthPatchOptions
     ) {
-        this.outputNode = new GainNode(audioContext);
+        this.outputNode = new GainNode(audioContext, { gain: 0 });
         this.oscillators = (this.options.oscillators || []).map(
             (oscOpts): Oscillator => new Oscillator(
                 audioContext,
