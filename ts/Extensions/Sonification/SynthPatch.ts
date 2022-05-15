@@ -519,17 +519,20 @@ class SynthPatch {
         });
 
         const masterEnv = this.options.masterReleaseEnvelope || [];
-        scheduleGainEnvelope(
-            masterEnv,
-            'release',
-            time,
-            this.outputNode,
-            this.options.masterVolume
-        );
-        maxReleaseDuration = Math.max(
-            maxReleaseDuration,
-            masterEnv.length ? masterEnv[masterEnv.length - 1].t : 0
-        );
+        if (masterEnv.length) {
+            scheduleGainEnvelope(
+                masterEnv,
+                'release',
+                time,
+                this.outputNode,
+                this.options.masterVolume
+            );
+            maxReleaseDuration = Math.max(
+                maxReleaseDuration,
+                masterEnv[masterEnv.length - 1].t
+            );
+        }
+
         miniRampToVolAtTime(
             this.outputNode, time + maxReleaseDuration / 1000, 0
         );
