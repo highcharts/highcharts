@@ -82,6 +82,7 @@ h2 {
 
 #globalControls .chart {
     width: 250px;
+    margin-left: 20px;
 }
 
 #globalControls input {
@@ -193,12 +194,16 @@ button:active {
     background-color: #dcece9;
 }
 
+.span2 {
+    grid-column-end: span 2;
+}
+
 .oscillator {
     display: grid;
     column-gap: 2px;
     align-items: center;
     row-gap: 5px;
-    grid-template-columns: 11rem 6.5rem;
+    grid-template-columns: 11rem 3rem 3.5rem;
     background-color: #fafafa;
     border: 1px solid #d7d7d7;
     padding: 15px;
@@ -224,5 +229,6 @@ button:active {
 }
 
 .chartlabel {
-    margin-left: 10px;
+    font-size: 0.85rem;
+    margin-left: 3px;
 }

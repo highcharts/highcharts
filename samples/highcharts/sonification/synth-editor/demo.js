@@ -155,6 +155,7 @@ function createEnvelopeChart(type, container) {
         chart: {
             backgroundColor: 'transparent',
             plotBorderWidth: 1,
+            spacing: [10, 5, 0, 0],
             events: {
                 click: function (e) {
                     this.series[0].addPoint([
@@ -180,9 +181,10 @@ function createEnvelopeChart(type, container) {
         },
         xAxis: {
             min: 0,
-            max: 500,
+            max: 600,
             minPadding: 0,
             maxPadding: 0,
+            tickAmount: 3,
             minRange: 0,
             startOnTick: false,
             endOnTick: false
@@ -260,7 +262,9 @@ class Oscillator {
         this.htmlNode = document.createElement('div');
         this.htmlNode.className = 'oscillator';
         this.content = `<h3>#${this.id}</h3>
-            <button id="removeOsc${this.id}">Remove #${this.id}</button>`;
+            <button class="span2" id="removeOsc${this.id}">
+                Remove #${this.id}
+            </button>`;
         this.addControls();
         this.render();
         setTimeout(() => updateModulationLists(), 0);
@@ -282,15 +286,15 @@ class Oscillator {
             nameAndId = `name="${identifier}" id="${identifier}"`;
         this.content += `<label for="${identifier}">${label}</label>` +
             (type === 'select' ?
-                `<select ${nameAndId}>${controlContent}</select>` :
-                `<input type="number" ${nameAndId} value="${controlContent}">`
+                `<select class="span2" ${nameAndId}>${controlContent}</select>` : // eslint-disable-line
+                `<input class="span2" type="number" ${nameAndId} value="${controlContent}">` // eslint-disable-line
             );
         return identifier;
     }
 
     addChartContainer(id, label) {
         const identifier = `osc${this.id}${id}`;
-        this.content += `<div class="chart" id="${identifier}"></div>
+        this.content += `<div class="chart span2" id="${identifier}"></div>
             <label class="chartlabel">${label}</label>`;
         return identifier;
     }
