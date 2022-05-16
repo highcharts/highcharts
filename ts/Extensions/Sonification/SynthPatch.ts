@@ -528,7 +528,7 @@ class SynthPatch {
         // Connect nodes
         this.eqNodes.reduceRight((chain: AudioNode, node): AudioNode => {
             node.connect(chain);
-            return chain;
+            return node;
         }, outputNode);
     }
 
