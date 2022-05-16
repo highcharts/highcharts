@@ -214,7 +214,7 @@ button:active {
     font-size: 1.4rem;
 }
 
-.oscillator button {
+.oscillator button:not(.chartReset) {
     background-color: #af1919;
     color: white;
     padding: 5px;
@@ -231,4 +231,11 @@ button:active {
 .chartlabel {
     font-size: 0.85rem;
     margin-left: 3px;
+}
+
+.chartReset {
+    position: absolute;
+    right: 8px;
+    font-size: 0.8rem;
+    height: 1.2rem;
 }

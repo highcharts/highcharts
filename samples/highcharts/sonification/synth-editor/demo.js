@@ -163,6 +163,26 @@ function createEnvelopeChart(type, container) {
                         Math.round(e.yAxis[0].value * 100) / 100
                     ]);
                     updatePatch();
+                },
+                load: function () {
+                    const btn = document.createElement('button');
+                    let hideTimeout;
+                    this.container.appendChild(btn);
+                    btn.classList.add('chartReset', 'hidden');
+                    btn.textContent = 'Reset';
+                    btn.onclick = e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.series[0].setData([]);
+                        updatePatch();
+                    };
+                    this.renderTo.addEventListener('mouseenter', () => {
+                        clearTimeout(hideTimeout);
+                        btn.classList.remove('hidden');
+                    });
+                    this.renderTo.addEventListener('mouseleave', () => {
+                        hideTimeout = setTimeout(() => btn.classList.add('hidden'), 400);
+                    });
                 }
             }
         },
