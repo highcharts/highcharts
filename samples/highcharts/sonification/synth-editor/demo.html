@@ -108,7 +108,7 @@
          "Q": 23
         },
         "highpass": {
-         "frequency": 100,
+         "frequency": 170,
          "frequencyPitchTrackingMultiplier": 6
         }
        },
@@ -121,23 +121,640 @@
       ]
      }
   </div>
-  <div id="preset-advanced">
+  <div id="preset-saxophone">
     {
-      "masterVolume": "0.8",
+      "masterVolume": "0.9",
+      "noteGlideDuration": "10",
+      "masterAttackEnvelope": [
+       {
+        "t": 0,
+        "vol": 0
+       },
+       {
+        "t": 35,
+        "vol": 1
+       },
+       {
+        "t": 87,
+        "vol": 0.84
+       },
+       {
+        "t": 111,
+        "vol": 0.6
+       },
+       {
+        "t": 296,
+        "vol": 0.49
+       },
+       {
+        "t": 600,
+        "vol": 0.58
+       },
+       {
+        "t": 600,
+        "vol": 0.58
+       },
+       {
+        "t": 600,
+        "vol": 0.58
+       }
+      ],
+      "masterReleaseEnvelope": [
+       {
+        "t": 1,
+        "vol": 0.58
+       },
+       {
+        "t": 47,
+        "vol": 0.16
+       },
+       {
+        "t": 119,
+        "vol": 0
+       }
+      ],
       "eq": [
        {
-        "frequency": 2500,
-        "Q": 10,
-        "gain": -12
+        "frequency": 200,
+        "Q": 1,
+        "gain": -2
+       },
+       {
+        "frequency": 600,
+        "Q": 1,
+        "gain": 2
+       },
+       {
+        "frequency": 800,
+        "Q": 1,
+        "gain": -10
+       },
+       {
+        "frequency": 1100,
+        "Q": 1,
+        "gain": -2
+       },
+       {
+        "frequency": 2200,
+        "Q": 1,
+        "gain": -2
+       },
+       {
+        "frequency": 3500,
+        "Q": 1,
+        "gain": 10
+       },
+       {
+        "frequency": 12800,
+        "Q": 1,
+        "gain": 4
        }
       ],
       "oscillators": [
        {
+        "type": "sawtooth",
+        "volume": 0.3,
+        "volumePitchTrackingMultiplier": 0.06,
+        "lowpass": {
+         "frequency": 18,
+         "frequencyPitchTrackingMultiplier": 200
+        },
+        "highpass": {
+         "frequency": 300
+        },
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "whitenoise",
+        "fixedFrequency": 1,
+        "volume": 0.4,
+        "lowpass": {},
+        "highpass": {
+         "frequency": 7000
+        },
+        "vmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 1,
+          "vol": 1
+         },
+         {
+          "t": 51,
+          "vol": 1
+         },
+         {
+          "t": 86,
+          "vol": 0.84
+         },
+         {
+          "t": 500,
+          "vol": 0.78
+         },
+         {
+          "t": 500,
+          "vol": 0.78
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
         "type": "sine",
+        "fixedFrequency": 4,
+        "volume": 2,
+        "lowpass": {},
+        "highpass": {},
+        "fmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 15,
+          "vol": 0.94
+         },
+         {
+          "t": 79,
+          "vol": 1
+         },
+         {
+          "t": 172,
+          "vol": 0.47
+         },
+         {
+          "t": 500,
+          "vol": 0.26
+         },
+         {
+          "t": 500,
+          "vol": 0.26
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "fixedFrequency": 7,
+        "volume": 6,
+        "lowpass": {},
+        "highpass": {},
+        "fmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 25,
+          "vol": 0.99
+         },
+         {
+          "t": 85,
+          "vol": 0
+         },
+         {
+          "t": 85,
+          "vol": 0
+         },
+         {
+          "t": 387,
+          "vol": 0.02
+         },
+         {
+          "t": 511,
+          "vol": 0.43
+         },
+         {
+          "t": 600,
+          "vol": 0
+         }
+        ],
+        "releaseEnvelope": []
+       }
+      ]
+     }
+  </div>
+  <div id="preset-rock">
+    {
+      "masterVolume": "0.8",
+      "masterAttackEnvelope": [
+       {
+        "t": 0,
+        "vol": 0
+       },
+       {
+        "t": 8,
+        "vol": 0.95
+       },
+       {
+        "t": 39,
+        "vol": 1
+       },
+       {
+        "t": 73,
+        "vol": 0.85
+       }
+      ],
+      "masterReleaseEnvelope": [
+       {
+        "t": 1,
+        "vol": 0.89
+       },
+       {
+        "t": 40,
+        "vol": 0.29
+       },
+       {
+        "t": 82,
+        "vol": 0.01
+       }
+      ],
+      "eq": [
+       {
+        "frequency": 100,
+        "Q": 1,
+        "gain": -4
+       },
+       {
+        "frequency": 500,
+        "Q": 10,
+        "gain": 4
+       },
+       {
+        "frequency": 800,
+        "Q": 1,
+        "gain": 2
+       },
+       {
+        "frequency": 2200,
+        "Q": 1,
+        "gain": 4
+       },
+       {
+        "frequency": 3600,
+        "Q": 1,
+        "gain": 4
+       },
+       {
+        "frequency": 9400,
+        "Q": 0.7,
+        "gain": 6
+       },
+       {
+        "frequency": 12800,
+        "Q": 1,
+        "gain": 6
+       }
+      ],
+      "oscillators": [
+       {
+        "type": "sawtooth",
+        "volume": 2.5,
+        "volumePitchTrackingMultiplier": 0.07,
+        "lowpass": {
+         "frequency": 1,
+         "frequencyPitchTrackingMultiplier": 1000,
+         "Q": -12
+        },
+        "highpass": {
+         "frequency": 80,
+         "frequencyPitchTrackingMultiplier": 22
+        },
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "fixedFrequency": 200,
+        "volume": 100,
+        "lowpass": {},
+        "highpass": {},
+        "fmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 1,
+          "vol": 1
+         },
+         {
+          "t": 168,
+          "vol": 1
+         },
+         {
+          "t": 372,
+          "vol": 0.32
+         },
+         {
+          "t": 600,
+          "vol": 0.57
+         },
+         {
+          "t": 600,
+          "vol": 0.57
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sawtooth",
+        "freqMultiplier": 2,
+        "volume": 0.01,
+        "volumePitchTrackingMultiplier": 0.07,
+        "lowpass": {
+         "frequency": 5000
+        },
+        "highpass": {},
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "whitenoise",
+        "fixedFrequency": 1,
         "volume": 0.5,
         "lowpass": {},
         "highpass": {},
+        "vmOscillator": 2,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 1,
+          "vol": 1
+         },
+         {
+          "t": 35,
+          "vol": 0.93
+         },
+         {
+          "t": 48,
+          "vol": 0.66
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "fixedFrequency": 7.6,
+        "volume": 0.08,
+        "lowpass": {},
+        "highpass": {},
+        "vmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 600,
+          "vol": 0.95
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "freqMultiplier": 3,
+        "volume": 0.15,
+        "volumePitchTrackingMultiplier": 0.07,
+        "lowpass": {},
+        "highpass": {},
         "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "freqMultiplier": 4,
+        "volume": 0.015,
+        "detune": -10,
+        "volumePitchTrackingMultiplier": 0.07,
+        "lowpass": {},
+        "highpass": {},
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "volume": 0.08,
+        "detune": -10,
+        "lowpass": {},
+        "highpass": {},
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       }
+      ]
+     }
+  </div>
+  <div id="preset-test">
+    {
+      "masterVolume": "0.9",
+      "noteGlideDuration": "10",
+      "masterAttackEnvelope": [
+       {
+        "t": 0,
+        "vol": 0
+       },
+       {
+        "t": 1,
+        "vol": 0.97
+       },
+       {
+        "t": 56,
+        "vol": 0.84
+       },
+       {
+        "t": 96,
+        "vol": 0.98
+       },
+       {
+        "t": 141,
+        "vol": 0.71
+       },
+       {
+        "t": 296,
+        "vol": 0.49
+       },
+       {
+        "t": 600,
+        "vol": 0.58
+       }
+      ],
+      "masterReleaseEnvelope": [
+       {
+        "t": 1,
+        "vol": 0.58
+       },
+       {
+        "t": 47,
+        "vol": 0.16
+       },
+       {
+        "t": 119,
+        "vol": 0
+       }
+      ],
+      "eq": [
+       {
+        "frequency": 200,
+        "Q": 1,
+        "gain": 2
+       },
+       {
+        "frequency": 400,
+        "Q": 1,
+        "gain": -4
+       },
+       {
+        "frequency": 800,
+        "Q": 1,
+        "gain": -10
+       },
+       {
+        "frequency": 1600,
+        "Q": 1,
+        "gain": -2
+       },
+       {
+        "frequency": 2200,
+        "Q": 1,
+        "gain": -2
+       },
+       {
+        "frequency": 3500,
+        "Q": 1,
+        "gain": 6
+       },
+       {
+        "frequency": 12800,
+        "Q": 1,
+        "gain": 4
+       }
+      ],
+      "oscillators": [
+       {
+        "type": "sawtooth",
+        "volume": 0.3,
+        "volumePitchTrackingMultiplier": 0.07,
+        "lowpass": {
+         "frequency": 20,
+         "frequencyPitchTrackingMultiplier": 200
+        },
+        "highpass": {
+         "frequency": 300
+        },
+        "attackEnvelope": [],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "whitenoise",
+        "fixedFrequency": 1,
+        "volume": 0.4,
+        "lowpass": {},
+        "highpass": {
+         "frequency": 7000
+        },
+        "vmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 1,
+          "vol": 1
+         },
+         {
+          "t": 51,
+          "vol": 1
+         },
+         {
+          "t": 86,
+          "vol": 0.84
+         },
+         {
+          "t": 500,
+          "vol": 0.78
+         },
+         {
+          "t": 500,
+          "vol": 0.78
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "fixedFrequency": 4,
+        "volume": 2,
+        "lowpass": {},
+        "highpass": {},
+        "fmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 15,
+          "vol": 0.94
+         },
+         {
+          "t": 79,
+          "vol": 1
+         },
+         {
+          "t": 172,
+          "vol": 0.47
+         },
+         {
+          "t": 500,
+          "vol": 0.26
+         },
+         {
+          "t": 500,
+          "vol": 0.26
+         }
+        ],
+        "releaseEnvelope": []
+       },
+       {
+        "type": "sine",
+        "fixedFrequency": 7,
+        "volume": 6,
+        "lowpass": {},
+        "highpass": {},
+        "fmOscillator": 0,
+        "attackEnvelope": [
+         {
+          "t": 0,
+          "vol": 0
+         },
+         {
+          "t": 25,
+          "vol": 0.99
+         },
+         {
+          "t": 85,
+          "vol": 0
+         },
+         {
+          "t": 85,
+          "vol": 0
+         },
+         {
+          "t": 387,
+          "vol": 0.02
+         },
+         {
+          "t": 511,
+          "vol": 0.43
+         },
+         {
+          "t": 600,
+          "vol": 0
+         }
+        ],
         "releaseEnvelope": []
        }
       ]

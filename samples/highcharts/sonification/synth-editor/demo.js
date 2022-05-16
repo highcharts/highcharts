@@ -11,8 +11,10 @@ const charts = {}; // Our envelope chart references
 const el = el => document.getElementById(el);
 const presets = {
     basic: el('preset-basic').textContent,
-    advanced: el('preset-advanced').textContent,
-    whirlwind: el('preset-whirlwind').textContent
+    saxophone: el('preset-saxophone').textContent,
+    whirlwind: el('preset-whirlwind').textContent,
+    rock: el('preset-rock').textContent,
+    test: el('preset-test').textContent
 };
 
 // Get envelope options from an envelope chart
@@ -29,8 +31,8 @@ function getEq() {
         .reduce((definitions, container) => {
             const gain = parseFloat(container.querySelector('input[type="range"]').value);
             if (gain < -0.01 || gain > 0.01) {
-                const frequency = parseFloat(container.querySelector('.freq').value),
-                    Q = parseFloat(container.querySelector('.q').value);
+                const frequency = parseFloat(container.querySelector('.freq').value) || 0,
+                    Q = parseFloat(container.querySelector('.q').value) || 1;
                 definitions.push({
                     frequency,
                     Q,
@@ -459,7 +461,7 @@ function populateEQSliders() {
         const col = document.createElement('div');
         col.className = 'eqSlider';
         // eslint-disable-next-line
-        col.innerHTML = `<input orient="vertical" type="range" min="-40" max="6" step="2">
+        col.innerHTML = `<input orient="vertical" type="range" min="-40" max="20" step="2">
         <input class="freq" type="number">
         <input class="q" type="number">
         `;
