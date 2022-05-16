@@ -61,13 +61,12 @@ h2 {
 }
 
 #globalControls {
+    display: inline-flex;
     align-items: flex-start;
-    justify-content: center;
     margin-top: 30px;
     background-color: #fcfcfc;
     border: 1px solid #f0f0f0;
     padding: 20px;
-    max-width: 750px;
 }
 
 #globalControls h2 {
@@ -99,22 +98,21 @@ h2 {
     height: 2.5rem;
 }
 
-#playWideRange {
+button {
     height: 1.9rem;
-}
-
-#startSynth,
-#playWideRange {
+    background: none;
+    cursor: pointer;
+    padding: 2px 16px;
+    border-radius: 3px;
+    border: 1px solid #aaa;
     background-color: #fafafa;
 }
 
-#startSynth:hover,
-#playWideRange:hover {
+button:hover {
     background-color: #efefef;
 }
 
-#startSynth:active,
-#playWideRange:active {
+button:active {
     background-color: #e0e0e0;
 }
 
@@ -134,47 +132,64 @@ h2 {
     margin-left: 5px;
 }
 
-#presets {
-    display: none;
-}
-
-.help {
+#help {
     font-size: 0.8rem;
-    flex: 1;
-    align-self: flex-start;
-    padding: 5px;
+    padding: 20px;
+    max-width: 895px;
+    margin-top: 10px;
+    background-color: #f8f8f8;
 }
 
-.help h2 {
+#help h2 {
     font-size: 1rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+#help p {
+    margin: 0;
+    margin-top: 8px;
+}
+
+#masterEQ {
+    margin-left: 20px;
+}
+
+#eqSliders {
+    gap: 0;
+    flex-wrap: nowrap;
+}
+
+.eqSlider input[type="range"] {
+    -webkit-appearance: slider-vertical;
+    width: 50px;
+}
+
+.eqSlider input[type="number"] {
+    width: 3.5rem;
     text-align: center;
 }
 
-.help p {
-    margin: 0;
-    margin-top: 8px;
+#resetEQ {
+    height: 1.3rem;
+    font-size: 0.7rem;
+    justify-self: flex-end;
+    margin-bottom: 6px;
 }
 
 #addOsc {
     height: 30px;
     margin-top: 10px;
-}
-
-button {
-    background: none;
     background-color: #d5f3d5;
-    cursor: pointer;
-    padding: 2px 16px;
-    border-radius: 3px;
     border: 1px solid #616161;
 }
 
-button:hover {
+#addOsc:hover {
     background-color: #e6f2e6;
     border: 1px solid #455;
 }
 
-button:active {
+#addOsc:active {
     background-color: #dcece9;
 }
 

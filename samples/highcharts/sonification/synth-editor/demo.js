@@ -23,6 +23,50 @@ function getChartEnvelope(chartContainerId) {
 }
 
 
+// Get EQ settings from UI
+function getEq() {
+    return [...document.querySelectorAll('.eqSlider')]
+        .reduce((definitions, container) => {
+            const gain = parseFloat(container.querySelector('input[type="range"]').value);
+            if (gain < -0.01 || gain > 0.01) {
+                const frequency = parseFloat(container.querySelector('.freq').value),
+                    Q = parseFloat(container.querySelector('.q').value);
+                definitions.push({
+                    frequency,
+                    Q,
+                    gain
+                });
+            }
+            return definitions;
+        }, []);
+}
+
+
+// Apply preset EQ to UI
+function applyEq(eqDefinitions) {
+    const defs = eqDefinitions.slice(0),
+        eqContainers = [...document.querySelectorAll('.eqSlider')],
+        defaultFrequencies = [200, 400, 800, 1600, 2200, 3600, 6400, 12800];
+
+    let i = 0;
+    while (defs.length < eqContainers.length) {
+        defs.push({
+            frequency: defaultFrequencies[i],
+            gain: 0,
+            Q: 1
+        });
+        ++i;
+    }
+
+    defs.sort((a, b) => a.frequency - b.frequency).forEach((def, ix) => {
+        const container = eqContainers[ix];
+        container.querySelector('input[type="range"]').value = def.gain;
+        container.querySelector('.freq').value = def.frequency;
+        container.querySelector('.q').value = def.Q;
+    });
+}
+
+
 // Update the patch options and JSON from the current UI settings
 function updatePatch() {
     const val = id => el(id).value,
@@ -39,6 +83,7 @@ function updatePatch() {
         noteGlideDuration: el('glideDuration').value,
         masterAttackEnvelope: getChartEnvelope('masterAttackEnvChart'),
         masterReleaseEnvelope: getChartEnvelope('masterReleaseEnvChart'),
+        eq: getEq(),
         oscillators: oscillators.map(osc => {
             const i = osc.inputs,
                 getOscWithId = id => oscillators
@@ -270,13 +315,13 @@ class Oscillator {
                 opts.lowpassFreq || ''),
             lowpassPitchTrackingMult: this.addControl('input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
                 opts.lowpassPitchTrackingMult || ''),
-            lowpassQ: this.addControl('input', 'lowpassQ', 'Lowpass Q',
+            lowpassQ: this.addControl('input', 'lowpassQ', 'Lowpass resonance',
                 opts.lowpassQ || ''),
             highpassFreq: this.addControl('input', 'highpassFreq', 'Highpass frequency',
                 opts.highpassFreq || ''),
             highpassPitchTrackingMult: this.addControl('input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
                 opts.highpassPitchTrackingMult || ''),
-            highpassQ: this.addControl('input', 'highpassQ', 'Highpass Q',
+            highpassQ: this.addControl('input', 'highpassQ', 'Highpass resonance',
                 opts.highpassQ || ''),
             fmOsc: this.addControl('select', 'FMOsc', 'FM oscillator', ''),
             vmOsc: this.addControl('select', 'VMOsc', 'VM oscillator', ''),
@@ -344,6 +389,7 @@ function applyPreset(presetId) {
     el('glideDuration').value = options.noteGlideDuration || '';
     envToChart('masterAttackEnvChart', options.masterAttackEnvelope);
     envToChart('masterReleaseEnvChart', options.masterReleaseEnvelope);
+    applyEq(options.eq || []);
     options.oscillators.forEach(opts => {
         oscillators.push(new Oscillator({
             freqMultiplier: opts.freqMultiplier,
@@ -380,6 +426,30 @@ function applyPreset(presetId) {
         setTimeout(updatePatch, 0);
         setTimeout(playJingle, 50);
     }, 100);
+}
+
+
+function populateEQSliders() {
+    const container = el('eqSliders');
+    for (let i = 0; i < 8; ++i) {
+        const col = document.createElement('div');
+        col.className = 'eqSlider';
+        // eslint-disable-next-line
+        col.innerHTML = `<input orient="vertical" type="range" min="-40" max="6" step="2">
+        <input class="freq" type="number">
+        <input class="q" type="number">
+        `;
+        container.appendChild(col);
+    }
+    setTimeout(() => document.querySelectorAll('#eqSliders input')
+        .forEach(input => (input.onchange = updatePatch)), 10);
+}
+
+
+function resetEQ() {
+    document.querySelectorAll('#eqSliders input[type="range"]')
+        .forEach(input => (input.value = 0));
+    updatePatch();
 }
 
 
@@ -433,6 +503,8 @@ el('startSynth').onclick = function () {
     setTimeout(playJingle, 50);
 };
 el('playWideRange').onclick = playWideRange;
+el('showHelp').onclick = () => el('help').classList.toggle('hidden');
+el('resetEQ').onclick = resetEQ;
 el('masterVolume').onchange = el('glideDuration').onchange = updatePatch;
 el('json').onclick = function () {
     this.select();
@@ -443,4 +515,5 @@ el('preset').onchange = function () {
 };
 createEnvelopeChart('attack', 'masterAttackEnvChart');
 createEnvelopeChart('release', 'masterReleaseEnvChart');
+populateEQSliders();
 applyPreset('basic');

@@ -15,33 +15,40 @@
       <div class="row">
         <label id="presetLabel">Preset <select id="preset"></select></label>
         <button id="playWideRange">Play wide range</button>
+        <button id="showHelp">Help</button>
       </div>
 
-      <div class="row">
-        <div id="globalControls" class="row">
-          <div>
-            <h2>Global controls</h2>
-            <label>Master volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
-            <label>Glide between notes <input id="glideDuration" type="number" value="0"></label>
-          </div>
-          <div>
-            <h3>Master Attack Envelope</h3>
-            <div id="masterAttackEnvChart" class="chart"></div>
-          </div>
-          <div>
-            <h3>Master Release Envelope</h3>
-            <div id="masterReleaseEnvChart" class="chart"></div>
-          </div>
-        </div>
+      <div id="help" class="hidden">
+        <h2>Help</h2>
+        <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
+        <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete.</p>
+        <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes. The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
+        <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume.</p>
+      </div>
 
-        <div class="help">
-          <h2>Help</h2>
-          <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
-          <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete.</p>
-          <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes. The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
-          <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume.</p>
+      <div id="globalControls">
+        <div>
+          <h2>Global controls</h2>
+          <label>Master volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
+          <label>Glide between notes <input id="glideDuration" type="number" value="0"></label>
+        </div>
+        <div>
+          <h3>Master Attack Envelope</h3>
+          <div id="masterAttackEnvChart" class="chart"></div>
+        </div>
+        <div>
+          <h3>Master Release Envelope</h3>
+          <div id="masterReleaseEnvChart" class="chart"></div>
+        </div>
+        <div id="masterEQ">
+          <div class="row">
+            <h3>Master Parametric EQ (gain, frequency, Q)</h3>
+            <button id="resetEQ">Reset</button>
+          </div>
+          <div id="eqSliders" class="row"></div>
         </div>
       </div>
+  
       <div class="row">
         <h2>Oscillators</h2>
         <button id="addOsc">+ Add oscillator</button>
@@ -58,7 +65,7 @@
 
 <!-- ----------------------------------------- PRESETS STORED BELOW ------------------------------------------------ -->
 
-<div id="presets">
+<div id="presets" class="hidden">
   <div id="preset-basic">
     {
       "masterVolume": "0.8",
@@ -116,61 +123,19 @@
   </div>
   <div id="preset-advanced">
     {
-      "masterVolume": "0.85",
+      "masterVolume": "0.8",
+      "eq": [
+       {
+        "frequency": 2500,
+        "Q": 10,
+        "gain": -12
+       }
+      ],
       "oscillators": [
        {
-        "type": "sawtooth",
-        "volume": 0.1,
-        "lowpass": {
-         "frequency": 2500,
-         "Q": 2
-        },
-        "highpass": {
-         "frequency": 300
-        },
-        "attackEnvelope": [],
-        "releaseEnvelope": []
-       },
-       {
         "type": "sine",
-        "freqMultiplier": 15,
-        "volume": 2000,
+        "volume": 0.5,
         "lowpass": {},
-        "highpass": {},
-        "fmOscillator": 0,
-        "attackEnvelope": [],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "sine",
-        "fixedFrequency": 4,
-        "volume": 50,
-        "lowpass": {},
-        "highpass": {},
-        "fmOscillator": 1,
-        "attackEnvelope": [],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "square",
-        "freqMultiplier": 0.5,
-        "fixedFrequency": 358,
-        "volume": 0.2,
-        "lowpass": {
-         "frequency": 300
-        },
-        "highpass": {},
-        "attackEnvelope": [],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "sawtooth",
-        "freqMultiplier": 1.5,
-        "fixedFrequency": 355,
-        "volume": 0.1,
-        "lowpass": {
-         "frequency": 6000
-        },
         "highpass": {},
         "attackEnvelope": [],
         "releaseEnvelope": []

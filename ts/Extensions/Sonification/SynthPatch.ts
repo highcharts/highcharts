@@ -29,6 +29,12 @@ interface FilterOptions {
     Q?: number;
 }
 
+interface EQOptions {
+    frequency?: number;
+    gain?: number;
+    Q?: number;
+}
+
 interface OscOptions {
     attackEnvelope?: Envelope;
     detune?: number;
@@ -45,6 +51,7 @@ interface OscOptions {
 }
 
 interface SynthPatchOptions {
+    eq?: Array<EQOptions>;
     masterAttackEnvelope?: Envelope;
     masterReleaseEnvelope?: Envelope;
     masterVolume?: number;
@@ -395,6 +402,7 @@ class Oscillator {
 class SynthPatch {
     static stopRampTime = 0.007; // Ramp time to 0 when stopping sound
     private outputNode: GainNode;
+    private eqNodes: Array<BiquadFilterNode> = [];
     private oscillators: Array<Oscillator>;
 
     constructor(
@@ -402,12 +410,17 @@ class SynthPatch {
         private options: SynthPatchOptions
     ) {
         this.outputNode = new GainNode(audioContext, { gain: 0 });
+        this.createEqChain(this.outputNode);
+
+        const inputNode = this.eqNodes.length ?
+            this.eqNodes[0] : this.outputNode;
+
         this.oscillators = (this.options.oscillators || []).map(
             (oscOpts): Oscillator => new Oscillator(
                 audioContext,
                 oscOpts,
                 defined(oscOpts.fmOscillator) || defined(oscOpts.vmOscillator) ?
-                    void 0 : this.outputNode
+                    void 0 : inputNode
             ));
 
         // Now that we have all oscillators, connect the ones
@@ -502,6 +515,21 @@ class SynthPatch {
     // Connect the SynthPatch output to an audio node / destination
     connect(destinationNode: AudioNode): AudioNode {
         return this.outputNode.connect(destinationNode);
+    }
+
+
+    // Create nodes for master EQ
+    private createEqChain(outputNode: AudioNode): void {
+        this.eqNodes = (this.options.eq || []).map((eqDef): BiquadFilterNode =>
+            new BiquadFilterNode(this.audioContext, {
+                type: 'peaking',
+                ...eqDef
+            }));
+        // Connect nodes
+        this.eqNodes.reduceRight((chain: AudioNode, node): AudioNode => {
+            node.connect(chain);
+            return chain;
+        }, outputNode);
     }
 
 
