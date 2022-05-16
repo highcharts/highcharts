@@ -218,7 +218,7 @@ function createEnvelopeChart(type, container) {
             dragDrop: {
                 draggableY: true,
                 draggableX: true,
-                dragMaxX: 500,
+                dragMaxX: 600,
                 dragMinX: 1,
                 dragMaxY: 1,
                 dragMinY: 0
