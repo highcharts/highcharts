@@ -106,8 +106,7 @@ class PictorialSeries extends ColumnSeries {
      */
 
     // public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
-
-    //    // borderWidth: 0,
+    //     borderWidth: 1,
     // } as PictorialSeriesOptions);
 
     /* *
@@ -251,6 +250,7 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 });
 
 addEvent(StackItem, 'afterRender', function (): void {
+    const series = this.yAxis.series[0];
     const options = this.yAxis.options;
     const chart = this.yAxis.chart;
     const stackShadow = this.stackShadow;
@@ -262,10 +262,11 @@ addEvent(StackItem, 'afterRender', function (): void {
     const y = top;
     const width = x2 - x1;
     const height = this.yAxis.height;
-    const shape = ((this.yAxis.series[0].options as any).paths || []);
+    const shape = ((series.options as any).paths || []);
     const index = this.x % shape.length;
     const strokeWidth = pick(
         options.stackShadow && options.stackShadow.borderWidth,
+        series.options.borderWidth,
         1
     );
     if (!stackShadow && options.stackShadow && options.stackShadow.enabled) {
