@@ -164,9 +164,6 @@ class PictorialSeries extends ColumnSeries {
                 clipBox.y = clipBox.height;
                 clipBox.height = 0;
 
-                if (inverted) {
-                    clipBox.x = chart.plotHeight;
-                }
                 animationClipRect = chart.renderer.clipRect(clipBox);
                 chart.sharedClips[animationClipKey] = animationClipRect;
             }
@@ -191,8 +188,7 @@ class PictorialSeries extends ColumnSeries {
     public animateDrillupFrom(): void {}
 
     public pointAttribs(
-        point?: PictorialPoint,
-        selected?: StatesOptionsKey
+        point?: PictorialPoint
     ): SVGAttributes {
         const pointAttribs = super.pointAttribs.apply(this, arguments);
         const seriesOptions = this.options;
