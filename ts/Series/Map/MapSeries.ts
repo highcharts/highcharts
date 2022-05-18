@@ -17,6 +17,7 @@
  * */
 
 import type {
+    AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
@@ -1017,12 +1018,22 @@ class MapSeries extends ScatterSeries {
      * Extend setData to call processData and generatePoints immediately.
      * @private
      */
-    public setData(): void {
+    public setData(
+        data: Array<(PointOptions|PointShortOptions)>,
+        redraw: boolean = true,
+        animation?: (boolean|Partial<AnimationOptions>),
+        updatePoints?: boolean
+    ): void {
 
-        super.setData.apply(this, arguments);
+        delete this.bounds;
+        super.setData.call(this, data, false, void 0, updatePoints);
 
         this.processData();
         this.generatePoints();
+
+        if (redraw) {
+            this.chart.redraw(animation);
+        }
     }
 
     /**
