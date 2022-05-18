@@ -1,6 +1,6 @@
-//As I am using milliseconds in the data and would like to display
-//a running number of hours, I am using the following function
-//to convert from milliseconds to minutes and hours.
+// As I am using milliseconds in the data and would like to display a running
+// number of hours, I am using the following function to convert from
+// milliseconds to minutes and hours.
 function padTo2Digits(num) {
     return num.toString().padStart(2, '0');
 }
