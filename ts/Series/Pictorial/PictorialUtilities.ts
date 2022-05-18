@@ -8,13 +8,22 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+
 import Axis from '../../Core/Axis/Axis.js';
 
 function rescalePatternFill(
     element: SVGElement,
     yAxis: Axis,
-    height: number
+    width: number,
+    height: number,
+    borderWidth = 1
 ): void {
     const fill = element && element.attr('fill') as string;
     const match = fill && fill.match(/url\(([^)]+)\)/);
@@ -22,14 +31,25 @@ function rescalePatternFill(
         const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
         if (patternPath) {
             const bBox = patternPath.getBBox();
-            const scaleX = 1 / bBox.width;
-            const scaleY = yAxis.len /
-               height /
-                bBox.height;
+            let scaleX = 1 / (bBox.width + borderWidth);
+            let scaleY = yAxis.len / height / bBox.height;
+            let aspectRatio = bBox.width / bBox.height;
+            let pointAspectRatio = width / yAxis.len;
+            let x = -bBox.width / 2;
+
+            if (aspectRatio < pointAspectRatio) {
+                scaleX = scaleX * aspectRatio / pointAspectRatio;
+            }
+
+            patternPath.setAttribute(
+                'stroke-width', borderWidth / (width * scaleX)
+            );
+
             patternPath.setAttribute(
                 'transform',
+                'translate(0.5, 0)' +
                 `scale(${scaleX} ${scaleY}) ` +
-                `translate(${-bBox.x}, ${-bBox.y})`
+                `translate(${x + borderWidth * scaleX / 2}, ${-bBox.y})`
             );
         }
     }

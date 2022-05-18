@@ -16,7 +16,6 @@
 
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
-
 /* *
  *
  *  Declarations
@@ -32,4 +31,5 @@ export interface PictorialPointOptions extends ColumnPointOptions {
  *  Export
  *
  * */
+
 export default PictorialPointOptions;

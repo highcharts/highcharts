@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import '../Column/ColumnSeries.js';
 import '../../Extensions/PatternFill.js';
 
@@ -32,34 +33,35 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 import PictorialUtilities from './PictorialUtilities.js';
 
 const {
-    animObject
-} = A;
-
-const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
 
 const {
-    extend,
+    animObject
+} = A;
+
+const {
     merge,
-    addEvent
+    addEvent,
+    pick
 } = U;
 
 const {
     rescalePatternFill
 } = PictorialUtilities;
 
-export interface StackBorderOptions {
-    width?: number;
+export interface StackShadowOptions {
+    borderWidth?: number;
     enabled?: boolean;
     color?: ColorType;
+    borderColor?: ColorType
 }
 
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        stackBorder?: StackBorderOptions;
+        stackShadow?: StackShadowOptions;
     }
 }
 
@@ -103,13 +105,10 @@ class PictorialSeries extends ColumnSeries {
      * @optionparent plotOptions.pictorial
      */
 
-    public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    // public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
-        borderWidth: 0,
-        tooltip: {
-            pointFormat: 'text'
-        }
-    } as PictorialSeriesOptions);
+    //    // borderWidth: 0,
+    // } as PictorialSeriesOptions);
 
     /* *
      *
@@ -189,20 +188,6 @@ class PictorialSeries extends ColumnSeries {
         }
     }
 
-    /**
-     * Draws the targets. For inverted chart, the `series.group` is rotated,
-     * so the same coordinates apply. This method is based on column series
-     * drawPoints function.
-     *
-     * @ignore
-     * @function Highcharts.Series#drawPoints
-     */
-    public drawPoints(): void {
-        const series = this;
-
-        super.drawPoints.apply(series, arguments);
-    }
-
     public animateDrilldown(): void {}
     public animateDrillupFrom(): void {}
 
@@ -221,7 +206,7 @@ class PictorialSeries extends ColumnSeries {
                             point.index % seriesOptions.paths.length
                         ] as unknown as SVGPath,
                         fill: pointAttribs.fill,
-                        strokeWidth: 0,
+                        strokeWidth: pointAttribs['stroke-width'],
                         stroke: pointAttribs.stroke
                     },
                     x: point.shapeArgs.x,
@@ -257,7 +242,9 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
             rescalePatternFill(
                 point.graphic,
                 series.yAxis,
-                point.shapeArgs.height || Infinity
+                point.shapeArgs.width || 0,
+                point.shapeArgs.height || Infinity,
+                series.options.borderWidth || 0
             );
         }
     });
@@ -266,7 +253,7 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 addEvent(StackItem, 'afterRender', function (): void {
     const options = this.yAxis.options;
     const chart = this.yAxis.chart;
-    const stackBorder = this.stackBorder;
+    const stackShadow = this.stackShadow;
     const top = chart.plotTop;
     const x1 = this.xAxis.toPixels(this.x - 0.5);
     const x2 = this.xAxis.toPixels(this.x + 0.5);
@@ -277,16 +264,21 @@ addEvent(StackItem, 'afterRender', function (): void {
     const height = this.yAxis.height;
     const shape = ((this.yAxis.series[0].options as any).paths || []);
     const index = this.x % shape.length;
-
-    if (!stackBorder && options.stackBorder && options.stackBorder.enabled) {
-        this.stackBorder = chart.renderer.rect(x, y, width, height)
+    const strokeWidth = pick(
+        options.stackShadow && options.stackShadow.borderWidth,
+        1
+    );
+    if (!stackShadow && options.stackShadow && options.stackShadow.enabled) {
+        this.stackShadow = chart.renderer.rect(x, y, width, height)
             .attr({
                 fill: {
                     pattern: {
                         path: {
                             d: shape[index],
-                            fill: options.stackBorder.color || 'red',
-                            strokeWidth: 0
+                            fill: options.stackShadow.color || '#dedede',
+                            strokeWidth: strokeWidth,
+                            stroke: options.stackShadow.borderColor ||
+                            'transparent'
                         },
                         x: x,
                         y: y,
@@ -294,14 +286,19 @@ addEvent(StackItem, 'afterRender', function (): void {
                         height: height,
                         patternContentUnits: 'objectBoundingBox',
                         backgroundColor: 'none',
-                        color: 'red'
+                        color: '#dedede'
                     }
                 }
             })
             .add();
-        rescalePatternFill(this.stackBorder, this.yAxis, height);
-    } else if (stackBorder) {
-        stackBorder.attr({
+        rescalePatternFill(
+            this.stackShadow,
+            this.yAxis,
+            width, height,
+            strokeWidth
+        );
+    } else if (stackShadow) {
+        stackShadow.attr({
             x,
             y,
             width,
@@ -310,9 +307,12 @@ addEvent(StackItem, 'afterRender', function (): void {
                 pattern: {
                     path: {
                         d: shape[index],
-                        fill: options.stackBorder &&
-                            options.stackBorder.color || 'red',
-                        strokeWidth: 0
+                        fill: options.stackShadow &&
+                            options.stackShadow.color || '#dedede',
+                        strokeWidth: strokeWidth,
+                        stroke: options.stackShadow &&
+                        options.stackShadow.borderColor ||
+                        'transparent'
                     },
                     x: x,
                     y: y,
@@ -320,18 +320,18 @@ addEvent(StackItem, 'afterRender', function (): void {
                     height: height,
                     patternContentUnits: 'objectBoundingBox',
                     backgroundColor: 'none',
-                    color: 'red'
+                    color: '#dedede'
                 }
             }
         });
 
-        rescalePatternFill(stackBorder, this.yAxis, height);
+        rescalePatternFill(stackShadow, this.yAxis, width, height, strokeWidth);
     }
 });
 
 addEvent(StackItem, 'afterSetOffset', function (e): void {
-    if (this.stackBorder) {
-        this.stackBorder.attr({
+    if (this.stackShadow) {
+        this.stackShadow.attr({
             translateX: (e as any).xOffset,
             width: (e as any).xWidth
         });
@@ -387,7 +387,7 @@ export default PictorialSeries;
  * @since     next
  * @product   highcharts
  * @excluding dataParser, dataURL, marker, dataSorting, boostThreshold,
- *            boostBlending
+ *            boostBlending, edgeColor
  * @requires  modules/pictorial
  * @apioption series.pictorial
  */
@@ -396,8 +396,8 @@ export default PictorialSeries;
  * An array of data points for the series. For the `pictorial` series type,
  * points can be given in the following ways:
  *
- * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
- *    to `x,y,target`. If the first value is a string, it is applied as the name
+ * 1. An array of arrays with 2 values. In this case, the values correspond
+ *    to `x,y`. If the first value is a string, it is applied as the name
  *    of the point, and the `x` value is inferred. The `x` value can also be
  *    omitted, in which case the inner arrays should be of length 2\. Then the
  *    `x` value is automatically calculated, either starting at 0 and
@@ -405,9 +405,9 @@ export default PictorialSeries;
  *    series options.
  *    ```js
  *    data: [
- *        [0, 40, 75],
- *        [1, 50, 50],
- *        [2, 60, 40]
+ *        [0, 40],
+ *        [1, 50],
+ *        [2, 60]
  *    ]
  *    ```
  *
@@ -420,13 +420,11 @@ export default PictorialSeries;
  *    data: [{
  *        x: 0,
  *        y: 40,
- *        target: 75,
  *        name: "Point1",
  *        color: "#00FF00"
  *    }, {
- *         x: 1,
+ *        x: 1,
  *        y: 60,
- *        target: 40,
  *        name: "Point2",
  *        color: "#FF00FF"
  *    }]

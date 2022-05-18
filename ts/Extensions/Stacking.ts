@@ -187,7 +187,7 @@ declare global {
             public points: Record<string, Array<number>>;
             public rightCliff: number;
             public stack?: OptionsStackingValue;
-            public stackBorder?: SVGElement;
+            public stackShadow?: SVGElement;
             public textAlign: AlignValue;
             public total: (null|number);
             public touched?: number;

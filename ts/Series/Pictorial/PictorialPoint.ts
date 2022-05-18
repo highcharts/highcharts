@@ -8,8 +8,15 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PictorialUtilities from './PictorialUtilities.js';
 
@@ -36,6 +43,7 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
      * Properties
      *
      * */
+
     public options: PictorialPointOptions = void 0 as any;
     public series: PictorialSeries = void 0 as any;
 
@@ -53,7 +61,9 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
             rescalePatternFill(
                 point.graphic,
                 point.series.yAxis,
-                point.shapeArgs.height || Infinity
+                point.shapeArgs.width || 0,
+                point.shapeArgs.height || Infinity,
+                point.series.options.borderWidth || 0
             );
         }
     }
@@ -65,4 +75,5 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
  *  Export Default
  *
  * */
+
 export default PictorialPoint;
