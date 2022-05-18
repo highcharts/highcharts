@@ -20,7 +20,8 @@ Highcharts.chart('container', {
                 color: ( // theme
                     Highcharts.defaultOptions.title.style &&
                     Highcharts.defaultOptions.title.style.color
-                ) || 'gray'
+                ) || 'gray',
+                textOutline: 'none'
             }
         }
     },
