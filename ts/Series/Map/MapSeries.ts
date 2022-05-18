@@ -1246,8 +1246,10 @@ class MapSeries extends ScatterSeries {
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
             this.processData();
             this.generatePoints();
+
+            // Not only recalculate bounds (as previously), but also fit view
             delete this.bounds;
-            this.getProjectedBounds();
+            mapView && mapView.fitToBounds(void 0, void 0, false); // #17012
         }
 
         if (mapView) {
