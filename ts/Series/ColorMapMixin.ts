@@ -66,7 +66,8 @@ const PointMixin = {
         return (
             this.value !== null &&
             this.value !== Infinity &&
-            this.value !== -Infinity
+            this.value !== -Infinity &&
+            !isNaN(this.value)
         );
     }
 
