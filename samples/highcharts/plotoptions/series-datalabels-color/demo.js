@@ -7,10 +7,7 @@ Highcharts.chart('container', {
         series: {
             dataLabels: {
                 enabled: true,
-                color: 'red',
-                style: {
-                    textOutline: 'none'
-                }
+                color: '#e00000'
             }
         }
     },
