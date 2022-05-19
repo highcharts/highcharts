@@ -55,4 +55,17 @@ function rescalePatternFill(
     }
 }
 
-export default { rescalePatternFill };
+function invertShadowGroup(
+    shadowGroup: SVGElement,
+    xAxis: Axis,
+    yAxis: Axis
+): void {
+
+    if (yAxis.chart.inverted) {
+        shadowGroup.width = yAxis.len;
+        shadowGroup.height = xAxis.len;
+        shadowGroup.invert(true);
+    }
+}
+
+export default { rescalePatternFill, invertShadowGroup };

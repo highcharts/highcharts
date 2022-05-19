@@ -186,8 +186,9 @@ declare global {
             public options: YAxisStackLabelsOptions;
             public points: Record<string, Array<number>>;
             public rightCliff: number;
+            public shadowGroup: SVGElement;
             public stack?: OptionsStackingValue;
-            public stackShadow?: SVGElement;
+            public shadow?: SVGElement;
             public textAlign: AlignValue;
             public total: (null|number);
             public touched?: number;

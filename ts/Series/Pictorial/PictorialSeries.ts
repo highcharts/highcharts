@@ -49,7 +49,8 @@ const {
 } = U;
 
 const {
-    rescalePatternFill
+    rescalePatternFill,
+    invertShadowGroup
 } = PictorialUtilities;
 
 export interface StackShadowOptions {
@@ -105,9 +106,9 @@ class PictorialSeries extends ColumnSeries {
      * @optionparent plotOptions.pictorial
      */
 
-    // public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
-    //     borderWidth: 1,
-    // } as PictorialSeriesOptions);
+    public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
+        borderWidth: 0
+    } as PictorialSeriesOptions);
 
     /* *
      *
@@ -249,15 +250,14 @@ addEvent(StackItem, 'afterRender', function (): void {
     const series = this.yAxis.series[0];
     const options = this.yAxis.options;
     const chart = this.yAxis.chart;
-    const stackShadow = this.stackShadow;
-    const top = chart.plotTop;
-    const x1 = this.xAxis.toPixels(this.x - 0.5);
-    const x2 = this.xAxis.toPixels(this.x + 0.5);
-    const xCenter = this.xAxis.toPixels(this.x);
-    const x = xCenter;
-    const y = top;
-    const width = x2 - x1;
-    const height = this.yAxis.height;
+    const stackShadow = this.shadow;
+    const x1 = this.xAxis.toPixels(this.x - 0.5, true);
+    const x2 = this.xAxis.toPixels(this.x + 0.5, true);
+    const xCenter = this.xAxis.toPixels(this.x, true);
+    const x = chart.inverted ? this.xAxis.len - xCenter : xCenter;
+    const y = 0;
+    const width = Math.abs(x2 - x1);
+    const height = this.yAxis.len;
     const shape = ((series.options as any).paths || []);
     const index = this.x % shape.length;
     const strokeWidth = pick(
@@ -265,8 +265,20 @@ addEvent(StackItem, 'afterRender', function (): void {
         series.options.borderWidth,
         1
     );
+
     if (!stackShadow && options.stackShadow && options.stackShadow.enabled) {
-        this.stackShadow = chart.renderer.rect(x, y, width, height)
+        if (!this.shadowGroup) {
+            this.shadowGroup = chart.renderer.g('shadowGroup')
+                .attr({
+                    translateX: chart.inverted ?
+                        this.yAxis.pos : this.xAxis.pos,
+                    translateY: chart.inverted ?
+                        this.xAxis.pos : this.yAxis.pos
+                })
+                .add();
+        }
+
+        this.shadow = chart.renderer.rect(x, y, width, height)
             .attr({
                 fill: {
                     pattern: {
@@ -287,11 +299,19 @@ addEvent(StackItem, 'afterRender', function (): void {
                     }
                 }
             })
-            .add();
+            .add(this.shadowGroup);
+
+        invertShadowGroup(
+            this.shadowGroup,
+            this.xAxis,
+            this.yAxis
+        );
+
         rescalePatternFill(
-            this.stackShadow,
+            this.shadow,
             this.yAxis,
-            width, height,
+            width,
+            height,
             strokeWidth
         );
     } else if (stackShadow) {
@@ -322,13 +342,25 @@ addEvent(StackItem, 'afterRender', function (): void {
             }
         });
 
-        rescalePatternFill(stackShadow, this.yAxis, width, height, strokeWidth);
+        invertShadowGroup(
+            this.shadowGroup,
+            this.xAxis,
+            this.yAxis
+        );
+
+        rescalePatternFill(
+            stackShadow,
+            this.yAxis,
+            width,
+            height,
+            strokeWidth
+        );
     }
 });
 
 addEvent(StackItem, 'afterSetOffset', function (e): void {
-    if (this.stackShadow) {
-        this.stackShadow.attr({
+    if (this.shadow) {
+        this.shadow.attr({
             translateX: (e as any).xOffset,
             width: (e as any).xWidth
         });
