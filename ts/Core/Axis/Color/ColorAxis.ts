@@ -937,7 +937,7 @@ class ColorAxis extends Axis implements AxisLike {
                         setVisible: function (
                             this: ColorAxis.LegendItemObject
                         ): void {
-                            vis = axis.visible = !vis;
+                            this.visible = vis = axis.visible = !vis;
                             axis.series.forEach(function (series): void {
                                 series.points.forEach(function (
                                     point: Point
