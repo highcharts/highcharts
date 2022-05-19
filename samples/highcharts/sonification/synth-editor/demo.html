@@ -21,9 +21,11 @@
       <div id="help" class="hidden">
         <h2>Help</h2>
         <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
-        <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete.</p>
+        <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete. The master envelopes run in addition to the oscillator envelopes if defined.</p>
+        <p>The pulse width parameter only applies to oscillators with waveform type "pulse".</p>
+        <p>The frequency parameters do not apply to oscillators with waveform type "whitenoise".</p>
         <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes. The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
-        <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume.</p>
+        <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume. Note: With pulse waveforms, the FM parameter actually controls PWM (pulse width modulation) instead of FM.</p>
       </div>
 
       <div id="globalControls">
@@ -552,210 +554,59 @@
   </div>
   <div id="preset-test">
     {
-      "masterVolume": "0.9",
-      "noteGlideDuration": "10",
+      "masterVolume": "0.85",
       "masterAttackEnvelope": [
        {
-        "t": 0,
-        "vol": 0
-       },
-       {
         "t": 1,
-        "vol": 0.97
+        "vol": 0.56
        },
        {
-        "t": 56,
-        "vol": 0.84
+        "t": 93,
+        "vol": 0.55
        },
        {
-        "t": 96,
-        "vol": 0.98
-       },
-       {
-        "t": 141,
-        "vol": 0.71
-       },
-       {
-        "t": 296,
-        "vol": 0.49
+        "t": 186,
+        "vol": 0.33
        },
        {
         "t": 600,
-        "vol": 0.58
-       }
-      ],
-      "masterReleaseEnvelope": [
-       {
-        "t": 1,
-        "vol": 0.58
-       },
-       {
-        "t": 47,
-        "vol": 0.16
-       },
-       {
-        "t": 119,
         "vol": 0
-       }
-      ],
-      "eq": [
-       {
-        "frequency": 200,
-        "Q": 1,
-        "gain": 2
-       },
-       {
-        "frequency": 400,
-        "Q": 1,
-        "gain": -4
-       },
-       {
-        "frequency": 800,
-        "Q": 1,
-        "gain": -10
-       },
-       {
-        "frequency": 1600,
-        "Q": 1,
-        "gain": -2
-       },
-       {
-        "frequency": 2200,
-        "Q": 1,
-        "gain": -2
-       },
-       {
-        "frequency": 3500,
-        "Q": 1,
-        "gain": 6
-       },
-       {
-        "frequency": 12800,
-        "Q": 1,
-        "gain": 4
        }
       ],
       "oscillators": [
        {
-        "type": "sawtooth",
-        "volume": 0.3,
+        "type": "pulse",
+        "volume": 1,
+        "pulseWidth": 0.45,
         "volumePitchTrackingMultiplier": 0.07,
         "lowpass": {
-         "frequency": 20,
-         "frequencyPitchTrackingMultiplier": 200
+         "frequency": 5,
+         "frequencyPitchTrackingMultiplier": 900,
+         "Q": 3
         },
         "highpass": {
-         "frequency": 300
+         "frequency": 550
         },
-        "attackEnvelope": [],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "whitenoise",
-        "fixedFrequency": 1,
-        "volume": 0.4,
-        "lowpass": {},
-        "highpass": {
-         "frequency": 7000
-        },
-        "vmOscillator": 0,
         "attackEnvelope": [
+         {
+          "t": 1,
+          "vol": 1
+         }
+        ],
+        "releaseEnvelope": [
          {
           "t": 1,
           "vol": 1
          },
          {
-          "t": 51,
-          "vol": 1
+          "t": 203,
+          "vol": 0.45
          },
          {
-          "t": 86,
-          "vol": 0.84
-         },
-         {
-          "t": 500,
-          "vol": 0.78
-         },
-         {
-          "t": 500,
-          "vol": 0.78
-         }
-        ],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "sine",
-        "fixedFrequency": 4,
-        "volume": 2,
-        "lowpass": {},
-        "highpass": {},
-        "fmOscillator": 0,
-        "attackEnvelope": [
-         {
-          "t": 0,
-          "vol": 0
-         },
-         {
-          "t": 15,
-          "vol": 0.94
-         },
-         {
-          "t": 79,
-          "vol": 1
-         },
-         {
-          "t": 172,
-          "vol": 0.47
-         },
-         {
-          "t": 500,
-          "vol": 0.26
-         },
-         {
-          "t": 500,
-          "vol": 0.26
-         }
-        ],
-        "releaseEnvelope": []
-       },
-       {
-        "type": "sine",
-        "fixedFrequency": 7,
-        "volume": 6,
-        "lowpass": {},
-        "highpass": {},
-        "fmOscillator": 0,
-        "attackEnvelope": [
-         {
-          "t": 0,
-          "vol": 0
-         },
-         {
-          "t": 25,
-          "vol": 0.99
-         },
-         {
-          "t": 85,
-          "vol": 0
-         },
-         {
-          "t": 85,
-          "vol": 0
-         },
-         {
-          "t": 387,
-          "vol": 0.02
-         },
-         {
-          "t": 511,
-          "vol": 0.43
-         },
-         {
-          "t": 600,
+          "t": 442,
           "vol": 0
          }
-        ],
-        "releaseEnvelope": []
+        ]
        }
       ]
      }

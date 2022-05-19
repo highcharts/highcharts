@@ -98,6 +98,7 @@ function updatePatch() {
                 fixedFrequency: floatVal(i.fixedFrequency),
                 volume: floatVal(i.volume),
                 detune: intVal(i.detune),
+                pulseWidth: floatVal(i.pulseWidth),
                 volumePitchTrackingMultiplier: floatVal(i.volPitchTrackingMult),
                 lowpass: {
                     frequency: floatVal(i.lowpassFreq),
@@ -303,14 +304,20 @@ class Oscillator {
         updateModulationLists();
     }
 
-    addControl(type, id, label, controlContent) {
-        const identifier = `osc${this.id}${id}`,
-            nameAndId = `name="${identifier}" id="${identifier}"`;
-        this.content += `<label for="${identifier}">${label}</label>` +
-            (type === 'select' ?
-                `<select class="span2" ${nameAndId}>${controlContent}</select>` : // eslint-disable-line
-                `<input class="span2" type="number" ${nameAndId} value="${controlContent}">` // eslint-disable-line
-            );
+    addControl(type, className, label, controlContent, step) {
+        const identifier = `osc${this.id}${className}`,
+            nameAndId = `name="${identifier}" id="${identifier}"`,
+            classStr = `class="span2 ${className}"`;
+        this.content += `<label for="${identifier}">${label}</label>`;
+
+        if (type === 'select') {
+            // eslint-disable-next-line
+            this.content += `<select ${classStr} ${nameAndId}>${controlContent}</select>`;
+        } else if (type === 'input') {
+            // eslint-disable-next-line
+            this.content += `<input ${classStr} type="number" ${nameAndId} value="${controlContent}" step="${step}">`;
+        }
+
         return identifier;
     }
 
@@ -323,32 +330,34 @@ class Oscillator {
 
     addControls() {
         const opts = this.options,
-            typeOptions = ['sine', 'sawtooth', 'triangle', 'square', 'whitenoise']
+            typeOptions = ['sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse']
                 .reduce((str, option) => `${str}<option value="${option}">${option}</option>`, '');
         this.inputs = {
             type: this.addControl('select', 'Type', 'Waveform type', typeOptions),
             freqMultiplier: this.addControl('input', 'FreqMultiplier', 'Freq multiplier',
-                opts.freqMultiplier || ''),
+                opts.freqMultiplier || '', 1),
             fixedFrequency: this.addControl('input', 'FixedFreq', 'Fixed frequency',
-                opts.fixedFrequency || ''),
+                opts.fixedFrequency || '', 1),
             volume: this.addControl('input', 'Vol', 'Volume',
-                opts.volume || '0.5'),
+                opts.volume || '0.5', 0.05),
             detune: this.addControl('input', 'Detune', 'Detune (cents)',
-                opts.detune || ''),
+                opts.detune || '', 1),
+            pulseWidth: this.addControl('input', 'PulseWidth', 'Pulse width',
+                opts.pulseWidth || '', 0.05),
             volPitchTrackingMult: this.addControl('input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
-                opts.volPitchTrackingMult || ''),
+                opts.volPitchTrackingMult || '', 0.05),
             lowpassFreq: this.addControl('input', 'lowpassFreq', 'Lowpass frequency',
-                opts.lowpassFreq || ''),
+                opts.lowpassFreq || '', 1),
             lowpassPitchTrackingMult: this.addControl('input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
-                opts.lowpassPitchTrackingMult || ''),
+                opts.lowpassPitchTrackingMult || '', 0.1),
             lowpassQ: this.addControl('input', 'lowpassQ', 'Lowpass resonance',
-                opts.lowpassQ || ''),
+                opts.lowpassQ || '', 0.1),
             highpassFreq: this.addControl('input', 'highpassFreq', 'Highpass frequency',
-                opts.highpassFreq || ''),
+                opts.highpassFreq || '', 1),
             highpassPitchTrackingMult: this.addControl('input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
-                opts.highpassPitchTrackingMult || ''),
+                opts.highpassPitchTrackingMult || '', 0.1),
             highpassQ: this.addControl('input', 'highpassQ', 'Highpass resonance',
-                opts.highpassQ || ''),
+                opts.highpassQ || '', 0.1),
             fmOsc: this.addControl('select', 'FMOsc', 'FM oscillator', ''),
             vmOsc: this.addControl('select', 'VMOsc', 'VM oscillator', ''),
             attackEnvChart: this.addChartContainer('AttackEnv', 'Attack envelope'),
@@ -422,6 +431,7 @@ function applyPreset(presetId) {
             fixedFrequency: opts.fixedFrequency,
             volume: opts.volume,
             detune: opts.detune,
+            pulseWidth: opts.pulseWidth,
             volPitchTrackingMult: opts.volumePitchTrackingMultiplier,
             lowpassFreq: opts.lowpass && opts.lowpass.frequency,
             lowpassPitchTrackingMult: opts.lowpass && opts.lowpass
