@@ -21,7 +21,7 @@ const {
 
 type EnvelopePoint = Record<'t'|'vol', number>;
 type Envelope = Array<EnvelopePoint>;
-type OscType = 'sine'|'square'|'sawtooth'|'triangle'|'whitenoise';
+type OscType = 'sine'|'square'|'sawtooth'|'triangle'|'whitenoise'|'pulse';
 
 interface FilterOptions {
     frequency?: number;
@@ -35,6 +35,12 @@ interface EQOptions {
     Q?: number;
 }
 
+interface PulseOscOptions {
+    detune?: number;
+    pulseWidth?: number;
+    frequency?: number;
+}
+
 interface OscOptions {
     attackEnvelope?: Envelope;
     detune?: number;
@@ -43,6 +49,7 @@ interface OscOptions {
     fmOscillator?: number;
     highpass?: FilterOptions;
     lowpass?: FilterOptions;
+    pulseWidth?: number;
     releaseEnvelope?: Envelope;
     type?: OscType;
     vmOscillator?: number;
@@ -141,6 +148,108 @@ function scheduleGainEnvelope(
 }
 
 
+// Internal use for PulseOscNode
+interface PulseFrequencyFacade {
+    cancelScheduledValues(fromTime: number): AudioParam;
+    setValueAtTime(time: number, frequency: number): AudioParam;
+    setTargetAtTime(
+        time: number, frequency: number, timeConstant: number
+    ): AudioParam;
+}
+
+
+/**
+ * Internal class used by Oscillator, representing a Pulse Oscillator node.
+ * Combines two sawtooth oscillators to create a pulse by phase inverting and
+ * delaying one of them.
+ * @class
+ * @private
+ */
+class PulseOscNode {
+    private delayNode: DelayNode;
+    private masterGain: GainNode;
+    private phaseInverter: GainNode;
+    private sawOscA: OscillatorNode;
+    private sawOscB: OscillatorNode;
+    private pulseWidth: number;
+
+    constructor(context: AudioContext, options: PulseOscOptions) {
+        this.pulseWidth = Math.min(Math.max(0, options.pulseWidth || 0.5));
+
+        const makeOsc = (): OscillatorNode => new OscillatorNode(context, {
+            type: 'sawtooth',
+            detune: options.detune,
+            frequency: Math.max(1, options.frequency || 350)
+        });
+        this.sawOscA = makeOsc();
+        this.sawOscB = makeOsc();
+        this.phaseInverter = new GainNode(context, { gain: -1 });
+        this.masterGain = new GainNode(context);
+        this.delayNode = new DelayNode(context, {
+            delayTime: this.pulseWidth / this.sawOscA.frequency.value
+        });
+
+        this.sawOscA.connect(this.masterGain);
+        this.sawOscB.connect(this.phaseInverter);
+        this.phaseInverter.connect(this.delayNode);
+        this.delayNode.connect(this.masterGain);
+    }
+
+    connect(destination: AudioNode|AudioParam): void {
+        this.masterGain.connect(destination as AudioNode);
+    }
+
+    // Polymorph with normal osc.frequency API
+    getFrequencyFacade(): PulseFrequencyFacade {
+        const pulse = this;
+        return {
+            cancelScheduledValues(fromTime: number): AudioParam {
+                pulse.sawOscA.frequency.cancelScheduledValues(fromTime);
+                pulse.sawOscB.frequency.cancelScheduledValues(fromTime);
+                pulse.delayNode.delayTime.cancelScheduledValues(fromTime);
+                return pulse.sawOscA.frequency;
+            },
+
+            setValueAtTime(frequency: number, time: number): AudioParam {
+                this.cancelScheduledValues(time);
+                pulse.sawOscA.frequency.setValueAtTime(frequency, time);
+                pulse.sawOscB.frequency.setValueAtTime(frequency, time);
+                pulse.delayNode.delayTime
+                    .setValueAtTime(pulse.pulseWidth / frequency, time);
+                return pulse.sawOscA.frequency;
+            },
+
+            setTargetAtTime(
+                frequency: number, time: number, timeConstant: number
+            ): AudioParam {
+                this.cancelScheduledValues(time);
+                pulse.sawOscA.frequency
+                    .setTargetAtTime(frequency, time, timeConstant);
+                pulse.sawOscB.frequency
+                    .setTargetAtTime(frequency, time, timeConstant);
+                pulse.delayNode.delayTime.setTargetAtTime(
+                    pulse.pulseWidth / frequency, time, timeConstant);
+                return pulse.sawOscA.frequency;
+            }
+        };
+    }
+
+    getPWMTarget(): AudioParam {
+        return this.delayNode.delayTime;
+    }
+
+    start(): void {
+        this.sawOscA.start();
+        this.sawOscB.start();
+    }
+
+    stop(time: number): void {
+        this.sawOscA.stop(time);
+        this.sawOscB.stop(time);
+    }
+}
+
+
 /**
  * Internal class used by SynthPatch
  * @class
@@ -151,6 +260,7 @@ class Oscillator {
     vmOscillatorIx?: number;
     private oscNode?: OscillatorNode;
     private whiteNoise?: AudioBufferSourceNode;
+    private pulseNode?: PulseOscNode;
     private gainNode?: GainNode;
     private vmNode?: GainNode;
     private volTrackingNode?: GainNode;
@@ -186,9 +296,13 @@ class Oscillator {
             this.vmNode,
             this.gainNode,
             this.whiteNoise,
+            this.pulseNode,
             this.oscNode
-        ].reduce((prev, cur): AudioNode|AudioParam =>
-            (cur ? (cur.connect(prev as AudioNode), cur) : prev), destination);
+        ].reduce((prev, cur): AudioNode =>
+            (cur ?
+                (cur.connect(prev as AudioNode), cur as AudioNode) :
+                prev as AudioNode
+            ), destination);
     }
 
 
@@ -198,6 +312,9 @@ class Oscillator {
         }
         if (this.whiteNoise) {
             this.whiteNoise.start();
+        }
+        if (this.pulseNode) {
+            this.pulseNode.start();
         }
     }
 
@@ -209,6 +326,9 @@ class Oscillator {
         if (this.whiteNoise) {
             this.whiteNoise.stop(time);
         }
+        if (this.pulseNode) {
+            this.pulseNode.stop(time);
+        }
     }
 
 
@@ -217,29 +337,35 @@ class Oscillator {
     ): void {
         const opts = this.options,
             f = pick(opts.fixedFrequency, frequency) *
-                (opts.freqMultiplier || 1);
-        if (this.oscNode) {
-            this.oscNode.frequency.cancelScheduledValues(time);
+                (opts.freqMultiplier || 1),
+            oscTarget = this.oscNode ? this.oscNode.frequency :
+                this.pulseNode && this.pulseNode.getFrequencyFacade();
+
+        if (oscTarget) {
+            oscTarget.cancelScheduledValues(time);
             if (glideDuration) {
-                this.oscNode.frequency.setTargetAtTime(
+                oscTarget.setTargetAtTime(
                     f, time, glideDuration / 1000 / 5
                 );
-                this.oscNode.frequency.setValueAtTime(
+                oscTarget.setValueAtTime(
                     f, time + glideDuration / 1000
                 );
             } else {
-                this.oscNode.frequency.setValueAtTime(f, time);
+                oscTarget.setValueAtTime(f, time);
             }
         }
+
         this.scheduleVolTrackingChange(f, time, glideDuration);
         this.scheduleFilterTrackingChange(f, time, glideDuration);
     }
 
 
     // Get target for FM synthesis if another oscillator wants to modulate.
+    // Pulse nodes don't do FM, but do PWM instead.
     getFMTarget(): AudioParam|undefined {
         return this.oscNode && this.oscNode.detune ||
-            this.whiteNoise && this.whiteNoise.detune;
+            this.whiteNoise && this.whiteNoise.detune ||
+            this.pulseNode && this.pulseNode.getPWMTarget();
     }
 
 
@@ -340,23 +466,32 @@ class Oscillator {
     // Create the oscillator or audio buffer acting as the sound source
     private createSoundSource(): void {
         const opts = this.options,
-            ctx = this.audioContext;
+            ctx = this.audioContext,
+            frequency = (opts.fixedFrequency || 0) *
+                    (opts.freqMultiplier || 1);
+
         if (opts.type === 'whitenoise') {
             const bSize = ctx.sampleRate * 2,
                 buffer = ctx.createBuffer(1, bSize, ctx.sampleRate),
                 data = buffer.getChannelData(0);
             for (let i = 0; i < bSize; ++i) {
+                // More pleasant "white" noise with less variance than -1 to +1
                 data[i] = Math.random() * 1.2 - 0.6;
             }
             const wn = this.whiteNoise = ctx.createBufferSource();
             wn.buffer = buffer;
             wn.loop = true;
+        } else if (opts.type === 'pulse') {
+            this.pulseNode = new PulseOscNode(ctx, {
+                detune: opts.detune,
+                pulseWidth: opts.pulseWidth,
+                frequency
+            });
         } else {
             this.oscNode = new OscillatorNode(ctx, {
                 type: opts.type || 'sine',
                 detune: opts.detune,
-                frequency: (opts.fixedFrequency || 0) *
-                    (opts.freqMultiplier || 1)
+                frequency
             });
         }
     }
