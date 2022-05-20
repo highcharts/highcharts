@@ -23,7 +23,7 @@ QUnit.test('Default datetime format from tooltip', function (assert) {
 
     assert.strictEqual(
         point.graphic.element.getAttribute('aria-label'),
-        '1. Wednesday, Nov 15, 10:45:12, 1.'
+        'Wednesday, Nov 15, 10:45:12, 1.'
     );
 });
 
@@ -52,7 +52,7 @@ QUnit.test('pointDateFormat', function (assert) {
 
     assert.strictEqual(
         point.graphic.element.getAttribute('aria-label'),
-        '1. 10:45:12, 1.'
+        '10:45:12, 1.'
     );
 });
 
@@ -86,6 +86,6 @@ QUnit.test('pointDateFormatter', function (assert) {
 
     assert.strictEqual(
         point.graphic.element.getAttribute('aria-label'),
-        '1. 12, 1.'
+        '12, 1.'
     );
 });

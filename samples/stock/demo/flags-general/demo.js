@@ -3,7 +3,6 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     // Create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 0
         },
@@ -34,6 +33,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         // the event marker flags
         }, {
             type: 'flags',
+            accessibility: {
+                exposeAsGroupOnly: true,
+                description: 'Flagged events.'
+            },
             data: [{
                 x: Date.UTC(2017, 11, 1),
                 title: 'A',

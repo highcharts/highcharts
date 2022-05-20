@@ -676,7 +676,7 @@ class Legend {
                 (item as any).series :
                 item,
             seriesOptions = series.options,
-            showCheckbox = legend.createCheckboxForItem &&
+            showCheckbox = (legend.createCheckboxForItem) &&
                 seriesOptions &&
                 seriesOptions.showCheckbox,
             useHTML = options.useHTML,
@@ -1052,7 +1052,7 @@ class Legend {
             }
         }, this);
         distribute(boxes, chart.plotHeight).forEach((box): void => {
-            if (box.item._legendItemPos) {
+            if (box.item._legendItemPos && box.pos) {
                 box.item._legendItemPos[1] =
                     chart.plotTop - chart.spacing[0] + box.pos;
             }
@@ -1496,7 +1496,7 @@ class Legend {
                 translateX: padding,
                 translateY:
                     (clipHeight as any) + this.padding + 7 + this.titleHeight,
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             [this.up, this.upTracker].forEach(function (elem): void {
                 (elem as any).attr({

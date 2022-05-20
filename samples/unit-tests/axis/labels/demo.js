@@ -219,7 +219,7 @@ QUnit.test(
         });
 
         assert.ok(
-            chart.yAxis[0].ticks[50].label.attr('y') > 0,
+            chart.yAxis[0].ticks[50].label.attr('visibility') !== 'hidden',
             '50 label is placed'
         );
 
@@ -230,7 +230,7 @@ QUnit.test(
 
         setTimeout(function () {
             assert.ok(
-                chart.yAxis[0].ticks[50].label.attr('y') < 0,
+                chart.yAxis[0].ticks[50].label.attr('visibility') === 'hidden',
                 '50 label is hidden'
             );
 

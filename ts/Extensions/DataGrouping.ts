@@ -1114,10 +1114,12 @@ Axis.prototype.applyGrouping = function (
     const axis = this,
         series = axis.series;
 
+    // Reset the groupPixelWidth for all series, #17141.
     series.forEach(function (series): void {
-        // Reset the groupPixelWidth, then calculate if needed.
         series.groupPixelWidth = void 0; // #2110
+    });
 
+    series.forEach(function (series): void {
         series.groupPixelWidth = (
             axis.getGroupPixelWidth &&
             axis.getGroupPixelWidth()

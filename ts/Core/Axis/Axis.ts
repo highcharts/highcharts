@@ -725,10 +725,6 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (
-                                number: number
-                            ): boolean => number > 0;
-
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
                                 xData;
@@ -3684,30 +3680,30 @@ class Axis {
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
             // old behaviour (v5.0.12), where only one line was allowed.
-            textHeightOvershoot = Math.max(
-                (axisTitle as any).getBBox(null, 0).height - fontMetrics.h - 1,
+            textHeightOvershoot = axisTitle ? Math.max(
+                axisTitle.getBBox(false, 0).height - fontMetrics.h - 1,
                 0
-            ),
+            ) : 0,
 
             // the position in the length direction of the axis
             alongAxis = ({
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
-            } as any)[axisTitleOptions.align as any],
+            })[axisTitleOptions.align],
 
             // the position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +
                 (horiz ? 1 : -1) * // horizontal axis reverses the margin
                 (opposite ? -1 : 1) * // so does opposite axes
-                (this.axisTitleMargin as any) +
+                (this.axisTitleMargin || 0) +
                 [
                     -textHeightOvershoot, // top
                     textHeightOvershoot, // right
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            titlePosition: PositionObject = {
+            titlePosition = {
                 x: horiz ?
                     alongAxis + xOption :
                     offAxis + (opposite ? this.width : 0) + offset + xOption,
@@ -3979,15 +3975,10 @@ class Axis {
 
         if (axisTitle && showAxis) {
             const titleXy = axis.getTitlePosition();
-
-            if (isNumber(titleXy.y)) {
-                axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
-                axisTitle.isNew = false;
-            } else {
-                axisTitle.attr('y', -9999 as any);
-                axisTitle.isNew = true;
-            }
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+            axisTitle.isNew = false;
         }
+
 
         // Stacked totals:
         if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {

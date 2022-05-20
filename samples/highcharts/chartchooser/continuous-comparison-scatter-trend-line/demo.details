@@ -1,0 +1,6 @@
+---
+ name: "Scatter plot comparison with a trend line: Consumer Price Index vs Wages Increase (Norway)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

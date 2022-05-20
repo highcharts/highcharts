@@ -21,7 +21,6 @@ import type {
     CSSObject
 } from '../Core/Renderer/CSSObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
-import type NavigationOptions from '../Extensions/Exporting/NavigationOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -705,10 +704,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            buttonTheme = merge(breadcrumbsOptions.buttonTheme),
-            states = buttonTheme.states;
-
-        delete buttonTheme.states;
+            buttonTheme = merge(breadcrumbsOptions.buttonTheme);
 
         const button: SVGElement = chart.renderer
             .button(
@@ -741,10 +737,7 @@ class Breadcrumbs {
                         fireEvent(breadcrumbs, 'up', e);
                     }
                 },
-                buttonTheme,
-                states && states.hover,
-                states && states.select,
-                states && states.disabled
+                buttonTheme
             )
             .addClass('highcharts-breadcrumbs-button')
             .add(breadcrumbs.group);

@@ -24,6 +24,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             height: '15%'
         }],
 
+        plotOptions: {
+            flags: {
+                accessibility: {
+                    exposeAsGroupOnly: true,
+                    description: 'Flagged events.'
+                }
+            }
+        },
+
         series: [{
             name: 'USD to EUR',
             data: data,

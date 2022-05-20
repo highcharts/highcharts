@@ -1,0 +1,6 @@
+---
+ name: Read CSV data from an HTML table (Vitamins purchased by men vs. women)
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

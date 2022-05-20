@@ -44,16 +44,16 @@ namespace HighContrastLightTheme {
 
     export const options: DeepPartial<Options> = {
         colors: [
-            '#4372da',
+            '#265FB5',
             '#222',
-            '#0b7383',
-            '#6B26F0',
-            '#D42D1A',
-            '#3D239E',
-            '#7e7932',
-            '#b06320',
-            '#244a76',
-            '#76767A'
+            '#698F01',
+            '#F4693E',
+            '#4C0684',
+            '#0FA388',
+            '#B7104A',
+            '#AF9023',
+            '#1A704C',
+            '#B02FDD'
         ],
         navigator: {
             series: {

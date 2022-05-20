@@ -693,7 +693,11 @@ class MapView {
             if (typeof this.options.maxZoom === 'number') {
                 zoom = Math.min(zoom, this.options.maxZoom);
             }
-            this.zoom = zoom;
+
+            // Use isNumber to prevent Infinity (#17205)
+            if (isNumber(zoom)) {
+                this.zoom = zoom;
+            }
         }
 
         const bounds = this.getProjectedBounds();
