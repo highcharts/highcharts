@@ -12,9 +12,11 @@ const el = el => document.getElementById(el);
 const presets = {
     basic: el('preset-basic').textContent,
     saxophone: el('preset-saxophone').textContent,
-    whirlwind: el('preset-whirlwind').textContent,
+    piano: el('preset-piano').textContent,
+    vibraphone: el('preset-vibraphone').textContent,
+    synth: el('preset-synth').textContent,
     rock: el('preset-rock').textContent,
-    test: el('preset-test').textContent
+    whirlwind: el('preset-whirlwind').textContent
 };
 
 // Get envelope options from an envelope chart
