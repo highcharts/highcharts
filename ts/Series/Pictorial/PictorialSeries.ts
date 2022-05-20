@@ -21,7 +21,6 @@ import '../../Extensions/PatternFill.js';
 
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type ColorType from '../../Core/Color/ColorType.js';
 
 import PictorialPoint from './PictorialPoint.js';
@@ -247,18 +246,17 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 });
 
 addEvent(StackItem, 'afterRender', function (): void {
-    const series = this.yAxis.series[0];
+    const series = this.yAxis.series[0] as PictorialSeries;
+    // TODO find first pictorial series
     const options = this.yAxis.options;
     const chart = this.yAxis.chart;
     const stackShadow = this.shadow;
-    const x1 = this.xAxis.toPixels(this.x - 0.5, true);
-    const x2 = this.xAxis.toPixels(this.x + 0.5, true);
     const xCenter = this.xAxis.toPixels(this.x, true);
     const x = chart.inverted ? this.xAxis.len - xCenter : xCenter;
     const y = 0;
-    const width = Math.abs(x2 - x1);
+    const width = series.getColumnMetrics && series.getColumnMetrics().width;
     const height = this.yAxis.len;
-    const shape = ((series.options as any).paths || []);
+    const shape = series.options.paths || [];
     const index = this.x % shape.length;
     const strokeWidth = pick(
         options.stackShadow && options.stackShadow.borderWidth,
@@ -314,7 +312,8 @@ addEvent(StackItem, 'afterRender', function (): void {
             height,
             strokeWidth
         );
-    } else if (stackShadow) {
+
+    } else if (stackShadow && this.shadowGroup) {
         stackShadow.attr({
             x,
             y,

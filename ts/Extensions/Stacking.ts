@@ -186,7 +186,7 @@ declare global {
             public options: YAxisStackLabelsOptions;
             public points: Record<string, Array<number>>;
             public rightCliff: number;
-            public shadowGroup: SVGElement;
+            public shadowGroup?: SVGElement;
             public stack?: OptionsStackingValue;
             public shadow?: SVGElement;
             public textAlign: AlignValue;
@@ -303,6 +303,7 @@ class StackItem {
     public points: Record<string, Array<number>>;
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
+    public shadowGroup?: SVGElement;
     public textAlign: AlignValue;
     public total: (null|number);
     public touched?: number;
