@@ -5,8 +5,7 @@
  * https://www.highcharts.com/maps/demo/geojson instead.
  *
  * @todo
- * - Remove jQuery where not necessary (the combobox is probably still best
- *   implemented with jQuery UI)
+ * - Remove jQuery where not necessary
  */
 
 // Base path to maps
@@ -169,6 +168,13 @@ $("#mapDropdown").on('change', async function () {
             text: null
         },
 
+        accessibility: {
+            series: {
+                descriptionFormat: '{series.name}, map with {series.points.length} areas.',
+                pointDescriptionEnabledThreshold: 50
+            }
+        },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -222,6 +228,9 @@ $("#mapDropdown").on('change', async function () {
         }, {
             type: 'mapline',
             name: "Lines",
+            accessibility: {
+                enabled: false
+            },
             data: Highcharts.geojson(mapData, 'mapline'),
             /*
             data: [{

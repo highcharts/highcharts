@@ -1013,4 +1013,20 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         '#15782, mapNav should not overlap with ' +
             'export icon (Bottom right side).'
     );
+
+    // Verify that bounds adapt when setting data (#17013)
+    const worldScale = chart.series[0].transformGroups[0].scaleX;
+    chart.series[0].update({
+        allAreas: false
+    });
+
+    chart.series[0].setData([{
+        'hc-key': 'ru',
+        value: 148
+    }]);
+
+    assert.ok(
+        chart.series[0].transformGroups[0].scaleX / worldScale > 2,
+        'The view should be zoomed into the new point (#17013)'
+    );
 });

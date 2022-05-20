@@ -725,10 +725,6 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (
-                                number: number
-                            ): boolean => number > 0;
-
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
                                 xData;

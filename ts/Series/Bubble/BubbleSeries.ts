@@ -464,7 +464,10 @@ class BubbleSeries extends ScatterSeries {
                         !this.chart.options.chart.ignoreHiddenSeries
                     )
                 ) {
-                    const zExtremes = (otherSeries as any).getZExtremes();
+                    const zExtremes = (
+                        otherSeries.onPoint || (otherSeries as any)
+                    ).getZExtremes();
+
                     if (zExtremes) {
                         zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
                         zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
@@ -490,7 +493,7 @@ class BubbleSeries extends ScatterSeries {
                 minPxSize,
                 maxPxSize,
                 value,
-                yData[i]
+                yData && yData[i]
             ));
         }
         this.radii = radii;
@@ -748,7 +751,10 @@ Axis.prototype.beforePadding = function (): void {
             const data = (series as any)[dataKey];
 
             if (isXAxis) {
-                (series as any).getRadii(0, 0, series);
+                (series.onPoint || (series as any)).getRadii(0, 0, series);
+                if (series.onPoint) {
+                    series.radii = series.onPoint.radii;
+                }
             }
 
             if (range > 0) {
