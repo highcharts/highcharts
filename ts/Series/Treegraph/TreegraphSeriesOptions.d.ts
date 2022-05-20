@@ -32,6 +32,7 @@ import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 export type TreegraphLayoutTypes = 'Walker';
 export interface CollapseButtonOptions {
     onlyOnHover: boolean;
+    padding: number;
     x: number;
     y: number;
     enabled: boolean;

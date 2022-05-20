@@ -22,6 +22,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
+import Point from '../../Core/Series/Point.js';
 const { merge, addEvent } = U;
 const {
     seriesTypes: {
@@ -61,6 +62,7 @@ class TreegraphPoint extends TreemapPoint {
         super.draw.apply(this, arguments);
         const point = this,
             series = point.series,
+            parentGroup = point.graphic && point.graphic.parentGroup,
             levelOptions =
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
             btnOptions = merge(
@@ -68,6 +70,7 @@ class TreegraphPoint extends TreemapPoint {
                 levelOptions.collapseButton,
                 point.series.options.collapseButton
             ) as CollapseButtonOptions,
+            { width, height, padding } = btnOptions,
             chart = this.series.chart;
         if (!point.shapeArgs) {
             return;
@@ -95,11 +98,18 @@ class TreegraphPoint extends TreemapPoint {
                     'circle'
                 )
                 .attr({
-                    height: btnOptions.height,
-                    width: btnOptions.width
+                    height: height - 2 * padding,
+                    width: width - 2 * padding,
+                    padding: padding,
+                    'text-align': 'center',
+                    zIndex: 1
                 })
-                .add()
-                .toFront();
+                .addClass('highcharts-tracker')
+                .removeClass('highcharts-no-tooltip')
+                .add(parentGroup);
+
+            (point.collapseButton.element as any).point = point;
+
             if (btnOptions.onlyOnHover) {
                 point.collapseButton.hide();
             }
@@ -152,24 +162,17 @@ class TreegraphPoint extends TreemapPoint {
             btnWidth = btnOptions.width,
             btnHeight = btnOptions.height,
             { x, y, width, height } = point.getPointAttribs();
-        return inverted ? {
+        return {
             x:
-                plotSizeY -
-                y +
-                chart.plotLeft -
-                height / 2 -
-                btnWidth * 2 +
-                btnOptions.x,
-            y: plotSizeX - x + chart.plotTop + btnOptions.y
-        } : {
-            x: x + chart.plotLeft + width + btnOptions.x,
-            y:
-                y +
-                chart.plotTop +
-                height / 2 -
-                btnHeight * 2 +
-                btnOptions.y
+                x +
+                btnOptions.x +
+                (inverted ? btnWidth * -0.7 : +width + btnWidth * -0.3),
+            y: y + height / 2 - btnHeight / 2 + btnOptions.y
         };
+    }
+    public setState(): void {
+        Point.prototype.setState.apply(this, arguments);
+
     }
 }
 

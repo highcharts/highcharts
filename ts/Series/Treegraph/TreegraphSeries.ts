@@ -189,6 +189,11 @@ class TreegraphSeries extends TreemapSeries {
                  */
                 x: 0,
                 /**
+                 * Padding inside the button.
+                 * @default 2
+                 */
+                padding: 2,
+                /**
                  * Offset of the button in the y direction.
                  * @default 0
                  */
@@ -197,12 +202,12 @@ class TreegraphSeries extends TreemapSeries {
                  * Height of the button.
                  * @default 3
                  */
-                height: 3,
+                height: 10,
                 /**
                  * Width of the button.
                  * @default 3
                  */
-                width: 3
+                width: 10
             },
             /**
              * @extends plotOptions.series.tooltip
@@ -643,7 +648,7 @@ class TreegraphSeries extends TreemapSeries {
             Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Restore nodes.
-            this.points = this.points.concat(points);
+            this.points = points;
             this.options.dataLabels.forEach((option, index): void => {
                 option.textPath = dataLabelOptions[index];
             });
