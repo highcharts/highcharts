@@ -246,45 +246,94 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 });
 
 addEvent(StackItem, 'afterRender', function (): void {
-    const series = this.yAxis.series[0] as PictorialSeries;
     // TODO find first pictorial series
-    const options = this.yAxis.options;
-    const chart = this.yAxis.chart;
-    const stackShadow = this.shadow;
-    const xCenter = this.xAxis.toPixels(this.x, true);
-    const x = chart.inverted ? this.xAxis.len - xCenter : xCenter;
-    const y = 0;
-    const width = series.getColumnMetrics && series.getColumnMetrics().width;
-    const height = this.yAxis.len;
-    const shape = series.options.paths || [];
-    const index = this.x % shape.length;
-    const strokeWidth = pick(
-        options.stackShadow && options.stackShadow.borderWidth,
-        series.options.borderWidth,
-        1
-    );
+    const series = this.yAxis.series[0] as PictorialSeries;
+    if (series) {
+        const options = this.yAxis.options;
+        const chart = this.yAxis.chart;
+        const stackShadow = this.shadow;
+        const xCenter = this.xAxis.toPixels(this.x, true);
+        const x = chart.inverted ? this.xAxis.len - xCenter : xCenter;
+        const y = 0;
+        const width = series.getColumnMetrics &&
+            series.getColumnMetrics().width;
+        const height = this.yAxis.len;
+        const shape = series.options.paths || [];
+        const index = this.x % shape.length;
+        const strokeWidth = pick(
+            options.stackShadow && options.stackShadow.borderWidth,
+            series.options.borderWidth,
+            1
+        );
 
-    if (!stackShadow && options.stackShadow && options.stackShadow.enabled) {
-        if (!this.shadowGroup) {
-            this.shadowGroup = chart.renderer.g('shadowGroup')
+        if (
+            !stackShadow &&
+            options.stackShadow &&
+            options.stackShadow.enabled
+        ) {
+            if (!this.shadowGroup) {
+                this.shadowGroup = chart.renderer.g('shadowGroup')
+                    .attr({
+                        translateX: chart.inverted ?
+                            this.yAxis.pos : this.xAxis.pos,
+                        translateY: chart.inverted ?
+                            this.xAxis.pos : this.yAxis.pos
+                    })
+                    .add();
+            }
+
+            this.shadow = chart.renderer.rect(x, y, width, height)
                 .attr({
-                    translateX: chart.inverted ?
-                        this.yAxis.pos : this.xAxis.pos,
-                    translateY: chart.inverted ?
-                        this.xAxis.pos : this.yAxis.pos
+                    fill: {
+                        pattern: {
+                            path: {
+                                d: shape[index],
+                                fill: options.stackShadow.color || '#dedede',
+                                strokeWidth: strokeWidth,
+                                stroke: options.stackShadow.borderColor ||
+                                'transparent'
+                            },
+                            x: x,
+                            y: y,
+                            width: width,
+                            height: height,
+                            patternContentUnits: 'objectBoundingBox',
+                            backgroundColor: 'none',
+                            color: '#dedede'
+                        }
+                    }
                 })
-                .add();
-        }
+                .add(this.shadowGroup);
 
-        this.shadow = chart.renderer.rect(x, y, width, height)
-            .attr({
+            invertShadowGroup(
+                this.shadowGroup,
+                this.xAxis,
+                this.yAxis
+            );
+
+            rescalePatternFill(
+                this.shadow,
+                this.yAxis,
+                width,
+                height,
+                strokeWidth
+            );
+
+        } else if (stackShadow && this.shadowGroup) {
+            stackShadow.attr({
+                x,
+                y,
+                width,
+                height,
                 fill: {
                     pattern: {
                         path: {
                             d: shape[index],
-                            fill: options.stackShadow.color || '#dedede',
+                            fill: options.stackShadow &&
+                                options.stackShadow.color || '#dedede',
                             strokeWidth: strokeWidth,
-                            stroke: options.stackShadow.borderColor ||
+                            stroke: options.stackShadow &&
+                            options.stackShadow.borderColor ||
                             'transparent'
                         },
                         x: x,
@@ -296,64 +345,28 @@ addEvent(StackItem, 'afterRender', function (): void {
                         color: '#dedede'
                     }
                 }
-            })
-            .add(this.shadowGroup);
+            });
 
-        invertShadowGroup(
-            this.shadowGroup,
-            this.xAxis,
-            this.yAxis
-        );
+            invertShadowGroup(
+                this.shadowGroup,
+                this.xAxis,
+                this.yAxis
+            );
 
-        rescalePatternFill(
-            this.shadow,
-            this.yAxis,
-            width,
-            height,
-            strokeWidth
-        );
+            rescalePatternFill(
+                stackShadow,
+                this.yAxis,
+                width,
+                height,
+                strokeWidth
+            );
+        }
+    } else if (this.shadow && this.shadowGroup) {
+        this.shadow.destroy();
+        this.shadow = void 0;
 
-    } else if (stackShadow && this.shadowGroup) {
-        stackShadow.attr({
-            x,
-            y,
-            width,
-            height,
-            fill: {
-                pattern: {
-                    path: {
-                        d: shape[index],
-                        fill: options.stackShadow &&
-                            options.stackShadow.color || '#dedede',
-                        strokeWidth: strokeWidth,
-                        stroke: options.stackShadow &&
-                        options.stackShadow.borderColor ||
-                        'transparent'
-                    },
-                    x: x,
-                    y: y,
-                    width: width,
-                    height: height,
-                    patternContentUnits: 'objectBoundingBox',
-                    backgroundColor: 'none',
-                    color: '#dedede'
-                }
-            }
-        });
-
-        invertShadowGroup(
-            this.shadowGroup,
-            this.xAxis,
-            this.yAxis
-        );
-
-        rescalePatternFill(
-            stackShadow,
-            this.yAxis,
-            width,
-            height,
-            strokeWidth
-        );
+        this.shadowGroup.destroy();
+        this.shadowGroup = void 0;
     }
 });
 
