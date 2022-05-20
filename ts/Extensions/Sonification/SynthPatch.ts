@@ -214,8 +214,10 @@ class PulseOscNode {
                 this.cancelScheduledValues(time);
                 pulse.sawOscA.frequency.setValueAtTime(frequency, time);
                 pulse.sawOscB.frequency.setValueAtTime(frequency, time);
-                pulse.delayNode.delayTime
-                    .setValueAtTime(pulse.pulseWidth / frequency, time);
+                pulse.delayNode.delayTime.setValueAtTime(
+                    Math.round(10000 * pulse.pulseWidth / frequency) / 10000,
+                    time
+                );
                 return pulse.sawOscA.frequency;
             },
 
@@ -228,7 +230,10 @@ class PulseOscNode {
                 pulse.sawOscB.frequency
                     .setTargetAtTime(frequency, time, timeConstant);
                 pulse.delayNode.delayTime.setTargetAtTime(
-                    pulse.pulseWidth / frequency, time, timeConstant);
+                    Math.round(10000 * pulse.pulseWidth / frequency) / 10000,
+                    time,
+                    timeConstant
+                );
                 return pulse.sawOscA.frequency;
             }
         };
