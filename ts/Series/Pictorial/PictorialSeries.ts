@@ -248,7 +248,7 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 addEvent(StackItem, 'afterRender', function (): void {
     // TODO find first pictorial series
     const series = this.yAxis.series[0] as PictorialSeries;
-    if (series) {
+    if (series && this.yAxis.hasData() && this.xAxis.hasData()) {
         const options = this.yAxis.options;
         const chart = this.yAxis.chart;
         const stackShadow = this.shadow;
