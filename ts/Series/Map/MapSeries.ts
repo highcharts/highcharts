@@ -1247,9 +1247,19 @@ class MapSeries extends ScatterSeries {
             this.processData();
             this.generatePoints();
 
-            // Not only recalculate bounds (as previously), but also fit view
             delete this.bounds;
-            mapView && mapView.fitToBounds(void 0, void 0, false); // #17012
+            if (
+                mapView &&
+                !mapView.userOptions.center &&
+                !isNumber(mapView.userOptions.zoom)
+            ) {
+                // Not only recalculate bounds but also fit view
+                mapView.fitToBounds(void 0, void 0, false); // #17012
+            } else {
+                // If user defined his own center and zoom, get bounds but
+                // don't change view
+                this.getProjectedBounds();
+            }
         }
 
         if (mapView) {
