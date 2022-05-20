@@ -23,7 +23,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
 import Point from '../../Core/Series/Point.js';
-const { merge, addEvent } = U;
+const { merge, addEvent, pick } = U;
 const {
     seriesTypes: {
         treemap: {
@@ -88,8 +88,7 @@ class TreegraphPoint extends TreemapPoint {
                     x,
                     y,
                     function (): void {
-                        point.collapsed = !point.collapsed;
-                        point.series.redraw();
+                        point.toggleCollapse();
                     },
                     {},
                     void 0,
@@ -120,8 +119,6 @@ class TreegraphPoint extends TreemapPoint {
             } else {
                 const { x, y } = this.getCollapseBtnPosition(btnOptions);
                 point.collapseButton
-                    // TODO: Adjust the options to keep the button visible on
-                    // the clicked point.
                     .attr({
                         text: point.collapsed ? '+' : '-',
                         visibility: point.visible && !btnOptions.onlyOnHover ?
@@ -133,9 +130,15 @@ class TreegraphPoint extends TreemapPoint {
         }
     }
 
+    toggleCollapse(state?:boolean): void {
+        this.collapsed = pick(state, !this.collapsed);
+        this.series.redraw();
+    }
+
     shouldDraw(): boolean {
         return super.shouldDraw() && this.visible;
     }
+
     getPointAttribs(): ShapeArgs {
         return this.shapeArgs ? {
             x: this.shapeArgs.x || 0,
@@ -157,8 +160,6 @@ class TreegraphPoint extends TreemapPoint {
         const point = this,
             chart = point.series.chart,
             inverted = chart.inverted,
-            plotSizeX = chart.plotSizeX || 0,
-            plotSizeY = chart.plotSizeY || 0,
             btnWidth = btnOptions.width,
             btnHeight = btnOptions.height,
             { x, y, width, height } = point.getPointAttribs();
@@ -166,13 +167,12 @@ class TreegraphPoint extends TreemapPoint {
             x:
                 x +
                 btnOptions.x +
-                (inverted ? btnWidth * -0.7 : +width + btnWidth * -0.3),
+                (inverted ? btnWidth * -0.7 : width + btnWidth * -0.3),
             y: y + height / 2 - btnHeight / 2 + btnOptions.y
         };
     }
     public setState(): void {
         Point.prototype.setState.apply(this, arguments);
-
     }
 }
 
