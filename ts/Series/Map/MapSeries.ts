@@ -1267,7 +1267,7 @@ class MapSeries extends ScatterSeries {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012
             } else {
-                // If user defined his own center and zoom, get bounds but
+                // If center and zoom is defined in user options, get bounds but
                 // don't change view
                 this.getProjectedBounds();
             }
