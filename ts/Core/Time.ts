@@ -967,6 +967,16 @@ namespace Time {
     }
     export interface TimeNormalizedObject {
         count: number;
+        unitName: (
+            'millisecond'|
+            'second'|
+            'minute'|
+            'hour'|
+            'day'|
+            'week'|
+            'month'|
+            'year'
+        );
         unitRange: number;
     }
     export type TimeUnitValue = (
