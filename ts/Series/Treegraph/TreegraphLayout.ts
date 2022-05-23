@@ -257,10 +257,10 @@ class TreegraphLayout {
                 rightIntNode &&
                 rightIntNode.nextLeft()
             ) {
-                leftIntNode = leftOutNode =
-                    leftIntNode.nextRight() as TreegraphNode.Node;
-                rightIntNode = rightOutNode =
-                    rightOutNode.nextLeft() as TreegraphNode.Node;
+                leftIntNode = leftIntNode.nextRight() as TreegraphNode.Node;
+                leftOutNode = leftOutNode.nextLeft() as TreegraphNode.Node;
+                rightIntNode = rightIntNode.nextLeft() as TreegraphNode.Node;
+                rightOutNode = rightOutNode.nextRight() as TreegraphNode.Node;
 
                 rightOutNode.ancestor = node;
                 let siblingDistance = 1;
@@ -285,6 +285,7 @@ class TreegraphLayout {
                 leftOutMod += leftOutNode.mod;
                 rightOutMod += rightOutNode.mod;
             }
+
             if (
                 leftIntNode &&
                 leftIntNode.nextRight() &&
