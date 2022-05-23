@@ -401,17 +401,20 @@ class TreegraphSeries extends TreemapSeries {
         const series = this;
         const links = [] as TreegraphLink[];
         this.data.forEach((point, index): void => {
+            const levelOptions =
+                (series.mapOptionsToLevel as any)[point.node.level || 0] || {};
             if (point.node.parent) {
+                const pointOptions = merge(levelOptions, point.options);
                 if (!point.linkToParent || !point.linkToParent.update) {
                     const link = new series.LinkClass().init(
                         series,
-                        point.options,
+                        pointOptions,
                         void 0,
                         point
                     );
                     point.linkToParent = link;
                 } else {
-                    point.linkToParent.update(point.options, false);
+                    point.linkToParent.update(pointOptions, false);
                 }
                 point.linkToParent.index = links.push(point.linkToParent) - 1;
             } else {
@@ -464,7 +467,6 @@ class TreegraphSeries extends TreemapSeries {
         Series.prototype.translate.call(series);
         tree = series.tree = series.getTree();
         this.setCollapsedStatus(tree, true);
-        series.links = series.getLinks();
         rootNode = series.nodeMap[rootId];
 
         if (rootId !== '' && (!rootNode || !rootNode.children.length)) {
@@ -483,6 +485,7 @@ class TreegraphSeries extends TreemapSeries {
             }
         });
 
+        series.links = series.getLinks();
         series.setTreeValues(tree);
 
         this.layoutAlgorythm.calculatePositions(series);
@@ -769,15 +772,6 @@ class TreegraphSeries extends TreemapSeries {
             [nodeX + width / 2, nodeY];
     }
 }
-
-// Handle showing and hiding of the points
-addEvent(TreegraphSeries, 'click', function (e: PointerEvent): void {
-    let point = e.point as TreegraphPoint | undefined;
-    if (e && point) {
-        point.toggleCollapse();
-    }
-});
-
 
 /* *
  *

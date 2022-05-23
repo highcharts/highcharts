@@ -23,6 +23,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
 import Point from '../../Core/Series/Point.js';
+import { Palette } from '../../Core/Color/Palettes';
 const { merge, addEvent, pick } = U;
 const {
     seriesTypes: {
@@ -53,13 +54,17 @@ class TreegraphPoint extends TreemapPoint {
     public isLink = false;
     public collapseButton?: SVGElement;
     public series: TreegraphSeries = void 0 as any;
-    public collapsed: boolean = false;
+    public collapsed?: boolean;
     public node: TreegraphNode.Node = void 0 as any;
     public level?: number;
     public linkToParent?: TreegraphLink;
 
     draw(): void {
         super.draw.apply(this, arguments);
+        this.renderCollapseButton();
+    }
+
+    renderCollapseButton(): void {
         const point = this,
             series = point.series,
             parentGroup = point.graphic && point.graphic.parentGroup,
@@ -83,24 +88,21 @@ class TreegraphPoint extends TreemapPoint {
             }
             let { x, y } = this.getCollapseBtnPosition(btnOptions);
             point.collapseButton = chart.renderer
-                .button(
+                .label(
                     point.collapsed ? '+' : '-',
                     x,
                     y,
-                    function (): void {
-                        point.toggleCollapse();
-                    },
-                    {},
-                    void 0,
-                    void 0,
-                    void 0,
                     'circle'
                 )
                 .attr({
                     height: height - 2 * padding,
                     width: width - 2 * padding,
                     padding: padding,
+                    fill: Palette.neutralColor20,
+                    stroke: Palette.neutralColor80,
+                    'stroke-width': 1,
                     'text-align': 'center',
+                    align: 'center',
                     zIndex: 1
                 })
                 .addClass('highcharts-tracker')
@@ -109,7 +111,7 @@ class TreegraphPoint extends TreemapPoint {
 
             (point.collapseButton.element as any).point = point;
 
-            if (btnOptions.onlyOnHover) {
+            if (btnOptions.onlyOnHover && !point.collapsed) {
                 point.collapseButton.hide();
             }
         } else {
@@ -121,16 +123,21 @@ class TreegraphPoint extends TreemapPoint {
                 point.collapseButton
                     .attr({
                         text: point.collapsed ? '+' : '-',
-                        visibility: point.visible && !btnOptions.onlyOnHover ?
-                            'inherit' :
-                            'hidden'
+                        rotation: chart.inverted ? 90 : 0,
+                        visibility:
+                            point.visible &&
+                            (!btnOptions.onlyOnHover ||
+                                point.state === 'hover' ||
+                                point.collapsed) ?
+                                'inherit' :
+                                'hidden'
                     })
                     .animate({ x, y });
             }
         }
     }
 
-    toggleCollapse(state?:boolean): void {
+    toggleCollapse(state?: boolean): void {
         this.collapsed = pick(state, !this.collapsed);
         this.series.redraw();
     }
@@ -179,7 +186,7 @@ class TreegraphPoint extends TreemapPoint {
 addEvent(TreegraphPoint, 'mouseOut', function (): void {
     const btn = this.collapseButton,
         btnOptions = this.options.collapseButton;
-    if (btn && btnOptions && btnOptions.onlyOnHover) {
+    if (btn && btnOptions && btnOptions.onlyOnHover && !this.collapsed) {
         btn.hide();
     }
 });
@@ -188,6 +195,11 @@ addEvent(TreegraphPoint, 'mouseOver', function (): void {
     if (this.collapseButton) {
         this.collapseButton.show();
     }
+});
+
+// Handle showing and hiding of the points
+addEvent(TreegraphPoint, 'click', function (): void {
+    this.toggleCollapse();
 });
 /* *
  *
