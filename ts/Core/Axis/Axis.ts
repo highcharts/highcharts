@@ -3536,7 +3536,10 @@ class Axis {
             labelOffsetPadded -= lineHeightCorrection;
             labelOffsetPadded += directionFactor * (
                 horiz ?
-                    axis.tickRotCorr.y + directionFactor * 8 :
+                    pick(
+                        labelOptions.y,
+                        axis.tickRotCorr.y + directionFactor * 8
+                    ) :
                     labelOptions.x
             );
         }
