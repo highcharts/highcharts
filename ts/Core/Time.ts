@@ -888,7 +888,7 @@ class Time {
         range: number,
         timestamp: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Record<Time.TimeUnit, Time.DateTimeLabelFormatOption>
+        dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
     ): string|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
@@ -958,15 +958,19 @@ class Time {
 
 namespace Time {
     export interface DateTimeLabelFormatObject {
-        from: string;
+        from?: string;
         list?: string[];
         main: string;
-        to: string;
+        range?: boolean;
+        to?: string;
     }
     export type DateTimeLabelFormatOption = (
         string|
         Array<string>|
         Time.DateTimeLabelFormatObject
+    );
+    export type DateTimeLabelFormatsOption = (
+        Record<TimeUnit, DateTimeLabelFormatOption>
     );
     export interface TimeOptions {
         Date?: any;
