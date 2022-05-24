@@ -52,7 +52,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                         Edge: 1.5,
                         Firefox: 4,
                         MSIE: 2.5,
-                        Safari: 2.5,
+                        Safari: 4.5, // the same as Chrome
                         '': 1
                     }[TestUtilities.browser || ''],
                     'Data label #' +
@@ -70,7 +70,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                         Edge: 7.5,
                         Firefox: 9.5,
                         MSIE: 7.5,
-                        Safari: 8.5,
+                        Safari: 9, // the same as Chrome
                         '': 1
                     }[TestUtilities.browser || ''],
                     'Data label #' +
@@ -95,11 +95,11 @@ QUnit.test('Change of label alignment after add(#4605)', function (assert) {
             },
             plotOptions: {
                 columnrange: {
-                    //cropThreshold: Number.MAX_VALUE,
+                    // cropThreshold: Number.MAX_VALUE,
                     dataLabels: {
-                        //allowOverlap: true,
-                        //crop: false,
-                        //overflow: 'none',
+                        // allowOverlap: true,
+                        // crop: false,
+                        // overflow: 'none',
                         enabled: true,
                         inside: true
                     }
