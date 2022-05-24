@@ -12,12 +12,6 @@
   <button id="startSynth">Start synth</button>
 
   <div id="controls" class="hidden">
-      <div class="row">
-        <label id="presetLabel">Preset <select id="preset"></select></label>
-        <button id="playWideRange">Play wide range</button>
-        <button id="showHelp">Help</button>
-      </div>
-
       <div id="help" class="hidden">
         <h2>Help</h2>
         <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
@@ -28,38 +22,47 @@
         <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume. Note: With pulse waveforms, the FM parameter actually controls PWM (pulse width modulation) instead of FM.</p>
       </div>
 
-      <div id="globalControls">
-        <div>
-          <h2>Global controls</h2>
-          <label>Master volume <input id="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
-          <label>Glide between notes <input id="glideDuration" type="number" value="0"></label>
-        </div>
-        <div>
-          <h3>Master Attack Envelope</h3>
-          <div id="masterAttackEnvChart" class="chart"></div>
-        </div>
-        <div>
-          <h3>Master Release Envelope</h3>
-          <div id="masterReleaseEnvChart" class="chart"></div>
-        </div>
-        <div id="masterEQ">
-          <div class="row">
-            <h3>Master Parametric EQ (gain, frequency, Q)</h3>
-            <button id="resetEQ">Reset</button>
-          </div>
-          <div id="eqSliders" class="row"></div>
-        </div>
-      </div>
-  
-      <div class="row">
-        <h2>Oscillators</h2>
-        <button id="addOsc">+ Add oscillator</button>
-      </div>
-      <div id="oscillators" class="row">
-      </div>
+      <button id="showHelp">Help</button>
 
-      <h2>Generated Patch JSON</h2>
-      <textarea readonly id="json">{}</textarea>
+      <div id="synthContainer">
+        <div class="row">
+          <label class="presetLabel">Preset <select class="preset"></select></label>
+          <button class="playWideRange">Play wide range</button>
+        </div>
+
+        <div class="globalControls">
+          <div>
+            <h2>Global controls</h2>
+            <label>Master volume <input class="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
+            <label>Glide between notes <input class="glideDuration" type="number" value="0"></label>
+          </div>
+          <div>
+            <h3>Master Attack Envelope</h3>
+            <div class="masterAttackEnvChart chart"></div>
+          </div>
+          <div>
+            <h3>Master Release Envelope</h3>
+            <div class="masterReleaseEnvChart chart"></div>
+          </div>
+          <div class="masterEQ">
+            <div class="row">
+              <h3>Master Parametric EQ (gain, frequency, Q)</h3>
+              <button class="resetEQ">Reset</button>
+            </div>
+            <div class="eqSliders row"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <h2>Oscillators</h2>
+          <button class="addOsc">+ Add oscillator</button>
+        </div>
+        <div class="oscillators row">
+        </div>
+  
+        <h2>Generated Patch JSON</h2>
+        <textarea readonly class="json">{}</textarea>
+      </div>
   </div>
 </main>
 
@@ -339,7 +342,7 @@
   </div>
   <div id="preset-rock">
     {
-      "masterVolume": "0.8",
+      "masterVolume": "0.9",
       "masterAttackEnvelope": [
        {
         "t": 0,
@@ -734,7 +737,7 @@
   </div>
   <div id="preset-synth">
     {
-      "masterVolume": "0.45",
+      "masterVolume": "0.4",
       "masterAttackEnvelope": [
        {
         "t": 1,
@@ -846,7 +849,7 @@
   </div>
   <div id="preset-piano">
     {
-      "masterVolume": "0.6",
+      "masterVolume": "0.5",
       "masterAttackEnvelope": [
        {
         "t": 1,
@@ -904,7 +907,7 @@
        {
         "frequency": 10000,
         "Q": 0.4,
-        "gain": -16
+        "gain": -12
        }
       ],
       "oscillators": [

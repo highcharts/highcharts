@@ -10,7 +10,36 @@ h2 {
     padding: 1px 4px;
 }
 
-#json {
+#startSynth {
+    height: 2.5rem;
+}
+
+#help {
+    font-size: 0.8rem;
+    padding: 20px 40px;
+    max-width: 895px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f8f8f8;
+}
+
+#help h2 {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+#help p {
+    margin: 0;
+    margin-top: 8px;
+}
+
+#showHelp {
+    margin-bottom: 20px;
+    padding: 5px 20px;
+}
+
+.json {
     font-family: monospace;
     background-color: #444;
     color: #d6eed6;
@@ -60,7 +89,7 @@ h2 {
     display: none;
 }
 
-#globalControls {
+.globalControls {
     display: inline-flex;
     align-items: flex-start;
     margin-top: 30px;
@@ -69,34 +98,30 @@ h2 {
     padding: 20px;
 }
 
-#globalControls h2 {
+.globalControls h2 {
     margin-top: 0;
 }
 
-#globalControls h3 {
+.globalControls h3 {
     margin-top: 5px;
     margin-left: 30px;
     font-size: 0.8rem;
     font-weight: normal;
 }
 
-#globalControls .chart {
+.globalControls .chart {
     width: 250px;
     margin-left: 20px;
 }
 
-#globalControls input {
+.globalControls input {
     display: block;
     margin-top: 5px;
 }
 
-#globalControls label {
+.globalControls label {
     margin-top: 20px;
     display: block;
-}
-
-#startSynth {
-    height: 2.5rem;
 }
 
 button {
@@ -117,51 +142,32 @@ button:active {
     background-color: #e0e0e0;
 }
 
-#masterVolume {
+.masterVolume {
     display: block;
     margin-top: 7px;
 }
 
-#presetLabel {
+.presetLabel {
     font-size: 1rem;
     margin: 10px 5px;
 }
 
-#preset {
+.preset {
     width: 150px;
     height: 1.8rem;
     margin-left: 5px;
 }
 
-#help {
-    font-size: 0.8rem;
-    padding: 20px;
-    max-width: 895px;
-    margin-top: 10px;
-    background-color: #f8f8f8;
-}
-
-#help h2 {
-    font-size: 1rem;
-    text-align: center;
-    margin-top: 0;
-}
-
-#help p {
-    margin: 0;
-    margin-top: 8px;
-}
-
-#masterEQ {
+.masterEQ {
     margin-left: 20px;
 }
 
-#eqSliders {
+.eqSliders {
     gap: 0;
     flex-wrap: nowrap;
 }
 
-.eqSlider input[type="range"] {
+.eqSlider .gain {
     -webkit-appearance: slider-vertical;
     width: 50px;
 }
@@ -171,26 +177,26 @@ button:active {
     text-align: center;
 }
 
-#resetEQ {
+.resetEQ {
     height: 1.3rem;
     font-size: 0.7rem;
     justify-self: flex-end;
     margin-bottom: 6px;
 }
 
-#addOsc {
+.addOsc {
     height: 30px;
     margin-top: 10px;
     background-color: #d5f3d5;
     border: 1px solid #616161;
 }
 
-#addOsc:hover {
+.addOsc:hover {
     background-color: #e6f2e6;
     border: 1px solid #455;
 }
 
-#addOsc:active {
+.addOsc:active {
     background-color: #dcece9;
 }
 
@@ -199,25 +205,31 @@ button:active {
 }
 
 .oscillator {
-    display: grid;
-    column-gap: 2px;
-    align-items: center;
-    row-gap: 5px;
-    grid-template-columns: 11rem 3rem 3.5rem;
     background-color: #fafafa;
     border: 1px solid #d7d7d7;
     padding: 15px;
     border-radius: 4px;
 }
 
+.oscillator .controlsContainer {
+    display: grid;
+    column-gap: 2px;
+    align-items: center;
+    row-gap: 5px;
+    grid-template-columns: 11rem 3rem 3.5rem;
+}
+
 .oscillator h3 {
     font-size: 1.4rem;
+    display: inline-block;
+    margin-top: 0;
 }
 
 .oscillator button:not(.chartReset) {
     background-color: #af1919;
     color: white;
     padding: 5px;
+    float: right;
 }
 
 .oscillator select {
