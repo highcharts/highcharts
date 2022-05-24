@@ -938,6 +938,12 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'The view should not change after updating data values'
     );
 
+
+    mapView.update({
+        center: undefined,
+        zoom: undefined
+    });
+
     let ruPoint = series.points[148];
 
     assert.strictEqual(
