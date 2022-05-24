@@ -418,30 +418,27 @@ QUnit.test('button width', function (assert) {
 });
 
 QUnit.test('Rangeselector update', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        series: [
-            {
+    const chart = Highcharts.stockChart('container', {
+            series: [{
                 data: [1, 2, 3]
-            }
-        ]
-    });
+            }]
+        }),
+        height = chart.yAxis[0].axisGroup.getBBox().height;
 
     chart.update({
         rangeSelector: {
-            buttons: [
-                {
-                    type: 'all',
-                    text: 'All'
-                }
-            ]
+            buttons: [{
+                type: 'all',
+                text: 'All'
+            }]
         }
     });
 
-    assert.close(
+    assert.strictEqual(
         chart.yAxis[0].axisGroup.getBBox().height,
-        240,
-        2,
-        'Range selector should have enough space'
+        height,
+        `Range selector should reserve correct amount of space after update
+        (#10015).`
     );
 });
 

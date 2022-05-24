@@ -3409,6 +3409,7 @@ class Axis {
             titleMargin = 0,
             labelOffset = 0, // reset
             labelOffsetPadded,
+            lineHeight,
             lineHeightCorrection;
 
         // For reuse in Axis.render
@@ -3522,8 +3523,9 @@ class Axis {
         );
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
+        lineHeight = axis.labelMetrics().h;
         if (side === 0) {
-            lineHeightCorrection = -axis.labelMetrics().h;
+            lineHeightCorrection = -lineHeight;
         } else if (side === 2) {
             lineHeightCorrection = axis.tickRotCorr.y;
         } else {
@@ -3538,7 +3540,7 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y + directionFactor * 8
+                        axis.tickRotCorr.y + directionFactor * lineHeight
                     ) :
                     labelOptions.x
             );
