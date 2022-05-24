@@ -306,7 +306,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
+        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
