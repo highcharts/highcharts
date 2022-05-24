@@ -29,6 +29,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../FormatUtilities.js';
@@ -249,7 +250,8 @@ class Tick {
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
                     value,
-                    (options.dateTimeLabelFormats || {}) as any
+                    options.dateTimeLabelFormats ||
+                        {} as Time.DateTimeLabelFormatsOption
                 );
             }
         }
