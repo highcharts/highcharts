@@ -31,7 +31,7 @@ namespace TreegraphNode {
         public ancestor: Node = void 0 as any;
         public shift: number = 0;
         public change: number = 0;
-        public children: Array<Node> = void 0 as any;
+        public children: Array<Node> = [];
         public x?: number;
         public y?: number;
         public preX: number = 0;

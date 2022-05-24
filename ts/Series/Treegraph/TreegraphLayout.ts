@@ -38,27 +38,32 @@ class TreegraphLayout {
         // First connection to itself.
         dummyNode.children.push(child);
         dummyNode.parent = parent.id;
-        dummyNode.column = child.column - gapSize;
+        dummyNode.parentNode = parent;
+        dummyNode.point = parent.point;
         dummyNode.level = child.level - gapSize;
-
+        dummyNode.relativeXPosition = child.relativeXPosition;
+        dummyNode.visible = true;
         // Then connection from parent to dummyNode.
         parent.children[child.relativeXPosition] = dummyNode;
         child.oldParentNode = parent;
+        child.relativeXPosition = 0;
 
         // Then connection from child to dummyNode.
+        child.parentNode = dummyNode;
         child.parent = dummyNode.id;
+
         return dummyNode;
     }
     /**
-    * Walker algorythm of positioning the nodes in the treegraph improved by
-    * Buchheim to run in the linear time. Basic algorithm consists of post
-    * order traversal, which starts from going bottom up (first walk), and then
-    * pre order traversal top to bottom (second walk) where adding all of the
-    * modifiers is performed.
-    * link to the paper: http://dirk.jivas.de/papers/buchheim02improving.pdf
-    *
-    * @param {TreegraphSeries} series the Treegraph series
-    */
+     * Walker algorythm of positioning the nodes in the treegraph improved by
+     * Buchheim to run in the linear time. Basic algorithm consists of post
+     * order traversal, which starts from going bottom up (first walk), and then
+     * pre order traversal top to bottom (second walk) where adding all of the
+     * modifiers is performed.
+     * link to the paper: http://dirk.jivas.de/papers/buchheim02improving.pdf
+     *
+     * @param {TreegraphSeries} series the Treegraph series
+     */
     public calculatePositions(series: TreegraphSeries): void {
         const treeLayout = this;
         const nodes = series.nodeList as TreegraphNode.Node[];
@@ -78,17 +83,13 @@ class TreegraphLayout {
      * @param nodes all of the nodes.
      */
     public beforeLayout(nodes: TreegraphNode.Node[]): void {
-        const treeLayout = this;
         nodes.forEach((node): void => {
             node.children.forEach((child, index): void => {
                 // Support for children placed in distant columns.
-                if (
-                    child &&
-                    (child.column - node.column > 1)
-                ) {
+                if (child && child.level - node.level > 1) {
                     // For further columns treat the nodes as a
                     // single parent-child pairs till the column is achieved.
-                    let gapSize = child.column - node.column - 1,
+                    let gapSize = child.level - node.level - 1,
                         parent = node;
                     // parent -> dummyNode -> child
                     while (gapSize > 0) {
@@ -119,12 +120,12 @@ class TreegraphLayout {
         });
     }
     /**
-    * Assigns the value to each node, which indicates, what is his sibling
-    * number.
-    *
-    * @param node root node
-    * @param index index to which the nodes position should be set
-    */
+     * Assigns the value to each node, which indicates, what is his sibling
+     * number.
+     *
+     * @param node root node
+     * @param index index to which the nodes position should be set
+     */
     public calculateRelativeX(node: TreegraphNode.Node, index: number): void {
         const treeLayout = this;
         node.children.forEach((child, index): void => {
@@ -161,10 +162,7 @@ class TreegraphLayout {
 
             node.children.forEach(function (child): void {
                 treeLayout.firstWalk(child);
-                defaultAncestor = treeLayout.apportion(
-                    child,
-                    defaultAncestor
-                );
+                defaultAncestor = treeLayout.apportion(child, defaultAncestor);
             });
             treeLayout.executeShifts(node);
 
@@ -333,6 +331,12 @@ class TreegraphLayout {
     public afterLayout(nodes: TreegraphNode.Node[]): void {
         nodes.forEach((node): void => {
             if (node.oldParentNode) {
+                // Restore default connections
+                node.relativeXPosition = node.parentNode.relativeXPosition;
+                node.parent = node.oldParentNode.parent;
+                node.parentNode = node.oldParentNode;
+
+                // Delete dummyNode
                 delete node.oldParentNode.children[node.relativeXPosition];
                 node.oldParentNode.children[node.relativeXPosition] = node;
                 node.oldParentNode = void 0;
