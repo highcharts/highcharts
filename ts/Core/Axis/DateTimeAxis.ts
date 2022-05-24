@@ -326,7 +326,7 @@ namespace DateTimeAxis{
          */
         public getXDateFormat(
             x: number,
-            dateTimeLabelFormats: Record<string, string>
+            dateTimeLabelFormats: Record<Time.TimeUnit, string>
         ): string {
             const { axis } = this;
 

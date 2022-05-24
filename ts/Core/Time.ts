@@ -603,9 +603,9 @@ class Time {
      * @return {Highcharts.Dictionary<T>}
      * The object definition
      */
-    public resolveDTLFormat<T>(
-        f: (string|Array<T>|Record<string, T>)
-    ): Record<string, T> {
+    public resolveDTLFormat(
+        f: Time.DateTimeLabelFormatOption
+    ): Time.DateTimeLabelFormatObject {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -614,7 +614,7 @@ class Time {
                 to: f[2]
             };
         }
-        return f as any;
+        return f;
     }
 
     /**
@@ -888,7 +888,7 @@ class Time {
         range: number,
         timestamp: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Record<string, string>
+        dateTimeLabelFormats: Record<Time.TimeUnit, Time.DateTimeLabelFormatOption>
     ): string|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
@@ -898,49 +898,52 @@ class Time {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Record<string, number>;
+            } as Record<Time.TimeUnit, number>;
 
         let format: string|undefined,
-            n,
-            lastN = 'millisecond'; // for sub-millisecond data, #4223
+            n: Time.TimeUnit|undefined,
+            // for sub-millisecond data, #4223
+            lastN: Time.TimeUnit = 'millisecond';
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
+            if (n) {
 
-            // If the range is exactly one week and we're looking at a
-            // Sunday/Monday, go for the week format
-            if (
-                range === timeUnits.week &&
-                +this.dateFormat('%w', timestamp) === startOfWeek &&
-                dateStr.substr(6) === blank.substr(6)
-            ) {
-                n = 'week';
-                break;
-            }
+                // If the range is exactly one week and we're looking at a
+                // Sunday/Monday, go for the week format
+                if (
+                    range === timeUnits.week &&
+                    +this.dateFormat('%w', timestamp) === startOfWeek &&
+                    dateStr.substr(6) === blank.substr(6)
+                ) {
+                    n = 'week';
+                    break;
+                }
 
-            // The first format that is too great for the range
-            if (timeUnits[n] > range) {
-                n = lastN;
-                break;
-            }
+                // The first format that is too great for the range
+                if (timeUnits[n] > range) {
+                    n = lastN;
+                    break;
+                }
 
-            // If the point is placed every day at 23:59, we need to show
-            // the minutes as well. #2637.
-            if (
-                strpos[n] &&
-                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
-            ) {
-                break;
-            }
+                // If the point is placed every day at 23:59, we need to show
+                // the minutes as well. #2637.
+                if (
+                    strpos[n] &&
+                    dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
+                ) {
+                    break;
+                }
 
-            // Weeks are outside the hierarchy, only apply them on
-            // Mondays/Sundays like in the first condition
-            if (n !== 'week') {
-                lastN = n;
+                // Weeks are outside the hierarchy, only apply them on
+                // Mondays/Sundays like in the first condition
+                if (n !== 'week') {
+                    lastN = n;
+                }
             }
         }
 
         if (n) {
-            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main as any;
+            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
         }
 
         return format;
@@ -954,6 +957,17 @@ class Time {
  * */
 
 namespace Time {
+    export interface DateTimeLabelFormatObject {
+        from: string;
+        list?: string[];
+        main: string;
+        to: string;
+    }
+    export type DateTimeLabelFormatOption = (
+        string|
+        Array<string>|
+        Time.DateTimeLabelFormatObject
+    );
     export interface TimeOptions {
         Date?: any;
         getTimezoneOffset?: Function;
@@ -967,18 +981,19 @@ namespace Time {
     }
     export interface TimeNormalizedObject {
         count: number;
-        unitName: (
-            'millisecond'|
-            'second'|
-            'minute'|
-            'hour'|
-            'day'|
-            'week'|
-            'month'|
-            'year'
-        );
+        unitName: TimeUnit;
         unitRange: number;
     }
+    export type TimeUnit = (
+        'millisecond'|
+        'second'|
+        'minute'|
+        'hour'|
+        'day'|
+        'week'|
+        'month'|
+        'year'
+    );
     export type TimeUnitValue = (
         'Date'|
         'Day'|
