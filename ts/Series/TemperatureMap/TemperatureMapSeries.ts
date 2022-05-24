@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2021
+ *  Rafal Sebestjanski, Piotr Madej, Askel Eirik Johansson
  *
  *  License: www.highcharts.com/license
  *
@@ -61,7 +62,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
     public drawPoints(): void {
         const series: any = this,
-            pointLength = series.points.length
+            pointLength = series.points.length;
         let colors: any = series.options.colors,
             i: number;
 
@@ -69,53 +70,58 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
         }*/
 
-        colors = colors.map((color: ColorType | GradientColorStop, ii: number): any => {
-            const maxSize2 = relativeLength(series.options.maxSize, 100) // check 100 valid?
-            const radiusFactor: number = ii / (colors.length - 1),
-                maxSize = (1 - radiusFactor) * maxSize2,
-                fillColor = {
-                    radialGradient: {
-                        cx: 0.5,
-                        cy: 0.5,
-                        r: 0.5
-                    },
-                    // TODO, refactor how the array is created.
-                    // There is code that can be shared.
-                    stops: (typeof color === 'string') ? [
-                        [ii === colors.length - 1 ? 0 : 0.5, color],
-                        [1, (new Color(color)).setOpacity(0).get('rgba')]
-                    ] : [color, [1, new Color((color as any)[1]).setOpacity(0).get('rgba')]]
+        colors = colors.map(
+            (color: ColorType | GradientColorStop, ii: number): any => {
+
+                const maxSize2 = relativeLength(series.options.maxSize, 100);
+                const radiusFactor: number = ii / (colors.length - 1),
+                    maxSize = (1 - radiusFactor) * maxSize2,
+                    fillColor = {
+                        radialGradient: {
+                            cx: 0.5,
+                            cy: 0.5,
+                            r: 0.5
+                        },
+                        // TODO, refactor how the array is created.
+                        // There is code that can be shared.
+                        stops: (typeof color === 'string') ? [
+                            [ii === colors.length - 1 ? 0 : 0.5, color],
+                            [1, (new Color(color)).setOpacity(0).get('rgba')]
+                        ] : [color, [1, new Color((color as any)[1])
+                            .setOpacity(0).get('rgba')]]
+                    };
+
+                // Options from point level not supported - API says it should,
+                // but visually is it useful at all?
+                series.options.marker.fillColor = fillColor;
+                series.options.maxSize = maxSize;
+                series.getRadii(); // recalc. radii
+                series.translateBubble(); // use radii
+
+                super.drawPoints.apply(series);
+
+                i = 0;
+                while (i < pointLength) {
+                    const point = series.points[i];
+
+                    point.graphic.attr({
+                        zIndex: ii
+                    });
+
+                    point['graphic' + ii] = point.graphic;
+
+                    // Set up next or loop back to the start
+                    point.graphic = point[
+                        'graphic' + ((ii + 1) % colors.length)
+                    ];
+                    i++;
+                }
+
+                return {
+                    maxSize,
+                    fillColor
                 };
-
-            // Options from point level not supported - API says it should,
-            // but visually is it useful at all?
-            series.options.marker.fillColor = fillColor;
-            series.options.maxSize = maxSize;
-            series.getRadii(); // recalc. radii
-            series.translateBubble(); // use radii
-
-            super.drawPoints.apply(series);
-
-            i = 0;
-            while (i < pointLength) {
-                const point = series.points[i];
-
-                point.graphic.attr({
-                    zIndex: ii
-                });
-
-                point['graphic' + ii] = point.graphic;
-
-                // Set up next or loop back to the start
-                point.graphic = point['graphic' + ((ii + 1) % colors.length)];
-                i++;
-            }
-
-            return {
-                maxSize,
-                fillColor
-            }
-        });
+            });
 
         // Clean up for animation (else the first color is as small as the last)
         series.options.marker.fillColor = colors[0].fillColor;
