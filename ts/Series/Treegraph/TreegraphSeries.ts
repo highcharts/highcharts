@@ -535,6 +535,7 @@ class TreegraphSeries extends TreemapSeries {
                 x2 += (toNode.shapeArgs.width || 0);
             }
             xMiddle = Math.floor((x2 + x1) / 2) + crisp;
+            const diff = toNode.node.xPosition - fromNode.node.xPosition;
 
             // Put the link on the side of the node when an offset is given. HR
             // node in the main demo.
@@ -550,13 +551,36 @@ class TreegraphSeries extends TreemapSeries {
                     ]
                 };
             } else if (type === 'curved') {
-                const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
-                link.shapeArgs = {
-                    d: [
-                        ['M', x1, y1],
-                        ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
-                    ]
-                };
+                if (diff === 1) {
+                    const offset =
+                        Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
+                    link.shapeArgs = {
+                        d: [
+                            ['M', x1, y1],
+                            ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
+                        ]
+                    };
+                } else {
+                    const fullWidth = Math.abs(x2 - x1);
+                    const width =
+                        fullWidth / diff - (toNode.shapeArgs.width || 0);
+                    const offset = width * factor * (inverted ? -1 : 1);
+                    link.shapeArgs = {
+                        d: [
+                            ['M', x1, y1],
+                            [
+                                'C',
+                                x1 + offset,
+                                y1,
+                                x1 + width - offset,
+                                y2,
+                                x1 + width,
+                                y2
+                            ],
+                            ['L', x2, y2]
+                        ]
+                    };
+                }
             } else {
                 link.shapeArgs = {
                     d: PathUtilities.curvedPath(

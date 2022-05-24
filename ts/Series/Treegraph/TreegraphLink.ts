@@ -12,8 +12,8 @@ export interface LinkPointOptions extends TreegraphPointOptions {
 }
 class LinkPoint extends Point {
     options: LinkPointOptions = void 0 as any;
-    fromNode: Point = void 0 as any;
-    toNode: Point = void 0 as any;
+    fromNode: TreegraphPoint = void 0 as any;
+    toNode: TreegraphPoint = void 0 as any;
     isLink = true;
     node = {};
     formatPrefix = 'link';
