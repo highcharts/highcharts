@@ -493,8 +493,12 @@ class Chart {
                     optionsChart.zoomType
                 );
                 optionsChart.zoomKey = pick(
-                    zooming.zoomKey,
+                    zooming.key,
                     optionsChart.zoomKey
+                );
+                optionsChart.resetZoomButton = pick(
+                    zooming.resetButton,
+                    optionsChart.resetZoomButton
                 );
             }
 
