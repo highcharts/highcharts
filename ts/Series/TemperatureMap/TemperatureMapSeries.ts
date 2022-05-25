@@ -63,12 +63,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
     public drawPoints(): void {
         const series: any = this,
             pointLength = series.points.length;
-        let colors: any = series.options.colors,
+
+        let colors: any = series.options.colors || series.chart.options.colors,
             i: number;
-
-        /* (1) if (colors === typeof Array<GradientColor['stops']>) {
-
-        }*/
 
         colors = colors.map(
             (color: ColorType | GradientColorStop, ii: number): any => {
