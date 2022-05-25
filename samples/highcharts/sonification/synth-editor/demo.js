@@ -407,10 +407,8 @@ class Synth {
                     if (
                         typeof val === 'undefined' ||
                         val.length === 0 ||
-                        typeof val === 'object' && (
-                            !Object.keys(val).length ||
-                            !Object.values(val).some(n => typeof n !== 'undefined')
-                        )
+                        typeof val === 'object' && !Object.values(val)
+                            .some(n => typeof n !== 'undefined')
                     ) {
                         delete obj[key];
                     }
