@@ -27,7 +27,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+const {
+    isNumber,
+    extend
+} = U;
 
 /* *
  *
@@ -89,6 +92,16 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
         return this.graphic && shape && shape !== this.graphic.symbolKey;
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+extend(FlagsPoint.prototype, {
+    ttBelow: false
+});
 
 /* *
  *
