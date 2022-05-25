@@ -88,7 +88,6 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sharding": "^4.4.0",
     "lint-staged": "^12.4.1",
-    "log-update": "^5.0.1",
     "lolex": "^6.0.0",
     "marked": "^4.0.15",
     "mkdirp": "^1.0.4",

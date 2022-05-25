@@ -286,8 +286,7 @@ class Time {
      *
      */
     public update(options: Time.TimeOptions): void {
-        const useUTC = pick(options && options.useUTC, true) as boolean,
-            time = this;
+        const useUTC = pick(options && options.useUTC, true);
 
         this.options = options = merge(true, this.options || {}, options);
 
@@ -295,7 +294,7 @@ class Time {
         this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
-        this.timezoneOffset = (useUTC && options.timezoneOffset) as any;
+        this.timezoneOffset = (useUTC && options.timezoneOffset) || void 0;
 
         this.getTimezoneOffset = this.timezoneOffsetFunction();
 

@@ -15,7 +15,6 @@
  * */
 import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type { MultiLineString, Polygon } from './GeoJSON';
 
 /* *

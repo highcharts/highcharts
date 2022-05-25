@@ -21,7 +21,6 @@ import type {
     CSSObject
 } from '../Core/Renderer/CSSObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
-import type NavigationOptions from '../Extensions/Exporting/NavigationOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';

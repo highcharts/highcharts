@@ -1573,8 +1573,6 @@ Scatter.prototype.markerClusterAlgorithms = {
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
         let series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
             pointMaxDistance = options.processedDistance ||
                 clusterDefaultOptions.layoutAlgorithm.gridSize,
             group: (Record<string, Highcharts.MarkerClusterSplitDataArray>) = {},
@@ -2099,8 +2097,6 @@ Scatter.prototype.generatePoints = function (): void {
     const series = this,
         chart = series.chart,
         mapView = chart.mapView,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
         xData = series.xData,
         yData = series.yData,
         clusterOptions = series.options.cluster,
