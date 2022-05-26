@@ -320,7 +320,7 @@ addEvent(StackItem, 'afterRender', function (): void {
             );
 
         } else if (stackShadow && this.shadowGroup) {
-            stackShadow.attr({
+            stackShadow.animate({
                 x,
                 y,
                 width,
@@ -345,6 +345,13 @@ addEvent(StackItem, 'afterRender', function (): void {
                         color: '#dedede'
                     }
                 }
+            });
+
+            this.shadowGroup.animate({
+                translateX: chart.inverted ?
+                    this.yAxis.pos : this.xAxis.pos,
+                translateY: chart.inverted ?
+                    this.xAxis.pos : this.yAxis.pos
             });
 
             invertShadowGroup(
