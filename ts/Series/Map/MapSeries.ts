@@ -1543,13 +1543,15 @@ export default MapSeries;
  */
 
 /**
+ * @typedef {"LineString"|"Polygon"|"MultiLineString"|"MultiPolygon"} Highcharts.SeriesMapDataGeometryTypeValue
+ */
+/**
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
  *
- * @type      {string}
+ * @type      {Highcharts.SeriesMapDataGeometryTypeValue}
  * @since 9.3.0
  * @product   highmaps
- * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
  * @apioption series.map.data.geometry.type
  */
 
