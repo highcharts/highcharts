@@ -651,7 +651,7 @@ const ChartDefaults: ChartOptions = {
          * @since 2.2
          */
         theme: {
-            /** 
+            /**
              * @internal
              * @deprecated
              */
@@ -1157,7 +1157,7 @@ const ChartDefaults: ChartOptions = {
                  */
                 y: 10
             }
-        },
+        }
 
     },
     /**
