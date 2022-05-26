@@ -621,8 +621,12 @@ class BubbleSeries extends ScatterSeries {
                     height: 2 * radius
                 };
             } else { // below zThreshold
-                // #1691
-                point.shapeArgs = point.plotY = point.dlBox = void 0;
+                point.shapeArgs = point.dlBox = void 0; // #1691
+                point.plotY = 0; // #17281
+                point.marker = {
+                    width: 0,
+                    height: 0
+                };
             }
         }
 
