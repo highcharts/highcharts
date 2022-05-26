@@ -7,4 +7,5 @@ tags:
   - Highcharts Maps demo
 categories:
   - Series types
+use_png_thumbnail: true
 ...

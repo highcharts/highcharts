@@ -1419,8 +1419,12 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let mockPointOpts = annotation.options.shapes[0]
-                                .point as MockPointOptions,
+                        const shapes = annotation.options.shapes;
+
+                        let mockPointOpts = (
+                                (shapes && shapes[0] && shapes[0].point) ||
+                                {}
+                            ) as MockPointOptions,
                             distance;
 
                         if (
@@ -1616,8 +1620,12 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        let points: Array<MockPointOptions> =
-                                annotation.options.shapes[0].points as any,
+                        const shapes = annotation.options.shapes;
+
+                        let points = (
+                                (shapes && shapes[0] && shapes[0].points) ||
+                                []
+                            ) as Array<MockPointOptions>,
                             coords = this.chart.pointer.getCoordinates(e),
                             coordsX = this.utils.getAssignedAxis(coords.xAxis),
                             coordsY = this.utils.getAssignedAxis(coords.yAxis),

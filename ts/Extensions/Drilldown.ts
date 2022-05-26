@@ -1073,7 +1073,9 @@ Chart.prototype.drillUp = function (): void {
 
     this.redraw();
 
-    (this.ddDupes as any).length = []; // #3315
+    if (this.ddDupes) {
+        this.ddDupes.length = 0; // #3315
+    } // #8324
 
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
@@ -1293,7 +1295,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1352,7 +1354,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1386,7 +1388,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     });
 
     if (removeGroup) {
-        delete this.group;
+        delete (this as any).group;
     }
 
     this.points.forEach(function (point: Point): void {
@@ -1473,7 +1475,7 @@ if (PieSeries) {
                     }
 
                     // Reset to prototype
-                    delete this.animate;
+                    delete (this as Partial<typeof this>).animate;
                 }
             }
         }

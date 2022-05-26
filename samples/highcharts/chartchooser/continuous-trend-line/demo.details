@@ -1,0 +1,6 @@
+---
+ name: "Spline trend continuous data: NASA Budget as a % of Fed Budget"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

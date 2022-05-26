@@ -611,29 +611,33 @@ class SVGRenderer implements SVGRendererLike {
     }
 
     /**
-     * Returns white for dark colors and black for bright colors.
+     * Returns white for dark colors and black for bright colors, based on W3C's
+     * definition of [Relative luminance](
+     * https://www.w3.org/WAI/GL/wiki/Relative_luminance).
      *
      * @function Highcharts.SVGRenderer#getContrast
      *
-     * @param {Highcharts.ColorString} rgba
+     * @param {Highcharts.ColorString} color
      * The color to get the contrast for.
      *
      * @return {Highcharts.ColorString}
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
-    public getContrast(rgba: ColorString): ColorString {
-        rgba = Color.parse(rgba).rgba as any;
+    public getContrast(color: ColorString): ColorString {
+        // #6216, #17273
+        const rgba = Color.parse(color).rgba
+            .map((b8): number => {
+                const c = b8 / 255;
+                return c <= 0.03928 ?
+                    c / 12.92 :
+                    Math.pow((c + 0.055) / 1.055, 2.4);
+            });
 
-        // The threshold may be discussed. Here's a proposal for adding
-        // different weight to the color channels (#6216)
-        (rgba[0] as any) *= 1; // red
-        (rgba[1] as any) *= 1.2; // green
-        (rgba[2] as any) *= 0.5; // blue
+        // Relative luminance
+        const l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
 
-        return (rgba[0] as any) + (rgba[1] as any) + (rgba[2] as any) >
-            1.8 * 255 ?
-            '#000000' :
-            '#FFFFFF';
+        // Use white or black based on which provides more contrast
+        return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? '#FFFFFF' : '#000000';
     }
 
     /**

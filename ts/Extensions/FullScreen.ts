@@ -427,7 +427,7 @@ addEvent(Chart, 'beforeRender', function (): void {
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenfullscreenCloseCallbackFunction}
- * @since     next
+ * @since 10.1.0
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
  * @apioption chart.events.fullscreenClose
@@ -441,7 +441,7 @@ addEvent(Chart, 'beforeRender', function (): void {
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenfullscreenOpenCallbackFunction}
- * @since     next
+ * @since 10.1.0
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
  * @apioption chart.events.fullscreenOpen

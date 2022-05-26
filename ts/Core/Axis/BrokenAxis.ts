@@ -727,8 +727,8 @@ namespace BrokenAxis {
 
             if (!hasBreaks && axis.val2lin === Additions.val2Lin) {
                 // Revert to prototype functions
-                delete axis.val2lin;
-                delete axis.lin2val;
+                delete (axis as Partial<typeof axis>).val2lin;
+                delete (axis as Partial<typeof axis>).lin2val;
             }
 
             if (hasBreaks) {

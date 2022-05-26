@@ -283,7 +283,17 @@ const Options: DeepPartial<OptionsType> = {
      */
     accessibility: {
         /**
-         * Enable accessibility functionality for the chart.
+         * Enable accessibility functionality for the chart. For more
+         * information on how to include these features, and why this is
+         * recommended, see [Highcharts Accessibility](https://www.highcharts.com/docs/accessibility/accessibility-module).
+         *
+         * Highcharts will by default emit a warning to the console if
+         * the [accessibility module](https://code.highcharts.com/modules/accessibility.js)
+         * is not loaded. Setting this option to `false` will override
+         * and silence the warning.
+         *
+         * Once the module is loaded, setting this option to `false`
+         * will disable the module for this chart.
          *
          * @since 5.0.0
          */
@@ -441,7 +451,7 @@ const Options: DeepPartial<OptionsType> = {
              *  Accessible low-medium-high chart
              *
              * @type      {string}
-             * @since next
+             * @since 10.1.0
              */
             descriptionFormat:
                 '{seriesDescription}{authorDescription}{axisDescription}',
@@ -579,7 +589,7 @@ const Options: DeepPartial<OptionsType> = {
              *         Accessible map with null points
              *
              * @type      {boolean}
-             * @since next
+             * @since 10.1.0
              */
             describeNull: true
         },
@@ -852,7 +862,7 @@ const Options: DeepPartial<OptionsType> = {
                  * you start at the last focused point.
                  *
                  * @type  {boolean}
-                 * @since next
+                 * @since 10.1.0
                  */
                 rememberPointFocus: false
             }

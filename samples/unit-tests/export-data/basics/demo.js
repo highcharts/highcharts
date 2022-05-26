@@ -379,9 +379,9 @@ QUnit.test('Pie chart, multiple', function (assert) {
 
     var csv = [
         '"Category","Categories","Subcategories"',
-        '"Animals",2',
+        '"Animals",2,',
         '"Cats",,1',
-        '"Plants",2',
+        '"Plants",2,',
         '"Dogs",,1',
         '"Potatoes",,1',
         '"Trees",,1'
@@ -1103,8 +1103,8 @@ QUnit.test('Point name (#13293)', function (assert) {
         }),
         csv =
             '"Category","Series 1 (x)","Series 1 (y)","Series 2"\n' +
-            '"Point2",1,9\n' +
-            '"Point1",2,6\n' +
+            '"Point2",1,9,\n' +
+            '"Point1",2,6,\n' +
             '20,,,9\n' +
             '30,,,6';
 
@@ -1154,8 +1154,8 @@ QUnit.test('Point name with category (#13293)', function (assert) {
         }),
         csv =
             '"Category","Series 1","Series 2"\n' +
-            '"Point2",9\n' +
-            '"Point1",6\n' +
+            '"Point2",9,\n' +
+            '"Point1",6,\n' +
             '20,,9\n' +
             '30,,6';
 

@@ -9,4 +9,5 @@ tags:
 categories:
   - General:
       priority: 6
+use_png_thumbnail: true
 ...
