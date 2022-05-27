@@ -39,7 +39,7 @@ const {
 } = SeriesRegistry;
 
 import U from '../../Core/Utilities.js';
-const { merge, pick, addEvent, isArray } = U;
+const { merge, pick, relativeLength, isArray } = U;
 
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -344,18 +344,22 @@ class TreegraphSeries extends TreemapSeries {
                     level.marker,
                     point.options.marker
                 ),
+                radius = relativeLength(
+                    markerOptions.radius || 0,
+                    Math.min(plotSizeX, plotSizeY)
+                ),
                 symbol = markerOptions.symbol,
                 nodeSizeY = symbol === 'circle' ?
-                    pick(markerOptions.radius, 0) * 2 :
+                    radius * 2 :
                     pick(
-                        markerOptions.height,
-                        ((markerOptions.radius || 0) * 2)
+                        relativeLength(markerOptions.height || 0, plotSizeY),
+                        radius * 2
                     ),
                 nodeSizeX = symbol === 'circle' ?
-                    pick(markerOptions.radius, 0) * 2 :
+                    radius * 2 :
                     pick(
-                        markerOptions.width,
-                        ((markerOptions.radius || 0) * 2)
+                        relativeLength(markerOptions.width || 0, plotSizeX),
+                        radius * 2
                     );
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
@@ -512,16 +516,15 @@ class TreegraphSeries extends TreemapSeries {
                 link.options.link && link.options.link.type,
                 this.options.link.type
             );
+
         if (fromNode.shapeArgs && toNode.shapeArgs) {
 
-            let x1 = Math.floor(
-                    (fromNode.shapeArgs.x || 0) +
-                    (fromNode.shapeArgs.width || 0)
-                ) + crisp,
+            const fromNodeWidth = (fromNode.shapeArgs.width || 0);
+            let x1 = Math.floor((fromNode.shapeArgs.x || 0) + fromNodeWidth) +
+                crisp,
                 y1 = Math.floor(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2
-                ) + crisp,
+                    (fromNode.shapeArgs.height || 0) / 2) + crisp,
                 x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp,
                 y2 = Math.floor(
                     (toNode.shapeArgs.y || 0) +
@@ -531,7 +534,7 @@ class TreegraphSeries extends TreemapSeries {
                 inverted = this.chart.inverted;
 
             if (inverted) {
-                x1 -= (fromNode.shapeArgs.width || 0);
+                x1 -= fromNodeWidth;
                 x2 += (toNode.shapeArgs.width || 0);
             }
             xMiddle = Math.floor((x2 + x1) / 2) + crisp;
@@ -551,36 +554,24 @@ class TreegraphSeries extends TreemapSeries {
                     ]
                 };
             } else if (type === 'curved') {
-                if (diff === 1) {
-                    const offset =
-                        Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
-                    link.shapeArgs = {
-                        d: [
-                            ['M', x1, y1],
-                            ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
-                        ]
-                    };
-                } else {
-                    const fullWidth = Math.abs(x2 - x1);
-                    const width =
-                        fullWidth / diff - (toNode.shapeArgs.width || 0);
-                    const offset = width * factor * (inverted ? -1 : 1);
-                    link.shapeArgs = {
-                        d: [
-                            ['M', x1, y1],
-                            [
-                                'C',
-                                x1 + offset,
-                                y1,
-                                x1 + width - offset,
-                                y2,
-                                x1 + width,
-                                y2
-                            ],
-                            ['L', x2, y2]
-                        ]
-                    };
-                }
+                const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
+                    width = (fullWidth / diff) - fromNodeWidth,
+                    offset = width * factor * (inverted ? -1 : 1);
+                link.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        [
+                            'C',
+                            x1 + offset,
+                            y1,
+                            x1 + width - offset,
+                            y2,
+                            x1 + width,
+                            y2
+                        ],
+                        ['L', x2, y2]
+                    ]
+                };
             } else {
                 link.shapeArgs = {
                     d: PathUtilities.curvedPath(

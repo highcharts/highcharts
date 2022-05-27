@@ -6,7 +6,7 @@ Highcharts.chart('container', {
         {
             reversed: true,
             marker: {
-                radius: 30
+                radius: 60
             },
             type: 'treegraph',
             keys: ['id', 'parent'],
@@ -15,7 +15,7 @@ Highcharts.chart('container', {
                 ['B', 'A'],
                 ['C', 'B'],
                 ['E', 'B'],
-                ['D', 'A']
+                ['Dslkdfjslfjsldfjsldfjsldkfjsdlfj', 'A']
             ]
         }
     ]

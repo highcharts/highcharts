@@ -39,10 +39,10 @@ class TreegraphLayout {
         dummyNode.children.push(child);
         dummyNode.parent = parent.id;
         dummyNode.parentNode = parent;
-        dummyNode.point = parent.point;
+        dummyNode.point = child.point;
         dummyNode.level = child.level - gapSize;
         dummyNode.relativeXPosition = child.relativeXPosition;
-        dummyNode.visible = true;
+        dummyNode.visible = child.visible;
         // Then connection from parent to dummyNode.
         parent.children[child.relativeXPosition] = dummyNode;
         child.oldParentNode = parent;
