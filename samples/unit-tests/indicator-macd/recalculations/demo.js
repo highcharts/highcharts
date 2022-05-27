@@ -501,6 +501,25 @@ QUnit.test('After changing the MACD params all points should calculate properly,
     );
 
     assert.strictEqual(
+        chart.series[1].color,
+        Highcharts.getOptions().colors[1],
+        `When colour is not specified, each element (columns) should get it
+        from the colour array.`
+    );
+    assert.strictEqual(
+        chart.series[1].graphsignal.stroke,
+        Highcharts.getOptions().colors[2],
+        `When colour is not specified, each element (signalLine) should get it
+        from the colour array.`
+    );
+    assert.strictEqual(
+        chart.series[1].graphmacd.stroke,
+        Highcharts.getOptions().colors[3],
+        `When colour is not specified, each element (macdLine) should get it
+        from the colour array.`
+    );
+
+    assert.strictEqual(
         seriesPoints[seriesPoints.length - 1].x,
         secondMACCD[secondMACCD.length - 1].x,
         `After changing the short period to 13, the x value of the last MACD
