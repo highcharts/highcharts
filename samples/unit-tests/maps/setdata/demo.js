@@ -805,6 +805,10 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     // Initialize the chart
     const chart = Highcharts.mapChart('container', {
+        accessibility: {
+            enabled: false
+        },
+
         title: {
             text: ''
         },
@@ -846,17 +850,79 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         ]
     });
 
-    data[148].value = 1;
+    const series = chart.series[0],
+        mapView = chart.mapView;
 
-    const mapView = chart.mapView;
+    let centerBeforeUpdate,
+        zoomBeforeUpdate;
+
+    series.setData([{
+        'hc-key': 'us',
+        value: 155
+    }]);
+
+    // Check both updates: "allAreas: true" and back to "allAreas: false"
+    // The view should be changed.
+    for (let i = 0; i < 2; i++) {
+        centerBeforeUpdate = mapView.center;
+        zoomBeforeUpdate = mapView.zoom;
+
+        series.update({
+            allAreas: !series.options.allAreas
+        });
+
+        assert.notDeepEqual(
+            centerBeforeUpdate,
+            mapView.center,
+            `When updating "allAreas: ${series.options.allAreas}", the mapView
+            should fit view (center), #17012.`
+        );
+
+        assert.notEqual(
+            zoomBeforeUpdate,
+            mapView.zoom,
+            `When updating "allAreas: ${series.options.allAreas}", the mapView
+            should fit view (zoom), #17012.`
+        );
+    }
+
+    mapView.update({
+        center: [660, 8054],
+        zoom: -2.4
+    });
+
+    // Check both updates: "allAreas: true" and back to "allAreas: false" with
+    // center and zoom set by a user. The view should not be changed.
+    for (let i = 0; i < 2; i++) {
+        centerBeforeUpdate = mapView.center;
+        zoomBeforeUpdate = mapView.zoom;
+
+        series.update({
+            allAreas: !series.options.allAreas
+        });
+
+        assert.deepEqual(
+            centerBeforeUpdate,
+            mapView.center,
+            `When updating "allAreas: ${series.options.allAreas}" with center
+            set by a user in userOptions, the view shouldn't be changed.`
+        );
+
+        assert.equal(
+            zoomBeforeUpdate,
+            mapView.zoom,
+            `When updating "allAreas: ${series.options.allAreas}" with zoom set
+            by a user in userOptions, the view shouldn't be changed.`
+        );
+    }
+
+    data[148].value = 1;
 
     const before = Object.assign(
         {},
         mapView.center,
         mapView.zoom
     );
-
-    const series = chart.series[0];
 
     series.setData(data);
 
@@ -871,6 +937,12 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         before,
         'The view should not change after updating data values'
     );
+
+
+    mapView.update({
+        center: undefined,
+        zoom: undefined
+    });
 
     let ruPoint = series.points[148];
 

@@ -861,49 +861,42 @@ namespace GridAxis {
                             const units = (gridAxisOptions.units || []);
 
                             let unitIdx: (number|undefined),
-                                count,
-                                unitName;
+                                count = 1,
+                                unitName:
+                                Time.TimeNormalizedObject['unitName'] = 'year';
 
                             for (let i = 0; i < units.length; i++) {
-                                if (
-                                    (units as any)[i][0] ===
-                                    parentInfo.unitName
-                                ) {
+                                const unit = units[i];
+                                if (unit && unit[0] === parentInfo.unitName) {
                                     unitIdx = i;
                                     break;
                                 }
                             }
 
-                            // Get the first allowed count on the next
-                            // unit.
-                            if ((units as any)[(unitIdx as any) + 1]) {
-                                unitName = (units as any)[
-                                    (unitIdx as any) + 1
-                                ][0];
-                                count =
-                                    ((units as any)[
-                                        (unitIdx as any) + 1
-                                    ][1] || [1])[0];
+                            // Get the first allowed count on the next unit.
+                            const unit = (
+                                isNumber(unitIdx) && units[unitIdx + 1]
+                            );
+                            if (unit) {
+                                unitName = unit[0] || 'year';
+                                const counts = unit[1];
+                                count = counts && counts[0] || 1;
 
-                            // In case the base X axis shows years, make
-                            // the secondary axis show ten times the
-                            // years (#11427)
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
                             } else if (parentInfo.unitName === 'year') {
-                                unitName = 'year';
+                                // unitName is 'year'
                                 count = parentInfo.count * 10;
                             }
 
                             const unitRange = timeUnits[unitName];
                             this.tickInterval = unitRange * count;
-                            return this.getTimeTicks(
-                                {
-                                    unitRange: unitRange,
-                                    count: count,
-                                    unitName: unitName
-                                },
+
+                            return this.chart.time.getTimeTicks(
+                                { unitRange, count, unitName },
                                 min,
                                 max,
-                                this.options.startOfWeek as any
+                                this.options.startOfWeek
                             );
                         }
                     };
