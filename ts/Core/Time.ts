@@ -900,53 +900,45 @@ class Time {
                 day: 3
             } as Record<Time.TimeUnit, number>;
 
-        let format: string|undefined,
-            n: Time.TimeUnit|undefined,
+        let n: Time.TimeUnit = 'millisecond',
             // for sub-millisecond data, #4223
-            lastN: Time.TimeUnit = 'millisecond';
+            lastN: Time.TimeUnit = n;
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
-            if (n) {
+            // If the range is exactly one week and we're looking at a
+            // Sunday/Monday, go for the week format
+            if (
+                range === timeUnits.week &&
+                +this.dateFormat('%w', timestamp) === startOfWeek &&
+                dateStr.substr(6) === blank.substr(6)
+            ) {
+                n = 'week';
+                break;
+            }
 
-                // If the range is exactly one week and we're looking at a
-                // Sunday/Monday, go for the week format
-                if (
-                    range === timeUnits.week &&
-                    +this.dateFormat('%w', timestamp) === startOfWeek &&
-                    dateStr.substr(6) === blank.substr(6)
-                ) {
-                    n = 'week';
-                    break;
-                }
+            // The first format that is too great for the range
+            if (timeUnits[n] > range) {
+                n = lastN;
+                break;
+            }
 
-                // The first format that is too great for the range
-                if (timeUnits[n] > range) {
-                    n = lastN;
-                    break;
-                }
+            // If the point is placed every day at 23:59, we need to show
+            // the minutes as well. #2637.
+            if (
+                strpos[n] &&
+                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
+            ) {
+                break;
+            }
 
-                // If the point is placed every day at 23:59, we need to show
-                // the minutes as well. #2637.
-                if (
-                    strpos[n] &&
-                    dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
-                ) {
-                    break;
-                }
-
-                // Weeks are outside the hierarchy, only apply them on
-                // Mondays/Sundays like in the first condition
-                if (n !== 'week') {
-                    lastN = n;
-                }
+            // Weeks are outside the hierarchy, only apply them on
+            // Mondays/Sundays like in the first condition
+            if (n !== 'week') {
+                lastN = n;
             }
         }
 
-        if (n) {
-            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
-        }
-
-        return format;
+        return this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
     }
 }
 
