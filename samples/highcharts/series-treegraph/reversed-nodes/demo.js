@@ -1,4 +1,8 @@
 Highcharts.chart('container', {
+    chart: {
+        inverted: true,
+        height: 600
+    },
     title: {
         text: 'Treegraph series with reversed order of nodes.'
     },
@@ -6,16 +10,16 @@ Highcharts.chart('container', {
         {
             reversed: true,
             marker: {
-                radius: 60
+                radius: 20
             },
             type: 'treegraph',
-            keys: ['id', 'parent'],
+            keys: ['id', 'parent', 'level'],
             data: [
                 ['A'],
                 ['B', 'A'],
                 ['C', 'B'],
                 ['E', 'B'],
-                ['Dslkdfjslfjsldfjsldfjsldkfjsdlfj', 'A']
+                ['F', 'A', 4]
             ]
         }
     ]

@@ -539,7 +539,6 @@ class TreegraphSeries extends TreemapSeries {
             }
             xMiddle = Math.floor((x2 + x1) / 2) + crisp;
             const diff = toNode.node.xPosition - fromNode.node.xPosition;
-
             // Put the link on the side of the node when an offset is given. HR
             // node in the main demo.
 
@@ -564,9 +563,9 @@ class TreegraphSeries extends TreemapSeries {
                             'C',
                             x1 + offset,
                             y1,
-                            x1 + width - offset,
+                            x1 - offset + width * (inverted ? -1 : 1),
                             y2,
-                            x1 + width,
+                            x1 + width * (inverted ? -1 : 1),
                             y2
                         ],
                         ['L', x2, y2]
