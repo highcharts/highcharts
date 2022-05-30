@@ -542,17 +542,17 @@ class TreegraphSeries extends TreemapSeries {
                 x1 -= fromNodeWidth;
                 x2 += (toNode.shapeArgs.width || 0);
             }
-            xMiddle = Math.floor((x2 + x1) / 2) + crisp;
             const diff = toNode.node.xPosition - fromNode.node.xPosition;
             // Put the link on the side of the node when an offset is given. HR
             // node in the main demo.
 
-            link.plotX = xMiddle;
-            link.plotY = (y1 + y2) / 2;
             link.shapeType = 'path';
             const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
                 width = (fullWidth / diff) - fromNodeWidth,
                 offset = width * factor * (inverted ? -1 : 1);
+            xMiddle = Math.floor((x2 + x1) / 2) + crisp;
+            link.plotX = xMiddle;
+            link.plotY = y2;
             if (type === 'straight') {
                 link.shapeArgs = {
                     d: [
@@ -582,8 +582,8 @@ class TreegraphSeries extends TreemapSeries {
                     d: PathUtilities.curvedPath(
                         [
                             ['M', x1, y1],
-                            ['L', xMiddle, y1],
-                            ['L', xMiddle, y2],
+                            ['L', x1 + width * (inverted ? -0.5 : 0.5), y1],
+                            ['L', x1 + width * (inverted ? -0.5 : 0.5), y2],
                             ['L', x2, y2]
                         ],
                         this.options.link.radius
