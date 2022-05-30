@@ -207,7 +207,12 @@ class TreegraphSeries extends TreemapSeries {
                  * Width of the button.
                  * @default 3
                  */
-                width: 10
+                width: 10,
+                /**
+                 * The symbol of the collapse button.
+                 */
+                shape: 'circle'
+
             },
             /**
              * @extends plotOptions.series.tooltip
@@ -545,17 +550,18 @@ class TreegraphSeries extends TreemapSeries {
             link.plotX = xMiddle;
             link.plotY = (y1 + y2) / 2;
             link.shapeType = 'path';
+            const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
+                width = (fullWidth / diff) - fromNodeWidth,
+                offset = width * factor * (inverted ? -1 : 1);
             if (type === 'straight') {
                 link.shapeArgs = {
                     d: [
                         ['M', x1, y1],
+                        ['L', x1 + width * (inverted ? -1 : 1), y2],
                         ['L', x2, y2]
                     ]
                 };
             } else if (type === 'curved') {
-                const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
-                    width = (fullWidth / diff) - fromNodeWidth,
-                    offset = width * factor * (inverted ? -1 : 1);
                 link.shapeArgs = {
                     d: [
                         ['M', x1, y1],

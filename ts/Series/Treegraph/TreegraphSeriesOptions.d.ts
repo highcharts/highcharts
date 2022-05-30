@@ -21,6 +21,7 @@ import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
 import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -32,6 +33,7 @@ import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 export type TreegraphLayoutTypes = 'Walker';
 export interface CollapseButtonOptions {
     onlyOnHover: boolean;
+    shape: SymbolKey;
     padding: number;
     x: number;
     y: number;

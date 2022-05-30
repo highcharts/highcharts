@@ -75,7 +75,7 @@ class TreegraphPoint extends TreemapPoint {
                 levelOptions.collapseButton,
                 point.series.options.collapseButton
             ) as CollapseButtonOptions,
-            { width, height, padding } = btnOptions,
+            { width, height, padding, shape } = btnOptions,
             chart = this.series.chart;
         if (!point.shapeArgs) {
             return;
@@ -92,13 +92,16 @@ class TreegraphPoint extends TreemapPoint {
                     point.collapsed ? '+' : '-',
                     x,
                     y,
-                    'circle'
+                    shape
                 )
                 .attr({
                     height: height - 2 * padding,
                     width: width - 2 * padding,
                     padding: padding,
                     fill: Palette.neutralColor20,
+                    rotation: chart.inverted ? 90 : 0,
+                    rotationOriginX: width / 2,
+                    rotationOriginY: height / 2,
                     stroke: Palette.neutralColor80,
                     'stroke-width': 1,
                     'text-align': 'center',
@@ -124,6 +127,8 @@ class TreegraphPoint extends TreemapPoint {
                     .attr({
                         text: point.collapsed ? '+' : '-',
                         rotation: chart.inverted ? 90 : 0,
+                        rotationOriginX: width / 2,
+                        rotationOriginY: height / 2,
                         visibility:
                             point.visible &&
                             (!btnOptions.onlyOnHover ||
@@ -174,7 +179,7 @@ class TreegraphPoint extends TreemapPoint {
             x:
                 x +
                 btnOptions.x +
-                (inverted ? btnWidth * -0.7 : width + btnWidth * -0.3),
+                (inverted ? -btnHeight * 0.3 : width + btnWidth * -0.3),
             y: y + height / 2 - btnHeight / 2 + btnOptions.y
         };
     }
