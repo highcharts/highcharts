@@ -62,12 +62,13 @@ Highcharts.chart('container', {
             style: {
                 fontWeight: 'normal',
                 overflow: 'hidden',
-                //textOverflow: '"."' is nice when useHTML
+                // textOverflow: '"."' is nice when useHTML
                 whiteSpace: 'nowrap',
                 textAlign: 'center',
                 fontSize: forExport ? '14px' : undefined,
                 textOutline: 'none'
             },
+            rotationMode: 'circular',
             padding: 3
         },
         point: {
@@ -164,10 +165,7 @@ Highcharts.chart('container', {
         headerFormat: '',
         pointFormat: '{point.label}',
         useHTML: false,
-        outside: true,
-        _style: {
-            pointerEvents: 'auto'
-        }
+        outside: true
     },
     exporting: {
         allowHTML: true
