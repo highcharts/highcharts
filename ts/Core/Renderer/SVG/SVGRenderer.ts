@@ -46,6 +46,7 @@ const {
     isMS,
     isWebKit,
     noop,
+    CUSTOM_SVG_NS,
     SVG_NS,
     symbolSizes,
     win
@@ -293,6 +294,9 @@ class SVGRenderer implements SVGRendererLike {
         if (container.innerHTML.indexOf('xmlns') === -1) {
             attr(element, 'xmlns', this.SVG_NS);
         }
+
+        // Add namespace for custom attributes
+        attr(element, 'xmlns:chart', this.CUSTOM_SVG_NS);
 
         // object properties
         renderer.isSVG = true;
@@ -2108,6 +2112,7 @@ class SVGRenderer implements SVGRendererLike {
 
 interface SVGRenderer extends SVGRendererLike {
     Element: typeof SVGElement;
+    CUSTOM_SVG_NS: string;
     SVG_NS: string;
     escapes: Record<string, string>;
     symbols: typeof Symbols;
@@ -2124,6 +2129,7 @@ extend(SVGRenderer.prototype, {
      */
     Element: SVGElement,
 
+    CUSTOM_SVG_NS,
     SVG_NS,
 
     /**

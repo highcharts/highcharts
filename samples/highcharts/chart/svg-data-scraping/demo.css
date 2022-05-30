@@ -1,0 +1,11 @@
+#container {
+    height: 400px;
+    max-width: 800px;
+}
+
+#output {
+    background-color: #f0f0f0;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 800px;
+}

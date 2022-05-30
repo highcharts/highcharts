@@ -60,6 +60,7 @@ import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
+    CUSTOM_SVG_NS,
     hasTouch,
     svg,
     win
@@ -2640,7 +2641,7 @@ class Series {
             );
         let i,
             point,
-            graphic,
+            graphic: SVGElement|undefined,
             verb,
             pointMarkerOptions,
             hasPointMarker,
@@ -3477,6 +3478,8 @@ class Series {
             }, animDuration || 0);
         }
 
+        series.setDataScrapingAttrs();
+
         // Means data is in accordance with what you see
         series.isDirty = false;
 
@@ -3521,6 +3524,55 @@ class Series {
         series.render();
         if (wasDirty) { // #3868, #3945
             delete this.kdTree;
+        }
+    }
+
+    /**
+     * Set attributes for data scraping from the SVG elements.
+     * @private
+     */
+    public setDataScrapingAttrs(): void {
+        const series = this,
+            points = series.points || [],
+            seriesParentEl = points[0] && points[0].graphic &&
+                points[0].graphic.element &&
+                points[0].graphic.element.parentNode ||
+                series.markerGroup && series.markerGroup.element ||
+                series.group && series.group.element,
+            setDataScrapingAttr = (attr: string, val: unknown): void =>
+                seriesParentEl && seriesParentEl.setAttributeNS(
+                    CUSTOM_SVG_NS, 'chart:' + attr, val as string
+                ),
+            keys = series.pointArrayMap || ['y'];
+
+        setDataScrapingAttr('seriesname', series.name);
+        setDataScrapingAttr('seriestype', series.type);
+        setDataScrapingAttr('dataformat', `[x,${keys.join(',')}]`);
+        setDataScrapingAttr('pointsinseries',
+            series.data && series.data.length);
+
+        if (points && points.length < 1000) {
+            const keysLen = keys.length;
+            let i = series.points.length,
+                dataScrapingRes;
+            while (i--) {
+                const p = points[i],
+                    el = p.graphic && p.graphic.element;
+                if (el) {
+                    if (p.isNull) {
+                        el.setAttributeNS(CUSTOM_SVG_NS,
+                            'chart:pointisnull', 'true');
+                    }
+                    const xDesc = p.name || p.x;
+                    dataScrapingRes = `[${xDesc}`;
+                    for (let j = 0; j < keysLen; ++j) {
+                        dataScrapingRes += `,${(p as any)[keys[j]] as string}`;
+                    }
+                    dataScrapingRes += ']';
+                    el.setAttributeNS(CUSTOM_SVG_NS,
+                        'chart:pointdata', dataScrapingRes);
+                }
+            }
         }
     }
 

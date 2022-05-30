@@ -44,7 +44,10 @@ const {
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const {
+    CUSTOM_SVG_NS,
+    doc
+} = H;
 import HU from '../Utils/HTMLUtilities.js';
 const {
     addClass,
@@ -490,10 +493,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 chart.options.sonification &&
                 chart.options.sonification.enabled
             ),
-            sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
-                chart.index,
-            dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
-                chart.index,
+            sonifyButtonId = `highcharts-a11y-sonify-data-btn-${chart.index}`,
+            dataTableButtonId = `hc-linkto-highcharts-data-table-${chart.index}`,
             annotationsList = getAnnotationsInfoHTML(
                 chart as Highcharts.AnnotationChart
             ),
@@ -517,6 +518,12 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 annotationsList: annotationsList
             },
             formattedString = A11yI18n.i18nFormat(format, context, chart);
+
+        if (context.chartLongdesc) {
+            chart.renderer.box.setAttributeNS(
+                CUSTOM_SVG_NS, 'chart:alt', context.chartLongdesc
+            );
+        }
 
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;

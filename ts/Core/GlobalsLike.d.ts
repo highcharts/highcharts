@@ -34,6 +34,7 @@ import type Time from './Time';
  */
 export interface GlobalsLike {
     readonly Obj: ObjectConstructor;
+    readonly CUSTOM_SVG_NS: string;
     readonly SVG_NS: string;
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;

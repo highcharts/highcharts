@@ -114,6 +114,7 @@ namespace Globals {
      * */
 
     export const SVG_NS = 'http://www.w3.org/2000/svg',
+        CUSTOM_SVG_NS = 'https://highcharts.com/xmlnamespaces/chart',
         product = 'Highcharts',
         version = '@product.version@',
         win = (

@@ -55,7 +55,10 @@ const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
-const { deg2rad } = H;
+const {
+    CUSTOM_SVG_NS,
+    deg2rad
+} = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
@@ -3985,6 +3988,21 @@ class Axis {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
+
+
+        // Set SVG attributes for data scraping
+        const setDataScrapingAttr = (attr: string, val: unknown): void =>
+                axis.axisGroup && axis.axisGroup.element.setAttributeNS(
+                    CUSTOM_SVG_NS, 'chart:' + attr, val as string),
+            extremes = log ? axis.getExtremes() : axis;
+        setDataScrapingAttr('axisdimension', axis.coll);
+        setDataScrapingAttr('axistype', options.type);
+        setDataScrapingAttr('axistitle',
+            options.title && options.title.text || null);
+        setDataScrapingAttr('axisvisualmax', extremes.max);
+        setDataScrapingAttr('axisvisualmin', extremes.min);
+        setDataScrapingAttr('axisdatamax', axis.dataMax);
+        setDataScrapingAttr('axisdatamin', axis.dataMin);
 
         // Record old scaling for updating/animation
         axis.old = {

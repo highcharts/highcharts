@@ -66,6 +66,7 @@ const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
 const {
     charts,
+    CUSTOM_SVG_NS,
     doc,
     marginNames,
     svg,
@@ -1214,6 +1215,11 @@ class Chart {
             if (!this.styledMode) {
                 elem.css((options as any).style);
             }
+
+            // Handle data scraping attrs
+            elem.element.setAttributeNS(
+                CUSTOM_SVG_NS, 'chart:' + name, options.text || ''
+            );
 
             /**
              * The chart title. The title has an `update` method that allows
