@@ -19,10 +19,10 @@ Highcharts.chart('container', {
         treegraph: {
             marker: {
                 symbol: 'rect',
-                height: 70,
-                width: 44,
+                height: '10%',
+                width: '6%',
                 fillColor: markerColor,
-                radius: 30
+                radius: '5%'
             },
 
             link: {
@@ -142,7 +142,7 @@ Highcharts.chart('container', {
                     },
                     marker: {
                         lineWidth: 3,
-                        height: 80,
+                        height: '14%',
                         fillColor: expeditionColor
                     }
                 },
