@@ -41,7 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.10",
     "@babel/preset-env": "^7.17.10",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.30",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.31",
     "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.1",
     "@octokit/rest": "^18.12.0",
     "@types/jquery": "^3.5.14",
