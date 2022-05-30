@@ -112,6 +112,7 @@ class TreegraphSeries extends TreemapSeries {
              * @default false
              * @product highcharts
              *
+             * @sample highcharts/series-treegraph/reversed-nodes
              *         Treegraph series with reversed nodes.
              */
             reversed: false,
