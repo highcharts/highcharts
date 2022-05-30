@@ -833,6 +833,11 @@ class SVGRenderer implements SVGRendererLike {
                 .css(extend({ cursor: 'default' }, normalStyle));
         }
 
+        // Restore states options #17336.
+        if (theme) {
+            theme.states = states;
+        }
+
         return label
             .on('touchstart', (e: Event): void => e.stopPropagation())
             .on('click', function (e: Event): void {
