@@ -1253,7 +1253,8 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
             chartX = (event as any).chartX,
             fullCircle = Math.PI * 2,
             startAngleRad = chart.hoverPane.axis.startAngleRad,
-            endAngleRad = chart.hoverPane.axis.endAngleRad;
+            endAngleRad = chart.hoverPane.axis.endAngleRad,
+            linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
 
         let attrs: SVGAttributes = {};
 
@@ -1296,8 +1297,92 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
                 }
             }
 
-            attrs.start = Math.max(startAngle + startAngleRad, startAngleRad);
-            attrs.end = Math.min(endAngle + startAngleRad, endAngleRad);
+            const start = attrs.start =
+                Math.max(startAngle + startAngleRad, startAngleRad),
+                end = attrs.end =
+                    Math.min(endAngle + startAngleRad, endAngleRad);
+
+            // Adjust the selection shape for polygon grid lines
+            if (
+                (linearAxis as any).options.gridLineInterpolation === 'polygon'
+            ) {
+
+                const radialAxis = chart.hoverPane.axis,
+                    tickInterval = radialAxis.tickInterval,
+                    min = start - radialAxis.startAngleRad + radialAxis.pos,
+                    max = end - start,
+                    pathStart = radialAxis.toValue(min),
+                    pathEnd = radialAxis.toValue(min + max),
+                    ticks = radialAxis.tickPositions;
+
+                let path = (linearAxis as any).getPlotLinePath({
+                        value: linearAxis.max
+                    }),
+                    lastTick = find(ticks, (tick):boolean => tick >= pathEnd),
+                    firstTick = find(
+                        [...ticks].reverse(),
+                        (tick):boolean => tick <= pathStart
+                    );
+
+                if (!defined(lastTick)) {
+                    lastTick = ticks[ticks.length - 1];
+                }
+
+                if (!defined(firstTick)) {
+                    firstTick = ticks[0];
+                    lastTick += tickInterval;
+                    path[0][0] = 'L';
+                    // To do: figure out why -3 or -2
+                    path.unshift(path[path.length - 3]);
+                }
+
+                path = path.slice(
+                    ticks.indexOf(firstTick),
+                    ticks.indexOf(lastTick) + 1
+                );
+
+                path[0][0] = 'M';
+
+                let x1 = path[0][1],
+                    y1 = path[0][2],
+                    x2 = path[1][1],
+                    y2 = path[1][2];
+
+                let scale = (Math.abs(pathStart) % tickInterval) / tickInterval;
+
+                // For negative numbers
+                if (pathStart < 0) {
+                    scale = 1 - scale;
+                }
+
+                let xValue = x1 - scale * (x1 - x2),
+                    yValue = y1 - scale * (y1 - y2);
+
+                x1 = path[path.length - 1][1];
+                y1 = path[path.length - 1][2];
+                x2 = path[path.length - 2][1];
+                y2 = path[path.length - 2][2];
+
+                scale = (tickInterval - (Math.abs(pathEnd) % tickInterval)) /
+                    tickInterval;
+
+                // For negative numbers or and scale should never reach 1
+                if (pathEnd < 0 || scale === 1) {
+                    scale = 1 - scale;
+                }
+
+                path[0] = ['M', xValue, yValue];
+
+                xValue = x1 - scale * (x1 - x2);
+                yValue = y1 - scale * (y1 - y2);
+                path[path.length - 1] = ['L', xValue, yValue];
+
+                path.push([
+                    'L', center[0] + chart.plotLeft,
+                    chart.plotTop + center[1]
+                ]);
+                attrs.d = path;
+            }
         }
 
         // Adjust the height of the selection marker
