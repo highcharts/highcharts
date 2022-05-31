@@ -8,6 +8,9 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Core/Axis/ColorAxis.js';
-import '../../Mixins/ColorMapSeries.js';
+import Highcharts from '../../Core/Globals.js';
+import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
 import '../../Series/Heatmap/HeatmapSeries.js';
+const G: AnyRecord = Highcharts;
+G.ColorAxis = ColorAxis;
+ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);

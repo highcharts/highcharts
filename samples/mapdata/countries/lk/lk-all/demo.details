@@ -1,5 +1,5 @@
 ---
- name: Sri Lanka - Highmaps
- description: Highmaps demo
+ name: Sri Lanka - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

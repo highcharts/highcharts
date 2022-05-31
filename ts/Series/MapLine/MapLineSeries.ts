@@ -98,12 +98,8 @@ class MapLineSeries extends MapSeries {
 
     /**
      * Get presentational attributes
-     *
      * @private
      * @function Highcharts.seriesTypes.mapline#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
      */
     public pointAttribs(
         point: MapLinePoint,
@@ -128,7 +124,7 @@ class MapLineSeries extends MapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -230,8 +226,27 @@ export default MapLineSeries;
  *  ```
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @extends   series.map.data
+ * @excluding drilldown
  * @product   highmaps
  * @apioption series.mapline.data
+ */
+
+/**
+ * Pixel width of the mapline line.
+ *
+ * @type      {number}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.mapline.states.hover.lineWidth
+ */
+
+/**
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @excluding borderWidth
+ * @apioption plotOptions.mapline.states.hover
  */
 
 ''; // adds doclets above to transpiled file

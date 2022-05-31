@@ -1,0 +1,6 @@
+---
+ name: "Scatter plot relationship (Vitamin D in preventing COVID-19 infection with a trend line)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

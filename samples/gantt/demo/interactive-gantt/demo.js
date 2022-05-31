@@ -54,6 +54,27 @@ var chart = Highcharts.ganttChart('container', {
         text: 'Drag and drop points to edit'
     },
 
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                return Highcharts.format(
+                    point.milestone ?
+                        '{point.name}, milestone for {point.yCategory} at {point.x:%Y-%m-%d}.' :
+                        '{point.name}, assigned to {point.yCategory} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
+                    { point }
+                );
+            }
+        }
+    },
+
     plotOptions: {
         series: {
             animation: false, // Do not animate dependency connectors
@@ -86,6 +107,9 @@ var chart = Highcharts.ganttChart('container', {
     yAxis: {
         type: 'category',
         categories: ['Tech', 'Marketing', 'Sales'],
+        accessibility: {
+            description: 'Organization departments'
+        },
         min: 0,
         max: 2
     },

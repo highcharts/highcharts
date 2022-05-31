@@ -1,12 +1,14 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	min-width: 310px;
-	height: 400px;
-	max-width: 600px;
-	margin: 0 auto;
+    min-width: 310px;
+    height: 400px;
+    max-width: 600px;
+    margin: 0 auto;
 }
-.highcharts-polygon-series .highcharts-graph, .highcharts-polygon-series .highcharts-point {
-	fill-opacity: 0.3;
-	stroke-width: 1px;
+
+.highcharts-polygon-series .highcharts-graph,
+.highcharts-polygon-series .highcharts-point {
+    fill-opacity: 0.3;
+    stroke-width: 1px;
 }

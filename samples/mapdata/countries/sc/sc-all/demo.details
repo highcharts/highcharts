@@ -1,5 +1,5 @@
 ---
- name: Seychelles - Highmaps
- description: Highmaps demo
+ name: Seychelles - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

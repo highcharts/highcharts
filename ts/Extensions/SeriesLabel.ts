@@ -453,7 +453,7 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
     // correctly detected)
     if (
         (this as SplineSeries).getPointSpline &&
-        node.getPointAtLength &&
+        (node.getPointAtLength) &&
         !onArea &&
         // Not performing well on complex series, node.getPointAtLength is too
         // heavy (#9815)
@@ -818,7 +818,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        const colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none'),
+        const colorClass = (
+                'highcharts-color-' + pick(series.colorIndex, 'none')
+            ),
             isNew = !series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
@@ -866,7 +868,10 @@ Chart.prototype.drawSeriesLabels = function (): void {
             y: number,
             bBox: BBoxObject
         ): boolean {
-            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+            const leftBound = Math.max(
+                    paneLeft as any,
+                    pick(areaMin, -Infinity)
+                ),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)
@@ -899,7 +904,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 }
 
                 series.labelBySeries = label = chart.renderer
-                    .label(labelText, 0, -9999, 'connector')
+                    .label(labelText, 0, 0, 'connector')
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +

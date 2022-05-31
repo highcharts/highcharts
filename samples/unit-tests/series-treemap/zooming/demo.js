@@ -74,12 +74,12 @@ QUnit.test(
         chart.series[0].drillToNode('A');
         extremes = xAxis.getExtremes();
         assert.strictEqual(
-            extremes.min,
+            Highcharts.correctFloat(extremes.min),
             0,
             'xAxis.min is matching the root node'
         );
         assert.strictEqual(
-            extremes.max,
+            Highcharts.correctFloat(extremes.max),
             50,
             'xAxis.max is matching the root node'
         );
@@ -87,7 +87,7 @@ QUnit.test(
         // When allowDrillToNode extremes should be unaffected by zoom.
         xAxis.zoom(80, 100);
         extremes = xAxis.getExtremes();
-        assert.strictEqual(extremes.min, 0, 'xAxis.min is unaffected by zoom');
-        assert.strictEqual(extremes.max, 50, 'xAxis.max is unaffected by zoom');
+        assert.strictEqual(Highcharts.correctFloat(extremes.min), 0, 'xAxis.min is unaffected by zoom');
+        assert.strictEqual(Highcharts.correctFloat(extremes.max), 50, 'xAxis.max is unaffected by zoom');
     }
 );

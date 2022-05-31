@@ -934,6 +934,7 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'treemap',
+        name: 'Regions',
         layoutAlgorithm: 'squarified',
         allowDrillToNode: true,
         animationLimit: 1000,

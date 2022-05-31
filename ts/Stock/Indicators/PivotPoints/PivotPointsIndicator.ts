@@ -62,8 +62,7 @@ class PivotPointsIndicator extends SMAIndicator {
      * @requires     stock/indicators/pivotpoints
      * @optionparent plotOptions.pivotpoints
      */
-    public static defaultOptions: PivotPointsOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: PivotPointsOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */
@@ -190,7 +189,10 @@ class PivotPointsIndicator extends SMAIndicator {
             pivotPoints: Array<LinePoint>
         ): void {
             path = path.concat(
-                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
+                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                    indicator,
+                    pivotPoints
+                )
             );
         });
 
@@ -251,9 +253,8 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(
-                        indicator, arguments
-                    );
+                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
+                        .apply(indicator, arguments);
                 }
             );
         }

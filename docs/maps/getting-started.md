@@ -13,19 +13,18 @@ For basics, see [Highcharts installation](https://highcharts.com/docs/getting-st
 
 If you already have Highcharts installed in the web page and want to run Highcharts Maps as a plugin, include this script tag _after_ `highcharts.js`:
 
-
     <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 
 Load the map
 ------------
 
-Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps#Highcharts.geojson) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highcharts Maps loads its maps from [TopoJSON](https://github.com/topojson/topojson) or [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/mapline-mappoint/).
 
 There are three basic sources for your map:
 
 1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](https://highcharts.com/docs/maps/map-collection) on the map collection to get started.
 2.  Find an SVG map online and convert it using our (experimental) [online converter](https://highcharts.github.io/map-from-svg). 
-3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highcharts Maps](https://highcharts.com/docs/maps/custom-maps).
+3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highcharts Maps](https://www.highcharts.com/docs/maps/create-custom-maps).
 
 Initialize the map
 ------------------
@@ -41,4 +40,4 @@ Add and join data
 
 Once the empty map is in place, we're ready to add the data to the [series.data](https://api.highcharts.com/highmaps/series.map.data) option. For the joining to work, each data point must have some identifier that relates to the same identifier in the map data set. This or these identifiers are then specified in the [joinBy](https://api.highcharts.com/highmaps/plotOptions.series.joinBy) option. See detailed documentation and examples there.
 
-Another way to join the data is to simply skip the mapData and set the [path](https://api.highcharts.com/highmaps/series.map.data.path) directly on the data point. This mixes the data and the structure and is not generally recommended, but it performs faster, and may be considered in situations where you have static data and a backend to perform the joining.
+Another way to join the data is to simply skip the `mapData` and set the [geometry](https://api.highcharts.com/highmaps/series.map.data.geometry) directly on the data point. This mixes the data and the structure and is not generally recommended, but it performs faster, and may be considered in situations where you have static data and a backend to perform the joining.

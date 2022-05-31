@@ -1,0 +1,208 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+*,
+::after,
+::before {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0 !important;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+.chart-container .thick {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .thin {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .transparent {
+    opacity: 100%;
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+    top: 0 !important;
+}
+
+.chart-container .highcharts-background {
+    fill: #211836;
+    transform: translate(-0.5px, -0.5px);
+    width: 500px;
+}
+
+.chart-container .highcharts-plot-background {
+    fill: #46465c;
+    transform: translate(-0.5px, -0.5px);
+    width: 500px;
+}
+
+.chart-container .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+#editor .highcharts-area {
+    fill-opacity: 1;
+    stroke-width: 0;
+}
+
+#editor .purple {
+    fill: #8087e8;
+    stroke: transparent;
+}
+
+#editor .green {
+    fill: #a3edba;
+    stroke: transparent;
+}
+
+#editor .bottom {
+    fill: #211836;
+    stroke: transparent;
+    fill-opacity: 1;
+}
+
+#editor .water {
+    fill: #30426b;
+    stroke: transparent;
+    fill-opacity: 1;
+}
+
+#editor .menu .highcharts-graph {
+    fill: transparent;
+    stroke: #fff;
+    stroke-width: 9px;
+    stroke-linecap: square;
+    fill-opacity: 1;
+}
+
+#editor .particle {
+    position: absolute;
+    background-repeat: no-repeat;
+}
+
+#particle-3 {
+    width: 24px;
+    height: 32px;
+    background-image: url("https://www.highcharts.com/samples/graphics/homepage/p3.svg");
+}
+
+#particle-3 {
+    offset-path: path("M 4 -2 C 4 -2 6.4 326 8 326 C 9.4 326 11.5 121 11.5 121");
+    animation: move 3s ease-out forwards;
+    offset-rotate: 45deg;
+}
+
+#particle-2 {
+    width: 22px;
+    height: 42px;
+    background-image: url("https://www.highcharts.com/samples/graphics/homepage/p2.svg");
+    offset-rotate: 45deg;
+    offset-path: path("M 6 -3 C 6 -3 6.6 410 7 410 C 10.4 414 15.5 218 15.5 218");
+    animation: move 4s ease-out forwards;
+}
+
+#particle-6 {
+    width: 45px;
+    height: 45px;
+    background-image: url("https://www.highcharts.com/samples/graphics/homepage/p6.svg");
+    offset-path: path("M 11 -1 C 11 -1 10.4 410 10 410 C 12.2 410 15.5 113 15.5 113");
+    animation: move 4.5s ease-out forwards;
+    offset-rotate: 45deg;
+}
+
+#particle-5 {
+    width: 35px;
+    height: 50px;
+    background-image: url("https://www.highcharts.com/samples/graphics/homepage/p5.svg");
+    offset-rotate: 45deg;
+    offset-path: path("M 4 0 C 4 0 5.8 420 7 420 C 9.2 420 12.5 200 12.5 200");
+    animation: move 4s ease-out forwards;
+}
+
+.highed-vsplitter {
+    height: 100%;
+    width: 500px !important;
+    box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
+}
+
+.highed-container {
+    width: 500px !important;
+    height: 500px !important;
+}
+
+.highed-colorpicker {
+    top: 10px !important;
+}
+
+@keyframes move {
+    0% {
+        offset-distance: 0%;
+        offset-rotate: 45deg;
+    }
+
+    100% {
+        offset-distance: 100%;
+        offset-rotate: 0deg;
+    }
+}
+
+@media screen  and (min-width: 300px) {
+    .chart-container {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+@media screen  and (min-width: 400px) {
+    .chart-container {
+        width: 400px;
+        height: 400px;
+    }
+
+    #editor .menu .highcharts-graph {
+        stroke-width: 12px;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    .chart-container {
+        width: 500px;
+        height: 500px;
+    }
+
+    #editor .menu .highcharts-graph {
+        stroke-width: 16px;
+    }
+}

@@ -312,9 +312,7 @@ class BulletSeries extends ColumnSeries {
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
         const dataExtremes = super.getExtremes.call(this, yData),
-            series = this,
-            targetData = series.targetData;
-        let yMax, yMin;
+            targetData = this.targetData;
 
         if (targetData && targetData.length) {
             const targetExtremes = super.getExtremes.call(
@@ -343,7 +341,7 @@ class BulletSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

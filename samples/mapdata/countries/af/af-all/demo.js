@@ -1,79 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['af-kt', 0],
-    ['af-pk', 1],
-    ['af-gz', 2],
-    ['af-bd', 3],
-    ['af-nr', 4],
-    ['af-kr', 5],
-    ['af-kz', 6],
-    ['af-ng', 7],
-    ['af-tk', 8],
-    ['af-bl', 9],
-    ['af-kb', 10],
-    ['af-kp', 11],
-    ['af-2030', 12],
-    ['af-la', 13],
-    ['af-lw', 14],
-    ['af-pv', 15],
-    ['af-sm', 16],
-    ['af-vr', 17],
-    ['af-pt', 18],
-    ['af-bg', 19],
-    ['af-hr', 20],
-    ['af-bk', 21],
-    ['af-jw', 22],
-    ['af-bm', 23],
-    ['af-gr', 24],
-    ['af-fb', 25],
-    ['af-sp', 26],
-    ['af-fh', 27],
-    ['af-hm', 28],
-    ['af-nm', 29],
-    ['af-2014', 30],
-    ['af-oz', 31],
-    ['af-kd', 32],
-    ['af-zb', 33]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/af/af-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/af/af-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['af-kt', 10], ['af-pk', 11], ['af-gz', 12], ['af-bd', 13],
+        ['af-nr', 14], ['af-kr', 15], ['af-kz', 16], ['af-ng', 17],
+        ['af-tk', 18], ['af-bl', 19], ['af-kb', 20], ['af-kp', 21],
+        ['af-2030', 22], ['af-la', 23], ['af-lw', 24], ['af-pv', 25],
+        ['af-sm', 26], ['af-vr', 27], ['af-pt', 28], ['af-bg', 29],
+        ['af-hr', 30], ['af-bk', 31], ['af-jw', 32], ['af-bm', 33],
+        ['af-gr', 34], ['af-fb', 35], ['af-sp', 36], ['af-fh', 37],
+        ['af-hm', 38], ['af-nm', 39], ['af-2014', 40], ['af-oz', 41],
+        ['af-kd', 42], ['af-zb', 43]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/af/af-all.js">Afghanistan</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/af/af-all.topo.json">Afghanistan</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

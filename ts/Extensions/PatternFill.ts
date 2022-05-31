@@ -40,6 +40,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     erase,
     merge,
     pick,
@@ -68,7 +69,9 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/pattern-fill */
-        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+        calculatePatternDimensions(
+            pattern: PatternFill.PatternOptionsObject
+        ): void;
     }
 }
 
@@ -137,7 +140,7 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
  * @private
  * @function hashFromObject
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The javascript object to compute the hash from.
  *
  * @param {boolean} [preSeed=false]
@@ -221,6 +224,15 @@ Point.prototype.calculatePatternDimensions = function (
         if (!bBox.width || !bBox.height) {
             pattern._width = 'defer';
             pattern._height = 'defer';
+
+            // Mark the pattern to be flipped later if upside down (#16810)
+            const scaleY = this.series.chart.mapView &&
+                this.series.chart.mapView.getSVGTransform().scaleY;
+
+            if (defined(scaleY) && scaleY < 0) {
+                pattern._inverted = true;
+            }
+
             return;
         }
 
@@ -308,7 +320,12 @@ SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
+        id = (
+            'highcharts-pattern-' +
+            this.idCounter +
+            '-' +
+            (this.chartIndex || 0)
+        );
         ++this.idCounter;
     }
 
@@ -334,6 +351,14 @@ SVGRenderer.prototype.addPattern = function (
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
     };
+
+    if (options._inverted) {
+        attrs.patternTransform = 'scale(1, -1)'; // (#16810)
+        if (options.patternTransform) {
+            options.patternTransform += ' scale(1, -1)';
+        }
+    }
+
     if (options.patternTransform) {
         attrs.patternTransform = options.patternTransform;
     }
@@ -461,10 +486,10 @@ addEvent(Series, 'render', function (): void {
                         point.shapeArgs.height
                     )
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._height = 'defer';
                 } else {
                     point.calculatePatternDimensions(
                         (colorOptions as PatternFill.PatternObject).pattern
@@ -617,10 +642,10 @@ addEvent(Chart, 'endResize', function (): void {
                     colorOptions &&
                     (colorOptions as PatternFill.PatternObject).pattern
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._height = 'defer';
                 }
             });
         });
@@ -656,7 +681,10 @@ addEvent(Chart, 'redraw', function (): void {
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
                 if (id) {
-                    const sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                    const sanitizedId = id
+                        .replace(renderer.url, '')
+                        .replace('url(#', '')
+                        .replace(')', '');
                     usedIds[sanitizedId] = true;
                 }
             }
@@ -694,6 +722,7 @@ namespace PatternFill {
     }
 
     export interface PatternOptionsObject {
+        _inverted?: (Boolean);
         _height?: (number|string);
         _width?: (number|string);
         _x?: number;

@@ -123,7 +123,7 @@ class ScatterSeries extends LineSeries {
          *
          * @type      {boolean}
          * @default   false
-         * @product   highcharts highstock
+         * @product   highcharts highstock highmaps
          * @apioption plotOptions.scatter.stickyTracking
          */
 
@@ -242,7 +242,7 @@ class ScatterSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

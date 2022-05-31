@@ -22,11 +22,9 @@ QUnit.test('Sub-millisecond tooltip(#4223)', function (assert) {
     });
 
     assert.equal(
-        Highcharts.Tooltip.prototype.getXDateFormat.call(
-            chart.tooltip,
-            chart.series[0].points[0],
-            chart.options.tooltip,
-            chart.xAxis[0]
+        chart.xAxis[0].dateTime.getXDateFormat(
+            chart.series[0].points[0].x,
+            chart.options.tooltip.dateTimeLabelFormats
         ),
         '%A, %b %e, %H:%M:%S.%L',
         'Milliseconds are preserved in tooltip'

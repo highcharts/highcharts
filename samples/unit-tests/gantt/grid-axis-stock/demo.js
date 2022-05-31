@@ -915,7 +915,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     axes = chart.xAxis.filter(axis => !axis.options.isInternal);
 
 
-    axes.forEach(function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type || 'linear',
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,
@@ -1096,7 +1096,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 
     axes = chart.yAxis;
 
-    axes.forEach(function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type,
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,

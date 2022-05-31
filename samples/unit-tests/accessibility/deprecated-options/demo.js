@@ -29,12 +29,17 @@ QUnit.test(
                         exposeElementToA11y: false,
                         test: 'hello',
                         data: [1, 2, { y: 5, test: 'testStr' }, 3]
+                    }, {
+                        accessibility: {
+                            pointDescriptionFormatter: () => {}
+                        }
                     }
                 ]
             }),
             chartOptions = chart.options,
             seriesOptions = chart.series[0].options,
             seriesA11yOptions = seriesOptions.accessibility,
+            series2A11yOptions = chart.series[1].options.accessibility,
             pointOptions = chart.series[0].points[2].options;
 
         assert.strictEqual(chartOptions.chart.inverted, true);
@@ -46,7 +51,8 @@ QUnit.test(
 
         assert.strictEqual(seriesOptions.test, 'hello');
         assert.strictEqual(seriesA11yOptions.description, 'seriesDesc');
-        assert.ok(seriesA11yOptions.pointDescriptionFormatter);
+        assert.ok(seriesA11yOptions.point.descriptionFormatter);
+        assert.ok(series2A11yOptions.point.descriptionFormatter);
         assert.strictEqual(seriesA11yOptions.exposeAsGroupOnly, false);
         assert.strictEqual(seriesA11yOptions.keyboardNavigation.enabled, false);
 

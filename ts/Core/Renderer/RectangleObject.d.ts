@@ -28,7 +28,7 @@ export interface RectangleObject extends BBoxObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

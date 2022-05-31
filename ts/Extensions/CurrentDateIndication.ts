@@ -26,10 +26,15 @@ import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../Core/FormatUtilities';
+import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
+import type {
+    PlotLineLabelOptions,
+    PlotLineOptions
+} from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
-import Palette from '../Core/Color/Palette.js';
-import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
+import { Palette } from '../Core/Color/Palettes.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -113,7 +118,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
-         * [dateFormat](/class-reference/Highcharts#.dateFormat) function.
+         * [dateFormat](/class-reference/Highcharts.Time#dateFormat) function.
          *
          * @type      {string}
          * @default   %a, %b %d %Y, %H:%M
@@ -147,7 +152,7 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
 
     if (cdiOptions) {
-        const plotLineOptions: Highcharts.AxisPlotLinesOptions =
+        const plotLineOptions: PlotLineOptions =
             typeof cdiOptions === 'object' ?
                 merge(defaultOptions, cdiOptions) :
                 merge(defaultOptions);
@@ -176,10 +181,7 @@ addEvent(PlotLineOrBand, 'render', function (): void {
 wrap(PlotLineOrBand.prototype, 'getLabelText', function (
     this: PlotLineOrBand,
     defaultMethod: Function,
-    defaultLabelOptions: (
-        Highcharts.AxisPlotLinesLabelOptions|
-        Highcharts.AxisPlotBandsLabelOptions
-    )
+    defaultLabelOptions: (PlotBandLabelOptions|PlotLineLabelOptions)
 ): string {
     const options = this.options;
 

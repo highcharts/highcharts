@@ -20,6 +20,8 @@
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
+ *  series.accessibility.pointDescriptionFormatter ->
+ *      series.accessibility.point.descriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
  *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
@@ -168,8 +170,10 @@ function deprecateFromOptionsMap(
                 false,
                 chart,
                 {
-                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
-                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                    [rootOldAsArray.join('.') + '.' + oldOptionKey]: (
+                        rootNewAsArray.join('.') + '.' +
+                        mapToNewOptions[oldOptionKey].join('.')
+                    )
                 }
             );
         }
@@ -187,7 +191,12 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
+            error(
+                32,
+                false,
+                chart,
+                { [`chart.${prop}`]: `use accessibility.${prop}` }
+            );
         }
     });
 }
@@ -201,7 +210,9 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
+            error(32, false, chart, {
+                'axis.description': 'use axis.accessibility.description'
+            });
         }
     });
 }
@@ -216,10 +227,13 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'pointDescriptionFormatter'
+            'accessibility', 'point', 'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
             'accessibility', 'keyboardNavigation', 'enabled'
+        ],
+        'accessibility.pointDescriptionFormatter': [
+            'accessibility', 'point', 'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series: Series): void {
@@ -227,7 +241,17 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            const optionVal = (series.options as any)[oldOption];
+            let optionVal = (series.options as any)[oldOption];
+
+            // Special case
+            if (oldOption === 'accessibility.pointDescriptionFormatter') {
+                optionVal = (
+                    series.options.accessibility &&
+                    (series.options.accessibility as any)
+                        .pointDescriptionFormatter
+                );
+            }
+
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(
@@ -242,7 +266,12 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     32,
                     false,
                     chart,
-                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
+                    {
+                        [`series.${oldOption}`]: (
+                            'series.' +
+                            (oldToNewSeriesOptions as any)[oldOption].join('.')
+                        )
+                    }
                 );
             }
         });

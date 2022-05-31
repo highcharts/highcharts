@@ -173,7 +173,9 @@ class ZAxis extends Axis implements AxisLike {
         axis.hasVisibleSeries = false;
 
         // Reset properties in case we're redrawing (#3353)
-        axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = void 0;
+        axis.dataMin = axis.dataMax = axis.ignoreMinPadding = (
+            axis.ignoreMaxPadding = void 0
+        );
 
         if (axis.stacking) {
             axis.stacking.buildStacks();

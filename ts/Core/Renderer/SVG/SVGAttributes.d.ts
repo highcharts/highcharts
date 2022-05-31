@@ -52,6 +52,7 @@ export interface SVGAttributes {
     dashstyle?: DashStyleValue;
     depth?: number;
     display?: ''|'block'|'none';
+    'dominant-baseline'?: string;
     dx?: number;
     dy?: number;
     end?: number;
@@ -84,6 +85,7 @@ export interface SVGAttributes {
     refY?: number;
     rx?: number;
     ry?: number;
+    role?: string;
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
@@ -130,7 +132,7 @@ export interface SVGAttributes {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

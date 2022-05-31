@@ -1,5 +1,5 @@
 ---
- name: Turkmenistan - Highmaps
- description: Highmaps demo
+ name: Turkmenistan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type Axis from './Axis';
 import type {
     AxisBreakOptions,
     YAxisOptions
@@ -24,10 +25,9 @@ import type {
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
+import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import Axis from './Axis.js';
-import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
@@ -47,7 +47,7 @@ const {
 
 declare module './AxisComposition' {
     interface AxisComposition {
-        brokenAxis?: BrokenAxis['brokenAxis'];
+        brokenAxis?: BrokenAxis.Additions;
     }
 }
 
@@ -66,7 +66,7 @@ declare module './AxisOptions' {
 
 declare module './AxisType' {
     interface AxisTypeRegistry {
-        BrokenAxis: BrokenAxis;
+        BrokenAxis: BrokenAxis.Composition;
     }
 }
 
@@ -92,24 +92,37 @@ declare module '../Series/SeriesOptions' {
  *
  * */
 
-interface BrokenAxis extends Axis {
-    /**
-     * HC <= 8 backwards compatibility, used by demo samples.
-     * @deprecated
-     * @private
-     * @requires modules/broken-axis
-     */
-    breakArray: Array<AxisBreakObject>;
-    /** @requires modules/broken-axis */
-    brokenAxis: BrokenAxis.Additions;
-}
-
 /**
  * Axis with support of broken data rows.
  * @private
- * @class
  */
 namespace BrokenAxis {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class Composition extends Axis {
+        /**
+         * HC <= 8 backwards compatibility, used by demo samples.
+         * @deprecated
+         * @private
+         * @requires modules/broken-axis
+         */
+        breakArray: Array<AxisBreakObject>;
+        /** @requires modules/broken-axis */
+        brokenAxis: Additions;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -128,21 +141,34 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (AxisClass.keepProps.indexOf('brokenAxis') === -1) {
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
 
             AxisClass.keepProps.push('brokenAxis');
 
-            const seriesProto = Series.prototype;
+            addEvent(AxisClass, 'init', onAxisInit);
+            addEvent(AxisClass, 'afterInit', onAxisAfterInit);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
+            addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
             seriesProto.gappedPath = seriesGappedPath;
 
-            addEvent(AxisClass, 'init', onInit);
-            addEvent(AxisClass, 'afterInit', onAfterInit);
-            addEvent(AxisClass, 'afterSetTickPositions', onAfterSetTickPositions);
-            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
-
-            addEvent(SeriesClass, 'afterGeneratePoints', onSeriesAfterGeneratePoints);
+            addEvent(
+                SeriesClass,
+                'afterGeneratePoints',
+                onSeriesAfterGeneratePoints
+            );
             addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         }
 
@@ -152,7 +178,7 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onAfterInit(this: Axis): void {
+    function onAxisAfterInit(this: Axis): void {
         if (typeof this.brokenAxis !== 'undefined') {
             this.brokenAxis.setBreaks(this.options.breaks, false);
         }
@@ -162,7 +188,7 @@ namespace BrokenAxis {
      * Force Axis to be not-ordinal when breaks are defined.
      * @private
      */
-    function onAfterSetOptions(this: Axis): void {
+    function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
         if (axis.brokenAxis && axis.brokenAxis.hasBreaks) {
             axis.options.ordinal = false;
@@ -172,7 +198,7 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onAfterSetTickPositions(this: Axis): void {
+    function onAxisAfterSetTickPositions(this: Axis): void {
         const axis = this,
             brokenAxis = axis.brokenAxis;
 
@@ -198,11 +224,11 @@ namespace BrokenAxis {
     /**
      * @private
      */
-    function onInit(this: Axis): void {
+    function onAxisInit(this: Axis): void {
         const axis = this;
 
         if (!axis.brokenAxis) {
-            axis.brokenAxis = new Additions(axis as BrokenAxis);
+            axis.brokenAxis = new Additions(axis as Composition);
         }
     }
 
@@ -301,10 +327,15 @@ namespace BrokenAxis {
                             ) {
                                 eventName = 'pointBreak';
 
-                            } else if (
-                                (threshold < brk.from && y > brk.from && y < brk.to) ||
-                                (threshold > brk.from && y > brk.to && y < brk.from)
-                            ) {
+                            } else if ((
+                                threshold < brk.from &&
+                                y > brk.from &&
+                                y < brk.to
+                            ) || (
+                                threshold > brk.from &&
+                                y > brk.to &&
+                                y < brk.from
+                            )) {
                                 eventName = 'pointInBreak';
                             }
                             if (eventName) {
@@ -438,20 +469,17 @@ namespace BrokenAxis {
                         } as any
                     );
 
-                    // For stacked chart generate empty stack items,
-                    // #6546
+                    // For stacked chart generate empty stack items, #6546
                     if (yAxis.stacking && this.options.stacking) {
-                        stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
-                            new StackItem(
-                                yAxis as any,
-                                (
-                                    (yAxis.options as YAxisOptions)
-                                        .stackLabels as any
-                                ),
-                                false,
-                                xRange,
-                                this.stack
-                            );
+                        stack = yAxis.stacking.stacks[this.stackKey as any][
+                            xRange
+                        ] = new StackItem(
+                            yAxis as any,
+                            (yAxis.options as YAxisOptions).stackLabels as any,
+                            false,
+                            xRange,
+                            this.stack
+                        );
                         stack.total = 0;
                     }
                 }
@@ -582,7 +610,7 @@ namespace BrokenAxis {
          *
          * */
 
-        public constructor(axis: Axis) {
+        public constructor(axis: Composition) {
             this.axis = axis;
         }
 
@@ -592,7 +620,7 @@ namespace BrokenAxis {
          *
          * */
 
-        public axis: Axis;
+        public axis: Composition;
         public breakArray?: Array<AxisBreakObject>;
         public hasBreaks: boolean = false;
         public unitLength?: number;
@@ -698,8 +726,8 @@ namespace BrokenAxis {
 
             if (!hasBreaks && axis.val2lin === Additions.val2Lin) {
                 // Revert to prototype functions
-                delete axis.val2lin;
-                delete axis.lin2val;
+                delete (axis as Partial<typeof axis>).val2lin;
+                delete (axis as Partial<typeof axis>).lin2val;
             }
 
             if (hasBreaks) {
@@ -721,10 +749,15 @@ namespace BrokenAxis {
 
                         let axisBreak;
 
-                        while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
+                        while (
+                            (axisBreak = brokenAxis.findBreakAt(newMin, breaks))
+                        ) {
                             newMin = axisBreak.to as any;
                         }
-                        while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks as any))) {
+                        while ((axisBreak = brokenAxis.findBreakAt(
+                            newMax,
+                            breaks as any
+                        ))) {
                             newMax = axisBreak.from as any;
                         }
 
@@ -733,7 +766,7 @@ namespace BrokenAxis {
                             newMax = newMin;
                         }
                     }
-                    Axis.prototype.setExtremes.call(
+                    axis.constructor.prototype.setExtremes.call(
                         this,
                         newMin,
                         newMax,
@@ -744,7 +777,7 @@ namespace BrokenAxis {
                 };
 
                 axis.setAxisTranslation = function (): void {
-                    Axis.prototype.setAxisTranslation.call(this);
+                    axis.constructor.prototype.setAxisTranslation.call(this);
 
                     brokenAxis.unitLength = void 0;
                     if (brokenAxis.hasBreaks) {
@@ -768,10 +801,16 @@ namespace BrokenAxis {
                                 repeat = brk.repeat || Infinity;
                                 if (isNumber(min) && isNumber(max)) {
                                     if (Additions.isInBreak(brk, min)) {
-                                        min += (brk.to % repeat) - (min % repeat);
+                                        min += (
+                                            (brk.to % repeat) -
+                                            (min % repeat)
+                                        );
                                     }
                                     if (Additions.isInBreak(brk, max)) {
-                                        max -= (max % repeat) - (brk.from % repeat);
+                                        max -= (
+                                            (max % repeat) -
+                                            (brk.from % repeat)
+                                        );
                                     }
                                 }
                             }
@@ -838,7 +877,11 @@ namespace BrokenAxis {
                                         to: brk.value,
                                         len: brk.value - start - (brk.size || 0)
                                     });
-                                    length += brk.value - start - (brk.size || 0);
+                                    length += (
+                                        brk.value -
+                                        start -
+                                        (brk.size || 0)
+                                    );
                                 }
                             }
                         );
@@ -847,7 +890,11 @@ namespace BrokenAxis {
 
                         // Used with staticScale, and below the actual axis
                         // length, when breaks are substracted.
-                        if (isNumber(min) && isNumber(max) && isNumber(axis.min)) {
+                        if (
+                            isNumber(min) &&
+                            isNumber(max) &&
+                            isNumber(axis.min)
+                        ) {
                             brokenAxis.unitLength = max - min - length +
                                 pointRangePadding;
 
@@ -878,6 +925,7 @@ namespace BrokenAxis {
             }
         }
     }
+
 }
 
 /* *

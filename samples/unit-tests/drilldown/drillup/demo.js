@@ -101,7 +101,6 @@ QUnit.test(
             },
             series: series
         };
-
         var clock = TestUtilities.lolexInstall();
 
         try {
@@ -127,7 +126,6 @@ QUnit.test(
         }
     }
 );
-
 // Highcharts 4.0.4, Issue #3544
 // Drillup does not work when data are set dynamically
 QUnit.test('Drill up failed on top level (#3544)', function (assert) {
@@ -140,8 +138,13 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         xAxis: {
             type: 'category'
         },
-
+        title: {
+            text: null
+        },
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             animation: false,
             series: [
                 {
@@ -182,7 +185,6 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         controller.getPosition().relatedTarget,
         'Drilldown column is not visible'
     );
-
     controller.click();
 
     assert.deepEqual(
@@ -192,14 +194,19 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
     );
     controller.moveTo(columnCenterX, columnCenterY);
 
-    var drillUpButton = chart.drillUpButton,
-        drillUpButtonX = drillUpButton.x - drillUpButton.getBBox().width / 2,
-        drillUpButtonY = drillUpButton.y + drillUpButton.getBBox().height / 2;
+    var breadcrumbsGroup = chart.breadcrumbs.group;
 
-    assert.notEqual(drillUpButton, undefined, 'Drill up button is undefined');
+    assert.notEqual(chart.drillUpButton, undefined, 'Drill up button is not undefined');
 
-    controller.moveTo(drillUpButtonX, drillUpButtonY);
-    controller.click();
+    controller.moveTo(
+        breadcrumbsGroup.translateX + 10,
+        breadcrumbsGroup.translateY + 10
+    );
+
+    controller.click(
+        breadcrumbsGroup.translateX + 10,
+        breadcrumbsGroup.translateY + 10
+    );
     controller.moveTo(columnCenterX, columnCenterY);
 
     assert.deepEqual(
@@ -268,6 +275,9 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
             }
         ],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false
+            },
             animation: false,
             series: [
                 {
@@ -352,3 +362,99 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
         'The legend is not showing right information'
     );
 });
+
+QUnit.test(
+    'Drilldown on the chart with category axis and cropThreshold set, #16135.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                keys: ['name', 'y', 'drilldown'],
+                cropThreshold: 5,
+                data: [
+                    ['A-0', 0, 'DrillSeries'],
+                    ['A-1', 1, 'DrillSeries'],
+                    ['A-2', 2, 'DrillSeries'],
+                    ['A-3', 3, 'DrillSeries'],
+                    ['A-4', 4, 'DrillSeries'],
+                    ['A-5', 5, 'DrillSeries'],
+                    ['A-6', 6, 'DrillSeries'],
+                    ['A-7', 7, 'DrillSeries'],
+                    ['A-8', 8, 'DrillSeries'],
+                    ['A-9', 9, 'DrillSeries']
+                ]
+            }],
+            drilldown: {
+                drilldown: {
+                    breadcrumbs: {
+                        showFullPath: false
+                    },
+                    series: [{
+                        data: [
+                            ['x-0', 1],
+                            ['x-1', 2],
+                            ['x-2', 3]
+                        ],
+                        name: 'DrillSeries',
+                        id: 'DrillSeries'
+                    }]
+                }
+            }
+        });
+
+        chart.series[0].points[1].doDrilldown();
+        chart.drillUp();
+        assert.strictEqual(
+            chart.series[0].xData[chart.series[0].xData.length - 1],
+            9,
+            `After drilling down and up on the chart with the category axis
+            the main series should go back to its original state.`
+        );
+    });
+
+QUnit.test(
+    'Drillup after asynchronous drilldown on the chart, #8324.',
+    function (assert) {
+        let assertPassed = true;
+        try {
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column',
+                    events: {
+                        load: function () {
+                            const chart = this,
+                                point = chart.series[0].data[0];
+
+                            chart.addSingleSeriesAsDrilldown(point, {
+                                data: [{
+                                    y: 1,
+                                    drilldown: true
+                                }, {
+                                    y: 2,
+                                    drilldown: true
+                                }]
+                            });
+                            chart.applyDrilldown();
+                            chart.drillUp();
+                        }
+                    }
+                },
+                series: [{
+                    data: [{
+                        y: 3,
+                        drilldown: true
+                    }]
+                }]
+            });
+        } catch {
+            assertPassed = false;
+        }
+
+        assert.ok(assertPassed, 'It should not update the length of udefined ddDupes.');
+    }
+);

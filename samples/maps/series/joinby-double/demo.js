@@ -1,49 +1,56 @@
-var data = [{
-    code: 'DK',
-    value: 2
-}, {
-    code: 'FI',
-    value: 5
-}, {
-    code: 'IS',
-    value: 4
-}, {
-    code: 'NO',
-    value: 1
-}, {
-    code: 'SE',
-    value: 3
-}, {
-    code: 'FO',
-    value: 6
-}];
+(async () => {
+
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
+    ).then(response => response.json());
+
+    var data = [{
+        code: 'DK',
+        value: 2
+    }, {
+        code: 'FI',
+        value: 5
+    }, {
+        code: 'IS',
+        value: 4
+    }, {
+        code: 'NO',
+        value: 1
+    }, {
+        code: 'SE',
+        value: 3
+    }, {
+        code: 'FO',
+        value: 6
+    }];
 
 
-// Initiate the chart
-Highcharts.mapChart('container', {
+    // Initialize the chart
+    Highcharts.mapChart('container', {
 
-    title: {
-        text: 'Data joined by <em>iso-a2</em> and <em>code</em>'
-    },
+        title: {
+            text: 'Data joined by <em>iso-a2</em> and <em>code</em>'
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
-
-    colorAxis: {},
-
-    series: [{
-        data: data,
-        mapData: Highcharts.maps['custom/nordic-countries-core'],
-        joinBy: ['iso-a2', 'code'],
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#a4edba'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
-        }
-    }]
-});
+        },
+
+        colorAxis: {},
+
+        series: [{
+            data: data,
+            mapData: topology,
+            joinBy: ['iso-a2', 'code'],
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#a4edba'
+                }
+            }
+        }]
+    });
+})();

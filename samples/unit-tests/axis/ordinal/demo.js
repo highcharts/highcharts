@@ -9,25 +9,36 @@ QUnit.test('Ordinal general tests.', function (assert) {
             xAxis: {
                 min: 1458054620689
             },
-            series: [
-                {
-                    type: 'column',
-                    data: [
-                        [1451577600000, 305899579],
-                        [1454256000000, 303016703],
-                        [1456761600000, 308008429],
-                        [1459440000000, 328699625],
-                        [1462032000000, 350010305],
-                        [1464710400000, 365809905],
-                        [1467302400000, 364839585],
-                        [1469980800000, 386193804],
-                        [1472659200000, 387630083],
-                        [1475251200000, 405138911]
-                    ]
+            series: [{
+                type: 'column',
+                data: [
+                    [1451577600000, 305899579],
+                    [1454256000000, 303016703],
+                    [1456761600000, 308008429],
+                    [1459440000000, 328699625],
+                    [1462032000000, 350010305],
+                    [1464710400000, 365809905],
+                    [1467302400000, 364839585],
+                    [1469980800000, 386193804],
+                    [1472659200000, 387630083],
+                    [1475251200000, 405138911]
+                ]
+            },
+            {
+                data: [1, 2, 3, 4, [420, 44]],
+                dataGrouping: {
+                    forced: true,
+                    units: [['millisecond', [1, 42]]]
                 }
-            ]
+            },
+            {
+                type: 'column',
+                data: [1, 2, 3],
+                visible: false
+            }]
         }),
-        tickPositions = chart.xAxis[0].tickPositions;
+        tickPositions = chart.xAxis[0].tickPositions,
+        controller = new TestController(chart);
 
     assert.ok(
         tickPositions[0] >= chart.xAxis[0].min,
@@ -53,6 +64,13 @@ QUnit.test('Ordinal general tests.', function (assert) {
         'Last tick should be smaller than axis max when ' +
             'ordinal is enabled (#12716).'
     );
+
+    chart.xAxis[0].setExtremes(0, 5);
+    chart.xAxis[0].setExtremes(0, 500);
+
+    controller.click(100, 100);
+
+    assert.ok(true, 'Click should not throw #16255');
 });
 
 QUnit.test(
@@ -257,32 +275,47 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
     );
+
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+    assert.notStrictEqual(
+        extendedOrdinalPositionsLength,
+        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        `After adding the point, the extendedOrdinalPositions array
+        should be recalculated, #16055.`
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);
+    assert.equal(findIndexOf(array, 15), array.length - 1);
     assert.equal(findIndexOf(array, 14), -1);
     assert.equal(findIndexOf(array, 18), -1);
+    assert.equal(findIndexOf(array, -18), -1);
     assert.equal(findIndexOf(array, 3, true), 2);
     assert.equal(findIndexOf(array, 0, true), 0);
     assert.equal(findIndexOf(array, -10, true), 0);
-    assert.equal(findIndexOf(array, 2, true), 2);
+    assert.equal(findIndexOf(array, 1, true), 1);
     assert.equal(findIndexOf(array, 11, true), 4);
     assert.equal(findIndexOf(array, 18, true), 7);
+    assert.equal(findIndexOf(array, 0.1, true), 0);
+    assert.equal(findIndexOf(array, 6, true), 3);
 });
 
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
         transA: -0.04,
-        min: 3,
+        min: 3.24,
         len: 500,
         translationSlope: 0.2,
+        minPixelPadding: 0,
         ordinal: {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7],
@@ -308,10 +341,10 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
 
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.getIndexOfPoint;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
     axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Composition.prototype.findIndexOf;
+        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }
@@ -363,5 +396,183 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         12.2,
         `For the pixel value higher than any point in extendedOrdinalPositions,
         array, the function should calculate value for that point.`
+    );
+});
+
+QUnit.test('val2lin- unit tests', function (assert) {
+    const axis = {
+        ordinal: {
+            extendedOrdinalPositions: [
+                0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9, 10
+            ],
+            positions: [3, 4.2, 4.8, 5, 7]
+        }
+    };
+    axis.ordinal.axis = axis;
+
+    function val2lin(val, toIndex) {
+        return Highcharts.Axis.prototype.val2lin.call(axis, val, toIndex);
+    }
+
+    assert.equal(
+        val2lin(5, true),
+        3,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(7, true),
+        4,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(3, true),
+        0,
+        `If the value we are looking for is inside the ordinal positions array
+        and fits the exact value, the method should return the index of that
+        value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(6, true),
+        3.5,
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(3.6, true),
+        0.5,
+        `If the value we are looking for is inside the ordinal positions array
+        and doesn't fit the exact value, the method should return the index
+        between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(0, true),
+        -3,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(9, true),
+        6,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and fits the exact value, the method should return
+        the index of that value in this array as a total number.`
+    );
+    assert.equal(
+        val2lin(2.25, true),
+        -0.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(8.5, true),
+        5.5,
+        `If the value we are looking for is inside the extended ordinal
+        positions array and doesn't fit the exact value, the method should
+        return the index between higher and lower value.`
+    );
+    assert.equal(
+        val2lin(-10, true),
+        -14,
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
+    );
+    assert.equal(
+        val2lin(20, true),
+        19,
+        `If the value we are looking for is outside the extended ordinal
+        positions array, the method should return the approximate index
+        extrapolated from the slope of the array`
+    );
+});
+
+QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [10, 4],
+                [11, 1],
+                [12, 2],
+                [14, 3]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `When the boost module is present and the chart is initiated with
+        the default options, the ordinal positions should be calculated.`
+    );
+    assert.notOk(
+        chart.series[0].currentDataGrouping,
+        `When the boost module is present and the chart is initiated with
+        the default options, the data should not be grouped.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect,
+        `When the boost module is present and the chart is initiated with
+        the default options, the chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        boostThreshold: 1
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `After updating the boostThreshold,
+        ordinal positions should be still calculated.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        `After updating the boostThreshold,
+        the chart should not be boosted nor grouped.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true,
+            units: [
+                ['millisecond', [2]]
+            ]
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+            chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced) for the chart,
+        series should be boosted and grouped.`
+    );
+    assert.notOk(
+        (
+            chart.series[0].boostClipRect ||
+            chart.boostClipRect
+        ) &&
+        chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced), chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            enabled: false
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+        (
+            chart.series[0].boostClipRect ||
+            chart.boostClipRect
+        ),
+        `Only after explicitly disabling the data grouping
+        chart should be boosted.`
     );
 });

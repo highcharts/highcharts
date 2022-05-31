@@ -1,8 +1,13 @@
+#container {
+    height: 300px;
+    min-width: 300px;
+}
+
 #reporting {
-    position: absolute; 
-    top: 55px; 
-    right: 20px; 
-    font: 12px Arial, Verdana; 
+    position: absolute;
+    top: 55px;
+    right: 20px;
+    font: 12px Arial, Verdana, sans-serif;
     color: #666;
     background: white;
 }

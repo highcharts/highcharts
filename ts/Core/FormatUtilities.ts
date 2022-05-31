@@ -150,13 +150,16 @@ function format(str: string, ctx: any, chart?: Chart): string {
                 segment = valueAndFormat.join(':');
 
                 if (floatRegex.test(segment)) { // float
-                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    const decimals = parseInt(
+                        (segment.match(decRegex) || ['', '-1'])[1],
+                        10
+                    );
                     if (val !== null) {
                         val = numberFormatter(
                             val,
                             decimals,
-                            (lang as any).decimalPoint,
-                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                            lang.decimalPoint,
+                            segment.indexOf(',') > -1 ? lang.thousandsSep : ''
                         );
                     }
                 } else {
@@ -264,8 +267,8 @@ function numberFormat(
     const thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
+    decimalPoint = pick(decimalPoint, lang.decimalPoint);
+    thousandsSep = pick(thousandsSep, lang.thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';

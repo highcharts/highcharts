@@ -34,6 +34,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
+export type OrganizationHangingIndentTranslationValue = (
+    'inherit'|'cumulative'|'shrink'
+);
+
 export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions {
     states: SeriesStatesOptions<OrganizationSeries>;
 }
@@ -48,10 +52,12 @@ export interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions {
 export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels?: OrganizationDataLabelOptions;
     hangingIndent?: number;
+    hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
     levels?: Array<OrganizationSeriesLevelOptions>;
     linkColor?: ColorString;
     linkLineWidth?: number;
     linkRadius?: number;
+    minNodeLength?: number;
     nodes?: Array<OrganizationSeriesNodeOptions>;
     states?: SeriesStatesOptions<OrganizationSeries>;
 }

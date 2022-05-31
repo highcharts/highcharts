@@ -12,3 +12,4 @@
  */
 'use strict';
 import '../../Stock/Indicators/SMA/SMAIndicator.js';
+import '../../Stock/Indicators/EMA/EMAIndicator.js';

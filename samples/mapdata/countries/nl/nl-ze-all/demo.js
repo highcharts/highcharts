@@ -1,58 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['nl-ze-gm0716', 0],
-    ['nl-ze-gm0717', 1],
-    ['nl-ze-gm1714', 2],
-    ['nl-ze-gm1676', 3],
-    ['nl-ze-gm0678', 4],
-    ['nl-ze-gm0703', 5],
-    ['nl-ze-gm0664', 6],
-    ['nl-ze-gm0687', 7],
-    ['nl-ze-gm1695', 8],
-    ['nl-ze-gm0718', 9],
-    ['nl-ze-gm0654', 10],
-    ['nl-ze-gm0715', 11],
-    ['nl-ze-gm0677', 12]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/nl/nl-ze-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/nl/nl-ze-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['nl-ze-gm0716', 10], ['nl-ze-gm0717', 11], ['nl-ze-gm1714', 12],
+        ['nl-ze-gm1676', 13], ['nl-ze-gm0678', 14], ['nl-ze-gm0703', 15],
+        ['nl-ze-gm0664', 16], ['nl-ze-gm0687', 17], ['nl-ze-gm1695', 18],
+        ['nl-ze-gm0718', 19], ['nl-ze-gm0654', 20], ['nl-ze-gm0715', 21],
+        ['nl-ze-gm0677', 22]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-ze-all.js">Zeeland</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-ze-all.topo.json">Zeeland</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

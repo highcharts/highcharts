@@ -21,40 +21,60 @@ Highcharts.ganttChart('container', {
         outside: true
     },
 
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{point.yCategory}, assigned to {point.assignee} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.'
+        }
+    },
+
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
+    },
+
     series: [{
         name: 'Project 1',
         data: [{
             start: Date.UTC(2018, 11, 1),
             end: Date.UTC(2018, 11, 2),
             y: 0,
-            assignee: 'JonArild'
+            assignee: 'bre1470'
         }, {
             start: Date.UTC(2018, 11, 2),
             end: Date.UTC(2018, 11, 5),
             y: 1,
-            assignee: 'Oystein',
-            fontSymbol: 'exclamation'
+            assignee: 'oysteinmoseng',
+            fontSymbol: 'exclamation',
+            accessibility: {
+                description: 'Exclamation symbol.'
+            }
         }, {
             start: Date.UTC(2018, 11, 8),
             end: Date.UTC(2018, 11, 9),
             y: 2,
-            assignee: 'Torstein'
+            assignee: 'TorsteinHonsi'
         }, {
             start: Date.UTC(2018, 11, 9),
             end: Date.UTC(2018, 11, 19),
             y: 1,
-            assignee: 'JonArild'
+            assignee: 'bre1470'
         }, {
             start: Date.UTC(2018, 11, 10),
             end: Date.UTC(2018, 11, 23),
             y: 2,
-            assignee: 'Torstein',
-            fontSymbol: 'smile-o'
+            assignee: 'TorsteinHonsi',
+            fontSymbol: 'smile-o',
+            accessibility: {
+                description: 'Smiling face symbol.'
+            }
         }],
         dataLabels: [{
             enabled: true,
             format: '<div style="width: 20px; height: 20px; overflow: hidden; border-radius: 50%; margin-left: -25px">' +
-                '<img src="https://www.highcharts.com/images/employees2014/{point.assignee}.jpg" ' +
+                '<img src="https://github.com/{point.assignee}.png" ' +
                 'style="width: 30px; margin-left: -5px; margin-top: -2px"></div>',
             useHTML: true,
             align: 'left'

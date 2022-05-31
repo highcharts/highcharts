@@ -72,7 +72,7 @@ Use your custom package file
 ----------------------------
 
 According to our [installation](./installation.md) guide you can reference your
-custom package file either as a ES module...
+custom package file either as an ES module...
 
 ```html
 <html>

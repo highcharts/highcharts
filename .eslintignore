@@ -5,10 +5,11 @@ samples/highcharts/common-js/**/*.js
 samples/highcharts/esm/async-await/demo.js
 samples/cloud/**/**/*.js
 samples/static/*.js
-test/test-controller.js
-test/test-template.js
-test/test-utilities.js
+samples/highcharts/studies/data-layer/**/*.js
 test/cypress
+test/test-*.*
+test/*.ts
+test/typescript-karma
 tools/eslint-plugin-highcharts/node_modules/**
 tools/jsdoc/storage/**/*.js
 ts/**/*.js

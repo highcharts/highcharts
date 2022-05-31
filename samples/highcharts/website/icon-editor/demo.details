@@ -1,0 +1,7 @@
+---
+ name: Highcharts Static Chart for Highcharts Editor Page
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+ skipTest: true
+...

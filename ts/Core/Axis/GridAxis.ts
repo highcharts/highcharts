@@ -68,6 +68,8 @@ declare module './AxisComposition' {
 declare module './AxisLike' {
     interface AxisLike {
         axisBorder?: SVGElement;
+        hiddenLabels: Array<SVGElement>;
+        hiddenMarks: Array<SVGElement>;
         rightWall?: SVGElement;
         getMaxLabelDimensions(
             ticks: Record<string, Tick>,
@@ -224,10 +226,18 @@ namespace GridAxis {
             // Add event handlers
             addEvent(AxisClass, 'init', onInit);
             addEvent(AxisClass, 'afterGetOffset', onAfterGetOffset);
-            addEvent(AxisClass, 'afterGetTitlePosition', onAfterGetTitlePosition);
+            addEvent(
+                AxisClass,
+                'afterGetTitlePosition',
+                onAfterGetTitlePosition
+            );
             addEvent(AxisClass, 'afterInit', onAfterInit);
             addEvent(AxisClass, 'afterRender', onAfterRender);
-            addEvent(AxisClass, 'afterSetAxisTranslation', onAfterSetAxisTranslation);
+            addEvent(
+                AxisClass,
+                'afterSetAxisTranslation',
+                onAfterSetAxisTranslation
+            );
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions2);
             addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
@@ -238,7 +248,11 @@ namespace GridAxis {
 
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
 
-        addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
+        addEvent(
+            TickClass,
+            'afterGetLabelPosition',
+            onTickAfterGetLabelPosition
+        );
         addEvent(TickClass, 'labelFormat', onTickLabelFormat);
 
         return AxisClass as (T&typeof GridAxis);
@@ -310,7 +324,10 @@ namespace GridAxis {
             this.treeGrid.mapOfPosToGridNode
         ) {
             const treeDepth = this.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            dimensions.width += this.options.labels.indentation * (treeDepth - 1);
+            dimensions.width += (
+                this.options.labels.indentation *
+                (treeDepth - 1)
+            );
         }
 
         return dimensions;
@@ -522,7 +539,10 @@ namespace GridAxis {
                                 axis.left,
                                 startPoint[2] || 0
                             ],
-                            upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
+                            upperBorderPath = [
+                                upperBorderStartPoint,
+                                upperBorderEndPoint
+                            ],
                             lowerBorderEndPoint: SVGPath.Segment = [
                                 'L',
                                 axis.chart.chartWidth - axis.chart.marginRight,
@@ -533,10 +553,15 @@ namespace GridAxis {
                                 endPoint[1] || 0,
                                 axis.toPixels(max + axis.tickmarkOffset)
                             ],
-                            lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                            lowerBorderPath = [
+                                lowerBorderStartPoint,
+                                lowerBorderEndPoint
+                            ];
 
                         if (!axis.grid.upperBorder && min % 1 !== 0) {
-                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath);
+                            axis.grid.upperBorder = axis.grid.renderBorder(
+                                upperBorderPath
+                            );
                         }
                         if (axis.grid.upperBorder) {
                             axis.grid.upperBorder.attr({
@@ -549,7 +574,9 @@ namespace GridAxis {
                         }
 
                         if (!axis.grid.lowerBorder && max % 1 !== 0) {
-                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath);
+                            axis.grid.lowerBorder = axis.grid.renderBorder(
+                                lowerBorderPath
+                            );
                         }
                         if (axis.grid.lowerBorder) {
                             axis.grid.lowerBorder.attr({
@@ -562,10 +589,12 @@ namespace GridAxis {
                         }
                     }
 
-                    // Render an extra line parallel to the existing axes,
-                    // to close the grid.
+                    // Render an extra line parallel to the existing axes, to
+                    // close the grid.
                     if (!axis.grid.axisLineExtra) {
-                        axis.grid.axisLineExtra = axis.grid.renderBorder(linePath);
+                        axis.grid.axisLineExtra = axis.grid.renderBorder(
+                            linePath
+                        );
                     } else {
                         axis.grid.axisLineExtra.attr({
                             stroke: options.lineColor,
@@ -576,9 +605,8 @@ namespace GridAxis {
                         });
                     }
 
-                    // show or hide the line depending on
-                    // options.showEmpty
-                    axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
+                    // show or hide the line depending on options.showEmpty
+                    axis.axisLine[axis.showAxis ? 'show' : 'hide']();
                 }
             }
 
@@ -596,14 +624,30 @@ namespace GridAxis {
                 )
             ) {
                 const tickmarkOffset = axis.tickmarkOffset,
-                    lastTick = axis.tickPositions[axis.tickPositions.length - 1],
+                    lastTick = axis.tickPositions[
+                        axis.tickPositions.length - 1
+                    ],
                     firstTick = axis.tickPositions[0];
 
+                let label: SVGElement|undefined,
+                    tickMark: SVGElement|undefined;
+
+
+                while ((label = axis.hiddenLabels.pop()) && label.element) {
+                    label.show(); // #15453
+                }
+                while (
+                    (tickMark = axis.hiddenMarks.pop()) &&
+                    tickMark.element
+                ) {
+                    tickMark.show(); // #16439
+                }
+
                 // Hide/show firts tick label.
-                let label = axis.ticks[firstTick].label;
+                label = axis.ticks[firstTick].label;
                 if (label) {
                     if (min - firstTick > tickmarkOffset) {
-                        label.hide();
+                        axis.hiddenLabels.push(label.hide());
                     } else {
                         label.show();
                     }
@@ -613,19 +657,19 @@ namespace GridAxis {
                 label = axis.ticks[lastTick].label;
                 if (label) {
                     if (lastTick - max > tickmarkOffset) {
-                        label.hide();
+                        axis.hiddenLabels.push(label.hide());
                     } else {
                         label.show();
                     }
                 }
 
                 const mark = axis.ticks[lastTick].mark;
-                if (mark) {
-                    if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
-                        mark.hide();
-                    } else if (axis.ticks[lastTick - 1]) {
-                        mark.show();
-                    }
+                if (
+                    mark &&
+                    lastTick - max < tickmarkOffset &&
+                    lastTick - max > 0 && axis.ticks[lastTick].isLast
+                ) {
+                    axis.hiddenMarks.push(mark.hide());
                 }
             }
         }
@@ -658,7 +702,8 @@ namespace GridAxis {
                     options.labels &&
                     !defined(userLabels.align) &&
                     (
-                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any)
+                            .range === false ||
                         tickInfo.count > 1 // years
                     )
                 ) {
@@ -816,49 +861,42 @@ namespace GridAxis {
                             const units = (gridAxisOptions.units || []);
 
                             let unitIdx: (number|undefined),
-                                count,
-                                unitName;
+                                count = 1,
+                                unitName:
+                                Time.TimeNormalizedObject['unitName'] = 'year';
 
                             for (let i = 0; i < units.length; i++) {
-                                if (
-                                    (units as any)[i][0] ===
-                                    parentInfo.unitName
-                                ) {
+                                const unit = units[i];
+                                if (unit && unit[0] === parentInfo.unitName) {
                                     unitIdx = i;
                                     break;
                                 }
                             }
 
-                            // Get the first allowed count on the next
-                            // unit.
-                            if ((units as any)[(unitIdx as any) + 1]) {
-                                unitName = (units as any)[
-                                    (unitIdx as any) + 1
-                                ][0];
-                                count =
-                                    ((units as any)[
-                                        (unitIdx as any) + 1
-                                    ][1] || [1])[0];
+                            // Get the first allowed count on the next unit.
+                            const unit = (
+                                isNumber(unitIdx) && units[unitIdx + 1]
+                            );
+                            if (unit) {
+                                unitName = unit[0] || 'year';
+                                const counts = unit[1];
+                                count = counts && counts[0] || 1;
 
-                            // In case the base X axis shows years, make
-                            // the secondary axis show ten times the
-                            // years (#11427)
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
                             } else if (parentInfo.unitName === 'year') {
-                                unitName = 'year';
+                                // unitName is 'year'
                                 count = parentInfo.count * 10;
                             }
 
                             const unitRange = timeUnits[unitName];
                             this.tickInterval = unitRange * count;
-                            return this.getTimeTicks(
-                                {
-                                    unitRange: unitRange,
-                                    count: count,
-                                    unitName: unitName
-                                },
+
+                            return this.chart.time.getTimeTicks(
+                                { unitRange, count, unitName },
                                 min,
                                 max,
-                                this.options.startOfWeek as any
+                                this.options.startOfWeek
                             );
                         }
                     };
@@ -942,7 +980,10 @@ namespace GridAxis {
             const labelPadding =
                 (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
             const distance = horiz ?
-                gridOptions.cellHeight || labelPadding + maxLabelDimensions.height :
+                (
+                    gridOptions.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
                 labelPadding + maxLabelDimensions.width;
             if (isArray(e.tickSize)) {
                 e.tickSize[0] = distance;
@@ -957,7 +998,9 @@ namespace GridAxis {
      */
     function onChartAfterSetChartSize(this: Chart): void {
         this.axes.forEach(function (axis): void {
-            (axis.grid && axis.grid.columns || []).forEach(function (column): void {
+            (axis.grid && axis.grid.columns || []).forEach(function (
+                column
+            ): void {
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
@@ -994,12 +1037,17 @@ namespace GridAxis {
         const gridOptions = userOptions.grid || {};
 
         if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+            userOptions.tickColor = userOptions.lineColor = (
+                gridOptions.borderColor
+            );
         }
 
         if (!axis.grid) {
             axis.grid = new Additions(axis as GridAxis);
         }
+
+        axis.hiddenLabels = [];
+        axis.hiddenMarks = [];
     }
 
     /**
@@ -1326,7 +1374,10 @@ namespace GridAxis {
                 otherAxis: Axis,
                 index: number
             ): void {
-                if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
+                if (
+                    otherAxis.side === axis.side &&
+                    !otherAxis.options.isInternal
+                ) {
                     lastIndex = index;
                     if (otherAxis === parentAxis) {
                         // Get the index of the axis in question
@@ -1337,19 +1388,21 @@ namespace GridAxis {
 
             return (
                 lastIndex === thisIndex &&
-                (isNumber(columnIndex) ? (columns as any).length === columnIndex : true)
+                (
+                    isNumber(columnIndex) ?
+                        (columns as any).length === columnIndex :
+                        true
+                )
             );
         }
 
         /**
          * Add extra border based on the provided path.
-         *  *
          * @private
-         *
          * @param {SVGPath} path
          * The path of the border.
-         *
          * @return {Highcharts.SVGElement}
+         * Border
          */
         public renderBorder(path: SVGPath): SVGElement {
             const axis = this.axis,
@@ -1384,7 +1437,14 @@ dateFormats.E = function (this: Time, timestamp: number): string {
 
 // Adds week date format
 dateFormats.W = function (this: Time, timestamp: number): string {
-    const d = new this.Date(timestamp);
+    const time = this,
+        d = new this.Date(timestamp),
+        unitsToOmit = (['Hours', 'Milliseconds', 'Minutes', 'Seconds'] as Array<Time.TimeUnitValue>);
+
+    unitsToOmit.forEach(function (format): void { // #16550
+        time.set(format, d, 0);
+    }
+    );
     const firstDay = (this.get('Day', d) + 6) % 7;
     const thursday = new this.Date(d.valueOf());
     this.set('Date', thursday, this.get('Date', d) - firstDay + 3);

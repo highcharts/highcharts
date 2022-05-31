@@ -15,13 +15,12 @@ import type {
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator,
-        atr: ATRIndicator
+        sma: SMAIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -40,7 +39,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class KeltnerChannelsIndicator extends SMAIndicator {
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -61,7 +60,24 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
      * @optionparent plotOptions.keltnerchannels
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Option for fill color between lines in Keltner Channels Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type {Highcharts.Color}
+         * @since 9.3.2
+         * @apioption plotOptions.keltnerchannels.fillColor
+         *
+         */
         params: {
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             */
+            index: 0,
             period: 20,
             /**
              * The ATR period.
@@ -114,7 +130,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
             approximation: 'averages'
         },
         lineWidth: 1
-    } as KeltnerChannelsOptions)
+    } as KeltnerChannelsOptions);
 
     public data: Array<KeltnerChannelsPoint> = void 0 as any;
     public options: KeltnerChannelsOptions = void 0 as any;
@@ -200,40 +216,41 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
     }
 }
 
-interface KeltnerChannelsIndicator {
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    requiredIndicators: Array<string>;
-
+    pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
     pointClass: typeof KeltnerChannelsPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    pointValKey: MultipleLinesComposition.Composition['pointValKey'];
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(KeltnerChannelsIndicator.prototype, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
     nameBase: 'Keltner Channels',
+    areaLinesNames: ['top', 'bottom'],
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(KeltnerChannelsIndicator);
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 
 /* *
