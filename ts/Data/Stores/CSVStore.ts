@@ -56,6 +56,7 @@ class CSVStore extends DataStore<CSVStore.Event> {
      *  Static Properties
      *
      * */
+
     protected static readonly defaultOptions: CSVStore.Options = {
         csv: '',
         csvURL: '',
@@ -191,9 +192,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
         store.emit({ type: 'load', detail: eventDetail, table: store.table });
 
         ajax({
-            url: store.liveDataURL,
+            url: store.liveDataURL || '',
             dataType: 'text',
-            success: function (csv: string): void {
+            success: function (csv): void {
+                csv = `${csv}`;
+
                 store.parser.parse({ csv });
 
                 // On inital fetch we need to set the columns
