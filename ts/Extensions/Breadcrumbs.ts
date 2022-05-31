@@ -266,6 +266,15 @@ class Breadcrumbs {
         relativeTo: 'plotBox',
 
         /**
+         * Whether to reverse the order of buttons. This is common in Arabic
+         * and Hebrew.
+         *
+         * @type       {boolean}
+         * @since      next
+         */
+        rtl: void 0,
+
+        /**
          * Positioning for the button row. The breadcrumbs buttons will be
          * aligned properly for the default chart layout (title,  subtitle,
          * legend, range selector) for the custom chart layout set the position
@@ -669,6 +678,10 @@ class Breadcrumbs {
                 newPositions.x += xOffset;
             }
 
+            if (breadcrumbs.options.rtl) {
+                newPositions.x += positionOptions.width;
+            }
+
             newPositions.y = pick(newPositions.y, this.yOffset, 0);
 
             breadcrumbs.group.align(
@@ -933,16 +946,26 @@ class Breadcrumbs {
      *        Breadcrumbs class.
      */
     public updateListElements(): void {
-        const updateXPosition = function (
+        const breadcrumbs = this,
+            elementList = breadcrumbs.elementList,
+            buttonSpacing = breadcrumbs.options.buttonSpacing,
+            list = breadcrumbs.list,
+            rtl = breadcrumbs.options.rtl,
+            rtlFactor = rtl ? -1 : 1,
+            updateXPosition = function (
                 element: SVGElement,
                 spacing: number
             ): number {
-                return element.getBBox().width + spacing;
+                return rtlFactor * element.getBBox().width +
+                    rtlFactor * spacing;
             },
-            breadcrumbs = this,
-            elementList = breadcrumbs.elementList,
-            buttonSpacing = breadcrumbs.options.buttonSpacing,
-            list = breadcrumbs.list;
+            adjustToRTL = function (
+                element: SVGElement,
+                posX: number,
+                posY: number
+            ): void {
+                element.translate(posX - element.getBBox().width, posY);
+            };
 
         // Inital position for calculating the breadcrumbs group.
         let posX = breadcrumbs.group ?
@@ -967,9 +990,12 @@ class Breadcrumbs {
                     !isLast
                 ) {
                     // Add spacing for the next separator
-                    posX += buttonSpacing;
+                    posX += rtlFactor * buttonSpacing;
                     currentBreadcrumb.separator =
                         breadcrumbs.renderSeparator(posX, posY);
+                    if (rtl) {
+                        adjustToRTL(currentBreadcrumb.separator, posX, posY);
+                    }
                     posX += updateXPosition(
                         currentBreadcrumb.separator,
                         buttonSpacing
@@ -985,11 +1011,17 @@ class Breadcrumbs {
             } else {
                 // Render a button.
                 button = breadcrumbs.renderButton(breadcrumb, posX, posY);
+                if (rtl) {
+                    adjustToRTL(button, posX, posY);
+                }
                 posX += updateXPosition(button, buttonSpacing);
 
                 // Render a separator.
                 if (!isLast) {
                     separator = breadcrumbs.renderSeparator(posX, posY);
+                    if (rtl) {
+                        adjustToRTL(separator, posX, posY);
+                    }
                     posX += updateXPosition(separator, buttonSpacing);
                 }
                 elementList[breadcrumb.level] = {
@@ -1103,6 +1135,7 @@ namespace Breadcrumbs {
         format?: string;
         formatter?: BreadcrumbsButtonsFormatter;
         relativeTo?: ButtonRelativeToValue;
+        rtl?: boolean;
         position: BreadcrumbsAlignOptions;
         separator: SeparatorOptions;
         showFullPath: boolean;
