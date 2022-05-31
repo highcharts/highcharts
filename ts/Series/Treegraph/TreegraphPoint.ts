@@ -151,20 +151,6 @@ class TreegraphPoint extends TreemapPoint {
         return super.shouldDraw() && this.visible;
     }
 
-    getPointAttribs(): ShapeArgs {
-        return this.shapeArgs ? {
-            x: this.shapeArgs.x || 0,
-            y: this.shapeArgs.y || 0,
-            height: this.shapeArgs.height || 0,
-            width: this.shapeArgs.width || 0
-        } : {
-            x: 0,
-            y: 0,
-            height: 0,
-            width: 0
-        };
-    }
-
     getCollapseBtnPosition(btnOptions: CollapseButtonOptions): {
         x: number;
         y: number;
@@ -174,7 +160,7 @@ class TreegraphPoint extends TreemapPoint {
             inverted = chart.inverted,
             btnWidth = btnOptions.width,
             btnHeight = btnOptions.height,
-            { x, y, width, height } = point.getPointAttribs();
+            { x = 0, y = 0, width = 0, height = 0 } = point.shapeArgs || {};
         return {
             x:
                 x +

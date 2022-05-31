@@ -75,15 +75,16 @@ To change the configuraiton of a specific link, you have to specify the link obj
 This setting will take effect on the link that goes **to** the given node.
 
 ### Collapse Feature
-The nodes' default onClick behavior is a toggle collpase feature. When clicking any node (which has children) the visibility of all of the child nodes and links, which connect them to the given node which change, hiding a set of data. This allows hiding any sub-trees and makes the data easier to read. When clicking on the same node again, all nodes and links will be visible again. You can test this feature on any demo, since this is a default behavior.
+The nodes' default behavior on click is to toggle the collapsed/expanded state. When clicking any node (which has children) the visibility of all child nodes and links will be hidden. This allows hiding any sub-trees and makes the data easier to read. When clicking on the same node again, all nodes and links will be visible again. You can test this feature on any demo, since this is a default behavior.
+
 ### Options
 
 For an overview over the options for the treegraph, see the [API](https://api.highcharts.com/highcharts/plotOptions.treegraph).
 
 
-
 ### More demos
 
+*   [Phylogenetic Treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-phylogenetic)
 *   [Treegraph chart with different link types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-types)
 *   [Treegraph chart with text path on dataLabels for links](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-text-path)
 *   [Treegraph chart with different node level for nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/node-level)

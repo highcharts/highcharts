@@ -55,7 +55,7 @@ class TreegraphLayout {
         return dummyNode;
     }
     /**
-     * Walker algorythm of positioning the nodes in the treegraph improved by
+     * Walker algorithm of positioning the nodes in the treegraph improved by
      * Buchheim to run in the linear time. Basic algorithm consists of post
      * order traversal, which starts from going bottom up (first walk), and then
      * pre order traversal top to bottom (second walk) where adding all of the
