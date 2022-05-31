@@ -75,7 +75,7 @@ class TreegraphPoint extends TreemapPoint {
                 levelOptions.collapseButton,
                 point.series.options.collapseButton
             ) as CollapseButtonOptions,
-            { width, height, padding, shape } = btnOptions,
+            { width, height, padding, shape, style } = btnOptions,
             chart = this.series.chart;
         if (!point.shapeArgs) {
             return;
@@ -109,7 +109,9 @@ class TreegraphPoint extends TreemapPoint {
                     zIndex: 1
                 })
                 .addClass('highcharts-tracker')
+                .addClass('highcharts-collapse-button')
                 .removeClass('highcharts-no-tooltip')
+                .css(style || {})
                 .add(parentGroup);
 
             (point.collapseButton.element as any).point = point;

@@ -170,49 +170,59 @@ class TreegraphSeries extends TreemapSeries {
                  * @type {number}
                  * @since next
                  * @product highcharts
-                 * @apioption series.treegraph.link.offset
+                 * @apioption series.treegraph.link.curveFactor
                  *
                  */
             },
             /**
-             * Options applied to the collapse button.
+             * Options applied to collapse Button. The collape button is the
+             * small button which indicates, that the node is collapsable.
              */
             collapseButton: {
+                /**
+                 * Whether the button should be visible only when the node is
+                 * hovered. When set to true, the button is hidden for nodes,
+                 * which are not collapsed, and shown for the collapsed ones.
+                 */
                 onlyOnHover: true,
                 /**
                  * Whether the button should be visible.
-                 * @default true
                  */
                 enabled: true,
                 /**
                  * Offset of the button in the x direction.
-                 * @default 0
                  */
                 x: 0,
                 /**
                  * Padding inside the button.
-                 * @default 2
                  */
                 padding: 2,
                 /**
                  * Offset of the button in the y direction.
-                 * @default 0
                  */
                 y: 0,
                 /**
                  * Height of the button.
-                 * @default 3
                  */
                 height: 10,
                 /**
                  * Width of the button.
-                 * @default 3
                  */
                 width: 10,
                 /**
                  * The symbol of the collapse button.
                  */
                 shape: 'circle'
+                /**
+                 * CSS styles for the collapse button.
+                 *
+                 * In styled mode, the subtitle style is given in the
+                 * `.highcharts-collapse-button` class.
+                 *
+                 *
+                 * @type      {Highcharts.CSSObject}
+                 * @apioption series.treegraph.collapseButton.style
+                 */
 
             },
             /**
@@ -517,7 +527,7 @@ class TreegraphSeries extends TreemapSeries {
             toNode = link.toNode,
             linkWidth = this.options.link.lineWidth,
             crisp = (Math.round(linkWidth) % 2) / 2,
-            factor = pick(this.options.link.offset, 0.5),
+            factor = pick(this.options.link.curveFactor, 0.5),
             type = pick(
                 link.options.link && link.options.link.type,
                 this.options.link.type
@@ -544,9 +554,6 @@ class TreegraphSeries extends TreemapSeries {
                 x2 += (toNode.shapeArgs.width || 0);
             }
             const diff = toNode.node.xPosition - fromNode.node.xPosition;
-            // Put the link on the side of the node when an offset is given. HR
-            // node in the main demo.
-
             link.shapeType = 'path';
             const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
                 width = (fullWidth / diff) - fromNodeWidth,

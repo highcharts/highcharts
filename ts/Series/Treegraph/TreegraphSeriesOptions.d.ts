@@ -22,6 +22,7 @@ import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
 import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 
 /* *
  *
@@ -32,6 +33,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 export type TreegraphLayoutTypes = 'Walker';
 export interface CollapseButtonOptions {
+    style?: CSSObject;
     onlyOnHover: boolean;
     shape: SymbolKey;
     padding: number;
