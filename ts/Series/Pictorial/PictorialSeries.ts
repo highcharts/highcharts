@@ -246,9 +246,27 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 });
 
 addEvent(StackItem, 'afterRender', function (): void {
-    // TODO find first pictorial series
-    const series = this.yAxis.series[0] as PictorialSeries;
-    if (series && this.yAxis.hasData() && this.xAxis.hasData()) {
+    // Get first pictorial series
+    const stackKeys = Object
+        .keys(this.points)
+        .filter((p): boolean => p.split(',').length > 1);
+    let seriesIndex = parseFloat(
+        stackKeys &&
+        stackKeys[0] &&
+        stackKeys[0].split(',')[0]
+    );
+
+    if (isNaN(seriesIndex)) {
+        seriesIndex = -1;
+    }
+    const series = this.yAxis.chart.series[seriesIndex] as PictorialSeries;
+
+    if (
+        series &&
+        series.is('pictorial') &&
+        this.yAxis.hasData() &&
+        this.xAxis.hasData()
+    ) {
         const options = this.yAxis.options;
         const chart = this.yAxis.chart;
         const stackShadow = this.shadow;
