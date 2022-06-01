@@ -828,7 +828,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         EventEmitterMixin.destroy.call(this);
         ControllableMixin.destroy.call(this);
 
-        destroyObjectProperties(this, [chart]);
+        destroyObjectProperties(this, chart);
     }
 
     /**

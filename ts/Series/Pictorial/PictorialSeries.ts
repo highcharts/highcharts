@@ -42,8 +42,8 @@ const {
 } = A;
 
 const {
-    merge,
     addEvent,
+    merge,
     pick
 } = U;
 
@@ -247,17 +247,19 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
 
 addEvent(StackItem, 'afterRender', function (): void {
     // TODO find first pictorial series
-    const series = this.yAxis.series[0] as PictorialSeries;
-    if (series && this.yAxis.hasData() && this.xAxis.hasData()) {
-        const options = this.yAxis.options;
-        const chart = this.yAxis.chart;
+    const series = this.axis.series[0] as PictorialSeries;
+    const xAxis = series.xAxis;
+
+    if (series && this.axis.hasData() && xAxis.hasData()) {
+        const options = this.axis.options;
+        const chart = this.axis.chart;
         const stackShadow = this.shadow;
-        const xCenter = this.xAxis.toPixels(this.x, true);
-        const x = chart.inverted ? this.xAxis.len - xCenter : xCenter;
+        const xCenter = xAxis.toPixels(this.x, true);
+        const x = chart.inverted ? xAxis.len - xCenter : xCenter;
         const y = 0;
         const width = series.getColumnMetrics &&
             series.getColumnMetrics().width;
-        const height = this.yAxis.len;
+        const height = this.axis.len;
         const shape = series.options.paths || [];
         const index = this.x % shape.length;
         const strokeWidth = pick(
@@ -275,9 +277,9 @@ addEvent(StackItem, 'afterRender', function (): void {
                 this.shadowGroup = chart.renderer.g('shadowGroup')
                     .attr({
                         translateX: chart.inverted ?
-                            this.yAxis.pos : this.xAxis.pos,
+                            this.axis.pos : xAxis.pos,
                         translateY: chart.inverted ?
-                            this.xAxis.pos : this.yAxis.pos
+                            xAxis.pos : this.axis.pos
                     })
                     .add();
             }
@@ -307,13 +309,13 @@ addEvent(StackItem, 'afterRender', function (): void {
 
             invertShadowGroup(
                 this.shadowGroup,
-                this.xAxis,
-                this.yAxis
+                xAxis,
+                this.axis
             );
 
             rescalePatternFill(
                 this.shadow,
-                this.yAxis,
+                this.axis,
                 width,
                 height,
                 strokeWidth
@@ -349,20 +351,20 @@ addEvent(StackItem, 'afterRender', function (): void {
 
             this.shadowGroup.animate({
                 translateX: chart.inverted ?
-                    this.yAxis.pos : this.xAxis.pos,
+                    this.axis.pos : xAxis.pos,
                 translateY: chart.inverted ?
-                    this.xAxis.pos : this.yAxis.pos
+                    xAxis.pos : this.axis.pos
             });
 
             invertShadowGroup(
                 this.shadowGroup,
-                this.xAxis,
-                this.yAxis
+                xAxis,
+                this.axis
             );
 
             rescalePatternFill(
                 stackShadow,
-                this.yAxis,
+                this.axis,
                 width,
                 height,
                 strokeWidth

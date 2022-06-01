@@ -1102,12 +1102,12 @@ function arrayMax(data: Array<any>): number {
  *        The object to destroy properties on.
  *
  * @param {*} [except]
- *        Exceptions, do not destroy these properties, only delete them.
+ *        Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj: any, except: any[] = []): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val, n): void {
         // If the object is non-null and destroy is defined
-        if (val && except.indexOf(val) === -1 && val.destroy) {
+        if (val && val !== except && val.destroy) {
             // Invoke the destroy
             val.destroy();
         }

@@ -22,7 +22,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type { YAxisOptions, XAxisOptions } from '../Core/Axis/AxisOptions';
+import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -40,7 +40,6 @@ import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
-
 const {
     correctFloat,
     defined,
@@ -128,6 +127,7 @@ declare global {
         }
         interface StackItemObject {
             alignOptions: AlignObject;
+            axis: StackingAxis.Composition;
             cumulative?: number;
             crop?: boolean;
             isNegative: boolean;
@@ -138,8 +138,6 @@ declare global {
             rotation: number;
             total: number;
             x: number;
-            xAxis: Axis;
-            yAxis: StackingAxis.Composition;
         }
         interface YAxisStackLabelsOptions {
             animation?: (false|Partial<AnimationOptions>);
@@ -171,12 +169,10 @@ declare global {
                 options: YAxisStackLabelsOptions,
                 isNegative: boolean,
                 x: number,
-                xAxis: Axis,
                 stackOption?: OptionsStackingValue
             );
             public alignOptions: AlignObject;
-            public yAxis: StackingAxis.Composition;
-            public xAxis: Axis;
+            public axis: StackingAxis.Composition;
             public base?: string;
             public cumulative?: (null|number);
             public hasValidPoints: boolean;
@@ -242,15 +238,12 @@ class StackItem {
         options: Highcharts.YAxisStackLabelsOptions,
         isNegative: boolean,
         x: number,
-        xAxis: Axis,
         stackOption?: Highcharts.OptionsStackingValue
     ) {
 
         const inverted = axis.chart.inverted;
 
-        this.yAxis = axis;
-
-        this.xAxis = xAxis;
+        this.axis = axis;
 
         // Tells if the stack is negative
         this.isNegative = isNegative;
@@ -291,8 +284,7 @@ class StackItem {
     }
 
     public alignOptions: AlignObject;
-    public xAxis: Axis;
-    public yAxis: StackingAxis.Composition;
+    public axis: StackingAxis.Composition;
     public base?: string;
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
@@ -314,7 +306,7 @@ class StackItem {
      * @function Highcharts.StackItem#destroy
      */
     public destroy(): void {
-        destroyObjectProperties(this, [this.yAxis, this.xAxis]);
+        destroyObjectProperties(this, this.axis);
     }
 
     /**
@@ -325,7 +317,7 @@ class StackItem {
      * @param {Highcharts.SVGElement} group
      */
     public render(group: SVGElement): void {
-        let chart = this.yAxis.chart,
+        let chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
             attr: Highcharts.AttrObject = {},
@@ -377,7 +369,6 @@ class StackItem {
 
         // Rank it higher than data labels (#8742)
         this.label.labelrank = chart.plotSizeY;
-        fireEvent(this, 'afterRender');
     }
 
     /**
@@ -400,7 +391,7 @@ class StackItem {
         defaultX?: number
     ): void {
         let stackItem = this,
-            axis = stackItem.yAxis,
+            axis = stackItem.axis,
             chart = axis.chart,
             // stack value translated mapped to chart coordinates
             y = axis.translate(
@@ -485,7 +476,7 @@ class StackItem {
             if (isJustify) {
                 // Justify stackLabel into the stackBox
                 Series.prototype.justifyDataLabel.call(
-                    this.yAxis,
+                    this.axis,
                     label,
                     stackItem.alignOptions,
                     label.alignAttr,
@@ -530,7 +521,7 @@ class StackItem {
         h: number,
         axis: Axis
     ): BBoxObject {
-        const reversed = stackItem.yAxis.reversed,
+        const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
             axisPos = axis.height + (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
@@ -715,7 +706,6 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
                     ).stackLabels as any,
                     isNegative,
                     x,
-                    this.xAxis,
                     stackOption as any
                 );
             }
