@@ -271,8 +271,10 @@ class Breadcrumbs {
          *
          * @type       {boolean}
          * @since      next
+         * @sample     {highcharts} highcharts/breadcrumbs/rtl
+         *             Breadcrumbs in RTL
          */
-        rtl: void 0,
+        rtl: false,
 
         /**
          * Positioning for the button row. The breadcrumbs buttons will be
@@ -1135,7 +1137,7 @@ namespace Breadcrumbs {
         format?: string;
         formatter?: BreadcrumbsButtonsFormatter;
         relativeTo?: ButtonRelativeToValue;
-        rtl?: boolean;
+        rtl: boolean;
         position: BreadcrumbsAlignOptions;
         separator: SeparatorOptions;
         showFullPath: boolean;
