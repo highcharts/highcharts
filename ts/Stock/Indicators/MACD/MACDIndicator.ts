@@ -197,23 +197,9 @@ class MACDIndicator extends SMAIndicator {
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
-            // Set default color for a signal line and the histogram:
-            this.options = merge({
-                signalLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
-                },
-                macdLine: {
-                    styles: {
-                        color: this.color
-                    }
-                }
-            }, this.options);
-
             // If the default colour doesn't set, get the next available from
             // the array and apply it #15608.
-            if (this.userOptions._colorIndex) {
+            if (defined(this.userOptions._colorIndex)) {
                 if (
                     this.options.signalLine &&
                     this.options.signalLine.styles &&

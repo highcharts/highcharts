@@ -501,7 +501,7 @@ QUnit.test('After changing the MACD params all points should calculate properly,
     );
 
     assert.strictEqual(
-        chart.series[1].color,
+        chart.series[1].points[0].graphic.attr('fill'),
         Highcharts.getOptions().colors[1],
         `When colour is not specified, each element (columns) should get it
         from the colour array.`
