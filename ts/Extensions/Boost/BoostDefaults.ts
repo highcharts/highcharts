@@ -12,51 +12,11 @@
 
 'use strict';
 
-import '../../Core/Globals.js';
-
 /* *
  *
- * Declarations
+ *  API Options
  *
  * */
-declare module '../../Core/Options'{
-    interface Options {
-        boost?: Highcharts.BoostOptions;
-    }
-}
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        boostBlending?: Highcharts.BoostBlendingValue;
-        boostThreshold?: number;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BoostDebugOptions {
-            showSkipSummary?: boolean;
-            timeBufferCopy?: boolean;
-            timeKDTree?: boolean;
-            timeRendering?: boolean;
-            timeSeriesProcessing?: boolean;
-            timeSetup?: boolean;
-        }
-        interface BoostOptions {
-            allowForce?: boolean;
-            debug?: BoostDebugOptions;
-            enabled?: boolean;
-            seriesThreshold?: number;
-            pixelRatio?: number;
-            useGPUTranslations?: boolean;
-            usePreallocated?: boolean;
-        }
-        type BoostBlendingValue = ('add'|'darken'|'multiply');
-    }
-}
 
 /**
  * Options for the Boost module. The Boost module allows certain series types

@@ -62,7 +62,7 @@ let eachAsync = butils.eachAsync,
  * @return {void}
  */
 function init(): void {
-    extend(Series.prototype, {
+    extend(Series.prototype.boostCanvas, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas

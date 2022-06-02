@@ -15,6 +15,7 @@
 'use strict';
 
 import type Series from '../../Core/Series/Series';
+import BCU from '../BoostCanvas/BoostCanvasUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
@@ -220,60 +221,6 @@ function allocateIfNotSeriesBoosting(
 }
 
 /**
- * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
- * UI thread.
- *
- * @private
- *
- * @param arr {Array} - the array to loop through
- * @param fn {Function} - the callback to call for each item
- * @param finalFunc {Function} - the callback to call when done
- * @param chunkSize {Number} - the number of iterations per timeout
- * @param i {Number} - the current index
- * @param noTimeout {Boolean} - set to true to skip timeouts
- */
-function eachAsync(
-    arr: Array<unknown>,
-    fn: Function,
-    finalFunc: Function,
-    chunkSize?: number,
-    i?: number,
-    noTimeout?: boolean
-): void {
-    i = i || 0;
-    chunkSize = chunkSize || CHUNK_SIZE;
-
-    let threshold = i + chunkSize,
-        proceed = true;
-
-    while (proceed && i < threshold && i < arr.length) {
-        proceed = fn(arr[i], i);
-        ++i;
-    }
-
-    if (proceed) {
-        if (i < arr.length) {
-
-            if (noTimeout) {
-                eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
-            } else if (win.requestAnimationFrame) {
-                // If available, do requestAnimationFrame - shaves off a few ms
-                win.requestAnimationFrame(function (): void {
-                    eachAsync(arr, fn, finalFunc, chunkSize, i);
-                });
-            } else {
-                setTimeout(function (): void {
-                    eachAsync(arr, fn, finalFunc, chunkSize, i);
-                });
-            }
-
-        } else if (finalFunc) {
-            finalFunc();
-        }
-    }
-}
-
-/**
  * Returns true if the current browser supports webgl
  *
  * @private
@@ -346,7 +293,7 @@ const funs = {
     shouldForceChartSeriesBoosting: shouldForceChartSeriesBoosting,
     renderIfNotSeriesBoosting: renderIfNotSeriesBoosting,
     allocateIfNotSeriesBoosting: allocateIfNotSeriesBoosting,
-    eachAsync: eachAsync,
+    eachAsync: BCU.eachAsync,
     hasWebGLSupport: hasWebGLSupport,
     pointDrawHandler: pointDrawHandler
 };

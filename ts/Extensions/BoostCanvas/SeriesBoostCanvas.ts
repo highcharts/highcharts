@@ -15,30 +15,30 @@
 
 'use strict';
 
-import type AreaSeries from '../Series/Area/AreaSeries';
-import type BoostTargetObject from './Boost/BoostTargetObject';
-import type ColumnSeries from '../Series/Column/ColumnSeries';
-import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
-import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type BoostTargetObject from '../Boost/BoostTargetObject';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+} from '../../Core/Series/PointOptions';
+import type Series from '../../Core/Series/Series';
 
-import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color/Color.js';
+import BCU from './BoostCanvasUtilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import H from '../Core/Globals.js';
+import G from '../../Core/Globals.js';
 const {
     doc,
     noop
-} = H;
-import { Palette } from '../Core/Color/Palettes.js';
-import Series from '../Core/Series/Series.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
-import U from '../Core/Utilities.js';
+} = G;
+import { Palette } from '../../Core/Color/Palettes.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -49,156 +49,212 @@ const {
     wrap
 } = U;
 
-declare module '../Core/Series/SeriesLike' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Boost/BoostOptions' {
+    interface BoostOptions {
+        timeRendering?: boolean;
+        timeSeriesProcessing?: boolean;
+        timeSetup?: boolean;
+    }
+}
+
+declare module '../Boost/BoostTargetObject' {
+    interface BoostTargetObject {
+        ctx?: (CanvasRenderingContext2D|null);
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike extends BoostTargetObject {
-        cvsStrokeBatch?: number;
-        /** @requires modules/boost-canvas */
-        canvasToSVG(): void;
-        /** @requires modules/boost-canvas */
-        cvsDrawPoint(
+        boostCanvas?: SeriesBoostCanvas.Additions;
+    }
+}
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+namespace SeriesBoostCanvas {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class Composition extends Series {
+        boostCanvas: Additions;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const CHUNK_SIZE = 50000;
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Variables
+     *
+     * */
+
+    let destroyLoadingDiv: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        SeriesClass: typeof Series
+    ): typeof Composition {
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(SeriesClass, 'destroy', onDestroy);
+            addEvent(SeriesClass, 'init', onInit);
+        }
+
+        return SeriesClass as typeof Composition;
+    }
+
+    /**
+     * @private
+     */
+    function onDestroy(
+        this: Series
+    ): void {
+        if (this.boostCanvas) {
+            this.boostCanvas.destroy();
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onInit(
+        this: Series
+    ): void {
+        const series = this as Composition;
+
+        if (!series.boostCanvas) {
+            series.boostCanvas = new Additions(series);
+        }
+    }
+
+    /* *
+     *
+     *  Classes
+     *
+     * */
+
+    export class Additions {
+
+        /* *
+         *
+         *  Constructors
+         *
+         * */
+
+        public constructor(series: Composition) {
+            this.series = series;
+        }
+
+        /* *
+         *
+         *  Properties
+         *
+         * */
+
+        public cvsStrokeBatch?: number;
+
+        public fill?: boolean;
+
+        public series: Composition;
+
+        /* *
+         *
+         *  Functions
+         *
+         * */
+
+        /**
+         * Draw the canvas image inside an SVG image
+         */
+        public canvasToSVG(): void {
+            const series = this.series;
+
+            if (!series.chart.isChartSeriesBoosting()) {
+                if (series.boostCopy || series.chart.boostCopy) {
+                    (series.boostCopy || series.chart.boostCopy)();
+                }
+            } else {
+                if (series.boostClear) {
+                    series.boostClear();
+                }
+            }
+        }
+
+        public cvsDrawPoint?(
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,
             yBottom: number,
             lastPoint?: Record<string, number>
         ): void;
-        /** @requires modules/boost-canvas */
-        cvsLineTo(
+
+        public cvsLineTo(
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number
-        ): void;
-        /** @requires modules/boost-canvas */
-        cvsMarkerCircle(
+        ): void {
+            ctx.lineTo(clientX, plotY);
+        }
+
+        public cvsMarkerCircle?(
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,
             r: number,
             i?: number
         ): void;
-        /** @requires modules/boost-canvas */
-        cvsMarkerSquare(
+
+        public cvsMarkerSquare?(
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,
             r: number
         ): void;
-        /** @requires modules/boost-canvas */
-        getContext(): (CanvasRenderingContext2D|null|undefined);
-        /** @requires modules/boost-canvas */
-        renderCanvas(): void;
-    }
-}
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        /** @requires modules/boost-canvas */
-        function initCanvasBoost(): void;
-    }
-}
-
-let CHUNK_SIZE = 50000,
-    destroyLoadingDiv: number;
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * Initialize the canvas boost.
- *
- * @function Highcharts.initCanvasBoost
- */
-const initCanvasBoost = function (): void {
-    if (H.seriesTypes.heatmap) {
-        wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
-            this: HeatmapSeries
-        ): void {
-            const chart = this.chart,
-                ctx = this.getContext(),
-                inverted = this.chart.inverted,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis;
-
-            if (ctx) {
-
-                // draw the columns
-                this.points.forEach(function (point): void {
-                    let plotY = point.plotY,
-                        pointAttr: SVGAttributes;
-
-                    if (
-                        typeof plotY !== 'undefined' &&
-                        !isNaN(plotY) &&
-                        point.y !== null &&
-                        ctx
-                    ) {
-                        const { x = 0, y = 0, width = 0, height = 0 } =
-                            point.shapeArgs || {};
-
-                        if (!chart.styledMode) {
-                            pointAttr = point.series.pointAttribs(point);
-                        } else {
-                            pointAttr = point.series.colorAttribs(point);
-                        }
-
-                        ctx.fillStyle = pointAttr.fill as any;
-
-                        if (inverted) {
-                            ctx.fillRect(
-                                yAxis.len - y + xAxis.left,
-                                xAxis.len - x + yAxis.top,
-                                -height,
-                                -width
-                            );
-                        } else {
-                            ctx.fillRect(
-                                x + xAxis.left,
-                                y + yAxis.top,
-                                width,
-                                height
-                            );
-                        }
-                    }
-                });
-
-                this.canvasToSVG();
-
-            } else {
-                this.chart.showLoading(
-                    'Your browser doesn\'t support HTML5 canvas, <br>' +
-                    'please use a modern browser'
-                );
-
-                // Uncomment this to provide low-level (slow) support in oldIE.
-                // It will cause script errors on charts with more than a few
-                // thousand points.
-                // arguments[0].call(this);
-            }
-        });
-    }
-
-
-    extend(Series.prototype, {
+        public destroy(): void {
+            this.series = void 0 as any;
+        }
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
          * copied over to an SVG image element.
-         *
-         * @private
-         * @function Highcharts.Series#getContext
          */
-        getContext: function (
-            this: Series
-        ): (CanvasRenderingContext2D|null|undefined) {
-            let chart = this.chart,
+        public getContext(): (CanvasRenderingContext2D|null|undefined) {
+            const series = this.series,
+                chart = series.chart,
                 width = chart.chartWidth,
                 height = chart.chartHeight,
-                targetGroup = chart.seriesGroup || this.group,
-                target: BoostTargetObject = this,
-                ctx: (CanvasRenderingContext2D|null|undefined),
                 swapXY = function (
                     this: CanvasRenderingContext2D,
                     proceed: Function,
@@ -211,6 +267,10 @@ const initCanvasBoost = function (): void {
                 ): void {
                     proceed.call(this, y, x, a, b, c, d);
                 };
+
+            let targetGroup = chart.seriesGroup || series.group,
+                target: BoostTargetObject = series,
+                ctx: (CanvasRenderingContext2D|null|undefined);
 
             if (chart.isChartSeriesBoosting()) {
                 target = chart as any;
@@ -284,41 +344,14 @@ const initCanvasBoost = function (): void {
             (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
 
             return ctx;
-        },
+        }
 
-        /**
-         * Draw the canvas image inside an SVG image
-         *
-         * @private
-         * @function Highcharts.Series#canvasToSVG
-         */
-        canvasToSVG: function (this: Series): void {
-            if (!this.chart.isChartSeriesBoosting()) {
-                if (this.boostCopy || this.chart.boostCopy) {
-                    (this.boostCopy || this.chart.boostCopy)();
-                }
-            } else {
-                if (this.boostClear) {
-                    this.boostClear();
-                }
-            }
-        },
-
-        cvsLineTo: function (
-            this: Series,
-            ctx: CanvasRenderingContext2D,
-            clientX: number,
-            plotY: number
-        ): void {
-            ctx.lineTo(clientX, plotY);
-        },
-
-        renderCanvas: function (this: Series): void {
-            let series = this,
+        public renderCanvas(): void {
+            let series = this.series,
                 options = series.options,
                 chart = series.chart,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis,
+                xAxis = series.xAxis,
+                yAxis = series.yAxis,
                 activeBoostSettings = chart.options.boost || {},
                 boostSettings = {
                     timeRendering: activeBoostSettings.timeRendering || false,
@@ -471,9 +504,9 @@ const initCanvasBoost = function (): void {
                 compareX = options.findNearestPointBy === 'x',
                 //
                 xDataFull: Array<number> = (
-                    this.xData ||
-                    (this.options as any).xData ||
-                    this.processedXData ||
+                    series.xData ||
+                    (series.options as any).xData ||
+                    series.processedXData ||
                     false
                 ),
                 //
@@ -508,13 +541,13 @@ const initCanvasBoost = function (): void {
                     }
                 };
 
-            if (this.renderTarget) {
-                this.renderTarget.attr({ 'href': '' });
+            if (series.renderTarget) {
+                series.renderTarget.attr({ 'href': '' });
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.points || this.graph) {
-                this.destroyGraphics();
+            if (series.points || series.graph) {
+                series.destroyGraphics();
             }
 
             // The group
@@ -532,12 +565,12 @@ const initCanvasBoost = function (): void {
                 series.markerGroup = null as any;
             });
 
-            points = this.points = [];
+            points = series.points = [];
             ctx = this.getContext();
             series.buildKDTree = noop; // Do not start building while drawing
 
-            if (this.boostClear) {
-                this.boostClear();
+            if (series.boostClear) {
+                series.boostClear();
             }
 
             // if (this.canvas) {
@@ -549,7 +582,7 @@ const initCanvasBoost = function (): void {
             //     );
             // }
 
-            if (!this.visible) {
+            if (!series.visible) {
                 return;
             }
 
@@ -578,7 +611,7 @@ const initCanvasBoost = function (): void {
             }
 
             // Loop over the points
-            (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
+            BCU.eachAsync(sdata, function (d: any, i: number): boolean {
                 let x: number,
                     y: number,
                     clientX: number,
@@ -731,7 +764,7 @@ const initCanvasBoost = function (): void {
                 //     (series.boostCopy || series.chart.boostCopy)();
                 // }
 
-                series.canvasToSVG();
+                series.boostCanvas.canvasToSVG();
 
                 if (boostSettings.timeRendering) {
                     console.timeEnd('canvas rendering'); // eslint-disable-line no-console
@@ -766,117 +799,15 @@ const initCanvasBoost = function (): void {
             // getSVG methods are not chained for it.
             }, chart.renderer.forExport ? Number.MAX_VALUE : void 0);
         }
-    });
 
-    seriesTypes.scatter.prototype.cvsMarkerCircle = function (
-        ctx: CanvasRenderingContext2D,
-        clientX: number,
-        plotY: number,
-        r: number
-    ): void {
-        ctx.moveTo(clientX, plotY);
-        ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
-    };
-
-    // Rect is twice as fast as arc, should be used for small markers
-    seriesTypes.scatter.prototype.cvsMarkerSquare = function (
-        ctx: CanvasRenderingContext2D,
-        clientX: number,
-        plotY: number,
-        r: number
-    ): void {
-        ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
-    };
-    seriesTypes.scatter.prototype.fill = true;
-
-    if (seriesTypes.bubble) {
-        seriesTypes.bubble.prototype.cvsMarkerCircle = function (
-            ctx: CanvasRenderingContext2D,
-            clientX: number,
-            plotY: number,
-            r: number,
-            i?: number
-        ): void {
-            ctx.moveTo(clientX, plotY);
-            ctx.arc(
-                clientX,
-                plotY,
-                this.radii && (this.radii[i as any] as any),
-                0,
-                2 * Math.PI,
-                false
-            );
-        };
-        seriesTypes.bubble.prototype.cvsStrokeBatch = 1;
     }
 
-    extend(seriesTypes.area.prototype, {
-        cvsDrawPoint: function (
-            this: AreaSeries,
-            ctx: CanvasRenderingContext2D,
-            clientX: number,
-            plotY: number,
-            yBottom: number,
-            lastPoint: Record<string, number>
-        ): void {
-            if (lastPoint && clientX !== lastPoint.clientX) {
-                ctx.moveTo(lastPoint.clientX as any, lastPoint.yBottom as any);
-                ctx.lineTo(lastPoint.clientX as any, lastPoint.plotY as any);
-                ctx.lineTo(clientX, plotY);
-                ctx.lineTo(clientX, yBottom);
-            }
-        },
-        fill: true,
-        fillOpacity: true,
-        sampling: true
-    });
+}
 
-    extend(seriesTypes.column.prototype, {
-        cvsDrawPoint: function (
-            this: ColumnSeries,
-            ctx: CanvasRenderingContext2D,
-            clientX: number,
-            plotY: number,
-            yBottom: number
-        ): void {
-            ctx.rect(clientX - 1, plotY, 1, yBottom - plotY);
-        },
-        fill: true,
-        sampling: true
-    });
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-    Chart.prototype.callbacks.push(function (chart: Chart): void {
-
-        /**
-         * @private
-         */
-        function canvasToSVG(this: Chart): void {
-            if (chart.boostCopy) {
-                chart.boostCopy();
-            }
-        }
-
-        /**
-         * @private
-         */
-        function clear(this: Chart): void {
-            if (chart.renderTarget) {
-                chart.renderTarget.attr({ href: '' });
-            }
-
-            if (chart.canvas) {
-                (chart.canvas.getContext('2d') as any).clearRect(
-                    0,
-                    0,
-                    chart.canvas.width,
-                    chart.canvas.height
-                );
-            }
-        }
-
-        addEvent(chart, 'predraw', clear);
-        addEvent(chart, 'render', canvasToSVG);
-    });
-};
-
-export default initCanvasBoost;
+export default SeriesBoostCanvas;

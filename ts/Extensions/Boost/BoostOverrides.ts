@@ -13,6 +13,7 @@
 'use strict';
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type BoostTargetObject from './BoostTargetObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type {
     PointOptions,
@@ -43,7 +44,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         /** @requires modules/boost */
-        getBoostClipRect(target: Highcharts.BoostTargetObject): BBoxObject;
+        getBoostClipRect(target: BoostTargetObject): BBoxObject;
         /** @requires modules/boost */
         isChartSeriesBoosting(): boolean;
     }

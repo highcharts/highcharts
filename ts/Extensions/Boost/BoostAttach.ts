@@ -12,9 +12,13 @@
 
 'use strict';
 
-import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+/* *
+ *
+ *  Imports
+ *
+ * */
 
+import type BoostTargetObject from './BoostTargetObject';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
@@ -26,34 +30,11 @@ const {
 } = U;
 
 declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike extends Highcharts.BoostTargetObject {}
+    interface ChartLike extends BoostTargetObject {}
 }
 
 declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike extends Highcharts.BoostTargetObject {}
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BoostTargetObject {
-            boostClipRect?: SVGElement;
-            canvas?: HTMLCanvasElement;
-            ogl?: BoostGLRenderer;
-            renderTarget?: (HTMLElement|SVGElement);
-            renderTargetCtx?: CanvasRenderingContext2D;
-            renderTargetFo?: SVGElement;
-            /** @requires modules/boost */
-            boostClear(): void;
-            /** @requires modules/boost */
-            boostCopy(): void;
-            /** @requires modules/boost */
-            boostResizeTarget(): void;
-        }
-    }
+    interface SeriesLike extends BoostTargetObject {}
 }
 
 let mainCanvas: HTMLCanvasElement|undefined;
@@ -80,7 +61,7 @@ function createAndAttachRenderer(
 
     let width = chart.chartWidth,
         height = chart.chartHeight,
-        target: Highcharts.BoostTargetObject = chart,
+        target: BoostTargetObject = chart,
         targetGroup = chart.seriesGroup || series.group,
         alpha = 1,
         foSupported: boolean = doc.implementation.hasFeature(
