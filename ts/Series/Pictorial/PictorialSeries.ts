@@ -30,6 +30,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
 import PictorialUtilities from './PictorialUtilities.js';
+import { PictorialPathOptions } from './PictorialSeriesOptions';
 
 const {
     seriesTypes: {
@@ -115,7 +116,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    public paths: Array<string | SVGPath> = void 0 as any;
+    public paths: Array<PictorialPathOptions> = void 0 as any;
 
     public data: Array<PictorialPoint> = void 0 as any;
 
@@ -199,7 +200,7 @@ class PictorialSeries extends ColumnSeries {
                     path: {
                         d: seriesOptions.paths[
                             point.index % seriesOptions.paths.length
-                        ] as unknown as SVGPath,
+                        ].definition,
                         fill: pointAttribs.fill,
                         strokeWidth: pointAttribs['stroke-width'],
                         stroke: pointAttribs.stroke
@@ -306,7 +307,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                     fill: {
                         pattern: {
                             path: {
-                                d: shape[index],
+                                d: shape[index].definition,
                                 fill: options.stackShadow.color || '#dedede',
                                 strokeWidth: strokeWidth,
                                 stroke: options.stackShadow.borderColor ||
@@ -347,7 +348,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                 fill: {
                     pattern: {
                         path: {
-                            d: shape[index],
+                            d: shape[index].definition,
                             fill: options.stackShadow &&
                                 options.stackShadow.color || '#dedede',
                             strokeWidth: strokeWidth,

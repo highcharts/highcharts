@@ -24,7 +24,12 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
  * */
 
 export interface PictorialSeriesOptions extends ColumnSeriesOptions {
-    paths?: Array <string | SVGPath>;
+    paths?: Array <PictorialPathOptions>;
+}
+
+export interface PictorialPathOptions {
+    definition?: string | SVGPath;
+    max?: Number;
 }
 
 /* *

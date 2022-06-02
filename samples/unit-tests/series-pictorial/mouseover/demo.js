@@ -7,9 +7,9 @@ QUnit.test('Hover state tests', function (assert) {
         plotOptions: {
             pictorial: {
                 stacking: 'percent',
-                paths: [
-                    'M50 0 L 100 200 L 0 200 Z'
-                ]
+                paths: [{
+                    definition: 'M50 0 L 100 200 L 0 200 Z'
+                }]
             }
         },
 
