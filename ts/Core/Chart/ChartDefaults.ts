@@ -462,8 +462,7 @@ const ChartDefaults: ChartOptions = {
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
-         * @type       {string}
-         * @validvalue ["x", "y", "xy"]
+         * @type       {Highcharts.ChartPanningTypeValue}
          * @default    {highcharts|highstock} x
          * @default    {highmaps} xy
          */
