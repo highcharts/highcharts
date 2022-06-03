@@ -1383,7 +1383,7 @@ function GLRenderer(
             // If there are entries in the colorData buffer, build and bind it.
             if (s.colorData.length > 0) {
                 shader.setUniform('hasColor', 1.0);
-                cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
+                cbuffer = new GLVertexBuffer(gl, shader);
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
             } else {
@@ -1559,7 +1559,7 @@ function GLRenderer(
             return false;
         }
 
-        vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
+        vbuffer = new GLVertexBuffer(gl, shader);
 
         /**
          * @private

@@ -38,41 +38,50 @@ declare global {
  * in a single call.
  *
  * @private
- * @function GLVertexBuffer
+ * @class GLVertexBuffer
+ *
  * @param {WebGLContext} gl
  * the context in which to create the buffer
  * @param {GLShader} shader
  * the shader to use
  */
-function GLVertexBuffer(
-    gl: WebGLRenderingContext,
-    shader: Highcharts.BoostGLShader,
-    dataComponents?: number
-    /* , type */
-): Highcharts.BoostGLVertexBuffer {
-    let buffer: (false|WebGLBuffer|null) = false,
-        vertAttribute: (false|number) = false,
-        components = dataComponents || 2,
-        preAllocated: (false|Float32Array) = false,
-        iterator = 0,
-        // farray = false,
-        data: (Array<number>|undefined);
+class GLVertexBuffer {
 
-    // type = type || 'float';
+    public constructor(
+        gl: WebGLRenderingContext,
+        shader: Highcharts.BoostGLShader,
+        dataComponents?: number
+        /* , type */
+    ) {
+        this.components = dataComponents || 2;
+        this.dataComponents = dataComponents;
+        this.gl = gl;
+        this.shader = shader;
+    }
+
+    private buffer: (false|WebGLBuffer|null) = false;
+    private components: number;
+    public data: (Array<number>|undefined);
+    private dataComponents?: number;
+    private iterator = 0;
+    private gl: WebGLRenderingContext;
+    private preAllocated: (false|Float32Array) = false;
+    private shader: Highcharts.BoostGLShader;
+    private vertAttribute: (false|number) = false;
 
     /**
      * @private
      */
-    function destroy(): void {
-        if (buffer) {
-            gl.deleteBuffer(buffer);
-            buffer = false;
-            vertAttribute = false;
+    public destroy(): void {
+        if (this.buffer) {
+            this.gl.deleteBuffer(this.buffer);
+            this.buffer = false;
+            this.vertAttribute = false;
         }
 
-        iterator = 0;
-        components = dataComponents || 2;
-        data = [];
+        this.iterator = 0;
+        this.components = this.dataComponents || 2;
+        this.data = [];
     }
 
     /**
@@ -82,42 +91,43 @@ function GLVertexBuffer(
      * @param attrib {String} - the name of the Attribute to bind the buffer to
      * @param dataComponents {Integer} - the number of components per. indice
      */
-    function build(
+    public build(
         dataIn: Array<number>,
         attrib: string,
         dataComponents?: number
     ): boolean {
         let farray: (false|Float32Array|undefined);
 
-        data = dataIn || [];
+        this.data = dataIn || [];
 
-        if ((!data || data.length === 0) && !preAllocated) {
+        if ((!this.data || this.data.length === 0) && !this.preAllocated) {
             // console.error('trying to render empty vbuffer');
-            destroy();
+            this.destroy();
             return false;
         }
 
-        components = dataComponents || components;
+        this.components = dataComponents || this.components;
 
-        if (buffer) {
-            gl.deleteBuffer(buffer);
+        if (this.buffer) {
+            this.gl.deleteBuffer(this.buffer);
         }
 
-        if (!preAllocated) {
-            farray = new Float32Array(data);
+        if (!this.preAllocated) {
+            farray = new Float32Array(this.data);
         }
 
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            (preAllocated as any) || (farray as any),
-            gl.STATIC_DRAW
+        this.buffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+        this.gl.bufferData(
+            this.gl.ARRAY_BUFFER,
+            (this.preAllocated as any) || (farray as any),
+            this.gl.STATIC_DRAW
         );
 
         // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
-        vertAttribute = gl.getAttribLocation(shader.program() as any, attrib);
-        gl.enableVertexAttribArray(vertAttribute);
+        this.vertAttribute = this.gl
+            .getAttribLocation(this.shader.program() as any, attrib);
+        this.gl.enableVertexAttribArray(this.vertAttribute);
 
         // Trigger cleanup
         farray = false;
@@ -129,16 +139,21 @@ function GLVertexBuffer(
      * Bind the buffer
      * @private
      */
-    function bind(): (boolean|undefined) {
-        if (!buffer) {
+    public bind(): (boolean|undefined) {
+        if (!this.buffer) {
             return false;
         }
 
         // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         // gl.enableVertexAttribArray(vertAttribute);
         // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.vertexAttribPointer(
-            vertAttribute as any, components, gl.FLOAT, false, 0, 0
+        this.gl.vertexAttribPointer(
+            this.vertAttribute as any,
+            this.components,
+            this.gl.FLOAT,
+            false,
+            0,
+            0
         );
         // gl.enableVertexAttribArray(vertAttribute);
     }
@@ -150,11 +165,11 @@ function GLVertexBuffer(
      * @param to {Integer} - the end indice
      * @param drawMode {String} - the draw mode
      */
-    function render(from: number, to: number, drawMode: string): boolean {
-        const length = preAllocated ?
-            preAllocated.length : (data as any).length;
+    public render(from: number, to: number, drawMode: string): boolean {
+        const length = this.preAllocated ?
+            this.preAllocated.length : (this.data as any).length;
 
-        if (!buffer) {
+        if (!this.buffer) {
             return false;
         }
 
@@ -176,10 +191,10 @@ function GLVertexBuffer(
 
         drawMode = drawMode || 'points';
 
-        gl.drawArrays(
-            (gl as any)[drawMode.toUpperCase()],
-            from / components,
-            (to - from) / components
+        this.gl.drawArrays(
+            (this.gl as any)[drawMode.toUpperCase()],
+            from / this.components,
+            (to - from) / this.components
         );
 
         return true;
@@ -188,12 +203,12 @@ function GLVertexBuffer(
     /**
      * @private
      */
-    function push(x: number, y: number, a: number, b: number): void {
-        if (preAllocated) { // && iterator <= preAllocated.length - 4) {
-            preAllocated[++iterator] = x;
-            preAllocated[++iterator] = y;
-            preAllocated[++iterator] = a;
-            preAllocated[++iterator] = b;
+    public push(x: number, y: number, a: number, b: number): void {
+        if (this.preAllocated) { // && iterator <= preAllocated.length - 4) {
+            this.preAllocated[++this.iterator] = x;
+            this.preAllocated[++this.iterator] = y;
+            this.preAllocated[++this.iterator] = a;
+            this.preAllocated[++this.iterator] = b;
         }
     }
 
@@ -202,23 +217,13 @@ function GLVertexBuffer(
      *     - This is slower for charts with many series
      * @private
      */
-    function allocate(size: number): void {
+    public allocate(size: number): void {
         size *= 4;
-        iterator = -1;
+        this.iterator = -1;
 
-        preAllocated = new Float32Array(size);
+        this.preAllocated = new Float32Array(size);
     }
 
-    // /////////////////////////////////////////////////////////////////////////
-    return {
-        destroy: destroy,
-        bind: bind,
-        data: data,
-        build: build,
-        render: render,
-        allocate: allocate,
-        push: push
-    };
 }
 
 export default GLVertexBuffer;
