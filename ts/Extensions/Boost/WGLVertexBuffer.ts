@@ -12,23 +12,11 @@
 
 'use strict';
 
-declare global {
-    namespace Highcharts {
-        interface BoostGLVertexBuffer {
-            data: (Array<number>|undefined);
-            allocate(size: number): void;
-            bind(): (boolean|undefined);
-            build(
-                dataIn: Array<number>,
-                attrib: string,
-                dataComponents?: number
-            ): boolean;
-            destroy(): void;
-            push(x: number, y: number, a: number, b: number): void;
-            render(from: number, to: number, drawMode: string): boolean;
-        }
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -38,14 +26,19 @@ declare global {
  * in a single call.
  *
  * @private
- * @class GLVertexBuffer
  *
  * @param {WebGLContext} gl
  * the context in which to create the buffer
  * @param {GLShader} shader
  * the shader to use
  */
-class GLVertexBuffer {
+class WGLVertexBuffer {
+
+    /* *
+     *
+     *  Constuctor
+     *
+     * */
 
     public constructor(
         gl: WebGLRenderingContext,
@@ -59,29 +52,70 @@ class GLVertexBuffer {
         this.shader = shader;
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     private buffer: (false|WebGLBuffer|null) = false;
+
     private components: number;
+
     public data: (Array<number>|undefined);
+
     private dataComponents?: number;
+
     private iterator = 0;
+
     private gl: WebGLRenderingContext;
+
     private preAllocated: (false|Float32Array) = false;
+
     private shader: Highcharts.BoostGLShader;
+
     private vertAttribute: (false|number) = false;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+
     /**
+     * Note about pre-allocated buffers:
+     *     - This is slower for charts with many series
      * @private
      */
-    public destroy(): void {
-        if (this.buffer) {
-            this.gl.deleteBuffer(this.buffer);
-            this.buffer = false;
-            this.vertAttribute = false;
+    public allocate(size: number): void {
+        size *= 4;
+        this.iterator = -1;
+
+        this.preAllocated = new Float32Array(size);
+    }
+
+    /**
+     * Bind the buffer
+     * @private
+     */
+    public bind(): (boolean|undefined) {
+        if (!this.buffer) {
+            return false;
         }
 
-        this.iterator = 0;
-        this.components = this.dataComponents || 2;
-        this.data = [];
+        // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
+        // gl.enableVertexAttribArray(vertAttribute);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        this.gl.vertexAttribPointer(
+            this.vertAttribute as any,
+            this.components,
+            this.gl.FLOAT,
+            false,
+            0,
+            0
+        );
+        // gl.enableVertexAttribArray(vertAttribute);
     }
 
     /**
@@ -136,26 +170,30 @@ class GLVertexBuffer {
     }
 
     /**
-     * Bind the buffer
      * @private
      */
-    public bind(): (boolean|undefined) {
-        if (!this.buffer) {
-            return false;
+    public destroy(): void {
+        if (this.buffer) {
+            this.gl.deleteBuffer(this.buffer);
+            this.buffer = false;
+            this.vertAttribute = false;
         }
 
-        // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
-        // gl.enableVertexAttribArray(vertAttribute);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        this.gl.vertexAttribPointer(
-            this.vertAttribute as any,
-            this.components,
-            this.gl.FLOAT,
-            false,
-            0,
-            0
-        );
-        // gl.enableVertexAttribArray(vertAttribute);
+        this.iterator = 0;
+        this.components = this.dataComponents || 2;
+        this.data = [];
+    }
+
+    /**
+     * @private
+     */
+    public push(x: number, y: number, a: number, b: number): void {
+        if (this.preAllocated) { // && iterator <= preAllocated.length - 4) {
+            this.preAllocated[++this.iterator] = x;
+            this.preAllocated[++this.iterator] = y;
+            this.preAllocated[++this.iterator] = a;
+            this.preAllocated[++this.iterator] = b;
+        }
     }
 
     /**
@@ -200,30 +238,12 @@ class GLVertexBuffer {
         return true;
     }
 
-    /**
-     * @private
-     */
-    public push(x: number, y: number, a: number, b: number): void {
-        if (this.preAllocated) { // && iterator <= preAllocated.length - 4) {
-            this.preAllocated[++this.iterator] = x;
-            this.preAllocated[++this.iterator] = y;
-            this.preAllocated[++this.iterator] = a;
-            this.preAllocated[++this.iterator] = b;
-        }
-    }
-
-    /**
-     * Note about pre-allocated buffers:
-     *     - This is slower for charts with many series
-     * @private
-     */
-    public allocate(size: number): void {
-        size *= 4;
-        this.iterator = -1;
-
-        this.preAllocated = new Float32Array(size);
-    }
-
 }
 
-export default GLVertexBuffer;
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+export default WGLVertexBuffer;

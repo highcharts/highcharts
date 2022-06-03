@@ -24,7 +24,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import GLShader from './WGLShader.js';
-import GLVertexBuffer from './WGLVBuffer.js';
+import WGLVertexBuffer from './WGLVertexBuffer.js';
 import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
@@ -147,7 +147,7 @@ function GLRenderer(
     //  // Shader
     let shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
-        vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
+        vbuffer: WGLVertexBuffer = false as any,
         vlen = 0,
         // Opengl context
         gl: WebGLRenderingContext = false as any,
@@ -1383,7 +1383,7 @@ function GLRenderer(
             // If there are entries in the colorData buffer, build and bind it.
             if (s.colorData.length > 0) {
                 shader.setUniform('hasColor', 1.0);
-                cbuffer = new GLVertexBuffer(gl, shader);
+                cbuffer = new WGLVertexBuffer(gl, shader);
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
             } else {
@@ -1559,7 +1559,7 @@ function GLRenderer(
             return false;
         }
 
-        vbuffer = new GLVertexBuffer(gl, shader);
+        vbuffer = new WGLVertexBuffer(gl, shader);
 
         /**
          * @private
