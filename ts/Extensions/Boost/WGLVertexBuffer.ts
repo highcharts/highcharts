@@ -18,7 +18,8 @@
  *
  * */
 
-import { WGLDrawModeValue } from './WGLDrawMode';
+import type { WGLDrawModeValue } from './WGLDrawMode';
+import type WGLShader from './WGLShader';
 
 /* *
  *
@@ -50,7 +51,7 @@ class WGLVertexBuffer {
 
     public constructor(
         gl: WebGLRenderingContext,
-        shader: Highcharts.BoostGLShader,
+        shader: WGLShader,
         dataComponents?: number
         /* , type */
     ) {
@@ -80,7 +81,7 @@ class WGLVertexBuffer {
 
     private preAllocated: (false|Float32Array) = false;
 
-    private shader: Highcharts.BoostGLShader;
+    private shader: WGLShader;
 
     private vertAttribute: (false|number) = false;
 
@@ -170,7 +171,7 @@ class WGLVertexBuffer {
 
         // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         this.vertAttribute = this.gl
-            .getAttribLocation(this.shader.program() as any, attrib);
+            .getAttribLocation(this.shader.getProgram() as any, attrib);
         this.gl.enableVertexAttribArray(this.vertAttribute);
 
         // Trigger cleanup

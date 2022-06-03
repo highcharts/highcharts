@@ -24,7 +24,7 @@ import type { WGLDrawModeValue } from './WGLDrawMode';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import GLShader from './WGLShader.js';
+import WGLShader from './WGLShader.js';
 import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
@@ -146,7 +146,7 @@ function GLRenderer(
     postRenderCallback: Function
 ): (false|Highcharts.BoostGLRenderer) {
     //  // Shader
-    let shader: Highcharts.BoostGLShader = false as any,
+    let shader: WGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: WGLVertexBuffer = false as any,
         vlen = 0,
@@ -1377,7 +1377,7 @@ function GLRenderer(
                 // #15869, a buffer with fewer points might already be bound by
                 // a different series/chart causing out of range errors
                 gl.disableVertexAttribArray(
-                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                    gl.getAttribLocation(shader.getProgram() as any, 'aColor')
                 );
             }
 
@@ -1539,7 +1539,7 @@ function GLRenderer(
         // gl.depthMask(gl.FALSE);
         gl.depthFunc(gl.LESS);
 
-        shader = GLShader(gl) as any; // eslint-disable-line new-cap
+        shader = new WGLShader(gl);
 
         if (!shader) {
             // We need to abort, there's no shader context
