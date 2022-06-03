@@ -267,46 +267,88 @@ function clamp(value: number, min: number, max: number): number {
 
 // eslint-disable-next-line valid-jsdoc
 /**
- * Remove settings that have not changed, to avoid unnecessary rendering or
- * computing (#9197).
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
  * @private
  */
-function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
-    newer: TNew,
-    older: TOld
-): TNew & TOld {
-    const result: AnyRecord = {};
+function diffObjects(
+    newer: AnyRecord,
+    older: AnyRecord,
+    keepOlder?: boolean,
+    collectionsWithUpdate?: string[]
+): AnyRecord {
+    const ret = {};
 
-    objectEach(newer, function (_val: unknown, key: (number|string)): void {
-        let ob;
+    /**
+     * Recurse over a set of options and its current values,
+     * and store the current values in the ret object.
+     */
+    function diff(
+        newer: AnyRecord,
+        older: AnyRecord,
+        ret: AnyRecord,
+        depth: number
+    ): void {
+        const keeper = keepOlder ? older : newer;
 
-        // Dive into objects (except DOM nodes)
-        if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
-        ) {
-            ob = cleanRecursively(
-                newer[key],
+        objectEach(newer, function (newerVal, key): void {
+            if (
+                !depth &&
+                collectionsWithUpdate &&
+                collectionsWithUpdate.indexOf(key) > -1 &&
                 older[key]
-            );
-            if (Object.keys(ob).length) {
-                result[key] = ob;
+            ) {
+                newerVal = splat(newerVal);
+
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (
+                    let i = 0;
+                    i < Math.max(newerVal.length, older[key].length);
+                    i++
+                ) {
+
+                    // Item exists in current data (#6347)
+                    if (older[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (newerVal[i] === void 0) {
+                            ret[key][i] = older[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            diff(
+                                newerVal[i],
+                                older[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
+                    }
+                }
+            } else if (
+                isObject(newerVal, true) &&
+                !newerVal.nodeType // #10044
+            ) {
+                ret[key] = isArray(newerVal) ? [] : {};
+                diff(newerVal, older[key] || {}, ret[key], depth + 1);
+
+            } else if (newer[key] !== older[key]) {
+                ret[key] = keeper[key];
             }
+        });
+    }
 
-        // Arrays, primitives and DOM nodes are copied directly
-        } else if (
-            isObject(newer[key]) ||
-            newer[key] !== older[key] ||
-            // If the newer key is explicitly undefined, keep it (#10525)
-            (key in newer && !(key in older))
-        ) {
-            result[key] = newer[key];
-        }
-    });
+    diff(newer, older, ret, 0);
 
-    return result;
+    return ret;
 }
+
 
 /**
  * Shortcut for parseInt
@@ -2080,13 +2122,13 @@ const Utilities = {
     arrayMin,
     attr,
     clamp,
-    cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     erase,
     error,

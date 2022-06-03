@@ -90,10 +90,10 @@ import AST from '../Renderer/HTML/AST.js';
 const {
     addEvent,
     attr,
-    cleanRecursively,
     createElement,
     css,
     defined,
+    diffObjects,
     discardElement,
     erase,
     error,
@@ -3197,7 +3197,7 @@ class Chart {
             chart.setResponsive(false, true);
         }
 
-        options = cleanRecursively(options, chart.options);
+        options = diffObjects(options, chart.options);
 
         chart.userOptions = merge(chart.userOptions, options);
 

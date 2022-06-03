@@ -77,9 +77,9 @@ const {
     arrayMax,
     arrayMin,
     clamp,
-    cleanRecursively,
     correctFloat,
     defined,
+    diffObjects,
     erase,
     error,
     extend,
@@ -4195,7 +4195,7 @@ class Series {
         redraw?: boolean
     ): void {
 
-        options = cleanRecursively(options, this.userOptions);
+        options = diffObjects(options, this.userOptions);
         fireEvent(this, 'update', { options: options });
 
         const series = this,

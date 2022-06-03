@@ -26,6 +26,69 @@
         return count;
     }
 
+    QUnit.test('diffObjects', assert => {
+
+        // eslint-disable-next-line no-underscore-dangle
+        const diffObjects = Highcharts._modules[
+            'Core/Utilities.js'
+        ].diffObjects;
+
+        let result;
+
+        //---
+        result = diffObjects({
+            type: 'apples'
+        }, {
+            type: 'oranges'
+        });
+        assert.deepEqual(
+            result,
+            { type: 'apples' },
+            'New prop should be returned by default'
+        );
+
+        //---
+        result = diffObjects(
+            {
+                type: 'apples'
+            }, {
+                type: 'oranges'
+            },
+            true
+        );
+        assert.deepEqual(
+            result,
+            { type: 'oranges' },
+            'Older prop should be returned by option'
+        );
+
+
+        //---
+        result = diffObjects({
+            type: undefined
+        }, {
+            type: 'apples'
+        });
+        assert.deepEqual(
+            result,
+            { type: undefined },
+            'New, undefined properties should be _in_ the result, but ' +
+            'undefined (#10525)'
+        );
+
+        //---
+        result = diffObjects({
+            node: document.getElementById('container')
+        }, {
+        });
+        assert.strictEqual(
+            result.node.getAttribute('id'),
+            document.getElementById('container').getAttribute('id'),
+            'DOM nodes should be copied by reference, not deep copied'
+        );
+
+    });
+
     QUnit.test('Extend', function (assert) {
         var empty = {};
         var extra = { key1: 'k1', key2: 'k2' };
