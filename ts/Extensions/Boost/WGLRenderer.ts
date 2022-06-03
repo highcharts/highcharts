@@ -20,11 +20,11 @@ import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type { WGLDrawModeValue } from './WGLDrawMode';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import GLShader from './WGLShader.js';
-import WGLVertexBuffer from './WGLVertexBuffer.js';
 import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
@@ -35,6 +35,8 @@ const {
     objectEach,
     pick
 } = U;
+import WGLDrawMode from './WGLDrawMode.js';
+import WGLVertexBuffer from './WGLVertexBuffer.js';
 
 /**
  * Internal types
@@ -88,7 +90,7 @@ declare global {
         }
         interface BoostGLSeriesObject {
             colorData: Array<number>;
-            drawMode: BoostGLDrawModeValue;
+            drawMode: WGLDrawModeValue;
             hasMarkers: boolean;
             markerFrom: number;
             markerTo?: number;
@@ -107,7 +109,6 @@ declare global {
             texture: HTMLCanvasElement;
             handle: (WebGLTexture|null);
         }
-        type BoostGLDrawModeValue = ('line_strip'|'lines'|'points'|'triangles');
     }
     interface CanvasRenderingContext2D {
         FUNC_MIN: number;
@@ -589,7 +590,7 @@ function GLRenderer(
             // translated, so we skip the shader translation.
             inst.skipTranslation = true;
             // Force triangle draw mode
-            inst.drawMode = 'triangles';
+            inst.drawMode = 'TRIANGLES';
 
             // We don't have a z component in the shader, so we need to sort.
             if (points[0].node && points[0].node.levelDynamic) {
@@ -922,7 +923,7 @@ function GLRenderer(
                     // If this is  rendered as a point, just skip drawing it
                     // entirely, as we're not dependandt on lineTo'ing to it.
                     // See #8197
-                    if (inst.drawMode === 'points') {
+                    if (inst.drawMode === 'POINTS') {
                         continue;
                     }
 
@@ -1121,21 +1122,7 @@ function GLRenderer(
                 s.options.marker.enabled !== false :
                 false,
             showMarkers: true,
-            drawMode: (
-                {
-                    'area': 'lines',
-                    'arearange': 'lines',
-                    'areaspline': 'lines',
-                    'column': 'lines',
-                    'columnrange': 'lines',
-                    'bar': 'lines',
-                    'line': 'line_strip',
-                    'scatter': 'points',
-                    'heatmap': 'triangles',
-                    'treemap': 'triangles',
-                    'bubble': 'points'
-                } as Record<string, Highcharts.BoostGLDrawModeValue>
-            )[s.type] || 'line_strip'
+            drawMode: WGLDrawMode[s.type] || 'LINE_STRIP'
         };
 
         if (s.index >= series.length) {
@@ -1321,7 +1308,7 @@ function GLRenderer(
             } else {
                 fillColor =
                     (
-                        s.drawMode === 'points' && // #14260
+                        s.drawMode === 'POINTS' && // #14260
                         s.series.pointAttribs &&
                         s.series.pointAttribs().fill
                     ) ||
@@ -1346,7 +1333,7 @@ function GLRenderer(
 
             // This is very much temporary
             if (
-                s.drawMode === 'lines' &&
+                s.drawMode === 'LINES' &&
                 settings.useAlpha &&
                 (scolor[3] as any) < 1
             ) {
@@ -1400,7 +1387,7 @@ function GLRenderer(
             setYAxis(s.series.yAxis);
             setThreshold(hasThreshold, translatedThreshold as any);
 
-            if (s.drawMode === 'points') {
+            if (s.drawMode === 'POINTS') {
                 shader.setPointSize(pick(
                     options.marker && options.marker.radius,
                     0.5
@@ -1426,7 +1413,7 @@ function GLRenderer(
 
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
-            if (lineWidth > 0 || s.drawMode !== 'line_strip') {
+            if (lineWidth > 0 || s.drawMode !== 'LINE_STRIP') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,

@@ -14,11 +14,17 @@
 
 /* *
  *
- *  Class
+ *  Imports
  *
  * */
 
-/* eslint-disable valid-jsdoc */
+import { WGLDrawModeValue } from './WGLDrawMode';
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Vertex Buffer abstraction.
@@ -26,17 +32,19 @@
  * in a single call.
  *
  * @private
+ * @class
+ * @name WGLVertexBuffer
  *
  * @param {WebGLContext} gl
- * the context in which to create the buffer
- * @param {GLShader} shader
- * the shader to use
+ * Context in which to create the buffer.
+ * @param {WGLShader} shader
+ * Shader to use.
  */
 class WGLVertexBuffer {
 
     /* *
      *
-     *  Constuctor
+     *  Constructor
      *
      * */
 
@@ -82,17 +90,16 @@ class WGLVertexBuffer {
      *
      * */
 
-
     /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
      * @private
      */
-    public allocate(size: number): void {
-        size *= 4;
+    public allocate(
+        size: number
+    ): void {
         this.iterator = -1;
-
-        this.preAllocated = new Float32Array(size);
+        this.preAllocated = new Float32Array(size * 4);
     }
 
     /**
@@ -121,9 +128,12 @@ class WGLVertexBuffer {
     /**
      * Build the buffer
      * @private
-     * @param dataIn {Array<float>} - a 0 padded array of indices
-     * @param attrib {String} - the name of the Attribute to bind the buffer to
-     * @param dataComponents {Integer} - the number of components per. indice
+     * @param {Array<number>} dataIn
+     * Zero padded array of indices
+     * @param {string} attrib
+     * Name of the Attribute to bind the buffer to
+     * @param {number} dataComponents
+     * Mumber of components per. indice
      */
     public build(
         dataIn: Array<number>,
@@ -186,6 +196,16 @@ class WGLVertexBuffer {
 
     /**
      * @private
+     * Adds data to the pre-allocated buffer.
+     * @private
+     * @param {number} x
+     * X data
+     * @param {number} y
+     * Y data
+     * @param {number} a
+     * A data
+     * @param {number} b
+     * B data
      */
     public push(x: number, y: number, a: number, b: number): void {
         if (this.preAllocated) { // && iterator <= preAllocated.length - 4) {
@@ -198,12 +218,20 @@ class WGLVertexBuffer {
 
     /**
      * Render the buffer
+     *
      * @private
-     * @param from {Integer} - the start indice
-     * @param to {Integer} - the end indice
-     * @param drawMode {String} - the draw mode
+     * @param {number} from
+     * Start indice.
+     * @param {number} to
+     * End indice.
+     * @param {WGLDrawModeValue} drawMode
+     * Draw mode.
      */
-    public render(from: number, to: number, drawMode: string): boolean {
+    public render(
+        from: number,
+        to: number,
+        drawMode: WGLDrawModeValue
+    ): boolean {
         const length = this.preAllocated ?
             this.preAllocated.length : (this.data as any).length;
 
@@ -227,10 +255,10 @@ class WGLVertexBuffer {
             return false;
         }
 
-        drawMode = drawMode || 'points';
+        drawMode = drawMode || 'POINTS';
 
         this.gl.drawArrays(
-            (this.gl as any)[drawMode.toUpperCase()],
+            this.gl[drawMode],
             from / this.components,
             (to - from) / this.components
         );
@@ -242,7 +270,7 @@ class WGLVertexBuffer {
 
 /* *
  *
- *  Imports
+ *  Default Export
  *
  * */
 
