@@ -1,0 +1,19 @@
+body {
+    background-color: #2e2b36;
+}
+
+#container {
+    height: 450px;
+    min-width: 310px;
+    width: 1100px;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
+button {
+    margin-bottom: 20px;
+}
+
+pre {
+    display: none;
+}
