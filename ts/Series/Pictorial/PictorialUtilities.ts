@@ -15,12 +15,18 @@
  * */
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { PictorialPathOptions } from './PictorialSeriesOptions';
+import U from '../../Core/Utilities.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 
+const {
+    defined
+} = U;
+
 function rescalePatternFill(
     element: SVGElement,
-    yAxis: Axis,
+    stackHeight: number,
     width: number,
     height: number,
     borderWidth = 1
@@ -32,9 +38,9 @@ function rescalePatternFill(
         if (patternPath) {
             const bBox = patternPath.getBBox();
             let scaleX = 1 / (bBox.width + borderWidth);
-            let scaleY = yAxis.len / height / bBox.height;
+            let scaleY = stackHeight / height / bBox.height;
             let aspectRatio = bBox.width / bBox.height;
-            let pointAspectRatio = width / yAxis.len;
+            let pointAspectRatio = width / stackHeight;
             let x = -bBox.width / 2;
 
             if (aspectRatio < pointAspectRatio) {
@@ -55,6 +61,27 @@ function rescalePatternFill(
     }
 }
 
+function getStackMetrics(
+    yAxis: Axis,
+    shape?: PictorialPathOptions
+): {
+        height: number,
+        y: number
+    } {
+    let height = yAxis.len;
+    let y = 0;
+
+    if (shape && defined(shape.max)) {
+        y = yAxis.toPixels(shape.max, true);
+        height = yAxis.len - y;
+    }
+
+    return {
+        height,
+        y
+    };
+}
+
 function invertShadowGroup(
     shadowGroup: SVGElement,
     xAxis: Axis,
@@ -68,4 +95,4 @@ function invertShadowGroup(
     }
 }
 
-export default { rescalePatternFill, invertShadowGroup };
+export default { rescalePatternFill, invertShadowGroup, getStackMetrics };

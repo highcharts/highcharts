@@ -44,13 +44,15 @@ const {
 
 const {
     addEvent,
+    defined,
     merge,
     pick
 } = U;
 
 const {
     rescalePatternFill,
-    invertShadowGroup
+    invertShadowGroup,
+    getStackMetrics
 } = PictorialUtilities;
 
 export interface StackShadowOptions {
@@ -193,8 +195,12 @@ class PictorialSeries extends ColumnSeries {
     ): SVGAttributes {
         const pointAttribs = super.pointAttribs.apply(this, arguments);
         const seriesOptions = this.options;
+        const series = this;
 
         if (point && point.shapeArgs && seriesOptions.paths) {
+            const shape = (series as any).options.paths[point.index %
+                (series as any).options.paths.length];
+            const { y, height } = getStackMetrics(series.yAxis, shape);
             pointAttribs.fill = {
                 pattern: {
                     path: {
@@ -206,9 +212,9 @@ class PictorialSeries extends ColumnSeries {
                         stroke: pointAttribs.stroke
                     },
                     x: point.shapeArgs.x,
-                    y: 0,
+                    y: y,
                     width: point.shapeArgs.width || 0,
-                    height: point.series.yAxis.len,
+                    height: height,
                     patternContentUnits: 'objectBoundingBox',
                     backgroundColor: 'none',
                     color: '#ff0000'
@@ -234,10 +240,12 @@ class PictorialSeries extends ColumnSeries {
 addEvent(PictorialSeries, 'afterRender', function (): void {
     const series = this;
     series.points.forEach(function (point: PictorialPoint): void {
+        const shape = (series as any).options.paths[point.index %
+        (series as any).options.paths.length];
         if (point.graphic && point.shapeArgs) {
             rescalePatternFill(
                 point.graphic,
-                series.yAxis,
+                getStackMetrics(series.yAxis, shape).height,
                 point.shapeArgs.width || 0,
                 point.shapeArgs.height || Infinity,
                 series.options.borderWidth || 0
@@ -274,12 +282,12 @@ addEvent(StackItem, 'afterRender', function (): void {
         const stackShadow = this.shadow;
         const xCenter = xAxis.toPixels(this.x, true);
         const x = chart.inverted ? xAxis.len - xCenter : xCenter;
-        const y = 0;
+        const paths = series.options.paths || [];
+        const index = this.x % paths.length;
+        const shape = paths[index];
         const width = series.getColumnMetrics &&
             series.getColumnMetrics().width;
-        const height = this.axis.len;
-        const shape = series.options.paths || [];
-        const index = this.x % shape.length;
+        const { height, y } = getStackMetrics(series.yAxis, shape);
         const strokeWidth = pick(
             options.stackShadow && options.stackShadow.borderWidth,
             series.options.borderWidth,
@@ -307,7 +315,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                     fill: {
                         pattern: {
                             path: {
-                                d: shape[index].definition,
+                                d: paths[index].definition,
                                 fill: options.stackShadow.color || '#dedede',
                                 strokeWidth: strokeWidth,
                                 stroke: options.stackShadow.borderColor ||
@@ -333,7 +341,7 @@ addEvent(StackItem, 'afterRender', function (): void {
 
             rescalePatternFill(
                 this.shadow,
-                this.axis,
+                height,
                 width,
                 height,
                 strokeWidth
@@ -348,7 +356,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                 fill: {
                     pattern: {
                         path: {
-                            d: shape[index].definition,
+                            d: paths[index].definition,
                             fill: options.stackShadow &&
                                 options.stackShadow.color || '#dedede',
                             strokeWidth: strokeWidth,
@@ -382,7 +390,7 @@ addEvent(StackItem, 'afterRender', function (): void {
 
             rescalePatternFill(
                 stackShadow,
-                this.axis,
+                height,
                 width,
                 height,
                 strokeWidth

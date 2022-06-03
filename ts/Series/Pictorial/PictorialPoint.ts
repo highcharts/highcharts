@@ -17,8 +17,13 @@
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
 
+import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PictorialUtilities from './PictorialUtilities.js';
+
+const {
+    defined
+} = U;
 
 const {
     seriesTypes: {
@@ -27,7 +32,8 @@ const {
 } = SeriesRegistry;
 
 const {
-    rescalePatternFill
+    rescalePatternFill,
+    getStackMetrics
 } = PictorialUtilities;
 
 /* *
@@ -57,10 +63,13 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
         const point = this;
 
         super.setState.apply(point, arguments);
+        const series = point.series;
+        const shape = (series as any).options.paths[point.index %
+            (series as any).options.paths.length];
         if (point.graphic && point.shapeArgs) {
             rescalePatternFill(
                 point.graphic,
-                point.series.yAxis,
+                getStackMetrics(series.yAxis, shape).height,
                 point.shapeArgs.width || 0,
                 point.shapeArgs.height || Infinity,
                 point.series.options.borderWidth || 0

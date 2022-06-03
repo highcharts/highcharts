@@ -369,6 +369,7 @@ class StackItem {
 
         // Rank it higher than data labels (#8742)
         this.label.labelrank = chart.plotSizeY;
+        fireEvent(this, 'afterRender');
     }
 
     /**

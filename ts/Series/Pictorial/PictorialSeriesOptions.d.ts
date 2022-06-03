@@ -29,7 +29,7 @@ export interface PictorialSeriesOptions extends ColumnSeriesOptions {
 
 export interface PictorialPathOptions {
     definition?: string | SVGPath;
-    max?: Number;
+    max?: number;
 }
 
 /* *
