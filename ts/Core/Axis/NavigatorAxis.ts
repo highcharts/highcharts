@@ -190,9 +190,9 @@ class NavigatorAxis {
             const chartOptions = chart.options;
             const navigator = chartOptions.navigator;
             const navigatorAxis = axis.navigatorAxis;
-            const pinchType = (chartOptions.chart as any).pinchType;
+            const pinchType = (chartOptions.chart as any).zooming.pinchType;
             const rangeSelector = chartOptions.rangeSelector;
-            const zoomType = (chartOptions.chart as any).zoomType;
+            const zoomType = (chartOptions.chart as any).zooming.type;
 
             let previousZoom;
 

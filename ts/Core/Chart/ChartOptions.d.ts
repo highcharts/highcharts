@@ -133,7 +133,7 @@ export interface ChartOptions {
     type?: string;
     width?: (null|number);
     zoomBySingleTouch?: boolean;
-    zooming?: Partial<ChartZoomingOptions>;
+    zooming: Partial<ChartZoomingOptions>;
     zoomType?: ('x'|'xy'|'y');
 }
 
@@ -175,11 +175,11 @@ export interface ChartSelectionContextObject {
 }
 
 export interface ChartZoomingOptions {
+    key?: string;
+    pinchType?: string;
+    resetButton?: ChartResetZoomButtonOptions;
     singleTouch: boolean;
     type?: ('x'|'xy'|'y');
-    pinchType?: string;
-    key?: string;
-    resetButton?: ChartResetZoomButtonOptions;
 }
 
 /* *

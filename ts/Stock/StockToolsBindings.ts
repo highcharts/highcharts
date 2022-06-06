@@ -2348,7 +2348,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 }
             });
 
@@ -2378,7 +2380,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'y'
+                    zooming: {
+                        type: 'y'
+                    }
                 }
             });
             fireEvent(
@@ -2407,7 +2411,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'xy'
+                    zooming: {
+                        type: 'xy'
+                    }
                 }
             });
 
