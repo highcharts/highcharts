@@ -194,10 +194,6 @@ class TreegraphSeries extends TreemapSeries {
                  */
                 x: 0,
                 /**
-                 * Padding inside the button.
-                 */
-                padding: 2,
-                /**
                  * Offset of the button in the y direction.
                  */
                 y: 0,
@@ -216,7 +212,7 @@ class TreegraphSeries extends TreemapSeries {
                 /**
                  * CSS styles for the collapse button.
                  *
-                 * In styled mode, the subtitle style is given in the
+                 * In styled mode, the collapse button style is given in the
                  * `.highcharts-collapse-button` class.
                  *
                  *

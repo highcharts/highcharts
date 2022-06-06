@@ -11,7 +11,6 @@ Highcharts.chart('container', {
                 onlyOnHover: false,
                 height: 40,
                 width: 40,
-                padding: 4,
                 style: { fontSize: 20 }
             },
             type: 'treegraph',

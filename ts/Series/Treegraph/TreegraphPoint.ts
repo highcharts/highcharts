@@ -75,7 +75,8 @@ class TreegraphPoint extends TreemapPoint {
                 levelOptions.collapseButton,
                 point.series.options.collapseButton
             ) as CollapseButtonOptions,
-            { width, height, padding, shape, style } = btnOptions,
+            { width, height, shape, style } = btnOptions,
+            padding = 2,
             chart = this.series.chart;
         if (!point.shapeArgs) {
             return;

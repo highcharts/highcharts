@@ -36,7 +36,6 @@ export interface CollapseButtonOptions {
     style?: CSSObject;
     onlyOnHover: boolean;
     shape: SymbolKey;
-    padding: number;
     x: number;
     y: number;
     enabled: boolean;
