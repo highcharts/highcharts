@@ -161,118 +161,139 @@ class GaugeSeries extends Series {
              * @since   2.3.0
              * @product highcharts
              */
-            dial: {},
+            dial: {
+                /**
+                 * The background or fill color of the gauge's dial.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   #000000
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.backgroundColor
+                 */
+                backgroundColor: '#000000',
 
-            /**
-             * The length of the dial's base part, relative to the total radius
-             * or length of the dial.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {string}
-             * @default   70%
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.baseLength
-             */
+                /**
+                 * The length of the dial's base part, relative to the total
+                 * radius or length of the dial.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {string}
+                 * @default   70%
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.baseLength
+                 */
+                baseLength: '70%',
 
-            /**
-             * The pixel width of the base of the gauge dial. The base is the
-             * part closest to the pivot, defined by baseLength.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {number}
-             * @default   3
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.baseWidth
-             */
+                /**
+                 * The pixel width of the base of the gauge dial. The base is
+                 * the part closest to the pivot, defined by baseLength.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {number}
+                 * @default   3
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.baseWidth
+                 */
+                baseWidth: 3,
 
-            /**
-             * The radius or length of the dial, in percentages relative to the
-             * radius of the gauge itself.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {string}
-             * @default   80%
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.radius
-             */
+                /**
+                 * The border color or stroke of the gauge's dial. By default,
+                 * the borderWidth is 0, so this must be set in addition to a
+                 * custom border color.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   #cccccc
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.borderColor
+                 */
+                borderColor: '#cccccc',
 
-            /**
-             * The length of the dial's rear end, the part that extends out on
-             * the other side of the pivot. Relative to the dial's length.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {string}
-             * @default   10%
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.rearLength
-             */
+                /**
+                 * The width of the gauge dial border in pixels.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {number}
+                 * @default   0
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.borderWidth
+                 */
+                borderWidth: 0,
 
-            /**
-             * The width of the top of the dial, closest to the perimeter. The
-             * pivot narrows in from the base to the top.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {number}
-             * @default   1
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.topWidth
-             */
+                /**
+                 * An array with an SVG path for the custom dial.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-path/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {Highcharts.SVGPathArray}
+                 * @since     next
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.path
+                 */
 
-            /**
-             * The background or fill color of the gauge's dial.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   #000000
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.backgroundColor
-             */
+                /**
+                 * The radius or length of the dial, in percentages relative to
+                 * the radius of the gauge itself.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {string}
+                 * @default   80%
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.radius
+                 */
+                radius: '80%',
 
-            /**
-             * The border color or stroke of the gauge's dial. By default, the
-             * borderWidth is 0, so this must be set in addition to a custom
-             * border color.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   #cccccc
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.borderColor
-             */
+                /**
+                 * The length of the dial's rear end, the part that extends out
+                 * on the other side of the pivot. Relative to the dial's
+                 * length.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {string}
+                 * @default   10%
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.rearLength
+                 */
+                rearLength: '10%',
 
-            /**
-             * The width of the gauge dial border in pixels.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-dial/
-             *         Dial options demonstrated
-             *
-             * @type      {number}
-             * @default   0
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.dial.borderWidth
-             */
+                /**
+                 * The width of the top of the dial, closest to the perimeter.
+                 * The pivot narrows in from the base to the top.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-dial/
+                 *         Dial options demonstrated
+                 *
+                 * @type      {number}
+                 * @default   1
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.dial.topWidth
+                 */
+                topWidth: 1
+            },
 
             /**
              * Allow the dial to overshoot the end of the perimeter axis by
@@ -414,18 +435,12 @@ class GaugeSeries extends Series {
 
             const dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
-                radius = (
-                    (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
-                    200
-                ),
-                baseLength = (
-                    (pInt(pick(dialOptions.baseLength, '70%')) * radius) /
-                    100
-                ),
-                rearLength = (
-                    (pInt(pick(dialOptions.rearLength, '10%')) * radius) /
-                    100
-                ),
+                radius =
+                    (pInt(dialOptions.radius) * center[2]) / 200,
+                baseLength =
+                    (pInt(dialOptions.baseLength) * radius) / 100,
+                rearLength =
+                    (pInt(dialOptions.rearLength) * radius) / 100,
                 baseWidth = dialOptions.baseWidth || 3,
                 topWidth = dialOptions.topWidth || 1;
 
