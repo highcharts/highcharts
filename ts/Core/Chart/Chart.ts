@@ -477,28 +477,28 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
-            const zooming = optionsChart.zooming;
+            const zooming = optionsChart.zooming = optionsChart.zooming || {};
 
             if (zooming) {
-                optionsChart.pinchType = pick(
-                    zooming.pinchType,
-                    optionsChart.pinchType
-                );
-                optionsChart.zoomBySingleTouch = pick(
-                    zooming.singleTouch,
-                    optionsChart.zoomBySingleTouch
-                );
-                optionsChart.zoomType = pick(
-                    zooming.type,
-                    optionsChart.zoomType
-                );
-                optionsChart.zoomKey = pick(
+                zooming.key = pick(
                     zooming.key,
                     optionsChart.zoomKey
                 );
-                optionsChart.resetZoomButton = pick(
+                zooming.pinchType = pick(
+                    zooming.pinchType,
+                    optionsChart.pinchType
+                );
+                zooming.resetButton = pick(
                     zooming.resetButton,
                     optionsChart.resetZoomButton
+                );
+                zooming.singleTouch = pick(
+                    zooming.singleTouch,
+                    optionsChart.zoomBySingleTouch
+                );
+                zooming.type = pick(
+                    zooming.type,
+                    optionsChart.zoomType
                 );
             }
 
