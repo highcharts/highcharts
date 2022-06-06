@@ -603,9 +603,9 @@ class Time {
      * @return {Highcharts.Dictionary<T>}
      * The object definition
      */
-    public resolveDTLFormat<T>(
-        f: (string|Array<T>|Record<string, T>)
-    ): Record<string, T> {
+    public resolveDTLFormat(
+        f: Time.DateTimeLabelFormatOption
+    ): Time.DateTimeLabelFormatObject {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -614,7 +614,7 @@ class Time {
                 to: f[2]
             };
         }
-        return f as any;
+        return f;
     }
 
     /**
@@ -888,7 +888,7 @@ class Time {
         range: number,
         timestamp: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Record<string, string>
+        dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
     ): string|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
@@ -898,14 +898,13 @@ class Time {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Record<string, number>;
+            } as Record<Time.TimeUnit, number>;
 
-        let format: string|undefined,
-            n,
-            lastN = 'millisecond'; // for sub-millisecond data, #4223
+        let n: Time.TimeUnit = 'millisecond',
+            // for sub-millisecond data, #4223
+            lastN: Time.TimeUnit = n;
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
-
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
             if (
@@ -939,11 +938,7 @@ class Time {
             }
         }
 
-        if (n) {
-            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main as any;
-        }
-
-        return format;
+        return this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
     }
 }
 
@@ -954,6 +949,21 @@ class Time {
  * */
 
 namespace Time {
+    export interface DateTimeLabelFormatObject {
+        from?: string;
+        list?: string[];
+        main: string;
+        range?: boolean;
+        to?: string;
+    }
+    export type DateTimeLabelFormatOption = (
+        string|
+        Array<string>|
+        Time.DateTimeLabelFormatObject
+    );
+    export type DateTimeLabelFormatsOption = (
+        Record<TimeUnit, DateTimeLabelFormatOption>
+    );
     export interface TimeOptions {
         Date?: any;
         getTimezoneOffset?: Function;
@@ -967,8 +977,19 @@ namespace Time {
     }
     export interface TimeNormalizedObject {
         count: number;
+        unitName: TimeUnit;
         unitRange: number;
     }
+    export type TimeUnit = (
+        'millisecond'|
+        'second'|
+        'minute'|
+        'hour'|
+        'day'|
+        'week'|
+        'month'|
+        'year'
+    );
     export type TimeUnitValue = (
         'Date'|
         'Day'|

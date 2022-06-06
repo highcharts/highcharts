@@ -174,3 +174,26 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('Bubble with custom symbol markers, #17281.', function (assert) {
+    Highcharts.chart("container", {
+        series: [{
+            type: "bubble",
+            data: [
+                [1, 1, 1],
+                [2, 2, 2],
+                [3, 3, 3]
+            ],
+            zMin: 1.1,
+            marker: {
+                symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+            }
+        }]
+    });
+
+    assert.ok(
+        true,
+        `When the custom marker is set and the point is out of zThreshold, the
+        symbol should not be displayed and there should be no errors.`
+    );
+});
