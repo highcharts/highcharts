@@ -361,18 +361,12 @@ class TreegraphSeries extends TreemapSeries {
                     Math.min(plotSizeX, plotSizeY)
                 ),
                 symbol = markerOptions.symbol,
-                nodeSizeY = symbol === 'circle' ?
+                nodeSizeY = (symbol === 'circle' || !markerOptions.height) ?
                     radius * 2 :
-                    pick(
-                        relativeLength(markerOptions.height || 0, plotSizeY),
-                        radius * 2
-                    ),
-                nodeSizeX = symbol === 'circle' ?
+                    relativeLength(markerOptions.height, plotSizeY),
+                nodeSizeX = symbol === 'circle' || !markerOptions.width ?
                     radius * 2 :
-                    pick(
-                        relativeLength(markerOptions.width || 0, plotSizeX),
-                        radius * 2
-                    );
+                    relativeLength(markerOptions.width, plotSizeX);
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
