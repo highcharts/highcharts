@@ -58,6 +58,10 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormatter: TreegraphDataLabelFormatterCallback;
     linkTextPath?: DataLabelTextPathOptions;
 }
+export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
+    collapsed?: boolean;
+}
+
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
     collapseButton: CollapseButtonOptions;

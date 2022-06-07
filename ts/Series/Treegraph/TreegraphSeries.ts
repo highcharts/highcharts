@@ -45,6 +45,7 @@ import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 import TreegraphLayout from './TreegraphLayout.js';
+import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -318,6 +319,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public links: Array<TreegraphLink> = [];
 
+    public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
     /* *
      *
      *  Functions
