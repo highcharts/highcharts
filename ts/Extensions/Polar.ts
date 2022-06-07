@@ -1201,6 +1201,83 @@ addEvent(Series, 'afterInit', function (): void {
     }
 });
 
+function trimPath(
+    path: any,
+    start: number,
+    end: number,
+    radialAxis: RadialAxis.AxisComposition
+):any {
+    const pathStart = radialAxis.toValue(
+            start - radialAxis.startAngleRad + radialAxis.pos
+        ),
+        max = end - start,
+        pathEnd = radialAxis.toValue(
+            start - radialAxis.startAngleRad + radialAxis.pos + max
+        ),
+        tickInterval = radialAxis.tickInterval,
+        ticks = radialAxis.tickPositions;
+
+    let lastTick = find(ticks, (tick): boolean => tick >= end),
+        firstTick = find(
+            [...ticks].reverse(),
+            (tick): boolean => tick <= start
+        );
+
+    if (!defined(lastTick)) {
+        lastTick = ticks[ticks.length - 1];
+    }
+
+    if (!defined(firstTick)) {
+        firstTick = ticks[0];
+        lastTick += tickInterval;
+        path[0][0] = 'L';
+        // To do: figure out why -3 or -2
+        path.unshift(path[path.length - 3]);
+    }
+
+    path = path.slice(
+        ticks.indexOf(firstTick),
+        ticks.indexOf(lastTick) + 1
+    );
+
+    path[0][0] = 'M';
+
+    let x1 = path[0][1],
+        y1 = path[0][2],
+        x2 = path[1][1],
+        y2 = path[1][2];
+
+    let scale = (Math.abs(start) % tickInterval) / tickInterval;
+
+    // For negative numbers
+    if (start < 0) {
+        scale = 1 - scale;
+    }
+
+    let xValue = x1 - scale * (x1 - x2),
+        yValue = y1 - scale * (y1 - y2);
+
+    x1 = path[path.length - 1][1];
+    y1 = path[path.length - 1][2];
+    x2 = path[path.length - 2][1];
+    y2 = path[path.length - 2][2];
+
+    scale = (tickInterval - (Math.abs(end) % tickInterval)) /
+        tickInterval;
+
+    // For negative numbers or and scale should never reach 1
+    if (end < 0 || scale === 1) {
+        scale = 1 - scale;
+    }
+
+    path[0] = ['M', xValue, yValue];
+
+    xValue = x1 - scale * (x1 - x2);
+    yValue = y1 - scale * (y1 - y2);
+    path[path.length - 1] = ['L', xValue, yValue];
+
+    return path;
+}
 /**
  * Replace selection marker with arc for polar charts
  * @private
@@ -1306,77 +1383,20 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
             if (
                 (linearAxis as any).options.gridLineInterpolation === 'polygon'
             ) {
-
                 const radialAxis = chart.hoverPane.axis,
                     tickInterval = radialAxis.tickInterval,
                     min = start - radialAxis.startAngleRad + radialAxis.pos,
                     max = end - start,
                     pathStart = radialAxis.toValue(min),
-                    pathEnd = radialAxis.toValue(min + max),
-                    ticks = radialAxis.tickPositions;
+                    pathEnd = radialAxis.toValue(min + max);
 
                 let path = (linearAxis as any).getPlotLinePath({
-                        value: linearAxis.max
-                    }),
-                    lastTick = find(ticks, (tick):boolean => tick >= pathEnd),
-                    firstTick = find(
-                        [...ticks].reverse(),
-                        (tick):boolean => tick <= pathStart
-                    );
+                    value: linearAxis.max
+                });
 
-                if (!defined(lastTick)) {
-                    lastTick = ticks[ticks.length - 1];
-                }
-
-                if (!defined(firstTick)) {
-                    firstTick = ticks[0];
-                    lastTick += tickInterval;
-                    path[0][0] = 'L';
-                    // To do: figure out why -3 or -2
-                    path.unshift(path[path.length - 3]);
-                }
-
-                path = path.slice(
-                    ticks.indexOf(firstTick),
-                    ticks.indexOf(lastTick) + 1
-                );
-
-                path[0][0] = 'M';
-
-                let x1 = path[0][1],
-                    y1 = path[0][2],
-                    x2 = path[1][1],
-                    y2 = path[1][2];
-
-                let scale = (Math.abs(pathStart) % tickInterval) / tickInterval;
-
-                // For negative numbers
-                if (pathStart < 0) {
-                    scale = 1 - scale;
-                }
-
-                let xValue = x1 - scale * (x1 - x2),
-                    yValue = y1 - scale * (y1 - y2);
-
-                x1 = path[path.length - 1][1];
-                y1 = path[path.length - 1][2];
-                x2 = path[path.length - 2][1];
-                y2 = path[path.length - 2][2];
-
-                scale = (tickInterval - (Math.abs(pathEnd) % tickInterval)) /
-                    tickInterval;
-
-                // For negative numbers or and scale should never reach 1
-                if (pathEnd < 0 || scale === 1) {
-                    scale = 1 - scale;
-                }
-
-                path[0] = ['M', xValue, yValue];
-
-                xValue = x1 - scale * (x1 - x2);
-                yValue = y1 - scale * (y1 - y2);
-                path[path.length - 1] = ['L', xValue, yValue];
-
+                // Get trimmed path
+                path = trimPath(path, pathStart, pathEnd, radialAxis);
+                // Add center to the path
                 path.push([
                     'L', center[0] + chart.plotLeft,
                     chart.plotTop + center[1]
@@ -1437,6 +1457,41 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
             }
         }
 
+        if (this.zoomHor &&
+            this.zoomVert &&
+            linearAxis.options.gridLineInterpolation === 'polygon'
+        ) {
+            const radialAxis = chart.hoverPane.axis,
+                tickInterval = radialAxis.tickInterval,
+                start = attrs.start || 0,
+                end = attrs.end || 0,
+                min = start - radialAxis.startAngleRad + radialAxis.pos,
+                max = end - start,
+                pathStart = radialAxis.toValue(min),
+                pathEnd = radialAxis.toValue(min + max);
+
+            // Trim path
+            if (attrs.d) {
+                let innerPath = attrs.d.slice(0, attrs.d.length / 2),
+                    outerPath = attrs.d.slice(
+                        attrs.d.length / 2,
+                        attrs.d.length
+                    );
+
+                outerPath = [...outerPath as any].reverse();
+
+                const radialAxis = chart.hoverPane.axis;
+                innerPath = trimPath(innerPath, pathStart, pathEnd, radialAxis);
+                outerPath = trimPath(outerPath, pathStart, pathEnd, radialAxis);
+
+                if (outerPath) {
+                    (outerPath[0][0] as any) = 'L';
+                }
+
+                outerPath = [...outerPath as any].reverse();
+                attrs.d = innerPath.concat(outerPath as any);
+            }
+        }
         (event as any).attrs = attrs;
     }
 });
