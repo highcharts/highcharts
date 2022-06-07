@@ -6,6 +6,8 @@ const { Octokit } = require('@octokit/rest');
 const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
+const os = require('os');
+const path = require('path');
 
 require('colors');
 
@@ -97,24 +99,27 @@ const loadPulls = async since => {
 
 module.exports = async (since, fromCache) => {
 
-    const included = [];
+    const included = [],
+        tmpFileName = path.join(os.tmpdir(), 'pulls.json');
 
     let pulls;
     if (fromCache) {
-        pulls = await fs.readFile('tmp/pulls.json');
+        pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
         pulls = await loadPulls(since);
-        await fs.writeFile('tmp/pulls.json', JSON.stringify(pulls));
+        await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 
     // Simplify
-    pulls = pulls.map(p => ({
-        description: p.body.split('\n')[0].trim(),
-        upgradeNote: parseUpgradeNote(p),
-        labels: p.labels,
-        number: p.number
-    }));
+    pulls = pulls
+        .filter(p => Boolean(p.body))
+        .map(p => ({
+            description: p.body.split('\n')[0].trim(),
+            upgradeNote: parseUpgradeNote(p),
+            labels: p.labels,
+            number: p.number
+        }));
 
     pulls.forEach(p => {
         p.product = 'Highcharts';

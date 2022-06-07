@@ -1,5 +1,5 @@
 ---
- name: British Isles, admin1 - Highmaps
- description: Highmaps demo
+ name: British Isles, admin1 - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

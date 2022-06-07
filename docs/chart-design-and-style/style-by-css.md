@@ -7,20 +7,26 @@ When the [chart.styledMode](https://api.highcharts.com/highcharts/chart.styledMo
 
 Highcharts comes with a default CSS file, [css/highcharts.css](https://code.highcharts.com/css/highcharts.css), which is built from [SCSS](https://github.com/highcharts/highcharts/blob/master/css/highcharts.scss).
 
-To customize your styles, you can [create your own themes with SCSS](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS rules. See our [CodePen boilerplate](https://codepen.io/anon/pen/eQyawK) to experiment with the default SCSS.
+To customize your styles, you can [create your own themes with SCSS](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS rules. See our [CodePen SCSS boilerplate](https://codepen.io/anon/pen/eQyawK) to experiment with the default SCSS.
 
-### Upgrade note
 
-Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.
+WHAT CAN BE STYLED?
+-------------------
+Typography, colors and visual properties like stroke width and style can be set by CSS.
+
+However, layout and positioning of elements like the title or legend can not be controlled by CSS. This is a limitation of CSS for SVG, that does not (yet - [SVG 2 Geometric Style Properties](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
+
 
 WHAT CSS RULES APPLY
 --------------------
 
 Depending on how you prefer to work, you can use the browser's developer console to select SVG elements in the chart and see what CSS rules apply to it. But beware that (as of 2016) Firefox does this best. Chrome and Safari doesn't show all affected rules for SVG elements.
 
-In addition to these, most elements, especially those where you can add multiple items, like axes, series, points etc, have a _className_ option. Use this to apply specific styling. An example can be seen for [axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
+In addition to these, most elements, especially those where you can add multiple items, like axes, series, points etc, have a _className_ option. Use this to apply specific styling. See this [example of axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
 
-The following is an overview of what CSS rules are internally set on the Highcharts SVG elements and how to use them. 
+The following is an overview of what CSS rules are internally set on the Highcharts SVG elements and how to use them.
+
+### CSS rules
 
     .highcharts-alternate-grid
 
@@ -36,7 +42,7 @@ The area under an area series. Use the parent item, ._highcharts-series_ includ
 
 The top group for axis. In addition to this class name, the group will have _.highcharts-xaxis_, _.highcharts-yaxis_ or _.highcharts-coloraxis_ class names. A custom class name can be set by the _className_ option. For individually styling other axis elements, use the top group to differentiate.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
+[Demo of axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
 
 
     .highcharts-axis-labels
@@ -48,14 +54,14 @@ Replaces [axis.labels.style](https://api.highcharts.com/highcharts/xAxis.labels
 
 Text styles for the axis title. Replaces [axis.title.style](https://api.highcharts.com/highcharts/xAxis.title.style).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
+[Demo of axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
 
 
     .highcharts-background
 
 A rectangle for the chart background. Use it to set background fills or strokes. Replaces [chart.backgroundColor](https://api.highcharts.com/highcharts/chart.backgroundColor), [chart.borderColor](https://api.highcharts.com/highcharts/chart.borderColor) and [chart.borderWidth](https://api.highcharts.com/highcharts/chart.borderWidth) options. Backgrounds can also be set on the container div, but in that they will not be part of the exported chart.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-border-background/).
+[Chart background demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-border-background/).
 
 
     .highcharts-boxplot-series
@@ -66,7 +72,7 @@ A rectangle for the chart background. Use it to set background fills or strokes.
 
 The various graphic items for box plot series. The box, median, stem and whisker are nested inside the series group. Replaces colors, stroke widths and dash style options for box plots.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/).
+[Boxplot demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/).
 
 
     .highcharts-button
@@ -78,7 +84,7 @@ Used for the wrapping group of the exporting button, range selector buttons in H
 
 The symbol for the exporting button, can be used to set stroke and fill etc. 
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
+[Demo of export menu styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
 
 
     .highcharts-candlestick-series .highcharts-point-up
@@ -86,49 +92,56 @@ The symbol for the exporting button, can be used to set stroke and fill etc. 
 
 Rules to differentiate between up or down points in Highcharts Stock candlesticks.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
+[Candlestick demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
 
+    .highcharts-hollowcandlestick-series .highcharts-point-down
+    .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up
+    .highcharts-hollowcandlestick-series .highcharts-point-up
+
+Rules to differentiate between up or down points in Highcharts Stock hollow candlesticks.
+
+[Hollow candlestick demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/hollow-candlestick/).
 
     .highcharts-color-{n}
 
 Colors used for series, or individual points when [colorByPoint](https://api.highcharts.com/highcharts/plotOptions.column.colorByPoint) is set, typically for pie charts etc. Each such color rule sets the fill and stroke to a default color in _highcharts.css_, then these properties may be overridden by more specific rules, for example for a common stroke on pies. The best place to set your own custom colors is by modifying highcharts.css/highcharts.scss, otherwise the strokes and fills must be set more specifically. Replaces [colors](https://api.highcharts.com/highcharts/colors).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
+[Demo of styling series and point colors](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
 
 
     .highcharts-contextbutton
 
 The context button with a burger menu for the exporting module. Replaces visual options for [exporting.buttons.contextButton](https://api.highcharts.com/highcharts/exporting.buttons.contextButton) and [navigation.buttonOptions.theme](https://api.highcharts.com/highcharts/navigation.buttonOptions.theme).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
+[Demo of export menu styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
 
 
     .highcharts-credits
 
 The credits label, normally found in the lower right corner of the chart. Replaces [credits.style](https://api.highcharts.com/highcharts/credits.style) and more.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/credits/). 
+[Demo of credits styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/credits/). 
 
 
     .highcharts-crosshair
 
 Styles for the crosshair extending from the axis to the currently highlighted point. Styling can also be differentiated by _.highcharts-crosshair-category_ or _.highcharts-crosshair-thin_.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/crosshairs/).
+[Demo of crosshair styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/crosshairs/).
 
 
     .highcharts-crosshair-label
 
 The label next to the crosshair in Highcharts Stock. 
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/crosshair-label/).
+[Demo of styling the crosshair label](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/crosshair-label/).
 
 
     .highcharts-data-label
 
 The data label. Use _.highcharts-data-label-box_ to style the border or background, and _.highcharts-data-label text_ for text styling. Use the _dataLabels.className_ option to set specific class names for individual items. Replaces background, border, color and style options for [series.dataLabels](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels/).
+[Demo of styling data labels](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels/).
 
 
     .highcharts-drilldown-axis-label
@@ -151,7 +164,7 @@ Styles for the drill-up button. Replaces [drilldown.drillUpButton.theme](https:
 
 Styles for the dial and pivot of gauge series. Replaces border and background options for [plotOptions.gauge.dial](https://api.highcharts.com/highcharts/plotOptions.gauge.dial) and [plotOptions.gauge.pivot](https://api.highcharts.com/highcharts/plotOptions.gauge.pivot).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/gauge/).
+[Gauge series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/gauge/).
 
 
     .highcharts-graph
@@ -163,7 +176,7 @@ The graph of a line or line-like series. Use the parent item, ._highcharts-serie
 
 Styling for grid lines. Replaces [gridLineWidth](https://api.highcharts.com/highcharts/xAxis.gridLineWidth) and [gridLineColor](https://api.highcharts.com/highcharts/xAxis.gridLineColor).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
+[Demo of styling axis grid lines](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
 
 
     .highcharts-halo
@@ -175,21 +188,21 @@ The halo appearing around the hovered point.
 
 The box and border for the legend. Replaces [legend.backgroundColor](https://api.highcharts.com/highcharts/legend.backgroundColor), [legend.borderColor](https://api.highcharts.com/highcharts/legend.borderColor) and [legend.borderWidth](https://api.highcharts.com/highcharts/legend.borderWidth).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-legend-item
 
 Styles for each individual legend item. Replaces [legend.itemStyle](https://api.highcharts.com/highcharts/legend.itemStyle), and [legend.itemHoverStyle](https://api.highcharts.com/highcharts/legend.itemHoverStyle) when the _:hover_ pseudo-class is added.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-legend-item-hidden
 
 A legend item for a hidden series or point. Replaces [legend.itemHiddenStyle](https://api.highcharts.com/highcharts/legend.itemHiddenStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-legend-navigation
@@ -201,66 +214,66 @@ Styles for the navigation part of the legend, the arrow up and down and the text
 
 The active arrow of the legend navigation. Replaces [legend.navigation.activeColor](https://api.highcharts.com/highcharts/legend.navigation.activeColor).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-legend-nav-inactive
 
 The inactive arrow of the legend navigation. Replaces [legend.navigation.inactiveColor](https://api.highcharts.com/highcharts/legend.navigation.inactiveColor).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-legend-title
 
 The legend title. Use this CSS rule for text styling. Replaces [legend.title.style](https://api.highcharts.com/highcharts/legend.title.style).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
+[Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 
     .highcharts-loading
 
 The loading overlay. Replaces [loading.style](https://api.highcharts.com/highcharts/loading.style) as well of the show and hide duration.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/loading/).
+[Demo of loading message styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/loading/).
 
 
     .highcharts-loading-inner
 
 The inner div of the loading label. Replaces [loading.labelStyle](https://api.highcharts.com/highcharts/loading.labelStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/loading/).
+[Demo of loading message styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/loading/).
 
 
     .highcharts-minor-grid-line
 
 Replaces [axis.minorGridLineColor](https://api.highcharts.com/highcharts/xAxis.minorGridLineColor) and [axis.minorGridLineWidth](https://api.highcharts.com/highcharts/xAxis.minorGridLineWidth).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
+[Demo of styling axis grid lines](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
 
 
     .highcharts-navigator-handle
     .highcharts-navigator-handle-left
     .highcharts-navigator-handle-left
 
-Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock#navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock#navigator.handles.borderColor).
+Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock/navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock/navigator.handles.borderColor).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the navigator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-navigator-mask-outside
     .highcharts-navigator-mask-inside
 
-Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock#navigator.maskFill).
+Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock/navigator.maskFill).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the navigator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-navigator-outline
 
-Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock#navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock#navigator.outlineWidth).
+Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock/navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock/navigator.outlineWidth).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the navigator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-navigator-series
@@ -270,9 +283,9 @@ Styles for the navigator series in Highcharts Stock. Replaces options like lineW
 
     .highcharts-negative
 
-A class given to negative parts of the graph, area and individual points if the [negativeColor ](https://api.highcharts.com/highcharts/plotOptions.series.negativeColor)option is set to true. 
+A class given to negative parts of the graph, area and individual points if the [negativeColor](https://api.highcharts.com/highcharts/plotOptions.series.negativeColor) option is set to true. 
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-negative-color/).
+[Demo of styling negative values](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-negative-color/).
 
 
     .highcharts-no-data
@@ -282,7 +295,7 @@ Styles for the label shown when no data is present in the chart (requires the _
 
     .highcharts-null-point
 
-Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps#plotOptions.map.nullColor).
+Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColor](https://api.highcharts.com/highmaps/plotOptions.map.nullColor).
 
 
     .highcharts-ohlc-series .highcharts-point-up
@@ -290,21 +303,21 @@ Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColo
 
 Rules to differentiate between up or down points in Highcharts Stock OHLC series.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/ohlc/).
+[OHLC demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/ohlc/).
 
 
     .highcharts-pane
 
 For pane backgrounds in radial charts. Replaces backgrounds and borders under the [pane.background](https://api.highcharts.com/highcharts/pane.background) option set.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pane/).
+[Demo of styling panes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pane/).
 
 
     .highcharts-plot-background
 
 A rectangle for setting fills on the plot area. Unlike _.highcharts-plot-border_, this element is drawn behind the grid, so it shouldn't be used to give the plot area a stroke.  Replaces [chart.plotBackgroundColor](https://api.highcharts.com/highcharts/chart.plotBackgroundColor).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-plotarea/).
+[Demo of styling the plot area](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-plotarea/).
 
 
     .highcharts-point
@@ -313,21 +326,21 @@ A rectangle for setting fills on the plot area. Unlike _.highcharts-plot-border
 
 Styles for each point. Use the parent item, ._highcharts-series_ including series type, index or individual class name, to identify specific series. Use an individual _className_ option for each point to style single points.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-marker/).
+[Demo of styling point markers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-marker/).
 
 
     .highcharts-menu
 
 The container of the context menu. Replaces [navigation.menuStyle](https://api.highcharts.com/highcharts/navigation.menuStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
+[Demo of export menu styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
 
 
     .highcharts-menu-item
 
 The list items in the context menu. Replaces [navigation.menuItemStyle](https://api.highcharts.com/highcharts/navigation.menuItemStyle). Use the _:hover_ pseudo-class to replace [navigation.menuItemHoverStyle](https://api.highcharts.com/highcharts/navigation.menuItemHoverStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
+[Demo of export menu styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/exporting-style/).
 
 
     .highcharts-plot-band
@@ -344,7 +357,7 @@ Style the plot band labels. Use the className option on each band to distinguish
 
 A rectangle for setting a stroke on the plot area. Unlike _.highcharts-plot-background_, this element is drawn in front of the grid. Replaces [chart.plotBorderColor](https://api.highcharts.com/highcharts/chart.plotBorderColor) and [chart.plotBorderWidth](https://api.highcharts.com/highcharts/chart.plotBorderWidth).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-plotarea/).
+[Demo of styling the plot area](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart-plotarea/).
 
 
  
@@ -362,30 +375,30 @@ Style the plot line labels. Use the _className_ option on each line to disting
 
     .highcharts-range-input text
 
-Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock#rangeSelector.inputStyle).
+Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock/rangeSelector.inputStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the range selector](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-label
 
-Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock#rangeSelector.labelStyle).
+Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock/rangeSelector.labelStyle).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the range selector](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-range-selector-buttons
 
-Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock#rangeSelector.buttonTheme).
+Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock/rangeSelector.buttonTheme).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
+[Demo of styling the range selector](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
 
     .highcharts-root
 
 Matches the root _svg_ element of the chart. Use this to set styles that should be inherited by all elements, like _font-family_ or other text styles. 
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart/).
+[Demo of styling the root element](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart/).
 
 
     .highcharts-scrollbar
@@ -397,14 +410,12 @@ Matches the root _svg_ element of the chart. Use this to set styles that shoul
 
 Styles for the Highcharts Stock scrollbar. The thumb is the actual bar. The buttons are in each end, and each has an arrow inside it. The rifles are the small strokes on the center of the bar.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/chart/).
-
 
     .highcharts-series
 
 General styling for all series. To apply styling to only a specific series type, you can define CSS rules for _.highcharts-{type}-series_, for example _.highcharts-area-series_ or _.highcharts-bar-series_. To make specific styling for one single series, you can define CSS rules for _.highcharts-series-{n}_ where _n_ is the index, or give the series a _className_ option.
 
-Live demo of [cursor](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-cursor/), [dashstyle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/), [pie series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/), [polygon series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/polygon/), [waterfall series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/waterfall/).
+See [cursor demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-cursor/), [dashstyle demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/), [pie series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/), [polygon series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/polygon/), [waterfall series demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/waterfall/).
 
 
     .highcharts-selection-marker
@@ -421,14 +432,14 @@ Text styles for stack labels. Replaces [yAxis.stackLabels.style](https://api.hi
 
 Text styles for the subtitle. Replaces [subtitle.style](https://api.highcharts.com/highcharts/subtitle.style).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/titles/).
+[Demo of styling titles](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/titles/).
 
 
     .highcharts-tick
 
 Styles for the tick marks along the axis. Replaces [axis.tickColor](https://api.highcharts.com/highcharts/xAxis.tickColor) and [axis.tickWidth](https://api.highcharts.com/highcharts/xAxis.tickWidth). Use _.highcharts-xaxis_ / _.highcharts-yaxis_ parent items or className options to distinguish axes.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
+[Demo of axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis-grid/).
 
 
  
@@ -438,7 +449,7 @@ Styles for the tick marks along the axis. Replaces [axis.tickColor](https://api
 
 Text styles for the title. Replaces [title.style](https://api.highcharts.com/highcharts/title.style).
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/titles/).
+[Demo of styling titles](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/titles/).
 
 
  
@@ -451,11 +462,17 @@ Text styles for the title. Replaces [title.style](https://api.highcharts.com/hi
 
 Styles for the tooltip. The tooltip box is the shape or path where the background and border can be set. Text styles should be applied to the text element.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/tooltip-border-background/).
+[Demo of tooltip styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/tooltip-border-background/).
 
 
     .highcharts-zone-{n}
 
 When [zones](https://api.highcharts.com/highcharts/plotOptions.series.zones) are applied, each zone is given a class name with its index. A custom _className_ option can also be set in the zone options. Replaces the color, dashStyle and fillColor options for zones.
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/).
+[Demo of styling zones](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/).
+
+
+COMPATIBILITY NOTE
+-------------------
+
+Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.

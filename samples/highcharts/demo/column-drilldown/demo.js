@@ -4,9 +4,11 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
+        align: 'left',
         text: 'Browser market shares. January, 2018'
     },
     subtitle: {
+        align: 'left',
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     accessibility: {
@@ -85,6 +87,11 @@ Highcharts.chart('container', {
         }
     ],
     drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
         series: [
             {
                 name: "Chrome",

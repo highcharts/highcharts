@@ -1,13 +1,22 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#container {
+    height: 400px;
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
 .highcharts-plot-border {
-	stroke-width: 1px;
-	stroke: silver;
+    stroke-width: 1px;
+    stroke: silver;
 }
+
 .highcharts-plot-line {
-	stroke-width: 2px;
-	stroke-dasharray: 2, 2;
+    stroke-width: 2px;
+    stroke-dasharray: 2, 2;
 }
+
 .highcharts-plot-line-label {
-	font-style: italic;
+    font-style: italic;
 }

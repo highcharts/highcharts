@@ -1,5 +1,5 @@
 ---
- name: Liberia - Highmaps
- description: Highmaps demo
+ name: Liberia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

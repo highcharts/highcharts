@@ -131,7 +131,7 @@ class ADIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<(number|null|undefined)> = (series.yData as any),
             volumeSeriesID: string = (params.volumeSeriesID as any),
-            volumeSeries: LineSeries = (series.chart.get(volumeSeriesID) as any),
+            volumeSeries: LineSeries = series.chart.get(volumeSeriesID) as any,
             yValVolume = volumeSeries && volumeSeries.yData,
             yValLen = yVal ? yVal.length : 0,
             AD: Array<Array<number>> = [],

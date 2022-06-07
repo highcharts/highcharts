@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Chart Chooser Sunburst Chart
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

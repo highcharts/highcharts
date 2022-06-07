@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Skies.js';
+import H from '../../Core/Globals.js';
+import SkiesTheme from '../../Extensions/Themes/Skies.js';
+H.theme = SkiesTheme.options;
+SkiesTheme.apply();

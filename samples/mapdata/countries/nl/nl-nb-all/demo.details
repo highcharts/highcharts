@@ -1,5 +1,5 @@
 ---
- name: Noord-Brabant - Highmaps
- description: Highmaps demo
+ name: Noord-Brabant - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

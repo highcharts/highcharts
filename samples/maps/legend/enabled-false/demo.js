@@ -1,39 +1,46 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initiate the chart
-    Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        chart: {
-            marginLeft: 70
-        },
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        title: {
-            text: 'Legend disabled'
-        },
+        // Initialize the chart
+        Highcharts.mapChart('container', {
 
-        legend: {
-            enabled: false
-        },
-
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
+            chart: {
+                marginLeft: 70
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            title: {
+                text: 'Legend disabled'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
+})();

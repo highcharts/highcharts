@@ -24,7 +24,10 @@ declare module '../MockPointOptions' {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: ElliottWave.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: ElliottWave.Options
+    ) {
         super(chart, options);
     }
 
@@ -39,7 +42,9 @@ class ElliottWave extends CrookedLine {
             point: MockPointOptions,
             i: number
         ): void {
-            const typeOptions = this.options.typeOptions as ElliottWave.TypeOptions,
+            const typeOptions = (
+                    this.options.typeOptions as ElliottWave.TypeOptions
+                ),
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],
@@ -79,7 +84,7 @@ ElliottWave.prototype.defaultOptions = merge(
              */
 
             /**
-             * @ignore-options
+             * @ignore-option
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {

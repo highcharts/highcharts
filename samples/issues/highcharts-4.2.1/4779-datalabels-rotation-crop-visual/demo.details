@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- exportInnerHTML: true
-...

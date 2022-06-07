@@ -1,0 +1,83 @@
+<script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/draggable-points.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://kit.fontawesome.com/3c770b0879.js" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+
+
+<div class="chart-container" id="gantt"></div>
+
+<div class="main-container">
+	<div id="button-group">
+		<button id="btnShowDialog" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskDialog">
+				Add task
+		</button>
+		<button id="btnRemoveSelected" disabled="disabled" class="btn btn-primary">
+				Remove selected
+		</button>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="addTaskDialog" tabindex="-1" aria-labelledby="addTaskDialog1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add Task</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="inputName" class="form-label">Task Name</label>
+						<input type="text" class="form-control" id="inputName"/>
+					</div>
+					<div class="mb-3">
+						<label for="selectDepartment" class="form-label">Department</label>
+						<select class="form-select" id="selectDepartment">
+							<option value="0">Tech</option>
+							<option value="1">Marketing</option>
+							<option value="2">Sales</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="selectDependency" class="form-label">Dependency</label>
+						<select class="form-select" id="selectDependency">
+							<!-- Filled in by Javascript -->
+						</select>
+					</div>
+					<div class="mb-3">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="" id="chkMilestone">
+							<label class="form-check-label" for="chkMilestone">
+								Milestone
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="btnAddTask" type="button" class="btn btn-primary">Add Task</button>
+					<button id="btnCancelAddTask" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+	</div>
+</div>
+
+<div id="modal-backdrop" class="fade"></div>
+
+<svg height="0" width="0">
+	<defs>
+			<clipPath id="myClip">
+					<circle stroke="#000000" stroke-miterlimit="10" cx="250" cy="254" r="150"/>
+			</clipPath>
+	</defs>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" >
+	<linearGradient id="bg-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+		<stop offset="5%" stop-color="#1f1836" />
+		<stop offset="95%" stop-color="#45445d" />
+	</linearGradient>
+</svg>
+
+
+

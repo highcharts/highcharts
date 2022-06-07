@@ -135,9 +135,15 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
             },
             plotOptions: {
                 column: {
-                    stacking: 'normal'
+                    stacking: 'normal',
+                    colorByPoint: true
                 }
             },
+            yAxis: [{},
+                {
+                    opposite: true
+                }
+            ],
             series: [
                 {
                     name: 'John',
@@ -172,6 +178,40 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
             'There should be an SVG element for each data point.'
         );
     }
+
+    // Issue #16979
+    // column with stacking = 'percent' shows only one point
+    chart.addSeries({
+        name: 'Percent',
+        data: [
+            [2, 1],
+            [2, 2]
+        ],
+        yAxis: 1,
+        stacking: 'percent'
+    });
+
+    assert.equal(
+        chart.yAxis[1].dataMax,
+        100,
+        'The dataMax should be equal to 100'
+    );
+
+    chart.addSeries({
+        name: 'Percent',
+        data: [
+            [3, -2],
+            [3, 2]
+        ],
+        yAxis: 1,
+        stacking: 'percent'
+    });
+
+    assert.strictEqual(
+        chart.series[3].points[0].barX,
+        chart.series[3].points[1].barX,
+        'The barX of point[0] should be equal to barX of point[1]'
+    );
 });
 
 // Issue #7420

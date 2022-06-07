@@ -18,6 +18,7 @@
  *
  * */
 
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -417,10 +418,11 @@ class ItemSeries extends PieSeries {
             rowsOption = this.options.rows,
             // How many rows (arcs) should be used
             rowFraction = (diameter - innerSize) / diameter,
-            isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
+            isCircle: boolean = fullAngle % (2 * Math.PI) === 0,
+            total = this.total || 0;
 
         // Increase the itemSize until we find the best fit
-        while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
+        while (itemCount > total + (rows && isCircle ? rows.length : 0)) {
 
             finalItemCount = itemCount;
 
@@ -486,8 +488,7 @@ class ItemSeries extends PieSeries {
          * @private
          * @param {Highcharts.ItemRowContainerObject} item
          * Wrapped object with angle and row
-         * @return {void}
-         */
+             */
         function cutOffRow(item: ItemSeries.RowContainerObject): void {
             if (overshoot > 0) {
                 item.row.colCount--;
@@ -570,7 +571,7 @@ class ItemSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -588,7 +589,7 @@ extend(ItemSeries.prototype, {
  * */
 
 namespace ItemSeries {
-    export interface GeometryObject extends Highcharts.GeometryObject {
+    export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
     export interface RowContainerObject {
@@ -682,7 +683,7 @@ export default ItemSeries;
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
- * @excludes  sliced
+ * @exclude   sliced
  * @product   highcharts
  * @apioption series.item.data
  */

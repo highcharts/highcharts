@@ -90,6 +90,9 @@ Highcharts.setOptions({
     },
     tooltip: {
         animation: false
+    },
+    drilldown: {
+        animation: false
     }
 });
 // Save default functions from the default options, as they are not stringified
@@ -126,8 +129,9 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+/*
 // Override Highcharts and jQuery ajax functions to load from local
-Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+function ajax(proceed, attr) {
     var success = attr.success;
     attr.error = function (e) {
         throw new Error('Failed to load: ' + attr.url);
@@ -142,10 +146,60 @@ Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
         };
         return proceed.call(this, attr);
     }
-});
+}
+Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
+Highcharts.wrap(Highcharts, 'ajax', ajax);
 if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);
+    };
+}
+*/
+
+// Hijack XHMLHttpRequest to run local JSON sources
+var open = XMLHttpRequest.prototype.open;
+var send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function (type, url) {
+	this.requestURL = url;
+    return open.apply(this, arguments);
+}
+
+XMLHttpRequest.prototype.send = function () {
+    var localData = this.requestURL && window.JSONSources[this.requestURL];
+	if (localData) {
+        Object.defineProperty(this, 'readyState', {
+            get: function () { return 4; }
+        });
+        Object.defineProperty(this, 'status', {
+            get: function () { return 200; }
+        });
+        Object.defineProperty(this, 'responseText', {
+            get: function () { return JSON.stringify(localData); }
+        });
+
+        this.onreadystatechange();
+    } else {
+        return send.apply(this, arguments);
+    }
+}
+
+// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+if (window.Promise) {
+    window.fetch = function (url) {
+        return new Promise(function (resolve, reject) {
+            var localData = url && window.JSONSources[url];
+            if (localData) {
+                // Fake the return
+                resolve({
+                    ok: true,
+                    json: function () {
+                        return localData;
+                    }
+                });
+            } else {
+                reject('Sample error, URL "' + url + '" missing in JSONSources (trying to fetch)');
+            }
+        });
     };
 }
 
@@ -306,10 +360,18 @@ if (window.QUnit) {
             }
 
             var containerStyle = document.getElementById('container').style;
+            containerStyle.display = '';
+            containerStyle.float = '';
             containerStyle.width = '';
+            containerStyle.maxWidth = '';
+            containerStyle.minWidth = '';
             containerStyle.height = '';
+            containerStyle.maxHeight = '';
+            containerStyle.minHeight = '';
             containerStyle.position = '';
+            containerStyle.bottom = '';
             containerStyle.left = '';
+            containerStyle.right = '';
             containerStyle.top = '';
             containerStyle.zIndex = '';
 
@@ -452,9 +514,19 @@ function getSVG(chart) {
 
         if (chart.styledMode) {
             svg = svg.replace(
-                '</style>',
-                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
-                + 'text, tspan { fill: blue; stroke: none; } </style>'
+                '</defs>',
+                '<style>' +
+                '* {' +
+                '   fill: rgba(0, 0, 0, 0.1);' +
+                '   stroke: black;' +
+                '   stroke-width: 1px;' +
+                '}' +
+                'text, tspan {' +
+                '    fill: blue;' +
+                '    stroke: none;' +
+                '}' +
+                '</style>' +
+                '</defs>'
             );
         }
 

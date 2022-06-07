@@ -94,7 +94,16 @@ QUnit.test('Navigator (#4053)', function (assert) {
 });
 
 QUnit.test('General Navigator tests', function (assert) {
+    let left = 0;
+
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    afterSetChartSize() {
+                        left = this.navigator && this.navigator.left;
+                    }
+                }
+            },
             legend: {
                 enabled: true
             },
@@ -104,7 +113,10 @@ QUnit.test('General Navigator tests', function (assert) {
                 }
             },
             navigator: {
-                height: 100
+                height: 100,
+                xAxis: {
+                    left: 200
+                }
             },
             series: [
                 {
@@ -120,6 +132,12 @@ QUnit.test('General Navigator tests', function (assert) {
         secondShadeXBeforeTranslate,
         x,
         y;
+
+    assert.strictEqual(
+        left,
+        200,
+        '#15803: navigator.left should be correct after afterSetChartSize'
+    );
 
     const eventCount = el => {
         let count = 0;
@@ -155,7 +173,7 @@ QUnit.test('General Navigator tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].clipBox.height,
+        chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height'),
         100,
         'Navigator series has correct clipping rect height (#5904)'
     );
@@ -566,16 +584,16 @@ QUnit.test(
                 }
             ];
 
-        Highcharts.each(series, function (s) {
+        series.forEach(s => {
             chart.addSeries(s, false);
         });
         chart.xAxis[0].setExtremes();
 
-        Highcharts.each(points, function (s, index) {
+        points.forEach((s, index) => {
             if (
                 chart.series[index].options.id !== 'highcharts-navigator-series'
             ) {
-                Highcharts.each(s.data, function (p) {
+                s.data.forEach(p => {
                     chart.series[index].addPoint(p, false);
                 });
             }
@@ -1270,4 +1288,66 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
         `After changing the extremes and adding shifted points,
         the range should not equal zero.`
     );
+});
+
+
+QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        series: [{
+            pointInterval: 36e7
+        }]
+    });
+    assert.notStrictEqual(
+        chart.xAxis[0].max,
+        0,
+        `After adding series to the chart that has set the range,
+        the navigator shouldn't stick to min.`
+    );
+});
+
+
+QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+    const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
+
+    const mocks = [
+        // Regular case, simple series
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] }
+            ]
+        },
+        // Two series, one without xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { }
+            ]
+        },
+        // Two series, one without empty xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { xData: [] }
+            ]
+        },
+        // One series, undefiend in xData
+        {
+            baseSeries: [
+                { xData: [-5, undefined, 5] }
+            ]
+        }
+    ];
+
+    mocks.forEach(mock => {
+        const result = method.call(mock, 0);
+
+        assert.strictEqual(
+            result,
+            -5,
+            `With config: ${JSON.stringify(mock)}, the min should not be a NaN`
+        );
+    });
 });

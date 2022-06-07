@@ -19,6 +19,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Chart3D from '../../Core/Chart/Chart3D';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
@@ -26,6 +27,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
@@ -101,14 +103,13 @@ declare module '../../Core/Series/SeriesOptions' {
  * Chart with stacks
  * @param {string} stacking
  * Stacking option
- * @return {Highcharts.Stack3DDictionary}
  */
 function retrieveStacks(
     chart: Chart,
     stacking?: string
-): Highcharts.Stack3DDictionary {
+): Chart3D.Stack3DDictionary {
     const series = chart.series as Array<Series>,
-        stacks = {} as Highcharts.Stack3DDictionary;
+        stacks: Chart3D.Stack3DDictionary = { totalStacks: 0 };
 
     let stackNumber: number,
         i = 1;
@@ -163,7 +164,7 @@ columnProto.translate3dShapes = function (): void {
             series.index, // #4743
         z = (stack as any) * (depth + (seriesOptions.groupZPadding || 1)),
         borderCrisp = series.borderWidth % 2 ? 0.5 : 0,
-        point2dPos; // Position of point in 2D, used for 3D position calculation.
+        point2dPos; // Position of point in 2D, used for 3D position calculation
 
     if (chart.inverted && !series.yAxis.reversed) {
         borderCrisp *= -1;
@@ -221,7 +222,8 @@ columnProto.translate3dShapes = function (): void {
                 ) {
                     // Set args to 0 if column is outside the chart.
                     for (const key in shapeArgs) { // eslint-disable-line guard-for-in
-                        (shapeArgs as any)[key] = 0;
+                        // #13840
+                        (shapeArgs as any)[key] = key === 'y' ? -9999 : 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
                     // currently outside of plot.
@@ -318,7 +320,11 @@ wrap(columnProto, 'animate', function (
                         (point.shapeArgs as any).y = point.shapey; // #2968
                         // null value do not have a graphic
                         if (point.graphic) {
-                            point.graphic.animate(
+                            point.graphic[
+                                point.outside3dPlot ?
+                                    'attr' :
+                                    'animate'
+                            ](
                                 point.shapeArgs as any,
                                 series.options.animation
                             );

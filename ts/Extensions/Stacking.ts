@@ -115,15 +115,18 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
+        type OptionsStackingValue = (
+            'normal'|'overlap'|'percent'|'stream'|'group'
+        );
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
+            stackKey?: string;
             x: number;
         }
         interface StackItemObject {
             alignOptions: AlignObject;
-            axis: StackingAxis;
+            axis: StackingAxis.Composition;
             cumulative?: number;
             crop?: boolean;
             isNegative: boolean;
@@ -161,14 +164,14 @@ declare global {
         }
         class StackItem {
             public constructor(
-                axis: StackingAxis,
+                axis: StackingAxis.Composition,
                 options: YAxisStackLabelsOptions,
                 isNegative: boolean,
                 x: number,
                 stackOption?: OptionsStackingValue
             );
             public alignOptions: AlignObject;
-            public axis: StackingAxis;
+            public axis: StackingAxis.Composition;
             public base?: string;
             public cumulative?: (null|number);
             public hasValidPoints: boolean;
@@ -228,7 +231,7 @@ declare global {
  */
 class StackItem {
     public constructor(
-        axis: StackingAxis,
+        axis: StackingAxis.Composition,
         options: Highcharts.YAxisStackLabelsOptions,
         isNegative: boolean,
         x: number,
@@ -278,7 +281,7 @@ class StackItem {
     }
 
     public alignOptions: AlignObject;
-    public axis: StackingAxis;
+    public axis: StackingAxis.Composition;
     public base?: string;
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
@@ -341,7 +344,8 @@ class StackItem {
                 r: options.borderRadius || 0,
                 text: str,
                 rotation: (options as any).rotation,
-                padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
+                // set default padding to 5 as it is in datalabels #12308
+                padding: pick((options as any).padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
 
@@ -434,7 +438,8 @@ class StackItem {
                     boxOffsetX = bBox.width / 2;
                 } else {
                     boxOffsetX = chart.inverted ?
-                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                        (isNegative ? bBox.width + padding : -padding) :
+                        bBox.width / 2;
                 }
             }
 
@@ -460,7 +465,7 @@ class StackItem {
                 label.show();
             } else {
                 // Move label away to avoid the overlapping issues
-                label.alignAttr.y = -9999;
+                label.hide();
                 isJustify = false;
             }
 
@@ -484,7 +489,10 @@ class StackItem {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
-                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                    chart.isInsidePlot(
+                        label.x - padding + label.width,
+                        label.y
+                    ) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {
@@ -497,22 +505,6 @@ class StackItem {
     /**
      * @private
      * @function Highcharts.StackItem#getStackBox
-     *
-     * @param {Highcharts.Chart} chart
-     *
-     * @param {Highcharts.StackItem} stackItem
-     *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {number} xWidth
-     *
-     * @param {number} h
-     *
-     * @param {Highcharts.Axis} axis
-     *
-     * @return {Highcharts.BBoxObject}
      */
     public getStackBox(
         chart: Chart,
@@ -531,7 +523,8 @@ class StackItem {
                 (!stackItem.isNegative && reversed); // #4056
 
         return { // this is the box for the complete stack
-            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
+            x: inverted ?
+                (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
                 x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
                 axis.height - x - xWidth :
@@ -655,7 +648,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks,
         stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
@@ -805,7 +798,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
  */
 Series.prototype.modifyStacks = function (): void {
     let series = this,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
         processedXData = series.processedXData,
@@ -868,11 +861,6 @@ Series.prototype.percentStacker = function (
  *
  * @private
  * @function Highcharts.Series#getStackIndicator
- * @param {Highcharts.StackItemIndicatorObject|undefined} stackIndicator
- * @param {number} x
- * @param {number} index
- * @param {string} [key]
- * @return {Highcharts.StackItemIndicatorObject}
  */
 Series.prototype.getStackIndicator = function (
     stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
@@ -885,12 +873,13 @@ Series.prototype.getStackIndicator = function (
     // changed:
     if (!defined(stackIndicator) ||
         stackIndicator.x !== x ||
-        (key && stackIndicator.key !== key)
+        (key && stackIndicator.stackKey !== key)
     ) {
         stackIndicator = {
             x: x,
             index: 0,
-            key: key
+            key: key,
+            stackKey: key
         };
     } else {
         (stackIndicator).index++;

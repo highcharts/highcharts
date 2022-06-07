@@ -126,7 +126,9 @@ class DotPlotSeries extends ColumnSeries {
             point.graphics = graphics = point.graphics || {};
             pointAttr = point.pointAttr ?
                 (
-                    (point.pointAttr as any)[point.selected ? 'selected' : ''] ||
+                    (point.pointAttr as any)[
+                        point.selected ? 'selected' : ''
+                    ] ||
                     (series.pointAttr as any)['']
                 ) :
                 series.pointAttribs(point, (point.selected as any) && 'select');

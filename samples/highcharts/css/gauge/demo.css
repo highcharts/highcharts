@@ -1,45 +1,61 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#container {
+    min-width: 310px;
+    max-width: 400px;
+    height: 300px;
+    margin: 0 auto;
+}
 
 .outer-pane {
-	fill: #EFEFEF;
+    fill: #efefef;
 }
+
 .middle-pane {
-	stroke-width: 1px;
-	stroke: #AAA;
+    stroke-width: 1px;
+    stroke: #aaa;
 }
+
 .inner-pane {
-	fill: #DDDDDD;
+    fill: #ddd;
 }
+
 .green-band {
-	fill: #55BF3B;
-	fill-opacity: 1;
+    fill: #55bf3b;
+    fill-opacity: 1;
 }
+
 .yellow-band {
-	fill: #DDDF0D;
-	fill-opacity: 1;
+    fill: #dddf0d;
+    fill-opacity: 1;
 }
+
 .red-band {
-	fill: #DF5353;
-	fill-opacity: 1;
+    fill: #df5353;
+    fill-opacity: 1;
 }
+
 .highcharts-gauge-series .highcharts-pivot {
-	stroke-width: 1px;
-	stroke: black;
-	fill-opacity: 0.3;
+    stroke-width: 1px;
+    stroke: black;
+    fill-opacity: 0.3;
 }
+
 .highcharts-gauge-series .highcharts-dial {
-	fill: gray;
+    fill: gray;
 }
+
 .highcharts-yaxis .highcharts-tick {
-	stroke-width: 2px;
-	stroke: #666666;
+    stroke-width: 2px;
+    stroke: #666;
 }
+
 .highcharts-yaxis-grid .highcharts-grid-line,
 .highcharts-yaxis-grid .highcharts-minor-grid-line {
-	display: none;
+    display: none;
 }
 
 .highcharts-yaxis .highcharts-minor-tick {
-	stroke-width: 1px;
-	stroke: #999999;
+    stroke-width: 1px;
+    stroke: #999;
 }

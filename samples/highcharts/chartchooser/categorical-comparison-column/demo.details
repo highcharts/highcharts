@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Chart Chooser Column Chart
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

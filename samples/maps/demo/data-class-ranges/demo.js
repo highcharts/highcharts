@@ -1,25 +1,13 @@
-// Load the data from a Google Spreadsheet
-// https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0/pubhtml
-Highcharts.data({
-    googleSpreadsheetKey: '1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0',
+(async () => {
 
-    // Custom handler when the spreadsheet is parsed
-    parsed: function (columns) {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        // Read the columns into the data array
-        var data = [];
-        Highcharts.each(columns[0], function (code, i) {
-            data.push({
-                code: code.toUpperCase(),
-                value: parseFloat(columns[2][i]),
-                name: columns[1][i]
-            });
-        });
-
-        // Initiate the chart
-        Highcharts.mapChart('container', {
+    function drawChart(data) {
+        return Highcharts.mapChart('container', {
             chart: {
-                map: 'custom/world',
+                map: topology,
                 borderWidth: 1
             },
 
@@ -86,7 +74,7 @@ Highcharts.data({
 
             series: [{
                 data: data,
-                joinBy: ['iso-a3', 'code'],
+                joinBy: ['iso-a2', 'code'],
                 animation: true,
                 name: 'Population density',
                 states: {
@@ -100,11 +88,33 @@ Highcharts.data({
                 shadow: false
             }]
         });
-    },
-    error: function () {
-        document.getElementById('container').innerHTML = '<div class="loading">' +
-            '<i class="icon-frown icon-large"></i> ' +
-            'Error loading data from Google Spreadsheets' +
-            '</div>';
     }
-});
+
+    // Load the data from a Google Spreadsheet
+    // https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0/pubhtml
+    Highcharts.data({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA',
+
+        // Custom handler when the spreadsheet is parsed
+        parsed: function (columns) {
+
+            // Read the columns into the data array
+            const data = columns[0].slice(1).map((code, i) => ({
+                code: code.toUpperCase(),
+                value: parseFloat(columns[2][i + 1]),
+                name: columns[1][i + 1]
+            }));
+
+            drawChart(data);
+        },
+        error: function () {
+            const chart = drawChart();
+            chart.showLoading(
+                '<i class="icon-frown icon-large"></i> ' +
+                'Error loading data from Google Spreadsheets'
+            );
+        }
+    });
+
+})();

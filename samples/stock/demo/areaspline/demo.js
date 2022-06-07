@@ -2,8 +2,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
 
     // Create the chart
     Highcharts.stockChart('container', {
-
-
         rangeSelector: {
             selected: 1
         },

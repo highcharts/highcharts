@@ -51,7 +51,6 @@ export interface MACDOptions extends SMAOptions {
     groupPadding?: number;
     pointPadding?: number;
     minPointLength?: number;
-    tooltip?: TooltipOptions;
     signalLine?: MACDLineOptions;
     macdLine?: MACDLineOptions;
 }

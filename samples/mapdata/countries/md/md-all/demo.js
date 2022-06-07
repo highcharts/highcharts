@@ -1,85 +1,63 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['md-rz', 0],
-    ['md-2266', 1],
-    ['md-te', 2],
-    ['md-2267', 3],
-    ['md-cu', 4],
-    ['md-bd', 5],
-    ['md-sv', 6],
-    ['md-sd', 7],
-    ['md-so', 8],
-    ['md-do', 9],
-    ['md-ed', 10],
-    ['md-br', 11],
-    ['md-oc', 12],
-    ['md-rs', 13],
-    ['md-bt', 14],
-    ['md-dr', 15],
-    ['md-fa', 16],
-    ['md-gl', 17],
-    ['md-si', 18],
-    ['md-ug', 19],
-    ['md-ch', 20],
-    ['md-ta', 21],
-    ['md-ga', 22],
-    ['md-st', 23],
-    ['md-cv', 24],
-    ['md-an', 25],
-    ['md-ba', 26],
-    ['md-cn', 27],
-    ['md-ca', 28],
-    ['md-cs', 29],
-    ['md-cr', 30],
-    ['md-1605', 31],
-    ['md-fl', 32],
-    ['md-du', 33],
-    ['md-db', 34],
-    ['md-hi', 35],
-    ['md-ia', 36],
-    ['md-le', 37],
-    ['md-ni', 38],
-    ['md-oh', 39]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/md/md-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/md/md-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['md-rz', 10], ['md-2266', 11], ['md-te', 12], ['md-2267', 13],
+        ['md-cu', 14], ['md-bd', 15], ['md-sv', 16], ['md-sd', 17],
+        ['md-so', 18], ['md-do', 19], ['md-ed', 20], ['md-br', 21],
+        ['md-oc', 22], ['md-rs', 23], ['md-bt', 24], ['md-dr', 25],
+        ['md-fa', 26], ['md-gl', 27], ['md-si', 28], ['md-ug', 29],
+        ['md-ch', 30], ['md-ta', 31], ['md-ga', 32], ['md-st', 33],
+        ['md-cv', 34], ['md-an', 35], ['md-ba', 36], ['md-cn', 37],
+        ['md-ca', 38], ['md-cs', 39], ['md-cr', 40], ['md-1605', 41],
+        ['md-fl', 42], ['md-du', 43], ['md-db', 44], ['md-hi', 45],
+        ['md-ia', 46], ['md-le', 47], ['md-ni', 48], ['md-oh', 49]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/md/md-all.js">Moldova</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/md/md-all.topo.json">Moldova</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

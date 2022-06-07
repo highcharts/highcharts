@@ -20,7 +20,7 @@ var data = [
 
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json', function (geojson) {
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
         chart: {
             map: geojson
@@ -28,6 +28,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
         title: {
             text: 'GeoJSON in Highmaps'
+        },
+
+        accessibility: {
+            typeDescription: 'Map of Germany.'
         },
 
         mapNavigation: {

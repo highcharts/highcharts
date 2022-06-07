@@ -144,7 +144,8 @@ H.layouts.packedbubble = extendClass(
                 });
             }
         },
-        isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
+        // #14439, new stable check.
+        isStable: function (this: PackedBubbleLayout): boolean {
             const tempDiff = Math.abs(
                 (this.prevSystemTemperature as any) -
                 (this.systemTemperature as any)
@@ -296,9 +297,7 @@ H.layouts.packedbubble = extendClass(
 addEvent(Chart as any, 'beforeRedraw', function (
     this: PackedBubbleChart
 ): void {
-    // eslint-disable-next-line no-invalid-this
     if (this.allDataPoints) {
-        // eslint-disable-next-line no-invalid-this
-        delete this.allDataPoints;
+        delete (this as Partial<typeof this>).allDataPoints;
     }
 });

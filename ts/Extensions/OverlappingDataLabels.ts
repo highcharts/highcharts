@@ -69,10 +69,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                 objectEach(stack, function (
                     stackItem: Highcharts.StackItem
                 ): void {
-                    if (
-                        stackItem.label &&
-                        stackItem.label.visibility !== 'hidden' // #15607
-                    ) {
+                    if (stackItem.label) {
                         labels.push(stackItem.label);
                     }
                 });
@@ -211,7 +208,10 @@ Chart.prototype.hideOverlappingLabels = function (
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
-                } else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
+                } else if (
+                    isNumber(label.x) &&
+                    Math.round(label.x) !== label.translateX
+                ) {
                     xOffset = label.x - label.translateX;
                 }
 
@@ -265,7 +265,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 box2 &&
                 label1 !== label2 && // #6465, polar chart with connectEnds
                 label1.newOpacity !== 0 &&
-                label2.newOpacity !== 0
+                label2.newOpacity !== 0 &&
+                // #15863 dataLabels are no longer hidden by translation
+                label1.visibility !== 'hidden' &&
+                label2.visibility !== 'hidden'
             ) {
                 if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
@@ -293,10 +296,11 @@ Chart.prototype.hideOverlappingLabels = function (
  * @private
  * @function hideOrShow
  * @param {Highcharts.SVGElement} label
- *        The label.
+ * The label.
  * @param {Highcharts.Chart} chart
- *        The chart that contains the label.
+ * The chart that contains the label.
  * @return {boolean}
+ * Whether label is affected
  */
 function hideOrShow(label: SVGElement, chart: Chart): boolean {
     let complete: (Function|undefined),
@@ -308,13 +312,17 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 
         if (label.oldOpacity !== newOpacity) {
 
-            // Make sure the label is completely hidden to avoid catching
-            // clicks (#4362)
+            // Make sure the label is completely hidden to avoid catching clicks
+            // (#4362)
             if (label.alignAttr && label.placed) { // data labels
-                label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                label[
+                    newOpacity ? 'removeClass' : 'addClass'
+                ]('highcharts-data-label-hidden');
                 complete = function (): void {
                     if (!chart.styledMode) {
-                        label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        label.css({
+                            pointerEvents: newOpacity ? 'auto' : 'none'
+                        });
                     }
                 };
 

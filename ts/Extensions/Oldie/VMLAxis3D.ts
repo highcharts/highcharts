@@ -79,9 +79,35 @@ class VMLAxis3D {
 
         AxisClass.keepProps.push('vml');
 
+        addEvent(AxisClass, 'destroy', VMLAxis3D.onDestroy);
         addEvent(AxisClass, 'init', VMLAxis3D.onInit);
         addEvent(AxisClass, 'render', VMLAxis3D.onRender);
 
+    }
+
+    /**
+     * @private
+     */
+    public static onDestroy(this: Axis): void {
+        const axis = this as VMLAxis3D,
+            vml = axis.vml;
+        if (vml) {
+            let el: (Highcharts.VMLElement|undefined);
+
+            ([
+                'backFrame',
+                'bottomFrame',
+                'sideFrame'
+            ] as Array<('backFrame'|'bottomFrame'|'sideFrame')>).forEach(
+                function (prop): void {
+                    el = vml[prop];
+                    if (el) {
+                        vml[prop] = el.destroy();
+                    }
+                },
+                this
+            );
+        }
     }
 
     /**

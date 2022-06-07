@@ -98,7 +98,7 @@ class DPOIndicator extends SMAIndicator {
              */
             period: 21
         }
-    } as DPOOptions)
+    } as DPOOptions);
 
     /* *
     *
@@ -186,7 +186,7 @@ class DPOIndicator extends SMAIndicator {
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 

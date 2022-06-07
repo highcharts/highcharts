@@ -1,5 +1,5 @@
 ---
- name: Fiji - Highmaps
- description: Highmaps demo
+ name: Fiji - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

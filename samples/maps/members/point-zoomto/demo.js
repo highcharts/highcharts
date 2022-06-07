@@ -1,72 +1,80 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Assign id's
-    data.forEach(function (p) {
-        p.id = p.code;
-    });
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world-highres.topo.json'
+    ).then(response => response.json());
 
-    // Initiate the chart
-    var chart = Highcharts.mapChart('container', {
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        title: {
-            text: 'Zoom to point'
-        },
+        // Assign id's
+        data.forEach(function (p) {
+            p.id = p.code;
+        });
 
-        subtitle: {
-            text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
-        },
+        // Initialize the chart
+        var chart = Highcharts.mapChart('container', {
 
-        legend: {
             title: {
-                text: 'Population density per km²'
-            }
-        },
+                text: 'Zoom to point'
+            },
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
+            subtitle: {
+                text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
+            },
 
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world-highres'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            allowPointSelect: true,
-            cursor: 'pointer',
-            events: {
-                click: function (e) {
-                    e.point.zoomTo();
+            legend: {
+                title: {
+                    text: 'Population density per km²'
                 }
             },
-            states: {
-                hover: {
-                    color: '#a4edba'
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
                 }
             },
-            tooltip: {
-                pointFormat: '{point.id} {point.name}',
-                valueSuffix: '/km²'
-            }
-        }]
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                allowPointSelect: true,
+                cursor: 'pointer',
+                events: {
+                    click: function (e) {
+                        e.point.zoomTo();
+                    }
+                },
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{point.id} {point.name}',
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
+
+        // Activate the buttons
+        document.getElementById('ecuador').addEventListener('click', function () {
+            chart.get('EC').zoomTo();
+        });
+        document.getElementById('south-korea').addEventListener('click', function () {
+            chart.get('KR').zoomTo();
+        });
+        document.getElementById('zoom-out').addEventListener('click', function () {
+            chart.mapZoom();
+        });
     });
 
-    // Activate the buttons
-    document.getElementById('ecuador').addEventListener('click', function () {
-        chart.get('EC').zoomTo();
-    });
-    document.getElementById('south-korea').addEventListener('click', function () {
-        chart.get('KR').zoomTo();
-    });
-    document.getElementById('zoom-out').addEventListener('click', function () {
-        chart.mapZoom();
-    });
-});
+})();

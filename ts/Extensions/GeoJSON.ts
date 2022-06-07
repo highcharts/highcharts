@@ -10,6 +10,14 @@
 
 'use strict';
 
+import type {
+    GeoJSON,
+    GeoJSONFeature,
+    TopoJSON
+} from '../Maps/GeoJSON';
+import type MapPointOptions from '../Series/Map/MapPointOptions';
+import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
+import type { ProjectedXY } from '../Maps/MapViewOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
@@ -33,22 +41,30 @@ declare module '../Core/Chart/ChartLike'{
         mapCreditsFull?: string;
         /** @requires modules/maps */
         mapTransforms?: any;
-        /** @requires modules/maps */
-        fromLatLonToPoint(latLon: Highcharts.MapLatLonObject): Highcharts.MapCoordinateObject;
-        /** @requires modules/maps */
+        /**
+         * @requires modules/maps
+         * @deprecated
+         */
+        fromLatLonToPoint(
+            latLon: Highcharts.MapLonLatObject
+        ): ProjectedXY|undefined;
+        /**
+         * @requires modules/maps
+         * @deprecated
+         */
         fromPointToLatLon(
-            point: Highcharts.MapCoordinateObject
-        ): (Highcharts.MapLatLonObject|undefined);
+            point: ProjectedXY
+        ): (Highcharts.MapLonLatObject|undefined);
         /** @requires modules/maps */
         transformFromLatLon(
-            latLon: Highcharts.MapLatLonObject,
+            latLon: Highcharts.MapLonLatObject,
             transform: any
-        ): Highcharts.MapCoordinateObject;
+        ): ProjectedXY|undefined;
         /** @requires modules/maps */
         transformToLatLon(
-            point: Highcharts.MapCoordinateObject,
+            point: ProjectedXY,
             transform: any
-        ): (Highcharts.MapLatLonObject|undefined);
+        ): (Highcharts.MapLonLatObject|undefined);
     }
 }
 
@@ -65,47 +81,16 @@ declare module '../Core/Chart/ChartOptions'{
  */
 declare global {
     namespace Highcharts {
-        interface MapCoordinateObject {
-            name?: string;
-            properties?: object;
-            x: number;
-            y: (number|null);
-        }
         interface MapPathObject {
             name?: string;
-            path: SVGPath;
+            path?: SVGPath;
             properties?: object;
         }
-        interface MapLatLonObject {
+        interface MapLonLatObject {
             lat: number;
             lon: number;
         }
-        interface GeoJSON {
-            copyright?: string;
-            copyrightShort?: string;
-            crs?: AnyRecord;
-            features: Array<GeoJSONFeature>;
-            'hc-transform'?: Record<string, GeoJSONTransform>;
-            title?: string;
-            type?: string;
-            version?: string;
-        }
-        interface GeoJSONFeature extends AnyRecord {
-            type: string;
-        }
-        interface GeoJSONTransform {
-            crs?: string;
-            hitZone?: AnyRecord;
-            jsonmarginX?: number;
-            jsonmarginY?: number;
-            jsonres?: number;
-            rotation?: number;
-            scale?: number;
-            xoffset?: number;
-            xpan?: number;
-            yoffset?: number;
-            ypan?: number;
-        }
+
         /** @requires modules/maps */
         function geojson(
             geojson: GeoJSON,
@@ -114,6 +99,7 @@ declare global {
         ): Array<any>;
     }
     interface Window {
+        d3: any;
         proj4: any;
     }
 }
@@ -228,72 +214,49 @@ declare global {
 /**
  * Result object of a map transformation.
  *
- * @interface Highcharts.MapCoordinateObject
+ * @interface Highcharts.ProjectedXY
  *//**
- * X coordinate on the map.
- * @name Highcharts.MapCoordinateObject#x
+ * X coordinate in projected units.
+ * @name Highcharts.ProjectedXY#x
  * @type {number}
  *//**
- * Y coordinate on the map.
- * @name Highcharts.MapCoordinateObject#y
- * @type {number|null}
+ * Y coordinate in projected units
+ * @name Highcharts.ProjectedXY#y
+ * @type {number}
  */
 
 /**
  * A latitude/longitude object.
  *
- * @interface Highcharts.MapLatLonObject
+ * @interface Highcharts.MapLonLatObject
  *//**
  * The latitude.
- * @name Highcharts.MapLatLonObject#lat
+ * @name Highcharts.MapLonLatObject#lat
  * @type {number}
  *//**
  * The longitude.
- * @name Highcharts.MapLatLonObject#lon
+ * @name Highcharts.MapLonLatObject#lon
  * @type {number}
  */
 
+/**
+ * An array of longitude, latitude.
+ *
+ * @typedef {Array<number>} Highcharts.LonLatArray
+ */
+
+/**
+ * A TopoJSON object, see description on the
+ * [project's GitHub page](https://github.com/topojson/topojson).
+ *
+ * @typedef {Object} Highcharts.TopoJSON
+ */
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
- * Test for point in polygon. Polygon defined as array of [x,y] points.
- * @private
- */
-function pointInPolygon(
-    point: Highcharts.MapCoordinateObject,
-    polygon: Array<Array<number>>
-): boolean {
-    let i,
-        j,
-        rel1,
-        rel2,
-        c = false,
-        x = point.x,
-        y = point.y;
-
-    for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        rel1 = polygon[i][1] > (y as any);
-        rel2 = polygon[j][1] > (y as any);
-        if (
-            rel1 !== rel2 &&
-            (
-                x < (polygon[j][0] -
-                    polygon[i][0]) * ((y as any) - polygon[i][1]) /
-                    (polygon[j][1] - polygon[i][1]) +
-                    polygon[i][0]
-            )
-        ) {
-            c = !c;
-        }
-    }
-
-    return c;
-}
-
-/**
- * Highmaps only. Get point from latitude and longitude using specified
+ * Highcharts Maps only. Get point from latitude and longitude using specified
  * transform definition.
  *
  * @requires modules/map
@@ -303,20 +266,20 @@ function pointInPolygon(
  *
  * @function Highcharts.Chart#transformFromLatLon
  *
- * @param {Highcharts.MapLatLonObject} latLon
+ * @param {Highcharts.MapLonLatObject} latLon
  *        A latitude/longitude object.
  *
  * @param {*} transform
  *        The transform definition to use as explained in the
  *        {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
  *
- * @return {Highcharts.MapCoordinateObject}
+ * @return {ProjectedXY}
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (
-    latLon: Highcharts.MapLatLonObject,
+    latLon: Highcharts.MapLonLatObject,
     transform: any
-): Highcharts.MapCoordinateObject {
+): ProjectedXY|undefined {
 
     /**
      * Allows to manually load the proj4 library from Highcharts options
@@ -324,24 +287,27 @@ Chart.prototype.transformFromLatLon = function (
      * In case of loading the library from a `script` tag,
      * this option is not needed, it will be loaded from there by default.
      *
-     * @type       {function}
-     * @product    highmaps
-     * @apioption  chart.proj4
+     * @type      {Function}
+     * @product   highmaps
+     * @apioption chart.proj4
      */
 
-    const proj4 = (
-        this.userOptions.chart &&
-        this.userOptions.chart.proj4 ||
-        win.proj4
-    );
-
+    const proj4 = this.options.chart.proj4 || win.proj4;
     if (!proj4) {
         error(21, false, this);
-        return {
-            x: 0,
-            y: null
-        };
+        return;
     }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
 
     const projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
@@ -354,73 +320,67 @@ Chart.prototype.transformFromLatLon = function (
         ] : projected;
 
     return {
-        x: (
-            (rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) +
-            (transform.xpan || 0)
-        ) * (transform.jsonres || 1) +
-        (transform.jsonmarginX || 0),
-        y: (
-            ((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) +
-            (transform.ypan || 0)
-        ) * (transform.jsonres || 1) -
-        (transform.jsonmarginY || 0)
+        x: ((rotated[0] - xoffset) * scale + xpan) * jsonres + jsonmarginX,
+        y: -(((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY)
     };
 };
 
 /**
- * Highmaps only. Get latLon from point using specified transform definition.
- * The method returns an object with the numeric properties `lat` and `lon`.
+ * Highcharts Maps only. Get latLon from point using specified transform
+ * definition. The method returns an object with the numeric properties `lat`
+ * and `lon`.
  *
  * @requires modules/map
  *
- * @sample maps/series/latlon-transform/
- *         Use specific transformation for lat/lon
+ * @sample maps/series/latlon-transform/ Use specific transformation for lat/lon
  *
  * @function Highcharts.Chart#transformToLatLon
  *
- * @param {Highcharts.Point|Highcharts.MapCoordinateObject} point
- *        A `Point` instance, or any object containing the properties `x` and
- *        `y` with numeric values.
+ * @param {Highcharts.Point|Highcharts.ProjectedXY} point A `Point` instance, or
+ *        any object containing the properties `x` and `y` with numeric values.
  *
- * @param {*} transform
- *        The transform definition to use as explained in the
+ * @param {*} transform The transform definition to use as explained in the
  *        {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
  *
- * @return {Highcharts.MapLatLonObject|undefined}
- *         An object with `lat` and `lon` properties.
+ * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and `lon`
+ *         properties.
  */
 Chart.prototype.transformToLatLon = function (
-    point: Highcharts.MapCoordinateObject,
+    point: ProjectedXY,
     transform: any
-): (Highcharts.MapLatLonObject|undefined) {
-    if (typeof win.proj4 === 'undefined') {
+): (Highcharts.MapLonLatObject|undefined) {
+
+    const proj4 = this.options.chart.proj4 || win.proj4;
+    if (!proj4) {
         error(21, false, this);
         return;
     }
 
+    if (point.y === null) {
+        return;
+    }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
+
     const normalized = {
-            x: (
-                (
-                    point.x -
-                    (transform.jsonmarginX || 0)
-                ) / (transform.jsonres || 1) -
-                (transform.xpan || 0)
-            ) / (transform.scale || 1) +
-            (transform.xoffset || 0),
-            y: (
-                (
-                    -(point.y as any) - (transform.jsonmarginY || 0)
-                ) / (transform.jsonres || 1) +
-                (transform.ypan || 0)
-            ) / (transform.scale || 1) +
-            (transform.yoffset || 0)
+            x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
+            y: ((point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         },
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
             (transform.rotation && Math.sin(transform.rotation)),
         // Note: Inverted sinAngle to reverse rotation direction
-        projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
+        projected = proj4(transform.crs, 'WGS84', transform.rotation ? {
             x: normalized.x * cosAngle + normalized.y * -sinAngle,
             y: normalized.x * sinAngle + normalized.y * cosAngle
         } : normalized);
@@ -429,213 +389,216 @@ Chart.prototype.transformToLatLon = function (
 };
 
 /**
- * Highmaps only. Calculate latitude/longitude values for a point. Returns an
- * object with the numeric properties `lat` and `lon`.
+ * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
+ *
+ * @deprecated
  *
  * @requires modules/map
- *
- * @sample maps/demo/latlon-advanced/
- *         Advanced lat/lon demo
  *
  * @function Highcharts.Chart#fromPointToLatLon
  *
- * @param {Highcharts.Point|Highcharts.MapCoordinateObject} point
- *        A `Point` instance or anything containing `x` and `y` properties with
- *        numeric values.
+ * @param {Highcharts.Point|Highcharts.ProjectedXY} point A `Point`
+ *        instance or anything containing `x` and `y` properties with numeric
+ *        values.
  *
- * @return {Highcharts.MapLatLonObject|undefined}
- *         An object with `lat` and `lon` properties.
+ * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and `lon`
+ *         properties.
  */
 Chart.prototype.fromPointToLatLon = function (
-    point: Highcharts.MapCoordinateObject
-): (Highcharts.MapLatLonObject|undefined) {
-    let transforms = this.mapTransforms,
-        transform;
-
-    if (!transforms) {
-        error(22, false, this);
-        return;
-    }
-
-    for (transform in transforms) {
-        if (
-            Object.hasOwnProperty.call(transforms, transform) &&
-            transforms[transform].hitZone &&
-            pointInPolygon(
-                { x: point.x, y: -(point.y as any) },
-                transforms[transform].hitZone.coordinates[0]
-            )
-        ) {
-            return this.transformToLatLon(point, transforms[transform]);
-        }
-    }
-
-    return this.transformToLatLon(
-        point,
-        transforms['default'] // eslint-disable-line dot-notation
-    );
+    point: ProjectedXY
+): (Highcharts.MapLonLatObject|undefined) {
+    return this.mapView && this.mapView.projectedUnitsToLonLat(point);
 };
 
 /**
- * Highmaps only. Get chart coordinates from latitude/longitude. Returns an
- * object with x and y values corresponding to the `xAxis` and `yAxis`.
+ * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
+ *
+ * @deprecated
  *
  * @requires modules/map
- *
- * @sample maps/series/latlon-to-point/
- *         Find a point from lat/lon
  *
  * @function Highcharts.Chart#fromLatLonToPoint
  *
- * @param {Highcharts.MapLatLonObject} latLon
- *        Coordinates.
+ * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
  *
- * @return {Highcharts.MapCoordinateObject}
- *         X and Y coordinates in terms of chart axis values.
+ * @return {Highcharts.ProjectedXY}
+ *      X and Y coordinates in terms of projected values
  */
 Chart.prototype.fromLatLonToPoint = function (
-    latLon: Highcharts.MapLatLonObject
-): Highcharts.MapCoordinateObject {
-    let transforms = this.mapTransforms,
-        transform,
-        coords;
-
-    if (!transforms) {
-        error(22, false, this);
-        return {
-            x: 0,
-            y: null
-        };
-    }
-
-    for (transform in transforms) {
-        if (
-            Object.hasOwnProperty.call(transforms, transform) &&
-            transforms[transform].hitZone
-        ) {
-            coords = this.transformFromLatLon(latLon, transforms[transform]);
-            if (pointInPolygon(
-                { x: coords.x, y: -(coords.y as any) },
-                transforms[transform].hitZone.coordinates[0]
-            )) {
-                return coords;
-            }
-        }
-    }
-
-    return this.transformFromLatLon(
-        latLon,
-        transforms['default'] // eslint-disable-line dot-notation
-    );
+    lonLat: Highcharts.MapLonLatObject
+): ProjectedXY|undefined {
+    return this.mapView && this.mapView.lonLatToProjectedUnits(lonLat);
 };
 
+/*
+ * Convert a TopoJSON topology to GeoJSON. By default the first object is
+ * handled.
+ * Based on https://github.com/topojson/topojson-specification
+*/
+function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
+
+    // Decode first object/feature as default
+    if (!objectName) {
+        objectName = Object.keys(topology.objects)[0];
+    }
+    const object = topology.objects[objectName];
+
+    // Already decoded => return cache
+    if (object['hc-decoded-geojson']) {
+        return object['hc-decoded-geojson'];
+    }
+
+    // Do the initial transform
+    let arcsArray = topology.arcs as any[];
+    if (topology.transform) {
+        const { scale, translate } = topology.transform;
+        arcsArray = topology.arcs.map((arc): any => {
+            let x = 0,
+                y = 0;
+            return arc.map((position): number[] => {
+                position = position.slice();
+                position[0] = (x += position[0]) * scale[0] + translate[0];
+                position[1] = (y += position[1]) * scale[1] + translate[1];
+                return position;
+            });
+        });
+    }
+
+    // Recurse down any depth of multi-dimentional arrays of arcs and insert
+    // the coordinates
+    const arcsToCoordinates = (
+        arcs: any
+    ): number[] => {
+        if (typeof arcs[0] === 'number') {
+            return arcs.reduce(
+                (coordinates: number[], arcNo: number, i: number): number[] => {
+                    let arc = arcNo < 0 ? arcsArray[~arcNo] : arcsArray[arcNo];
+
+                    // The first point of an arc is always identical to the last
+                    // point of the previes arc, so slice it off to save further
+                    // processing.
+                    if (arcNo < 0) {
+                        arc = arc.slice(
+                            0,
+                            i === 0 ? arc.length : arc.length - 1
+                        );
+                        arc.reverse();
+                    } else if (i) {
+                        arc = arc.slice(1);
+                    }
+                    return coordinates.concat(arc);
+                },
+                []
+            );
+        }
+        return arcs.map(arcsToCoordinates);
+    };
+
+    const features = object.geometries
+        .map((geometry): GeoJSONFeature => ({
+            type: 'Feature',
+            properties: geometry.properties,
+            geometry: {
+                type: geometry.type,
+                coordinates: geometry.coordinates ||
+                    arcsToCoordinates(geometry.arcs)
+            } as any
+        }));
+
+    const geojson: GeoJSON = {
+        type: 'FeatureCollection',
+        copyright: topology.copyright,
+        copyrightShort: topology.copyrightShort,
+        copyrightUrl: topology.copyrightUrl,
+        features,
+        'hc-recommended-mapview': object['hc-recommended-mapview'],
+        bbox: topology.bbox,
+        title: topology.title
+    };
+
+    object['hc-decoded-geojson'] = geojson;
+
+    return geojson;
+}
+
 /**
- * Highmaps only. Restructure a GeoJSON object in preparation to be read
- * directly by the
+ * Highcharts Maps only. Restructure a GeoJSON or TopoJSON object in preparation
+ * to be read directly by the
  * {@link https://api.highcharts.com/highmaps/plotOptions.series.mapData|series.mapData}
- * option. The GeoJSON will be broken down to fit a specific Highcharts type,
+ * option. The object will be broken down to fit a specific Highcharts type,
  * either `map`, `mapline` or `mappoint`. Meta data in GeoJSON's properties
- * object will be copied directly over to {@link Point.properties} in Highmaps.
+ * object will be copied directly over to {@link Point.properties} in Highcharts
+ * Maps.
  *
  * @requires modules/map
  *
- * @sample maps/demo/geojson/
- *         Simple areas
- * @sample maps/demo/geojson-multiple-types/
- *         Multiple types
+ * @sample maps/demo/geojson/ Simple areas
+ * @sample maps/demo/mapline-mappoint/ Multiple types
+ * @sample maps/series/mapdata-multiple/ Multiple map sources
  *
  * @function Highcharts.geojson
  *
- * @param {Highcharts.GeoJSON} geojson
- *        The GeoJSON structure to parse, represented as a JavaScript object
- *        rather than a JSON string.
+ * @param {Highcharts.GeoJSON|Highcharts.TopoJSON} json The GeoJSON or TopoJSON
+ *        structure to parse, represented as a JavaScript object.
  *
- * @param {string} [hType=map]
- *        The Highmaps series type to prepare for. Setting "map" will return
- *        GeoJSON polygons and multipolygons. Setting "mapline" will return
- *        GeoJSON linestrings and multilinestrings. Setting "mappoint" will
- *        return GeoJSON points and multipoints.
+ * @param {string} [hType=map] The Highcharts Maps series type to prepare for.
+ *        Setting "map" will return GeoJSON polygons and multipolygons. Setting
+ *        "mapline" will return GeoJSON linestrings and multilinestrings.
+ *        Setting "mappoint" will return GeoJSON points and multipoints.
  *
- * @return {Array<*>}
- *         An object ready for the `mapData` option.
+ *
+ * @return {Array<*>} An object ready for the `mapData` option.
  */
-H.geojson = function (
-    geojson: Highcharts.GeoJSON,
-    hType?: string,
+function geojson(
+    json: GeoJSON|TopoJSON,
+    hType: string = 'map',
     series?: Series
-): Array<any> {
-    let mapData = [] as Array<any>,
-        path = [] as SVGPath,
-        polygonToPath = function (polygon: Array<Array<number>>): void {
-            polygon.forEach((point, i): void => {
-                if (i === 0) {
-                    path.push(['M', point[0], -point[1]]);
-                } else {
-                    path.push(['L', point[0], -point[1]]);
-                }
-            });
-        };
+): (MapPointOptions|MapPointPointOptions)[] {
+    const mapData: (MapPointOptions|MapPointPointOptions)[] = [];
 
-    hType = hType || 'map';
+    const geojson = json.type === 'Topology' ? topo2geo(json) : json;
 
-    geojson.features.forEach(function (feature: any): void {
+    geojson.features.forEach(function (feature): void {
 
-        let geometry = feature.geometry,
-            type = geometry.type,
-            coordinates = geometry.coordinates,
-            properties = feature.properties,
-            point: (
-                Highcharts.MapCoordinateObject|
-                Highcharts.MapPathObject|
-                undefined
-            );
+        const geometry = feature.geometry || {},
+            type = geometry.type as any,
+            coordinates = geometry.coordinates as any,
+            properties = feature.properties;
 
-        path = [];
+        let pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
 
-        if (hType === 'map' || hType === 'mapbubble') {
-            if (type === 'Polygon') {
-                coordinates.forEach(polygonToPath);
-                path.push(['Z']);
-
-            } else if (type === 'MultiPolygon') {
-                coordinates.forEach(function (
-                    items: Array<Array<Array<number>>>
-                ): void {
-                    items.forEach(polygonToPath);
-                });
-                path.push(['Z']);
+        if (
+            (hType === 'map' || hType === 'mapbubble') &&
+            (type === 'Polygon' || type === 'MultiPolygon')
+        ) {
+            if (coordinates.length) {
+                pointOptions = { geometry: { coordinates, type } };
             }
 
-            if (path.length) {
-                point = { path: path };
+        } else if (
+            hType === 'mapline' &&
+            (
+                type === 'LineString' ||
+                type === 'MultiLineString'
+            )
+        ) {
+            if (coordinates.length) {
+                pointOptions = { geometry: { coordinates, type } };
             }
 
-        } else if (hType === 'mapline') {
-            if (type === 'LineString') {
-                polygonToPath(coordinates);
-            } else if (type === 'MultiLineString') {
-                coordinates.forEach(polygonToPath);
-            }
-
-            if (path.length) {
-                point = { path: path };
-            }
-
-        } else if (hType === 'mappoint') {
-            if (type === 'Point') {
-                point = {
-                    x: coordinates[0],
-                    y: -coordinates[1]
-                };
+        } else if (hType === 'mappoint' && type === 'Point') {
+            if (coordinates.length) {
+                pointOptions = { geometry: { coordinates, type } };
             }
         }
-        if (point) {
-            mapData.push(extend(point, {
-                name: properties.name || properties.NAME,
+        if (pointOptions) {
+            const name = properties && (properties.name || properties.NAME);
+            mapData.push(extend(pointOptions, {
+                name: typeof name === 'string' ? name : void 0,
 
                 /**
-                 * In Highmaps, when data is loaded from GeoJSON, the GeoJSON
-                 * item's properies are copied over here.
+                 * In Highcharts Maps, when data is loaded from GeoJSON, the
+                 * GeoJSON item's properies are copied over here.
                  *
                  * @requires modules/map
                  * @name Highcharts.Point#properties
@@ -661,7 +624,7 @@ H.geojson = function (
     }
 
     return mapData;
-};
+}
 
 // Override addCredits to include map source by default
 wrap(Chart.prototype, 'addCredits', function (
@@ -687,3 +650,11 @@ wrap(Chart.prototype, 'addCredits', function (
         });
     }
 });
+
+H.geojson = geojson;
+
+const GeoJSONModule = {
+    geojson,
+    topo2geo
+};
+export default GeoJSONModule;

@@ -56,7 +56,10 @@ class Pitchfork extends InfinityLine {
         secondAnglePoint?: Highcharts.AnnotationPointType
     ): PositionObject {
         const angle = Math.atan2(
-                (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
+                (
+                    (secondAnglePoint as any).plotY -
+                    (firstAnglePoint.plotY as any)
+                ),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
             ),
             distance = 1e7;
@@ -88,7 +91,10 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Pitchfork.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Pitchfork.Options
+    ) {
         super(chart, options);
     }
 
@@ -121,7 +127,7 @@ class Pitchfork extends InfinityLine {
                 this.points[0],
                 Pitchfork.middleLineEdgePoint as any
             ]
-        }, false as any);
+        }, 0);
 
         this.initShape({
             type: 'path',
@@ -129,7 +135,7 @@ class Pitchfork extends InfinityLine {
                 this.points[1],
                 Pitchfork.topLineEdgePoint as any
             ]
-        }, false as any);
+        }, 1);
 
         this.initShape({
             type: 'path',
@@ -137,7 +143,7 @@ class Pitchfork extends InfinityLine {
                 this.points[2],
                 Pitchfork.bottomLineEdgePoint as any
             ]
-        }, false as any);
+        }, 2);
     }
 
     public addBackgrounds(): void {
@@ -175,7 +181,8 @@ class Pitchfork extends InfinityLine {
                         };
                     }
                 ]
-            })
+            }),
+            3
         );
 
         const outerBackground = (this.initShape as any)(
@@ -187,7 +194,8 @@ class Pitchfork extends InfinityLine {
                     shapes[2].points[1],
                     this.points[2]
                 ]
-            })
+            }),
+            4
         );
 
         typeOptions.innerBackground = innerBackground.options;

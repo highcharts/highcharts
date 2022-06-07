@@ -40,6 +40,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     erase,
     merge,
     pick,
@@ -68,7 +69,9 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/pattern-fill */
-        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+        calculatePatternDimensions(
+            pattern: PatternFill.PatternOptionsObject
+        ): void;
     }
 }
 
@@ -92,21 +95,34 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
     const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
+    // Start with subtle patterns
     [
-        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
-        'M 3 0 L 3 10 M 8 0 L 8 10',
-        'M 0 3 L 10 3 M 0 8 L 10 8',
-        'M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7',
-        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
-        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
-        'M 10 3 L 5 3 L 5 0 M 5 10 L 5 7 L 0 7',
-        'M 2 5 L 5 2 L 8 5 L 5 8 Z',
-        'M 0 0 L 5 10 L 10 0'
+        'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+        'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+        'M 2 0 L 2 5 M 4 0 L 4 5',
+        'M 0 2 L 5 2 M 0 4 L 5 4',
+        'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
     ].forEach((pattern: string, i: number): void => {
         patterns.push({
             path: pattern,
             color: colors[i],
+            width: 5,
+            height: 5,
+            patternTransform: 'scale(1.4 1.4)'
+        });
+    });
+
+    // Then add the more drastic ones
+    [
+        'M 0 0 L 5 10 L 10 0',
+        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
+        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
+        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9'
+    ].forEach((pattern: string, i: number): void => {
+        patterns.push({
+            path: pattern,
+            color: colors[i + 5],
             width: 10,
             height: 10
         });
@@ -124,7 +140,7 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
  * @private
  * @function hashFromObject
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The javascript object to compute the hash from.
  *
  * @param {boolean} [preSeed=false]
@@ -134,9 +150,9 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
  *         The computed hash.
  */
 function hashFromObject(obj: object, preSeed?: boolean): string {
-    let str = JSON.stringify(obj),
-        strLen = str.length || 0,
-        hash = 0,
+    const str = JSON.stringify(obj),
+        strLen = str.length || 0;
+    let hash = 0,
         i = 0,
         char,
         seedStep;
@@ -208,6 +224,15 @@ Point.prototype.calculatePatternDimensions = function (
         if (!bBox.width || !bBox.height) {
             pattern._width = 'defer';
             pattern._height = 'defer';
+
+            // Mark the pattern to be flipped later if upside down (#16810)
+            const scaleY = this.series.chart.mapView &&
+                this.series.chart.mapView.getSVGTransform().scaleY;
+
+            if (defined(scaleY) && scaleY < 0) {
+                pattern._inverted = true;
+            }
+
             return;
         }
 
@@ -295,7 +320,12 @@ SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
+        id = (
+            'highcharts-pattern-' +
+            this.idCounter +
+            '-' +
+            (this.chartIndex || 0)
+        );
         ++this.idCounter;
     }
 
@@ -321,6 +351,14 @@ SVGRenderer.prototype.addPattern = function (
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
     };
+
+    if (options._inverted) {
+        attrs.patternTransform = 'scale(1, -1)'; // (#16810)
+        if (options.patternTransform) {
+            options.patternTransform += ' scale(1, -1)';
+        }
+    }
+
     if (options.patternTransform) {
         attrs.patternTransform = options.patternTransform;
     }
@@ -448,10 +486,10 @@ addEvent(Series, 'render', function (): void {
                         point.shapeArgs.height
                     )
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._height = 'defer';
                 } else {
                     point.calculatePatternDimensions(
                         (colorOptions as PatternFill.PatternObject).pattern
@@ -604,10 +642,10 @@ addEvent(Chart, 'endResize', function (): void {
                     colorOptions &&
                     (colorOptions as PatternFill.PatternObject).pattern
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._height = 'defer';
                 }
             });
         });
@@ -643,7 +681,10 @@ addEvent(Chart, 'redraw', function (): void {
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
                 if (id) {
-                    const sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                    const sanitizedId = id
+                        .replace(renderer.url, '')
+                        .replace('url(#', '')
+                        .replace(')', '');
                     usedIds[sanitizedId] = true;
                 }
             }
@@ -681,6 +722,7 @@ namespace PatternFill {
     }
 
     export interface PatternOptionsObject {
+        _inverted?: (Boolean);
         _height?: (number|string);
         _width?: (number|string);
         _x?: number;

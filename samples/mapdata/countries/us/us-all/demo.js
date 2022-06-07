@@ -1,104 +1,66 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['us-ma', 0],
-    ['us-wa', 1],
-    ['us-ca', 2],
-    ['us-or', 3],
-    ['us-wi', 4],
-    ['us-me', 5],
-    ['us-mi', 6],
-    ['us-nv', 7],
-    ['us-nm', 8],
-    ['us-co', 9],
-    ['us-wy', 10],
-    ['us-ks', 11],
-    ['us-ne', 12],
-    ['us-ok', 13],
-    ['us-mo', 14],
-    ['us-il', 15],
-    ['us-in', 16],
-    ['us-vt', 17],
-    ['us-ar', 18],
-    ['us-tx', 19],
-    ['us-ri', 20],
-    ['us-al', 21],
-    ['us-ms', 22],
-    ['us-nc', 23],
-    ['us-va', 24],
-    ['us-ia', 25],
-    ['us-md', 26],
-    ['us-de', 27],
-    ['us-pa', 28],
-    ['us-nj', 29],
-    ['us-ny', 30],
-    ['us-id', 31],
-    ['us-sd', 32],
-    ['us-ct', 33],
-    ['us-nh', 34],
-    ['us-ky', 35],
-    ['us-oh', 36],
-    ['us-tn', 37],
-    ['us-wv', 38],
-    ['us-dc', 39],
-    ['us-la', 40],
-    ['us-fl', 41],
-    ['us-ga', 42],
-    ['us-sc', 43],
-    ['us-mn', 44],
-    ['us-mt', 45],
-    ['us-nd', 46],
-    ['us-az', 47],
-    ['us-ut', 48],
-    ['us-hi', 49],
-    ['us-ak', 50]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/us/us-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['us-ma', 10], ['us-wa', 11], ['us-ca', 12], ['us-or', 13],
+        ['us-wi', 14], ['us-me', 15], ['us-mi', 16], ['us-nv', 17],
+        ['us-nm', 18], ['us-co', 19], ['us-wy', 20], ['us-ks', 21],
+        ['us-ne', 22], ['us-ok', 23], ['us-mo', 24], ['us-il', 25],
+        ['us-in', 26], ['us-vt', 27], ['us-ar', 28], ['us-tx', 29],
+        ['us-ri', 30], ['us-al', 31], ['us-ms', 32], ['us-nc', 33],
+        ['us-va', 34], ['us-ia', 35], ['us-md', 36], ['us-de', 37],
+        ['us-pa', 38], ['us-nj', 39], ['us-ny', 40], ['us-id', 41],
+        ['us-sd', 42], ['us-ct', 43], ['us-nh', 44], ['us-ky', 45],
+        ['us-oh', 46], ['us-tn', 47], ['us-wv', 48], ['us-dc', 49],
+        ['us-la', 50], ['us-fl', 51], ['us-ga', 52], ['us-sc', 53],
+        ['us-mn', 54], ['us-mt', 55], ['us-nd', 56], ['us-az', 57],
+        ['us-ut', 58], ['us-hi', 59], ['us-ak', 60]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-all.js">United States of America</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-all.topo.json">United States of America</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }, {
-        name: 'Separators',
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
-        color: 'silver',
-        nullColor: 'silver',
-        showInLegend: false,
-        enableMouseTracking: false
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

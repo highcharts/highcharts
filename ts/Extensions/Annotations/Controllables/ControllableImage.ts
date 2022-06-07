@@ -49,7 +49,7 @@ class ControllableImage implements ControllableMixin.Type {
         width: 'width',
         height: 'height',
         zIndex: 'zIndex'
-    }
+    };
 
     /* *
      *
@@ -83,7 +83,9 @@ class ControllableImage implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;

@@ -156,12 +156,21 @@ class CMFIndicator extends SMAIndicator {
 
     /**
      * @private
-     * @param {Array<number>} xData - x timestamp values
-     * @param {Array<number>} seriesYData - yData of basic series
-     * @param {Array<number>} volumeSeriesYData - yData of volume series
-     * @param {number} period - indicator's param
-     * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
-     * flow data
+     *
+     * @param {Array<number>} xData
+     * x timestamp values
+     *
+     * @param {Array<number>} seriesYData
+     * yData of basic series
+     *
+     * @param {Array<number>} volumeSeriesYData
+     * yData of volume series
+     *
+     * @param {number} period
+     * indicator's param
+     *
+     * @return {Highcharts.IndicatorNullableValuesObject}
+     * object containing computed money flow data
      */
     public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
@@ -183,11 +192,18 @@ class CMFIndicator extends SMAIndicator {
         /**
          * Calculates money flow volume, changes i, nullIndex vars from
          * upper scope!
+         *
          * @private
-         * @param {Array<number>} ohlc - OHLC point
-         * @param {number} volume - Volume point's y value
-         * @return {number|null} - volume * moneyFlowMultiplier
-         **/
+         *
+         * @param {Array<number>} ohlc
+         * OHLC point
+         *
+         * @param {number} volume
+         * Volume point's y value
+         *
+         * @return {number|null}
+         * Volume * moneyFlowMultiplier
+         */
         function getMoneyFlowVolume(
             ohlc: Array<number>,
             volume: number
@@ -206,11 +222,15 @@ class CMFIndicator extends SMAIndicator {
 
             /**
              * @private
-             * @param {number} h - High value
-             * @param {number} l - Low value
-             * @param {number} c - Close value
-             * @return {number} calculated multiplier for the point
-             **/
+             * @param {number} h
+             * High value
+             * @param {number} l
+             * Low value
+             * @param {number} c
+             * Close value
+             * @return {number}
+             * Calculated multiplier for the point
+             */
             function getMoneyFlowMultiplier(
                 h: number,
                 l: number,
@@ -277,7 +297,7 @@ class CMFIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

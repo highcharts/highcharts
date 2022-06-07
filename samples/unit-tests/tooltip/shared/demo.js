@@ -212,14 +212,15 @@ QUnit.test(
     }
 );
 
-QUnit.test('Shared tooltip with pointPlacement (#5832)', function (assert) {
+QUnit.test('Shared tooltip with pointPlacement and stickOnContact', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
 
         tooltip: {
-            shared: true
+            shared: true,
+            stickOnContact: true
         },
         plotOptions: {
             column: {
@@ -268,5 +269,49 @@ QUnit.test('Shared tooltip with pointPlacement (#5832)', function (assert) {
         target: chart.container
     });
 
-    assert.strictEqual(chart.hoverPoints.length, 5, 'All series present');
+    assert.strictEqual(chart.hoverPoints.length, 5, '#5832: All series present');
+
+    const heightBefore = chart.tooltip.tracker.attr('height');
+    chart.series[1].points[0].onMouseOver();
+    assert.strictEqual(
+        chart.tooltip.tracker.attr('height'),
+        heightBefore,
+        '#15843: Tracker height should be the same after hovering another point in the same stack'
+    );
+});
+
+QUnit.test('Shared tooltip with multiple axes', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [4]
+        }, {
+            data: [2, 6, 4],
+            type: 'column'
+        }, {
+            data: [4, 7, 9],
+            type: 'column',
+            yAxis: 1
+        }],
+        tooltip: {
+            shared: true,
+            hideDelay: 0
+        },
+        yAxis: [{
+            height: '50%'
+        }, {
+            top: '60%',
+            height: '40%',
+            offset: 0
+        }]
+    });
+
+    const controller = new TestController(chart);
+    const point = chart.series[2].points[0];
+    const axis = chart.yAxis[1];
+
+    controller.moveTo(axis.left + point.plotX, axis.top + point.plotY + 5);
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#16004: Tooltip should be visible'
+    );
 });

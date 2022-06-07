@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Michal Filipiec
+ js_wrap: b
+...

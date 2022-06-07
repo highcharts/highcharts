@@ -40,6 +40,9 @@ function getSeries(n, s) {
     for (; i < s; i++) {
         r.push({
             data: getData(n),
+            dataGrouping: {
+                enabled: false
+            },
             lineWidth: 2,
             boostThreshold: 1,
             turboThreshold: 1,

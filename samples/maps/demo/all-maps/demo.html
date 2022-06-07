@@ -1,6 +1,7 @@
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 <script src="https://code.highcharts.com/mapdata/index.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
 <script src="https://www.highcharts.com/samples/static/jquery.combobox.js"></script>
 
@@ -8,20 +9,20 @@
 <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 <div id="demo-wrapper">
-    <div id="mapBox">
+    <div id="map-box">
         <div id="up"></div>
         <div class="selector">
-            <button id="btn-prev-map" class="prev-next"><i class="fa fa-angle-left"></i></button>
-            <select id="mapDropdown" class="ui-widget combobox"></select>
-            <button id="btn-next-map" class="prev-next"><i class="fa fa-angle-right"></i></button>
+            <button id="btn-prev-map" class="prev-next" aria-label="Previous map"><i class="fa fa-angle-left"></i></button>
+            <!-- Note: jQuery UI combobox should be replaced with an accessible widget -->
+            <select aria-label="Select a map to display" id="mapDropdown" class="ui-widget combobox"></select>
+            <button id="btn-next-map" class="prev-next" aria-label="Next map"><i class="fa fa-angle-right"></i></button>
         </div>
         <div id="container"></div>
     </div>
-    <div id="sideBox">
-
+    <div id="side-box">
         <input type="checkbox" id="chkDataLabels" checked='checked' />
-        <label for="chkDataLabels" style="display: inline">Data labels</label>
-        <div id="infoBox">
+        <label for="chkDataLabels">Data labels</label>
+        <div id="info-box">
             <h4>This map</h4>
             <div id="download"></div>
         </div>

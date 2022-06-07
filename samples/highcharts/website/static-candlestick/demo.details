@@ -1,0 +1,5 @@
+ name: Highcharts Website Homepage Static Chart
+ authors:
+   - Nancy Dillon
+ skipTest: true
+ js_wrap: b

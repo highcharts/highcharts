@@ -7,6 +7,7 @@
 'use strict';
 
 import type ControllableCircle from '../Controllables/ControllableCircle';
+import type ControllableEllipse from '../Controllables/ControllableEllipse';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
@@ -14,6 +15,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+
 const {
     merge
 } = U;
@@ -121,7 +123,8 @@ class BasicAnnotation extends Annotation {
                         coords = this.chart.pointer.getCoordinates(e),
                         x = coords.xAxis[0].value,
                         y = coords.yAxis[0].value,
-                        points: Array<MockPointOptions> = target.options.points as any;
+                        points: Array<MockPointOptions> = target.options.points as any,
+                        shapes = annotation.userOptions.shapes;
 
                     // Top right point
                     points[1].x = x;
@@ -131,8 +134,10 @@ class BasicAnnotation extends Annotation {
                     // Bottom left
                     points[3].y = y;
 
-                    annotation.userOptions.shapes[0].points =
-                        target.options.points;
+                    if (shapes && shapes[0]) {
+                        shapes[0].points = target.options.points;
+                    }
+
                     annotation.redraw(false);
                 }
             }
@@ -161,7 +166,8 @@ class BasicAnnotation extends Annotation {
                     target: ControllableCircle
                 ): void {
                     const annotation = target.annotation,
-                        position = this.mouseMoveToTranslation(e);
+                        position = this.mouseMoveToTranslation(e),
+                        shapes = annotation.userOptions.shapes;
 
                     target.setRadius(
                         Math.max(
@@ -172,9 +178,116 @@ class BasicAnnotation extends Annotation {
                         )
                     );
 
-                    annotation.userOptions.shapes[0].r = target.options.r;
-                    annotation.userOptions.shapes[0].point =
-                        target.options.point;
+                    if (shapes && shapes[0]) {
+                        shapes[0].r = target.options.r;
+                        shapes[0].point = target.options.point;
+                    }
+
+                    target.redraw(false);
+                }
+            }
+        }],
+        ellipse: [{
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const position = target.getAbsolutePosition(target.points[0]);
+
+                return {
+                    x: position.x - this.graphic.width / 2,
+                    y: position.y - this.graphic.height / 2
+                };
+            },
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse
+                ): void {
+                    const position =
+                        target.getAbsolutePosition(target.points[0]);
+
+                    target.translatePoint(
+                        e.chartX - position.x,
+                        e.chartY - position.y,
+                        0
+                    );
+
+                    target.redraw(false);
+                }
+            }
+        }, {
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const position = target.getAbsolutePosition(target.points[1]);
+
+                return {
+                    x: position.x - this.graphic.width / 2,
+                    y: position.y - this.graphic.height / 2
+                };
+            },
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse
+                ): void {
+                    const position = target.getAbsolutePosition(
+                        target.points[1]
+                    );
+
+                    target.translatePoint(
+                        e.chartX - position.x,
+                        e.chartY - position.y,
+                        1
+                    );
+
+                    target.redraw(false);
+                }
+            }
+        }, {
+            positioner: function (
+                this: Highcharts.AnnotationControlPoint,
+                target: ControllableEllipse
+            ): PositionObject {
+                const position = target.getAbsolutePosition(target.points[0]),
+                    position2 = target.getAbsolutePosition(target.points[1]),
+                    attrs = target.getAttrs(position, position2);
+
+                return {
+                    x: attrs.cx - this.graphic.width / 2 +
+                        attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
+                    y: attrs.cy - this.graphic.height / 2 -
+                        attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
+                };
+            },
+            events: {
+                drag: function (
+                    this: Annotation,
+                    e: Highcharts.AnnotationEventObject,
+                    target: ControllableEllipse
+                ): void {
+                    const position = target.getAbsolutePosition(
+                            target.points[0]
+                        ),
+                        position2 = target.getAbsolutePosition(
+                            target.points[1]
+                        ),
+                        newR = target.getDistanceFromLine(
+                            position,
+                            position2,
+                            e.chartX,
+                            e.chartY
+                        ),
+                        yAxis = target.getYAxis(),
+                        newRY = Math.abs(
+                            yAxis.toValue(0) - yAxis.toValue(newR)
+                        );
+
+                    target.setYRadius(newRY);
 
                     target.redraw(false);
                 }
@@ -188,7 +301,10 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationsOptions) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Highcharts.AnnotationsOptions
+    ) {
         super(chart, options);
     }
 
@@ -216,8 +332,11 @@ class BasicAnnotation extends Annotation {
 
         if (options.shapes) {
             delete options.labelOptions;
-            if (options.shapes[0].type === 'circle') {
-                this.basicType = 'circle';
+            const type = options.shapes[0].type;
+            // The rectangle is rendered as a path, whereas other basic shapes
+            // are rendered as their respecitve SVG shapes.
+            if (type && type !== 'path') {
+                this.basicType = type;
             } else {
                 this.basicType = 'rectangle';
             }
@@ -241,6 +360,7 @@ namespace BasicAnnotation {
     export interface ControlPoints {
         label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        ellipse: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
         circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
     }
 }

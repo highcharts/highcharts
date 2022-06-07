@@ -5,6 +5,10 @@ function getScreenReaderSectionEl(chart) {
     return infoRegions && infoRegions.screenReaderSections.before.element;
 }
 
+function screenReaderSectionHasContents(sectionEl) {
+    return sectionEl.textContent.length > 0;
+}
+
 function getPointAriaLabel(point) {
     return point.graphic.element.getAttribute('aria-label');
 }
@@ -22,6 +26,9 @@ QUnit.test('Accessibility disabled', function (assert) {
             accessibility: {
                 enabled: false
             },
+            title: {
+                text: 'No a11y'
+            },
             series: [
                 {
                     data: [1, 2, 3, 4, 5, 6]
@@ -34,8 +41,20 @@ QUnit.test('Accessibility disabled', function (assert) {
     assert.notOk(getPointAriaLabel(point), 'There be no ARIA on point');
 
     assert.notOk(
-        srSection && srSection.getAttribute('aria-label'),
+        srSection && screenReaderSectionHasContents(srSection),
         'There be no screen reader region'
+    );
+
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('aria-label'),
+        'No a11y',
+        'SVG root has aria label'
+    );
+
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        'img',
+        'SVG root has img role'
     );
 });
 
@@ -86,13 +105,13 @@ QUnit.test('No data', function (assert) {
     });
 
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, no series option'
     );
 
@@ -100,7 +119,7 @@ QUnit.test('No data', function (assert) {
         series: []
     });
     assert.ok(
-        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
+        screenReaderSectionHasContents(getScreenReaderSectionEl(chart)),
         'There be screen reader region, no series items'
     );
 });
@@ -156,10 +175,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         '-1',
         'There be tabindex on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There be empty ARIA on series'
+        'There is no aria-label on series'
     );
 
     point.series.addPoint(4);
@@ -168,10 +186,9 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         getPointAriaLabel(point.series.points[6]),
         'There still be ARIA on point'
     );
-    assert.strictEqual(
+    assert.notOk(
         getSeriesAriaLabel(chart.series[0]),
-        '',
-        'There still be ARIA on series'
+        'There is still no aria-label on series'
     );
 });
 
@@ -235,6 +252,11 @@ QUnit.test('pointDescriptionFormatter', function (assert) {
 
 QUnit.test('Chart description', function (assert) {
     var chart = Highcharts.chart('container', {
+        lang: {
+            accessibility: {
+                svgContainerLabel: 'Test'
+            }
+        },
         accessibility: {
             description: 'Description: Yo.'
         },
@@ -248,6 +270,22 @@ QUnit.test('Chart description', function (assert) {
         getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') >
             -1,
         'Chart description included in screen reader region'
+    );
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        null,
+        'SVG root has no role'
+    );
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('aria-label'),
+        'Test',
+        'SVG root has aria label from lang'
+    );
+
+    chart.update({});
+    assert.ok(
+        document.querySelector('.highcharts-exit-anchor'),
+        '#15986: There should still be an exit anchor after updating'
     );
 });
 
@@ -351,9 +389,7 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         focusBorderY = chart.focusElement.focusBorder.attr('y'),
         focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
         focusElementX = chart.focusElement.attr('x'),
-        focusElementY = chart.focusElement.attr('y'),
-        focusElementHeight = point.graphic.getBBox().height,
-        H = Highcharts;
+        focusElementY = chart.focusElement.attr('y');
 
     assert.strictEqual(
         focusBorderX + focusBorderWidth / 2,
@@ -361,10 +397,9 @@ QUnit.test('Focus border in wordcloud', function (assert) {
         'should be correctly applied for text elements horizontally, #11397'
     );
 
-    // Correct baseline position on Firefox.
     assert.strictEqual(
         focusBorderY + focusBorderHeight / 2,
-        H.isFirefox ? focusElementY - focusElementHeight * 0.25 : focusElementY,
+        focusElementY,
         'should be correctly applied for text elements vertically, #11397'
     );
 });
