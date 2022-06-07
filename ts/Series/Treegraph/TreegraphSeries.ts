@@ -885,6 +885,12 @@ export default TreegraphSeries;
  * @excluding layoutStartingDirection, layoutAlgorithm, colorVariation
  * @apioption series.treegraph.levels
  */
+
+/**
+ * Set collapsed status for nodes level-wise.
+ * @type {boolean}
+ * @apioption series.treegraph.levels.collapsed
+ */
 /**
  * An array of data points for the series. For the `treegraph` series type,
  * points can be given in the following ways:
