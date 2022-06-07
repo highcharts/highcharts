@@ -456,9 +456,15 @@ class TreegraphSeries extends TreemapSeries {
         node: TreegraphNode.Node,
         visibility: boolean
     ): void {
-        if (node.point) {
-            node.point.visible = visibility;
-            visibility = visibility === false ? false : !node.point.collapsed;
+        const point = node.point;
+        if (point) {
+            // Take the level options into account.
+            point.collapsed = pick(
+                point.collapsed,
+                (this.mapOptionsToLevel[node.level] || {}).collapsed
+            );
+            point.visible = visibility;
+            visibility = visibility === false ? false : !point.collapsed;
         }
         node.children.forEach((childNode): void => {
             this.setCollapsedStatus(childNode, visibility);
@@ -478,7 +484,6 @@ class TreegraphSeries extends TreemapSeries {
         // Call prototype function
         Series.prototype.translate.call(series);
         tree = series.tree = series.getTree();
-        this.setCollapsedStatus(tree, true);
         rootNode = series.nodeMap[rootId];
 
         if (rootId !== '' && (!rootNode || !rootNode.children.length)) {
@@ -496,6 +501,8 @@ class TreegraphSeries extends TreemapSeries {
                 colorByPoint: options.colorByPoint
             }
         });
+
+        this.setCollapsedStatus(tree, true);
 
         series.links = series.getLinks();
         series.setTreeValues(tree);
