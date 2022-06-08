@@ -2768,8 +2768,10 @@ if (!H.Navigator) {
 
         if (((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled)) &&
-            ((!isTouchDevice && (chartOptions.chart as any).zooming.type === 'x') ||
-            (isTouchDevice && (chartOptions.chart as any).zooming.pinchType === 'x'))
+            ((!isTouchDevice &&
+            (chartOptions.chart as any).zooming.type === 'x') ||
+            (isTouchDevice &&
+            (chartOptions.chart as any).zooming.pinchType === 'x'))
         ) {
             return false;
         }
