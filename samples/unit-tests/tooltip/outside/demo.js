@@ -81,33 +81,3 @@ QUnit.test('Outside tooltip styling', function (assert) {
         '#11494: Setting tooltip.style.zIndex should also work'
     );
 });
-
-QUnit.test('Tooltip visibility after the scrollablePlotArea change, #17352.',
-    assert => {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                type: 'spline',
-                scrollablePlotArea: {
-                    minHeight: 200
-                }
-            },
-            series: [{
-                data: [0, 1, 2, 3, 4]
-            }]
-        });
-
-        document.getElementById('container').style.height = "190px";
-        chart.reflow();
-
-        document.getElementById('container').style.height = "400px";
-        chart.reflow();
-
-        chart.tooltip.refresh(chart.series[0].points[0]);
-
-        assert.notOk(
-            chart.tooltip.isHidden,
-            `After updating the scrollablePlotArea, the tooltip should be still
-            visible.`
-        );
-    }
-);
