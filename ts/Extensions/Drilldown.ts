@@ -1786,7 +1786,7 @@ addEvent(Point, 'afterSetState', function (): void {
 });
 
 addEvent(Chart, 'drillup', function (): void {
-    if (this.resetZoomButton) {
+    if (this.resetZoomButton && this.resetZoomButton.element) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });
