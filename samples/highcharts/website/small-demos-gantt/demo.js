@@ -548,8 +548,6 @@ function subtasks() {
                 formatter: function () {
                     return this.value;
                 },
-                // useHTML: true,
-                // format: '<p style="padding:10px;background-color:#f0f0f0;color:#000;">{text}</p>',
                 symbol: {
                     // y: 0,
                     fillColor: '#fff',
