@@ -4089,6 +4089,8 @@ class Series {
                     point.destroy();
                 }
 
+                // series.processData();
+
                 // redraw
                 series.isDirty = true;
                 series.isDirtyData = true;

@@ -31,8 +31,8 @@ import GradientColorStop from '../../Core/Color/GradientColor';
 // } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ColorType from '../../Core/Color/ColorType';
+import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike';
 const {
-    merge,
     extend,
     relativeLength
 } = U;
@@ -60,8 +60,12 @@ declare module '../../Core/Series/SeriesOptions' {
  */
 class TemperatureMapSeries extends MapBubbleSeries {
 
+    public isPointInside(): boolean {
+        return true;
+    }
+
     public drawPoints(): void {
-        const series: any = this,
+        const series = this,
             pointLength = series.points.length;
 
         let colors: any = series.options.colors || series.chart.options.colors,
@@ -69,8 +73,8 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
         colors = colors.map(
             (color: ColorType | GradientColorStop, ii: number): any => {
-
-                const maxSize2 = relativeLength(series.options.maxSize, 100);
+                const maxSize2 =
+                    relativeLength((series as any).options.maxSize, 100);
                 const radiusFactor: number = ii / (colors.length - 1),
                     maxSize = (1 - radiusFactor) * maxSize2,
                     fillColor = {
@@ -90,7 +94,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                 // Options from point level not supported - API says it should,
                 // but visually is it useful at all?
-                series.options.marker.fillColor = fillColor;
+                (series as any).options.marker.fillColor = fillColor;
                 series.options.maxSize = maxSize;
                 series.getRadii(); // recalc. radii
                 series.translateBubble(); // use radii
@@ -100,17 +104,35 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 i = 0;
                 while (i < pointLength) {
                     const point = series.points[i];
+                    let graphics: Array<SVGElementLike>;
 
-                    point.graphic.attr({
-                        zIndex: ii
-                    });
+                    point.graphics = graphics = point.graphics || [];
 
-                    point['graphic' + ii] = point.graphic;
+                    if (point && point.graphic && point.visible) {
+                        if (point.graphics[ii]) {
+                            point.graphics[ii].destroy();
+                            point.graphic.attr({
+                                zIndex: ii
+                            });
+                            point.graphics[ii] = point.graphic;
+                        } else {
+                            point.graphic.attr({
+                                zIndex: ii
+                            });
 
-                    // Set up next or loop back to the start
-                    point.graphic = point[
-                        'graphic' + ((ii + 1) % colors.length)
-                    ];
+                            // Last graphic will be as point.graphic instead of
+                            // in the point.graphics array
+                            if (ii !== colors.length - 1) {
+                                point.graphics.push(point.graphic);
+                            }
+                        }
+
+                        // Don't reset point.graphic in the last iteration
+                        if (ii !== colors.length - 1) {
+                            point.graphic = void 0;
+                        }
+                    }
+
                     i++;
                 }
 
@@ -121,14 +143,17 @@ class TemperatureMapSeries extends MapBubbleSeries {
             });
 
         // Clean up for animation (else the first color is as small as the last)
-        series.options.marker.fillColor = colors[0].fillColor;
+        if (series.options.marker) {
+            series.options.marker.fillColor = colors[0].fillColor;
+        }
+
         series.options.maxSize = colors[0].maxSize;
         series.getRadii(); // recalc. radii
         series.translateBubble(); // use radii
 
         // Change opacity of the whole series
         // this should be done in a better place
-        series.group.attr({
+        series.group && series.group.attr({
             opacity: 0.75
         });
     }
@@ -181,6 +206,20 @@ interface TemperatureMapSeries {
     // updateData: typeof MapSeries.prototype['updateData'];
     // xyFromShape: boolean;
 }
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+interface TemperatureMapSeries {
+    pointClass: typeof TemperatureMapPoint;
+}
+extend(TemperatureMapSeries.prototype, {
+    pointClass: TemperatureMapPoint,
+    isPointInside: TemperatureMapSeries.prototype.isPointInside
+});
 
 /* *
  *
