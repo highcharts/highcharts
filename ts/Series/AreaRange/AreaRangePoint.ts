@@ -24,17 +24,15 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        area: {
-            prototype: {
-                pointClass: AreaPoint,
-                pointClass: {
-                    prototype: areaProto
-                }
+    area: {
+        prototype: {
+            pointClass: AreaPoint,
+            pointClass: {
+                prototype: areaProto
             }
         }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -69,21 +67,47 @@ class AreaRangePoint extends AreaPoint {
      * */
 
     public _plotY?: number;
+
     public below?: boolean;
+
     public dataLabelUpper?: SVGLabel;
+
     public isInside?: boolean;
+
     public isTopInside?: boolean;
+
+    /**
+     * Range series only. The high or maximum value for each data point.
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
     public high: number = void 0 as any;
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
     public low: number = void 0 as any;
+
     public lowerGraphic?: SVGElement;
+
     public options: AreaRangePointOptions = void 0 as any;
+
     public origProps?: Partial<AreaRangePoint>;
+
     public plotHigh: number = void 0 as any;
+
     public plotLow: number = void 0 as any;
+
     public plotHighX: number = void 0 as any;
+
     public plotLowX: number = void 0 as any;
+
     public plotX: number = void 0 as any;
+
     public series: AreaRangeSeries = void 0 as any;
+
     public upperGraphic?: SVGElement;
 
     /* *
