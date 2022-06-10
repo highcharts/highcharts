@@ -317,23 +317,20 @@ class AreaRangeSeries extends AreaSeries {
      * path to both lower and higher values of the range.
      * @private
      */
-    public getGraphPath(points: Array<AreaPoint>): SVGPath {
+    public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
 
-        let highPoints = [],
+        const highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
-            i,
             getGraphPath = areaProto.getGraphPath,
-            point: any,
-            pointShim: any,
-            linePath: SVGPath & AnyRecord,
-            lowerPath: SVGPath & AnyRecord,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
-            connectNulls = options.connectNulls,
-            step = options.step,
-            higherPath,
-            higherAreaPath;
+            connectNulls = options.connectNulls;
+
+        let i,
+            point: AreaRangePoint,
+            pointShim: any,
+            step = options.step;
 
         points = points || this.points;
 
@@ -365,7 +362,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             pointShim = {
-                polarPlotY: point.polarPlotY,
+                polarPlotY: (point as any).polarPlotY,
                 rectPlotX: point.rectPlotX,
                 yBottom: point.yBottom,
                 // plotHighX is for polar charts
@@ -389,7 +386,7 @@ class AreaRangeSeries extends AreaSeries {
         }
 
         // Get the paths
-        lowerPath = getGraphPath.call(this, points);
+        const lowerPath = getGraphPath.call(this, points);
         if (step) {
             if ((step as any) === true) {
                 step = 'left';
@@ -400,13 +397,12 @@ class AreaRangeSeries extends AreaSeries {
                 right: 'left'
             }[step] as any; // swap for reading in getGraphPath
         }
-        higherPath = getGraphPath.call(this, highPoints);
-        higherAreaPath = getGraphPath.call(this, highAreaPoints);
+        const higherPath = getGraphPath.call(this, highPoints);
+        const higherAreaPath = getGraphPath.call(this, highAreaPoints);
         options.step = step;
 
         // Create a line on both top and bottom of the range
-        linePath = ([] as SVGPath)
-            .concat(lowerPath, higherPath);
+        const linePath = ([] as SVGPath).concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement into
         // 'lineTo'
@@ -427,8 +423,8 @@ class AreaRangeSeries extends AreaSeries {
         this.areaPath = lowerPath.concat(higherAreaPath);
 
         // Prepare for sideways animation
-        linePath.isArea = true;
-        linePath.xMap = lowerPath.xMap;
+        (linePath as any).isArea = true;
+        (linePath as any).xMap = lowerPath.xMap;
         this.areaPath.xMap = lowerPath.xMap;
 
         return linePath;
@@ -441,14 +437,15 @@ class AreaRangeSeries extends AreaSeries {
      */
     public drawDataLabels(): void {
 
-        let data = this.points,
+        const data = this.points,
             length = data.length,
-            i,
             originalDataLabels = [],
             dataLabelOptions = this.options.dataLabels,
-            point,
-            up,
-            inverted = this.chart.inverted,
+            inverted = this.chart.inverted;
+
+        let i: number,
+            point: AreaRangePoint,
+            up: boolean,
             upperDataLabelOptions: AreaRangeDataLabelOptions,
             lowerDataLabelOptions: AreaRangeDataLabelOptions;
 
@@ -602,10 +599,11 @@ class AreaRangeSeries extends AreaSeries {
     }
 
     public drawPoints(): void {
-        let series = this,
-            pointLength = series.points.length,
-            point,
-            i;
+        const series = this,
+            pointLength = series.points.length;
+
+        let i: number,
+            point: AreaRangePoint;
 
         // Draw bottom points
         areaProto.drawPoints.apply(series, arguments);
