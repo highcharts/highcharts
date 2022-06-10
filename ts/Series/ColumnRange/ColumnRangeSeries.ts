@@ -16,7 +16,10 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -219,6 +222,37 @@ class ColumnRangeSeries extends AreaRangeSeries {
         });
     }
 
+    // Overrides from modules that may be loaded after this module
+    // @todo move to compositions
+
+    // public crispCol(): BBoxObject {
+    //     return columnProto.crispCol.apply(this, arguments as any);
+    // }
+    // public drawPoints(): void {
+    //     return columnProto.drawPoints.apply(this, arguments as any);
+    // }
+    // public drawTracker(): void {
+    //     return columnProto.drawTracker.apply(this, arguments as any);
+    // }
+    // public getColumnMetrics(): ColumnMetricsObject {
+    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
+    // }
+    public pointAttribs(): SVGAttributes {
+        return columnProto.pointAttribs.apply(this, arguments as any);
+    }
+    // public adjustForMissingColumns(): number {
+    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
+    // }
+    // public animate(): void {
+    //     return columnProto.animate.apply(this, arguments as any);
+    // }
+    public translate3dPoints(): void {
+        return columnProto.translate3dPoints.apply(this, arguments as any);
+    }
+    public translate3dShapes(): void {
+        return columnProto.translate3dShapes.apply(this, arguments as any);
+    }
+
 }
 
 /* *
@@ -236,16 +270,15 @@ interface ColumnRangeSeries {
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints,
     getColumnMetrics: typeof columnProto.getColumnMetrics;
-    pointAttribs: typeof columnProto.pointAttribs,
-    polarArc: typeof columnProto.polarArc,
-    translate3dPoints: typeof columnProto.translate3dPoints,
-    translate3dShapes: typeof columnProto.translate3dShapes
+    // pointAttribs: typeof columnProto.pointAttribs,
+    polarArc: typeof columnProto.polarArc
+    // translate3dPoints: typeof columnProto.translate3dPoints,
+    // translate3dShapes: typeof columnProto.translate3dShapes
 }
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     pointClass: ColumnRangePoint,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    // Overrides from modules that may be loaded after this module
     adjustForMissingColumns: columnProto.adjustForMissingColumns,
     animate: columnProto.animate,
     crispCol: columnProto.crispCol,
@@ -254,10 +287,10 @@ extend(ColumnRangeSeries.prototype, {
     getSymbol: noop,
     drawTracker: columnProto.drawTracker,
     getColumnMetrics: columnProto.getColumnMetrics,
-    pointAttribs: columnProto.pointAttribs,
-    polarArc: columnProto.polarArc,
-    translate3dPoints: columnProto.translate3dPoints,
-    translate3dShapes: columnProto.translate3dShapes
+    // pointAttribs: columnProto.pointAttribs,
+    polarArc: columnProto.polarArc
+    // translate3dPoints: columnProto.translate3dPoints,
+    // translate3dShapes: columnProto.translate3dShapes
 });
 
 /* *
