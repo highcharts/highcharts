@@ -28,7 +28,7 @@ interface ColumnRangePointOptions extends AreaRangePointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

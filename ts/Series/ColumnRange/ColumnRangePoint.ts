@@ -24,7 +24,9 @@ const {
     seriesTypes: {
         column: {
             prototype: {
-                pointClass: ColumnPoint
+                pointClass: {
+                    prototype: columnProto
+                }
             }
         },
         arearange: {
@@ -76,13 +78,13 @@ class ColumnRangePoint extends AreaRangePoint {
  * */
 
 interface ColumnRangePoint {
-    barX: typeof ColumnPoint.prototype['barX'];
-    pointWidth: typeof ColumnPoint.prototype['pointWidth'];
-    shapeType: typeof ColumnPoint.prototype['shapeType'];
+    barX: typeof columnProto.barX;
+    pointWidth: typeof columnProto.pointWidth;
+    shapeType: typeof columnProto.shapeType;
 
 }
 extend(ColumnRangePoint.prototype, {
-    setState: ColumnPoint.prototype.setState
+    setState: columnProto.setState
 });
 
 /* *
