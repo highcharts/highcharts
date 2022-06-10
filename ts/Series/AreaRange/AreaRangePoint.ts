@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -15,14 +17,24 @@
  * */
 
 import type AreaRangePointOptions from './AreaRangePointOptions';
+import type AreaRangeSeries from './AreaRangeSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import AreaRangeSeries from './AreaRangeSeries.js';
-import AreaSeries from '../Area/AreaSeries.js';
-import Point from '../../Core/Series/Point.js';
-const { prototype: pointProto } = Point;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        area: {
+            prototype: {
+                pointClass: AreaPoint,
+                pointClass: {
+                    prototype: areaProto
+                }
+            }
+        }
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -48,7 +60,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class AreaRangePoint extends AreaSeries.prototype.pointClass {
+class AreaRangePoint extends AreaPoint {
 
     /* *
      *
@@ -113,7 +125,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         }
 
         // Top state:
-        pointProto.setState.apply(this, arguments as any);
+        areaProto.setState.apply(this, arguments as any);
 
         this.state = prevState;
 
@@ -133,12 +145,13 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
             series.lowerStateMarkerGraphic = void 0;
         }
 
-        pointProto.setState.apply(this, arguments as any);
+        areaProto.setState.apply(this, arguments as any);
     }
 
     public haloPath(): SVGPath {
-        let isPolar = this.series.chart.polar,
-            path: SVGPath = [];
+        const isPolar = this.series.chart.polar;
+
+        let path: SVGPath = [];
 
         // Bottom halo
         this.plotY = this.plotLow;
@@ -147,7 +160,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         }
 
         if (this.isInside) {
-            path = pointProto.haloPath.apply(this, arguments as any);
+            path = areaProto.haloPath.apply(this, arguments as any);
         }
 
         // Top halo
@@ -157,7 +170,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         }
         if (this.isTopInside) {
             path = path.concat(
-                pointProto.haloPath.apply(this, arguments as any)
+                areaProto.haloPath.apply(this, arguments as any)
             );
         }
 
@@ -167,11 +180,12 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     public isValid(): boolean {
         return isNumber(this.low) && isNumber(this.high);
     }
+
 }
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
