@@ -57,13 +57,15 @@ interface OscOptions {
     volumePitchTrackingMultiplier?: number;
 }
 
-interface SynthPatchOptions {
-    eq?: Array<EQOptions>;
-    masterAttackEnvelope?: Envelope;
-    masterReleaseEnvelope?: Envelope;
-    masterVolume?: number;
-    noteGlideDuration?: number;
-    oscillators?: Array<OscOptions>;
+namespace SynthPatch {
+    export interface SynthPatchOptions {
+        eq?: Array<EQOptions>;
+        masterAttackEnvelope?: Envelope;
+        masterReleaseEnvelope?: Envelope;
+        masterVolume?: number;
+        noteGlideDuration?: number;
+        oscillators?: Array<OscOptions>;
+    }
 }
 
 
@@ -540,14 +542,14 @@ class Oscillator {
  * @private
  */
 class SynthPatch {
-    static stopRampTime = 0.007; // Ramp time to 0 when stopping sound
+    static stopRampTime = 0.012; // Ramp time to 0 when stopping sound
     private outputNode: GainNode;
     private eqNodes: Array<BiquadFilterNode> = [];
     private oscillators: Array<Oscillator>;
 
     constructor(
         private audioContext: AudioContext,
-        private options: SynthPatchOptions
+        private options: SynthPatch.SynthPatchOptions
     ) {
         this.outputNode = new GainNode(audioContext, { gain: 0 });
         this.createEqChain(this.outputNode);

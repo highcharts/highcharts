@@ -1,0 +1,128 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+
+<button id="play">Play</button>
+
+<pre id="synthPreset">{
+    "masterVolume": "0.5",
+    "masterAttackEnvelope": [
+     {
+      "t": 1,
+      "vol": 0.71
+     },
+     {
+      "t": 82,
+      "vol": 0.64
+     },
+     {
+      "t": 149,
+      "vol": 0.26
+     },
+     {
+      "t": 425,
+      "vol": 0
+     }
+    ],
+    "eq": [
+     {
+      "frequency": 200,
+      "Q": 1,
+      "gain": 4
+     },
+     {
+      "frequency": 450,
+      "Q": 1,
+      "gain": 6
+     },
+     {
+      "frequency": 1300,
+      "Q": 1,
+      "gain": 2
+     },
+     {
+      "frequency": 2600,
+      "Q": 0.8,
+      "gain": 8
+     },
+     {
+      "frequency": 3500,
+      "Q": 0.8,
+      "gain": 6
+     },
+     {
+      "frequency": 6200,
+      "Q": 0.8,
+      "gain": 10
+     },
+     {
+      "frequency": 8000,
+      "Q": 1,
+      "gain": -26
+     },
+     {
+      "frequency": 10000,
+      "Q": 0.4,
+      "gain": -12
+     }
+    ],
+    "oscillators": [
+     {
+      "type": "pulse",
+      "volume": 0.5,
+      "pulseWidth": 0.45,
+      "volumePitchTrackingMultiplier": 0.07,
+      "lowpass": {
+       "frequency": 4.5,
+       "frequencyPitchTrackingMultiplier": 900,
+       "Q": -2
+      },
+      "highpass": {
+       "frequency": 370
+      },
+      "attackEnvelope": [
+       {
+        "t": 1,
+        "vol": 1
+       }
+      ],
+      "releaseEnvelope": [
+       {
+        "t": 1,
+        "vol": 1
+       },
+       {
+        "t": 282,
+        "vol": 0.64
+       },
+       {
+        "t": 597,
+        "vol": 0
+       },
+       {
+        "t": 597,
+        "vol": 0
+       }
+      ]
+     },
+     {
+      "type": "whitenoise",
+      "volume": 1,
+      "lowpass": {
+       "frequency": 400
+      },
+      "highpass": {
+       "frequency": 300
+      },
+      "attackEnvelope": [
+       {
+        "t": 1,
+        "vol": 1
+       },
+       {
+        "t": 19,
+        "vol": 0
+       }
+      ]
+     }
+    ]
+   }</pre>

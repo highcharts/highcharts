@@ -20,6 +20,9 @@ import PointSonify from '../../Extensions/Sonification/PointSonify.js';
 import SeriesSonify from '../../Extensions/Sonification/SeriesSonify.js';
 import Sonification from '../../Extensions/Sonification/Sonification.js';
 import SynthPatch from '../../Extensions/Sonification/SynthPatch.js';
+import SonificationInstrument from '../../Extensions/Sonification/SonificationInstrument.js';
+import SonificationSpeaker from '../../Extensions/Sonification/SonificationSpeaker.js';
+import SonificationTimeline from '../../Extensions/Sonification/SonificationTimeline.js';
 import Timeline from '../../Extensions/Sonification/Timeline.js';
 import TimelineEvent from '../../Extensions/Sonification/TimelineEvent.js';
 import TimelinePath from '../../Extensions/Sonification/TimelinePath.js';
@@ -30,6 +33,9 @@ G.sonification = {
     Earcon,
     Instrument,
     SynthPatch,
+    SonificationInstrument,
+    SonificationSpeaker,
+    SonificationTimeline,
     Timeline,
     TimelineEvent,
     TimelinePath
