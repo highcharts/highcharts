@@ -15,12 +15,12 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorMapMixin from '../../Series/ColorMapMixin';
-import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type { WGLDrawModeValue } from './WGLDrawMode';
+import type WGLOptions from './WGLOptions';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -38,38 +38,47 @@ const {
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
 
+interface WGLNode {
+    levelDynamic?: number;
+}
+
+interface WGLPoint extends Point {
+    node?: WGLNode;
+}
+
+interface WGLSeriesObject {
+    colorData: Array<number>;
+    drawMode: WGLDrawModeValue;
+    hasMarkers: boolean;
+    markerFrom: number;
+    markerTo?: number;
+    segments: Array<Record<string, number>>;
+    series: Series;
+    showMarkers: boolean;
+    skipTranslation?: boolean;
+    zMax: number;
+    zMin: number;
+}
+
+interface WGLTextureCallbackFunction {
+    (ctx: CanvasRenderingContext2D): void;
+}
+
+interface WGLTextureObject {
+    isReady: boolean;
+    texture: HTMLCanvasElement;
+    handle: (WebGLTexture|null);
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface BoostGLDebugOptions extends BoostDebugOptions {
-            timeBufferCopy: boolean;
-            timeKDTree: boolean;
-            timeRendering: boolean;
-            timeSeriesProcessing: boolean;
-            timeSetup: boolean;
-            showSkipSummary: boolean;
-        }
-        interface BoostGLNode {
-            levelDynamic?: number;
-        }
-        interface BoostGLOptions extends BoostOptions {
-            debug: BoostGLDebugOptions;
-            fillColor: ColorString;
-            lineWidth: number;
-            pointSize?: number;
-            useAlpha: boolean;
-            useGPUTranslations: boolean;
-            usePreallocated: boolean;
-        }
-        interface BoostGLPoint extends Point {
-            node?: BoostGLNode;
-        }
         interface BoostGLRenderer {
             data: Array<Array<number>>;
-            settings: BoostGLOptions;
+            settings: WGLOptions;
             allocateBuffer(chart: Chart): void;
             allocateBufferForSingleSeries(series: Series): void;
             clear(): void;
@@ -87,27 +96,6 @@ declare global {
             setXAxis(axis: Axis): void;
             setYAxis(axis: Axis): void;
             valid(): boolean;
-        }
-        interface BoostGLSeriesObject {
-            colorData: Array<number>;
-            drawMode: WGLDrawModeValue;
-            hasMarkers: boolean;
-            markerFrom: number;
-            markerTo?: number;
-            segments: Array<Record<string, number>>;
-            series: Series;
-            showMarkers: boolean;
-            skipTranslation?: boolean;
-            zMax: number;
-            zMin: number;
-        }
-        interface BoostGLTextureCallbackFunction {
-            (ctx: CanvasRenderingContext2D): void;
-        }
-        interface BoostGLTextureObject {
-            isReady: boolean;
-            texture: HTMLCanvasElement;
-            handle: (WebGLTexture|null);
         }
     }
     interface CanvasRenderingContext2D {
@@ -165,11 +153,9 @@ function GLRenderer(
         // Is it inited?
         isInited = false,
         // The series stack
-        series: Array<Highcharts.BoostGLSeriesObject> = [],
+        series: Array<WGLSeriesObject> = [],
         // Texture handles
-        textureHandles: Record<string, (
-            Highcharts.BoostGLTextureObject
-        )> = {},
+        textureHandles: Record<string, WGLTextureObject> = {},
         // Things to draw as "rectangles" (i.e lines)
         asBar: Record<string, boolean> = {
             'column': true,
@@ -184,7 +170,7 @@ function GLRenderer(
             'bubble': true
         },
         // Render settings
-        settings: Highcharts.BoostGLOptions = {
+        settings: WGLOptions = {
             pointSize: 1,
             lineWidth: 1,
             fillColor: '#AA00AA',
@@ -339,7 +325,7 @@ function GLRenderer(
      */
     function pushSeriesData(
         series: Series,
-        inst: Highcharts.BoostGLSeriesObject
+        inst: WGLSeriesObject
     ): void {
         let isRange = (
                 series.pointArrayMap &&
@@ -381,7 +367,7 @@ function GLRenderer(
             // For some reason eslint/TypeScript don't pick up that this is
             // actually used: --- bre1470: it is never read, just set
             // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
-            points: Array<Highcharts.BoostGLPoint> =
+            points: Array<WGLPoint> =
                 series.points || (false as any),
             lastX: number = false as any,
             lastY: number = false as any,
@@ -594,10 +580,7 @@ function GLRenderer(
 
             // We don't have a z component in the shader, so we need to sort.
             if (points[0].node && points[0].node.levelDynamic) {
-                points.sort(function (
-                    a: Highcharts.BoostGLPoint,
-                    b: Highcharts.BoostGLPoint
-                ): number {
+                points.sort((a, b): number => {
                     if (a.node) {
                         if (
                             (a.node.levelDynamic as any) >
@@ -1254,7 +1237,7 @@ function GLRenderer(
 
         // Render the series
         series.forEach(function (
-            s: Highcharts.BoostGLSeriesObject,
+            s: WGLSeriesObject,
             si: number
         ): void {
             let options = s.series.options,
@@ -1553,9 +1536,9 @@ function GLRenderer(
          */
         function createTexture(
             name: string,
-            fn: Highcharts.BoostGLTextureCallbackFunction
+            fn: WGLTextureCallbackFunction
         ): void {
-            const props: Highcharts.BoostGLTextureObject = {
+            const props: WGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()

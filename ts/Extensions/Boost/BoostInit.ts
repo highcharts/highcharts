@@ -13,6 +13,8 @@
 'use strict';
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
+import type WGLOptions from './WGLOptions';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -100,7 +102,7 @@ function init(): void {
                 maxVal: (number|undefined),
                 minI: (number|undefined),
                 maxI: (number|undefined),
-                boostOptions: Highcharts.BoostGLOptions,
+                boostOptions: WGLOptions,
                 compareX = options.findNearestPointBy === 'x',
 
                 xDataFull = (
