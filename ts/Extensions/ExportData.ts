@@ -1028,7 +1028,7 @@ Chart.prototype.getTableAST = function (
             value: (number|string)
         ): AST.Node {
             let textContent = pick(value, ''),
-                className = 'text' + (classes ? ' ' + classes : '');
+                className = 'highcharts-text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
             if (typeof textContent === 'number') {
@@ -1036,9 +1036,9 @@ Chart.prototype.getTableAST = function (
                 if (decimalPoint === ',') {
                     textContent = textContent.replace('.', decimalPoint);
                 }
-                className = 'number';
+                className = 'highcharts-number';
             } else if (!value) {
-                className = 'empty';
+                className = 'highcharts-empty';
             }
 
             attributes = extend(
