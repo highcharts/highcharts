@@ -14,6 +14,7 @@
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import type WGLOptions from './WGLOptions';
+import type WGLRenderer from './WGLRenderer';
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
@@ -72,7 +73,7 @@ function init(): void {
         renderCanvas: function (this: Series): void {
             let series = this,
                 options = series.options || {},
-                renderer: Highcharts.BoostGLRenderer = false as any,
+                renderer: WGLRenderer = false as any,
                 chart = series.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,

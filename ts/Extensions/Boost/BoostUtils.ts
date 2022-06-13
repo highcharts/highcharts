@@ -15,6 +15,8 @@
 'use strict';
 
 import type Series from '../../Core/Series/Series';
+import type WGLRenderer from './WGLRenderer';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
@@ -190,7 +192,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  * @param series {Highcharts.Series} - the series
  */
 function renderIfNotSeriesBoosting(
-    renderer: Highcharts.BoostGLRenderer,
+    renderer: WGLRenderer,
     series: Series,
     chart?: Chart
 ): void {
@@ -207,7 +209,7 @@ function renderIfNotSeriesBoosting(
  * @private
  */
 function allocateIfNotSeriesBoosting(
-    renderer: Highcharts.BoostGLRenderer,
+    renderer: WGLRenderer,
     series: Series
 ): void {
     if (renderer &&
@@ -313,7 +315,7 @@ function hasWebGLSupport(): boolean {
  */
 function pointDrawHandler(this: Series, proceed: Function): void {
     let enabled = true,
-        renderer: Highcharts.BoostGLRenderer;
+        renderer: WGLRenderer;
 
     if (this.chart.options && this.chart.options.boost) {
         enabled = typeof this.chart.options.boost.enabled === 'undefined' ?

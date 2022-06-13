@@ -16,7 +16,6 @@ import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Series from '../../Core/Series/Series.js';
@@ -24,6 +23,7 @@ import U from '../../Core/Utilities.js';
 const {
     error
 } = U;
+import WGLRenderer from './WGLRenderer.js';
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike extends Highcharts.BoostTargetObject {}
@@ -42,7 +42,7 @@ declare global {
         interface BoostTargetObject {
             boostClipRect?: SVGElement;
             canvas?: HTMLCanvasElement;
-            ogl?: BoostGLRenderer;
+            ogl?: WGLRenderer;
             renderTarget?: (HTMLElement|SVGElement);
             renderTargetCtx?: CanvasRenderingContext2D;
             renderTargetFo?: SVGElement;
@@ -76,7 +76,7 @@ let mainCanvas: HTMLCanvasElement|undefined;
 function createAndAttachRenderer(
     chart: Chart,
     series: Series
-): Highcharts.BoostGLRenderer {
+): WGLRenderer {
 
     let width = chart.chartWidth,
         height = chart.chartHeight,
@@ -209,7 +209,7 @@ function createAndAttachRenderer(
     target.boostClear();
 
     if (!target.ogl) {
-        target.ogl = GLRenderer(function (): void { // eslint-disable-line new-cap
+        target.ogl = new WGLRenderer((): void => {
             if ((target.ogl as any).settings.debug.timeBufferCopy) {
                 console.time('buffer copy'); // eslint-disable-line no-console
             }

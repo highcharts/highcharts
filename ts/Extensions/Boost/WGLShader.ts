@@ -270,10 +270,8 @@ class WGLShader {
     ) {
         this.gl = gl;
 
-        if (gl) {
-            if (!this.createShader()) {
-                return false as any;
-            }
+        if (gl && !this.createShader()) {
+            return void 0 as any;
         }
     }
 
