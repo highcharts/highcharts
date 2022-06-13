@@ -941,6 +941,7 @@ class RangeSelector {
         } else if (range) {
             newMin = Math.max(newMax - range, dataMin as any);
             newMax = Math.min(newMin + range, dataMax as any);
+            addOffsetMin = false;
 
         } else if (type === 'ytd') {
 
