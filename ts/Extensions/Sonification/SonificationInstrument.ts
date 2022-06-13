@@ -13,6 +13,7 @@
 'use strict';
 
 import SynthPatch from './SynthPatch.js';
+import InstrumentPresets from './InstrumentPresets.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -26,13 +27,14 @@ interface SonificationInstrumentCapabilitiesOptions {
 }
 
 interface SonificationInstrumentOptions {
-    synthPatch: SynthPatch.SynthPatchOptions;
+    synthPatch: keyof typeof InstrumentPresets|SynthPatch.SynthPatchOptions;
     capabilities?: SonificationInstrumentCapabilitiesOptions;
 }
 
 namespace SonificationInstrument {
     export interface ScheduledEventOptions {
-        note?: number|string;
+        note?: number|string; // Num semitones from c0, or a note string
+        frequency?: number; // Note frequency
         noteDuration?: number;
         tremoloDepth?: number;
         tremoloSpeed?: number;
@@ -58,7 +60,7 @@ class SonificationInstrument {
     private highpassNode?: BiquadFilterNode;
     private tremoloOsc?: OscillatorNode;
     private tremoloDepth?: GainNode;
-
+    private curParams: SonificationInstrument.ScheduledEventOptions = {};
 
     constructor(
         private audioContext: AudioContext,
@@ -75,7 +77,11 @@ class SonificationInstrument {
         options.capabilities || {}));
 
         this.connectCapabilityNodes(this.volumeNode, this.masterVolNode);
-        this.synthPatch = new SynthPatch(audioContext, options.synthPatch);
+        this.synthPatch = new SynthPatch(
+            audioContext,
+            typeof options.synthPatch === 'string' ?
+                InstrumentPresets[options.synthPatch] : options.synthPatch
+        );
         this.synthPatch.startSilently();
         this.synthPatch.connect(this.volumeNode);
     }
@@ -94,32 +100,43 @@ class SonificationInstrument {
         time: number,
         params: SonificationInstrument.ScheduledEventOptions
     ): void {
-        const audioTime = this.audioContext.currentTime + time;
-        if (defined(params.note)) {
+        const mergedParams = extend(this.curParams, params),
+            audioTime = this.audioContext.currentTime + time,
+            freq = defined(params.note) ?
+                SonificationInstrument.musicalNoteToFrequency(params.note) :
+                params.frequency;
+
+        if (defined(freq)) {
             this.synthPatch.playFreqAtTime(
-                audioTime,
-                SonificationInstrument.musicalNoteToFrequency(params.note),
-                params.noteDuration
-            );
+                audioTime, freq, mergedParams.noteDuration);
         }
-        if (defined(params.tremoloDepth) || defined(params.tremoloSpeed)) {
+        if (
+            defined(mergedParams.tremoloDepth) ||
+            defined(mergedParams.tremoloSpeed)
+        ) {
             this.setTremoloAtTime(
-                audioTime, params.tremoloDepth, params.tremoloSpeed
+                audioTime, mergedParams.tremoloDepth, mergedParams.tremoloSpeed
             );
         }
-        if (defined(params.pan)) {
-            this.setPanAtTime(audioTime, params.pan);
+        if (defined(mergedParams.pan)) {
+            this.setPanAtTime(audioTime, mergedParams.pan);
         }
-        if (defined(params.volume)) {
-            this.setVolumeAtTime(audioTime, params.volume);
+        if (defined(mergedParams.volume)) {
+            this.setVolumeAtTime(audioTime, mergedParams.volume);
         }
-        if (defined(params.lowpassFreq) || defined(params.lowpassResonance)) {
+        if (
+            defined(mergedParams.lowpassFreq) ||
+            defined(mergedParams.lowpassResonance)
+        ) {
             this.setFilterAtTime('lowpass', audioTime,
-                params.lowpassFreq, params.lowpassResonance);
+                mergedParams.lowpassFreq, mergedParams.lowpassResonance);
         }
-        if (defined(params.highpassFreq) || defined(params.highpassResonance)) {
+        if (
+            defined(mergedParams.highpassFreq) ||
+            defined(mergedParams.highpassResonance)
+        ) {
             this.setFilterAtTime('highpass', audioTime,
-                params.highpassFreq, params.highpassResonance);
+                mergedParams.highpassFreq, mergedParams.highpassResonance);
         }
     }
 
@@ -185,8 +202,9 @@ class SonificationInstrument {
     }
 
 
-    cancelScheduled(): void {
+    cancel(): void {
         this.synthPatch.cancelScheduled();
+        this.silenceAtTime(0);
         [
             this.tremoloDepth && this.tremoloDepth.gain,
             this.tremoloOsc && this.tremoloOsc.frequency,

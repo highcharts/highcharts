@@ -345,8 +345,7 @@ class Oscillator {
         const opts = this.options,
             f = pick(opts.fixedFrequency, frequency) *
                 (opts.freqMultiplier || 1),
-            oscTarget = this.oscNode ? this.oscNode.frequency :
-                this.pulseNode && this.pulseNode.getFrequencyFacade();
+            oscTarget = this.getOscTarget();
 
         if (oscTarget) {
             oscTarget.cancelScheduledValues(time);
@@ -395,11 +394,24 @@ class Oscillator {
     }
 
 
-    // Cancel any envelopes currently scheduled
-    cancelScheduledEnvelopes(): void {
+    // Cancel any envelopes or frequency changes currently scheduled
+    cancelScheduled(): void {
         if (this.gainNode) {
             this.gainNode.gain
                 .cancelScheduledValues(this.audioContext.currentTime);
+        }
+        const oscTarget = this.getOscTarget();
+        if (oscTarget) {
+            oscTarget.cancelScheduledValues(0);
+        }
+        if (this.lowpassNode) {
+            this.lowpassNode.frequency.cancelScheduledValues(0);
+        }
+        if (this.highpassNode) {
+            this.highpassNode.frequency.cancelScheduledValues(0);
+        }
+        if (this.volTrackingNode) {
+            this.volTrackingNode.gain.cancelScheduledValues(0);
         }
     }
 
@@ -534,6 +546,13 @@ class Oscillator {
             });
         }
     }
+
+
+    // Get the oscillator frequency target
+    private getOscTarget(): AudioParam|PulseFrequencyFacade|undefined {
+        return this.oscNode ? this.oscNode.frequency :
+            this.pulseNode && this.pulseNode.getFrequencyFacade();
+    }
 }
 
 
@@ -647,10 +666,11 @@ class SynthPatch {
     }
 
 
-    // Cancel any scheduled muting of sound
+    // Cancel any scheduled actions
     cancelScheduled(): void {
         this.outputNode.gain.cancelScheduledValues(
             this.audioContext.currentTime);
+        this.oscillators.forEach((o): void => o.cancelScheduled());
     }
 
 

@@ -1,27 +1,40 @@
 var Instrument = Highcharts.sonification.SonificationInstrument,
     Speech = Highcharts.sonification.SonificationSpeaker,
     Timeline = Highcharts.sonification.SonificationTimeline,
-    timeline;
+    el = function (id) {
+        return document.getElementById(id);
+    },
+    timeline,
+    done = true;
+
+function onEnd() {
+    el('play').textContent = 'Play';
+    el('playLast').textContent = 'Play last notes';
+    done = true;
+}
+
 
 function getTimeline() {
     var ctx = new AudioContext(),
         instr1 = new Instrument(ctx, ctx.destination, {
-            synthPatch: JSON.parse(document.getElementById('synthPreset1').textContent),
+            synthPatch: 'piano',
             capabilities: {
                 tremolo: true,
                 filters: true
             }
         }),
         instr2 = new Instrument(ctx, ctx.destination, {
-            synthPatch: JSON.parse(document.getElementById('synthPreset2').textContent)
+            synthPatch: 'vibraphone'
         }),
         speaker = new Speech({
-            lang: 'en-US',
+            language: 'en-US',
             rate: 1.7,
-            pitch: 1.2,
+            pitch: 0.4,
             volume: 0.2
         }),
-        timeline = new Timeline();
+        timeline = new Timeline({
+            onEnd: onEnd
+        });
 
     var speechChannel = timeline.addChannel('speech', speaker);
     [{
@@ -29,25 +42,32 @@ function getTimeline() {
         message: '1'
     }, {
         time: 0.5,
-        message: '2'
+        message: '2',
+        speechOptions: { pitch: 1.6 }
     }, {
         time: 1,
-        message: '3'
+        message: '3',
+        speechOptions: { pitch: 0.6 }
     }, {
         time: 1.5,
-        message: '4'
+        message: '4',
+        speechOptions: { pitch: 0.9 }
     }, {
         time: 2,
-        message: '5'
+        message: '5',
+        speechOptions: { pitch: 1.3 }
     }, {
         time: 2.5,
-        message: '6'
+        message: '6',
+        speechOptions: { pitch: 1.7 }
     }, {
         time: 3,
-        message: '7'
+        message: '7',
+        speechOptions: { pitch: 2 }
     }, {
         time: 3.5,
-        message: '8'
+        message: '8',
+        speechOptions: { pitch: 2 }
     }].forEach(e => speechChannel.addEvent(e));
 
 
@@ -136,13 +156,28 @@ function getTimeline() {
     return timeline;
 }
 
-
-document.getElementById('play').onclick = function () {
+function onBtnClick(btn, textSuffix, filter) {
+    var suffix = textSuffix || '';
     timeline = timeline || getTimeline();
-    timeline.play();
+    if (timeline.paused) {
+        btn.textContent = 'Pause' + suffix;
+        timeline.resume();
+    } else if (done) {
+        btn.textContent = 'Pause' + suffix;
+        done = false;
+        timeline.play(filter);
+    } else {
+        btn.textContent = 'Resume' + suffix;
+        timeline.pause();
+    }
+}
+
+el('play').onclick = function () {
+    onBtnClick(this);
 };
 
-document.getElementById('playLast').onclick = function () {
-    timeline = timeline || getTimeline();
-    timeline.play(e => e.time > 2);
+el('playLast').onclick = function () {
+    onBtnClick(this, ' last notes', function (e) {
+        return e.time > 2;
+    });
 };

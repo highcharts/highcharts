@@ -12,60 +12,22 @@
 
 'use strict';
 
-import type Point from '../../Core/Series/Point.js';
-import SonificationInstrument from './SonificationInstrument.js';
 import type SonificationSpeaker from './SonificationSpeaker';
+import TimelineChannel from './TimelineChannel.js';
+import SonificationInstrument from './SonificationInstrument.js';
+import U from '../../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 
-interface SonificationTimelineEvent {
-    time: number; // Time is given in seconds, where 0 is now.
-    relatedPoints?: Point[];
-    instrumentEventOptions?: SonificationInstrument.ScheduledEventOptions;
-    message?: string;
-    callback?: Function;
+interface SonificationTimelineOptions {
+    onEnd?: Function;
 }
 
-
-/**
- * @private
- */
-class TimelineChannel {
-    events: SonificationTimelineEvent[];
-    muted?: boolean;
-
-    constructor(
-        public type: 'instrument'|'speech',
-        public engine: SonificationInstrument|SonificationSpeaker
-    ) {
-        this.events = [];
-    }
-
-
-    addEvent(event: SonificationTimelineEvent): void {
-        const lastEvent = this.events[this.events.length - 1];
-        if (lastEvent && event.time < lastEvent.time) {
-            throw new Error(
-                // eslint-disable-next-line max-len
-                'Highcharts Sonification: Timeline event order must be in ascending time.'
-            );
-        }
-        this.events.push(event);
-    }
-
-
-    mute(): void {
-        this.muted = true;
-    }
-
-
-    unmute(): void {
-        this.muted = false;
-    }
-
-
-    cancelScheduled(): void {
-        this.engine.cancelScheduled();
-    }
+interface FilteredChannel {
+    channel: TimelineChannel;
+    filteredEvents: Sonification.TimelineEvent[];
 }
 
 
@@ -73,20 +35,26 @@ class TimelineChannel {
  * @private
  */
 class SonificationTimeline {
-    private channels: TimelineChannel[];
-    private scheduledCallbacks: number[];
+    paused = false;
+    channels: TimelineChannel[] = [];
+    private scheduledCallbacks: number[] = [];
+    private playingTimeline?: SonificationTimeline;
+    private options: SonificationTimelineOptions;
+    private playTimestamp = 0;
+    private resumeFromTime = 0;
 
 
-    constructor() {
-        this.channels = [];
-        this.scheduledCallbacks = [];
+    constructor(options?: SonificationTimelineOptions) {
+        this.options = options || {};
     }
 
 
+    // Add a channel, optionally with events, to be played.
     // Note: Only one speech channel is supported at a time.
     addChannel(
         type: 'instrument'|'speech',
-        engine: SonificationInstrument|SonificationSpeaker
+        engine: SonificationInstrument|SonificationSpeaker,
+        events?: Sonification.TimelineEvent[]
     ): TimelineChannel {
         if (
             type === 'instrument' &&
@@ -96,71 +64,137 @@ class SonificationTimeline {
         ) {
             throw new Error('Highcharts Sonification: Invalid channel engine.');
         }
-        const channel = new TimelineChannel(type, engine);
+        const channel = new TimelineChannel(type, engine, events);
         this.channels.push(channel);
         return channel;
     }
 
 
-    // Play events, optionally filtering out only some of the events to play.
+    // Get a new timeline where the events are filtered by a condition.
+    // Timestamps are compensated, so that the first event starts immediately.
+    filter(
+        filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+    ): SonificationTimeline {
+        const filtered = this.channels.map(
+                (channel): FilteredChannel => {
+                    channel.cancel();
+                    return {
+                        channel,
+                        filteredEvents: channel.muted ?
+                            [] : channel.events.filter(filter)
+                    };
+                }),
+            minTime = filtered.reduce((acc, cur): number =>
+                Math.min(
+                    acc, cur.filteredEvents.length ?
+                        cur.filteredEvents[0].time : Infinity
+                ), Infinity);
+
+        const timeline = new SonificationTimeline(this.options);
+        filtered.forEach((c): TimelineChannel => timeline.addChannel(
+            c.channel.type, c.channel.engine, c.filteredEvents
+                .map((e): Sonification.TimelineEvent => merge(e, {
+                    time: e.time - minTime
+                }))));
+        return timeline;
+    }
+
+
+    // Play timeline, optionally filtering out only some of the events to play.
     // Note that if not all instrument parameters are updated on each event,
     // parameters may update differently depending on the events filtered out,
     // since some of the events that update parameters can be filtered out too.
-    play(filter?: ArrayFilterCallbackFunction<SonificationTimelineEvent>): void {
-        this.scheduledCallbacks.forEach(clearTimeout);
-
-        const playEvent = (
-            e: SonificationTimelineEvent,
-            channel: TimelineChannel,
-            timeOffset: number
-        ): void => {
-            if (channel.type === 'instrument') {
-                (channel.engine as SonificationInstrument).scheduleEventAtTime(
-                    e.time - timeOffset, e.instrumentEventOptions || {}
-                );
-            } else {
-                (channel.engine as SonificationSpeaker).sayAtTime(
-                    e.time - timeOffset, e.message || ''
-                );
-            }
-            if (e.callback) {
-                this.scheduledCallbacks.push(setTimeout(
-                    e.callback, (e.time - timeOffset) * 1000
-                ));
-            }
-        };
+    play(filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>): void {
+        this.cancel();
+        this.playTimestamp = Date.now();
+        this.resumeFromTime = 0;
+        this.paused = false;
 
         if (!filter) {
-            this.channels.forEach((channel): void => {
-                channel.cancelScheduled();
-                if (!channel.muted) {
-                    channel.events.forEach(
-                        (e): void => playEvent(e, channel, 0));
-                }
-            });
-        } else {
-            // If filtered we need to compensate for time
-            const filteredChannels = this.channels.map(
-                    (channel): Record<string, any>|null => {
-                        channel.cancelScheduled();
-                        return channel.muted ? null : {
-                            channel,
-                            filteredEvents: channel.events.filter(filter)
-                        };
-                    }),
-                minTime = filteredChannels.reduce((acc, cur): number =>
-                    Math.min(
-                        acc, cur ? cur.filteredEvents[0].time : Infinity
-                    ), Infinity);
+            this.playingTimeline = this;
+            let maxTime = 0;
 
-            filteredChannels.forEach((c): void => {
-                if (c) {
-                    c.filteredEvents.forEach(
-                        (e: SonificationTimelineEvent): void =>
-                            playEvent(e, c.channel, minTime));
+            // Just play everything
+            this.channels.forEach((channel): void => {
+                if (!channel.muted) {
+                    channel.events.forEach((e): void => {
+                        maxTime = Math.max(e.time, maxTime);
+                        if (channel.type === 'instrument') {
+                            (channel.engine as SonificationInstrument)
+                                .scheduleEventAtTime(
+                                    e.time, e.instrumentEventOptions || {}
+                                );
+                        } else {
+                            (channel.engine as SonificationSpeaker).sayAtTime(
+                                e.time, e.message || '', e.speechOptions || {}
+                            );
+                        }
+                        if (e.callback) {
+                            this.scheduledCallbacks.push(setTimeout(
+                                e.callback, e.time * 1000
+                            ));
+                        }
+                    });
                 }
             });
+
+            const onEnd = this.options.onEnd;
+            if (onEnd) {
+                this.scheduledCallbacks.push(setTimeout(
+                    (): void => onEnd(this),
+                    maxTime * 1000 + 200
+                ));
+            }
+        } else {
+            (this.playingTimeline = this.filter(filter)).play();
         }
+    }
+
+
+    // Pause for later resuming
+    pause(): void {
+        this.paused = true;
+        this.resumeFromTime = (Date.now() - this.playTimestamp - 50) / 1000;
+        this.cancel();
+    }
+
+
+    // Reset play/pause state so that a later call to resume() will start over
+    reset(): void {
+        delete this.playingTimeline;
+        this.playTimestamp = this.resumeFromTime = 0;
+        this.paused = false;
+    }
+
+
+    // Resume from paused
+    resume(): void {
+        this.paused = false;
+        if (this.playingTimeline) {
+            // Note that we need to update state on this timeline too,
+            // not just the filtered one that gets updated in play().
+            this.playTimestamp = Date.now();
+            (this.playingTimeline = this.playingTimeline
+                .filter((e): boolean => e.time > this.resumeFromTime))
+                .play();
+            this.resumeFromTime = 0;
+        } else {
+            this.play();
+        }
+    }
+
+
+    cancel(): void {
+        this.scheduledCallbacks.forEach(clearTimeout);
+        this.channels.forEach((c): void => c.cancel());
+        if (this.playingTimeline && this.playingTimeline !== this) {
+            this.playingTimeline.cancel();
+        }
+    }
+
+
+    setMasterVolume(vol: number): void {
+        this.channels.forEach((c): void => c.engine.setMasterVolume(vol));
     }
 
 
