@@ -209,20 +209,19 @@ function createAndAttachRenderer(
     target.boostClear();
 
     if (!target.ogl) {
-        target.ogl = new WGLRenderer((): void => {
-            if ((target.ogl as any).settings.debug.timeBufferCopy) {
+        target.ogl = new WGLRenderer((ogl): void => {
+            if (ogl.settings.debug.timeBufferCopy) {
                 console.time('buffer copy'); // eslint-disable-line no-console
             }
 
             target.boostCopy();
 
-            if ((target.ogl as any).settings.debug.timeBufferCopy) {
+            if (ogl.settings.debug.timeBufferCopy) {
                 console.timeEnd('buffer copy'); // eslint-disable-line no-console
             }
+        });
 
-        }) as any;
-
-        if (!(target.ogl as any).init(target.canvas)) {
+        if (!target.ogl.init(target.canvas)) {
             // The OGL renderer couldn't be inited.
             // This likely means a shader error as we wouldn't get to this point
             // if there was no WebGL support.
@@ -230,16 +229,16 @@ function createAndAttachRenderer(
         }
 
         // target.ogl.clear();
-        (target.ogl as any).setOptions(chart.options.boost || {});
+        target.ogl.setOptions(chart.options.boost || {});
 
         if (target instanceof Chart) {
-            (target.ogl as any).allocateBuffer(chart);
+            target.ogl.allocateBuffer(chart);
         }
     }
 
-    (target.ogl as any).setSize(width, height);
+    target.ogl.setSize(width, height);
 
-    return target.ogl as any;
+    return target.ogl;
 }
 
 export default createAndAttachRenderer;

@@ -58,6 +58,10 @@ interface WGLPoint extends Point {
     node?: WGLNode;
 }
 
+interface WGLRendererCallbackFunction {
+    (renderer: WGLRenderer): void;
+}
+
 interface WGLSeriesObject {
     colorData: Array<number>;
     drawMode: WGLDrawModeValue;
@@ -170,7 +174,7 @@ class WGLRenderer {
      * @param {number} height
      * the height of the viewport in pixels
      */
-    public static orthoMatrix(width: number, height: number): Array<number> {
+    private static orthoMatrix(width: number, height: number): Array<number> {
         const near = 0,
             far = 1;
 
@@ -185,7 +189,7 @@ class WGLRenderer {
     /**
      * @private
      */
-    public static seriesPointCount(series: Series): number {
+    private static seriesPointCount(series: Series): number {
         let isStacked: boolean,
             xData: Array<number>,
             s: number;
@@ -220,7 +224,7 @@ class WGLRenderer {
      *
      * */
 
-    public constructor(postRenderCallback: Function) {
+    public constructor(postRenderCallback: WGLRendererCallbackFunction) {
         this.postRenderCallback = postRenderCallback;
         this.settings = {
             pointSize: 1,
@@ -247,37 +251,39 @@ class WGLRenderer {
      * */
 
     // Opengl context
-    _gl: WebGLRenderingContext = false as any;
+    private gl?: WebGLRenderingContext;
 
     // The data to render - array of coordinates
-    data: Array<number> = false as any;
+    private data: Array<number> = [];
 
-    // Shader
-    shader?: WGLShader;
-
-    // Width of our viewport in pixels
-    width = 0;
     // Height of our viewport in pixels
-    height = 0;
-    // The marker data
-    markerData: Array<number> = false as any;
+    private height = 0;
 
     // Is it inited?
-    isInited = false;
+    private isInited = false;
 
-    postRenderCallback?: Function;
+    // Shader
+    private shader?: WGLShader;
+
+    // The marker data
+    private markerData: Array<number> = [];
+
+    private postRenderCallback?: WGLRendererCallbackFunction;
 
     // Render settings
-    settings: WGLOptions;
+    public settings: WGLOptions;
 
     // The series stack
-    series: Array<WGLSeriesObject> = [];
+    private series: Array<WGLSeriesObject> = [];
 
     // Texture handles
-    textureHandles: Record<string, WGLTextureObject> = {};
+    private textureHandles: Record<string, WGLTextureObject> = {};
 
     // Vertex buffers - keyed on shader attribute name
-    vbuffer?: WGLVertexBuffer;
+    private vbuffer?: WGLVertexBuffer;
+
+    // Width of our viewport in pixels
+    private width = 0;
 
     /* *
      *
@@ -288,7 +294,7 @@ class WGLRenderer {
     /**
      * @private
      */
-    public getPixelRatio(): number {
+    private getPixelRatio(): number {
         return this.settings.pixelRatio || win.devicePixelRatio || 1;
     }
 
@@ -352,19 +358,19 @@ class WGLRenderer {
      * @private
      */
     public clear(): void {
-        const gl = this._gl;
+        const gl = this.gl;
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl && gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
     /**
      * Get the WebGL context
      * @private
-     * @return {WebGLContext}
+     * @return {WebGLContext|undefined}
      * the context
      */
-    public gl(): WebGLRenderingContext {
-        return this._gl;
+    private getGL(): (WebGLRenderingContext|undefined) {
+        return this.gl;
     }
 
     /**
@@ -373,15 +379,15 @@ class WGLRenderer {
      * aligned correctly in memory
      * @private
      */
-    public pushSeriesData(
+    private pushSeriesData(
         series: Series,
         inst: WGLSeriesObject
     ): void {
-        const vbuffer = this.vbuffer;
-
-        let data = this.data,
+        const data = this.data,
             settings = this.settings,
-            isRange = (
+            vbuffer = this.vbuffer;
+
+        let isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -1184,7 +1190,7 @@ class WGLRenderer {
      * Should be called after clearing and before rendering
      * @private
      */
-    public flush(): void {
+    private flush(): void {
         const vbuffer = this.vbuffer;
 
         this.data = [];
@@ -1201,7 +1207,7 @@ class WGLRenderer {
      * @private
      * @param axis {Highcharts.Axis} - the x-axis
      */
-    public setXAxis(axis: Axis): void {
+    private setXAxis(axis: Axis): void {
         const shader = this.shader;
 
         if (!shader) {
@@ -1226,7 +1232,7 @@ class WGLRenderer {
      * @private
      * @param axis {Highcharts.Axis} - the y-axis
      */
-    public setYAxis(axis: Axis): void {
+    private setYAxis(axis: Axis): void {
         const shader = this.shader;
 
         if (!shader) {
@@ -1252,7 +1258,7 @@ class WGLRenderer {
      * @param has {boolean} - has threshold flag
      * @param translation {Float} - the threshold
      */
-    public setThreshold(has: boolean, translation: number): void {
+    private setThreshold(has: boolean, translation: number): void {
         const shader = this.shader;
 
         if (!shader) {
@@ -1268,8 +1274,8 @@ class WGLRenderer {
      * This renders all pushed series.
      * @private
      */
-    public renderChart(chart: Chart): (false|undefined) {
-        const gl = this._gl,
+    private renderChart(chart: Chart): (false|undefined) {
+        const gl = this.gl,
             settings = this.settings,
             shader = this.shader,
             vbuffer = this.vbuffer;
@@ -1509,7 +1515,7 @@ class WGLRenderer {
         }
 
         if (this.postRenderCallback) {
-            this.postRenderCallback();
+            this.postRenderCallback(this);
         }
 
         this.flush();
@@ -1539,28 +1545,25 @@ class WGLRenderer {
      * Set the viewport size in pixels
      * Creates an orthographic perspective matrix and applies it.
      * @private
-     * @param w {Integer} - the width of the viewport
-     * @param h {Integer} - the height of the viewport
      */
-    public setSize(w: number, h: number): void {
+    public setSize(width: number, height: number): void {
         const shader = this.shader;
 
         // Skip if there's no change, or if we have no valid shader
-        if (!shader || (this.width === w && this.height === h)) {
+        if (!shader || (this.width === width && this.height === height)) {
             return;
         }
 
-        this.width = w;
-        this.height = h;
+        this.width = width;
+        this.height = height;
 
         shader.bind();
-        shader.setPMatrix(WGLRenderer.orthoMatrix(w, h));
+        shader.setPMatrix(WGLRenderer.orthoMatrix(width, height));
     }
 
     /**
      * Init OpenGL
      * @private
-     * @param canvas {HTMLCanvas} - the canvas to render to
      */
     public init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
         const settings = this.settings;
@@ -1575,16 +1578,16 @@ class WGLRenderer {
             console.time('gl setup'); // eslint-disable-line no-console
         }
 
-        for (let i = 0; i < contexts.length; i++) {
-            this._gl = canvas.getContext(contexts[i], {
+        for (const context of contexts) {
+            this.gl = canvas.getContext(context, {
             //    premultipliedAlpha: false
             }) as any;
-            if (this._gl) {
+            if (this.gl) {
                 break;
             }
         }
 
-        const gl = this._gl;
+        const gl = this.gl;
 
         if (gl) {
             if (!noFlush) {
@@ -1610,9 +1613,6 @@ class WGLRenderer {
 
         this.vbuffer = new WGLVertexBuffer(gl, shader);
 
-        /**
-         * @private
-         */
         const createTexture = (
             name: string,
             fn: WGLTextureCallbackFunction
@@ -1690,7 +1690,7 @@ class WGLRenderer {
         };
 
         // Circle shape
-        createTexture('circle', function (ctx: CanvasRenderingContext2D): void {
+        createTexture('circle', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.arc(256, 256, 256, 0, 2 * Math.PI);
             ctx.stroke();
@@ -1698,14 +1698,12 @@ class WGLRenderer {
         });
 
         // Square shape
-        createTexture('square', function (ctx: CanvasRenderingContext2D): void {
+        createTexture('square', (ctx: CanvasRenderingContext2D): void => {
             ctx.fillRect(0, 0, 512, 512);
         });
 
         // Diamond shape
-        createTexture('diamond', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
+        createTexture('diamond', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.moveTo(256, 0);
             ctx.lineTo(512, 256);
@@ -1716,9 +1714,7 @@ class WGLRenderer {
         });
 
         // Triangle shape
-        createTexture('triangle', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
+        createTexture('triangle', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.moveTo(0, 512);
             ctx.lineTo(256, 0);
@@ -1728,9 +1724,9 @@ class WGLRenderer {
         });
 
         // Triangle shape (rotated)
-        createTexture('triangle-down', function (
+        createTexture('triangle-down', (
             ctx: CanvasRenderingContext2D
-        ): void {
+        ): void => {
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(256, 512);
@@ -1754,8 +1750,8 @@ class WGLRenderer {
      * @return {boolean}
      * true if the context is valid
      */
-    public valid(): boolean {
-        return (this._gl as any) !== false;
+    private valid(): boolean {
+        return (this.gl as any) !== false;
     }
 
     /**
@@ -1764,15 +1760,15 @@ class WGLRenderer {
      * @return {boolean}
      * true if it has, false if not
      */
-    public inited(): boolean {
+    private inited(): boolean {
         return this.isInited;
     }
 
     /**
      * @private
      */
-    public destroy(): void {
-        const gl = this._gl,
+    private destroy(): void {
+        const gl = this.gl,
             shader = this.shader,
             vbuffer = this.vbuffer;
 
