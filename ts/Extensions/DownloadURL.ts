@@ -52,11 +52,11 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (
     if (
         parts &&
         parts.length > 3 &&
-        win.atob &&
+        (win.atob) &&
         win.ArrayBuffer &&
         win.Uint8Array &&
         win.Blob &&
-        domurl.createObjectURL
+        (domurl.createObjectURL)
     ) {
         // Try to convert data URL to Blob
         const binStr = win.atob(parts[3]),

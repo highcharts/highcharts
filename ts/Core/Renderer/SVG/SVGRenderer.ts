@@ -1708,7 +1708,7 @@ class SVGRenderer implements SVGRendererLike {
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
-            win.getComputedStyle // old IE doesn't support it
+            (win.getComputedStyle) // old IE doesn't support it
         ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,

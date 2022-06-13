@@ -1068,10 +1068,10 @@ class RangeSelector {
                     maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
-                if (minInput && minInput.blur) {
+                if (minInput && (minInput.blur)) {
                     fireEvent(minInput, 'blur');
                 }
-                if (maxInput && maxInput.blur) {
+                if (maxInput && (maxInput.blur)) {
                     fireEvent(maxInput, 'blur');
                 }
             };
