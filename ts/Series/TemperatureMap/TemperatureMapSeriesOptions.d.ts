@@ -14,6 +14,7 @@
  *
  * */
 
+import ColorType from '../../Core/Color/ColorType';
 import type MapBubbleSeriesOptions from '../MapBubble/MapBubbleSeriesOptions';
 
 /* *
@@ -23,9 +24,8 @@ import type MapBubbleSeriesOptions from '../MapBubble/MapBubbleSeriesOptions';
  * */
 
 interface TemperatureMapSeriesOptions extends MapBubbleSeriesOptions {
-
+    temperatureColors: Array<ColorType>;
 }
-
 /* *
  *
  *  Default export
