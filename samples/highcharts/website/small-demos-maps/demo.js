@@ -394,17 +394,10 @@ function temps() {
         // call downloads the XML format data, basing on specific capital
         // city latitude and longitude values.
 
-        function getJSON(url, cb) {
-            const request = new XMLHttpRequest();
-            request.open('GET', url, true);
 
-            request.onload = function () {
-                if (this.status < 400) {
-                    return cb(JSON.parse(this.response));
-                }
-            };
-
-            request.send();
+        async function getJSON(url, cb) {
+            const request = await fetch(url).then(response => response.json());
+            return cb(request);
         }
 
         // Data structure: [country_code, latitude, longitude, capital_city]
@@ -666,180 +659,182 @@ function clusters() {
             'https://code.highcharts.com/mapdata/custom/europe.topo.json'
         ).then(response => response.json());
 
-        Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json', function (data) {
-            Highcharts.mapChart('container', {
-                chart: {
-                    map: topology,
-                    margin: [0, 0, 10, 0]
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json'
+        ).then(response => response.json());
+
+        Highcharts.mapChart('container', {
+            chart: {
+                map: topology,
+                margin: [0, 0, 10, 0]
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            exporting: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: mapbuttons,
+                buttons: {
+                    zoomIn: {
+                        x: 5,
+                        y: 10
+                    },
+                    zoomOut: {
+                        x: 5,
+                        y: 36
+                    }
                 },
-                title: {
-                    text: ''
-                },
-                subtitle: {
-                    text: ''
-                },
-                exporting: {
+                enableMouseWheelZoom: false
+            },
+            mapView: {
+                center: [17, 54],
+                zoom: 3.8
+            },
+            tooltip: {
+                formatter: function () {
+                    if (this.point.clusteredData) {
+                        return 'Clustered points: ' + this.point.clusterPointsAmount;
+                    }
+                    return '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                margin: 20,
+                floating: false,
+                padding: 8,
+                y: 20,
+                navigation: {
                     enabled: false
-                },
-                credits: {
-                    enabled: false
-                },
-                mapNavigation: {
-                    enabled: true,
-                    buttonOptions: mapbuttons,
-                    buttons: {
-                        zoomIn: {
-                            x: 5,
-                            y: 10
+                }
+            },
+            colorAxis: {
+                lineColor: 'black',
+                minColor: '#D9DBF8',
+                maxColor: '#E1D369',
+                style: {
+                    fontSize: '10px'
+                }
+            },
+            plotOptions: {
+                mappoint: {
+                    cluster: {
+                        enabled: true,
+                        allowOverlap: false,
+                        animation: {
+                            duration: 450
                         },
-                        zoomOut: {
-                            x: 5,
-                            y: 36
+                        marker: {
+                            lineColor: '#000',
+                            lineWidth: 1
+                        },
+                        dataLabels: {
+                            style: {
+                                color: '#000',
+                                textOutline: '#fff',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        layoutAlgorithm: {
+                            type: 'grid',
+                            gridSize: 70
+                        },
+                        zones: [{
+                            from: 1,
+                            to: 4,
+                            marker: {
+                                radius: 13
+                            }
+                        }, {
+                            from: 5,
+                            to: 9,
+                            marker: {
+                                radius: 15
+                            }
+                        }, {
+                            from: 10,
+                            to: 15,
+                            marker: {
+                                radius: 17
+                            }
+                        }, {
+                            from: 16,
+                            to: 20,
+                            marker: {
+                                radius: 19
+                            }
+                        }, {
+                            from: 21,
+                            to: 100,
+                            marker: {
+                                radius: 21
+                            }
+                        }]
+                    }
+                }
+            },
+            series: [{
+                name: 'Basemap',
+                borderColor: '#A0A0A0',
+                nullColor: '#A3EDBA',
+                showInLegend: false
+            }, {
+                type: 'mappoint',
+                enableMouseTracking: true,
+                colorKey: 'clusterPointsAmount',
+                name: 'Cities',
+                color: '#5749AD',
+                data: data
+            }],
+            responsive: {
+                rules: [
+                    ///up to 219
+                    {
+                        condition: {
+                            ///up tp this
+                            maxWidth: 219
+                        },
+                        chartOptions: {
+                            chart: {
+                                height: 150
+                            },
+                            mapView: {
+                                zoom: 2
+                            },
+                            colorAxis: {
+                                visible: false
+                            }
                         }
                     },
-                    enableMouseWheelZoom: false
-                },
-                mapView: {
-                    center: [17, 54],
-                    zoom: 3.8
-                },
-                tooltip: {
-                    formatter: function () {
-                        if (this.point.clusteredData) {
-                            return 'Clustered points: ' + this.point.clusterPointsAmount;
-                        }
-                        return '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
-                    }
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'top',
-                    margin: 20,
-                    floating: false,
-                    padding: 8,
-                    y: 20,
-                    navigation: {
-                        enabled: false
-                    }
-                },
-                colorAxis: {
-                    lineColor: 'black',
-                    minColor: '#D9DBF8',
-                    maxColor: '#E1D369',
-                    style: {
-                        fontSize: '10px'
-                    }
-                },
-                plotOptions: {
-                    mappoint: {
-                        cluster: {
-                            enabled: true,
-                            allowOverlap: false,
-                            animation: {
-                                duration: 450
-                            },
-                            marker: {
-                                lineColor: '#000',
-                                lineWidth: 1
-                            },
-                            dataLabels: {
-                                style: {
-                                    color: '#000',
-                                    textOutline: '#fff',
-                                    fontWeight: 'bold'
-                                }
-                            },
-                            layoutAlgorithm: {
-                                type: 'grid',
-                                gridSize: 70
-                            },
-                            zones: [{
-                                from: 1,
-                                to: 4,
-                                marker: {
-                                    radius: 13
-                                }
-                            }, {
-                                from: 5,
-                                to: 9,
-                                marker: {
-                                    radius: 15
-                                }
-                            }, {
-                                from: 10,
-                                to: 15,
-                                marker: {
-                                    radius: 17
-                                }
-                            }, {
-                                from: 16,
-                                to: 20,
-                                marker: {
-                                    radius: 19
-                                }
-                            }, {
-                                from: 21,
-                                to: 100,
-                                marker: {
-                                    radius: 21
-                                }
-                            }]
-                        }
-                    }
-                },
-                series: [{
-                    name: 'Basemap',
-                    borderColor: '#A0A0A0',
-                    nullColor: '#A3EDBA',
-                    showInLegend: false
-                }, {
-                    type: 'mappoint',
-                    enableMouseTracking: true,
-                    colorKey: 'clusterPointsAmount',
-                    name: 'Cities',
-                    color: '#5749AD',
-                    data: data
-                }],
-                responsive: {
-                    rules: [
-                        ///up to 219
-                        {
-                            condition: {
-                                ///up tp this
-                                maxWidth: 219
-                            },
-                            chartOptions: {
-                                chart: {
-                                    height: 150
-                                },
-                                mapView: {
-                                    zoom: 2
-                                },
-                                colorAxis: {
-                                    visible: false
-                                }
-                            }
+                    {
+                        condition: {
+                            minWidth: 220
                         },
-                        {
-                            condition: {
-                                minWidth: 220
+                        chartOptions: {
+                            chart: {
+                                height: 260
                             },
-                            chartOptions: {
-                                chart: {
-                                    height: 260
-                                },
-                                colorAxis: {
-                                    visible: false
-                                },
-                                mapView: {
-                                    zoom: 3.8
-                                }
+                            colorAxis: {
+                                visible: false
+                            },
+                            mapView: {
+                                zoom: 3.8
                             }
                         }
-                    ]
-                }
-            });
+                    }
+                ]
+            }
         });
 
     })();
