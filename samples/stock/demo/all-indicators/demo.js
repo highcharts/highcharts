@@ -30,6 +30,15 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         subtitle: {
             text: 'All indicators'
         },
+        accessibility: {
+            series: {
+                descriptionFormat: '{seriesDescription}.'
+            },
+            description: 'Use the dropdown menus above to display different indicator series on the chart.',
+            screenReaderSection: {
+                beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+            }
+        },
         legend: {
             enabled: true
         },
@@ -47,7 +56,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         }],
         plotOptions: {
             series: {
-                showInLegend: true
+                showInLegend: true,
+                accessibility: {
+                    exposeAsGroupOnly: true
+                }
             }
         },
         series: [{

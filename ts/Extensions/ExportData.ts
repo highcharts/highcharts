@@ -153,12 +153,6 @@ declare global {
             categoryDatetimeHeader?: string;
         }
     }
-    interface MSBlobBuilder extends Blob {
-    }
-    interface Window {
-        /** @deprecated */
-        MSBlobBuilder: typeof MSBlobBuilder;
-    }
 }
 
 /**
@@ -954,8 +948,8 @@ Chart.prototype.getCSV = function (
         lineDelimiter = csvOptions.lineDelimiter;
 
     // Transform the rows to CSV
-    rows.forEach(function (row: Array<(number|string)>, i: number): void {
-        let val: (number|string) = '',
+    rows.forEach((row: Array<(number|string|undefined)>, i: number): void => {
+        let val: (number|string|undefined) = '',
             j = row.length;
 
         while (j--) {
@@ -970,6 +964,14 @@ Chart.prototype.getCSV = function (
             }
             row[j] = val;
         }
+
+        // The first row is the header - it defines the number of columns.
+        // Empty columns between not-empty cells are covered in the getDataRows
+        // method.
+        // Now add empty values only to the end of the row so all rows have
+        // the same number of columns, #17186
+        row.length = rows.length ? rows[0].length : 0;
+
         // Add the values
         csv += row.join(itemDelimiter);
 
@@ -1088,7 +1090,7 @@ Chart.prototype.getTableAST = function (
             value: (number|string)
         ): AST.Node {
             let textContent = pick(value, ''),
-                className = 'text' + (classes ? ' ' + classes : '');
+                className = 'highcharts-text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
             if (typeof textContent === 'number') {
@@ -1096,9 +1098,9 @@ Chart.prototype.getTableAST = function (
                 if (decimalPoint === ',') {
                     textContent = textContent.replace('.', decimalPoint);
                 }
-                className = 'number';
+                className = 'highcharts-number';
             } else if (!value) {
-                className = 'empty';
+                className = 'highcharts-empty';
             }
 
             attributes = extend(

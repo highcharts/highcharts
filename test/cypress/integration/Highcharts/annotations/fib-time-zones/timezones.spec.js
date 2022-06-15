@@ -1,4 +1,4 @@
-describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
+describe('Stock Tools Fibonacci Time Zones, #15825', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
     });

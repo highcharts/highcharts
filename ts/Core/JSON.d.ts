@@ -22,15 +22,22 @@ export namespace JSON {
     /**
      * Type structor of arrays as it is supported in JSON.
      */
-    export interface Array<T extends (Primitive|Type)=(Primitive|Type)> extends globalThis.Array<T> {
-        [index: number]: T;
+    export interface Array extends globalThis.Array<(Primitive|Type)> {
+        [index: number]: (Primitive|Type);
+    }
+
+    /**
+     * Class API for JSON.stringify.
+     */
+    export interface Builder {
+        toJSON(): Type;
     }
 
     /**
      * Type structure of a record object as it is supported in JSON.
      */
-    export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
-        [key: string]: T;
+    export interface Object {
+        [key: string]: (Primitive|Type);
     }
 
     /**
@@ -42,11 +49,9 @@ export namespace JSON {
      * All object types, that are supported in JSON.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    export type Type = (Array|Object|Primitive);
+    export type Type = (Array|Object);
 
 }
-
-export type JSON = (JSON.Array|JSON.Object);
 
 /* *
  *

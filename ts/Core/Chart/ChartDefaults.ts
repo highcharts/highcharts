@@ -534,7 +534,7 @@ const ChartDefaults: ChartOptions = {
      * performance, especially with bigger sets of data.
      *
      * @type       {boolean}
-     * @since      next
+     * @since 10.1.0
      */
     allowMutatingData: true,
 

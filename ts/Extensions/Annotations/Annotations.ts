@@ -194,10 +194,10 @@ declare global {
             events: AnnotationsEventsOptions;
             id?: (number|string);
             itemType?: string;
-            labelOptions: AnnotationsLabelOptions;
+            labelOptions?: AnnotationsLabelOptions;
             labels: Array<AnnotationsLabelsOptions>;
             shapeOptions: AnnotationsShapeOptions;
-            shapes: Array<AnnotationsShapesOptions>;
+            shapes?: Array<AnnotationsShapesOptions>;
             type?: string;
             typeOptions: AnnotationsTypeOptions;
             visible: boolean;
@@ -508,7 +508,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (
             name: ('labels'|'shapes')
         ): void {
-            if (baseOptions[name]) {
+            const someBaseOptions = baseOptions[name];
+
+            if (someBaseOptions) {
                 if (newOptions[name]) {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
@@ -521,7 +523,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                             Highcharts.AnnotationsLabelsOptions|
                             Highcharts.AnnotationsShapesOptions
                             ) {
-                            return merge(baseOptions[name][i], basicOptions);
+                            return merge(someBaseOptions[i], basicOptions);
                         }
                     ) as any;
                 } else {
@@ -534,14 +536,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 
     public addShapes(): void {
-        (this.options.shapes || []).forEach(function (
+        const shapes = this.options.shapes || [];
+        shapes.forEach(function (
             this: Annotation,
             shapeOptions: Highcharts.AnnotationsShapesOptions,
             i: number
         ): void {
             const shape = this.initShape(shapeOptions, i);
 
-            merge(true, this.options.shapes[i], shape.options);
+            merge(true, shapes[i], shape.options);
         }, this);
     }
 
@@ -1942,7 +1945,10 @@ chartProto.callbacks.push(function (
 
         annotations.forEach((annotation): void => {
 
-            if (annotation.options.labelOptions.includeInDataExport) {
+            if (
+                annotation.options.labelOptions &&
+                annotation.options.labelOptions.includeInDataExport
+            ) {
 
                 annotation.labels.forEach((label): void => {
                     if (label.options.text) {

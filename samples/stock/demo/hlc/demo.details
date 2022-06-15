@@ -10,4 +10,5 @@ tags:
 categories:
   - Chart types:
       priority: 14
+use_png_thumbnail: true
 ...
