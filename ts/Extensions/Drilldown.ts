@@ -831,7 +831,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
             yMin: yAxis && yAxis.userMin,
             yMax: yAxis && yAxis.userMax
         },
-        resetZoomButton: this.resetZoomButton as any
+        resetZoomButton: last && last.levelNumber === levelNumber ?
+            void 0 : this.resetZoomButton as any
     } as any, colorProp);
 
     // Push it to the lookup array
@@ -1786,7 +1787,7 @@ addEvent(Point, 'afterSetState', function (): void {
 });
 
 addEvent(Chart, 'drillup', function (): void {
-    if (this.resetZoomButton && this.resetZoomButton.element) {
+    if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });
