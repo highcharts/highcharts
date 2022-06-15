@@ -12,11 +12,10 @@
 
 'use strict';
 
-import SonificationTimeline from '../../Extensions/Sonification/SonificationTimeline.js';
-
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
+import type { Options } from '../../Core/Options';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
@@ -30,6 +29,9 @@ const {
     win
 } = H;
 import defaultSonificationOptions from './Options.js';
+
+import SonificationTimeline from '../../Extensions/Sonification/SonificationTimeline.js';
+import timelineFromChart from './TimelineFromChart.js';
 
 
 declare module '../../Core/Chart/ChartLike' {
@@ -101,9 +103,14 @@ class Sonification {
         if (!this.ready(this.update.bind(this))) {
             return;
         }
-
-        // Update timeline
-        // ...
+        if (this.timeline) {
+            this.timeline.cancel();
+        }
+        if (this.audioContext && this.audioDestination) {
+            this.timeline = timelineFromChart(
+                this.audioContext, this.audioDestination, this.chart
+            );
+        }
     }
 
 
@@ -125,9 +132,7 @@ class Sonification {
 
         if (this.timeline) {
             this.timeline.play((e): boolean =>
-                (e.relatedPoints || []).some(
-                    (p): boolean => p.series === series
-                ));
+                !!e.relatedPoint && e.relatedPoint.series === series);
         }
     }
 
@@ -139,8 +144,7 @@ class Sonification {
         }
 
         if (this.timeline) {
-            this.timeline.play((e): boolean =>
-                (e.relatedPoints || []).indexOf(point) > -1);
+            this.timeline.play((e): boolean => e.relatedPoint === point);
         }
     }
 
@@ -217,6 +221,19 @@ namespace Sonification {
 
 
     /**
+     * Update
+     * @private
+     */
+    function chartOnUpdate(this: Chart, e: { options: Options }): void {
+        const newOptions = e.options.sonification;
+        if (newOptions) {
+            merge(true, this.options.sonification, newOptions);
+            chartOnRender.call(this);
+        }
+    }
+
+
+    /**
      * Compose
      * @private
      */
@@ -239,6 +256,7 @@ namespace Sonification {
             });
             addEvent(ChartClass, 'destroy', chartOnDestroy);
             addEvent(ChartClass, 'render', chartOnRender);
+            addEvent(ChartClass, 'update', chartOnUpdate);
         }
 
         // Extend series

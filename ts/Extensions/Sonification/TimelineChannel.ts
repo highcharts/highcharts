@@ -16,14 +16,15 @@ import type Point from '../../Core/Series/Point.js';
 import type SonificationSpeaker from './SonificationSpeaker';
 import SonificationInstrument from './SonificationInstrument.js';
 
+
 declare global {
     namespace Sonification {
         interface TimelineEvent {
             time: number; // Time is given in seconds, where 0 is now.
-            relatedPoints?: Point[];
+            relatedPoint?: Point;
             instrumentEventOptions?: SonificationInstrument
                 .ScheduledEventOptions;
-            speechOptions?: Sonification.SpeakerOptions;
+            speechOptions?: Partial<Sonification.SpeakerOptions>;
             message?: string;
             callback?: Function;
         }
@@ -50,12 +51,12 @@ class TimelineChannel {
     addEvent(event: Sonification.TimelineEvent): void {
         const lastEvent = this.events[this.events.length - 1];
         if (lastEvent && event.time < lastEvent.time) {
-            throw new Error(
-                // eslint-disable-next-line max-len
-                'Highcharts Sonification: Timeline event order must be in ascending time.'
-            );
+            let i = this.events.length;
+            while (--i && this.events[i].time > event.time) { /* */ }
+            this.events.splice(i + 1, 0, event);
+        } else {
+            this.events.push(event);
         }
-        this.events.push(event);
     }
 
 

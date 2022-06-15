@@ -264,21 +264,25 @@ class SonificationInstrument {
     }
 
 
+    // Get number of notes from C0 from a string like "F#4"
+    static noteStringToC0Distance(note: string): number {
+        const match = note.match(/^([a-g][#b]?)([0-8])$/ui),
+            semitone = match ? match[1] : 'a',
+            wholetone = semitone[0].toLowerCase(),
+            accidental = semitone[1],
+            octave = match ? parseInt(match[2], 10) : 4,
+            accidentalOffset = accidental === '#' ?
+                1 : accidental === 'b' ? -1 : 0;
+        return ({
+            c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11
+        }[wholetone] || 0) + accidentalOffset + octave * 12;
+    }
+
+
     // Note can be a string 'c0' to 'b8' or a number of semitones from c0.
-    private static musicalNoteToFrequency(note: string|number): number {
-        let notesFromC0 = note as number;
-        if (typeof note === 'string') {
-            const match = note.match(/^([a-g][#b]?)([0-8])$/ui),
-                semitone = match ? match[1] : 'a',
-                wholetone = semitone[0].toLowerCase(),
-                accidental = semitone[1],
-                octave = match ? parseInt(match[2], 10) : 4,
-                accidentalOffset = accidental === '#' ?
-                    1 : accidental === 'b' ? -1 : 0;
-            notesFromC0 = ({
-                c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11
-            }[wholetone] || 0) + accidentalOffset + octave * 12;
-        }
+    static musicalNoteToFrequency(note: string|number): number {
+        const notesFromC0 = typeof note === 'string' ?
+            this.noteStringToC0Distance(note) : note;
         return 16.3516 * Math.pow(2, Math.min(notesFromC0, 107) / 12);
     }
 }

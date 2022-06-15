@@ -18,18 +18,26 @@ import type SynthPatch from './SynthPatch';
 
 declare global {
     namespace Sonification {
-        type TrackValueCallback = (playingPoints: Array<Point>, time: number) => number;
-        type TrackStringCallback = (playingPoints: Array<Point>, time: number) => string;
-        type TrackPredicateCallback = (playingPoints: Array<Point>, time: number) => boolean;
+        type TrackValueCallback = (point: Point, time: number) => number;
+        type TrackStringCallback = (point: Point, time: number) => string;
+        type TrackPredicateCallback = (point: Point, time: number) => boolean;
         type TrackOptions = Array<InstrumentTrackOptions|SpeechTrackOptions>;
+        type MapFunctionTypes = 'linear'|'logarithmic';
         type MappingParameter =
         string|number|TrackValueCallback|MappingParameterOptions;
 
-        interface MappingParameterOptions{
+        interface MappingParameterOptions {
+            min?: number;
+            max?: number;
+            mapTo: string;
+            mapFunction?: MapFunctionTypes;
+        }
+
+        interface PitchMappingParameterOptions {
             min?: number|string;
             max?: number|string;
             mapTo: string;
-            mapFunction?: string;
+            mapFunction?: MapFunctionTypes;
         }
 
         interface FilterMappingOptions {
@@ -46,8 +54,12 @@ declare global {
             time?: MappingParameter;
             pan?: MappingParameter;
             volume?: MappingParameter;
-            pitch?: string[]|number[]|MappingParameter;
+            pitch?: (
+                string[]|number[]|string|number|PitchMappingParameterOptions
+            );
+            frequency?: MappingParameter;
             gapBetweenNotes?: MappingParameter;
+            playDelay?: MappingParameter;
             noteDuration?: MappingParameter;
             tremolo?: TremoloMappingOptions;
             lowpass?: FilterMappingOptions;
@@ -59,9 +71,11 @@ declare global {
             instrument: string|SynthPatch.SynthPatchOptions;
             mapping?: InstrumentTrackMappingOptions;
             activeWhen?: TrackPredicateCallback;
+            roundToMusicalNotes?: boolean;
         }
 
         interface SpeechTrackMappingOptions {
+            time?: MappingParameter;
             text: string|TrackStringCallback;
             playDelay?: MappingParameter;
             rate?: MappingParameter;
@@ -89,10 +103,12 @@ declare global {
             events?: ChartSonificationEventsOptions;
             showTooltipOnPlay: boolean;
             showCrosshairOnPlay: boolean;
+            globalTracks?: TrackOptions;
             /**
-             * Used to create instrument tracks for series without options
+             * Used to create a track for series without options
              */
-            defaultInstrumentOptions: InstrumentTrackOptions|SpeechTrackOptions;
+            defaultInstrumentOptions: InstrumentTrackOptions;
+            defaultSpeechOptions: SpeechTrackOptions;
         }
 
         interface SonificationGroupingOptions {
@@ -112,10 +128,6 @@ declare global {
              * Continuously play context sounds
              */
             contextTracks?: TrackOptions;
-            /**
-             * Play for each point where activeWhen returns true.
-             */
-            notifications?: TrackOptions;
         }
     }
 }
@@ -153,6 +165,13 @@ const Options: DeepPartial<OptionsType> = {
                     min: 'c2',
                     max: 'c6'
                 }
+            }
+        },
+        defaultSpeechOptions: {
+            language: 'en-US',
+            mapping: {
+                time: 'x',
+                rate: 1.3
             }
         }
     }
