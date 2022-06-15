@@ -1,5 +1,5 @@
 QUnit.test(
-    'Negative stack with just one point should be also calculate (#4979)',
+    'Negative stack with just one point should be also calculated, #4979,17116',
     function (assert) {
         var chart = $('#container')
                 .highcharts({
@@ -31,6 +31,37 @@ QUnit.test(
             oldHeight,
             chart.series[0].points[0].graphic.getBBox(true).height,
             'Correct height for a negative point'
+        );
+
+        chart.update({
+            chart: {
+                inverted: true,
+                spacingTop: 80,
+                spacingBottom: 100,
+                spacingRight: 150,
+                spacingLeft: 260
+            },
+            yAxis: {
+                min: -500,
+                stackLabels: {
+                    enabled: true
+                }
+            },
+            series: [{
+                type: 'column',
+                stacking: 'normal',
+                data: [-50]
+            }]
+        }, true, true);
+        const point = chart.series[0].points[0],
+            label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label;
+
+        assert.close(
+            chart.plotWidth + chart.plotLeft - point.plotY, // point pos
+            chart.plotLeft + label.x  + label.width,
+            0.5,
+            `Negative stack labels in the inverted chart should be properly
+            calculated, #17116.`
         );
     }
 );
@@ -216,7 +247,7 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
 
 // Issue #7420
 // stacking column graph and threshold: null
-QUnit.test('Null threshold (#7420)', function (assert) {
+QUnit.test('Null threshold and inverted chart, #7420.', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -242,37 +273,5 @@ QUnit.test('Null threshold (#7420)', function (assert) {
         chart.series[0].points[0].graphic.element.getBBox().height,
         0,
         'The points should have an extent'
-    );
-});
-
-QUnit.test('Negative stack labels in the inverted chart should be properly calculated. (#17116)', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            inverted: true,
-            spacingRight: 200
-        },
-        yAxis: {
-            min: -500,
-            stackLabels: {
-                enabled: true
-            }
-        },
-        series: [{
-            type: 'column',
-            stacking: 'normal',
-            data: [-50]
-        }]
-    });
-
-    const point = chart.series[0].points[0],
-        pointPos = chart.plotWidth + chart.plotLeft - point.plotY,
-        label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label,
-        labelPos = chart.plotLeft + label.x,
-        labelWidth = label.width;
-        
-    assert.strictEqual(
-        pointPos - (labelPos + labelWidth) < 1,
-        true,
-        'The stack label should be in close range'
     );
 });

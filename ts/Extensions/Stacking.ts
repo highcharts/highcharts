@@ -427,24 +427,30 @@ class StackItem {
             let bBox = label.getBBox(),
                 padding = label.padding,
                 boxOffsetX,
-                boxOffsetY;
+                boxOffsetY = chart.inverted ?
+                    bBox.height / 2 : (isNegative ? -padding : bBox.height);
 
             if (textAlign === 'left') {
                 boxOffsetX = chart.inverted ? -padding : padding;
             } else if (textAlign === 'right') {
                 boxOffsetX = bBox.width;
+            } else if (textAlign === 'center') {
+                boxOffsetX = bBox.width / 2;
             } else {
-                if (chart.inverted && textAlign === 'center') {
-                    boxOffsetX = bBox.width / 2;
-                } else {
-                    boxOffsetX = chart.inverted ?
-                        (isNegative ? bBox.width + padding : -padding) :
-                        bBox.width / 2;
-                }
+                boxOffsetX = chart.inverted ?
+                    (isNegative ? bBox.width + padding : -padding) :
+                    bBox.width / 2;
             }
 
-            boxOffsetY = chart.inverted ?
-                bBox.height / 2 : (isNegative ? -padding : bBox.height);
+            if (isNegative) {
+                if (chart.inverted && axis.reversed) {
+                    boxOffsetX -= chart.spacing[2];
+                } else if (chart.inverted) {
+                    boxOffsetX -= chart.spacing[1];
+                } else if (axis.reversed) {
+                    boxOffsetY += chart.spacing[2];
+                }
+            }
 
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
@@ -479,11 +485,6 @@ class StackItem {
                     bBox,
                     stackBox
                 );
-            }
-
-            // Check if chart is inverted with negative values #17116
-            if (chart.inverted) {
-                label.alignAttr.x += chart.spacing[1] * (isNegative ? 1 : 0);
             }
 
             label.attr({
