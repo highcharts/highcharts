@@ -174,7 +174,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.backgroundColor
                  */
-                backgroundColor: '#000000',
+                backgroundColor: Palette.neutralColor100,
 
                 /**
                  * The length of the dial's base part, relative to the total
@@ -220,7 +220,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderColor
                  */
-                borderColor: '#cccccc',
+                borderColor: Palette.neutralColor20,
 
                 /**
                  * The width of the gauge dial border in pixels.
@@ -325,61 +325,66 @@ class GaugeSeries extends Series {
              * @since   2.3.0
              * @product highcharts
              */
-            pivot: {},
 
-            /**
-             * The pixel radius of the pivot.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
-             *         Pivot options demonstrated
-             *
-             * @type      {number}
-             * @default   5
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.pivot.radius
-             */
+            pivot: {
+                /**
+                 * The pixel radius of the pivot.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
+                 *         Pivot options demonstrated
+                 *
+                 * @type      {number}
+                 * @default   5
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.pivot.radius
+                 */
+                radius: 5,
 
-            /**
-             * The border or stroke width of the pivot.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
-             *         Pivot options demonstrated
-             *
-             * @type      {number}
-             * @default   0
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.pivot.borderWidth
-             */
+                /**
+                 * The border or stroke width of the pivot.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
+                 *         Pivot options demonstrated
+                 *
+                 * @type      {number}
+                 * @default   0
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.pivot.borderWidth
+                 */
+                borderWidth: 0,
 
-            /**
-             * The border or stroke color of the pivot. In able to change this,
-             * the borderWidth must also be set to something other than the
-             * default 0.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
-             *         Pivot options demonstrated
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   #cccccc
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.pivot.borderColor
-             */
+                /**
+                 * The border or stroke color of the pivot. In able to change
+                 * this, the borderWidth must also be set to something other
+                 * than the default 0.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
+                 *         Pivot options demonstrated
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   #cccccc
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.pivot.borderColor
+                 */
+                borderColor: Palette.neutralColor20,
 
-            /**
-             * The background color or fill of the pivot.
-             *
-             * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
-             *         Pivot options demonstrated
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   #000000
-             * @since     2.3.0
-             * @product   highcharts
-             * @apioption plotOptions.gauge.pivot.backgroundColor
-             */
+                /**
+                 * The background color or fill of the pivot.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
+                 *         Pivot options demonstrated
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   #000000
+                 * @since     2.3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.gauge.pivot.backgroundColor
+                 */
+                backgroundColor: Palette.neutralColor100
+            },
 
             tooltip: {
                 headerFormat: ''
@@ -441,8 +446,8 @@ class GaugeSeries extends Series {
                     (pInt(dialOptions.baseLength) * radius) / 100,
                 rearLength =
                     (pInt(dialOptions.rearLength) * radius) / 100,
-                baseWidth = dialOptions.baseWidth || 3,
-                topWidth = dialOptions.topWidth || 1;
+                baseWidth = dialOptions.baseWidth,
+                topWidth = dialOptions.topWidth;
 
             let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + (yAxis.translate(
@@ -524,10 +529,9 @@ class GaugeSeries extends Series {
             // Presentational attributes
             if (!chart.styledMode) {
                 (point.graphic as any)[graphic ? 'animate' : 'attr']({
-                    stroke: dialOptions.borderColor || 'none',
-                    'stroke-width': dialOptions.borderWidth || 0,
-                    fill: dialOptions.backgroundColor ||
-                        Palette.neutralColor100
+                    stroke: dialOptions.borderColor,
+                    'stroke-width': dialOptions.borderWidth,
+                    fill: dialOptions.backgroundColor
                 });
             }
         });
@@ -538,9 +542,9 @@ class GaugeSeries extends Series {
                 translateX: center[0],
                 translateY: center[1]
             });
-        } else {
+        } else if (pivotOptions) {
             series.pivot =
-                renderer.circle(0, 0, pick((pivotOptions as any).radius, 5))
+                renderer.circle(0, 0, pivotOptions.radius)
                     .attr({
                         zIndex: 2
                     })
@@ -551,11 +555,9 @@ class GaugeSeries extends Series {
             // Presentational attributes
             if (!chart.styledMode) {
                 series.pivot.attr({
-                    'stroke-width': (pivotOptions as any).borderWidth || 0,
-                    stroke: (pivotOptions as any).borderColor ||
-                        Palette.neutralColor20,
-                    fill: (pivotOptions as any).backgroundColor ||
-                        Palette.neutralColor100
+                    fill: pivotOptions.backgroundColor,
+                    stroke: pivotOptions.borderColor,
+                    'stroke-width': pivotOptions.borderWidth
                 });
             }
         }
