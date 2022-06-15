@@ -493,7 +493,7 @@ class Tooltip {
 
         if (!this.label) {
 
-            if (this.outside) {
+            if (this.outside || options.useHTML) {
                 const chartStyle = this.chart.options.chart.style,
                     Renderer = RendererRegistry.getRendererType();
 
@@ -587,7 +587,7 @@ class Tooltip {
 
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
-            if (tooltip.outside && !tooltip.split) {
+            if (tooltip.renderer) {
                 const label = this.label;
                 const { xSetter, ySetter } = label;
                 label.xSetter = function (
@@ -681,6 +681,7 @@ class Tooltip {
                         chart.plotTop + chart.plotHeight
                 ]);
             };
+
         let first = buildDimensionArray('y'),
             second = buildDimensionArray('x'),
             swapped: (boolean|undefined);
@@ -1603,10 +1604,9 @@ class Tooltip {
          */
         const {
             container,
-            outside,
             renderer
         } = tooltip;
-        if (outside && container && renderer) {
+        if (container && renderer) {
             // Set container size to fit the bounds
             const { width, height, x, y } = tooltipLabel.getBBox();
             renderer.setSize(
@@ -1800,12 +1800,10 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const chart = this.chart,
-            options = this.options,
-            pointer = chart.pointer,
+        const { chart, options, renderer } = this,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            chartPosition = pointer.getChartPosition(),
+            chartPosition = chart.pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
@@ -1817,9 +1815,9 @@ class Tooltip {
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
-        if (this.outside) {
+        if (renderer) {
             pad = options.borderWidth + 2 * this.distance;
-            (this.renderer as any).setSize(
+            renderer.setSize(
                 label.width + pad,
                 label.height + pad,
                 false
