@@ -13,4 +13,10 @@
  * */
 
 'use strict';
-import '../../Extensions/Boost/Boost.js';
+
+import Highcharts from '../../Core/Globals.js';
+import Boost from '../../Extensions/Boost/Boost.js';
+
+const G: AnyRecord = Highcharts;
+
+Boost.compose(G.Color);

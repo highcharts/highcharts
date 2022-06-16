@@ -11,28 +11,63 @@
  * */
 
 'use strict';
-import H from '../../Core/Globals.js';
-import butils from './BoostUtils.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Color from '../../Core/Color/Color';
+
+import BU from './BoostUtils.js';
 import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import './BoostOverrides.js';
-import './NamedColors.js';
+import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
     error
 } = U;
 
-// These need to be fixed when we support named imports
-const hasWebGLSupport = butils.hasWebGLSupport;
+/* *
+ *
+ *  Composition
+ *
+ * */
 
-if (!hasWebGLSupport()) {
-    if (typeof initCanvasBoost !== 'undefined') {
-        // Fallback to canvas boost
-        initCanvasBoost();
-    } else {
-        error(26);
+namespace BoostComposition {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        ColorClass: typeof Color
+    ): void {
+        if (!BU.hasWebGLSupport()) {
+            if (typeof initCanvasBoost !== 'undefined') {
+                // Fallback to canvas boost
+                initCanvasBoost();
+            } else {
+                error(26);
+            }
+        } else {
+            // WebGL support is alright, and we're good to go.
+            init();
+        }
+
+        ColorClass.names = {
+            ...ColorClass.names,
+            ...NamedColors.defaultHTMLColorMap
+        };
     }
-} else {
-    // WebGL support is alright, and we're good to go.
-    init();
+
 }
+
+export default BoostComposition;
