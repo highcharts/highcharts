@@ -18,6 +18,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type AxisLike from '../Core/Axis/AxisLike';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
@@ -760,7 +761,6 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         last: (Highcharts.DrilldownLevelObject|undefined),
         colorProp: SeriesOptions;
 
-
     colorProp = this.styledMode ?
         { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
         { color: point.color || oldSeries.color };
@@ -1139,7 +1139,7 @@ addEvent(Chart, 'afterInit', function (): void {
 
 addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
-        axis.ddPoints = {};
+        const ddPoints: AxisLike['ddPoints'] = {};
         axis.series.forEach(function (series): void {
             let i,
                 xData = series.xData || [],
@@ -1158,21 +1158,29 @@ addEvent(Chart, 'render', function (): void {
                         .call({ series: series }, p);
 
                     if (p.drilldown) {
-                        if (!(axis.ddPoints as any)[xData[i]]) {
-                            (axis.ddPoints as any)[xData[i]] = [];
+                        if (!ddPoints[xData[i]]) {
+                            ddPoints[xData[i]] = [];
                         }
 
                         const index = i - (series.cropStart || 0);
+                        let point = points[index];
 
-                        (axis.ddPoints as any)[xData[i]].push(
+                        // Boost, make sure a real point is registered in
+                        // ddPoints (#16134)
+                        if (series.getPoint) {
+                            point = series.getPoint(point);
+                        }
+
+                        ddPoints[xData[i]].push(
                             (points && index >= 0 && index < points.length) ?
-                                points[index] :
-                                true
+                                point :
+                                true as any // When is this true?
                         );
                     }
                 }
             }
         });
+        axis.ddPoints = ddPoints;
 
         // Add drillability to ticks, and always keep it drillability updated
         // (#3951)
@@ -1319,14 +1327,16 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                if (!styledMode) {
+                if (animateFrom && !styledMode) {
                     // Add the point colors to animate from
-                    (animateFrom as any).fill = level.color;
+                    animateFrom.fill = level.color;
                 }
             }
         });
 
-        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
+        if (animateFrom && typeof animateFrom.x === 'number') {
+            animateFrom.x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
+        }
 
         this.points.forEach(function (point: Point): void {
             const animateTo = point.shapeArgs;
