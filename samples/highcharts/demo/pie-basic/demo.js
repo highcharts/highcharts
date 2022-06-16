@@ -1,3 +1,4 @@
+// Data retrieved from https://netmarketshare.com
 Highcharts.chart('container', {
     chart: {
         plotBackgroundColor: null,
@@ -6,7 +7,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in January, 2018'
+        text: 'Browser market shares in May, 2020'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -31,33 +32,33 @@ Highcharts.chart('container', {
         colorByPoint: true,
         data: [{
             name: 'Chrome',
-            y: 61.41,
+            y: 70.67,
             sliced: true,
             selected: true
         }, {
             name: 'Internet Explorer',
-            y: 11.84
+            y: 1.53
         }, {
             name: 'Firefox',
-            y: 10.85
+            y: 4.86
         }, {
             name: 'Edge',
-            y: 4.67
+            y: 14.77
         }, {
             name: 'Safari',
-            y: 4.18
+            y: 2.63
         }, {
             name: 'Sogou Explorer',
-            y: 1.64
+            y: 0.84
         }, {
             name: 'Opera',
-            y: 1.6
+            y: 1.40
         }, {
             name: 'QQ',
-            y: 1.2
+            y: 0.51
         }, {
             name: 'Other',
-            y: 2.61
+            y: 2.6
         }]
     }]
 });
