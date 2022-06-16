@@ -1,3 +1,5 @@
+// Data retrieved from https://gs.statcounter.com/browser-market-share#monthly-202201-202201-bar
+
 // Create the chart
 Highcharts.chart('container', {
     chart: {
@@ -5,7 +7,7 @@ Highcharts.chart('container', {
     },
     title: {
         align: 'left',
-        text: 'Browser market shares. January, 2018'
+        text: 'Browser market shares. January, 2022'
     },
     subtitle: {
         align: 'left',
@@ -50,37 +52,37 @@ Highcharts.chart('container', {
             data: [
                 {
                     name: "Chrome",
-                    y: 62.74,
+                    y: 63.06,
                     drilldown: "Chrome"
                 },
                 {
                     name: "Firefox",
-                    y: 10.57,
+                    y: 4.18,
                     drilldown: "Firefox"
                 },
                 {
                     name: "Internet Explorer",
-                    y: 7.23,
+                    y: 0.45,
                     drilldown: "Internet Explorer"
                 },
                 {
                     name: "Safari",
-                    y: 5.58,
+                    y: 19.84,
                     drilldown: "Safari"
                 },
                 {
                     name: "Edge",
-                    y: 4.02,
+                    y: 4.12,
                     drilldown: "Edge"
                 },
                 {
                     name: "Opera",
-                    y: 1.92,
+                    y: 2.33,
                     drilldown: "Opera"
                 },
                 {
                     name: "Other",
-                    y: 7.62,
+                    y: 1.582,
                     drilldown: null
                 }
             ]
