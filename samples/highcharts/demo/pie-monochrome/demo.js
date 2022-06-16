@@ -1,3 +1,4 @@
+// Data retrieved from https://netmarketshare.com/
 // Make monochrome colors
 var pieColors = (function () {
     var colors = [],
@@ -21,7 +22,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares at a specific website, 2014'
+        text: 'Browser market shares in february, 2022'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -51,12 +52,12 @@ Highcharts.chart('container', {
     series: [{
         name: 'Share',
         data: [
-            { name: 'Chrome', y: 61.41 },
-            { name: 'Internet Explorer', y: 11.84 },
-            { name: 'Firefox', y: 10.85 },
-            { name: 'Edge', y: 4.67 },
-            { name: 'Safari', y: 4.18 },
-            { name: 'Other', y: 7.05 }
+            { name: 'Chrome', y: 74.03 },
+            { name: 'Internet Explorer', y: 2.31 },
+            { name: 'Firefox', y: 4.96 },
+            { name: 'Edge', y: 12.66 },
+            { name: 'Safari', y: 2.49 },
+            { name: 'Other', y: 3.398 }
         ]
     }]
 });
