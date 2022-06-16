@@ -364,16 +364,6 @@ class WGLRenderer {
     }
 
     /**
-     * Get the WebGL context
-     * @private
-     * @return {WebGLContext|undefined}
-     * the context
-     */
-    private getGL(): (WebGLRenderingContext|undefined) {
-        return this.gl;
-    }
-
-    /**
      * Push data for a single series
      * This calculates additional vertices and transforms the data to be
      * aligned correctly in memory
@@ -1745,29 +1735,10 @@ class WGLRenderer {
     }
 
     /**
-     * Check if we have a valid OGL context
      * @private
-     * @return {boolean}
-     * true if the context is valid
+     * @todo use it
      */
-    private valid(): boolean {
-        return (this.gl as any) !== false;
-    }
-
-    /**
-     * Check if the renderer has been initialized
-     * @private
-     * @return {boolean}
-     * true if it has, false if not
-     */
-    private inited(): boolean {
-        return this.isInited;
-    }
-
-    /**
-     * @private
-     */
-    private destroy(): void {
+    public destroy(): void {
         const gl = this.gl,
             shader = this.shader,
             vbuffer = this.vbuffer;
