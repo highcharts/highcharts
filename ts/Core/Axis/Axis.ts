@@ -1426,13 +1426,18 @@ class Axis {
             names = this.names,
             i = names.length;
 
-        if (i > 0) {
+        let cleared: boolean|undefined;
+
+        const clearNames = (): void => {
             Object.keys((names as any).keys).forEach(function (
                 key: string
             ): void {
                 delete ((names as any).keys)[key];
             });
             names.length = 0;
+        };
+
+        if (i > 0) {
 
             this.minRange = this.userMinRange; // Reset
             (this.series || []).forEach(function (series): void {
@@ -1461,6 +1466,13 @@ class Axis {
                     i: number
                 ): void { // #9487
                     let x;
+
+                    // Make sure names are cleared only when there is new data
+                    // present, prevents clearing in Boost mode.
+                    if (!cleared) {
+                        clearNames();
+                        cleared = true;
+                    }
 
                     if (
                         point &&
