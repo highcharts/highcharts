@@ -14,15 +14,34 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Series from '../../Core/Series/Series';
 import type WGLRenderer from './WGLRenderer';
 
+import boostableMap from './BoostableMap.js';
 import Chart from '../../Core/Chart/Chart.js';
+import createAndAttachRenderer from './BoostAttach.js';
 import H from '../../Core/Globals.js';
 const {
     win,
     doc
 } = H;
+import U from '../../Core/Utilities.js';
+const {
+    pick
+} = U;
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -30,38 +49,34 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        /** @requires modules/boost */
-        function hasWebGLSupport(): boolean;
-    }
-}
-
-import boostableMap from './BoostableMap.js';
-import createAndAttachRenderer from './BoostAttach.js';
-
-import U from '../../Core/Utilities.js';
-const {
-    pick
-} = U;
-
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // This should be a const.
 const CHUNK_SIZE = 3000;
+
+const contexts = [
+    'webgl',
+    'experimental-webgl',
+    'moz-webgl',
+    'webkit-3d'
+];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Tolerant max() function.
  *
  * @private
- * @function patientMax
- *
  * @param {...Array<Array<unknown>>} args
  * Max arguments
- *
  * @return {number}
  * Max value
  */
@@ -89,11 +104,8 @@ function patientMax(...args: Array<Array<unknown>>): number {
  * Return true if ths boost.enabled option is true
  *
  * @private
- * @function boostEnabled
- *
  * @param {Highcharts.Chart} chart
  * The chart
- *
  * @return {boolean}
  * True, if boost is enabled.
  */
@@ -110,25 +122,24 @@ function boostEnabled(chart: Chart): boolean {
 }
 
 /**
- * Returns true if we should force boosting the chart
- * @private
- * @function shouldForceChartSeriesBoosting
+ * Returns true if we should force boosting the chart.
  *
+ * @private
  * @param {Highcharts.Chart} chart
  * The chart to check for forcing on
- *
  * @return {boolean}
  * True, if boosting should be forced.
  */
 function shouldForceChartSeriesBoosting(chart: Chart): boolean {
+    const allowBoostForce = pick(
+        chart.options.boost && chart.options.boost.allowForce,
+        true
+    );
+
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     let sboostCount = 0,
         canBoostCount = 0,
-        allowBoostForce = pick(
-            chart.options.boost && chart.options.boost.allowForce,
-            true
-        ),
         series;
 
     if (typeof chart.boostForceChartBoost !== 'undefined') {
@@ -188,8 +199,6 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  * Performs the actual render if the renderer is
  * attached to the series.
  * @private
- * @param renderer {OGLRenderer} - the renderer
- * @param series {Highcharts.Series} - the series
  */
 function renderIfNotSeriesBoosting(
     renderer: WGLRenderer,
@@ -226,13 +235,18 @@ function allocateIfNotSeriesBoosting(
  * UI thread.
  *
  * @private
- *
- * @param arr {Array} - the array to loop through
- * @param fn {Function} - the callback to call for each item
- * @param finalFunc {Function} - the callback to call when done
- * @param chunkSize {Number} - the number of iterations per timeout
- * @param i {Number} - the current index
- * @param noTimeout {Boolean} - set to true to skip timeouts
+ * @param {Array<unknown>} arr
+ * The array to loop through.
+ * @param {Function} fn
+ * The callback to call for each item.
+ * @param {Function} finalFunc
+ * The callback to call when done.
+ * @param {number} [chunkSize]
+ * The number of iterations per timeout.
+ * @param {number} [i]
+ * The current index.
+ * @param {boolean} [noTimeout]
+ * Set to true to skip timeouts.
  */
 function eachAsync(
     arr: Array<unknown>,
@@ -245,8 +259,9 @@ function eachAsync(
     i = i || 0;
     chunkSize = chunkSize || CHUNK_SIZE;
 
-    let threshold = i + chunkSize,
-        proceed = true;
+    const threshold = i + chunkSize;
+
+    let proceed = true;
 
     while (proceed && i < threshold && i < arr.length) {
         proceed = fn(arr[i], i);
@@ -277,23 +292,19 @@ function eachAsync(
 
 /**
  * Returns true if the current browser supports webgl
- *
  * @private
- * @function hasWebGLSupport
  */
 function hasWebGLSupport(): boolean {
-    let i = 0,
-        canvas,
-        contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
-        context: (false|WebGLRenderingContext|null) = false;
+    let canvas,
+        gl: (false|RenderingContext|null) = false;
 
     if (typeof win.WebGLRenderingContext !== 'undefined') {
         canvas = doc.createElement('canvas');
 
-        for (; i < contexts.length; i++) {
+        for (let i = 0; i < contexts.length; ++i) {
             try {
-                context = canvas.getContext(contexts[i]) as any;
-                if (typeof context !== 'undefined' && context !== null) {
+                gl = canvas.getContext(contexts[i]);
+                if (typeof gl !== 'undefined' && gl !== null) {
                     return true;
                 }
             } catch (e) {
@@ -309,13 +320,10 @@ function hasWebGLSupport(): boolean {
 
 /**
  * Used for treemap|heatmap.drawPoints
- *
  * @private
- * @function pointDrawHandler
  */
 function pointDrawHandler(this: Series, proceed: Function): void {
-    let enabled = true,
-        renderer: WGLRenderer;
+    let enabled = true;
 
     if (this.chart.options && this.chart.options.boost) {
         enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
@@ -330,7 +338,7 @@ function pointDrawHandler(this: Series, proceed: Function): void {
     this.chart.isBoosting = true;
 
     // Make sure we have a valid OGL context
-    renderer = createAndAttachRenderer(this.chart, this);
+    const renderer = createAndAttachRenderer(this.chart, this);
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
@@ -342,18 +350,21 @@ function pointDrawHandler(this: Series, proceed: Function): void {
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
-const funs = {
-    patientMax: patientMax,
-    boostEnabled: boostEnabled,
-    shouldForceChartSeriesBoosting: shouldForceChartSeriesBoosting,
-    renderIfNotSeriesBoosting: renderIfNotSeriesBoosting,
-    allocateIfNotSeriesBoosting: allocateIfNotSeriesBoosting,
-    eachAsync: eachAsync,
-    hasWebGLSupport: hasWebGLSupport,
-    pointDrawHandler: pointDrawHandler
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const BoostUtils = {
+    allocateIfNotSeriesBoosting,
+    boostEnabled,
+    eachAsync,
+    hasWebGLSupport,
+    patientMax,
+    pointDrawHandler,
+    renderIfNotSeriesBoosting,
+    shouldForceChartSeriesBoosting
 };
 
-// This needs to be fixed.
-H.hasWebGLSupport = hasWebGLSupport;
-
-export default funs;
+export default BoostUtils;

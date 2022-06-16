@@ -1574,8 +1574,8 @@ class WGLRenderer {
             console.time('gl setup'); // eslint-disable-line no-console
         }
 
-        for (const context of contexts) {
-            this.gl = canvas.getContext(context, {
+        for (let i = 0; i < contexts.length; ++i) {
+            this.gl = canvas.getContext(contexts[i], {
             //    premultipliedAlpha: false
             }) as any;
             if (this.gl) {

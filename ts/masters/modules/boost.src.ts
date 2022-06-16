@@ -16,7 +16,9 @@
 
 import Highcharts from '../../Core/Globals.js';
 import Boost from '../../Extensions/Boost/Boost.js';
+import BoostUtils from '../../Extensions/Boost/BoostUtils.js';
 
 const G: AnyRecord = Highcharts;
+G.hasWebGLSupport = BoostUtils.hasWebGLSupport;
 
 Boost.compose(G.Color);
