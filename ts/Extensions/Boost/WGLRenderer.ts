@@ -375,9 +375,8 @@ class WGLRenderer {
     ): void {
         const data = this.data,
             settings = this.settings,
-            vbuffer = this.vbuffer;
-
-        let isRange = (
+            vbuffer = this.vbuffer,
+            isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -401,8 +400,6 @@ class WGLRenderer {
             ),
             yAxis = series.yAxis,
             xAxis = series.xAxis,
-            // plotHeight = series.chart.plotHeight,
-            plotWidth = series.chart.plotWidth,
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -419,19 +416,27 @@ class WGLRenderer {
             // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
             points: Array<WGLPoint> =
                 series.points || (false as any),
+            sdata = isStacked ? series.data : (xData || rawData),
+            closestLeft = { x: Number.MAX_VALUE, y: 0 },
+            closestRight = { x: -Number.MAX_VALUE, y: 0 },
+            cullXThreshold = 1,
+            cullYThreshold = 1,
+            chartDestroyed = typeof chart.index === 'undefined',
+            drawAsBar = asBar[series.type],
+            zoneAxis = options.zoneAxis || 'y',
+            zones = options.zones || false,
+            threshold: number = options.threshold as any,
+            pixelRatio = this.getPixelRatio();
+
+        let // plotHeight = series.chart.plotHeight,
+            plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
             scolor: Color.RGBA,
-            sdata = isStacked ? series.data : (xData || rawData),
-            closestLeft = { x: Number.MAX_VALUE, y: 0 },
-            closestRight = { x: -Number.MAX_VALUE, y: 0 },
             //
             skipped = 0,
             hadPoints = false,
-            //
-            cullXThreshold = 1,
-            cullYThreshold = 1,
             // The following are used in the builder while loop
             x: number,
             y: number,
@@ -441,21 +446,15 @@ class WGLRenderer {
             px: number = false as any,
             nx: number = false as any,
             low: (number|undefined),
-            chartDestroyed = typeof chart.index === 'undefined',
             nextInside = false,
             prevInside = false,
             pcolor: Color.RGBA = false as any,
-            drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
             firstPoint = true,
-            zoneAxis = options.zoneAxis || 'y',
-            zones = options.zones || false,
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
-            threshold: number = options.threshold as any,
             gapSize: number = false as any,
-            pixelRatio = this.getPixelRatio(),
             vlen = 0;
 
         if (options.boostData && options.boostData.length > 0) {
@@ -651,8 +650,9 @@ class WGLRenderer {
             }
 
             points.forEach((point: Point): void => {
-                let plotY = point.plotY,
-                    swidth,
+                const plotY = point.plotY;
+
+                let swidth,
                     pointAttr;
 
                 if (
@@ -1124,7 +1124,8 @@ class WGLRenderer {
      * Push a series to the renderer
      * If we render the series immediatly, we don't have to loop later
      * @private
-     * @param s {Highchart.Series} - the series to push
+     * @param {Highchart.Series} s
+     * The series to push.
      */
     public pushSeries(s: Series): void {
         const markerData = this.markerData,
@@ -1195,7 +1196,8 @@ class WGLRenderer {
     /**
      * Pass x-axis to shader
      * @private
-     * @param axis {Highcharts.Axis} - the x-axis
+     * @param {Highcharts.Axis} axis
+     * The x-axis.
      */
     private setXAxis(axis: Axis): void {
         const shader = this.shader;
@@ -1220,7 +1222,8 @@ class WGLRenderer {
     /**
      * Pass y-axis to shader
      * @private
-     * @param axis {Highcharts.Axis} - the y-axis
+     * @param {Highcharts.Axis} axis
+     * The y-axis.
      */
     private setYAxis(axis: Axis): void {
         const shader = this.shader;
@@ -1245,8 +1248,10 @@ class WGLRenderer {
     /**
      * Set the translation threshold
      * @private
-     * @param has {boolean} - has threshold flag
-     * @param translation {Float} - the threshold
+     * @param {boolean} has
+     * Has threshold flag.
+     * @param {numbe} translation
+     * The threshold.
      */
     private setThreshold(has: boolean, translation: number): void {
         const shader = this.shader;
@@ -1313,9 +1318,8 @@ class WGLRenderer {
             s: WGLSeriesObject,
             si: number
         ): void => {
-            let options = s.series.options,
+            const options = s.series.options,
                 shapeOptions = options.marker,
-                sindex,
                 lineWidth = (
                     typeof options.lineWidth !== 'undefined' ?
                         options.lineWidth :
@@ -1325,7 +1329,6 @@ class WGLRenderer {
                 hasThreshold = isNumber(threshold),
                 yBottom = s.series.yAxis.getThreshold(threshold),
                 translatedThreshold = yBottom,
-                cbuffer,
                 showMarkers = pick(
                     options.marker ? options.marker.enabled : null,
                     s.series.xAxis.isRadial ? true : null,
@@ -1336,11 +1339,14 @@ class WGLRenderer {
                                 10
                         ) || 10)
                 ),
-                fillColor,
                 shapeTexture = this.textureHandles[
                     (shapeOptions && shapeOptions.symbol) ||
                     (s.series.symbol as any)
-                ] || this.textureHandles.circle,
+                ] || this.textureHandles.circle;
+
+            let sindex,
+                cbuffer,
+                fillColor,
                 scolor = [];
 
             if (
