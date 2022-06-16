@@ -12,8 +12,7 @@
 
 'use strict';
 
-import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type BoostTargetObject from './BoostTargetObject';
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
@@ -26,34 +25,11 @@ const {
 import WGLRenderer from './WGLRenderer.js';
 
 declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike extends Highcharts.BoostTargetObject {}
+    interface ChartLike extends BoostTargetObject {}
 }
 
 declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike extends Highcharts.BoostTargetObject {}
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BoostTargetObject {
-            boostClipRect?: SVGElement;
-            canvas?: HTMLCanvasElement;
-            ogl?: WGLRenderer;
-            renderTarget?: (HTMLElement|SVGElement);
-            renderTargetCtx?: CanvasRenderingContext2D;
-            renderTargetFo?: SVGElement;
-            /** @requires modules/boost */
-            boostClear(): void;
-            /** @requires modules/boost */
-            boostCopy(): void;
-            /** @requires modules/boost */
-            boostResizeTarget(): void;
-        }
-    }
+    interface SeriesLike extends BoostTargetObject {}
 }
 
 let mainCanvas: HTMLCanvasElement|undefined;
@@ -80,7 +56,7 @@ function createAndAttachRenderer(
 
     let width = chart.chartWidth,
         height = chart.chartHeight,
-        target: Highcharts.BoostTargetObject = chart,
+        target: BoostTargetObject = chart,
         targetGroup = chart.seriesGroup || series.group,
         alpha = 1,
         foSupported: boolean = doc.implementation.hasFeature(
@@ -88,7 +64,7 @@ function createAndAttachRenderer(
             '1.1'
         );
 
-    if (chart.isChartSeriesBoosting()) {
+    if (chart.boost && chart.boost.isChartSeriesBoosting()) {
         target = chart;
     } else {
         target = series;
@@ -203,7 +179,9 @@ function createAndAttachRenderer(
     (target.canvas as any).width = width;
     (target.canvas as any).height = height;
 
-    (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
+    if (chart.boost && target.boostClipRect) {
+        target.boostClipRect.attr(chart.boost.getBoostClipRect(target));
+    }
 
     target.boostResizeTarget();
     target.boostClear();

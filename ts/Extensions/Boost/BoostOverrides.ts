@@ -23,7 +23,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
 import Point from '../../Core/Series/Point.js';
@@ -39,15 +38,6 @@ const {
     pick,
     wrap
 } = U;
-
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
-        /** @requires modules/boost */
-        getBoostClipRect(target: Highcharts.BoostTargetObject): BBoxObject;
-        /** @requires modules/boost */
-        isChartSeriesBoosting(): boolean;
-    }
-}
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
@@ -101,67 +91,7 @@ import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';
 
 const boostEnabled = butils.boostEnabled,
-    shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     plotOptions = getOptions().plotOptions as SeriesTypePlotOptions;
-
-/**
- * Returns true if the chart is in series boost mode.
- *
- * @function Highcharts.Chart#isChartSeriesBoosting
- *
- * @param {Highcharts.Chart} chart
- *        the chart to check
- *
- * @return {boolean}
- *         true if the chart is in series boost mode
- */
-Chart.prototype.isChartSeriesBoosting = function (): boolean {
-    let isSeriesBoosting: boolean,
-        threshold = pick(
-            this.options.boost && this.options.boost.seriesThreshold,
-            50
-        );
-
-    isSeriesBoosting = threshold <= this.series.length ||
-        shouldForceChartSeriesBoosting(this);
-
-    return isSeriesBoosting;
-};
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * Get the clip rectangle for a target, either a series or the chart. For the
- * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highcharts Stock panes and navigator.
- *
- * @private
- * @function Highcharts.Chart#getBoostClipRect
- */
-Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
-    const clipBox = {
-        x: this.plotLeft,
-        y: this.plotTop,
-        width: this.plotWidth,
-        height: this.plotHeight
-    };
-
-    if (target === this) {
-        const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
-        if (verticalAxes.length <= 1) {
-            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-            clipBox.height = (
-                verticalAxes[0].pos -
-                this.plotTop +
-                verticalAxes[0].len
-            );
-        } else {
-            clipBox.height = this.plotHeight;
-        }
-    }
-
-    return clipBox;
-};
 
 /**
  * Return a full Point object based on the index.
@@ -401,7 +331,10 @@ wrap(Series.prototype, 'processData', function (
         if (series.forceCrop) {
             return false;
         }
-        return series.chart.isChartSeriesBoosting() || (
+        return (
+            series.chart.boost &&
+            series.chart.boost.isChartSeriesBoosting()
+        ) || (
             (data ? data.length : 0) >=
             (series.options.boostThreshold || Number.MAX_VALUE)
         );

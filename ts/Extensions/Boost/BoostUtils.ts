@@ -205,12 +205,14 @@ function renderIfNotSeriesBoosting(
     series: Series,
     chart?: Chart
 ): void {
+    chart = chart || series.chart;
+
     if (renderer &&
         series.renderTarget &&
         series.canvas &&
-        !(chart || series.chart).isChartSeriesBoosting()
+        !(chart.boost && chart.boost.isChartSeriesBoosting())
     ) {
-        renderer.render(chart || series.chart);
+        renderer.render(chart);
     }
 }
 
@@ -224,7 +226,7 @@ function allocateIfNotSeriesBoosting(
     if (renderer &&
         series.renderTarget &&
         series.canvas &&
-        !series.chart.isChartSeriesBoosting()
+        !(series.chart.boost && series.chart.boost.isChartSeriesBoosting())
     ) {
         renderer.allocateBufferForSingleSeries(series);
     }

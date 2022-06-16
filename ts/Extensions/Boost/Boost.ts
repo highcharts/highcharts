@@ -18,8 +18,10 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
 
+import BoostChart from './BoostChart.js';
 import BU from './BoostUtils.js';
 import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
@@ -36,7 +38,15 @@ const {
  *
  * */
 
-namespace BoostComposition {
+namespace Boost {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -48,6 +58,7 @@ namespace BoostComposition {
      * @private
      */
     export function compose(
+        ChartClass: typeof Chart,
         ColorClass: typeof Color
     ): void {
         if (!BU.hasWebGLSupport()) {
@@ -62,12 +73,18 @@ namespace BoostComposition {
             init();
         }
 
-        ColorClass.names = {
-            ...ColorClass.names,
-            ...NamedColors.defaultHTMLColorMap
-        };
+        if (composedClasses.indexOf(ColorClass) === -1) {
+            composedClasses.push(ColorClass);
+
+            ColorClass.names = {
+                ...ColorClass.names,
+                ...NamedColors.defaultHTMLColorMap
+            };
+        }
+
+        BoostChart.compose(ChartClass);
     }
 
 }
 
-export default BoostComposition;
+export default Boost;

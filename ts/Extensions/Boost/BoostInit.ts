@@ -166,7 +166,7 @@ function init(): void {
 
             // If we're rendering per. series we should create the marker groups
             // as usual.
-            if (!chart.isChartSeriesBoosting()) {
+            if (!chart.boost || !chart.boost.isChartSeriesBoosting()) {
                 // If all series were boosting, but are not anymore
                 // restore private markerGroup
                 if (this.markerGroup === chart.markerGroup) {
@@ -419,7 +419,11 @@ function init(): void {
          * @private
          */
         function canvasToSVG(): void {
-            if (chart.ogl && chart.isChartSeriesBoosting()) {
+            if (
+                chart.ogl &&
+                chart.boost &&
+                chart.boost.isChartSeriesBoosting()
+            ) {
                 chart.ogl.render(chart);
             }
         }
@@ -434,7 +438,10 @@ function init(): void {
             chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
             chart.isBoosting = false;
 
-            if (!chart.isChartSeriesBoosting() && chart.didBoost) {
+            if (
+                chart.didBoost &&
+                !(chart.boost && chart.boost.isChartSeriesBoosting())
+            ) {
                 chart.didBoost = false;
             }
 
@@ -443,7 +450,12 @@ function init(): void {
                 chart.boostClear();
             }
 
-            if (chart.canvas && chart.ogl && chart.isChartSeriesBoosting()) {
+            if (
+                chart.canvas &&
+                chart.ogl &&
+                chart.boost &&
+                chart.boost.isChartSeriesBoosting()
+            ) {
                 chart.didBoost = true;
 
                 // Allocate

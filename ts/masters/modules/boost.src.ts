@@ -21,4 +21,4 @@ import BoostUtils from '../../Extensions/Boost/BoostUtils.js';
 const G: AnyRecord = Highcharts;
 G.hasWebGLSupport = BoostUtils.hasWebGLSupport;
 
-Boost.compose(G.Color);
+Boost.compose(G.Chart, G.Color);

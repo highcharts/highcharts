@@ -16,6 +16,7 @@
 'use strict';
 
 import type AreaSeries from '../Series/Area/AreaSeries';
+import type BoostTargetObject from './Boost/BoostTargetObject';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
@@ -49,7 +50,7 @@ const {
 } = U;
 
 declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike extends Highcharts.BoostTargetObject {
+    interface SeriesLike extends BoostTargetObject {
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;
@@ -89,6 +90,12 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
+declare module './Boost/BoostTargetObject' {
+    interface BoostTargetObject {
+        ctx?: (CanvasRenderingContext2D|null);
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -101,9 +108,6 @@ declare global {
             timeRendering?: boolean;
             timeSeriesProcessing?: boolean;
             timeSetup?: boolean;
-        }
-        interface BoostTargetObject {
-            ctx?: (CanvasRenderingContext2D|null);
         }
     }
 }
@@ -204,7 +208,7 @@ const initCanvasBoost = function (): void {
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
-                target: Highcharts.BoostTargetObject = this,
+                target: BoostTargetObject = this,
                 ctx: (CanvasRenderingContext2D|null|undefined),
                 swapXY = function (
                     this: CanvasRenderingContext2D,
@@ -219,7 +223,7 @@ const initCanvasBoost = function (): void {
                     proceed.call(this, y, x, a, b, c, d);
                 };
 
-            if (chart.isChartSeriesBoosting()) {
+            if (chart.boost && chart.boost.isChartSeriesBoosting()) {
                 target = chart as any;
                 targetGroup = chart.seriesGroup;
             }
@@ -288,7 +292,9 @@ const initCanvasBoost = function (): void {
                 href: ''
             });
 
-            (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
+            if (chart.boost && target.boostClipRect) {
+                target.boostClipRect.attr(chart.boost.getBoostClipRect(target));
+            }
 
             return ctx;
         },
@@ -300,7 +306,10 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#canvasToSVG
          */
         canvasToSVG: function (this: Series): void {
-            if (!this.chart.isChartSeriesBoosting()) {
+            if (
+                !this.chart.boost ||
+                !this.chart.boost.isChartSeriesBoosting()
+            ) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
                 }
