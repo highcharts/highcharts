@@ -15,8 +15,8 @@
  *
  * */
 
-import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import SankeySeries from '../Sankey/SankeySeries';
+import type FlowMapSeriesOptions from './FlowMapSeriesOptions.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 import U from '../../Core/Utilities.js';
