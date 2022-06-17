@@ -67,10 +67,10 @@ class SonificationSpeaker {
     }
 
 
-    // Time in seconds from now
+    // Time in milliseconds from now
     sayAtTime(time: number, message: string, options?: Partial<Sonification.SpeakerOptions>): void {
         this.scheduled.push(
-            setTimeout(this.say.bind(this, message, options), time * 1000)
+            setTimeout(this.say.bind(this, message, options), time)
         );
     }
 

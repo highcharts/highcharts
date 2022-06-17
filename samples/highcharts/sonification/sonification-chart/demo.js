@@ -25,8 +25,9 @@ var chart = Highcharts.chart('container', {
                 volume: 0.3,
                 playDelay: 700
             },
-            activeWhen: function (point) {
-                return point.index === point.series.points.length - 1;
+            activeWhen: function (context) {
+                return context.point.index ===
+                    context.point.series.points.length - 1;
             }
         }]
     },
@@ -41,8 +42,8 @@ var chart = Highcharts.chart('container', {
                     volume: 0.2,
                     pan: 0
                 },
-                activeWhen: function (point) {
-                    return point.x === 7;
+                activeWhen: function (context) {
+                    return context.point.x === 7;
                 }
             }]
         },

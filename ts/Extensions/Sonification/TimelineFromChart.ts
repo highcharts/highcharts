@@ -238,7 +238,7 @@ function getMappingParameterValue(
         return mappingOptions;
     }
     if (typeof mappingOptions === 'function') {
-        return mappingOptions(point, time || 0);
+        return mappingOptions({ point, time: time || 0 });
     }
 
     let mapTo = mappingOptions as string,
@@ -424,7 +424,7 @@ function addMappedInstrumentEvent(
     time: number,
     extremesCache: PropExtremesCache,
     roundToMusicalNotes: boolean
-): void {
+): Sonification.TimelineEvent[] {
     const getParam = (
         param: string,
         fallback: number,
@@ -435,11 +435,12 @@ function addMappedInstrumentEvent(
         fallback, defaults
     );
 
-    const eventOpts: SonificationInstrument.ScheduledEventOptions = {
-        noteDuration: getParam('noteDuration', 200, { min: 40, max: 1000 }),
-        pan: getParam('pan', 0, { min: -1, max: 1 }),
-        volume: getParam('volume', 1, { min: 0.1, max: 1 })
-    };
+    const eventsAdded: Sonification.TimelineEvent[] = [],
+        eventOpts: SonificationInstrument.ScheduledEventOptions = {
+            noteDuration: getParam('noteDuration', 200, { min: 40, max: 1000 }),
+            pan: getParam('pan', 0, { min: -1, max: 1 }),
+            volume: getParam('volume', 1, { min: 0.1, max: 1 })
+        };
     if (mappingOptions.frequency) {
         eventOpts.frequency = getParam('frequency', 440,
             { min: 50, max: 6000 });
@@ -494,13 +495,16 @@ function addMappedInstrumentEvent(
             eventOpts.note = Math.round(eventOpts.note);
         }
 
-        channel.addEvent({
-            time: (time + playDelay + gapBetweenNotes * ix) / 1000,
-            relatedPoint: point,
-            instrumentEventOptions: ix !== void 0 ?
-                extend({}, eventOpts) : eventOpts
-        });
+        eventsAdded.push(
+            channel.addEvent({
+                time: time + playDelay + gapBetweenNotes * ix,
+                relatedPoint: point,
+                instrumentEventOptions: ix !== void 0 ?
+                    extend({}, eventOpts) : eventOpts
+            })
+        );
     };
+
     if (
         mappingOptions.pitch &&
         (mappingOptions.pitch as number[]).constructor === Array
@@ -510,6 +514,8 @@ function addMappedInstrumentEvent(
         addNoteEvent(mappingOptions.pitch as string|number|
         Sonification.PitchMappingParameterOptions);
     }
+
+    return eventsAdded;
 }
 
 
@@ -518,16 +524,15 @@ function addMappedInstrumentEvent(
  * @private
  */
 function getSpeechMessageValue(
-    point: Point,
-    messageParam: string|Sonification.TrackStringCallback,
-    time: number
+    context: Sonification.CallbackContext,
+    messageParam: string|Sonification.TrackStringCallback
 ): string {
     return format(
         typeof messageParam === 'function' ?
-            messageParam(point, time) :
+            messageParam(context) :
             messageParam,
-        { point, time },
-        point.series.chart
+        context,
+        context.point && context.point.series.chart
     );
 }
 
@@ -542,7 +547,7 @@ function addMappedSpeechEvent(
     mappingOptions: Sonification.SpeechTrackMappingOptions,
     time: number,
     extremesCache: PropExtremesCache
-): void {
+): Sonification.TimelineEvent|undefined {
     const getParam = (
         param: string,
         fallback: number,
@@ -556,11 +561,13 @@ function addMappedSpeechEvent(
         pitch = getParam('pitch', 1, { min: 0.3, max: 2 }),
         rate = getParam('rate', 1, { min: 0.4, max: 4 }),
         volume = getParam('volume', 1, { min: 0.1 }),
-        message = getSpeechMessageValue(point, mappingOptions.text, time);
+        message = getSpeechMessageValue({
+            point, time
+        }, mappingOptions.text);
 
     if (message) {
-        channel.addEvent({
-            time: (time + playDelay) / 1000,
+        return channel.addEvent({
+            time: time + playDelay,
             relatedPoint: point,
             speechOptions: {
                 pitch,
@@ -587,14 +594,19 @@ function timelineFromChart(
         defaultInstrOpts = options.defaultInstrumentOptions,
         defaultSpeechOpts = options.defaultSpeechOptions,
         globalTracks = options.globalTracks || [],
+        globalContextTracks = options.globalContextTracks || [],
         isSequential = options.order === 'sequential',
         // Slight margin for note end
         totalDuration = Math.max(50, options.duration - 300),
         afterSeriesWait = options.afterSeriesWait,
+        eventOptions = options.events || {},
         extremesCache = buildExtremesCache(chart),
         timeline = new SonificationTimeline({
-            onEnd: options.events && options.events.onEnd
-        });
+            onPlay: options.events && options.events.onPlay,
+            onEnd: options.events && options.events.onEnd,
+            showCrosshairOnly: options.showCrosshairOnly,
+            showPlayMarker: options.showPlayMarker
+        }, chart);
 
     let startTime = 0;
     chart.series.forEach((series, seriesIx): void => {
@@ -606,9 +618,16 @@ function timelineFromChart(
                 ) : totalDuration,
                 mainTracks = (sOptions.tracks || [defaultInstrOpts])
                     .concat(globalTracks),
+                contextTracks = seriesIx ? sOptions.contextTracks || [] :
+                    (sOptions.contextTracks || []).concat(globalContextTracks),
                 mainChannels: Record<string, TimelineChannel> = {};
 
+            // First and last events across channels related to this series
+            let firstEvent: Sonification.TimelineEvent = { time: Infinity },
+                lastEvent: Sonification.TimelineEvent = { time: -Infinity };
+
             series.points.forEach((point): void => {
+                // Add the mapped tracks
                 mainTracks.forEach((trackOpts, trackIx): void => {
                     const mergedOpts = trackOpts.type === 'speech' ?
                         merge(defaultSpeechOpts, trackOpts) :
@@ -633,23 +652,46 @@ function timelineFromChart(
                     if (
                         !mergedOpts.mapping ||
                         mergedOpts.activeWhen &&
-                        !mergedOpts.activeWhen(point, time)
+                        !mergedOpts.activeWhen({ point, time })
                     ) {
                         return;
                     }
 
                     // Add the event to be sonified
+                    let eventsAdded: Sonification.TimelineEvent[] = [];
                     if (mergedOpts.type === 'speech') {
-                        addMappedSpeechEvent(point, channel, mergedOpts.mapping,
+                        const eventAdded = addMappedSpeechEvent(
+                            point, channel, mergedOpts.mapping,
                             time, extremesCache.globalExtremes);
+                        if (eventAdded) {
+                            eventsAdded = [eventAdded];
+                        }
                     } else {
-                        addMappedInstrumentEvent(point, channel,
-                            mergedOpts.mapping, time,
+                        eventsAdded = addMappedInstrumentEvent(
+                            point, channel, mergedOpts.mapping, time,
                             extremesCache.globalExtremes,
                             pick(mergedOpts.roundToMusicalNotes, true));
                     }
+
+                    // Update the first/last event for later event handling
+                    firstEvent = eventsAdded.reduce(
+                        (first, e): Sonification.TimelineEvent => (
+                            e.time < first.time ? e : first
+                        ), firstEvent);
+                    lastEvent = eventsAdded.reduce(
+                        (last, e): Sonification.TimelineEvent => (
+                            e.time > last.time ? e : last
+                        ), lastEvent);
                 });
             });
+
+            // Add callbacks to first/last events
+            firstEvent.callback = eventOptions.onSeriesStart ?
+                eventOptions.onSeriesStart.bind(null, series, timeline) :
+                void 0;
+            lastEvent.callback = eventOptions.onSeriesEnd ?
+                eventOptions.onSeriesEnd.bind(null, series, timeline) :
+                void 0;
 
             if (isSequential) {
                 startTime += seriesDuration + afterSeriesWait;

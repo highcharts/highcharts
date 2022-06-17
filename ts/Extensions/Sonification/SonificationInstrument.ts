@@ -204,7 +204,7 @@ class SonificationInstrument {
 
     cancel(): void {
         this.synthPatch.cancelScheduled();
-        this.silenceAtTime(0);
+        this.synthPatch.mute();
         [
             this.tremoloDepth && this.tremoloDepth.gain,
             this.tremoloOsc && this.tremoloOsc.frequency,

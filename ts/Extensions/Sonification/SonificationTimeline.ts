@@ -13,6 +13,7 @@
 'use strict';
 
 import type SonificationSpeaker from './SonificationSpeaker';
+import type Chart from '../../Core/Chart/Chart';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import U from '../../Core/Utilities.js';
@@ -22,7 +23,10 @@ const {
 
 
 interface SonificationTimelineOptions {
+    onPlay?: Function;
     onEnd?: Function;
+    showPlayMarker?: boolean;
+    showCrosshairOnly?: boolean;
 }
 
 interface FilteredChannel {
@@ -36,6 +40,7 @@ interface FilteredChannel {
  */
 class SonificationTimeline {
     paused = false;
+    isPlaying = false;
     channels: TimelineChannel[] = [];
     private scheduledCallbacks: number[] = [];
     private playingTimeline?: SonificationTimeline;
@@ -44,7 +49,7 @@ class SonificationTimeline {
     private resumeFromTime = 0;
 
 
-    constructor(options?: SonificationTimelineOptions) {
+    constructor(options?: SonificationTimelineOptions, private chart?: Chart) {
         this.options = options || {};
     }
 
@@ -109,58 +114,112 @@ class SonificationTimeline {
         this.playTimestamp = Date.now();
         this.resumeFromTime = 0;
         this.paused = false;
+        this.isPlaying = true;
 
         if (!filter) {
             this.playingTimeline = this;
             let maxTime = 0;
+
+            const onPlay = this.options.onPlay,
+                showPlayMarker = this.options.showPlayMarker,
+                showCrosshairOnly = this.options.showCrosshairOnly;
+
+            if (onPlay) {
+                onPlay(this);
+            }
 
             // Just play everything
             this.channels.forEach((channel): void => {
                 if (!channel.muted) {
                     channel.events.forEach((e): void => {
                         maxTime = Math.max(e.time, maxTime);
+
                         if (channel.type === 'instrument') {
                             (channel.engine as SonificationInstrument)
                                 .scheduleEventAtTime(
-                                    e.time, e.instrumentEventOptions || {}
+                                    e.time / 1000,
+                                    e.instrumentEventOptions || {}
                                 );
                         } else {
                             (channel.engine as SonificationSpeaker).sayAtTime(
                                 e.time, e.message || '', e.speechOptions || {}
                             );
                         }
-                        if (e.callback) {
-                            this.scheduledCallbacks.push(setTimeout(
-                                e.callback, e.time * 1000
-                            ));
+
+                        const point = e.relatedPoint,
+                            needsCallback = e.callback || point &&
+                                (showPlayMarker || showCrosshairOnly);
+                        if (needsCallback) {
+                            this.scheduledCallbacks.push(
+                                setTimeout((): void => {
+                                    if (e.callback) {
+                                        e.callback();
+                                    }
+                                    if (point) {
+                                        if (
+                                            showPlayMarker &&
+                                            showCrosshairOnly
+                                        ) {
+                                            const s = point.series;
+                                            if (s.xAxis && s.xAxis.crosshair) {
+                                                s.xAxis.drawCrosshair(
+                                                    void 0, point);
+                                            }
+                                            if (s.yAxis && s.yAxis.crosshair) {
+                                                s.yAxis.drawCrosshair(
+                                                    void 0, point);
+                                            }
+                                        } else if (showPlayMarker) {
+                                            point.onMouseOver();
+                                        }
+                                    }
+                                }, e.time));
                         }
                     });
                 }
             });
 
             const onEnd = this.options.onEnd;
-            if (onEnd) {
-                this.scheduledCallbacks.push(setTimeout(
-                    (): void => onEnd(this),
-                    maxTime * 1000 + 200
-                ));
-            }
+            this.scheduledCallbacks.push(setTimeout(
+                (): void => {
+                    const chart = this.chart;
+                    this.isPlaying = false;
+                    if (onEnd) {
+                        onEnd(this);
+                    }
+                    if (chart) {
+                        if (chart.tooltip) {
+                            chart.tooltip.hide(0);
+                        }
+                        if (chart.hoverSeries) {
+                            chart.hoverSeries.onMouseOut();
+                        }
+                        if (showCrosshairOnly) {
+                            chart.axes.forEach((a): void => a.hideCrosshair());
+                        }
+                    }
+                },
+                maxTime + 250
+            ));
         } else {
             (this.playingTimeline = this.filter(filter)).play();
         }
     }
 
 
-    // Pause for later resuming
-    pause(): void {
+    // Pause for later resuming. Returns current timestamp to resume from.
+    pause(): number {
+        const currentTime = (Date.now() - this.playTimestamp);
         this.paused = true;
-        this.resumeFromTime = (Date.now() - this.playTimestamp - 50) / 1000;
+        this.resumeFromTime = currentTime - 50;
         this.cancel();
+        return currentTime;
     }
 
 
     // Reset play/pause state so that a later call to resume() will start over
     reset(): void {
+        this.cancel();
         delete this.playingTimeline;
         this.playTimestamp = this.resumeFromTime = 0;
         this.paused = false;
@@ -185,6 +244,7 @@ class SonificationTimeline {
 
 
     cancel(): void {
+        this.isPlaying = false;
         this.scheduledCallbacks.forEach(clearTimeout);
         this.channels.forEach((c): void => c.cancel());
         if (this.playingTimeline && this.playingTimeline !== this) {

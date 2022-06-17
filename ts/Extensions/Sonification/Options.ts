@@ -14,13 +14,23 @@
 
 import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
+import type SonificationTimeline from './SonificationTimeline';
 import type SynthPatch from './SynthPatch';
 
 declare global {
     namespace Sonification {
-        type TrackValueCallback = (point: Point, time: number) => number;
-        type TrackStringCallback = (point: Point, time: number) => string;
-        type TrackPredicateCallback = (point: Point, time: number) => boolean;
+        interface CallbackContext {
+            time: number;
+            point?: Point;
+            contextValue?: number;
+        }
+        type SeriesCallback = (
+            series: Series, timeline: SonificationTimeline
+        ) => void;
+        type TrackValueCallback = (context: CallbackContext) => number;
+        type TrackStringCallback = (context: CallbackContext) => string;
+        type TrackPredicateCallback = (context: CallbackContext) => boolean;
         type TrackOptions = Array<InstrumentTrackOptions|SpeechTrackOptions>;
         type MapFunctionTypes = 'linear'|'logarithmic';
         type MappingParameter =
@@ -91,7 +101,10 @@ declare global {
         }
 
         interface ChartSonificationEventsOptions {
+            onPlay?: Function;
             onEnd?: Function;
+            onSeriesStart?: SeriesCallback;
+            onSeriesEnd?: SeriesCallback;
         }
 
         interface ChartSonificationOptions {
@@ -101,9 +114,10 @@ declare global {
             masterVolume: number;
             order: 'sequential'|'simultaneous';
             events?: ChartSonificationEventsOptions;
-            showTooltipOnPlay: boolean;
-            showCrosshairOnPlay: boolean;
+            showPlayMarker: boolean;
+            showCrosshairOnly?: boolean;
             globalTracks?: TrackOptions;
+            globalContextTracks?: TrackOptions;
             /**
              * Used to create a track for series without options
              */
@@ -152,8 +166,7 @@ const Options: DeepPartial<OptionsType> = {
         afterSeriesWait: 700,
         masterVolume: 0.6,
         order: 'sequential',
-        showCrosshairOnPlay: true,
-        showTooltipOnPlay: true,
+        showPlayMarker: true,
         defaultInstrumentOptions: {
             instrument: 'piano',
             mapping: {

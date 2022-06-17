@@ -48,15 +48,17 @@ class TimelineChannel {
     }
 
 
-    addEvent(event: Sonification.TimelineEvent): void {
+    addEvent(event: Sonification.TimelineEvent): Sonification.TimelineEvent {
         const lastEvent = this.events[this.events.length - 1];
         if (lastEvent && event.time < lastEvent.time) {
+            // Ensure we are sorted by time, so insert at the right place
             let i = this.events.length;
             while (--i && this.events[i].time > event.time) { /* */ }
             this.events.splice(i + 1, 0, event);
         } else {
             this.events.push(event);
         }
+        return event;
     }
 
 

@@ -638,6 +638,15 @@ class SynthPatch {
     }
 
 
+    // Mute sound immediately
+    mute(): void {
+        this.cancelScheduled();
+        miniRampToVolAtTime(
+            this.outputNode, this.audioContext.currentTime, 0
+        );
+    }
+
+
     // Play a frequency at time (in seconds, in the AudioContext timespace).
     // Time denotes when the attack ramp starts. Note duration is given in
     // milliseconds. If note duration is not given, the note plays indefinitely.

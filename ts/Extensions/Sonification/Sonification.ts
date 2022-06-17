@@ -114,6 +114,11 @@ class Sonification {
     }
 
 
+    isPlaying(): boolean {
+        return !!this.timeline && this.timeline.isPlaying;
+    }
+
+
     sonifyChart(): void {
         if (!this.ready(this.sonifyChart.bind(this))) {
             return;
@@ -145,6 +150,13 @@ class Sonification {
 
         if (this.timeline) {
             this.timeline.play((e): boolean => e.relatedPoint === point);
+        }
+    }
+
+
+    cancel(): void {
+        if (this.timeline) {
+            this.timeline.cancel();
         }
     }
 
