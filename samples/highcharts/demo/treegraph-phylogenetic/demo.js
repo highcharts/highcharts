@@ -36,7 +36,7 @@ Highcharts.chart('container', {
                 }
             }],
             type: 'treegraph',
-            keys: ['parent', 'id', 'level', 'collapsed'],
+            keys: ['parent', 'id', 'level'],
             clip: false,
             data: [
                 [undefined, 'Proto Indo-European'],
