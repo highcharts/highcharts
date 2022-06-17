@@ -194,7 +194,7 @@ class WGLRenderer {
             xData: Array<number>,
             s: number;
 
-        if (series.isSeriesBoosting) {
+        if (series.boosted) {
             isStacked = !!series.options.stacking;
             xData = (
                 series.xData ||
@@ -326,7 +326,7 @@ class WGLRenderer {
         }
 
         chart.series.forEach((series: Series): void => {
-            if (series.isSeriesBoosting) {
+            if (series.boosted) {
                 s += WGLRenderer.seriesPointCount(series);
             }
         });
@@ -346,7 +346,7 @@ class WGLRenderer {
             return;
         }
 
-        if (series.isSeriesBoosting) {
+        if (series.boosted) {
             s = WGLRenderer.seriesPointCount(series);
         }
 

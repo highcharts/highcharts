@@ -40,8 +40,8 @@ const {
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
-        /** @requires modules/boost */
         boost?: BoostChart.Additions;
+        boosted?: boolean;
     }
 }
 
@@ -107,14 +107,31 @@ namespace BoostChart {
 
     export class Additions {
 
+        /* *
+         *
+         *  Constructor
+         *
+         * */
+
         public constructor(
             chart: Composition
         ) {
             this.chart = chart;
         }
 
+        /* *
+         *
+         *  Properties
+         *
+         * */
+
         private chart: Composition;
 
+        /* *
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * Returns true if the chart is in series boost mode.

@@ -333,11 +333,11 @@ function pointDrawHandler(this: Series, proceed: Function): void {
             this.chart.options.boost.enabled;
     }
 
-    if (!enabled || !this.isSeriesBoosting) {
+    if (!enabled || !this.boosted) {
         return proceed.call(this);
     }
 
-    this.chart.isBoosting = true;
+    this.chart.boosted = true;
 
     // Make sure we have a valid OGL context
     const renderer = createAndAttachRenderer(this.chart, this);

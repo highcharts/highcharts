@@ -18,6 +18,7 @@
  *
  * */
 
+import type BoostChart from './BoostChart';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
@@ -63,17 +64,10 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        i?: number;
-    }
-}
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         boost?: BoostSeries.Additions;
-        fillOpacity?: boolean;
-        isSeriesBoosting?: boolean;
+        boosted?: boolean;
     }
 }
 
@@ -107,6 +101,8 @@ namespace BoostSeries {
 
     export declare class Composition extends Series {
         boost: Additions;
+        boosted?: boolean;
+        chart: BoostChart.Composition;
     }
 
     /* *
@@ -131,6 +127,12 @@ namespace BoostSeries {
     ): (T&typeof Composition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
+        if (composedClasses.indexOf(PointClass) === -1) {
+            composedClasses.push(PointClass);
+
+            wrap(PointClass.prototype, 'haloPath', wrapPointHaloPath);
+        }
+
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -138,8 +140,6 @@ namespace BoostSeries {
             addEvent(SeriesClass, 'init', onSeriesInit);
 
             const seriesProto = SeriesClass.prototype;
-
-            wrap(PointClass.prototype, 'haloPath', wrapPointHaloPath);
 
             wrap(seriesProto, 'getExtremes', wrapSeriesGetExtremes);
             wrap(seriesProto, 'markerAttribs', wrapSeriesMarkerAttribs);
@@ -253,7 +253,7 @@ namespace BoostSeries {
                 (method === 'translate' || method === 'generatePoints');
 
             if (
-                !this.isSeriesBoosting ||
+                !this.boosted ||
                 letItPass ||
                 !boostEnabled(this.chart) ||
                 this.type === 'heatmap' ||
@@ -305,7 +305,7 @@ namespace BoostSeries {
             plotY: number = point.plotY || 0,
             inverted = chart.inverted;
 
-        if (series.boost && series.isSeriesBoosting && inverted) {
+        if (series.boosted && inverted) {
             point.plotX = series.yAxis.len - plotY;
             point.plotY = series.xAxis.len - plotX;
         }
@@ -313,7 +313,7 @@ namespace BoostSeries {
         const halo: SVGPath =
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        if (series.boost && series.isSeriesBoosting && inverted) {
+        if (series.boosted && inverted) {
             point.plotX = plotX;
             point.plotY = plotY;
         }
@@ -332,7 +332,7 @@ namespace BoostSeries {
     ): DataExtremesObject {
         if (
             this.boost &&
-            this.isSeriesBoosting &&
+            this.boosted &&
             this.boost.hasExtremes()
         ) {
             return {};
@@ -354,7 +354,7 @@ namespace BoostSeries {
             plotY: number = point.plotY || 0,
             inverted = chart.inverted;
 
-        if (series.isSeriesBoosting && inverted) {
+        if (series.boosted && inverted) {
             point.plotX = series.yAxis.len - plotY;
             point.plotY = series.xAxis.len - plotX;
         }
@@ -362,7 +362,7 @@ namespace BoostSeries {
         const attribs: SVGAttributes =
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        if (series.isSeriesBoosting && inverted) {
+        if (series.boosted && inverted) {
             point.plotX = plotX;
             point.plotY = plotY;
         }
@@ -380,8 +380,6 @@ namespace BoostSeries {
         this: Series,
         proceed: Function
     ): void {
-        const series = this;
-
         let dataToMeasure = this.options.data;
 
         /**
@@ -390,23 +388,27 @@ namespace BoostSeries {
          * If the data is going to be grouped, the series shouldn't be boosted.
          * @private
          */
-        function getSeriesBoosting(
+        const getSeriesBoosting = (
             data?: Array<(PointOptions|PointShortOptions)>
-        ): boolean {
+        ): boolean => {
+            const series = this as Composition;
+
             // Check if will be grouped.
             if (series.forceCrop) {
                 return false;
             }
             return (
-                series.chart.boost &&
-                series.chart.boost.isChartSeriesBoosting()
-            ) || (
-                (data ? data.length : 0) >=
-                (series.options.boostThreshold || Number.MAX_VALUE)
+                series.chart.boost.isChartSeriesBoosting() ||
+                (
+                    (data ? data.length : 0) >=
+                    (series.options.boostThreshold || Number.MAX_VALUE)
+                )
             );
-        }
+        };
 
-        if (boostEnabled(this.chart) && BoostableMap[this.type]) {
+        if (boostEnabled(this.chart) && BoostableMap[this.type] && this.boost) {
+            const series = this as Composition,
+                boost = series.boost;
 
             // If there are no extremes given in the options, we also need to
             // process the data to read the data extremes. If this is a heatmap,
@@ -414,36 +416,39 @@ namespace BoostSeries {
             if (
                 // First pass with options.data:
                 !getSeriesBoosting(dataToMeasure) ||
-                this.type === 'heatmap' ||
-                this.type === 'treemap' ||
+                series.type === 'heatmap' ||
+                series.type === 'treemap' ||
                 // processedYData for the stack (#7481):
-                this.options.stacking ||
-                !this.boost ||
-                !this.boost.hasExtremes(true)
+                series.options.stacking ||
+                !series.boost.hasExtremes(true)
             ) {
-                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-                dataToMeasure = this.processedXData;
+                proceed.apply(series, Array.prototype.slice.call(arguments, 1));
+                dataToMeasure = series.processedXData;
             }
 
-            // Set the isBoosting flag, second pass with processedXData to see
-            // if we have zoomed.
-            this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
+            // Set the isBoosting flag, second pass with processedXData to
+            // see if we have zoomed.
+            series.boosted = getSeriesBoosting(dataToMeasure);
 
             // Enter or exit boost mode
-            if (this.isSeriesBoosting && this.boost) {
+            if (series.boosted) {
                 // Force turbo-mode:
                 let firstPoint;
-                if (this.options.data && this.options.data.length) {
-                    firstPoint = this.getFirstValidPoint(this.options.data);
+                if (
+                    series.options.data &&
+                    series.options.data.length
+                ) {
+                    firstPoint = series.getFirstValidPoint(
+                        series.options.data
+                    );
                     if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                        error(12, false, this.chart);
+                        error(12, false, series.chart);
                     }
                 }
-                this.boost.enterBoost();
-            } else if (this.boost) {
-                this.boost.exitBoost();
+                boost.enterBoost();
+            } else {
+                boost.exitBoost();
             }
-
         // The series type is not boostable
         } else {
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -495,7 +500,7 @@ namespace BoostSeries {
 
         public alteredByBoost?: Array<BoostAlteredObject>;
 
-        public series: Composition;
+        private series: Composition;
 
         /* *
          *

@@ -32,8 +32,6 @@ const {
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
-        didBoost?: boolean;
-        isBoosting?: boolean;
         markerGroup?: Series['markerGroup'];
     }
 }
@@ -151,7 +149,7 @@ function init(): void {
             // Get or create the renderer
             renderer = createAndAttachRenderer(chart, series);
 
-            chart.isBoosting = true;
+            chart.boosted = true;
 
             boostOptions = renderer.settings;
 
@@ -380,7 +378,7 @@ function init(): void {
                 this: BubbleSeries,
                 proceed: Function
             ): boolean {
-                if (this.isSeriesBoosting) {
+                if (this.boosted) {
                     return false;
                 }
                 return proceed.apply(this, [].slice.call(arguments, 1));
@@ -433,17 +431,14 @@ function init(): void {
          * @private
          */
         function preRender(): void {
+            if (!chart.boost) {
+                return;
+            }
+
             // Reset force state
             chart.boostForceChartBoost = void 0;
             chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
-            chart.isBoosting = false;
-
-            if (
-                chart.didBoost &&
-                !(chart.boost && chart.boost.isChartSeriesBoosting())
-            ) {
-                chart.didBoost = false;
-            }
+            chart.boosted = false;
 
             // Clear the canvas
             if (chart.boostClear) {
@@ -453,11 +448,8 @@ function init(): void {
             if (
                 chart.canvas &&
                 chart.ogl &&
-                chart.boost &&
                 chart.boost.isChartSeriesBoosting()
             ) {
-                chart.didBoost = true;
-
                 // Allocate
                 chart.ogl.allocateBuffer(chart);
             }

@@ -893,7 +893,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             }
         }
 
-        if (series.visible && !series.isSeriesBoosting && points) {
+        if (series.visible && !series.boosted && points) {
             if (!label) {
 
                 let labelText = series.name;
@@ -1174,7 +1174,7 @@ function drawLabels(this: Chart, e: Event): void {
                 options.enabled &&
                 series.visible &&
                 (series.graph || series.area) &&
-                !series.isSeriesBoosting
+                !series.boosted
             ) {
                 (chart.labelSeries as any).push(series);
 

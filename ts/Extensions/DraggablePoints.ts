@@ -1754,7 +1754,7 @@ function getGroupedPoints(point: Point): Array<Point> {
         points: Array<Point> = [],
         groupKey = (series.options.dragDrop as any).groupBy;
 
-    if (series.isSeriesBoosting) { // #11156
+    if (series.boosted) { // #11156
         (series.options.data as any).forEach(function (
             pointOptions: (PointOptions|PointShortOptions),
             i: number
