@@ -20,6 +20,7 @@ const { doc } = H;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     error
 } = U;
 import WGLRenderer from './WGLRenderer.js';
@@ -218,5 +219,15 @@ function createAndAttachRenderer(
 
     return target.ogl;
 }
+
+addEvent(Series, 'hide', function (): void {
+    if (this.canvas && this.renderTarget) {
+        if (this.ogl) {
+            this.ogl.clear();
+        }
+        this.boostClear();
+    }
+
+});
 
 export default createAndAttachRenderer;

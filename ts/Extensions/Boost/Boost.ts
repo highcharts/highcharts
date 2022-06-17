@@ -20,12 +20,13 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
+import type Series from '../../Core/Series/Series';
 
 import BoostChart from './BoostChart.js';
+import BoostSeries from './BoostSeries.js';
 import BU from './BoostUtils.js';
 import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
-import './BoostOverrides.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -59,7 +60,8 @@ namespace Boost {
      */
     export function compose(
         ChartClass: typeof Chart,
-        ColorClass: typeof Color
+        SeriesClass: typeof Series,
+        ColorClass?: typeof Color
     ): void {
         if (!BU.hasWebGLSupport()) {
             if (typeof initCanvasBoost !== 'undefined') {
@@ -73,7 +75,7 @@ namespace Boost {
             init();
         }
 
-        if (composedClasses.indexOf(ColorClass) === -1) {
+        if (ColorClass && composedClasses.indexOf(ColorClass) === -1) {
             composedClasses.push(ColorClass);
 
             ColorClass.names = {
@@ -83,6 +85,7 @@ namespace Boost {
         }
 
         BoostChart.compose(ChartClass);
+        BoostSeries.compose(SeriesClass);
     }
 
 }
