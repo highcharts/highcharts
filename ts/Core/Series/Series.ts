@@ -1217,7 +1217,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && oldData[i].update) {
+                if (point !== oldData[i].y && (oldData[i].update)) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
