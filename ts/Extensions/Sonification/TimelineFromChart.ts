@@ -48,17 +48,17 @@ const isNoteDefinition = (str: string): boolean =>
 
 /**
  * Get chart wide min/max for a set of props, as well as per
- * series min/max for time props.
+ * series min/max for selected props.
  * @private
  */
 function getChartExtremesForProps(
     chart: Chart,
     props: string[],
-    timeProps: string[]
+    perSeriesProps: string[]
 ): ExtremesCache {
     const series = chart.series,
         numProps = props.length,
-        numTimeProps = timeProps.length,
+        numSeriesProps = perSeriesProps.length,
         initCache = (propList: string[]): PropExtremesCache =>
             propList.reduce((cache, prop): PropExtremesCache => {
                 ((cache[prop] = { min: Infinity, max: -Infinity }), cache);
@@ -79,9 +79,9 @@ function getChartExtremesForProps(
         globalExtremes = initCache(props);
 
     let i = series.length;
-    const seriesExtremes: PropExtremesCache[] = new Array(i);
+    const allSeriesExtremes: PropExtremesCache[] = new Array(i);
     while (i--) {
-        const timeExtremes = initCache(timeProps);
+        const seriesExtremes = initCache(perSeriesProps);
         const opts = series[i].options;
         if (
             !series[i].visible ||
@@ -96,17 +96,17 @@ function getChartExtremesForProps(
             while (k--) {
                 updateCache(globalExtremes, points[j], props[k]);
             }
-            k = numTimeProps;
+            k = numSeriesProps;
             while (k--) {
-                updateCache(timeExtremes, points[j], props[k]);
+                updateCache(seriesExtremes, points[j], props[k]);
             }
         }
-        seriesExtremes[i] = timeExtremes;
+        allSeriesExtremes[i] = seriesExtremes;
     }
 
     return {
         globalExtremes,
-        seriesExtremes
+        seriesExtremes: allSeriesExtremes
     };
 }
 
@@ -127,9 +127,9 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
         defaultSpeechMapping = globalOpts.defaultSpeechOptions &&
             globalOpts.defaultSpeechOptions.mapping || {},
         props: Record<string, boolean> = {},
-        timeprops: Record<string, boolean> = {},
+        perSeriesProps: Record<string, boolean> = {},
         addPropFromMappingParam = (param: string, val: unknown): void => {
-            const propObject = param === 'time' ? timeprops : props;
+            const propObject = param === 'time' ? perSeriesProps : props;
             if (typeof val === 'string' && param !== 'text') {
                 if (param === 'pitch' && isNoteDefinition(val)) {
                     return;
@@ -160,10 +160,17 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
         addPropsFromMappingOptions = (mapping: MappingOpts): void => {
             (Object.keys(mapping)).forEach((param): void =>
                 addPropFromMappingParam(param, (mapping as AnyRecord)[param]));
-        };
+        },
+        addPropsFromContextTracks = (
+            tracks: Sonification.ContextTrackOptions
+        ): void => tracks.forEach((track): void => {
+            props[track.valueProp || 'x'] =
+                perSeriesProps[track.valueProp || 'x'] = true;
+        });
 
     addPropsFromMappingOptions(defaultInstrMapping);
     addPropsFromMappingOptions(defaultSpeechMapping);
+    addPropsFromContextTracks(globalOpts.globalContextTracks || []);
     chart.series.forEach((series): void => {
         const sOpts = series.options.sonification;
         if (
@@ -171,6 +178,7 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
             sOpts &&
             sOpts.enabled !== false
         ) {
+            addPropsFromContextTracks(sOpts.contextTracks || []);
             (sOpts.tracks || []).concat(sOpts.contextTracks || []).forEach(
                 (trackOpts): void => {
                     if (trackOpts.mapping) {
@@ -182,7 +190,7 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
     });
 
     return getChartExtremesForProps(
-        chart, Object.keys(props), Object.keys(timeprops)
+        chart, Object.keys(props), Object.keys(perSeriesProps)
     );
 }
 
@@ -195,8 +203,8 @@ function mapToVirtualAxis(
     value: number,
     valueExtremes: PropExtremes,
     virtualAxisExtremes: PropExtremes,
-    invert: boolean,
-    logarithmic: boolean // Virtual axis is logarithmic
+    invert?: boolean,
+    logarithmic?: boolean // Virtual axis is logarithmic
 ): number {
     const lenValueAxis = valueExtremes.max - valueExtremes.min;
     if (lenValueAxis <= 0) {
@@ -228,17 +236,17 @@ function mapToVirtualAxis(
  * @private
  */
 function getMappingParameterValue(
-    point: Point,
+    context: Sonification.EventContext,
     extremesCache: PropExtremesCache,
     defaultMapping: Required<Sonification.MappingParameterOptions>,
     mappingOptions?: Sonification.MappingParameter,
-    time?: number
+    contextValueProp?: string
 ): number|null {
     if (typeof mappingOptions === 'number') {
         return mappingOptions;
     }
     if (typeof mappingOptions === 'function') {
-        return mappingOptions({ point, time: time || 0 });
+        return mappingOptions(extend({ time: 0 }, context));
     }
 
     let mapTo = mappingOptions as string,
@@ -261,24 +269,35 @@ function getMappingParameterValue(
         mapTo = mapTo.slice(1);
     }
 
-    let extremes = extremesCache[mapTo];
-    if (!extremes) {
-        extremes = extremesCache[mapTo] = getChartExtremesForProps(
-            point.series.chart, [mapTo], []
-        ).globalExtremes[mapTo];
+    let value: unknown = context.value;
+    const useContextValue = mapTo === 'value' && value !== void 0 &&
+        contextValueProp;
+    if (!useContextValue) {
+        const fixedValue = (
+            mappingOptions as Sonification.MappingParameterOptions
+        ).value;
+        if (fixedValue !== void 0) {
+            value = fixedValue;
+        } else {
+            if (!context.point) {
+                return null;
+            }
+            value = (context.point as any)[mapTo];
+        }
+        if (value === void 0) {
+            value = getNestedProperty(mapTo, context.point);
+        }
     }
 
-    let pointValue: unknown = (point as any)[mapTo];
-    if (pointValue === void 0) {
-        pointValue = getNestedProperty(mapTo, point);
-    }
-
-    if (typeof pointValue !== 'number') {
+    if (typeof value !== 'number' || value === null) {
         return null;
     }
 
+    const extremes = extremesCache[
+        useContextValue ? contextValueProp : mapTo
+    ];
     return mapToVirtualAxis(
-        pointValue, extremes, { min, max },
+        value as number, extremes, { min, max },
         isInverted, mapFunc === 'logarithmic'
     );
 }
@@ -289,19 +308,22 @@ function getMappingParameterValue(
  * @private
  */
 function getParamValWithDefault(
-    point: Point,
+    context: Sonification.EventContext,
     extremesCache: PropExtremesCache,
     mappingParamOptions: Sonification.MappingParameter,
     fallback: number,
-    defaults?: Partial<Sonification.MappingParameterOptions>
+    defaults?: Partial<Sonification.MappingParameterOptions>,
+    contextValueProp?: string
 ): number {
     return pick(getMappingParameterValue(
-        point,
+        context,
         extremesCache,
         extend({
             min: 0, max: 1, mapTo: 'y', mapFunction: 'linear'
-        }, (defaults || {}) as any),
-        mappingParamOptions
+        } as Required<Sonification.MappingParameterOptions>,
+        (defaults || {}) as Required<Sonification.MappingParameterOptions>),
+        mappingParamOptions,
+        contextValueProp
     ), fallback);
 }
 
@@ -318,7 +340,7 @@ function getPointTime(
     extremesCache: PropExtremesCache
 ): number {
     const time = getParamValWithDefault(
-        point, extremesCache, timeMappingOptions, 0,
+        { point, time: 0 }, extremesCache, timeMappingOptions, 0,
         { min: 0, max: duration, mapTo: 'x' }
     );
     return time + startTime;
@@ -418,12 +440,12 @@ function addTimelineChannelFromTrack(
  * @private
  */
 function addMappedInstrumentEvent(
-    point: Point,
+    context: Sonification.EventContext,
     channel: TimelineChannel,
     mappingOptions: Sonification.InstrumentTrackMappingOptions,
-    time: number,
     extremesCache: PropExtremesCache,
-    roundToMusicalNotes: boolean
+    roundToMusicalNotes: boolean,
+    contextValueProp?: string
 ): Sonification.TimelineEvent[] {
     const getParam = (
         param: string,
@@ -431,8 +453,8 @@ function addMappedInstrumentEvent(
         defaults: Partial<Sonification.MappingParameterOptions>,
         parent?: AnyRecord
     ): number => getParamValWithDefault(
-        point, extremesCache, (parent || mappingOptions as AnyRecord)[param],
-        fallback, defaults
+        context, extremesCache, (parent || mappingOptions as AnyRecord)[param],
+        fallback, defaults, contextValueProp
     );
 
     const eventsAdded: Sonification.TimelineEvent[] = [],
@@ -488,7 +510,8 @@ function addMappedInstrumentEvent(
         }
 
         eventOpts.note = getParamValWithDefault(
-            point, extremesCache, opts, 0, { min: 0, max: 107 }
+            context, extremesCache, opts, 0, { min: 0, max: 107 },
+            contextValueProp
         );
 
         if (roundToMusicalNotes) {
@@ -497,8 +520,8 @@ function addMappedInstrumentEvent(
 
         eventsAdded.push(
             channel.addEvent({
-                time: time + playDelay + gapBetweenNotes * ix,
-                relatedPoint: point,
+                time: context.time + playDelay + gapBetweenNotes * ix,
+                relatedPoint: context.point,
                 instrumentEventOptions: ix !== void 0 ?
                     extend({}, eventOpts) : eventOpts
             })
@@ -524,7 +547,7 @@ function addMappedInstrumentEvent(
  * @private
  */
 function getSpeechMessageValue(
-    context: Sonification.CallbackContext,
+    context: Sonification.EventContext,
     messageParam: string|Sonification.TrackStringCallback
 ): string {
     return format(
@@ -542,33 +565,31 @@ function getSpeechMessageValue(
  * @private
  */
 function addMappedSpeechEvent(
-    point: Point,
+    context: Sonification.EventContext,
     channel: TimelineChannel,
     mappingOptions: Sonification.SpeechTrackMappingOptions,
-    time: number,
-    extremesCache: PropExtremesCache
+    extremesCache: PropExtremesCache,
+    contextValueProp?: string
 ): Sonification.TimelineEvent|undefined {
     const getParam = (
         param: string,
         fallback: number,
         defaults: Partial<Sonification.MappingParameterOptions>
     ): number => getParamValWithDefault(
-        point, extremesCache, (mappingOptions as AnyRecord)[param],
-        fallback, defaults
+        context, extremesCache, (mappingOptions as AnyRecord)[param],
+        fallback, defaults, contextValueProp
     );
 
     const playDelay = getParam('playDelay', 0, { max: 200 }),
         pitch = getParam('pitch', 1, { min: 0.3, max: 2 }),
         rate = getParam('rate', 1, { min: 0.4, max: 4 }),
         volume = getParam('volume', 1, { min: 0.1 }),
-        message = getSpeechMessageValue({
-            point, time
-        }, mappingOptions.text);
+        message = getSpeechMessageValue(context, mappingOptions.text);
 
     if (message) {
         return channel.addEvent({
-            time: time + playDelay,
-            relatedPoint: point,
+            time: context.time + playDelay,
+            relatedPoint: context.point,
             speechOptions: {
                 pitch,
                 rate,
@@ -661,14 +682,14 @@ function timelineFromChart(
                     let eventsAdded: Sonification.TimelineEvent[] = [];
                     if (mergedOpts.type === 'speech') {
                         const eventAdded = addMappedSpeechEvent(
-                            point, channel, mergedOpts.mapping,
-                            time, extremesCache.globalExtremes);
+                            { point, time }, channel, mergedOpts.mapping,
+                            extremesCache.globalExtremes);
                         if (eventAdded) {
                             eventsAdded = [eventAdded];
                         }
                     } else {
                         eventsAdded = addMappedInstrumentEvent(
-                            point, channel, mergedOpts.mapping, time,
+                            { point, time }, channel, mergedOpts.mapping,
                             extremesCache.globalExtremes,
                             pick(mergedOpts.roundToMusicalNotes, true));
                     }
@@ -692,6 +713,79 @@ function timelineFromChart(
             lastEvent.callback = eventOptions.onSeriesEnd ?
                 eventOptions.onSeriesEnd.bind(null, series, timeline) :
                 void 0;
+
+            // Add the context tracks that are not related to points
+            contextTracks.forEach((trackOpts): void => {
+                const mergedOpts = trackOpts.type === 'speech' ?
+                    merge(defaultSpeechOpts, trackOpts) :
+                    merge(defaultInstrOpts, trackOpts);
+
+                const contextChannel = addTimelineChannelFromTrack(
+                    timeline, audioContext,
+                    destinationNode, mergedOpts
+                );
+
+                const {
+                        timeInterval,
+                        valueInterval
+                    } = mergedOpts,
+                    valueProp = mergedOpts.valueProp || 'x',
+                    contextExtremes = extremesCache
+                        .seriesExtremes[seriesIx][valueProp],
+                    isActive = (time: number, value: number): boolean => {
+                        const activeWhen = mergedOpts.activeWhen;
+                        if (typeof activeWhen === 'function') {
+                            return activeWhen({ value, time });
+                        }
+                        if (typeof activeWhen === 'object') {
+                            return value <= (activeWhen as AnyRecord).max &&
+                                value >= (activeWhen as AnyRecord).min;
+                        }
+                        return true;
+                    },
+                    addContextEvent = (time: number, value: number): void => {
+                        if (!mergedOpts.mapping || !isActive(time, value)) {
+                            return;
+                        }
+
+                        if (mergedOpts.type === 'speech') {
+                            addMappedSpeechEvent({ time, value },
+                                contextChannel, mergedOpts.mapping,
+                                extremesCache.globalExtremes,
+                                valueProp);
+                        } else {
+                            addMappedInstrumentEvent({ time, value },
+                                contextChannel, mergedOpts.mapping,
+                                extremesCache.globalExtremes,
+                                pick(mergedOpts.roundToMusicalNotes, true),
+                                valueProp);
+                        }
+                    };
+
+                if (timeInterval) {
+                    let time = 0;
+                    while (time <= seriesDuration) {
+                        const val = mapToVirtualAxis(
+                            time, { min: 0, max: seriesDuration },
+                            contextExtremes
+                        );
+                        addContextEvent(time + startTime, val);
+                        time += timeInterval;
+                    }
+                }
+                if (valueInterval) {
+                    let val = contextExtremes.min;
+                    while (val <= contextExtremes.max) {
+                        const time = mapToVirtualAxis(
+                            val, contextExtremes,
+                            { min: 0, max: seriesDuration },
+                            false, mergedOpts.valueMapFunction === 'logarithmic'
+                        );
+                        addContextEvent(time + startTime, val);
+                        val += valueInterval;
+                    }
+                }
+            });
 
             if (isSequential) {
                 startTime += seriesDuration + afterSeriesWait;

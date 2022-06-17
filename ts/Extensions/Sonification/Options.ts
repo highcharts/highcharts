@@ -20,18 +20,22 @@ import type SynthPatch from './SynthPatch';
 
 declare global {
     namespace Sonification {
-        interface CallbackContext {
+        interface EventContext {
             time: number;
             point?: Point;
-            contextValue?: number;
+            value?: number;
         }
         type SeriesCallback = (
             series: Series, timeline: SonificationTimeline
         ) => void;
-        type TrackValueCallback = (context: CallbackContext) => number;
-        type TrackStringCallback = (context: CallbackContext) => string;
-        type TrackPredicateCallback = (context: CallbackContext) => boolean;
+        type TrackValueCallback = (context: EventContext) => number;
+        type TrackStringCallback = (context: EventContext) => string;
+        type TrackPredicateCallback = (context: EventContext) => boolean;
         type TrackOptions = Array<InstrumentTrackOptions|SpeechTrackOptions>;
+        type InstrumentContextTrackOptions = InstrumentTrackOptions &
+        ContextOptions;
+        type SpeechContextTrackOptions = SpeechTrackOptions & ContextOptions;
+        type ContextTrackOptions = Array<InstrumentContextTrackOptions|SpeechContextTrackOptions>;
         type MapFunctionTypes = 'linear'|'logarithmic';
         type MappingParameter =
         string|number|TrackValueCallback|MappingParameterOptions;
@@ -41,6 +45,7 @@ declare global {
             max?: number;
             mapTo: string;
             mapFunction?: MapFunctionTypes;
+            value?: number;
         }
 
         interface PitchMappingParameterOptions {
@@ -48,6 +53,7 @@ declare global {
             max?: number|string;
             mapTo: string;
             mapFunction?: MapFunctionTypes;
+            value?: number;
         }
 
         interface FilterMappingOptions {
@@ -84,6 +90,19 @@ declare global {
             roundToMusicalNotes?: boolean;
         }
 
+        interface ValueConstraints {
+            min?: number;
+            max?: number;
+        }
+
+        interface ContextOptions {
+            timeInterval?: number;
+            valueInterval?: number;
+            valueProp?: string;
+            valueMapFunction?: MapFunctionTypes;
+            activeWhen?: TrackPredicateCallback|ValueConstraints;
+        }
+
         interface SpeechTrackMappingOptions {
             time?: MappingParameter;
             text: string|TrackStringCallback;
@@ -117,7 +136,7 @@ declare global {
             showPlayMarker: boolean;
             showCrosshairOnly?: boolean;
             globalTracks?: TrackOptions;
-            globalContextTracks?: TrackOptions;
+            globalContextTracks?: ContextTrackOptions;
             /**
              * Used to create a track for series without options
              */
@@ -141,7 +160,7 @@ declare global {
             /**
              * Continuously play context sounds
              */
-            contextTracks?: TrackOptions;
+            contextTracks?: ContextTrackOptions;
         }
     }
 }

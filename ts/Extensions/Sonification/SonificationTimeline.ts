@@ -194,9 +194,7 @@ class SonificationTimeline {
                         if (chart.hoverSeries) {
                             chart.hoverSeries.onMouseOut();
                         }
-                        if (showCrosshairOnly) {
-                            chart.axes.forEach((a): void => a.hideCrosshair());
-                        }
+                        chart.axes.forEach((a): void => a.hideCrosshair());
                     }
                 },
                 maxTime + 250

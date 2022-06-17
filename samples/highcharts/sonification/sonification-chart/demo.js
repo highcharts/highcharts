@@ -8,11 +8,9 @@ var chart = Highcharts.chart('container', {
         masterVolume: 0.5,
         defaultInstrumentOptions: {
             mapping: {
-                mapping: {
-                    pitch: {
-                        min: 'c3',
-                        max: 'c6'
-                    }
+                pitch: {
+                    min: 'c3',
+                    max: 'c6'
                 }
             }
         },
