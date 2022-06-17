@@ -82,9 +82,11 @@ class BoostChartAdditions {
             composedClasses.push(ChartClass);
 
             addEvent(ChartClass, 'init', function (): void {
-                this.boost = new BoostChartAdditions(
-                    this as BoostChartComposition
-                );
+                if (!this.boost) {
+                    this.boost = new BoostChartAdditions(
+                        this as BoostChartComposition
+                    );
+                }
             });
         }
 

@@ -137,18 +137,6 @@ function onSeriesDestroy(
 }
 
 /**
- * @private
- */
-function onSeriesInit(
-    this: Series
-): void {
-    // @todo limit compose to supported series classes
-    if (!this.boost && Boostables.indexOf(this.type) >= 0) {
-        this.boost = new BoostSeriesAdditions(this as BoostSeriesComposition);
-    }
-}
-
-/**
  * Override a bunch of methods the same way. If the number of points is
  * below the threshold, run the original method. If not, check for a
  * canvas version or do nothing.
@@ -428,7 +416,14 @@ class BoostSeriesAdditions {
             composedClasses.push(SeriesClass);
 
             addEvent(SeriesClass, 'destroy', onSeriesDestroy);
-            addEvent(SeriesClass, 'init', onSeriesInit);
+            addEvent(SeriesClass, 'init', function (): void {
+                // @todo limit compose to supported series classes
+                if (!this.boost && Boostables.indexOf(this.type) >= 0) {
+                    this.boost = new BoostSeriesAdditions(
+                        this as BoostSeriesComposition
+                    );
+                }
+            });
 
             const seriesProto = SeriesClass.prototype;
 
