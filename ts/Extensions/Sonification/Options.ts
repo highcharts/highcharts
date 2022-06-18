@@ -86,13 +86,16 @@ declare global {
             type?: 'instrument';
             instrument: string|SynthPatch.SynthPatchOptions;
             mapping?: InstrumentTrackMappingOptions;
-            activeWhen?: TrackPredicateCallback;
+            activeWhen?: TrackPredicateCallback|ValueConstraints;
             roundToMusicalNotes?: boolean;
         }
 
         interface ValueConstraints {
             min?: number;
             max?: number;
+            crossingUp?: number;
+            crossingDown?: number;
+            prop?: string;
         }
 
         interface ContextOptions {
@@ -114,7 +117,7 @@ declare global {
         interface SpeechTrackOptions {
             type: 'speech';
             mapping?: SpeechTrackMappingOptions;
-            activeWhen?: TrackPredicateCallback;
+            activeWhen?: TrackPredicateCallback|ValueConstraints;
             preferredVoice?: string;
             language: string;
         }

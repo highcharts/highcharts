@@ -47,6 +47,23 @@ const isNoteDefinition = (str: string): boolean =>
 
 
 /**
+ * Get the value of a point property from string.
+ * @private
+ */
+function getPointPropValue(point: Point, prop?: string): number|undefined {
+    let ret;
+    if (prop) {
+        ret = (point as AnyRecord)[prop];
+        if (typeof ret === 'number') {
+            return ret;
+        }
+        ret = getNestedProperty(prop, point);
+    }
+    return typeof ret === 'number' ? ret : void 0;
+}
+
+
+/**
  * Get chart wide min/max for a set of props, as well as per
  * series min/max for selected props.
  * @private
@@ -602,6 +619,59 @@ function addMappedSpeechEvent(
 
 
 /**
+ * Should a track be active for this event?
+ * @private
+ */
+function isActive(
+    context: Sonification.EventContext,
+    activeWhen?: Sonification.TrackPredicateCallback|
+    Sonification.ValueConstraints,
+    lastPropValue?: number
+): boolean {
+    if (typeof activeWhen === 'function') {
+        return activeWhen(context);
+    }
+    if (typeof activeWhen === 'object') {
+        const prop = activeWhen.prop,
+            val = pick(
+                context.value,
+                context.point && getPointPropValue(context.point, prop)
+            );
+        if (typeof val !== 'number') {
+            return false;
+        }
+
+        let crossingOk = true;
+        const crossingUp = activeWhen.crossingUp,
+            crossingDown = activeWhen.crossingDown,
+            hasLastValue = typeof lastPropValue === 'number';
+        if (crossingUp && crossingDown) {
+            crossingOk = hasLastValue && (
+                lastPropValue < crossingUp && val >= crossingUp ||
+                lastPropValue > crossingDown && val <= crossingDown
+            );
+        } else {
+            crossingOk = (
+                crossingUp === void 0 ||
+                hasLastValue && lastPropValue < crossingUp &&
+                    val >= crossingUp
+            ) && (
+                crossingDown === void 0 ||
+                hasLastValue && lastPropValue > crossingDown &&
+                    val <= crossingDown
+            );
+        }
+
+        const max = pick(activeWhen.max, Infinity),
+            min = pick(activeWhen.min, -Infinity);
+
+        return val <= max && val >= min && crossingOk;
+    }
+    return true;
+}
+
+
+/**
  * Build a new timeline object from a chart.
  * @private
  */
@@ -645,14 +715,26 @@ function timelineFromChart(
 
             // First and last events across channels related to this series
             let firstEvent: Sonification.TimelineEvent = { time: Infinity },
-                lastEvent: Sonification.TimelineEvent = { time: -Infinity };
+                lastEvent: Sonification.TimelineEvent = { time: -Infinity },
+                // For crossing threshold notifications
+                lastPropValue: number|undefined;
 
             series.points.forEach((point): void => {
                 // Add the mapped tracks
                 mainTracks.forEach((trackOpts, trackIx): void => {
                     const mergedOpts = trackOpts.type === 'speech' ?
-                        merge(defaultSpeechOpts, trackOpts) :
-                        merge(defaultInstrOpts, trackOpts);
+                            merge(defaultSpeechOpts, trackOpts) :
+                            merge(defaultInstrOpts, trackOpts),
+                        activeWhen = mergedOpts.activeWhen,
+                        updateLastPropValue = (): void => {
+                            if (
+                                typeof activeWhen === 'object' &&
+                                activeWhen.prop
+                            ) {
+                                lastPropValue = getPointPropValue(
+                                    point, activeWhen.prop);
+                            }
+                        };
 
                     let channel = mainChannels[trackIx];
                     if (!channel) {
@@ -672,9 +754,9 @@ function timelineFromChart(
                     // Is this track active?
                     if (
                         !mergedOpts.mapping ||
-                        mergedOpts.activeWhen &&
-                        !mergedOpts.activeWhen({ point, time })
+                        !isActive({ point, time }, activeWhen, lastPropValue)
                     ) {
+                        updateLastPropValue();
                         return;
                     }
 
@@ -693,6 +775,8 @@ function timelineFromChart(
                             extremesCache.globalExtremes,
                             pick(mergedOpts.roundToMusicalNotes, true));
                     }
+
+                    updateLastPropValue();
 
                     // Update the first/last event for later event handling
                     firstEvent = eventsAdded.reduce(
@@ -725,28 +809,30 @@ function timelineFromChart(
                     destinationNode, mergedOpts
                 );
 
+                lastPropValue = void 0;
                 const {
                         timeInterval,
                         valueInterval
                     } = mergedOpts,
                     valueProp = mergedOpts.valueProp || 'x',
+                    activeWhen = mergedOpts.activeWhen,
                     contextExtremes = extremesCache
                         .seriesExtremes[seriesIx][valueProp],
-                    isActive = (time: number, value: number): boolean => {
-                        const activeWhen = mergedOpts.activeWhen;
-                        if (typeof activeWhen === 'function') {
-                            return activeWhen({ value, time });
-                        }
-                        if (typeof activeWhen === 'object') {
-                            return value <= (activeWhen as AnyRecord).max &&
-                                value >= (activeWhen as AnyRecord).min;
-                        }
-                        return true;
-                    },
                     addContextEvent = (time: number, value: number): void => {
-                        if (!mergedOpts.mapping || !isActive(time, value)) {
+                        if (
+                            !mergedOpts.mapping ||
+                            !isActive(
+                                { time, value },
+                                typeof activeWhen === 'object' ?
+                                    extend({ prop: valueProp }, activeWhen) :
+                                    activeWhen,
+                                lastPropValue
+                            )
+                        ) {
+                            lastPropValue = value;
                             return;
                         }
+                        lastPropValue = value;
 
                         if (mergedOpts.type === 'speech') {
                             addMappedSpeechEvent({ time, value },
