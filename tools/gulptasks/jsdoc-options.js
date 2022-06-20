@@ -39,6 +39,46 @@ const TREE_FILE = 'tree.json';
  * */
 
 /**
+ * Creates the `error.html` file
+ *
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function createErrorHtml() {
+    const fs = require('fs');
+
+    fs.writeFileSync(
+        path.join(TARGET_DIRECTORY, 'error.html'),
+        `<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8" />
+                <script type="text/javascript">
+                    if (location.pathname.endsWith('.html')) {
+                        location.href = '/highcharts/index.html';
+                    } else if (location.pathname.endsWith('/')) {
+                        location.href = (
+                            location.pathname + 'index.html' +
+                            (location.hash.length > 1 ? location.hash : '')
+                        );
+                    } else {
+                        location.href = (
+                            location.pathname + '.html' +
+                            (location.hash.length > 1 ? location.hash : '')
+                        );
+                    }
+                </script>
+                <title>Highcharts API Reference</title>
+            </head>
+            <body>
+                <p><a href="/highcharts/index.html">Redirect</a></p>
+            </body>
+        </html>
+        `.replace(/\n {8,8}/gu, '\n')
+    );
+}
+
+/**
  * Creates the Highcharts API
  *
  * @return {Promise<void>}
@@ -161,6 +201,7 @@ function jsDocOptions() {
 
         Promise
             .resolve()
+            .then(createErrorHtml)
             .then(createTreeJson)
             .then(testTreeJson)
             .then(createApiDocumentation)
