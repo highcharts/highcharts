@@ -32,6 +32,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import ColorString from '../../../Core/Color/ColorString';
 const {
     extend,
     correctFloat,
@@ -190,22 +191,38 @@ class MACDIndicator extends SMAIndicator {
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
+        const originalColor = this.color,
+            originalColorIndex = this.userOptions._colorIndex;
+
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
-            // Set default color for a signal line and the histogram:
-            this.options = merge({
-                signalLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
-                },
-                macdLine: {
-                    styles: {
-                        color: this.color
-                    }
+            // If the default colour doesn't set, get the next available from
+            // the array and apply it #15608.
+            if (defined(this.userOptions._colorIndex)) {
+                if (
+                    this.options.signalLine &&
+                    this.options.signalLine.styles &&
+                    !this.options.signalLine.styles.lineColor
+                ) {
+                    this.userOptions._colorIndex++;
+                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.options.signalLine.styles.lineColor =
+                        this.color as ColorString;
                 }
-            }, this.options);
+
+                if (
+                    this.options.macdLine &&
+                    this.options.macdLine.styles &&
+                    !this.options.macdLine.styles.lineColor
+                ) {
+                    this.userOptions._colorIndex++;
+                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.options.macdLine.styles.lineColor =
+                        this.color as ColorString;
+                }
+            }
+
 
             // Zones have indexes automatically calculated, we need to
             // translate them to support multiple lines within one indicator
@@ -221,6 +238,10 @@ class MACDIndicator extends SMAIndicator {
             };
             this.resetZones = true;
         }
+
+        // Reset color and index #15608.
+        this.color = originalColor;
+        this.userOptions._colorIndex = originalColorIndex;
     }
 
     public toYData(

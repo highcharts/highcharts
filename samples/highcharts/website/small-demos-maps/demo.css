@@ -1,0 +1,21 @@
+body {
+    background-color: #46465c;
+    padding: 0;
+    color: #fff;
+}
+
+.chart-container {
+    border: 0 solid #000;
+    width: 100%;
+}
+
+a,
+a:hover {
+    color: #fff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#demo-content { margin: 0; }

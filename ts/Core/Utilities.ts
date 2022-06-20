@@ -25,6 +25,7 @@ import type {
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Time from './Time';
 
 import H from './Globals.js';
 const {
@@ -1161,7 +1162,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<string, number> = {
+const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,

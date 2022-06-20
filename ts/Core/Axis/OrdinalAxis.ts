@@ -20,6 +20,7 @@ import type DateTimeAxis from './DateTimeAxis';
 import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -48,7 +49,7 @@ declare module './AxisComposition' {
         ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
         getTimeTicks(
-            normalizedInterval: DateTimeAxis.NormalizedObject,
+            normalizedInterval: Time.TimeNormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,
@@ -114,7 +115,7 @@ namespace OrdinalAxis {
         isInternal?: boolean;
         ordinal: Additions;
         getTimeTicks(
-            normalizedInterval: DateTimeAxis.NormalizedObject,
+            normalizedInterval: Time.TimeNormalizedObject,
             min: number,
             max: number,
             startOfWeek: number,
@@ -202,7 +203,7 @@ namespace OrdinalAxis {
      */
     function getTimeTicks(
         this: Axis,
-        normalizedInterval: DateTimeAxis.NormalizedObject,
+        normalizedInterval: Time.TimeNormalizedObject,
         min: number,
         max: number,
         startOfWeek?: number,

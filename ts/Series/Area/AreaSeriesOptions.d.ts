@@ -32,4 +32,10 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<AreaSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default AreaSeriesOptions;
