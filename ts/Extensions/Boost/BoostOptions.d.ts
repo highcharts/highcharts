@@ -10,8 +10,6 @@
  *
  * */
 
-'use strict';
-
 import '../../Core/Globals.js';
 
 /* *
@@ -304,5 +302,3 @@ declare global {
  * @requires   modules/boost
  * @apioption  plotOptions.series.boostBlending
  */
-
-''; // adds doclets above to transpiled file
