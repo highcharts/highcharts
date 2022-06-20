@@ -19,11 +19,13 @@
 import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
 import type AreaSplinePoint from './AreaSplinePoint';
 
-import AreaSeries from '../Area/AreaSeries.js';
-const { prototype: areaProto } = AreaSeries;
 import SplineSeries from '../Spline/SplineSeries.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    area: AreaSeries,
+    area: { prototype: areaProto }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -49,7 +51,7 @@ class AreaSplineSeries extends SplineSeries {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -76,8 +78,9 @@ class AreaSplineSeries extends SplineSeries {
  * */
 interface AreaSplineSeries extends SplineSeries {
     pointClass: typeof AreaSplinePoint;
-    getStackPoints: AreaSeries['getStackPoints'];
-    drawGraph: typeof AreaSeries.prototype.drawGraph;
+    getGraphPath: typeof areaProto.getGraphPath,
+    getStackPoints: typeof areaProto.getStackPoints;
+    drawGraph: typeof areaProto.drawGraph;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
 }
 
