@@ -19,6 +19,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type BoostOptions from './BoostOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorMapMixin from '../../Series/ColorMapMixin';
 import type Point from '../../Core/Series/Point';
@@ -301,7 +302,7 @@ class WGLRenderer {
     /**
      * @private
      */
-    public setOptions(options: Highcharts.BoostOptions): void {
+    public setOptions(options: BoostOptions): void {
 
         // The pixelRatio defaults to 1. This is an antipattern, we should
         // refactor the Boost options to include an object of default options as

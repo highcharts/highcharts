@@ -16,6 +16,10 @@
  *
  * */
 
+import type {
+    BoostDebugOptions,
+    BoostOptions
+} from './BoostOptions';
 import type ColorString from '../../Core/Color/ColorString';
 
 /* *
@@ -24,7 +28,7 @@ import type ColorString from '../../Core/Color/ColorString';
  *
  * */
 
-interface WGLDebugOptions extends Highcharts.BoostDebugOptions {
+interface WGLDebugOptions extends BoostDebugOptions {
     timeBufferCopy: boolean;
     timeKDTree: boolean;
     timeRendering: boolean;
@@ -33,7 +37,7 @@ interface WGLDebugOptions extends Highcharts.BoostDebugOptions {
     showSkipSummary: boolean;
 }
 
-interface WGLOptions extends Highcharts.BoostOptions {
+interface WGLOptions extends BoostOptions {
     debug: WGLDebugOptions;
     fillColor: ColorString;
     lineWidth: number;

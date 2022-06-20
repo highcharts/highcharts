@@ -196,7 +196,6 @@ class WGLVertexBuffer {
     }
 
     /**
-     * @private
      * Adds data to the pre-allocated buffer.
      * @private
      * @param {number} x

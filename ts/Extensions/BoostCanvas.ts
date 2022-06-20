@@ -49,6 +49,20 @@ const {
     wrap
 } = U;
 
+declare module './Boost/BoostOptions' {
+    interface BoostOptions {
+        timeRendering?: boolean;
+        timeSeriesProcessing?: boolean;
+        timeSetup?: boolean;
+    }
+}
+
+declare module './Boost/BoostTargetObject' {
+    interface BoostTargetObject {
+        ctx?: (CanvasRenderingContext2D|null);
+    }
+}
+
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike extends BoostTargetObject {
         cvsStrokeBatch?: number;
@@ -90,11 +104,6 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module './Boost/BoostTargetObject' {
-    interface BoostTargetObject {
-        ctx?: (CanvasRenderingContext2D|null);
-    }
-}
 
 /**
  * Internal types
@@ -104,11 +113,6 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost-canvas */
         function initCanvasBoost(): void;
-        interface BoostOptions {
-            timeRendering?: boolean;
-            timeSeriesProcessing?: boolean;
-            timeSetup?: boolean;
-        }
     }
 }
 
