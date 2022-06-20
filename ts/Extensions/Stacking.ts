@@ -444,13 +444,17 @@ class StackItem {
 
             if (isNegative) {
                 if (chart.inverted && axis.reversed) {
-                    boxOffsetX -= chart.spacing[2];
+                    boxOffsetX -= stackBox.width;
                 } else if (chart.inverted) {
                     boxOffsetX -= chart.spacing[1];
                 } else if (axis.reversed) {
                     boxOffsetY += chart.spacing[2];
                 }
             }
+
+            // Round to avoid clipping in isInsidePlot.
+            boxOffsetX = Math.ceil(boxOffsetX);
+            boxOffsetY = Math.ceil(boxOffsetY);
 
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
