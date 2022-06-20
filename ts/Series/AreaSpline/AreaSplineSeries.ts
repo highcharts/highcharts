@@ -18,6 +18,7 @@
 
 import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
 import type AreaSplinePoint from './AreaSplinePoint';
+
 import AreaSeries from '../Area/AreaSeries.js';
 const { prototype: areaProto } = AreaSeries;
 import SplineSeries from '../Spline/SplineSeries.js';
@@ -52,43 +53,6 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    /**
-     * The area spline series is an area series where the graph between the
-     * points is smoothed into a spline.
-     *
-     * @sample {highcharts} highcharts/demo/areaspline/
-     *         Area spline chart
-     * @sample {highstock} stock/demo/areaspline/
-     *         Area spline chart
-     *
-     * @extends   plotOptions.area
-     * @excluding step, boostThreshold, boostBlending
-     * @product   highcharts highstock
-     * @apioption plotOptions.areaspline
-     */
-
-    /**
-     * @see [fillColor](#plotOptions.areaspline.fillColor)
-     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
-     *
-     * @apioption plotOptions.areaspline.color
-     */
-
-    /**
-     * @see [color](#plotOptions.areaspline.color)
-     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
-     *
-     * @apioption plotOptions.areaspline.fillColor
-     */
-
-    /**
-     * @see [color](#plotOptions.areaspline.color)
-     * @see [fillColor](#plotOptions.areaspline.fillColor)
-     *
-     * @default   {highcharts} 0.75
-     * @default   {highstock} 0.75
-     * @apioption plotOptions.areaspline.fillOpacity
-     */
     public static defaultOptions: AreaSplineSeriesOptions = merge(
         SplineSeries.defaultOptions,
         AreaSeries.defaultOptions
@@ -107,7 +71,7 @@ class AreaSplineSeries extends SplineSeries {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 interface AreaSplineSeries extends SplineSeries {
@@ -130,9 +94,6 @@ extend(AreaSplineSeries.prototype, {
  *
  * */
 
-/**
- * @private
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         areaspline: typeof AreaSplineSeries;
@@ -143,11 +104,55 @@ SeriesRegistry.registerSeriesType('areaspline', AreaSplineSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
 export default AreaSplineSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * The area spline series is an area series where the graph between the
+ * points is smoothed into a spline.
+ *
+ * @sample {highcharts} highcharts/demo/areaspline/
+ *         Area spline chart
+ * @sample {highstock} stock/demo/areaspline/
+ *         Area spline chart
+ *
+ * @extends   plotOptions.area
+ * @excluding step, boostThreshold, boostBlending
+ * @product   highcharts highstock
+ * @apioption plotOptions.areaspline
+ */
+
+/**
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.color
+ */
+
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.fillColor
+ */
+
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption plotOptions.areaspline.fillOpacity
+ */
 
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
