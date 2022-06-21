@@ -149,8 +149,7 @@ export default AreaSplineRangeSeries;
  * @see [color](#plotOptions.areasplinerange.color)
  * @see [fillColor](#plotOptions.areasplinerange.fillColor)
  *
- * @default   {highcharts} 0.75
- * @default   {highstock} 0.75
+ * @default   0.75
  * @apioption plotOptions.areasplinerange.fillOpacity
  */
 
@@ -238,8 +237,7 @@ export default AreaSplineRangeSeries;
  * @see [color](#series.areasplinerange.color)
  * @see [fillColor](#series.areasplinerange.fillColor)
  *
- * @default   {highcharts} 0.75
- * @default   {highstock} 0.75
+ * @default   0.75
  * @apioption series.areasplinerange.fillOpacity
  */
 
