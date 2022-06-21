@@ -20,6 +20,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AreaRangeSeries from '../Series/AreaRange/AreaRangeSeries';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
@@ -79,8 +80,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
-        rectPlotX?: Highcharts.PolarPoint['rectPlotX'];
-        rectPlotY?: Highcharts.PolarPoint['rectPlotY'];
+        rectPlotX?: PolarPoint['rectPlotX'];
+        rectPlotY?: PolarPoint['rectPlotY'];
         ttBelow?: boolean;
     }
 }
@@ -89,9 +90,9 @@ declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
-        polarArc: Highcharts.PolarSeries['polarArc'];
+        polarArc: PolarSeries['polarArc'];
         /** @requires Series/Polar */
-        findAlignments: Highcharts.PolarSeries['findAlignments'];
+        findAlignments: PolarSeries['findAlignments'];
     }
 }
 
@@ -101,83 +102,74 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AreaRangeSeries {
-            findAlignments: PolarSeries['findAlignments'];
-        }
-        interface PolarConnector {
-            leftContX: number;
-            leftContY: number;
-            plotX: number;
-            plotY: number;
-            prevPointCont?: PolarConnector;
-            rightContX: number;
-            rightContY: number;
-        }
-        interface PolarPoint extends Point {
-            plotX: number;
-            plotY: number;
-            polarPlotX: number;
-            polarPlotY: number;
-            rectPlotX: number;
-            rectPlotY: number;
-            series: PolarSeries;
-        }
-        interface PolarSeries extends Series {
-            startAngleRad: number;
-            clipCircle: SVGElement;
-            connectEnds?: boolean;
-            data: Array<PolarPoint>;
-            group: SVGElement;
-            hasClipCircleSetter?: boolean;
-            kdByAngle?: boolean;
-            points: Array<PolarPoint>;
-            preventPostTranslate?: boolean;
-            thresholdAngleRad: number | undefined;
-            translatedThreshold?: number;
-            animate(init?: boolean): void;
-            searchPoint: (
-                PolarSeries['kdByAngle'] extends true ?
-                    PolarSeries['searchPointByAngle'] :
-                    Series['searchPoint']
-            );
-            xAxis: RadialAxis.AxisComposition;
-            yAxis: RadialAxis.AxisComposition;
-            getConnectors(
-                segment: Array<Point>,
-                index: number,
-                calculateNeighbours?: boolean,
-                connectEnds?: boolean
-            ): PolarConnector;
-            polarArc(
-                low: number,
-                high: number,
-                start: number,
-                end: number
-            ): SVGAttributes;
-            findAlignments(
-                angle: number,
-                options: DataLabelOptions,
-            ): DataLabelOptions;
-            searchPointByAngle(e: PointerEvent): (Point|undefined);
-            translate(): void;
-            toXY(point: Point): void;
-        }
-    }
+interface PolarConnector {
+    leftContX: number;
+    leftContY: number;
+    plotX: number;
+    plotY: number;
+    prevPointCont?: PolarConnector;
+    rightContX: number;
+    rightContY: number;
+}
+
+interface PolarPoint extends Point {
+    plotX: number;
+    plotY: number;
+    polarPlotX: number;
+    polarPlotY: number;
+    rectPlotX: number;
+    rectPlotY: number;
+    series: PolarSeries;
+}
+
+interface PolarSeries extends Series {
+    startAngleRad: number;
+    clipCircle: SVGElement;
+    connectEnds?: boolean;
+    data: Array<PolarPoint>;
+    group: SVGElement;
+    hasClipCircleSetter?: boolean;
+    kdByAngle?: boolean;
+    points: Array<PolarPoint>;
+    preventPostTranslate?: boolean;
+    thresholdAngleRad: number | undefined;
+    translatedThreshold?: number;
+    animate(init?: boolean): void;
+    searchPoint: (
+        PolarSeries['kdByAngle'] extends true ?
+            PolarSeries['searchPointByAngle'] :
+            Series['searchPoint']
+    );
+    xAxis: RadialAxis.AxisComposition;
+    yAxis: RadialAxis.AxisComposition;
+    getConnectors(
+        segment: Array<Point>,
+        index: number,
+        calculateNeighbours?: boolean,
+        connectEnds?: boolean
+    ): PolarConnector;
+    polarArc(
+        low: number,
+        high: number,
+        start: number,
+        end: number
+    ): SVGAttributes;
+    findAlignments(
+        angle: number,
+        options: DataLabelOptions,
+    ): DataLabelOptions;
+    searchPointByAngle(e: PointerEvent): (Point|undefined);
+    translate(): void;
+    toXY(point: Point): void;
 }
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-let seriesProto = Series.prototype as Highcharts.PolarSeries,
+let seriesProto = Series.prototype as PolarSeries,
     pointerProto = Pointer.prototype,
-    columnProto: Highcharts.PolarSeries,
-    arearangeProto: Highcharts.AreaRangeSeries;
+    columnProto: PolarSeries,
+    arearangeProto: AreaRangeSeries;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -209,25 +201,25 @@ seriesProto.searchPointByAngle = function (
  *        well allows short recurence
  */
 seriesProto.getConnectors = function (
-    this: Highcharts.PolarSeries,
-    segment: Array<Highcharts.PolarPoint>,
+    this: PolarSeries,
+    segment: Array<PolarPoint>,
     index: number,
     calculateNeighbours?: boolean,
     connectEnds?: boolean
-): Highcharts.PolarConnector {
+): PolarConnector {
 
     let i: number,
         prevPointInd: number,
         nextPointInd: number,
-        previousPoint: Highcharts.PolarPoint,
-        nextPoint: Highcharts.PolarPoint,
+        previousPoint: PolarPoint,
+        nextPoint: PolarPoint,
         previousX: number,
         previousY: number,
         nextX: number,
         nextY: number,
         plotX: number,
         plotY: number,
-        ret: Highcharts.PolarConnector,
+        ret: PolarConnector,
         // 1 means control points midway between points, 2 means 1/3 from
         // the point, 3 is 1/4 etc;
         smoothing = 1.5,
@@ -319,8 +311,8 @@ seriesProto.getConnectors = function (
  * @private
  */
 seriesProto.toXY = function (
-    this: Highcharts.PolarSeries,
-    point: Highcharts.PolarPoint
+    this: PolarSeries,
+    point: PolarPoint
 ): void {
     let chart = this.chart,
         xAxis = this.xAxis,
@@ -382,10 +374,10 @@ if (seriesTypes.spline) {
         seriesTypes.spline.prototype,
         'getPointSpline',
         function (
-            this: Highcharts.PolarSeries,
+            this: PolarSeries,
             proceed: Function,
-            segment: Array<Highcharts.PolarPoint>,
-            point: Highcharts.PolarPoint,
+            segment: Array<PolarPoint>,
+            point: PolarPoint,
             i: number
         ): SVGPath {
             let ret,
@@ -444,7 +436,7 @@ if (seriesTypes.spline) {
  * @private
  */
 addEvent(Series, 'afterTranslate', function (): void {
-    const series = this as Highcharts.PolarSeries;
+    const series = this as PolarSeries;
     const chart = series.chart;
 
     if (chart.polar && series.xAxis) {
@@ -485,7 +477,7 @@ addEvent(Series, 'afterTranslate', function (): void {
         if (!this.hasClipCircleSetter) {
             this.hasClipCircleSetter = !!series.eventsToUnbind.push(
                 addEvent(series, 'afterRender', function (
-                    this: Highcharts.PolarSeries
+                    this: PolarSeries
                 ): void {
                     let circ: Array<number>;
 
@@ -525,9 +517,9 @@ addEvent(Series, 'afterTranslate', function (): void {
  * @private
  */
 wrap(seriesTypes.line.prototype, 'getGraphPath', function (
-    this: Highcharts.PolarSeries,
+    this: PolarSeries,
     proceed: Function,
-    points: Array<Highcharts.PolarPoint>
+    points: Array<PolarPoint>
 ): SVGPath {
     let series = this,
         i,
@@ -570,7 +562,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
 
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
-        points.forEach(function (point: Highcharts.PolarPoint): void {
+        points.forEach(function (point: PolarPoint): void {
             if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
@@ -592,7 +584,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
 
 
 const polarAnimate = function (
-    this: Highcharts.PolarSeries,
+    this: PolarSeries,
     proceed: Function,
     init?: boolean
 ): void {
@@ -631,7 +623,7 @@ const polarAnimate = function (
                     if (!init) {
                         paneInnerR = center[3] / 2;
                         series.points.forEach(function (
-                            point: Highcharts.PolarPoint
+                            point: PolarPoint
                         ): void {
                             graphic = point.graphic;
                             shapeArgs = point.shapeArgs;
@@ -696,11 +688,11 @@ wrap(seriesProto, 'animate', polarAnimate);
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
     columnProto = (
-        seriesTypes.column.prototype as unknown as Highcharts.PolarSeries
+        seriesTypes.column.prototype as unknown as PolarSeries
     );
 
     columnProto.polarArc = function (
-        this: (ColumnSeries&Highcharts.PolarSeries),
+        this: (ColumnSeries&PolarSeries),
         low: number,
         high: number,
         start: number,
@@ -746,7 +738,7 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(columnProto, 'translate', function (
-        this: (ColumnSeries&Highcharts.PolarSeries),
+        this: (ColumnSeries&PolarSeries),
         proceed: Function
     ): void {
 
@@ -763,7 +755,7 @@ if (seriesTypes.column) {
             endAngleRad = xAxis.endAngleRad,
             visibleRange = endAngleRad - startAngleRad,
             thresholdAngleRad,
-            points: Array<ColumnPoint>&Array<Highcharts.PolarPoint>,
+            points: Array<ColumnPoint>&Array<PolarPoint>,
             point: ColumnPoint,
             i: number,
             yMin: any,
@@ -956,7 +948,7 @@ if (seriesTypes.column) {
      * @private
      */
     columnProto.findAlignments = function (
-        this: Highcharts.PolarSeries,
+        this: PolarSeries,
         angle: number,
         options: DataLabelOptions
     ): DataLabelOptions {
@@ -997,9 +989,9 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(columnProto, 'alignDataLabel', function (
-        this: (ColumnSeries|Highcharts.PolarSeries),
+        this: (ColumnSeries|PolarSeries),
         proceed: Function,
-        point: (ColumnPoint|Highcharts.PolarPoint),
+        point: (ColumnPoint|PolarPoint),
         dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignTo: BBoxObject,
@@ -1012,7 +1004,7 @@ if (seriesTypes.column) {
             labelPos;
 
         if (chart.polar) {
-            angle = (point as Highcharts.PolarPoint).rectPlotX / Math.PI * 180;
+            angle = (point as PolarPoint).rectPlotX / Math.PI * 180;
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
                 if (this.findAlignments) {
@@ -1022,8 +1014,8 @@ if (seriesTypes.column) {
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
                 this.forceDL = chart.isInsidePlot(
-                    (point as Highcharts.PolarPoint).plotX,
-                    Math.round((point as Highcharts.PolarPoint).plotY)
+                    (point as PolarPoint).plotX,
+                    Math.round((point as PolarPoint).plotY)
                 );
 
                 // Checks if labels should be positioned inside
@@ -1032,12 +1024,12 @@ if (seriesTypes.column) {
                     // Calculates pixel positions for a data label to be
                     // inside
                     labelPos =
-                        (this as Highcharts.PolarSeries).yAxis.postTranslate(
+                        (this as PolarSeries).yAxis.postTranslate(
                         // angle
                             (
                                 (shapeArgs.start || 0) + (shapeArgs.end || 0)
                             ) / 2 -
-                            (this as Highcharts.PolarSeries)
+                            (this as PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius
                             (point as ColumnPoint).barX +
@@ -1089,7 +1081,7 @@ if (seriesTypes.column) {
  * @private
  */
 wrap(pointerProto, 'getCoordinates', function (
-    this: Highcharts.PolarSeries,
+    this: PolarSeries,
     proceed: Pointer['getCoordinates'],
     e: PointerEvent
 ): Pointer.AxesCoordinatesObject {
