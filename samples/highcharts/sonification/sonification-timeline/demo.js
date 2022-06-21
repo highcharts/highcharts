@@ -159,7 +159,7 @@ function getTimeline() {
 function onBtnClick(btn, textSuffix, filter) {
     var suffix = textSuffix || '';
     timeline = timeline || getTimeline();
-    if (timeline.paused) {
+    if (timeline.isPaused) {
         btn.textContent = 'Pause' + suffix;
         timeline.resume();
     } else if (done) {

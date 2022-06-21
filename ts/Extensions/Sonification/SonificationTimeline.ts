@@ -25,13 +25,48 @@ const {
 interface SonificationTimelineOptions {
     onPlay?: Function;
     onEnd?: Function;
+    onBoundaryHit?: Function;
     showPlayMarker?: boolean;
     showCrosshairOnly?: boolean;
 }
 
-interface FilteredChannel {
-    channel: TimelineChannel;
-    filteredEvents: Sonification.TimelineEvent[];
+
+/**
+ * Get filtered channels. Timestamps are compensated, so that the first
+ * event starts immediately.
+ * @private
+ */
+function filterChannels(
+    filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
+    channels: TimelineChannel[]
+): TimelineChannel[] {
+    interface FilteredChannel {
+        channel: TimelineChannel;
+        filteredEvents: Sonification.TimelineEvent[];
+    }
+    const filtered = channels.map(
+            (channel): FilteredChannel => {
+                channel.cancel();
+                return {
+                    channel,
+                    filteredEvents: channel.muted ?
+                        [] : channel.events.filter(filter)
+                };
+            }),
+        minTime = filtered.reduce((acc, cur): number =>
+            Math.min(
+                acc, cur.filteredEvents.length ?
+                    cur.filteredEvents[0].time : Infinity
+            ), Infinity);
+
+    return filtered.map((c): TimelineChannel => (
+        new TimelineChannel(
+            c.channel.type, c.channel.engine,
+            c.filteredEvents.map((e): Sonification.TimelineEvent =>
+                merge(e, { time: e.time - minTime })
+            ),
+            c.channel.muted
+        )));
 }
 
 
@@ -39,11 +74,11 @@ interface FilteredChannel {
  * @private
  */
 class SonificationTimeline {
-    paused = false;
+    isPaused = false;
     isPlaying = false;
     channels: TimelineChannel[] = [];
     private scheduledCallbacks: number[] = [];
-    private playingTimeline?: SonificationTimeline;
+    private playingChannels?: TimelineChannel[];
     private options: SonificationTimelineOptions;
     private playTimestamp = 0;
     private resumeFromTime = 0;
@@ -75,169 +110,190 @@ class SonificationTimeline {
     }
 
 
-    // Get a new timeline where the events are filtered by a condition.
-    // Timestamps are compensated, so that the first event starts immediately.
-    filter(
-        filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
-    ): SonificationTimeline {
-        const filtered = this.channels.map(
-                (channel): FilteredChannel => {
-                    channel.cancel();
-                    return {
-                        channel,
-                        filteredEvents: channel.muted ?
-                            [] : channel.events.filter(filter)
-                    };
-                }),
-            minTime = filtered.reduce((acc, cur): number =>
-                Math.min(
-                    acc, cur.filteredEvents.length ?
-                        cur.filteredEvents[0].time : Infinity
-                ), Infinity);
-
-        const timeline = new SonificationTimeline(this.options);
-        filtered.forEach((c): TimelineChannel => timeline.addChannel(
-            c.channel.type, c.channel.engine, c.filteredEvents
-                .map((e): Sonification.TimelineEvent => merge(e, {
-                    time: e.time - minTime
-                }))));
-        return timeline;
-    }
-
-
     // Play timeline, optionally filtering out only some of the events to play.
     // Note that if not all instrument parameters are updated on each event,
     // parameters may update differently depending on the events filtered out,
     // since some of the events that update parameters can be filtered out too.
-    play(filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>): void {
+    // The filterPersists argument determines whether or not the filter persists
+    // after e.g. pausing and resuming. Usually this should be true.
+    play(
+        filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
+        filterPersists = true
+    ): void {
         this.cancel();
         this.playTimestamp = Date.now();
         this.resumeFromTime = 0;
-        this.paused = false;
+        this.isPaused = false;
         this.isPlaying = true;
 
-        if (!filter) {
-            this.playingTimeline = this;
-            let maxTime = 0;
+        let maxTime = 0;
+        const onPlay = this.options.onPlay,
+            showPlayMarker = this.options.showPlayMarker,
+            showCrosshairOnly = this.options.showCrosshairOnly,
+            channels = filter ?
+                filterChannels(filter, this.playingChannels || this.channels) :
+                this.channels;
 
-            const onPlay = this.options.onPlay,
-                showPlayMarker = this.options.showPlayMarker,
-                showCrosshairOnly = this.options.showCrosshairOnly;
-
-            if (onPlay) {
-                onPlay(this);
-            }
-
-            // Just play everything
-            this.channels.forEach((channel): void => {
-                if (!channel.muted) {
-                    channel.events.forEach((e): void => {
-                        maxTime = Math.max(e.time, maxTime);
-
-                        if (channel.type === 'instrument') {
-                            (channel.engine as SonificationInstrument)
-                                .scheduleEventAtTime(
-                                    e.time / 1000,
-                                    e.instrumentEventOptions || {}
-                                );
-                        } else {
-                            (channel.engine as SonificationSpeaker).sayAtTime(
-                                e.time, e.message || '', e.speechOptions || {}
-                            );
-                        }
-
-                        const point = e.relatedPoint,
-                            needsCallback = e.callback || point &&
-                                (showPlayMarker || showCrosshairOnly);
-                        if (needsCallback) {
-                            this.scheduledCallbacks.push(
-                                setTimeout((): void => {
-                                    if (e.callback) {
-                                        e.callback();
-                                    }
-                                    if (point) {
-                                        if (
-                                            showPlayMarker &&
-                                            showCrosshairOnly
-                                        ) {
-                                            const s = point.series;
-                                            if (s.xAxis && s.xAxis.crosshair) {
-                                                s.xAxis.drawCrosshair(
-                                                    void 0, point);
-                                            }
-                                            if (s.yAxis && s.yAxis.crosshair) {
-                                                s.yAxis.drawCrosshair(
-                                                    void 0, point);
-                                            }
-                                        } else if (showPlayMarker) {
-                                            point.onMouseOver();
-                                        }
-                                    }
-                                }, e.time));
-                        }
-                    });
-                }
-            });
-
-            const onEnd = this.options.onEnd;
-            this.scheduledCallbacks.push(setTimeout(
-                (): void => {
-                    const chart = this.chart;
-                    this.isPlaying = false;
-                    if (onEnd) {
-                        onEnd(this);
-                    }
-                    if (chart) {
-                        if (chart.tooltip) {
-                            chart.tooltip.hide(0);
-                        }
-                        if (chart.hoverSeries) {
-                            chart.hoverSeries.onMouseOut();
-                        }
-                        chart.axes.forEach((a): void => a.hideCrosshair());
-                    }
-                },
-                maxTime + 250
-            ));
-        } else {
-            (this.playingTimeline = this.filter(filter)).play();
+        if (filterPersists) {
+            this.playingChannels = channels;
         }
+
+        if (onPlay) {
+            onPlay(this);
+        }
+
+        channels.forEach((channel): void => {
+            if (!channel.muted) {
+                channel.events.forEach((e): void => {
+                    maxTime = Math.max(e.time, maxTime);
+
+                    if (channel.type === 'instrument') {
+                        (channel.engine as SonificationInstrument)
+                            .scheduleEventAtTime(
+                                e.time / 1000,
+                                e.instrumentEventOptions || {}
+                            );
+                    } else {
+                        (channel.engine as SonificationSpeaker).sayAtTime(
+                            e.time, e.message || '', e.speechOptions || {}
+                        );
+                    }
+
+                    const point = e.relatedPoint,
+                        needsCallback = e.callback || point &&
+                            (showPlayMarker || showCrosshairOnly);
+                    if (needsCallback) {
+                        this.scheduledCallbacks.push(
+                            setTimeout((): void => {
+                                if (e.callback) {
+                                    e.callback();
+                                }
+                                if (point) {
+                                    if (
+                                        showPlayMarker &&
+                                        showCrosshairOnly
+                                    ) {
+                                        const s = point.series;
+                                        if (s.xAxis && s.xAxis.crosshair) {
+                                            s.xAxis.drawCrosshair(
+                                                void 0, point);
+                                        }
+                                        if (s.yAxis && s.yAxis.crosshair) {
+                                            s.yAxis.drawCrosshair(
+                                                void 0, point);
+                                        }
+                                    } else if (showPlayMarker) {
+                                        point.onMouseOver();
+                                    }
+                                }
+                            }, e.time));
+                    }
+                });
+            }
+        });
+
+        const onEnd = this.options.onEnd;
+        this.scheduledCallbacks.push(setTimeout(
+            (): void => {
+                const chart = this.chart;
+                this.isPlaying = false;
+                if (onEnd) {
+                    onEnd(this);
+                }
+                if (chart) {
+                    if (chart.tooltip) {
+                        chart.tooltip.hide(0);
+                    }
+                    if (chart.hoverSeries) {
+                        chart.hoverSeries.onMouseOut();
+                    }
+                    chart.axes.forEach((a): void => a.hideCrosshair());
+                }
+            },
+            maxTime + 250
+        ));
     }
 
 
     // Pause for later resuming. Returns current timestamp to resume from.
     pause(): number {
-        const currentTime = (Date.now() - this.playTimestamp);
-        this.paused = true;
-        this.resumeFromTime = currentTime - 50;
+        this.isPaused = true;
         this.cancel();
-        return currentTime;
+        this.resumeFromTime = Date.now() - this.playTimestamp;
+        return this.resumeFromTime;
+    }
+
+
+    // Resume from paused
+    resume(): void {
+        if (this.playingChannels) {
+            const resumeFrom = this.resumeFromTime - 50;
+            this.play((e): boolean => e.time > resumeFrom, false);
+            this.playTimestamp -= resumeFrom;
+        } else {
+            this.play();
+        }
+    }
+
+
+    // Play event(s) occurring next/prev from paused state.
+    playAdjacent(next: boolean): void {
+        const fromTime = this.isPaused ? this.resumeFromTime : -1,
+            closestTime = this.channels.reduce(
+                (time, channel): number => {
+                    // Adapted binary search since events are sorted by time
+                    const events = channel.events;
+                    let s = 0,
+                        e = events.length,
+                        lastValidTime = time;
+                    while (s < e) {
+                        const mid = (s + e) >> 1,
+                            t = events[mid].time,
+                            cmp = t - fromTime;
+                        if (cmp > 0) { // ahead
+                            if (next && t < lastValidTime) {
+                                lastValidTime = t;
+                            }
+                            e = mid;
+                        } else if (cmp < 0) { // behind
+                            if (!next && t > lastValidTime) {
+                                lastValidTime = t;
+                            }
+                            s = mid + 1;
+                        } else { // same as from time
+                            if (next) {
+                                s = mid + 1;
+                            } else {
+                                e = mid;
+                            }
+                        }
+                    }
+                    return lastValidTime;
+                }, next ? Infinity : -Infinity),
+            margin = 0.02;
+
+        if (closestTime === Infinity || closestTime === -Infinity) {
+            if (this.options.onBoundaryHit) {
+                this.options.onBoundaryHit({ timeline: this, next });
+            }
+            return;
+        }
+        this.play((e): boolean => (next ?
+            e.time > fromTime && e.time <= closestTime + margin :
+            e.time < fromTime && e.time >= closestTime - margin
+        ), false);
+        this.playingChannels = this.playingChannels || this.channels;
+        this.isPaused = true;
+        this.resumeFromTime = closestTime;
     }
 
 
     // Reset play/pause state so that a later call to resume() will start over
     reset(): void {
         this.cancel();
-        delete this.playingTimeline;
+        delete this.playingChannels;
         this.playTimestamp = this.resumeFromTime = 0;
-        this.paused = false;
-    }
-
-
-    // Resume from paused
-    resume(): void {
-        this.paused = false;
-        if (this.playingTimeline) {
-            // Note that we need to update state on this timeline too,
-            // not just the filtered one that gets updated in play().
-            this.playTimestamp = Date.now();
-            (this.playingTimeline = this.playingTimeline
-                .filter((e): boolean => e.time > this.resumeFromTime))
-                .play();
-            this.resumeFromTime = 0;
-        } else {
-            this.play();
-        }
+        this.isPaused = false;
     }
 
 
@@ -245,8 +301,8 @@ class SonificationTimeline {
         this.isPlaying = false;
         this.scheduledCallbacks.forEach(clearTimeout);
         this.channels.forEach((c): void => c.cancel());
-        if (this.playingTimeline && this.playingTimeline !== this) {
-            this.playingTimeline.cancel();
+        if (this.playingChannels && this.playingChannels !== this.channels) {
+            this.playingChannels.forEach((c): void => c.cancel());
         }
     }
 

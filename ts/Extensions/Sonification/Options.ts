@@ -127,6 +127,7 @@ declare global {
             onEnd?: Function;
             onSeriesStart?: SeriesCallback;
             onSeriesEnd?: SeriesCallback;
+            onBoundaryHit?: Function;
         }
 
         interface ChartSonificationOptions {

@@ -527,22 +527,23 @@ function addMappedInstrumentEvent(
         }
 
         eventOpts.note = getParamValWithDefault(
-            context, extremesCache, opts, 0, { min: 0, max: 107 },
+            context, extremesCache, opts, -1, { min: 0, max: 107 },
             contextValueProp
         );
 
-        if (roundToMusicalNotes) {
-            eventOpts.note = Math.round(eventOpts.note);
+        if (eventOpts.note > -1) {
+            if (roundToMusicalNotes) {
+                eventOpts.note = Math.round(eventOpts.note);
+            }
+            eventsAdded.push(
+                channel.addEvent({
+                    time: context.time + playDelay + gapBetweenNotes * ix,
+                    relatedPoint: context.point,
+                    instrumentEventOptions: ix !== void 0 ?
+                        extend({}, eventOpts) : eventOpts
+                })
+            );
         }
-
-        eventsAdded.push(
-            channel.addEvent({
-                time: context.time + playDelay + gapBetweenNotes * ix,
-                relatedPoint: context.point,
-                instrumentEventOptions: ix !== void 0 ?
-                    extend({}, eventOpts) : eventOpts
-            })
-        );
     };
 
     if (
@@ -553,6 +554,14 @@ function addMappedInstrumentEvent(
     } else if (mappingOptions.pitch) {
         addNoteEvent(mappingOptions.pitch as string|number|
         Sonification.PitchMappingParameterOptions);
+    } else if (mappingOptions.frequency) {
+        eventsAdded.push(
+            channel.addEvent({
+                time: context.time + playDelay,
+                relatedPoint: context.point,
+                instrumentEventOptions: eventOpts
+            })
+        );
     }
 
     return eventsAdded;
@@ -693,8 +702,9 @@ function timelineFromChart(
         eventOptions = options.events || {},
         extremesCache = buildExtremesCache(chart),
         timeline = new SonificationTimeline({
-            onPlay: options.events && options.events.onPlay,
-            onEnd: options.events && options.events.onEnd,
+            onPlay: eventOptions.onPlay,
+            onEnd: eventOptions.onEnd,
+            onBoundaryHit: eventOptions.onBoundaryHit,
             showCrosshairOnly: options.showCrosshairOnly,
             showPlayMarker: options.showPlayMarker
         }, chart);
@@ -748,7 +758,8 @@ function timelineFromChart(
                     const time = getPointTime(
                         point, startTime, seriesDuration,
                         mergedOpts.mapping && mergedOpts.mapping.time || 0,
-                        extremesCache.seriesExtremes[seriesIx]
+                        isSequential ? extremesCache.seriesExtremes[seriesIx] :
+                            extremesCache.globalExtremes
                     );
 
                     // Is this track active?
