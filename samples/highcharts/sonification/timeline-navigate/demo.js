@@ -50,7 +50,7 @@ var chart = Highcharts.chart('container', {
 });
 
 document.addEventListener('keydown', function (e) {
-    const timeline = chart.sonification.timeline;
+    var timeline = chart.sonification.timeline;
     if (e.code === 'KeyS') {
         if (chart.sonification.isPlaying()) {
             timeline.pause();
@@ -69,3 +69,10 @@ document.addEventListener('keydown', function (e) {
         }
     }
 });
+
+setInterval(function () {
+    var timeline = chart.sonification.timeline;
+    if (timeline) {
+        document.getElementById('currentTime').textContent = Math.round(timeline.getCurrentTime() / 3700 * 100);
+    }
+}, 200);

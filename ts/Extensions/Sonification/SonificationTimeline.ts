@@ -224,6 +224,15 @@ class SonificationTimeline {
     }
 
 
+    // Get current time
+    getCurrentTime(): number {
+        if (this.isPlaying) {
+            return Date.now() - this.playTimestamp;
+        }
+        return this.resumeFromTime;
+    }
+
+
     // Resume from paused
     resume(): void {
         if (this.playingChannels) {
@@ -284,6 +293,7 @@ class SonificationTimeline {
         ), false);
         this.playingChannels = this.playingChannels || this.channels;
         this.isPaused = true;
+        this.isPlaying = false;
         this.resumeFromTime = closestTime;
     }
 
