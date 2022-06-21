@@ -118,16 +118,6 @@ export interface AnnotationsAccessibilityOptionsObject {
     description?: string;
 }
 
-/** @private */
-declare global {
-    namespace Highcharts {
-        /** @todo remove out of namespace */
-        interface AnnotationsLabelOptions {
-            accessibility?: AnnotationsAccessibilityOptionsObject;
-        }
-    }
-}
-
 export interface AxisAccessibilityOptions {
     description?: string;
     enabled?: boolean;
@@ -207,6 +197,12 @@ declare module '../../Core/Series/PointOptions' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         accessibility?: SeriesAccessibilityOptions;
+    }
+}
+
+declare module '../../Extensions/Annotations/AnnotationsOptions' {
+    interface AnnotationsLabelOptions {
+        accessibility?: AnnotationsAccessibilityOptionsObject;
     }
 }
 
