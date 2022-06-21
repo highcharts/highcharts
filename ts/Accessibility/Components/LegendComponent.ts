@@ -22,6 +22,9 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type {
+    LegendAccessibilityOptions
+} from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
@@ -109,7 +112,7 @@ function scrollLegendToItem(legend: Legend, itemIx: number): void {
  */
 function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
-        legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
+        legendA11yOptions: LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
         );
 
@@ -580,7 +583,7 @@ class LegendComponent extends AccessibilityComponent {
             hasLegend = chart.legend && chart.legend.allItems,
             hasColorAxis = chart.colorAxis && chart.colorAxis.length,
             legendA11yOptions: DeepPartial<(
-                Highcharts.LegendAccessibilityOptions
+                LegendAccessibilityOptions
             )> = (
                 legendOptions.accessibility || {}
             );

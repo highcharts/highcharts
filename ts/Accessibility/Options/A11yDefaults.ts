@@ -18,184 +18,15 @@
  *
  * */
 
-import type Accessibility from '../Accessibility';
-import type Chart from '../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type OptionsType from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type A11yOptions from './A11yOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import ColorType from '../../Core/Color/ColorType';
 
 /* *
  *
- *  Declarations
+ *  API Options
  *
  * */
-
-declare module '../../Core/Axis/AxisOptions' {
-    interface AxisOptions {
-        accessibility?: Options.AxisAccessibilityOptions;
-    }
-}
-
-declare module '../../Core/Series/PointOptions' {
-    interface PointOptions {
-        accessibility?: Highcharts.PointAccessibilityOptionsObject;
-    }
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        accessibility?: Highcharts.SeriesAccessibilityOptions;
-    }
-}
-
-declare module '../../Core/Legend/LegendOptions' {
-    interface LegendOptions {
-        accessibility?: Highcharts.LegendAccessibilityOptions;
-    }
-}
-
-declare module '../../Core/Options'{
-    interface Options {
-        accessibility?: Highcharts.AccessibilityOptions;
-    }
-}
-
-declare module '../../Extensions/Exporting/ExportingOptions' {
-    interface ExportingOptions {
-        accessibility?: Highcharts.ExportingAccessibilityOptions;
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationsAccessibilityOptionsObject {
-            description?: string;
-        }
-        interface AnnotationsLabelOptions {
-            accessibility?: AnnotationsAccessibilityOptionsObject;
-        }
-        interface AccessibilityAnnouncementFormatter {
-            (
-                updatedSeries: Array<Series>,
-                addedSeries?: Series,
-                addedPoint?: Point,
-            ): false|string;
-        }
-        interface AccessibilityAnnounceNewDataOptions {
-            announcementFormatter?: AccessibilityAnnouncementFormatter;
-            enabled: boolean;
-            interruptUser: boolean;
-            minAnnounceInterval: number;
-        }
-        interface AccessibilityKeyboardNavigationFocusBorderOptions {
-            enabled: boolean;
-            hideBrowserFocusOutline: boolean;
-            margin: number;
-            style: FocusBorderStyleObject;
-        }
-        interface AccessibilityKeyboardNavigationOptions {
-            enabled: boolean;
-            focusBorder: AccessibilityKeyboardNavigationFocusBorderOptions;
-            order: Array<string>;
-            seriesNavigation: (
-                AccessibilityKeyboardNavigationSeriesNavigationOptions
-            );
-            wrapAround: boolean;
-        }
-        interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
-            mode?: string;
-            pointNavigationEnabledThreshold: (boolean|number);
-            skipNullPoints: boolean;
-            rememberPointFocus: boolean;
-        }
-        interface AccessibilityOptions {
-            announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: AnyRecord;
-            description?: string;
-            enabled: boolean;
-            highContrastTheme: AnyRecord;
-            keyboardNavigation: AccessibilityKeyboardNavigationOptions;
-            landmarkVerbosity: string;
-            linkedDescription: (string|HTMLDOMElement);
-            point: AccessibilityPointOptions;
-            series: AccessibilitySeriesOptions;
-            screenReaderSection: AccessibilityScreenReaderSectionOptions;
-            typeDescription?: string;
-        }
-        interface AccessibilityPointOptions {
-            dateFormat?: string;
-            dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
-            describeNull: boolean;
-            descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
-            valueDecimals?: number;
-            valueDescriptionFormat: string;
-            valuePrefix?: string;
-            valueSuffix?: string;
-        }
-        interface AccessibilityScreenReaderSectionOptions {
-            afterChartFormat: string;
-            afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
-            axisRangeDateFormat: string;
-            beforeChartFormat: string;
-            beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
-            onPlayAsSoundClick?: ScreenReaderClickCallbackFunction;
-            onViewDataTableClick?: ScreenReaderClickCallbackFunction;
-        }
-        interface AccessibilitySeriesOptions {
-            descriptionFormat: string;
-            descriptionFormatter?: (
-                ScreenReaderFormatterCallbackFunction<Series>
-            );
-            describeSingleSeries: boolean;
-            pointDescriptionEnabledThreshold: (boolean|number);
-        }
-        interface ExportingAccessibilityOptions {
-            enabled: boolean;
-        }
-        interface FocusBorderStyleObject {
-            borderRadius?: number;
-            color?: ColorType;
-            lineWidth?: number;
-        }
-        interface LegendAccessibilityKeyboardNavigationOptions {
-            enabled: boolean;
-        }
-        interface LegendAccessibilityOptions {
-            enabled: boolean;
-            keyboardNavigation: LegendAccessibilityKeyboardNavigationOptions;
-        }
-        interface PointAccessibilityOptionsObject {
-            description?: string;
-            enabled?: boolean;
-        }
-        interface ScreenReaderClickCallbackFunction {
-            (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
-        }
-        interface ScreenReaderFormatterCallbackFunction<T> {
-            (context: T): string;
-        }
-        interface SeriesAccessibilityKeyboardNavigationOptions {
-            enabled?: boolean;
-        }
-        interface SeriesAccessibilityOptions {
-            description?: string;
-            enabled?: boolean;
-            exposeAsGroupOnly?: boolean;
-            keyboardNavigation?: (
-                SeriesAccessibilityKeyboardNavigationOptions
-            );
-            point: AccessibilityPointOptions;
-        }
-    }
-}
 
 /**
  * Formatter callback for the accessibility announcement.
@@ -268,7 +99,7 @@ declare global {
  *         Formatted string for the screen reader module.
  */
 
-const Options: DeepPartial<OptionsType> = {
+const Options: DeepPartial<A11yOptions> = {
 
     /**
      * Options for configuring accessibility for the chart. Requires the
@@ -1151,13 +982,5 @@ const Options: DeepPartial<OptionsType> = {
     }
 
 };
-
-namespace Options {
-    export interface AxisAccessibilityOptions {
-        description?: string;
-        enabled?: boolean;
-        rangeDescription?: string;
-    }
-}
 
 export default Options;
