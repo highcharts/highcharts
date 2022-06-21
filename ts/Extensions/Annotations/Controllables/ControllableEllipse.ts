@@ -8,7 +8,10 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type {
+    AnnotationsShapeOptions
+} from '../AnnotationsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AxisType from '../../../Core/Axis/AxisType';
 import BBoxObject from '../../../Core/Renderer/BBoxObject';
@@ -25,7 +28,7 @@ const {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
+interface EllipseShapeOptions extends AnnotationsShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
