@@ -144,7 +144,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         ajax({
             url: url,
             dataType: 'json',
-            success: function (json: Highcharts.JSONType): void {
+            success: function (json): void {
                 store.parser.parse(json);
                 store.table.setColumns(store.parser.getTable().getColumns());
 

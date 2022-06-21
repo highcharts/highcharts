@@ -12,8 +12,7 @@ Highcharts.chart("container", {
         text: "Source:Google trends"
     },
     data: {
-        csvURL:
-      "https://www.highcharts.com/samples/data/google-trends-vitamin-d.csv"
+        csvURL: "https://www.highcharts.com/samples/data/google-trends-vitamin-d.csv"
     },
 
     tooltip: {

@@ -18,6 +18,7 @@
  *
  * */
 
+import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
@@ -1707,7 +1708,7 @@ class Data {
                     url: url,
                     dataType: tp || 'json',
                     success: function (
-                        res: (string|Highcharts.JSONType)
+                        res: (string|JSON.Type)
                     ): void {
                         if (chart && chart.series) {
                             done(res);
@@ -1734,7 +1735,7 @@ class Data {
             if (!request(
                 originalOptions.csvURL,
                 function (
-                    res: (string|Highcharts.JSONType)
+                    res: string
                 ): void {
                     chart.update({
                         data: {
@@ -1745,7 +1746,7 @@ class Data {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: (string|Highcharts.JSONType)
+                    res: Array<Array<Highcharts.DataValueType>>
                 ): void {
                     chart.update({
                         data: {
@@ -1754,7 +1755,7 @@ class Data {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: (string|Highcharts.JSONType)
+                        res: Array<Array<Highcharts.DataValueType>>
                     ): void {
                         chart.update({
                             data: {
@@ -1829,7 +1830,7 @@ class Data {
             ajax({
                 url,
                 dataType: 'json',
-                success: function (json: Highcharts.JSONType): void {
+                success: function (json: (string|JSON.Type)): void {
                     fn(json);
 
                     if (options.enablePolling) {
@@ -1855,11 +1856,11 @@ class Data {
             delete options.googleSpreadsheetKey;
 
             fetchSheet(function (
-                json: Highcharts.JSONType
+                json: JSON.Object
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
-                const columns: Array<Array<Highcharts.DataValueType>> =
-                    json.values;
+                const columns =
+                    json.values as Array<Array<Highcharts.DataValueType>>;
 
                 if (!columns || columns.length === 0) {
                     return false;
