@@ -13,7 +13,7 @@ Highcharts.chart("container", {
     },
     data: {
         csvURL:
-      "https://cdn.jsdelivr.net/gh/highcharts/highcharts@12fb8dea0e/samples/data/google-trends-vitamin-d.csv"
+      "https://www.highcharts.com/samples/data/google-trends-vitamin-d.csv"
     },
 
     tooltip: {
