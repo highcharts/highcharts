@@ -31,6 +31,10 @@
     background: #f8f8f8;
 }
 
+.highcharts-data-table tr {
+    cursor: pointer;
+}
+
 .highcharts-data-table tr:hover {
     background: #eff;
 }
@@ -42,9 +46,9 @@
 }
 
 .highcharts-sort-ascending::after {
-    content: " ↑";
+    content: " ↓";
 }
 
 .highcharts-sort-descending::after {
-    content: " ↓";
+    content: " ↑";
 }

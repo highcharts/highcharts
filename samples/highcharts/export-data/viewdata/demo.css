@@ -22,10 +22,14 @@
     padding: 0.5em;
 }
 
+.highcharts-data-table th {
+    cursor: pointer;
+}
+
 .highcharts-sort-ascending::after {
-    content: " ↑";
+    content: " ↓";
 }
 
 .highcharts-sort-descending::after {
-    content: " ↓";
+    content: " ↑";
 }
