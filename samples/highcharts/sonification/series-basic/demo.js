@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     title: {
         text: 'Click on series to sonify'
     },
@@ -8,28 +8,14 @@ var chart = Highcharts.chart('container', {
     accessibility: {
         landmarkVerbosity: 'one'
     },
+    sonification: {
+        showCrosshairOnly: true
+    },
+    xAxis: {
+        crosshair: true
+    },
     plotOptions: {
         series: {
-            sonification: {
-                instruments: [{
-                    instrument: 'triangleMajor',
-                    minFrequency: 523, // C5
-                    maxFrequency: 1047, // C6
-                    mapping: {
-                        pan: 'x'
-                    }
-                }],
-                events: {
-                    onPointStart: function (e, point) {
-                        point.onMouseOver();
-                        document.getElementById('stop').style.visibility = 'visible';
-                        document.getElementById('stop').focus();
-                    },
-                    onSeriesEnd: function () {
-                        document.getElementById('stop').style.visibility = 'hidden';
-                    }
-                }
-            },
             marker: {
                 radius: 8
             },
@@ -47,8 +33,3 @@ var chart = Highcharts.chart('container', {
         data: [4, 5, 7, 9, 11, 13, 11, 9]
     }]
 });
-
-document.getElementById('stop').onclick = function () {
-    chart.cancelSonify();
-    document.getElementById('stop').style.visibility = 'hidden';
-};

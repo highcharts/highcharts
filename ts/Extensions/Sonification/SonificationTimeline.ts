@@ -28,6 +28,7 @@ interface SonificationTimelineOptions {
     onBoundaryHit?: Function;
     showPlayMarker?: boolean;
     showCrosshairOnly?: boolean;
+    skipThreshold?: number;
 }
 
 
@@ -118,7 +119,8 @@ class SonificationTimeline {
     // after e.g. pausing and resuming. Usually this should be true.
     play(
         filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
-        filterPersists = true
+        filterPersists = true,
+        resetAfter = true
     ): void {
         this.cancel();
         this.playTimestamp = Date.now();
@@ -126,13 +128,17 @@ class SonificationTimeline {
         this.isPaused = false;
         this.isPlaying = true;
 
-        let maxTime = 0;
-        const onPlay = this.options.onPlay,
+        const skipThreshold = this.options.skipThreshold || 2,
+            onPlay = this.options.onPlay,
             showPlayMarker = this.options.showPlayMarker,
             showCrosshairOnly = this.options.showCrosshairOnly,
             channels = filter ?
                 filterChannels(filter, this.playingChannels || this.channels) :
-                this.channels;
+                this.channels,
+            getEventKeysSignature = (e: Sonification.TimelineEvent): string =>
+                Object.keys(e.speechOptions || {})
+                    .concat(Object.keys(e.instrumentEventOptions || {}))
+                    .join();
 
         if (filterPersists) {
             this.playingChannels = channels;
@@ -142,53 +148,81 @@ class SonificationTimeline {
             onPlay(this);
         }
 
+        let maxTime = 0;
         channels.forEach((channel): void => {
-            if (!channel.muted) {
-                channel.events.forEach((e): void => {
-                    maxTime = Math.max(e.time, maxTime);
+            if (channel.muted) {
+                return;
+            }
 
-                    if (channel.type === 'instrument') {
-                        (channel.engine as SonificationInstrument)
-                            .scheduleEventAtTime(
-                                e.time / 1000,
-                                e.instrumentEventOptions || {}
-                            );
-                    } else {
-                        (channel.engine as SonificationSpeaker).sayAtTime(
-                            e.time, e.message || '', e.speechOptions || {}
+            const numEvents = channel.events.length;
+            let lastCallbackTime = -Infinity,
+                lastEventTime = -Infinity,
+                lastEventKeys = '';
+            maxTime = Math.max(
+                channel.events[numEvents - 1] &&
+                channel.events[numEvents - 1].time || 0,
+                maxTime
+            );
+
+            for (let i = 0; i < numEvents; ++i) {
+                const e = channel.events[i],
+                    keysSig = getEventKeysSignature(e);
+
+                // Optimize by skipping extremely close events
+                // (<2ms apart by default)
+                if (
+                    keysSig === lastEventKeys &&
+                    e.time - lastEventTime < skipThreshold
+                ) {
+                    continue;
+                }
+
+                lastEventKeys = keysSig;
+                lastEventTime = e.time;
+
+                if (channel.type === 'instrument') {
+                    (channel.engine as SonificationInstrument)
+                        .scheduleEventAtTime(
+                            e.time / 1000,
+                            e.instrumentEventOptions || {}
                         );
-                    }
+                } else {
+                    (channel.engine as SonificationSpeaker).sayAtTime(
+                        e.time, e.message || '', e.speechOptions || {}
+                    );
+                }
 
-                    const point = e.relatedPoint,
-                        needsCallback = e.callback || point &&
-                            (showPlayMarker || showCrosshairOnly);
-                    if (needsCallback) {
-                        this.scheduledCallbacks.push(
-                            setTimeout((): void => {
-                                if (e.callback) {
-                                    e.callback();
-                                }
-                                if (point) {
-                                    if (
-                                        showPlayMarker &&
-                                        showCrosshairOnly
-                                    ) {
-                                        const s = point.series;
-                                        if (s.xAxis && s.xAxis.crosshair) {
-                                            s.xAxis.drawCrosshair(
-                                                void 0, point);
-                                        }
-                                        if (s.yAxis && s.yAxis.crosshair) {
-                                            s.yAxis.drawCrosshair(
-                                                void 0, point);
-                                        }
-                                    } else if (showPlayMarker) {
-                                        point.onMouseOver();
+                const point = e.relatedPoint,
+                    needsCallback = e.callback || point &&
+                        (showPlayMarker || showCrosshairOnly) &&
+                        e.time - lastCallbackTime > 25;
+                if (needsCallback) {
+                    this.scheduledCallbacks.push(
+                        setTimeout((): void => {
+                            if (e.callback) {
+                                e.callback();
+                            }
+                            if (point) {
+                                if (
+                                    showPlayMarker &&
+                                    showCrosshairOnly
+                                ) {
+                                    const s = point.series;
+                                    if (s.xAxis && s.xAxis.crosshair) {
+                                        s.xAxis.drawCrosshair(
+                                            void 0, point);
                                     }
+                                    if (s.yAxis && s.yAxis.crosshair) {
+                                        s.yAxis.drawCrosshair(
+                                            void 0, point);
+                                    }
+                                } else if (showPlayMarker) {
+                                    point.onMouseOver();
                                 }
-                            }, e.time));
-                    }
-                });
+                            }
+                        }, e.time));
+                    lastCallbackTime = e.time;
+                }
             }
         });
 
@@ -196,7 +230,9 @@ class SonificationTimeline {
         this.scheduledCallbacks.push(setTimeout(
             (): void => {
                 const chart = this.chart;
-                this.isPlaying = false;
+                if (resetAfter) {
+                    this.reset();
+                }
                 if (onEnd) {
                     onEnd(this);
                 }
@@ -226,10 +262,9 @@ class SonificationTimeline {
 
     // Get current time
     getCurrentTime(): number {
-        if (this.isPlaying) {
-            return Date.now() - this.playTimestamp;
-        }
-        return this.resumeFromTime;
+        return this.isPlaying ?
+            Date.now() - this.playTimestamp :
+            this.resumeFromTime;
     }
 
 
@@ -290,7 +325,7 @@ class SonificationTimeline {
         this.play((e): boolean => (next ?
             e.time > fromTime && e.time <= closestTime + margin :
             e.time < fromTime && e.time >= closestTime - margin
-        ), false);
+        ), false, false);
         this.playingChannels = this.playingChannels || this.channels;
         this.isPaused = true;
         this.isPlaying = false;

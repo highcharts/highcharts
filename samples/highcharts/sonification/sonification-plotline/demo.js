@@ -28,7 +28,7 @@ var chart = Highcharts.chart('container', {
                 max: 7
             },
             mapping: {
-                volume: 0.04
+                volume: 0.1
             }
         }]
     },

@@ -1,3 +1,12 @@
+// Some demo data with spikes
+var dataA = [],
+    dataB = [],
+    size = 50000;
+for (var i = 0; i < size; ++i) {
+    dataA.push(i % 10000 ? Math.sin(i / (size / 5)) * 100 + 1000 : 400);
+    dataB.push(i % 17000 ? Math.sin(i / (size / 53)) * 20 + 100 : 2000);
+}
+
 // Set up an extra instrument for playing notification when
 // attempting to navigate beyond chart.
 var ax, instr;
@@ -13,52 +22,61 @@ try {
 } catch (e) { /* ignore sonification unsupported */ }
 
 
+// Make the chart
 var chart = Highcharts.chart('container', {
     sonification: {
         order: 'simultaneous',
-        duration: 4000,
+        duration: 5000,
         masterVolume: 0.5,
         events: {
             onBoundaryHit: function () {
-                // Play a sound effect on navigation boundary hit
+                // Play a sound effect on navigation beyond chart
                 if (instr) {
                     instr.playFreqAtTime(0, 1, 300);
                 }
             }
         },
         defaultInstrumentOptions: {
+            instrument: 'sine',
+            roundToMusicalNotes: false,
+            pointGrouping: {
+                groupTimespan: 30 // Every 30ms is grouped together
+            },
             mapping: {
                 pitch: {
                     min: 'c3',
-                    max: 'c5'
+                    max: 'c7'
                 }
             }
         }
     },
     tooltip: {
-        shared: true
+        shared: true,
+        valueDecimals: 0
     },
     series: [{
         sonification: {
             tracks: [{
                 mapping: {
-                    pan: -1
+                    pan: -1 // Pan this series left
                 }
             }]
         },
-        data: [1, 5, 8, 13, 17, 20, 25, 24, 25]
+        data: dataA
     }, {
         sonification: {
             tracks: [{
                 mapping: {
-                    pan: 1
+                    pan: 1 // Pan this series right
                 }
             }]
         },
-        data: [null, 8, 13, 17, 17, 17, 13]
+        data: dataB
     }]
 });
 
+
+// Add keyboard shortcuts
 document.addEventListener('keydown', function (e) {
     var timeline = chart.sonification.timeline;
     if (e.code === 'KeyS') {
@@ -80,9 +98,12 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
+
+// Update current time readout
 setInterval(function () {
     var timeline = chart.sonification.timeline;
     if (timeline) {
-        document.getElementById('currentTime').textContent = Math.round(timeline.getCurrentTime() / 3700 * 100);
+        document.getElementById('currentTime').textContent =
+            Math.round(timeline.getCurrentTime() / 4700 * 100);
     }
 }, 200);

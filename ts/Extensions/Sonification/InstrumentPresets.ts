@@ -54,7 +54,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         ],
         oscillators: [{
             type: 'whitenoise',
-            volume: 1,
+            volume: 1.5,
             lowpass: { frequency: 300 },
             highpass: { frequency: 100, Q: 6 }
         }]
@@ -93,6 +93,79 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             volume: 1.3,
             lowpass: { frequency: 700, Q: 4 },
             highpass: { frequency: 250 }
+        }]
+    },
+
+    // NOISE ----------------------------
+    noise: {
+        masterVolume: 0.3,
+        oscillators: [{
+            type: 'whitenoise'
+        }]
+    },
+
+    // FILTERED NOISE -------------------
+    filteredNoise: {
+        masterVolume: 0.3,
+        eq: [
+            { frequency: 1600, Q: 1, gain: -8 },
+            { frequency: 2200, Q: 1, gain: -4 }
+        ],
+        oscillators: [{
+            type: 'whitenoise',
+            lowpass: {
+                frequency: 5,
+                frequencyPitchTrackingMultiplier: 1300,
+                Q: 6
+            },
+            highpass: {
+                frequency: 5,
+                frequencyPitchTrackingMultiplier: 300,
+                Q: 6
+            }
+        }]
+    },
+
+    // SINE -----------------------------
+    sine: {
+        masterVolume: 1,
+        oscillators: [{
+            type: 'sine',
+            volumePitchTrackingMultiplier: 0.07
+        }]
+    },
+
+    // SINE GLIDE -----------------------
+    sineGlide: {
+        masterVolume: 1,
+        noteGlideDuration: 100,
+        oscillators: [{
+            type: 'sine',
+            volumePitchTrackingMultiplier: 0.07
+        }]
+    },
+
+    // SYNTH1 ---------------------------
+    synth1: {
+        masterVolume: 0.4,
+        noteGlideDuration: 40,
+        masterAttackEnvelope: [
+            { t: 0, vol: 0.6 },
+            { t: 9, vol: 1 },
+            { t: 102, vol: 0.48 }
+        ],
+        eq: [{ frequency: 200, Q: 1, gain: -6 }],
+        oscillators: [{
+            type: 'sawtooth',
+            volume: 0.5
+        }, {
+            type: 'sawtooth',
+            volume: 0.5,
+            detune: 11
+        }, {
+            type: 'sawtooth',
+            volume: 0.5,
+            detune: -11
         }]
     },
 
@@ -220,6 +293,90 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             attackEnvelope: [
                 { t: 1, vol: 1 },
                 { t: 19, vol: 0 }
+            ]
+        }]
+    },
+
+    // SAXOPHONE ------------------------
+    saxophone: {
+        masterVolume: 1,
+        noteGlideDuration: 10,
+        masterAttackEnvelope: [
+            { t: 1, vol: 0.57 },
+            { t: 35, vol: 1 },
+            { t: 87, vol: 0.84 },
+            { t: 111, vol: 0.6 },
+            { t: 296, vol: 0.49 },
+            { t: 600, vol: 0.58 },
+            { t: 600, vol: 0.58 },
+            { t: 600, vol: 0.58 }
+        ],
+        masterReleaseEnvelope: [
+            { t: 1, vol: 0.58 },
+            { t: 47, vol: 0.16 },
+            { t: 119, vol: 0 }
+        ],
+        eq: [
+            { frequency: 200, Q: 1, gain: -2 },
+            { frequency: 600, Q: 1, gain: 2 },
+            { frequency: 800, Q: 1, gain: -10 },
+            { frequency: 1100, Q: 1, gain: -2 },
+            { frequency: 2200, Q: 1, gain: -2 },
+            { frequency: 3500, Q: 1, gain: 10 },
+            { frequency: 12800, Q: 1, gain: 4 }
+        ],
+        oscillators: [{
+            type: 'sawtooth',
+            volume: 0.45,
+            volumePitchTrackingMultiplier: 0.06,
+            lowpass: {
+                frequency: 18,
+                frequencyPitchTrackingMultiplier: 200
+            },
+            highpass: {
+                frequency: 300
+            }
+        }, {
+            type: 'whitenoise',
+            fixedFrequency: 1,
+            volume: 0.4,
+            highpass: {
+                frequency: 7000
+            },
+            vmOscillator: 0,
+            attackEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 51, vol: 1 },
+                { t: 86, vol: 0.84 },
+                { t: 500, vol: 0.78 },
+                { t: 500, vol: 0.78 }
+            ]
+        }, {
+            type: 'sine',
+            fixedFrequency: 4,
+            volume: 2,
+            fmOscillator: 0,
+            attackEnvelope: [
+                { t: 0, vol: 0 },
+                { t: 15, vol: 0.94 },
+                { t: 79, vol: 1 },
+                { t: 172, vol: 0.47 },
+                { t: 500, vol: 0.26 },
+                { t: 500, vol: 0.26 }
+            ]
+        }, {
+            type: 'sine',
+            fixedFrequency: 7,
+            volume: 6,
+            fmOscillator: 0,
+            attackEnvelope: [
+                { t: 0, vol: 0 },
+                { t: 25, vol: 0.99 },
+                { t: 85, vol: 0 },
+                { t: 85, vol: 0 },
+                { t: 387, vol: 0.02 },
+                { t: 511, vol: 0.43 },
+                { t: 600, vol: 0 }
             ]
         }]
     }

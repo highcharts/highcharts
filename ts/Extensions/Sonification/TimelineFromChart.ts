@@ -32,7 +32,10 @@ const {
     format
 } = FU;
 
-
+interface PointGroupItem {
+    point: Point;
+    time: number;
+}
 interface PropExtremes {
     max: number;
     min: number;
@@ -628,6 +631,98 @@ function addMappedSpeechEvent(
 
 
 /**
+ * Add events to a channel for a point&track combo.
+ * @private
+ */
+function addMappedEventForPoint(
+    context: Sonification.EventContext,
+    channel: TimelineChannel,
+    trackOptions: (
+        Sonification.InstrumentTrackOptions|
+        Sonification.SpeechTrackOptions
+    ),
+    extremesCache: PropExtremesCache
+): Sonification.TimelineEvent[] {
+    let eventsAdded: Sonification.TimelineEvent[] = [];
+
+    if (trackOptions.type === 'speech' && trackOptions.mapping) {
+        const eventAdded = addMappedSpeechEvent(
+            context, channel, trackOptions.mapping,
+            extremesCache);
+        if (eventAdded) {
+            eventsAdded = [eventAdded];
+        }
+    } else if (trackOptions.mapping) {
+        eventsAdded = addMappedInstrumentEvent(
+            context, channel, trackOptions.mapping as
+            Sonification.InstrumentTrackMappingOptions,
+            extremesCache,
+            pick(
+                (trackOptions as Sonification.InstrumentTrackOptions)
+                    .roundToMusicalNotes,
+                true
+            ));
+    }
+    return eventsAdded;
+}
+
+
+/**
+ * Get a reduced set of points from a list, depending on grouping opts.
+ * @private
+ */
+function getGroupedPoints(
+    pointGroupOpts: Sonification.PointGroupingOptions,
+    points: PointGroupItem[]
+): Point[] {
+    const alg = pointGroupOpts.algorithm || 'minmax',
+        r = (ix: number): Point[] => (
+            points[ix] ? [points[ix].point] : []
+        );
+
+    if (alg === 'first') {
+        return r(0);
+    }
+    if (alg === 'last') {
+        return r(points.length - 1);
+    }
+    if (alg === 'middle') {
+        return r(points.length >> 1);
+    }
+    if (alg === 'firstlast') {
+        return r(0).concat(r(points.length - 1));
+    }
+    if (alg === 'minmax') {
+        const prop = pointGroupOpts.prop || 'y';
+        let min: PointGroupItem|undefined,
+            max: PointGroupItem|undefined,
+            minVal: number,
+            maxVal: number;
+        points.forEach((p): void => {
+            const val = getPointPropValue((p as AnyRecord).point, prop);
+            if (val === void 0) {
+                return;
+            }
+            if (!min || val < minVal) {
+                min = p;
+                minVal = val;
+            }
+            if (!max || val > maxVal) {
+                max = p;
+                maxVal = val;
+            }
+        });
+        if (min && max) {
+            return min.time > max.time ?
+                [max.point, min.point] :
+                [min.point, max.point];
+        }
+    }
+    return [];
+}
+
+
+/**
  * Should a track be active for this event?
  * @private
  */
@@ -693,6 +788,12 @@ function timelineFromChart(
             {} as Sonification.ChartSonificationOptions,
         defaultInstrOpts = options.defaultInstrumentOptions,
         defaultSpeechOpts = options.defaultSpeechOptions,
+        defaultPointGroupOpts = {
+            enabled: true,
+            groupTimespan: 10,
+            algorithm: 'minmax',
+            prop: 'y'
+        },
         globalTracks = options.globalTracks || [],
         globalContextTracks = options.globalContextTracks || [],
         isSequential = options.order === 'sequential',
@@ -721,40 +822,45 @@ function timelineFromChart(
                     .concat(globalTracks),
                 contextTracks = seriesIx ? sOptions.contextTracks || [] :
                     (sOptions.contextTracks || []).concat(globalContextTracks),
-                mainChannels: Record<string, TimelineChannel> = {};
+                eventsAdded: Sonification.TimelineEvent[] = [];
 
-            // First and last events across channels related to this series
-            let firstEvent: Sonification.TimelineEvent = { time: Infinity },
-                lastEvent: Sonification.TimelineEvent = { time: -Infinity },
-                // For crossing threshold notifications
-                lastPropValue: number|undefined;
+            // For crossing threshold notifications
+            let lastPropValue: number|undefined;
 
-            series.points.forEach((point): void => {
-                // Add the mapped tracks
-                mainTracks.forEach((trackOpts, trackIx): void => {
-                    const mergedOpts = trackOpts.type === 'speech' ?
-                            merge(defaultSpeechOpts, trackOpts) :
-                            merge(defaultInstrOpts, trackOpts),
-                        activeWhen = mergedOpts.activeWhen,
-                        updateLastPropValue = (): void => {
-                            if (
-                                typeof activeWhen === 'object' &&
-                                activeWhen.prop
-                            ) {
-                                lastPropValue = getPointPropValue(
-                                    point, activeWhen.prop);
-                            }
-                        };
+            // Add events for the mapped tracks
+            mainTracks.forEach((trackOpts): void => {
+                const mergedOpts = merge(
+                        { pointGrouping: defaultPointGroupOpts },
+                        trackOpts.type === 'speech' ?
+                            defaultSpeechOpts : defaultInstrOpts,
+                        trackOpts
+                    ),
+                    pointGroupOpts = mergedOpts.pointGrouping,
+                    activeWhen = mergedOpts.activeWhen,
+                    updateLastPropValue = (point: Point): void => {
+                        if (
+                            typeof activeWhen === 'object' &&
+                            activeWhen.prop
+                        ) {
+                            lastPropValue = getPointPropValue(
+                                point, activeWhen.prop);
+                        }
+                    };
 
-                    let channel = mainChannels[trackIx];
-                    if (!channel) {
-                        channel = mainChannels[trackIx] =
-                            addTimelineChannelFromTrack(
-                                timeline, audioContext,
-                                destinationNode, mergedOpts
-                            );
-                    }
+                const channel = addTimelineChannelFromTrack(
+                        timeline, audioContext,
+                        destinationNode, mergedOpts
+                    ),
+                    add = (c: PointGroupItem): unknown => eventsAdded.push(
+                        ...addMappedEventForPoint(
+                            c, channel, mergedOpts, extremesCache.globalExtremes
+                        ));
 
+                // Go through the points and add events to channel
+                let pointGroup: PointGroupItem[] = [],
+                    pointGroupTime = -Infinity;
+                series.points.forEach((point, pointIx): void => {
+                    const isLastPoint = pointIx === series.points.length - 1;
                     const time = getPointTime(
                         point, startTime, seriesDuration,
                         mergedOpts.mapping && mergedOpts.mapping.time || 0,
@@ -762,46 +868,69 @@ function timelineFromChart(
                             extremesCache.globalExtremes
                     );
 
+                    const context: PointGroupItem = { point, time };
+
                     // Is this track active?
                     if (
                         !mergedOpts.mapping ||
-                        !isActive({ point, time }, activeWhen, lastPropValue)
+                        !isActive(context, activeWhen, lastPropValue)
                     ) {
-                        updateLastPropValue();
+                        updateLastPropValue(point);
                         return;
                     }
+                    updateLastPropValue(point);
 
-                    // Add the event to be sonified
-                    let eventsAdded: Sonification.TimelineEvent[] = [];
-                    if (mergedOpts.type === 'speech') {
-                        const eventAdded = addMappedSpeechEvent(
-                            { point, time }, channel, mergedOpts.mapping,
-                            extremesCache.globalExtremes);
-                        if (eventAdded) {
-                            eventsAdded = [eventAdded];
-                        }
+                    // Add the events
+                    if (!pointGroupOpts.enabled) {
+                        add(context);
                     } else {
-                        eventsAdded = addMappedInstrumentEvent(
-                            { point, time }, channel, mergedOpts.mapping,
-                            extremesCache.globalExtremes,
-                            pick(mergedOpts.roundToMusicalNotes, true));
+                        const dT = time - pointGroupTime,
+                            groupSpan = pointGroupOpts.groupTimespan;
+                        if (isLastPoint || dT > groupSpan) {
+                            if (dT <= groupSpan) {
+                                // Only happens if last point is within group
+                                pointGroup.push(context);
+                            }
+                            if (pointGroup.length === 1) {
+                                add(pointGroup[0]);
+                            } else {
+                                const points = getGroupedPoints(
+                                        pointGroupOpts, pointGroup),
+                                    spanTime = isLastPoint &&
+                                        dT <= groupSpan ? dT : groupSpan,
+                                    t = spanTime / points.length + 1;
+                                points.forEach((p, ix): unknown =>
+                                    add({
+                                        point: p,
+                                        time: Math.min(
+                                            pointGroupTime + t * (ix + 1),
+                                            time
+                                        )
+                                    }));
+                            }
+
+                            if (isLastPoint && dT > groupSpan) {
+                                add(context);
+                            } else {
+                                pointGroup = [context];
+                            }
+                            pointGroupTime = time;
+                        } else {
+                            pointGroup.push(context);
+                        }
                     }
-
-                    updateLastPropValue();
-
-                    // Update the first/last event for later event handling
-                    firstEvent = eventsAdded.reduce(
-                        (first, e): Sonification.TimelineEvent => (
-                            e.time < first.time ? e : first
-                        ), firstEvent);
-                    lastEvent = eventsAdded.reduce(
-                        (last, e): Sonification.TimelineEvent => (
-                            e.time > last.time ? e : last
-                        ), lastEvent);
                 });
             });
 
             // Add callbacks to first/last events
+            const firstEvent = eventsAdded.reduce(
+                (first, e): Sonification.TimelineEvent => (
+                    e.time < first.time ? e : first
+                ), { time: Infinity });
+            const lastEvent = eventsAdded.reduce(
+                (last, e): Sonification.TimelineEvent => (
+                    e.time > last.time ? e : last
+                ), { time: -Infinity });
             firstEvent.callback = eventOptions.onSeriesStart ?
                 eventOptions.onSeriesStart.bind(null, series, timeline) :
                 void 0;
@@ -813,7 +942,9 @@ function timelineFromChart(
             contextTracks.forEach((trackOpts): void => {
                 const mergedOpts = trackOpts.type === 'speech' ?
                     merge(defaultSpeechOpts, trackOpts) :
-                    merge(defaultInstrOpts, trackOpts);
+                    merge(defaultInstrOpts, {
+                        mapping: { pitch: { mapTo: 'value' } }
+                    }, trackOpts);
 
                 const contextChannel = addTimelineChannelFromTrack(
                     timeline, audioContext,

@@ -37,6 +37,8 @@ declare global {
         type SpeechContextTrackOptions = SpeechTrackOptions & ContextOptions;
         type ContextTrackOptions = Array<InstrumentContextTrackOptions|SpeechContextTrackOptions>;
         type MapFunctionTypes = 'linear'|'logarithmic';
+        type PointGroupingAlgorithmTypes = 'minmax'|'first'|'last'|
+        'middle'|'firstlast';
         type MappingParameter =
         string|number|TrackValueCallback|MappingParameterOptions;
 
@@ -66,6 +68,18 @@ declare global {
             speed?: MappingParameter;
         }
 
+        interface PointGroupingOptions {
+            enabled?: boolean;
+            groupTimespan?: number;
+            algorithm?: PointGroupingAlgorithmTypes;
+            prop?: string;
+        }
+
+        interface BaseTrackOptions {
+            pointGrouping?: PointGroupingOptions;
+            activeWhen?: TrackPredicateCallback|ValueConstraints;
+        }
+
         interface InstrumentTrackMappingOptions {
             time?: MappingParameter;
             pan?: MappingParameter;
@@ -82,11 +96,10 @@ declare global {
             highpass?: FilterMappingOptions;
         }
 
-        interface InstrumentTrackOptions {
+        interface InstrumentTrackOptions extends BaseTrackOptions {
             type?: 'instrument';
             instrument: string|SynthPatch.SynthPatchOptions;
             mapping?: InstrumentTrackMappingOptions;
-            activeWhen?: TrackPredicateCallback|ValueConstraints;
             roundToMusicalNotes?: boolean;
         }
 
@@ -114,10 +127,9 @@ declare global {
             pitch?: MappingParameter;
         }
 
-        interface SpeechTrackOptions {
+        interface SpeechTrackOptions extends BaseTrackOptions {
             type: 'speech';
             mapping?: SpeechTrackMappingOptions;
-            activeWhen?: TrackPredicateCallback|ValueConstraints;
             preferredVoice?: string;
             language: string;
         }
@@ -139,6 +151,7 @@ declare global {
             events?: ChartSonificationEventsOptions;
             showPlayMarker: boolean;
             showCrosshairOnly?: boolean;
+            pointGrouping: PointGroupingOptions;
             globalTracks?: TrackOptions;
             globalContextTracks?: ContextTrackOptions;
             /**
@@ -201,6 +214,12 @@ const Options: DeepPartial<OptionsType> = {
                     min: 'c2',
                     max: 'c6'
                 }
+            },
+            pointGrouping: {
+                enabled: true,
+                groupTimespan: 15,
+                algorithm: 'minmax',
+                prop: 'y'
             }
         },
         defaultSpeechOptions: {
@@ -208,6 +227,12 @@ const Options: DeepPartial<OptionsType> = {
             mapping: {
                 time: 'x',
                 rate: 1.3
+            },
+            pointGrouping: {
+                enabled: true,
+                groupTimespan: 10,
+                algorithm: 'last',
+                prop: 'y'
             }
         }
     }

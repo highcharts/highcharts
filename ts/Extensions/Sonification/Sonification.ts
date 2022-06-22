@@ -125,6 +125,7 @@ class Sonification {
         }
 
         if (this.timeline) {
+            this.timeline.reset();
             this.timeline.play();
         }
     }
@@ -136,6 +137,7 @@ class Sonification {
         }
 
         if (this.timeline) {
+            this.timeline.reset();
             this.timeline.play((e): boolean =>
                 !!e.relatedPoint && e.relatedPoint.series === series);
         }
@@ -149,6 +151,7 @@ class Sonification {
         }
 
         if (this.timeline) {
+            this.timeline.reset();
             this.timeline.play((e): boolean => e.relatedPoint === point);
         }
     }

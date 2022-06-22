@@ -273,6 +273,7 @@ class Oscillator {
     private volTrackingNode?: GainNode;
     private lowpassNode?: BiquadFilterNode;
     private highpassNode?: BiquadFilterNode;
+    private lastUpdateTime?: number;
 
     constructor(
         private audioContext: AudioContext,
@@ -345,17 +346,14 @@ class Oscillator {
         const opts = this.options,
             f = pick(opts.fixedFrequency, frequency) *
                 (opts.freqMultiplier || 1),
-            oscTarget = this.getOscTarget();
+            oscTarget = this.getOscTarget(),
+            timeConstant = glideDuration / 5000;
 
         if (oscTarget) {
             oscTarget.cancelScheduledValues(time);
-            if (glideDuration) {
-                oscTarget.setTargetAtTime(
-                    f, time, glideDuration / 1000 / 5
-                );
-                oscTarget.setValueAtTime(
-                    f, time + glideDuration / 1000
-                );
+            if (glideDuration && time - (this.lastUpdateTime || -1) > 0.01) {
+                oscTarget.setTargetAtTime(f, time, timeConstant);
+                oscTarget.setValueAtTime(f, time + timeConstant);
             } else {
                 oscTarget.setValueAtTime(f, time);
             }
@@ -363,6 +361,7 @@ class Oscillator {
 
         this.scheduleVolTrackingChange(f, time, glideDuration);
         this.scheduleFilterTrackingChange(f, time, glideDuration);
+        this.lastUpdateTime = time;
     }
 
 
