@@ -946,13 +946,25 @@ namespace OrdinalAxis {
                 i,
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
-                useOrdinal = false;
+                useOrdinal = false,
+                adjustOrdinalExtremesPoints = false;
 
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
+                let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
+
+                    // For an axis with multiple series, check if the distance
+                    // between points is identical throughout all series.
+                    if (i > 0) {
+                        adjustOrdinalExtremesPoints =
+                            distanceBetweenPoint !== series.processedXData[1] -
+                                series.processedXData[0];
+                    }
+                    distanceBetweenPoint =
+                        series.processedXData[1] - series.processedXData[0];
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
@@ -1018,6 +1030,14 @@ namespace OrdinalAxis {
                         }
                     }
                 });
+
+                // If the distance between points is not identical throughout
+                // all series, remove the first and last ordinal position to
+                // avoid enabling ordinal logic when it is not needed, #17405.
+                if (adjustOrdinalExtremesPoints) {
+                    ordinalPositions.pop();
+                    ordinalPositions.shift();
+                }
 
                 // cache the length
                 len = ordinalPositions.length;
