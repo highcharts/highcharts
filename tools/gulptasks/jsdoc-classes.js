@@ -43,7 +43,7 @@ const SOURCE_GLOBS = [
     'js/Core/Utilities.js',
     'js/Data/DataTable.js',
     'js/Extensions/Annotations/Mixins/ControllableMixin.js',
-    'js/Extensions/Annotations/Annotations.js',
+    'js/Extensions/Annotations/Annotation.js',
     'js/Extensions/Annotations/ControlPoint.js',
     'js/Extensions/Annotations/NavigationBindings.js',
     'js/Extensions/Sonification/*.js',
