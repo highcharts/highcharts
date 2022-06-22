@@ -632,27 +632,36 @@ class BubbleSeries extends ScatterSeries {
 
     }
 
-    public getPxExtremes(): BubblePxExtremes {
+    public getPxSize(
+        length: number|string|undefined,
+        isMinSize?: boolean
+    ): number {
+        const defaultValue = isMinSize ?
+            BubbleSeries.defaultOptions.minSize :
+            BubbleSeries.defaultOptions.maxSize;
         const smallestSize = Math.min(
             this.chart.plotWidth,
             this.chart.plotHeight
         );
+        let isPercent;
 
-        const getPxSize = (length: number|string): number => {
-            let isPercent;
+        length = pick(length, defaultValue as number|string);
 
-            if (typeof length === 'string') {
-                isPercent = /%$/.test(length);
-                length = parseInt(length, 10);
-            }
-            return isPercent ? smallestSize * length / 100 : length;
-        };
+        if (typeof length === 'string') {
+            isPercent = /%$/.test(length);
+            length = parseInt(length, 10);
+        }
 
-        const minPxSize = getPxSize(pick(this.options.minSize, 8));
+        return isPercent ? smallestSize * length / 100 : length;
+    }
+
+    public getPxExtremes(): BubblePxExtremes {
+        const minPxSize = this.getPxSize(this.options.minSize, true);
+
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize(pick(this.options.maxSize, '20%')),
+            this.getPxSize(this.options.maxSize),
             minPxSize
         );
 

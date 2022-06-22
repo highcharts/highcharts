@@ -36,6 +36,7 @@ const {
     correctFloat,
     defined,
     extend,
+    isArray,
     isNumber,
     merge,
     relativeLength
@@ -100,10 +101,22 @@ class TemperatureMapSeries extends MapBubbleSeries {
         maxPxSize: number
     } {
         const ret = super.getPxExtremes.apply(this),
-            temperatureColors = this.options.temperatureColors;
+            temperatureColors = this.options.temperatureColors,
+            colorStop = this.colorStop;
 
-        if (temperatureColors && temperatureColors.length) {
-            ret.minPxSize = ret.minPxSize / temperatureColors.length;
+        let sizeFactor: number = colorStop || (1 / temperatureColors.length);
+
+        // Recalculate minPxSize only when translating, not when calculating
+        // radii
+        if (this.adjustMinSize) {
+            ret.minPxSize = ret.minPxSize * sizeFactor;
+        }
+
+        if (temperatureColors && temperatureColors.length && !colorStop) {
+            // ret.maxPxSize = Math.max(
+            //     this.getPxSize(this.options.maxSize),
+            //     ret.minPxSize
+            // );
         }
 
         return ret;
@@ -118,16 +131,23 @@ class TemperatureMapSeries extends MapBubbleSeries {
         yValue?: number | null
     ): number | null {
         const temperatureColors = this.options.temperatureColors,
-            colorIndex = this.temperatureColorIndex;
+            colorIndex = this.temperatureColorIndex,
+            colorStop = this.colorStop;
 
-        if (temperatureColors && isNumber(colorIndex) && defined(value)) {
-            minSize = minSize * (temperatureColors.length - colorIndex);
-        }
-
-        return super.getRadius.apply(
+        let ret = super.getRadius.apply(
             this,
             [zMin, zMax, minSize, maxSize, value, yValue]
         );
+
+        if (isNumber(colorStop)) {
+            ret = (ret || 0) * colorStop;
+        } else if (temperatureColors && isNumber(colorIndex)) {
+            ret = (ret || 0) * (
+                correctFloat(1 - colorIndex / temperatureColors.length)
+            );
+        }
+
+        return ret;
     }
 
     public drawPoints(): void {
@@ -141,13 +161,17 @@ class TemperatureMapSeries extends MapBubbleSeries {
             i: number;
 
         const colorsLength = temperatureColors.length;
+        const options: any = series.options;
 
         temperatureColors = temperatureColors.map(
-            (color: ColorType | GradientColorStop, ii: number): any => {
-                const options: any = series.options;
-                const maxSize = options.maxSize;
-                const radiusFactor: number = ii / colorsLength;
-                const size = correctFloat(1 - radiusFactor) * maxSize;
+            (color: ColorType | GradientColorStop | any, ii: number): any => {
+
+                if (isArray(color)) {
+                    (this as any).colorStop = color[0];
+                }
+
+                color = typeof color === 'string' ? color : color[1];
+
                 const fillColor = {
                     radialGradient: {
                         cx: 0.5,
@@ -156,32 +180,33 @@ class TemperatureMapSeries extends MapBubbleSeries {
                     },
                     // TODO, refactor how the array is created.
                     // There is code that can be shared.
-                    stops: (typeof color === 'string') ? [
+                    stops: [
                         [ii === colorsLength - 1 ? 0 : 0.5, color],
                         [1, (new Color(color)).setOpacity(0).get('rgba')]
-                    ] : [color, [1, new Color((color as any)[1])
-                        .setOpacity(0).get('rgba')]]
+                    ]
                 };
 
                 // Options from point level not supported - API says it should,
                 // but visually is it useful at all?
-                (series as any).options.marker.fillColor = fillColor;
-                series.options.maxSize = size;
+                options.marker.fillColor = fillColor;
+
                 this.temperatureColorIndex = ii;
+
                 series.getRadii(); // recalc. radii
+
+                series.adjustMinSize = true;
                 series.translateBubble(); // use radii
+                series.adjustMinSize = false;
 
                 super.drawPoints.apply(series);
-                this.temperatureColorIndex = null;
 
-                series.options.maxSize = maxSize;
+                this.temperatureColorIndex = null;
 
                 i = 0;
                 while (i < pointLength) {
                     const point = series.points[i];
-                    let graphics: Array<SVGElementLike>;
 
-                    point.graphics = graphics = point.graphics || [];
+                    point.graphics = point.graphics || [];
 
                     if (point && point.graphic && point.visible) {
                         if (point.graphics[ii]) {
@@ -212,14 +237,13 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 }
 
                 return {
-                    size,
                     fillColor
                 };
             });
 
         // Clean up for animation (else the first color is as small as the last)
-        if (series.options.marker) {
-            series.options.marker.fillColor = temperatureColors[0].fillColor;
+        if (options.marker) {
+            options.marker.fillColor = temperatureColors[0].fillColor;
         }
 
         // series.options.maxSize = temperatureColors[0].size;
@@ -260,6 +284,8 @@ class TemperatureMapSeries extends MapBubbleSeries {
  * */
 
 interface TemperatureMapSeries {
+    colorStop: number;
+    adjustMinSize: boolean;
     temperatureColorIndex: null|number;
     // type: string;
     // getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
