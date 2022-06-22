@@ -889,7 +889,8 @@ class RangeSelector {
             rangeSetting: (number|undefined),
             ctx: Axis,
             ytdExtremes,
-            dataGrouping = rangeOptions.dataGrouping;
+            dataGrouping = rangeOptions.dataGrouping,
+            addOffsetMin = true;
 
         // chart has no data, base series is removed
         if (dataMin === null || dataMax === null) {
@@ -929,14 +930,18 @@ class RangeSelector {
                 } as any;
                 newMin = baseAxis.minFromRange.call(ctx);
                 if (isNumber(ctx.newMax)) {
-                    newMax = ctx.newMax as any;
+                    newMax = ctx.newMax;
                 }
+                // #15799: offsetMin is added in minFromRange so that it works
+                // with pre-selected buttons as well
+                addOffsetMin = false;
             }
 
         // Fixed times like minutes, hours, days
         } else if (range) {
             newMin = Math.max(newMax - range, dataMin as any);
             newMax = Math.min(newMin + range, dataMax as any);
+            addOffsetMin = false;
 
         } else if (type === 'ytd') {
 
@@ -948,24 +953,28 @@ class RangeSelector {
                 // event (below). When the series are initialized, but before
                 // the chart is rendered, we have access to the xData array
                 // (#942).
-                if (typeof dataMax === 'undefined') {
+                if (
+                    typeof dataMax === 'undefined' ||
+                    typeof dataMin === 'undefined'
+                ) {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
                     chart.series.forEach(function (series): void {
                         // reassign it to the last item
                         const xData = series.xData;
-
-                        dataMin = Math.min((xData as any)[0], dataMin as any);
-                        dataMax = Math.max(
-                            (xData as any)[(xData as any).length - 1],
-                            dataMax as any
-                        );
+                        if (xData) {
+                            dataMin = Math.min(xData[0], dataMin as any);
+                            dataMax = Math.max(
+                                xData[xData.length - 1],
+                                dataMax as any
+                            );
+                        }
                     });
                     redraw = false;
                 }
                 ytdExtremes = rangeSelector.getYTDExtremes(
                     dataMax,
-                    dataMin as any,
+                    dataMin,
                     chart.time.useUTC
                 );
                 newMin = rangeMin = ytdExtremes.min;
@@ -982,19 +991,18 @@ class RangeSelector {
             // If the navigator exist and the axis range is declared reset that
             // range and from now on only use the range set by a user, #14742.
             if (chart.navigator && chart.navigator.baseSeries[0]) {
-                chart.navigator.baseSeries[0].xAxis.options
-                    .range = void 0 as any;
+                chart.navigator.baseSeries[0].xAxis.options.range = void 0;
             }
 
             newMin = dataMin;
             newMax = dataMax as any;
         }
 
-        if (defined(newMin)) {
-            newMin += rangeOptions._offsetMin as any;
+        if (addOffsetMin && rangeOptions._offsetMin && defined(newMin)) {
+            newMin += rangeOptions._offsetMin;
         }
-        if (defined(newMax)) {
-            newMax += rangeOptions._offsetMax as any;
+        if (rangeOptions._offsetMax && defined(newMax)) {
+            newMax += rangeOptions._offsetMax;
         }
 
         if (this.dropdown) {
@@ -1005,7 +1013,7 @@ class RangeSelector {
         if (!baseAxis) {
             // Axis not yet instanciated. Temporarily set min and range
             // options and remove them on chart load (#4317).
-            baseXAxisOptions = splat(chart.options.xAxis as any)[0];
+            baseXAxisOptions = splat(chart.options.xAxis)[0];
             rangeSetting = baseXAxisOptions.range;
             baseXAxisOptions.range = range;
             minSetting = baseXAxisOptions.min;
@@ -1068,10 +1076,10 @@ class RangeSelector {
                     maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
-                if (minInput && minInput.blur) {
+                if (minInput && (minInput.blur)) {
                     fireEvent(minInput, 'blur');
                 }
-                if (maxInput && maxInput.blur) {
+                if (maxInput && (maxInput.blur)) {
                     fireEvent(maxInput, 'blur');
                 }
             };
@@ -2492,7 +2500,7 @@ class RangeSelector {
             if (button.state !== 2) {
                 button.hide();
             } else {
-                button.show(true);
+                button.show();
                 button.attr(getAttribs(rangeOptions.text));
 
                 hasActiveButton = true;
@@ -2504,7 +2512,7 @@ class RangeSelector {
                 dropdown.selectedIndex = 0;
             }
 
-            buttons[0].show(true);
+            buttons[0].show();
             buttons[0].attr(getAttribs(this.zoomText && this.zoomText.textStr));
         }
 
@@ -2539,7 +2547,7 @@ class RangeSelector {
         this.hideDropdown();
 
         if (zoomText) {
-            zoomText.show(true);
+            zoomText.show();
         }
 
         buttonOptions.forEach((
@@ -2548,7 +2556,7 @@ class RangeSelector {
         ): void => {
             const button = buttons[i];
 
-            button.show(true);
+            button.show();
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
@@ -2871,10 +2879,10 @@ Axis.prototype.minFromRange = function (): (number|undefined) {
         };
 
     if (isNumber(rangeOptions)) {
-        min = max - (rangeOptions as any);
+        min = max - rangeOptions;
         range = rangeOptions;
-    } else {
-        min = max + getTrueRange(max, -(rangeOptions as any).count);
+    } else if (rangeOptions) {
+        min = max + getTrueRange(max, -(rangeOptions.count || 1));
 
         // Let the fixedRange reflect initial settings (#5930)
         if (this.chart) {
@@ -2891,10 +2899,19 @@ Axis.prototype.minFromRange = function (): (number|undefined) {
         if (typeof range === 'undefined') { // #4501
             range = getTrueRange(min, (rangeOptions as any).count);
         }
-        this.newMax = Math.min(min + range, this.dataMax as any);
+        this.newMax = Math.min(
+            min + range,
+            pick(this.dataMax, Number.MAX_VALUE)
+        );
     }
     if (!isNumber(max)) {
         min = void 0;
+    } else if (
+        !isNumber(rangeOptions) &&
+        rangeOptions &&
+        rangeOptions._offsetMin
+    ) {
+        min += rangeOptions._offsetMin;
     }
     return min;
 

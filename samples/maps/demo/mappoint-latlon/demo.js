@@ -15,6 +15,10 @@
             text: 'Highmaps basic lat/lon demo'
         },
 
+        accessibility: {
+            description: 'Map where city locations have been defined using latitude/longitude.'
+        },
+
         mapNavigation: {
             enabled: true
         },
@@ -26,7 +30,7 @@
 
         series: [{
             // Use the gb-all map with no data as a basemap
-            name: 'Basemap',
+            name: 'Great Britain',
             borderColor: '#A0A0A0',
             nullColor: 'rgba(200, 200, 200, 0.3)',
             showInLegend: false
@@ -35,11 +39,19 @@
             type: 'mapline',
             nullColor: '#707070',
             showInLegend: false,
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            accessibility: {
+                enabled: false
+            }
         }, {
             // Specify points using lat/lon
             type: 'mappoint',
             name: 'Cities',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{xDescription}. Lat: {point.lat:.2f}, lon: {point.lon:.2f}.'
+                }
+            },
             color: Highcharts.getOptions().colors[1],
             data: [{
                 name: 'London',

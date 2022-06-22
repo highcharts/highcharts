@@ -46,6 +46,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    defined,
     merge,
     pick
 } = U;
@@ -128,7 +129,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 0,
                 scrollableMinHeight - this.chartHeight
             );
-            if (scrollablePixelsY) {
+            if (defined(scrollablePixelsY)) {
                 this.scrollablePlotBox = (
                     this.renderer.scrollablePlotBox = merge(this.plotBox)
                 );

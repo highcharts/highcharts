@@ -29,6 +29,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../FormatUtilities.js';
@@ -249,7 +250,8 @@ class Tick {
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
                     value,
-                    (options.dateTimeLabelFormats || {}) as any
+                    options.dateTimeLabelFormats ||
+                        {} as Time.DateTimeLabelFormatsOption
                 );
             }
         }
@@ -306,7 +308,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
+        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
@@ -535,19 +537,23 @@ class Tick {
             ),
             pos = {} as PositionObject;
 
-        let yOffset = labelOptions.y,
+        let yOffset: number,
             line: number;
 
-        if (!defined(yOffset)) {
-            if (axis.side === 0) {
-                yOffset = label.rotation ? -8 : -label.getBBox().height;
-            } else if (axis.side === 2) {
-                yOffset = rotCorr.y + 8;
-            } else {
-                // #3140, #3140
-                yOffset = Math.cos((label.rotation as any) * deg2rad) *
-                    (rotCorr.y - label.getBBox(false, 0).height / 2);
-            }
+        if (axis.side === 0) {
+            yOffset = label.rotation ? -8 : -label.getBBox().height;
+        } else if (axis.side === 2) {
+            yOffset = rotCorr.y + 8;
+        } else {
+            // #3140, #3140
+            yOffset = Math.cos((label.rotation as any) * deg2rad) *
+                (rotCorr.y - label.getBBox(false, 0).height / 2);
+        }
+
+        if (defined(labelOptions.y)) {
+            yOffset = axis.side === 0 && axis.horiz ?
+                labelOptions.y + yOffset :
+                labelOptions.y;
         }
 
         x = x +
@@ -1078,10 +1084,10 @@ class Tick {
             // Set the new position, and show or hide
             if (show && isNumber(xy.y)) {
                 xy.opacity = opacity;
-                label[tick.isNewLabel ? 'attr' : 'animate'](xy);
+                label[tick.isNewLabel ? 'attr' : 'animate'](xy).show(true);
                 tick.isNewLabel = false;
             } else {
-                label.attr('y', -9999 as any); // #1338
+                label.hide(); // #1338, #15863
                 tick.isNewLabel = true;
             }
         }

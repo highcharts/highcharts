@@ -219,7 +219,7 @@ QUnit.test(
         });
 
         assert.ok(
-            chart.yAxis[0].ticks[50].label.attr('y') > 0,
+            chart.yAxis[0].ticks[50].label.attr('visibility') !== 'hidden',
             '50 label is placed'
         );
 
@@ -230,7 +230,7 @@ QUnit.test(
 
         setTimeout(function () {
             assert.ok(
-                chart.yAxis[0].ticks[50].label.attr('y') < 0,
+                chart.yAxis[0].ticks[50].label.attr('visibility') === 'hidden',
                 '50 label is hidden'
             );
 
@@ -2103,4 +2103,42 @@ QUnit.test(
             -1,
             'label.formatter should take precedence over label.format'
         );
-    });
+    }
+);
+
+
+QUnit.test(
+    'xAxis labels.y offset',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                labels: {
+                    format: 'test<br>test<br>'
+                },
+                opposite: true
+            },
+
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        const defaultY = chart.xAxis[0].ticks[1].label.attr('y');
+
+        chart.xAxis[0].update({
+            labels: {
+                y: 0
+            }
+        });
+
+        assert.deepEqual(
+            chart.xAxis[0].ticks[1].label.attr('y'),
+            // +3px because of a "bug" in default positioning
+            // If you read this comment and you are not sure if you can remove
+            // this +3px, then yes, you can.
+            defaultY + 3,
+            `labels.y=0 for opposite xAxis should align label the same way as
+            labels.y=undefined (#12206)`
+        );
+    }
+);

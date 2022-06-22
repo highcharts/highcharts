@@ -242,7 +242,7 @@ class PlotLineOrBand {
             (svgElem as any).attr({ d: path });
         } else if (svgElem) {
             if (path) {
-                svgElem.show(true);
+                svgElem.show();
                 svgElem.animate({ d: path });
             } else if (svgElem.d) {
                 svgElem.hide();
@@ -383,7 +383,7 @@ class PlotLineOrBand {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
 
-        delete this.axis;
+        delete (this as Partial<this>).axis;
         destroyObjectProperties(this);
     }
 

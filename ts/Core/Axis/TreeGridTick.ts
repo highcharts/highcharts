@@ -200,7 +200,7 @@ namespace TreeGridTick {
         }
 
         // Set the new position, and show or hide
-        icon.attr({ y: shouldRender ? 0 : -9999 }); // #14904, #1338
+        icon[shouldRender ? 'show' : 'hide'](); // #14904, #1338
 
         // Presentational attributes
         if (!renderer.styledMode) {

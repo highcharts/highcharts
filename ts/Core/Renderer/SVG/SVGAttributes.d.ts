@@ -85,6 +85,7 @@ export interface SVGAttributes {
     refY?: number;
     rx?: number;
     ry?: number;
+    role?: string;
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;

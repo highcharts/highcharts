@@ -195,6 +195,7 @@ class SVGElement implements SVGElementLike {
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
+    public visibility?: 'hidden'|'inherit'|'visible';
     // @todo public width?: number;
     public x?: number;
     public y?: number;
@@ -1402,7 +1403,7 @@ class SVGElement implements SVGElementLike {
             duration: pick(duration, 150),
             complete: function (): void {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({ y: -9999 }).hide();
+                elemWrapper.hide();
             }
         });
     }
@@ -1697,22 +1698,11 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#hide
      *
-     * @param {boolean} [hideByTranslation=false]
-     *        The flag to determine if element should be hidden by moving out
-     *        of the viewport. Used for example for dataLabels.
-     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public hide(hideByTranslation?: boolean): this {
-
-        if (hideByTranslation) {
-            this.attr({ y: -9999 });
-        } else {
-            this.attr({ visibility: 'hidden' });
-        }
-
-        return this;
+    public hide(): this {
+        return this.attr({ visibility: 'hidden' });
     }
 
     /**
@@ -2234,7 +2224,7 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param {boolean} [inherit=false]
+     * @param {boolean} [inherit=true]
      *        Set the visibility attribute to `inherit` rather than `visible`.
      *        The difference is that an element with `visibility="visible"`
      *        will be visible even if the parent is hidden.
@@ -2242,7 +2232,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit?: boolean): this {
+    public show(inherit: boolean = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
@@ -2582,18 +2572,18 @@ class SVGElement implements SVGElementLike {
      *
      */
     public visibilitySetter(
-        value: string,
-        key: string,
+        value: 'hidden'|'inherit'|'visible',
+        key: 'visibility',
         element: SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as AnyRecord)[key] !== value) { // #6747
+        } else if (this[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as AnyRecord)[key] = value;
+        this[key] = value;
     }
 
     /**

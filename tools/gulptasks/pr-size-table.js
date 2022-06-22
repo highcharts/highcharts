@@ -24,9 +24,16 @@ const files = argv.files ? argv.files.split(',') : [
 ];
 
 /**
- * @param {string} outputFolder output path
- * @param {string} outputFileName output path
- * @return {promise} Writes file size as json doc
+ * Writes file size.
+ *
+ * @param {string} outputFolder
+ *        Output path.
+ *
+ * @param {string} outputFileName
+ *        Output path.
+ *
+ * @return {Promise<void>}
+ *         Writes file size as json doc.
  */
 async function writeFileSize(outputFolder, outputFileName) {
     try {
@@ -134,7 +141,7 @@ async function comment() {
                 await createPRComment(pr, commentBody);
             }
         } else {
-            log.error('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
+            log.failure('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
         }
     } catch (error) {
         log.failure(error);

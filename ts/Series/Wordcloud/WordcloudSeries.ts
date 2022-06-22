@@ -703,7 +703,7 @@ export default WordcloudSeries;
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.name
+ * @apioption series.wordcloud.data.name
  */
 
 /**
@@ -713,7 +713,7 @@ export default WordcloudSeries;
  * @type      {number}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.weight
+ * @apioption series.wordcloud.data.weight
  */
 
 ''; // detach doclets above
