@@ -947,7 +947,8 @@ namespace OrdinalAxis {
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
                 useOrdinal = false,
-                adjustOrdinalExtremesPoints = false;
+                adjustOrdinalExtremesPoints = false,
+                isBoosted = false;
 
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
@@ -968,6 +969,10 @@ namespace OrdinalAxis {
                     }
                     distanceBetweenPoint =
                         series.processedXData[1] - series.processedXData[0];
+
+                    if (series.isSeriesBoosting) {
+                        isBoosted = series.isSeriesBoosting;
+                    }
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
@@ -1037,7 +1042,8 @@ namespace OrdinalAxis {
                 // If the distance between points is not identical throughout
                 // all series, remove the first and last ordinal position to
                 // avoid enabling ordinal logic when it is not needed, #17405.
-                if (adjustOrdinalExtremesPoints) {
+                // Only for boosted series because changes are negligible.
+                if (adjustOrdinalExtremesPoints && isBoosted) {
                     ordinalPositions.pop();
                     ordinalPositions.shift();
                 }
