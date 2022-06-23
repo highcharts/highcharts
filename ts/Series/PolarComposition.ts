@@ -20,10 +20,10 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AreaRangeSeries from '../Series/AreaRange/AreaRangeSeries';
+import type AreaRangeSeries from './AreaRange/AreaRangeSeries';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnPoint from '../Series/Column/ColumnPoint';
-import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnSeries from './Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
@@ -37,7 +37,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import Pane from './Pane.js';
+import Pane from '../Extensions/Pane.js';
 import Pointer from '../Core/Pointer.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';

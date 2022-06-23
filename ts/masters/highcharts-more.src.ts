@@ -25,4 +25,4 @@ import '../Series/Gauge/GaugeSeries.js';
 import '../Series/PackedBubble/PackedBubbleSeries.js';
 import '../Series/Polygon/PolygonSeries.js';
 import '../Series/Waterfall/WaterfallSeries.js';
-import '../Extensions/Polar.js';
+import '../Series/PolarComposition.js';
