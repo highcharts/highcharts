@@ -192,11 +192,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
                 y -= height;
             }
 
-            if (isRadial) {
+            if (isRadial && this.polar) {
 
                 start = point.barX + startAngleRad;
                 point.shapeType = 'arc';
-                point.shapeArgs = this.polarArc(
+                point.shapeArgs = this.polar.arc(
                     y + height,
                     y,
                     start,
@@ -271,7 +271,7 @@ interface ColumnRangeSeries {
     drawPoints: typeof columnProto.drawPoints,
     getColumnMetrics: typeof columnProto.getColumnMetrics;
     // pointAttribs: typeof columnProto.pointAttribs,
-    polarArc: typeof columnProto.polarArc
+    // polarArc: typeof columnProto.polarArc
     // translate3dPoints: typeof columnProto.translate3dPoints,
     // translate3dShapes: typeof columnProto.translate3dShapes
 }
@@ -286,9 +286,9 @@ extend(ColumnRangeSeries.prototype, {
     drawPoints: columnProto.drawPoints,
     getSymbol: noop,
     drawTracker: columnProto.drawTracker,
-    getColumnMetrics: columnProto.getColumnMetrics,
+    getColumnMetrics: columnProto.getColumnMetrics
     // pointAttribs: columnProto.pointAttribs,
-    polarArc: columnProto.polarArc
+    // polarArc: columnProto.polarArc
     // translate3dPoints: columnProto.translate3dPoints,
     // translate3dShapes: columnProto.translate3dShapes
 });

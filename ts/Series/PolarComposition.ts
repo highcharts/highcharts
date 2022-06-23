@@ -20,29 +20,29 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AreaRangeSeries from './AreaRange/AreaRangeSeries';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type Chart from '../Core/Chart/Chart';
+import type ChartOptions from '../Core/Chart/ChartOptions';
 import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnSeries from './Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Pane from '../Extensions/Pane.js';
 import Pointer from '../Core/Pointer.js';
-import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -67,14 +67,15 @@ declare module '../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
-        clipCircle(
-            x: number,
-            y: number,
-            r: number,
-            innerR: number
-        ): SVGElement;
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        polar: ChartOptions['polar'];
+    }
+}
+
+declare module '../Core/Chart/ChartOptions' {
+    interface ChartOptions {
+        polar?: boolean;
     }
 }
 
@@ -91,10 +92,6 @@ declare module '../Core/Series/SeriesLike' {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
         polar?: PolarAdditions;
-        /** @requires Series/Polar */
-        polarArc: PolarSeriesComposition['polarArc'];
-        /** @requires Series/Polar */
-        findAlignments: PolarSeriesComposition['findAlignments'];
     }
 }
 
@@ -140,28 +137,11 @@ interface PolarSeriesComposition extends Series {
     animate(init?: boolean): void;
     searchPoint: (
         PolarSeriesComposition['kdByAngle'] extends true ?
-            PolarSeriesComposition['searchPointByAngle'] :
+            PolarAdditions['searchPointByAngle'] :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
     yAxis: RadialAxis.AxisComposition;
-    getConnectors(
-        segment: Array<Point>,
-        index: number,
-        calculateNeighbours?: boolean,
-        connectEnds?: boolean
-    ): PolarConnector;
-    polarArc(
-        low: number,
-        high: number,
-        start: number,
-        end: number
-    ): SVGAttributes;
-    findAlignments(
-        angle: number,
-        options: DataLabelOptions,
-    ): DataLabelOptions;
-    searchPointByAngle(e: PointerEvent): (Point|undefined);
     translate(): void;
 }
 
@@ -176,10 +156,8 @@ const composedClasses: Array<Function> = [];
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-const seriesProto = Series.prototype as PolarSeriesComposition,
-    pointerProto = Pointer.prototype;
-let columnProto: PolarSeriesComposition,
-    arearangeProto: AreaRangeSeries;
+const pointerProto = Pointer.prototype;
+let columnProto: PolarSeriesComposition;
 
 /* *
  *
@@ -188,24 +166,64 @@ let columnProto: PolarSeriesComposition,
  * */
 
 /**
- * Search a k-d tree by the point angle, used for shared tooltips in polar
- * charts
  * @private
  */
-seriesProto.searchPointByAngle = function (
-    e: PointerEvent
-): (Point|undefined) {
-    const series = this,
-        chart = series.chart,
-        xAxis = series.xAxis,
-        center = xAxis.pane.center,
-        plotX = e.chartX - center[0] - chart.plotLeft,
-        plotY = e.chartY - center[1] - chart.plotTop;
+function clipCircle(
+    renderer: SVGRenderer,
+    x: number,
+    y: number,
+    r: number,
+    innerR: number
+): SVGElement {
+    const id = uniqueKey(),
+        clipPath = renderer.createElement('clipPath').attr({
+            id: id
+        }).add(renderer.defs),
+        wrapper = innerR ?
+            renderer.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
+            renderer.circle(x, y, r).add(clipPath);
 
-    return this.searchKDTree({
-        clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-    });
-};
+    wrapper.id = id;
+    wrapper.clipPath = clipPath;
+
+    return wrapper;
+}
+
+/**
+ * Find correct align and vertical align based on an angle in polar chart
+ * @private
+ */
+function findAlignments(
+    angle: number,
+    options: DataLabelOptions
+): DataLabelOptions {
+    let align: AlignValue,
+        verticalAlign: VerticalAlignValue;
+
+    if (options.align === null) {
+        if (angle > 20 && angle < 160) {
+            align = 'left'; // right hemisphere
+        } else if (angle > 200 && angle < 340) {
+            align = 'right'; // left hemisphere
+        } else {
+            align = 'center'; // top or bottom
+        }
+        options.align = align;
+    }
+
+    if (options.verticalAlign === null) {
+        if (angle < 45 || angle > 315) {
+            verticalAlign = 'bottom'; // top part
+        } else if (angle > 135 && angle < 225) {
+            verticalAlign = 'top'; // bottom part
+        } else {
+            verticalAlign = 'middle'; // left or right
+        }
+        options.verticalAlign = verticalAlign;
+    }
+
+    return options;
+}
 
 /**
  * #6212 Calculate connectors for spline series in polar chart.
@@ -214,8 +232,7 @@ seriesProto.searchPointByAngle = function (
  *        Check if connectors should be calculated for neighbour points as
  *        well allows short recurence
  */
-seriesProto.getConnectors = function (
-    this: PolarSeriesComposition,
+function getConnectors(
     segment: Array<PolarPointComposition>,
     index: number,
     calculateNeighbours?: boolean,
@@ -301,7 +318,7 @@ seriesProto.getConnectors = function (
     // calculate connectors for previous and next point and push them inside
     // returned object
     if (calculateNeighbours) {
-        ret.prevPointCont = this.getConnectors(
+        ret.prevPointCont = getConnectors(
             segment,
             prevPointInd,
             false,
@@ -310,7 +327,7 @@ seriesProto.getConnectors = function (
     }
 
     return ret;
-};
+}
 
 if (seriesTypes.spline) {
     /**
@@ -335,7 +352,7 @@ if (seriesTypes.spline) {
                 if (!i) {
                     ret = ['M', point.plotX, point.plotY];
                 } else { // curve from last point to this
-                    connectors = this.getConnectors(
+                    connectors = getConnectors(
                         segment,
                         i,
                         true,
@@ -375,88 +392,6 @@ if (seriesTypes.spline) {
             .getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
-
-/**
- * Extend translate. The plotX and plotY values are computed as if the polar
- * chart were a cartesian plane, where plotX denotes the angle in radians
- * and (yAxis.len - plotY) is the pixel distance from center.
- * @private
- */
-addEvent(Series, 'afterTranslate', function (): void {
-    const series = this as PolarSeriesComposition,
-        chart = series.chart;
-
-    if (chart.polar && series.xAxis) {
-
-        // Prepare k-d-tree handling. It searches by angle (clientX) in
-        // case of shared tooltip, and by two dimensional distance in case
-        // of non-shared.
-        series.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (series.kdByAngle) {
-            series.searchPoint = series.searchPointByAngle;
-        } else {
-            series.options.findNearestPointBy = 'xy';
-        }
-
-        // Postprocess plot coordinates
-        if (!series.preventPostTranslate) {
-            const points = series.points;
-
-            let i = points.length;
-
-            while (i--) {
-                // Translate plotX, plotY from angle and radius to true plot
-                // coordinates
-                series.polar.toXY(points[i]);
-
-                // Treat points below Y axis min as null (#10082)
-                if (
-                    !chart.hasParallelCoordinates &&
-                    !series.yAxis.reversed &&
-                    (points[i].y as any) < (series.yAxis.min as any)
-                ) {
-                    points[i].isNull = true;
-                }
-            }
-        }
-
-        // Perform clip after render
-        if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = !!series.eventsToUnbind.push(
-                addEvent(series, 'afterRender', function (
-                    this: PolarSeriesComposition
-                ): void {
-                    let circ: Array<number>;
-
-                    if (chart.polar) {
-                        // For clipping purposes there is a need for
-                        // coordinates from the absolute center
-                        circ = (this.yAxis.pane as any).center;
-
-                        if (!this.clipCircle) {
-                            this.clipCircle = chart.renderer.clipCircle(
-                                circ[0],
-                                circ[1],
-                                circ[2] / 2,
-                                circ[3] / 2
-                            );
-                        } else {
-                            this.clipCircle.animate({
-                                x: circ[0],
-                                y: circ[1],
-                                r: circ[2] / 2,
-                                innerR: circ[3] / 2
-                            });
-                        }
-
-                        this.group.clip(this.clipCircle);
-                        this.setClip = H.noop;
-                    }
-                })
-            );
-        }
-    }
-}, { order: 2 }); // Run after translation of ||-coords
 
 /**
  * Extend getSegmentPath to allow connecting ends across 0 to provide a
@@ -529,155 +464,16 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     return ret;
 });
 
-
-const polarAnimate = function (
-    this: PolarSeriesComposition,
-    proceed: Function,
-    init?: boolean
-): void {
-    const series = this,
-        chart = this.chart,
-        group = this.group,
-        markerGroup = this.markerGroup,
-        center = this.xAxis && this.xAxis.center,
-        plotLeft = chart.plotLeft,
-        plotTop = chart.plotTop;
-
-    let animation = this.options.animation,
-        attribs: SVGAttributes,
-        paneInnerR: number,
-        graphic,
-        shapeArgs,
-        r,
-        innerR;
-
-    // Specific animation for polar charts
-    if (chart.polar) {
-        if (series.isRadialBar) {
-            if (!init) {
-                // Run the pie animation for radial bars
-                series.startAngleRad = pick(series.translatedThreshold,
-                    series.xAxis.startAngleRad);
-                H.seriesTypes.pie.prototype.animate.call(series, init);
-            }
-        } else {
-            // Enable animation on polar charts only in SVG. In VML, the scaling
-            // is different, plus animation would be so slow it would't matter.
-            if (chart.renderer.isSVG) {
-                animation = animObject(animation);
-
-                // A different animation needed for column like series
-                if (series.is('column')) {
-                    if (!init) {
-                        paneInnerR = center[3] / 2;
-                        series.points.forEach((point): void => {
-                            graphic = point.graphic;
-                            shapeArgs = point.shapeArgs;
-                            r = shapeArgs && shapeArgs.r;
-                            innerR = shapeArgs && shapeArgs.innerR;
-
-                            if (graphic && shapeArgs) {
-                                // start values
-                                graphic.attr({
-                                    r: paneInnerR,
-                                    innerR: paneInnerR
-                                });
-                                // animate
-                                graphic.animate({
-                                    r: r,
-                                    innerR: innerR
-                                }, series.options.animation);
-                            }
-                        });
-                    }
-                } else {
-                    // Initialize the animation
-                    if (init) {
-                        // Scale down the group and place it in the center
-                        attribs = {
-                            translateX: center[0] + plotLeft,
-                            translateY: center[1] + plotTop,
-                            scaleX: 0.001,
-                            scaleY: 0.001
-                        };
-                        group.attr(attribs);
-                        if (markerGroup) {
-                            markerGroup.attr(attribs);
-                        }
-                        // Run the animation
-                    } else {
-                        attribs = {
-                            translateX: plotLeft,
-                            translateY: plotTop,
-                            scaleX: 1,
-                            scaleY: 1
-                        };
-                        group.animate(attribs, animation);
-                        if (markerGroup) {
-                            markerGroup.animate(attribs, animation);
-                        }
-                    }
-                }
-            }
-        }
-
-    // For non-polar charts, revert to the basic animation
-    } else {
-        proceed.call(this, init);
-    }
-};
-
-// Define the animate method for regular series
-wrap(seriesProto, 'animate', polarAnimate);
-
-
 if (seriesTypes.column) {
-    arearangeProto = seriesTypes.arearange.prototype;
     columnProto = (
         seriesTypes.column.prototype as unknown as PolarSeriesComposition
     );
-
-    columnProto.polarArc = function (
-        this: (ColumnSeries&PolarSeriesComposition),
-        low: number,
-        high: number,
-        start: number,
-        end: number
-    ): SVGAttributes {
-        const center = this.xAxis.center,
-            len = this.yAxis.len,
-            paneInnerR = center[3] / 2;
-
-        let r = len - high + paneInnerR,
-            innerR = len - pick(low, len) + paneInnerR;
-
-        // Prevent columns from shooting through the pane's center
-        if (this.yAxis.reversed) {
-            if (r < 0) {
-                r = paneInnerR;
-            }
-
-            if (innerR < 0) {
-                innerR = paneInnerR;
-            }
-        }
-
-        // Return a new shapeArgs
-        return {
-            x: center[0],
-            y: center[1],
-            r: r,
-            innerR: innerR,
-            start: start,
-            end: end
-        };
-    };
 
     /**
      * Define the animate method for columnseries
      * @private
      */
-    wrap(columnProto, 'animate', polarAnimate);
+    wrap(columnProto, 'animate', wrapSeriesAnimate);
 
 
     /**
@@ -860,7 +656,7 @@ if (seriesTypes.column) {
                     // essential to make the animation work correctly (the
                     // scaling of the group) is replaced by animating each
                     // element separately.
-                    point.shapeArgs = series.polarArc(
+                    point.shapeArgs = series.polar.arc(
                         (point.yBottom as any),
                         (point.plotY as any),
                         start,
@@ -891,47 +687,6 @@ if (seriesTypes.column) {
     });
 
     /**
-     * Find correct align and vertical align based on an angle in polar chart
-     * @private
-     */
-    columnProto.findAlignments = function (
-        this: PolarSeriesComposition,
-        angle: number,
-        options: DataLabelOptions
-    ): DataLabelOptions {
-        let align: AlignValue,
-            verticalAlign: VerticalAlignValue;
-
-        if (options.align === null) {
-            if (angle > 20 && angle < 160) {
-                align = 'left'; // right hemisphere
-            } else if (angle > 200 && angle < 340) {
-                align = 'right'; // left hemisphere
-            } else {
-                align = 'center'; // top or bottom
-            }
-            options.align = align;
-        }
-
-        if (options.verticalAlign === null) {
-            if (angle < 45 || angle > 315) {
-                verticalAlign = 'bottom'; // top part
-            } else if (angle > 135 && angle < 225) {
-                verticalAlign = 'top'; // bottom part
-            } else {
-                verticalAlign = 'middle'; // left or right
-            }
-            options.verticalAlign = verticalAlign;
-        }
-
-        return options;
-    };
-
-    if (arearangeProto) {
-        arearangeProto.findAlignments = columnProto.findAlignments;
-    }
-
-    /**
      * Align column data labels outside the columns. #1199.
      * @private
      */
@@ -955,9 +710,7 @@ if (seriesTypes.column) {
             angle = (point as PolarPointComposition).rectPlotX / Math.PI * 180;
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
-                if (this.findAlignments) {
-                    options = this.findAlignments(angle, options);
-                }
+                options = findAlignments(angle, options);
             } else { // Required corrections for data labels of inverted bars
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
@@ -1000,14 +753,16 @@ if (seriesTypes.column) {
                     pick(options.verticalAlign, 'middle');
             }
 
-            seriesProto.alignDataLabel.call(
-                this,
-                point,
-                dataLabel,
-                options,
-                alignTo,
-                isNew
-            );
+            Object
+                .getPrototypeOf(Object.getPrototypeOf(this))
+                .alignDataLabel.call(
+                    this,
+                    point,
+                    dataLabel,
+                    options,
+                    alignTo,
+                    isNew
+                );
 
             // Hide label of a point (only inverted) that is outside the
             // visible y range
@@ -1073,28 +828,17 @@ wrap(pointerProto, 'getCoordinates', function (
     return ret;
 });
 
-SVGRenderer.prototype.clipCircle = function (
-    this: SVGRenderer,
-    x: number,
-    y: number,
-    r: number,
-    innerR: number
-): SVGElement {
-    const id = uniqueKey(),
-        clipPath = this.createElement('clipPath').attr({
-            id: id
-        }).add(this.defs),
-        wrapper = innerR ?
-            this.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
-            this.circle(x, y, r).add(clipPath);
+function onChartAfterDrawChartBox(
+    this: Chart
+): void {
+    (this.pane || []).forEach((pane): void => {
+        pane.render();
+    });
+}
 
-    wrapper.id = id;
-    wrapper.clipPath = clipPath;
-
-    return wrapper;
-};
-
-addEvent(Chart, 'getAxes', function (): void {
+function onChartGetAxes(
+    this: Chart
+): void {
 
     if (!this.pane) {
         this.pane = [];
@@ -1106,30 +850,11 @@ addEvent(Chart, 'getAxes', function (): void {
             this
         );
     }, this);
-});
-
-addEvent(Chart, 'afterDrawChartBox', function (): void {
-    (this.pane || []).forEach((pane): void => {
-        pane.render();
-    });
-});
-
+}
 
 /**
- * Extend chart.get to also search in panes. Used internally in
- * responsiveness and chart.update.
  * @private
  */
-wrap(Chart.prototype, 'get', function (
-    this: Chart,
-    proceed: Function,
-    id: string
-): boolean {
-    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
-        return (pane.options as any).id === id;
-    }) || proceed.call(this, id);
-});
-
 function onSeriesAfterInit(
     this: Series
 ): void {
@@ -1148,6 +873,207 @@ function onSeriesAfterInit(
     }
 }
 
+/**
+ * Extend translate. The plotX and plotY values are computed as if the polar
+ * chart were a cartesian plane, where plotX denotes the angle in radians
+ * and (yAxis.len - plotY) is the pixel distance from center.
+ * @private
+ */
+function onSeriesAfterTranslate(
+    this: Series
+): void {
+
+    if (this.chart.polar && this.xAxis) {
+        const series = this as PolarSeriesComposition,
+            chart = series.chart;
+
+        // Prepare k-d-tree handling. It searches by angle (clientX) in
+        // case of shared tooltip, and by two dimensional distance in case
+        // of non-shared.
+        series.kdByAngle = chart.tooltip && chart.tooltip.shared;
+        if (series.kdByAngle) {
+            series.searchPoint = series.polar.searchPointByAngle;
+        } else {
+            series.options.findNearestPointBy = 'xy';
+        }
+
+        // Postprocess plot coordinates
+        if (!series.preventPostTranslate) {
+            const points = series.points;
+
+            let i = points.length;
+
+            while (i--) {
+                // Translate plotX, plotY from angle and radius to true plot
+                // coordinates
+                series.polar.toXY(points[i]);
+
+                // Treat points below Y axis min as null (#10082)
+                if (
+                    !chart.hasParallelCoordinates &&
+                    !series.yAxis.reversed &&
+                    (points[i].y as any) < (series.yAxis.min as any)
+                ) {
+                    points[i].isNull = true;
+                }
+            }
+        }
+
+        // Perform clip after render
+        if (!this.hasClipCircleSetter) {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(
+                addEvent(series, 'afterRender', function (
+                    this: PolarSeriesComposition
+                ): void {
+                    let circ: Array<number>;
+
+                    if (chart.polar) {
+                        // For clipping purposes there is a need for
+                        // coordinates from the absolute center
+                        circ = (this.yAxis.pane as any).center;
+
+                        if (!this.clipCircle) {
+                            this.clipCircle = clipCircle(
+                                chart.renderer,
+                                circ[0],
+                                circ[1],
+                                circ[2] / 2,
+                                circ[3] / 2
+                            );
+                        } else {
+                            this.clipCircle.animate({
+                                x: circ[0],
+                                y: circ[1],
+                                r: circ[2] / 2,
+                                innerR: circ[3] / 2
+                            });
+                        }
+
+                        this.group.clip(this.clipCircle);
+                        this.setClip = H.noop;
+                    }
+                })
+            );
+        }
+    }
+}
+
+/**
+ * Extend chart.get to also search in panes. Used internally in
+ * responsiveness and chart.update.
+ * @private
+ */
+function wrapChartGet(
+    this: Chart,
+    proceed: Function,
+    id: string
+): boolean {
+    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
+        return (pane.options as any).id === id;
+    }) || proceed.call(this, id);
+}
+
+/**
+ * Define the animate method for regular series
+ * @private
+ */
+function wrapSeriesAnimate(
+    this: PolarSeriesComposition,
+    proceed: Function,
+    init?: boolean
+): void {
+    const series = this,
+        chart = this.chart,
+        group = this.group,
+        markerGroup = this.markerGroup,
+        center = this.xAxis && this.xAxis.center,
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop;
+
+    let animation = this.options.animation,
+        attribs: SVGAttributes,
+        paneInnerR: number,
+        graphic,
+        shapeArgs,
+        r,
+        innerR;
+
+    // Specific animation for polar charts
+    if (chart.polar) {
+        if (series.isRadialBar) {
+            if (!init) {
+                // Run the pie animation for radial bars
+                series.startAngleRad = pick(series.translatedThreshold,
+                    series.xAxis.startAngleRad);
+                H.seriesTypes.pie.prototype.animate.call(series, init);
+            }
+        } else {
+            // Enable animation on polar charts only in SVG. In VML, the scaling
+            // is different, plus animation would be so slow it would't matter.
+            if (chart.renderer.isSVG) {
+                animation = animObject(animation);
+
+                // A different animation needed for column like series
+                if (series.is('column')) {
+                    if (!init) {
+                        paneInnerR = center[3] / 2;
+                        series.points.forEach((point): void => {
+                            graphic = point.graphic;
+                            shapeArgs = point.shapeArgs;
+                            r = shapeArgs && shapeArgs.r;
+                            innerR = shapeArgs && shapeArgs.innerR;
+
+                            if (graphic && shapeArgs) {
+                                // start values
+                                graphic.attr({
+                                    r: paneInnerR,
+                                    innerR: paneInnerR
+                                });
+                                // animate
+                                graphic.animate({
+                                    r: r,
+                                    innerR: innerR
+                                }, series.options.animation);
+                            }
+                        });
+                    }
+                } else {
+                    // Initialize the animation
+                    if (init) {
+                        // Scale down the group and place it in the center
+                        attribs = {
+                            translateX: center[0] + plotLeft,
+                            translateY: center[1] + plotTop,
+                            scaleX: 0.001,
+                            scaleY: 0.001
+                        };
+                        group.attr(attribs);
+                        if (markerGroup) {
+                            markerGroup.attr(attribs);
+                        }
+                        // Run the animation
+                    } else {
+                        attribs = {
+                            translateX: plotLeft,
+                            translateY: plotTop,
+                            scaleX: 1,
+                            scaleY: 1
+                        };
+                        group.animate(attribs, animation);
+                        if (markerGroup) {
+                            markerGroup.animate(attribs, animation);
+                        }
+                    }
+                }
+            }
+        }
+
+    // For non-polar charts, revert to the basic animation
+    } else {
+        proceed.call(this, init);
+    }
+}
+
 /* *
  *
  *  Class
@@ -1163,13 +1089,36 @@ class PolarAdditions {
      * */
 
     public static compose(
+        ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
+            addEvent(ChartClass, 'getAxes', onChartGetAxes);
+
+            const chartProto = ChartClass.prototype;
+
+            wrap(chartProto, 'get', wrapChartGet);
+        }
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+            addEvent(
+                SeriesClass,
+                'afterTranslate',
+                onSeriesAfterTranslate,
+                { order: 2 } // Run after translation of ||-coords
+            );
+
+
+            const seriesProto = SeriesClass.prototype;
+
+            wrap(seriesProto, 'animate', wrapSeriesAnimate);
         }
     }
 
@@ -1198,6 +1147,62 @@ class PolarAdditions {
      *  Functions
      *
      * */
+
+    public arc(
+        low: number,
+        high: number,
+        start: number,
+        end: number
+    ): SVGAttributes {
+        const series = this.series,
+            center = series.xAxis.center,
+            len = series.yAxis.len,
+            paneInnerR = center[3] / 2;
+
+        let r = len - high + paneInnerR,
+            innerR = len - pick(low, len) + paneInnerR;
+
+        // Prevent columns from shooting through the pane's center
+        if (series.yAxis.reversed) {
+            if (r < 0) {
+                r = paneInnerR;
+            }
+
+            if (innerR < 0) {
+                innerR = paneInnerR;
+            }
+        }
+
+        // Return a new shapeArgs
+        return {
+            x: center[0],
+            y: center[1],
+            r: r,
+            innerR: innerR,
+            start: start,
+            end: end
+        };
+    }
+
+    /**
+     * Search a k-d tree by the point angle, used for shared tooltips in polar
+     * charts
+     * @private
+     */
+    public searchPointByAngle(
+        e: PointerEvent
+    ): (Point|undefined) {
+        const series = this.series,
+            chart = series.chart,
+            xAxis = series.xAxis,
+            center = xAxis.pane.center,
+            plotX = e.chartX - center[0] - chart.plotLeft,
+            plotY = e.chartY - center[1] - chart.plotTop;
+
+        return series.searchKDTree({
+            clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
+        });
+    }
 
     /**
      * Translate a point's plotX and plotY from the internal angle and radius

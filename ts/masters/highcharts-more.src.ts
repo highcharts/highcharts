@@ -26,4 +26,4 @@ import '../Series/PackedBubble/PackedBubbleSeries.js';
 import '../Series/Polygon/PolygonSeries.js';
 import '../Series/Waterfall/WaterfallSeries.js';
 import PolarAdditions from '../Series/PolarComposition.js';
-PolarAdditions.compose(G.Series);
+PolarAdditions.compose(G.Chart, G.Series);
