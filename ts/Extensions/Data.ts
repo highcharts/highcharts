@@ -18,6 +18,7 @@
  *
  * */
 
+import type DataConverter from '../Data/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -60,8 +61,74 @@ declare module '../Core/Chart/ChartLike'{
 }
 declare module '../Core/Options' {
     interface Options {
-        data?: Highcharts.DataOptions;
+        data?: DataOptions;
     }
+}
+
+type DataValueType = (number|string|null);
+
+interface DataAfterCompleteCallbackFunction {
+    (dataOptions?: Partial<Options>): void;
+}
+
+interface DataBeforeParseCallbackFunction {
+    (csv: string): string;
+}
+
+interface DataCompleteCallbackFunction {
+    (chartOptions: Partial<Options>): void;
+}
+
+interface DataOptions {
+    afterComplete?: DataAfterCompleteCallbackFunction;
+    beforeParse?: DataBeforeParseCallbackFunction;
+    columns?: Array<Array<DataValueType>>;
+    columnsURL?: string;
+    columnTypes?: Array<string>;
+    complete?: DataCompleteCallbackFunction;
+    csv?: string;
+    csvURL?: string;
+    dataRefreshRate?: number;
+    dateFormat?: string;
+    dateFormats?: undefined;
+    decimalPoint?: string;
+    enablePolling?: boolean;
+    endColumn?: number;
+    endRow?: number;
+    error?: Function;
+    firstRowAsNames?: boolean;
+    googleAPIKey?: string;
+    googleSpreadsheetKey?: string;
+    googleSpreadsheetRange?: string;
+    itemDelimiter?: string;
+    lineDelimiter?: string;
+    parsed?: DataParsedCallbackFunction;
+    parseDate?: DataParseDateCallbackFunction;
+    rows?: Array<Array<DataValueType>>;
+    rowsURL?: string;
+    seriesMapping?: Array<Record<string, number>>;
+    sort?: boolean;
+    startColumn?: number;
+    startRow?: number;
+    switchRowsAndColumns?: boolean;
+    table?: (string|HTMLElement);
+}
+interface DataParseDateCallbackFunction {
+    (dateValue: string): number;
+}
+interface DataParsedCallbackFunction {
+    (columns: Array<Array<DataValueType>>): (boolean|undefined);
+}
+interface DataValueCountObject {
+    global: number;
+    globalPointArrayMap: Array<string>;
+    individual: Array<number>;
+    seriesBuilders: Array<SeriesBuilder>;
+    xColumns: Array<number>;
+}
+interface SeriesBuilderReaderObject {
+    columnIndex: (number|undefined);
+    configName: string;
 }
 
 /**
@@ -70,75 +137,6 @@ declare module '../Core/Options' {
  */
 declare global {
     namespace Highcharts {
-        type DataValueType = (number|string|null);
-        interface DataAfterCompleteCallbackFunction {
-            (dataOptions?: Partial<Options>): void;
-        }
-        interface DataBeforeParseCallbackFunction {
-            (csv: string): string;
-        }
-        interface DataCompleteCallbackFunction {
-            (chartOptions: Partial<Options>): void;
-        }
-        interface DataDateFormatCallbackFunction {
-            (match: ReturnType<string['match']>): number;
-        }
-        interface DataDateFormatObject {
-            alternative?: string;
-            parser: DataDateFormatCallbackFunction;
-            regex: RegExp;
-        }
-        interface DataOptions {
-            afterComplete?: DataAfterCompleteCallbackFunction;
-            beforeParse?: DataBeforeParseCallbackFunction;
-            columns?: Array<Array<DataValueType>>;
-            columnsURL?: string;
-            columnTypes?: Array<string>;
-            complete?: DataCompleteCallbackFunction;
-            csv?: string;
-            csvURL?: string;
-            dataRefreshRate?: number;
-            dateFormat?: string;
-            dateFormats?: undefined;
-            decimalPoint?: string;
-            enablePolling?: boolean;
-            endColumn?: number;
-            endRow?: number;
-            error?: Function;
-            firstRowAsNames?: boolean;
-            googleAPIKey?: string;
-            googleSpreadsheetKey?: string;
-            googleSpreadsheetRange?: string;
-            itemDelimiter?: string;
-            lineDelimiter?: string;
-            parsed?: DataParsedCallbackFunction;
-            parseDate?: DataParseDateCallbackFunction;
-            rows?: Array<Array<DataValueType>>;
-            rowsURL?: string;
-            seriesMapping?: Array<Record<string, number>>;
-            sort?: boolean;
-            startColumn?: number;
-            startRow?: number;
-            switchRowsAndColumns?: boolean;
-            table?: (string|HTMLElement);
-        }
-        interface DataParseDateCallbackFunction {
-            (dateValue: string): number;
-        }
-        interface DataParsedCallbackFunction {
-            (columns: Array<Array<DataValueType>>): (boolean|undefined);
-        }
-        interface DataValueCountObject {
-            global: number;
-            globalPointArrayMap: Array<string>;
-            individual: Array<number>;
-            seriesBuilders: Array<SeriesBuilder>;
-            xColumns: Array<number>;
-        }
-        interface SeriesBuilderReaderObject {
-            columnIndex: (number|undefined);
-            configName: string;
-        }
         class Data {
             public constructor(
                 dataOptions: DataOptions,
@@ -150,7 +148,7 @@ declare global {
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
-            public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
+            public dateFormats: Record<string, DataConverter.DateFormatObject>;
             public decimalRegex?: RegExp;
             public firstRowAsNames: boolean;
             public liveDataTimeout?: number;
@@ -173,9 +171,7 @@ declare global {
                 chart?: Chart
             ): void;
             public parseColumn(column: Array<DataValueType>, col: number): void;
-            public parseCSV(
-                inOptions?: Highcharts.DataOptions
-            ): Array<Array<(number|string)>>;
+            public parseCSV(inOptions?: DataOptions): Array<Array<(number|string)>>;
             public parsed(): (boolean|undefined);
             public parseDate(val: string): number;
             public parseGoogleSpreadsheet(): boolean;
@@ -743,7 +739,7 @@ class Data {
      * */
 
     public constructor(
-        dataOptions: Highcharts.DataOptions,
+        dataOptions: DataOptions,
         chartOptions?: Options,
         chart?: Chart
     ) {
@@ -759,14 +755,14 @@ class Data {
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
     public chartOptions: Options = void 0 as any;
-    public columns?: Array<Array<Highcharts.DataValueType>>;
+    public columns?: Array<Array<DataValueType>>;
     public dateFormat?: string;
     public decimalRegex?: RegExp;
     public firstRowAsNames: boolean = void 0 as any;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>> = void 0 as any;
-    public options: Highcharts.DataOptions = void 0 as any;
-    public valueCount?: Highcharts.DataValueCountObject;
+    public options: DataOptions = void 0 as any;
+    public valueCount?: DataValueCountObject;
 
     /* *
      *
@@ -781,7 +777,7 @@ class Data {
      * @function Highcharts.Data#init
      */
     public init(
-        options: Highcharts.DataOptions,
+        options: DataOptions,
         chartOptions?: Options,
         chart?: Chart
     ): void {
@@ -861,7 +857,7 @@ class Data {
         }
     }
 
-    public hasURLOption(options: Highcharts.DataOptions): boolean {
+    public hasURLOption(options: DataOptions): boolean {
         return Boolean(
             options &&
             (options.rowsURL || options.csvURL || options.columnsURL)
@@ -915,15 +911,13 @@ class Data {
             i;
 
         ((chartOptions && chartOptions.series) || []).forEach(
-            function (series): void {
+            (series): void => {
                 individualCounts.push(getValueCount(series.type || globalType));
             }
         );
 
         // Collect the x-column indexes from seriesMapping
-        seriesMapping.forEach(function (
-            mapping: Record<string, number>
-        ): void {
+        seriesMapping.forEach((mapping: Record<string, number>): void => {
             xColumns.push(mapping.x || 0);
         });
 
@@ -935,9 +929,7 @@ class Data {
 
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
-        seriesMapping.forEach(function (
-            mapping: Record<string, number>
-        ): void {
+        seriesMapping.forEach((mapping: Record<string, number>): void => {
             const builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
@@ -1029,11 +1021,11 @@ class Data {
      *
      * @function Highcharts.Data#parseCSV
      */
-    public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
+    public parseCSV(inOptions?: DataOptions): Array<Array<DataValueType>> {
         let self = this,
             options = inOptions || this.options,
             csv = options.csv,
-            columns: Array<Array<Highcharts.DataValueType>>,
+            columns: Array<Array<DataValueType>>,
             startRow = (
                 typeof options.startRow !== 'undefined' && options.startRow ?
                     options.startRow :
@@ -1349,7 +1341,7 @@ class Data {
          */
         function deduceDateFormat(data: Array<string>, limit?: number): string {
             let format = 'YYYY/mm/dd',
-                thing: Array<Highcharts.DataValueType>,
+                thing: Array<DataValueType>,
                 guessedFormat: Array<string> = [],
                 calculatedFormat: string,
                 i = 0,
@@ -1569,7 +1561,7 @@ class Data {
      *
      * @function Highcharts.Data#parseTable
      */
-    public parseTable(): Array<Array<Highcharts.DataValueType>> {
+    public parseTable(): Array<Array<DataValueType>> {
         let options = this.options,
             table: HTMLElement = options.table as any,
             columns = this.columns || [],
@@ -1584,15 +1576,15 @@ class Data {
                 table = doc.getElementById(table) as any;
             }
 
-            [].forEach.call(table.getElementsByTagName('tr'), function (
+            [].forEach.call(table.getElementsByTagName('tr'), (
                 tr: HTMLTableRowElement,
                 rowNo: number
-            ): void {
+            ): void => {
                 if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (
+                    [].forEach.call(tr.children, (
                         item: Element,
                         colNo: number
-                    ): void {
+                    ): void => {
                         const row = (columns as any)[colNo - startColumn];
                         let i = 1;
 
@@ -1746,7 +1738,7 @@ class Data {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: Array<Array<Highcharts.DataValueType>>
+                    res: Array<Array<DataValueType>>
                 ): void {
                     chart.update({
                         data: {
@@ -1755,7 +1747,7 @@ class Data {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: Array<Array<Highcharts.DataValueType>>
+                        res: Array<Array<DataValueType>>
                     ): void {
                         chart.update({
                             data: {
@@ -1860,7 +1852,7 @@ class Data {
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
                 const columns =
-                    json.values as Array<Array<Highcharts.DataValueType>>;
+                    json.values as Array<Array<DataValueType>>;
 
                 if (!columns || columns.length === 0) {
                     return false;
@@ -1961,14 +1953,14 @@ class Data {
      *        Column index
      */
     public parseColumn(
-        column: Array<Highcharts.DataValueType> & { name?: string },
+        column: Array<DataValueType> & { name?: string },
         col: number
     ): void {
         const rawColumns = this.rawColumns,
             columns = this.columns,
             firstRowAsNames = this.firstRowAsNames,
             isXColumn = (this.valueCount as any).xColumns.indexOf(col) !== -1,
-            backup: Array<Highcharts.DataValueType> = [],
+            backup: Array<DataValueType> = [],
             chartOptions = this.chartOptions,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
@@ -1980,7 +1972,7 @@ class Data {
             columnHasName = defined(column.name);
 
         let row = column.length,
-            val: Highcharts.DataValueType,
+            val: DataValueType,
             floatVal,
             trimVal,
             trimInsideVal,
@@ -2108,7 +2100,7 @@ class Data {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    public dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
+    public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -2261,13 +2253,13 @@ class Data {
      *
      * @function Highcharts.Data#rowsToColumns
      */
-    public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
-    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
+    public rowsToColumns(rows: (Array<Array<DataValueType>>|undefined)
+    ): (Array<Array<DataValueType>>|undefined) {
         let row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<Highcharts.DataValueType>>|undefined);
+            columns: (Array<Array<DataValueType>>|undefined);
 
         if (rows) {
             columns = [];
@@ -2541,7 +2533,7 @@ class Data {
      * @param {boolean} [redraw=true]
      */
     public update(
-        options: Highcharts.DataOptions,
+        options: DataOptions,
         redraw?: boolean
     ): void {
         const chart = this.chart,
@@ -2594,7 +2586,7 @@ class Data {
  * @function Highcharts.data
  */
 G.data = function (
-    dataOptions: Highcharts.DataOptions,
+    dataOptions: DataOptions,
     chartOptions?: Options,
     chart?: Chart
 ): Highcharts.Data {
@@ -2697,7 +2689,7 @@ addEvent(
  */
 class SeriesBuilder {
     /* eslint-disable no-invalid-this */
-    public readers: Array<Highcharts.SeriesBuilderReaderObject> = [];
+    public readers: Array<SeriesBuilderReaderObject> = [];
     public pointIsArray: boolean = true;
     /* eslint-enable no-invalid-this */
 
@@ -2717,9 +2709,7 @@ class SeriesBuilder {
         // Loop each reader and give it an index if its missing.
         // The freeIndexes.shift() will return undefined if there
         // are no more columns.
-        builder.readers.forEach(function (
-            reader: Highcharts.SeriesBuilderReaderObject
-        ): void {
+        builder.readers.forEach((reader: SeriesBuilderReaderObject): void => {
             if (typeof reader.columnIndex === 'undefined') {
                 reader.columnIndex = freeIndexes.shift();
             }
@@ -2728,9 +2718,7 @@ class SeriesBuilder {
         // Now, all readers should have columns mapped. If not
         // then return false to signal that this series should
         // not be added.
-        builder.readers.forEach(function (
-            reader: Highcharts.SeriesBuilderReaderObject
-        ): void {
+        builder.readers.forEach((reader: SeriesBuilderReaderObject): void => {
             if (typeof reader.columnIndex === 'undefined') {
                 enoughColumns = false;
             }
@@ -2757,9 +2745,7 @@ class SeriesBuilder {
 
         // Loop each reader and ask it to read its value.
         // Then, build an array or point based on the readers names.
-        builder.readers.forEach(function (
-            reader: Highcharts.SeriesBuilderReaderObject
-        ): void {
+        builder.readers.forEach((reader: SeriesBuilderReaderObject): void => {
             const value = columns[reader.columnIndex as any][rowIndex];
 
             if (pointIsArray) {
