@@ -6,9 +6,12 @@
 
 'use strict';
 
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
@@ -305,7 +308,7 @@ namespace Tunnel {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         height: number;
-        heightControlPoint: Highcharts.AnnotationControlPointOptionsObject;
+        heightControlPoint: AnnotationControlPointOptionsObject;
     }
 }
 

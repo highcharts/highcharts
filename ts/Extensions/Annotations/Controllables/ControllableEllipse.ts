@@ -8,7 +8,10 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type {
+    AnnotationsShapeOptions
+} from '../AnnotationsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AxisType from '../../../Core/Axis/AxisType';
 import BBoxObject from '../../../Core/Renderer/BBoxObject';
@@ -25,7 +28,7 @@ const {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
+interface EllipseShapeOptions extends AnnotationsShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
@@ -290,9 +293,14 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param {number} ry a radius in y direction to be set
      */
     public setYRadius(ry: number): void {
+        const shapes = this.annotation.userOptions.shapes;
+
         this.options.ry = ry;
-        this.annotation.userOptions.shapes[0].ry = ry;
-        this.annotation.options.shapes[0].ry = ry;
+
+        if (shapes && shapes[0]) {
+            shapes[0].ry = ry;
+            shapes[0].ry = ry;
+        }
     }
 }
 

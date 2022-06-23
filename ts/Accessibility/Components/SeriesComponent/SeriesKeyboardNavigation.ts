@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type {
+    AccessibilityKeyboardNavigationSeriesNavigationOptions
+} from '../../Options/A11yOptions';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';
@@ -518,8 +521,7 @@ class SeriesKeyboardNavigation {
             keys = this.keyCodes,
             isNext = keyCode === keys.down || keyCode === keys.right,
             navOptions: (
-                Highcharts
-                    .AccessibilityKeyboardNavigationSeriesNavigationOptions
+                AccessibilityKeyboardNavigationSeriesNavigationOptions
             ) = (chart.options.accessibility as any).keyboardNavigation
                 .seriesNavigation;
 

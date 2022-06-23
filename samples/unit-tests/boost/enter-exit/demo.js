@@ -1,7 +1,11 @@
 (function () {
     function assertNonBoosted(assert, s) {
         assert.ok(
-            !s.renderTarget || s.renderTarget.attr('href') === '',
+            !s.renderTarget || (
+                s.renderTarget.attr('href') ===
+                // Blank pixel
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+            ),
             'No painted image'
         );
 

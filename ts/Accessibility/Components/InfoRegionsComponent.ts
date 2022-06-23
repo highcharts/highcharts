@@ -26,6 +26,9 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type {
+    ScreenReaderFormatterCallbackFunction
+} from '../Options/A11yOptions';
 
 import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -283,7 +286,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
+                        ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
                     return formatter ? formatter(chart) :
@@ -431,7 +434,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             if (sectionDiv.parentNode) {
                 sectionDiv.parentNode.removeChild(sectionDiv);
             }
-            delete region.element;
+            region.element = null;
         }
     }
 

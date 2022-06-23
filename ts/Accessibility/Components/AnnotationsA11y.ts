@@ -21,7 +21,7 @@
 
 
 import type Accessibility from '../Accessibility';
-import type Annotation from '../../Extensions/Annotations/Annotations';
+import type Annotation from '../../Extensions/Annotations/Annotation';
 import type Point from '../../Core/Series/Point';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';

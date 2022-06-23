@@ -14,9 +14,12 @@
  *
  * */
 
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import InfinityLine from './InfinityLine.js';
@@ -288,7 +291,7 @@ namespace FibonacciTimeZones {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: Highcharts.AnnotationControlPointOptionsObject;
+        controlPointOptions: AnnotationControlPointOptionsObject;
     }
 }
 
