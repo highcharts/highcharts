@@ -198,7 +198,7 @@ class SonificationTimeline {
                 const point = e.relatedPoint,
                     needsCallback = e.callback || point &&
                         (showPlayMarker || showCrosshairOnly) &&
-                        e.time - lastCallbackTime > 25;
+                        (e.time - lastCallbackTime > 50 || i === numEvents - 1);
                 if (needsCallback) {
                     this.scheduledCallbacks.push(
                         setTimeout((): void => {
@@ -212,12 +212,10 @@ class SonificationTimeline {
                                 ) {
                                     const s = point.series;
                                     if (s.xAxis && s.xAxis.crosshair) {
-                                        s.xAxis.drawCrosshair(
-                                            void 0, point);
+                                        s.xAxis.drawCrosshair(void 0, point);
                                     }
                                     if (s.yAxis && s.yAxis.crosshair) {
-                                        s.yAxis.drawCrosshair(
-                                            void 0, point);
+                                        s.yAxis.drawCrosshair(void 0, point);
                                     }
                                 } else if (showPlayMarker) {
                                     point.onMouseOver();
@@ -233,8 +231,9 @@ class SonificationTimeline {
         this.scheduledCallbacks.push(setTimeout(
             (): void => {
                 const chart = this.chart;
+                this.isPlaying = false;
                 if (resetAfter) {
-                    this.reset();
+                    this.resetPlayState();
                 }
                 if (onEnd) {
                     onEnd(this);
@@ -339,9 +338,7 @@ class SonificationTimeline {
     // Reset play/pause state so that a later call to resume() will start over
     reset(): void {
         this.cancel();
-        delete this.playingChannels;
-        this.playTimestamp = this.resumeFromTime = 0;
-        this.isPaused = false;
+        this.resetPlayState();
     }
 
 
@@ -382,6 +379,13 @@ class SonificationTimeline {
             url = window.URL.createObjectURL(blob);
         downloadURL(url, name);
         window.URL.revokeObjectURL(url);
+    }
+
+
+    private resetPlayState(): void {
+        delete this.playingChannels;
+        this.playTimestamp = this.resumeFromTime = 0;
+        this.isPaused = false;
     }
 }
 

@@ -137,11 +137,8 @@ const freqToNote = (f: number): number => Math.round(
             0x4D, 0x54, 0x72, 0x6B, // TRK_TYPE
             b(3, size), b(2, size), // TRK_SIZE
             b(1, size), b(0, size)
-        ].concat(
-            addTimeInfo ? timeInfo : [],
-            trackEvents,
-            [0, 0xFF, 0x2F, 0] // SYSEX_TRACK_END
-        );
+        ].concat(addTimeInfo ? timeInfo : [], trackEvents,
+            [0, 0xFF, 0x2F, 0]); // SYSEX_TRACK_END
     };
 
 /**
