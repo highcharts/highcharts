@@ -878,7 +878,7 @@ class Axis {
                     (sign * minPixelPadding) +
                     (isNumber(pointPlacement) ? localA * pointPlacement : 0)
                 ) :
-                NaN;
+                0;
         }
 
         return returnValue;
@@ -903,7 +903,7 @@ class Axis {
         value: number,
         paneCoordinates?: boolean
     ): number {
-        return this.translate(value, false, !this.horiz, null, true) as any +
+        return this.translate(value, false, !this.horiz, null, true) +
             (paneCoordinates ? 0 : this.pos);
     }
 
@@ -933,7 +933,7 @@ class Axis {
             !this.horiz,
             null,
             true
-        ) as any;
+        );
     }
 
     /**
@@ -2794,11 +2794,11 @@ class Axis {
      * @param {number} threshold
      * The threshold in axis values.
      *
-     * @return {number|undefined}
+     * @return {number}
      * The translated threshold position in terms of pixels, and corrected to
      * stay within the axis bounds.
      */
-    public getThreshold(threshold: number): (number|undefined) {
+    public getThreshold(threshold: number): number {
         const axis = this,
             log = axis.logarithmic,
             realMin = log ? log.lin2log(axis.min as any) : axis.min as any,

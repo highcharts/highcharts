@@ -2050,13 +2050,13 @@ class Navigator {
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value) as any;
+                    return this.translate(value);
                 },
                 toValue: function (
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value, true) as any;
+                    return this.translate(value, true);
                 }
             } as unknown as NavigatorAxis;
 

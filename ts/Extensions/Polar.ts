@@ -1123,7 +1123,7 @@ wrap(pointerProto, 'getCoordinates', function (
                         // distance from center
                         Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
                     true
-                ) as any
+                )
             });
         });
 
