@@ -622,6 +622,7 @@ class SynthPatch {
             endTime = curTime + SynthPatch.stopRampTime;
         miniRampToVolAtTime(this.outputNode, curTime, 0);
         this.oscillators.forEach((o): void => o.stopAtTime(endTime));
+        this.outputNode.disconnect();
     }
 
 

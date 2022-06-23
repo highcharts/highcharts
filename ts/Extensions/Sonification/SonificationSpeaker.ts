@@ -82,6 +82,13 @@ class SonificationSpeaker {
     }
 
 
+    // Ran on TimelineChannel.destroy
+    destroy(): void {
+        // Currently all we need to do is cancel.
+        this.cancel();
+    }
+
+
     setMasterVolume(vol: number): void {
         this.options.volume = vol;
     }

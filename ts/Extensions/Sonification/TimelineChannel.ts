@@ -77,6 +77,11 @@ class TimelineChannel {
     cancel(): void {
         this.engine.cancel();
     }
+
+
+    destroy(): void {
+        this.engine.destroy();
+    }
 }
 
 

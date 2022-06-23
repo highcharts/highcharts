@@ -203,7 +203,6 @@ class SonificationInstrument {
 
 
     cancel(): void {
-        this.synthPatch.cancelScheduled();
         this.synthPatch.mute();
         [
             this.tremoloDepth && this.tremoloDepth.gain,
@@ -215,6 +214,22 @@ class SonificationInstrument {
             this.panNode && this.panNode.pan,
             this.volumeNode.gain
         ].forEach((p): unknown => (p && p.cancelScheduledValues(0)));
+    }
+
+
+    destroy(): void {
+        this.cancel();
+        this.synthPatch.stop();
+        if (this.tremoloOsc) {
+            this.tremoloOsc.stop();
+        }
+        [
+            this.tremoloDepth, this.tremoloOsc, this.lowpassNode,
+            this.highpassNode, this.panNode, this.volumeNode,
+            this.masterVolNode
+        ].forEach(
+            ((n): void => n && n.disconnect())
+        );
     }
 
 

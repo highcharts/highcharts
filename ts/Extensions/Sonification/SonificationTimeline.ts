@@ -123,7 +123,8 @@ class SonificationTimeline {
     play(
         filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
         filterPersists = true,
-        resetAfter = true
+        resetAfter = true,
+        onEnd?: Function
     ): void {
         this.cancel();
         this.playTimestamp = Date.now();
@@ -227,13 +228,16 @@ class SonificationTimeline {
             }
         });
 
-        const onEnd = this.options.onEnd;
+        const onEndOpt = this.options.onEnd;
         this.scheduledCallbacks.push(setTimeout(
             (): void => {
                 const chart = this.chart;
                 this.isPlaying = false;
                 if (resetAfter) {
                     this.resetPlayState();
+                }
+                if (onEndOpt) {
+                    onEndOpt(this);
                 }
                 if (onEnd) {
                     onEnd(this);
@@ -349,6 +353,15 @@ class SonificationTimeline {
         if (this.playingChannels && this.playingChannels !== this.channels) {
             this.playingChannels.forEach((c): void => c.cancel());
         }
+    }
+
+
+    destroy(): void {
+        this.scheduledCallbacks.forEach(clearTimeout);
+        if (this.playingChannels && this.playingChannels !== this.channels) {
+            this.playingChannels.forEach((c): void => c.destroy());
+        }
+        this.channels.forEach((c): void => c.destroy());
     }
 
 

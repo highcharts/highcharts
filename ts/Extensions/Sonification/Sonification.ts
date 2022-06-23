@@ -38,14 +38,14 @@ declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         sonification?: Sonification;
         /** @requires modules/sonification */
-        sonify: () => void;
+        sonify: (onEnd?: Function) => void;
         /** @requires modules/sonification */
         updateSonificationEnabled: () => void;
     }
 }
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        sonify: () => void;
+        sonify: (onEnd?: Function) => void;
     }
 }
 declare module '../../Core/Series/PointLike' {
@@ -60,7 +60,7 @@ declare module '../../Core/Series/PointLike' {
  */
 class Sonification {
     timeline?: SonificationTimeline;
-    private audioContext?: AudioContext;
+    audioContext?: AudioContext;
     private retryContextCounter: number = 0;
     private audioDestination?: AudioDestinationNode;
 
@@ -89,7 +89,7 @@ class Sonification {
 
     destroy(): void {
         if (this.timeline) {
-            this.timeline.cancel();
+            this.timeline.destroy();
             delete this.timeline;
         }
         if (this.audioContext) {
@@ -104,7 +104,7 @@ class Sonification {
             return;
         }
         if (this.timeline) {
-            this.timeline.cancel();
+            this.timeline.destroy();
         }
         if (this.audioContext && this.audioDestination) {
             this.timeline = timelineFromChart(
@@ -119,19 +119,19 @@ class Sonification {
     }
 
 
-    sonifyChart(): void {
+    sonifyChart(onEnd?: Function): void {
         if (!this.ready(this.sonifyChart.bind(this))) {
             return;
         }
 
         if (this.timeline) {
             this.timeline.reset();
-            this.timeline.play();
+            this.timeline.play(void 0, void 0, void 0, onEnd);
         }
     }
 
 
-    sonifySeries(series: Series): void {
+    sonifySeries(series: Series, onEnd?: Function): void {
         if (!this.ready(this.sonifySeries.bind(this, series))) {
             return;
         }
@@ -139,12 +139,12 @@ class Sonification {
         if (this.timeline) {
             this.timeline.reset();
             this.timeline.play((e): boolean =>
-                !!e.relatedPoint && e.relatedPoint.series === series);
+                !!e.relatedPoint && e.relatedPoint.series === series,
+            void 0, void 0, onEnd);
         }
     }
 
 
-    // Note: We may want to do this more efficiently in the future.
     sonifyPoint(point: Point): void {
         if (!this.ready(this.sonifyPoint.bind(this, point))) {
             return;
@@ -263,9 +263,9 @@ namespace Sonification {
             composedClasses.push(ChartClass);
             extend(ChartClass.prototype, {
                 updateSonificationEnabled,
-                sonify: function (): void {
+                sonify: function (onEnd?: Function): void {
                     if (this.sonification) {
-                        this.sonification.sonifyChart();
+                        this.sonification.sonifyChart(onEnd);
                     }
                 }
             });
@@ -277,9 +277,9 @@ namespace Sonification {
         // Extend series
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
-            SeriesClass.prototype.sonify = function (): void {
+            SeriesClass.prototype.sonify = function (onEnd?: Function): void {
                 if (this.chart.sonification) {
-                    this.chart.sonification.sonifySeries(this);
+                    this.chart.sonification.sonifySeries(this, onEnd);
                 }
             };
         }
