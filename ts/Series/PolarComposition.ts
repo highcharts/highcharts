@@ -90,6 +90,8 @@ declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
+        polar?: PolarAdditions;
+        /** @requires Series/Polar */
         polarArc: PolarSeriesComposition['polarArc'];
         /** @requires Series/Polar */
         findAlignments: PolarSeriesComposition['findAlignments'];
@@ -131,6 +133,7 @@ interface PolarSeriesComposition extends Series {
     hasClipCircleSetter?: boolean;
     kdByAngle?: boolean;
     points: Array<PolarPointComposition>;
+    polar: PolarAdditions;
     preventPostTranslate?: boolean;
     thresholdAngleRad: number | undefined;
     translatedThreshold?: number;
@@ -160,8 +163,15 @@ interface PolarSeriesComposition extends Series {
     ): DataLabelOptions;
     searchPointByAngle(e: PointerEvent): (Point|undefined);
     translate(): void;
-    toXY(point: Point): void;
 }
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
@@ -171,7 +181,11 @@ const seriesProto = Series.prototype as PolarSeriesComposition,
 let columnProto: PolarSeriesComposition,
     arearangeProto: AreaRangeSeries;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -298,67 +312,6 @@ seriesProto.getConnectors = function (
     return ret;
 };
 
-/**
- * Translate a point's plotX and plotY from the internal angle and radius
- * measures to true plotX, plotY coordinates
- * @private
- */
-seriesProto.toXY = function (
-    this: PolarSeriesComposition,
-    point: PolarPointComposition
-): void {
-    const chart = this.chart,
-        xAxis = this.xAxis,
-        yAxis = this.yAxis,
-        plotX = point.plotX,
-        series = point.series,
-        inverted = chart.inverted,
-        pointY = point.y;
-
-    let plotY = point.plotY,
-        radius = inverted ? plotX : yAxis.len - plotY,
-        clientX;
-
-    // Corrected y position of inverted series other than column
-    if (inverted && series && !series.isRadialBar) {
-        point.plotY = plotY =
-            typeof pointY === 'number' ? (yAxis.translate(pointY) || 0) : 0;
-    }
-
-    // Save rectangular plotX, plotY for later computation
-    point.rectPlotX = plotX;
-    point.rectPlotY = plotY;
-
-    if (yAxis.center) {
-        radius += yAxis.center[3] / 2;
-    }
-
-    // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN when
-    // plotY is undefined (#15438)
-    if (isNumber(plotY)) {
-        const xy = inverted ? yAxis.postTranslate(plotY, radius) :
-            xAxis.postTranslate(plotX, radius);
-
-        point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-        point.plotY = point.polarPlotY = xy.y - chart.plotTop;
-    }
-
-    // If shared tooltip, record the angle in degrees in order to align X
-    // points. Otherwise, use a standard k-d tree to get the nearest point
-    // in two dimensions.
-    if (this.kdByAngle) {
-        clientX = (
-            (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
-        ) % 360;
-        if (clientX < 0) { // #2665
-            clientX += 360;
-        }
-        point.clientX = clientX;
-    } else {
-        point.clientX = point.plotX;
-    }
-};
-
 if (seriesTypes.spline) {
     /**
      * Overridden method for calculating a spline from one point to the next
@@ -454,7 +407,7 @@ addEvent(Series, 'afterTranslate', function (): void {
             while (i--) {
                 // Translate plotX, plotY from angle and radius to true plot
                 // coordinates
-                series.toXY(points[i]);
+                series.polar.toXY(points[i]);
 
                 // Treat points below Y axis min as null (#10082)
                 if (
@@ -558,7 +511,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
         // need to translate these
         points.forEach((point): void => {
             if (typeof point.polarPlotY === 'undefined') {
-                series.toXY(point);
+                series.polar.toXY(point);
             }
         });
     }
@@ -749,8 +702,8 @@ if (seriesTypes.column) {
 
         let threshold = options.threshold,
             thresholdAngleRad,
-            points: Array<ColumnPoint>&Array<PolarPointComposition>,
-            point: ColumnPoint,
+            points: (Array<ColumnPoint>&Array<PolarPointComposition>),
+            point: (ColumnPoint&PolarPointComposition),
             i: number,
             yMin: any,
             yMax: any,
@@ -806,7 +759,7 @@ if (seriesTypes.column) {
                 point.shapeType = 'arc';
 
                 if (chart.inverted) {
-                    point.plotY = yAxis.translate(pointY);
+                    point.plotY = yAxis.translate(pointY) || 0;
 
                     if (stacking && yAxis.stacking) {
                         stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
@@ -916,7 +869,7 @@ if (seriesTypes.column) {
                 }
 
                 // Provided a correct coordinates for the tooltip
-                series.toXY(point);
+                series.polar.toXY(point);
 
                 if (chart.inverted) {
                     tooltipPos = yAxis.postTranslate((point as any).rectPlotY,
@@ -1161,17 +1114,6 @@ addEvent(Chart, 'afterDrawChartBox', function (): void {
     });
 });
 
-addEvent(Series, 'afterInit', function (): void {
-    const chart = this.chart;
-
-    // Add flags that identifies radial inverted series
-    if (chart.inverted && chart.polar) {
-        this.isRadialSeries = true;
-        if (this.is('column')) {
-            this.isRadialBar = true;
-        }
-    }
-});
 
 /**
  * Extend chart.get to also search in panes. Used internally in
@@ -1187,3 +1129,142 @@ wrap(Chart.prototype, 'get', function (
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });
+
+function onSeriesAfterInit(
+    this: Series
+): void {
+    const chart = this.chart;
+
+    if (chart.polar) {
+        this.polar = new PolarAdditions(this as PolarSeriesComposition);
+
+        // Add flags that identifies radial inverted series
+        if (chart.inverted) {
+            this.isRadialSeries = true;
+            if (this.is('column')) {
+                this.isRadialBar = true;
+            }
+        }
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class PolarAdditions {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        SeriesClass: typeof Series
+    ): void {
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+        }
+    }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        series: PolarSeriesComposition
+    ) {
+        this.series = series;
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public series: PolarSeriesComposition;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Translate a point's plotX and plotY from the internal angle and radius
+     * measures to true plotX, plotY coordinates
+     * @private
+     */
+    public toXY(
+        point: PolarPointComposition
+    ): void {
+        const series = this.series,
+            chart = series.chart,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            plotX = point.plotX,
+            inverted = chart.inverted,
+            pointY = point.y;
+
+        let plotY = point.plotY,
+            radius = inverted ? plotX : yAxis.len - plotY,
+            clientX;
+
+        // Corrected y position of inverted series other than column
+        if (inverted && series && !series.isRadialBar) {
+            point.plotY = plotY =
+                typeof pointY === 'number' ? yAxis.translate(pointY) || 0 : 0;
+        }
+
+        // Save rectangular plotX, plotY for later computation
+        point.rectPlotX = plotX;
+        point.rectPlotY = plotY;
+
+        if (yAxis.center) {
+            radius += yAxis.center[3] / 2;
+        }
+
+        // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN
+        // when plotY is undefined (#15438)
+        if (isNumber(plotY)) {
+            const xy = inverted ? yAxis.postTranslate(plotY, radius) :
+                xAxis.postTranslate(plotX, radius);
+
+            point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+            point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+        }
+
+        // If shared tooltip, record the angle in degrees in order to align X
+        // points. Otherwise, use a standard k-d tree to get the nearest point
+        // in two dimensions.
+        if (series.kdByAngle) {
+            clientX = (
+                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+            ) % 360;
+            if (clientX < 0) { // #2665
+                clientX += 360;
+            }
+            point.clientX = clientX;
+        } else {
+            point.clientX = point.plotX;
+        }
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default PolarAdditions;
