@@ -20,6 +20,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ChartOptions from '../Core/Chart/ChartOptions';
@@ -27,20 +28,21 @@ import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnSeries from './Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
+import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
-import type RadialAxis from '../Core/Axis/RadialAxis';
 import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Core/Globals.js';
 import Pane from '../Extensions/Pane.js';
-import Pointer from '../Core/Pointer.js';
+import RadialAxis from '../Core/Axis/RadialAxis.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
@@ -156,7 +158,6 @@ const composedClasses: Array<Function> = [];
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-const pointerProto = Pointer.prototype;
 let columnProto: PolarSeriesComposition;
 
 /* *
@@ -779,55 +780,6 @@ if (seriesTypes.column) {
     });
 }
 
-/**
- * Extend getCoordinates to prepare for polar axis values
- * @private
- */
-wrap(pointerProto, 'getCoordinates', function (
-    this: PolarSeriesComposition,
-    proceed: Pointer['getCoordinates'],
-    e: PointerEvent
-): Pointer.AxesCoordinatesObject {
-    const chart = this.chart;
-
-    let ret: Pointer.AxesCoordinatesObject = {
-        xAxis: [],
-        yAxis: []
-    };
-
-    if (chart.polar) {
-
-        chart.axes.forEach((axis): void => {
-
-            // Skip colorAxis
-            if (axis.coll === 'colorAxis') {
-                return;
-            }
-
-            const isXAxis = axis.isXAxis,
-                center = axis.center,
-                x = e.chartX - (center as any)[0] - chart.plotLeft,
-                y = e.chartY - (center as any)[1] - chart.plotTop;
-
-            ret[isXAxis ? 'xAxis' : 'yAxis'].push({
-                axis: axis,
-                value: axis.translate(
-                    isXAxis ?
-                        Math.PI - Math.atan2(x, y) : // angle
-                        // distance from center
-                        Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
-                    true
-                ) as any
-            });
-        });
-
-    } else {
-        ret = proceed.call(this, e);
-    }
-
-    return ret;
-});
-
 function onChartAfterDrawChartBox(
     this: Chart
 ): void {
@@ -974,6 +926,55 @@ function wrapChartGet(
 }
 
 /**
+ * Extend getCoordinates to prepare for polar axis values
+ * @private
+ */
+function wrapPointerGetCoordinates(
+    this: PolarSeriesComposition,
+    proceed: Pointer['getCoordinates'],
+    e: PointerEvent
+): Pointer.AxesCoordinatesObject {
+    const chart = this.chart;
+
+    let ret: Pointer.AxesCoordinatesObject = {
+        xAxis: [],
+        yAxis: []
+    };
+
+    if (chart.polar) {
+
+        chart.axes.forEach((axis): void => {
+
+            // Skip colorAxis
+            if (axis.coll === 'colorAxis') {
+                return;
+            }
+
+            const isXAxis = axis.isXAxis,
+                center = axis.center,
+                x = e.chartX - (center as any)[0] - chart.plotLeft,
+                y = e.chartY - (center as any)[1] - chart.plotTop;
+
+            ret[isXAxis ? 'xAxis' : 'yAxis'].push({
+                axis: axis,
+                value: axis.translate(
+                    isXAxis ?
+                        Math.PI - Math.atan2(x, y) : // angle
+                        // distance from center
+                        Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
+                    true
+                ) as any
+            });
+        });
+
+    } else {
+        ret = proceed.call(this, e);
+    }
+
+    return ret;
+}
+
+/**
  * Define the animate method for regular series
  * @private
  */
@@ -1089,9 +1090,13 @@ class PolarAdditions {
      * */
 
     public static compose(
+        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof Series
+        PointerClass: typeof Pointer,
+        SeriesClass: typeof Series,
+        TickClass: typeof Tick
     ): void {
+        RadialAxis.compose(AxisClass, TickClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -1102,6 +1107,14 @@ class PolarAdditions {
             const chartProto = ChartClass.prototype;
 
             wrap(chartProto, 'get', wrapChartGet);
+        }
+
+        if (composedClasses.indexOf(PointerClass) === -1) {
+            composedClasses.push(PointerClass);
+
+            const pointerProto = PointerClass.prototype;
+
+            wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
         }
 
         if (composedClasses.indexOf(SeriesClass) === -1) {

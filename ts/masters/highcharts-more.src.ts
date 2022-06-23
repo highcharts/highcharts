@@ -11,8 +11,6 @@
 import Highcharts from '../Core/Globals.js';
 const G: AnyRecord = Highcharts;
 import '../Extensions/Pane.js';
-import RadialAxis from '../Core/Axis/RadialAxis.js';
-RadialAxis.compose(G.Axis, G.Tick);
 import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';
@@ -26,4 +24,4 @@ import '../Series/PackedBubble/PackedBubbleSeries.js';
 import '../Series/Polygon/PolygonSeries.js';
 import '../Series/Waterfall/WaterfallSeries.js';
 import PolarAdditions from '../Series/PolarComposition.js';
-PolarAdditions.compose(G.Chart, G.Series);
+PolarAdditions.compose(G.Axis, G.Chart, G.Pointer, G.Series, G.Tick);
