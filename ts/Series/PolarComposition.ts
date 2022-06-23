@@ -80,8 +80,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
-        rectPlotX?: PolarPoint['rectPlotX'];
-        rectPlotY?: PolarPoint['rectPlotY'];
+        rectPlotX?: PolarPointComposition['rectPlotX'];
+        rectPlotY?: PolarPointComposition['rectPlotY'];
         ttBelow?: boolean;
     }
 }
@@ -90,9 +90,9 @@ declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
-        polarArc: PolarSeries['polarArc'];
+        polarArc: PolarSeriesComposition['polarArc'];
         /** @requires Series/Polar */
-        findAlignments: PolarSeries['findAlignments'];
+        findAlignments: PolarSeriesComposition['findAlignments'];
     }
 }
 
@@ -112,32 +112,32 @@ interface PolarConnector {
     rightContY: number;
 }
 
-interface PolarPoint extends Point {
+interface PolarPointComposition extends Point {
     plotX: number;
     plotY: number;
     polarPlotX: number;
     polarPlotY: number;
     rectPlotX: number;
     rectPlotY: number;
-    series: PolarSeries;
+    series: PolarSeriesComposition;
 }
 
-interface PolarSeries extends Series {
+interface PolarSeriesComposition extends Series {
     startAngleRad: number;
     clipCircle: SVGElement;
     connectEnds?: boolean;
-    data: Array<PolarPoint>;
+    data: Array<PolarPointComposition>;
     group: SVGElement;
     hasClipCircleSetter?: boolean;
     kdByAngle?: boolean;
-    points: Array<PolarPoint>;
+    points: Array<PolarPointComposition>;
     preventPostTranslate?: boolean;
     thresholdAngleRad: number | undefined;
     translatedThreshold?: number;
     animate(init?: boolean): void;
     searchPoint: (
-        PolarSeries['kdByAngle'] extends true ?
-            PolarSeries['searchPointByAngle'] :
+        PolarSeriesComposition['kdByAngle'] extends true ?
+            PolarSeriesComposition['searchPointByAngle'] :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
@@ -166,9 +166,9 @@ interface PolarSeries extends Series {
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-let seriesProto = Series.prototype as PolarSeries,
-    pointerProto = Pointer.prototype,
-    columnProto: PolarSeries,
+const seriesProto = Series.prototype as PolarSeriesComposition,
+    pointerProto = Pointer.prototype;
+let columnProto: PolarSeriesComposition,
     arearangeProto: AreaRangeSeries;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -201,39 +201,22 @@ seriesProto.searchPointByAngle = function (
  *        well allows short recurence
  */
 seriesProto.getConnectors = function (
-    this: PolarSeries,
-    segment: Array<PolarPoint>,
+    this: PolarSeriesComposition,
+    segment: Array<PolarPointComposition>,
     index: number,
     calculateNeighbours?: boolean,
     connectEnds?: boolean
 ): PolarConnector {
+    const smoothing = 1.5,
+        denom = smoothing + 1,
+        addedNumber = connectEnds ? 1 : 0;
 
     let i: number,
-        prevPointInd: number,
-        nextPointInd: number,
-        previousPoint: PolarPoint,
-        nextPoint: PolarPoint,
-        previousX: number,
-        previousY: number,
-        nextX: number,
-        nextY: number,
-        plotX: number,
-        plotY: number,
-        ret: PolarConnector,
-        // 1 means control points midway between points, 2 means 1/3 from
-        // the point, 3 is 1/4 etc;
-        smoothing = 1.5,
-        denom = smoothing + 1,
         leftContX: number,
         leftContY: number,
         rightContX: number,
         rightContY: number,
-        dLControlPoint: number, // distance left control point
-        dRControlPoint: number,
-        leftContAngle: number,
-        rightContAngle: number,
-        jointAngle: number,
-        addedNumber = connectEnds ? 1 : 0;
+        jointAngle: number;
 
     // Calculate final index of points depending on the initial index value.
     // Because of calculating neighbours, index may be outisde segment
@@ -246,29 +229,38 @@ seriesProto.getConnectors = function (
         i = 0;
     }
 
-    prevPointInd = (i - 1 < 0) ? segment.length - (1 + addedNumber) : i - 1;
-    nextPointInd = (i + 1 > segment.length - 1) ? addedNumber : i + 1;
-    previousPoint = segment[prevPointInd];
-    nextPoint = segment[nextPointInd];
-    previousX = previousPoint.plotX;
-    previousY = previousPoint.plotY;
-    nextX = nextPoint.plotX;
-    nextY = nextPoint.plotY;
-    plotX = segment[i].plotX; // actual point
-    plotY = segment[i].plotY;
+    // 1 means control points midway between points, 2 means 1/3 from
+    // the point, 3 is 1/4 etc;
+    const prevPointInd = (
+            (i - 1 < 0) ? segment.length - (1 + addedNumber) : i - 1
+        ),
+        nextPointInd = (i + 1 > segment.length - 1) ? addedNumber : i + 1,
+        previousPoint = segment[prevPointInd],
+        nextPoint = segment[nextPointInd],
+        previousX = previousPoint.plotX,
+        previousY = previousPoint.plotY,
+        nextX = nextPoint.plotX,
+        nextY = nextPoint.plotY,
+        plotX = segment[i].plotX, // actual point
+        plotY = segment[i].plotY;
+
     leftContX = (smoothing * plotX + previousX) / denom;
     leftContY = (smoothing * plotY + previousY) / denom;
     rightContX = (smoothing * plotX + nextX) / denom;
     rightContY = (smoothing * plotY + nextY) / denom;
-    dLControlPoint = Math.sqrt(
-        Math.pow(leftContX - plotX, 2) + Math.pow(leftContY - plotY, 2)
-    );
-    dRControlPoint = Math.sqrt(
-        Math.pow(rightContX - plotX, 2) + Math.pow(rightContY - plotY, 2)
-    );
-    leftContAngle = Math.atan2(leftContY - plotY, leftContX - plotX);
-    rightContAngle = Math.atan2(rightContY - plotY, rightContX - plotX);
+
+    // distance left control point
+    const dLControlPoint = Math.sqrt(
+            Math.pow(leftContX - plotX, 2) + Math.pow(leftContY - plotY, 2)
+        ),
+        dRControlPoint = Math.sqrt(
+            Math.pow(rightContX - plotX, 2) + Math.pow(rightContY - plotY, 2)
+        ),
+        leftContAngle = Math.atan2(leftContY - plotY, leftContX - plotX),
+        rightContAngle = Math.atan2(rightContY - plotY, rightContX - plotX);
+
     jointAngle = (Math.PI / 2) + ((leftContAngle + rightContAngle) / 2);
+
     // Ensure the right direction, jointAngle should be in the same quadrant
     // as leftContAngle
     if (Math.abs(leftContAngle - jointAngle) > Math.PI / 2) {
@@ -283,7 +275,7 @@ seriesProto.getConnectors = function (
 
     // push current point's connectors into returned object
 
-    ret = {
+    const ret: PolarConnector = {
         rightContX: rightContX,
         rightContY: rightContY,
         leftContX: leftContX,
@@ -302,6 +294,7 @@ seriesProto.getConnectors = function (
             connectEnds
         );
     }
+
     return ret;
 };
 
@@ -311,17 +304,18 @@ seriesProto.getConnectors = function (
  * @private
  */
 seriesProto.toXY = function (
-    this: PolarSeries,
-    point: PolarPoint
+    this: PolarSeriesComposition,
+    point: PolarPointComposition
 ): void {
-    let chart = this.chart,
+    const chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
-        plotY = point.plotY,
         series = point.series,
         inverted = chart.inverted,
-        pointY = point.y,
+        pointY = point.y;
+
+    let plotY = point.plotY,
         radius = inverted ? plotX : yAxis.len - plotY,
         clientX;
 
@@ -354,8 +348,8 @@ seriesProto.toXY = function (
     // in two dimensions.
     if (this.kdByAngle) {
         clientX = (
-            (plotX / Math.PI * 180) +
-            (xAxis.pane.options.startAngle as any)) % 360;
+            (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+        ) % 360;
         if (clientX < 0) { // #2665
             clientX += 360;
         }
@@ -374,10 +368,10 @@ if (seriesTypes.spline) {
         seriesTypes.spline.prototype,
         'getPointSpline',
         function (
-            this: PolarSeries,
+            this: PolarSeriesComposition,
             proceed: Function,
-            segment: Array<PolarPoint>,
-            point: PolarPoint,
+            segment: Array<PolarPointComposition>,
+            point: PolarPointComposition,
             i: number
         ): SVGPath {
             let ret,
@@ -436,8 +430,8 @@ if (seriesTypes.spline) {
  * @private
  */
 addEvent(Series, 'afterTranslate', function (): void {
-    const series = this as PolarSeries;
-    const chart = series.chart;
+    const series = this as PolarSeriesComposition,
+        chart = series.chart;
 
     if (chart.polar && series.xAxis) {
 
@@ -477,7 +471,7 @@ addEvent(Series, 'afterTranslate', function (): void {
         if (!this.hasClipCircleSetter) {
             this.hasClipCircleSetter = !!series.eventsToUnbind.push(
                 addEvent(series, 'afterRender', function (
-                    this: PolarSeries
+                    this: PolarSeriesComposition
                 ): void {
                     let circ: Array<number>;
 
@@ -517,13 +511,13 @@ addEvent(Series, 'afterTranslate', function (): void {
  * @private
  */
 wrap(seriesTypes.line.prototype, 'getGraphPath', function (
-    this: PolarSeries,
+    this: PolarSeriesComposition,
     proceed: Function,
-    points: Array<PolarPoint>
+    points: Array<PolarPointComposition>
 ): SVGPath {
-    let series = this,
-        i,
-        firstValid,
+    const series = this;
+
+    let firstValid,
         popLastPoint;
 
     // Connect the path
@@ -531,7 +525,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
         points = points || this.points;
 
         // Append first valid point in order to connect the ends
-        for (i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             if (!points[i].isNull) {
                 firstValid = i;
                 break;
@@ -562,7 +556,7 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
 
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
-        points.forEach(function (point: PolarPoint): void {
+        points.forEach((point): void => {
             if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
@@ -584,18 +578,19 @@ wrap(seriesTypes.line.prototype, 'getGraphPath', function (
 
 
 const polarAnimate = function (
-    this: PolarSeries,
+    this: PolarSeriesComposition,
     proceed: Function,
     init?: boolean
 ): void {
-    let series = this,
+    const series = this,
         chart = this.chart,
-        animation = this.options.animation,
         group = this.group,
         markerGroup = this.markerGroup,
         center = this.xAxis && this.xAxis.center,
         plotLeft = chart.plotLeft,
-        plotTop = chart.plotTop,
+        plotTop = chart.plotTop;
+
+    let animation = this.options.animation,
         attribs: SVGAttributes,
         paneInnerR: number,
         graphic,
@@ -622,9 +617,7 @@ const polarAnimate = function (
                 if (series.is('column')) {
                     if (!init) {
                         paneInnerR = center[3] / 2;
-                        series.points.forEach(function (
-                            point: PolarPoint
-                        ): void {
+                        series.points.forEach((point): void => {
                             graphic = point.graphic;
                             shapeArgs = point.shapeArgs;
                             r = shapeArgs && shapeArgs.r;
@@ -688,20 +681,21 @@ wrap(seriesProto, 'animate', polarAnimate);
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
     columnProto = (
-        seriesTypes.column.prototype as unknown as PolarSeries
+        seriesTypes.column.prototype as unknown as PolarSeriesComposition
     );
 
     columnProto.polarArc = function (
-        this: (ColumnSeries&PolarSeries),
+        this: (ColumnSeries&PolarSeriesComposition),
         low: number,
         high: number,
         start: number,
         end: number
     ): SVGAttributes {
-        let center = this.xAxis.center,
+        const center = this.xAxis.center,
             len = this.yAxis.len,
-            paneInnerR = center[3] / 2,
-            r = len - high + paneInnerR,
+            paneInnerR = center[3] / 2;
+
+        let r = len - high + paneInnerR,
             innerR = len - pick(low, len) + paneInnerR;
 
         // Prevent columns from shooting through the pane's center
@@ -738,13 +732,11 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(columnProto, 'translate', function (
-        this: (ColumnSeries&PolarSeries),
+        this: (ColumnSeries&PolarSeriesComposition),
         proceed: Function
     ): void {
-
-        let series = this,
+        const series = this,
             options = series.options,
-            threshold = options.threshold,
             stacking = options.stacking,
             chart = series.chart,
             xAxis = series.xAxis,
@@ -753,9 +745,11 @@ if (seriesTypes.column) {
             center = yAxis.center,
             startAngleRad = xAxis.startAngleRad,
             endAngleRad = xAxis.endAngleRad,
-            visibleRange = endAngleRad - startAngleRad,
+            visibleRange = endAngleRad - startAngleRad;
+
+        let threshold = options.threshold,
             thresholdAngleRad,
-            points: Array<ColumnPoint>&Array<PolarPoint>,
+            points: Array<ColumnPoint>&Array<PolarPointComposition>,
             point: ColumnPoint,
             i: number,
             yMin: any,
@@ -948,7 +942,7 @@ if (seriesTypes.column) {
      * @private
      */
     columnProto.findAlignments = function (
-        this: PolarSeries,
+        this: PolarSeriesComposition,
         angle: number,
         options: DataLabelOptions
     ): DataLabelOptions {
@@ -989,22 +983,23 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(columnProto, 'alignDataLabel', function (
-        this: (ColumnSeries|PolarSeries),
+        this: (ColumnSeries|PolarSeriesComposition),
         proceed: Function,
-        point: (ColumnPoint|PolarPoint),
+        point: (ColumnPoint|PolarPointComposition),
         dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        let chart = this.chart,
-            inside = pick(options.inside, !!this.options.stacking),
-            angle,
+        const chart = this.chart,
+            inside = pick(options.inside, !!this.options.stacking);
+
+        let angle,
             shapeArgs,
             labelPos;
 
         if (chart.polar) {
-            angle = (point as PolarPoint).rectPlotX / Math.PI * 180;
+            angle = (point as PolarPointComposition).rectPlotX / Math.PI * 180;
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
                 if (this.findAlignments) {
@@ -1014,8 +1009,8 @@ if (seriesTypes.column) {
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
                 this.forceDL = chart.isInsidePlot(
-                    (point as PolarPoint).plotX,
-                    Math.round((point as PolarPoint).plotY)
+                    (point as PolarPointComposition).plotX,
+                    Math.round((point as PolarPointComposition).plotY)
                 );
 
                 // Checks if labels should be positioned inside
@@ -1024,12 +1019,12 @@ if (seriesTypes.column) {
                     // Calculates pixel positions for a data label to be
                     // inside
                     labelPos =
-                        (this as PolarSeries).yAxis.postTranslate(
+                        (this as PolarSeriesComposition).yAxis.postTranslate(
                         // angle
                             (
                                 (shapeArgs.start || 0) + (shapeArgs.end || 0)
                             ) / 2 -
-                            (this as PolarSeries)
+                            (this as PolarSeriesComposition)
                                 .xAxis.startAngleRad,
                             // radius
                             (point as ColumnPoint).barX +
@@ -1081,31 +1076,30 @@ if (seriesTypes.column) {
  * @private
  */
 wrap(pointerProto, 'getCoordinates', function (
-    this: PolarSeries,
+    this: PolarSeriesComposition,
     proceed: Pointer['getCoordinates'],
     e: PointerEvent
 ): Pointer.AxesCoordinatesObject {
-    let chart = this.chart,
-        ret: Pointer.AxesCoordinatesObject = {
-            xAxis: [],
-            yAxis: []
-        };
+    const chart = this.chart;
+
+    let ret: Pointer.AxesCoordinatesObject = {
+        xAxis: [],
+        yAxis: []
+    };
 
     if (chart.polar) {
 
-        chart.axes.forEach(function (axis): void {
-            let isXAxis = axis.isXAxis,
-                center = axis.center,
-                x,
-                y;
+        chart.axes.forEach((axis): void => {
 
             // Skip colorAxis
             if (axis.coll === 'colorAxis') {
                 return;
             }
 
-            x = e.chartX - (center as any)[0] - chart.plotLeft;
-            y = e.chartY - (center as any)[1] - chart.plotTop;
+            const isXAxis = axis.isXAxis,
+                center = axis.center,
+                x = e.chartX - (center as any)[0] - chart.plotLeft,
+                y = e.chartY - (center as any)[1] - chart.plotTop;
 
             ret[isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,
@@ -1133,16 +1127,14 @@ SVGRenderer.prototype.clipCircle = function (
     r: number,
     innerR: number
 ): SVGElement {
-    let wrapper: SVGElement,
-        id = uniqueKey(),
-
+    const id = uniqueKey(),
         clipPath = this.createElement('clipPath').attr({
             id: id
-        }).add(this.defs);
+        }).add(this.defs),
+        wrapper = innerR ?
+            this.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
+            this.circle(x, y, r).add(clipPath);
 
-    wrapper = innerR ?
-        this.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
-        this.circle(x, y, r).add(clipPath);
     wrapper.id = id;
     wrapper.clipPath = clipPath;
 
@@ -1155,9 +1147,7 @@ addEvent(Chart, 'getAxes', function (): void {
         this.pane = [];
     }
     this.options.pane = splat(this.options.pane);
-    this.options.pane.forEach(function (
-        paneOptions: Highcharts.PaneOptions
-    ): void {
+    this.options.pane.forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,
             this
@@ -1166,7 +1156,7 @@ addEvent(Chart, 'getAxes', function (): void {
 });
 
 addEvent(Chart, 'afterDrawChartBox', function (): void {
-    (this.pane as any).forEach(function (pane: Highcharts.Pane): void {
+    (this.pane || []).forEach((pane): void => {
         pane.render();
     });
 });
