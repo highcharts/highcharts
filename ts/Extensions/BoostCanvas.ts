@@ -368,7 +368,7 @@ const initCanvasBoost = function (): void {
                 enableMouseTracking = options.enableMouseTracking !== false,
                 lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
-                yBottom: number = yAxis.getThreshold(threshold) as any,
+                yBottom = yAxis.getThreshold(threshold),
                 hasThreshold = isNumber(threshold),
                 translatedThreshold: number = yBottom as any,
                 doFill = this.fill,

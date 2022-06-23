@@ -172,7 +172,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
             point.plotHigh = plotHigh = safeBounds(
                 yAxis.translate(
                     point.high, 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any
+                )
             );
             point.plotLow = safeBounds(point.plotY as any);
 

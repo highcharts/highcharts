@@ -291,7 +291,7 @@ class AreaRangeSeries extends AreaSeries {
                     1 as any,
                     0 as any,
                     1 as any
-                ) as any;
+                );
                 if (series.dataModify) {
                     point.yBottom = point.plotHigh;
                 }

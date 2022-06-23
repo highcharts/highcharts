@@ -456,9 +456,9 @@ class Tick {
             pos = {
                 x: horiz ?
                     correctFloat(
-                        (axis.translate(
+                        axis.translate(
                             tickPos + tickmarkOffset, null, null, old
-                        ) as any) +
+                        ) +
                         axis.transB
                     ) :
                     (
@@ -487,9 +487,9 @@ class Tick {
                     ) :
                     correctFloat(
                         (cHeight as any) -
-                        (axis.translate(
+                        axis.translate(
                             tickPos + tickmarkOffset, null, null, old
-                        ) as any) -
+                        ) -
                         axis.transB
                     )
             };
