@@ -46,7 +46,8 @@ interface ExtremesCache {
     seriesExtremes: Array<PropExtremesCache>;
 }
 const isNoteDefinition = (str: string): boolean =>
-    (/^([a-g][#b]?)[0-8]$/ui).test(str);
+    // eslint-disable-next-line require-unicode-regexp
+    (/^([a-g][#b]?)[0-8]$/i).test(str);
 
 
 /**

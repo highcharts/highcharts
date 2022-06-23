@@ -281,7 +281,8 @@ class SonificationInstrument {
 
     // Get number of notes from C0 from a string like "F#4"
     static noteStringToC0Distance(note: string): number {
-        const match = note.match(/^([a-g][#b]?)([0-8])$/ui),
+        // eslint-disable-next-line require-unicode-regexp
+        const match = note.match(/^([a-g][#b]?)([0-8])$/i),
             semitone = match ? match[1] : 'a',
             wholetone = semitone[0].toLowerCase(),
             accidental = semitone[1],
