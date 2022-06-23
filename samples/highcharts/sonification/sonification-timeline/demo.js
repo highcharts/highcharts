@@ -13,7 +13,6 @@ function onEnd() {
     done = true;
 }
 
-
 function getTimeline() {
     var ctx = new AudioContext(),
         instr1 = new Instrument(ctx, ctx.destination, {
@@ -36,8 +35,7 @@ function getTimeline() {
             onEnd: onEnd
         });
 
-    var speechChannel = timeline.addChannel('speech', speaker);
-    [{
+    timeline.addChannel('speech', speaker, [{
         time: 0,
         message: '1'
     }, {
@@ -68,11 +66,9 @@ function getTimeline() {
         time: 3500,
         message: '8',
         speechOptions: { pitch: 2 }
-    }].forEach(e => speechChannel.addEvent(e));
+    }]);
 
-
-    var instrChannel1 = timeline.addChannel('instrument', instr1);
-    [{
+    timeline.addChannel('instrument', instr1, [{
         time: 500,
         instrumentEventOptions: {
             note: 'c3',
@@ -114,11 +110,9 @@ function getTimeline() {
             pan: 1,
             tremoloSpeed: 0.3
         }
-    }].forEach(e => instrChannel1.addEvent(e));
+    }]);
 
-
-    var instrChannel2 = timeline.addChannel('instrument', instr2);
-    [{
+    timeline.addChannel('instrument', instr2, [{
         time: 1000,
         instrumentEventOptions: {
             note: 'd4',
@@ -151,7 +145,7 @@ function getTimeline() {
             note: 'g5',
             pan: 1
         }
-    }].forEach(e => instrChannel2.addEvent(e));
+    }]);
 
     return timeline;
 }

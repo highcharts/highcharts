@@ -16,6 +16,9 @@ import type SonificationSpeaker from './SonificationSpeaker';
 import type Chart from '../../Core/Chart/Chart';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
+import toMIDI from './MIDI.js';
+import DU from '../DownloadURL.js';
+const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -357,14 +360,28 @@ class SonificationTimeline {
     }
 
 
-    // Todo
-    getAsMIDI(): string {
-        let text = '';
-        this.channels.filter((c): boolean => c.type === 'instrument')
-            .forEach((c): void => {
-                text += 'Channel.';
-            });
-        return text;
+    getMIDIData(): Uint8Array {
+        return toMIDI(this.channels.filter(
+            (c): boolean => c.type === 'instrument'));
+    }
+
+
+    downloadMIDI(filename?: string): void {
+        const data = this.getMIDIData(),
+            name = (
+                filename ||
+                this.chart &&
+                this.chart.options.title &&
+                this.chart.options.title.text ||
+                'chart'
+            ) + '.mid',
+            blob = new Blob(
+                [data],
+                { type: 'application/octet-stream' }
+            ),
+            url = window.URL.createObjectURL(blob);
+        downloadURL(url, name);
+        window.URL.revokeObjectURL(url);
     }
 }
 

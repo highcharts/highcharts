@@ -20,7 +20,7 @@ import SonificationInstrument from './SonificationInstrument.js';
 declare global {
     namespace Sonification {
         interface TimelineEvent {
-            time: number; // Time is given in seconds, where 0 is now.
+            time: number; // Time is given in milliseconds, where 0 is now.
             relatedPoint?: Point;
             instrumentEventOptions?: SonificationInstrument
                 .ScheduledEventOptions;
@@ -55,7 +55,7 @@ class TimelineChannel {
         if (lastEvent && event.time < lastEvent.time) {
             // Ensure we are sorted by time, so insert at the right place
             let i = this.events.length;
-            while (--i && this.events[i].time > event.time) { /* */ }
+            while (i-- && this.events[i].time > event.time) { /* */ }
             this.events.splice(i + 1, 0, event);
         } else {
             this.events.push(event);
