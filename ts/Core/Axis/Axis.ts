@@ -821,9 +821,9 @@ class Axis {
         old?: (boolean|null),
         handleLog?: boolean,
         pointPlacement?: number
-    ): (number|undefined) {
+    ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = old && axis.old ? axis.old.min : axis.min,
+            localMin = (old && axis.old ? axis.old.min : axis.min) || 0,
             minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
@@ -859,7 +859,7 @@ class Axis {
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
             // from chart pixel to value:
-            returnValue = val / localA + (localMin as any);
+            returnValue = val / localA + localMin;
             if (doPostTranslate) { // log, ordinal and broken axis
                 returnValue = axis.lin2val(returnValue);
             }
@@ -867,21 +867,18 @@ class Axis {
         // From value to pixels
         } else {
             if (doPostTranslate) { // log, ordinal and broken axis
-                val = (axis.val2lin as any)(val);
+                val = axis.val2lin(val);
             }
-            const value = sign * (val - (localMin as any)) * localA;
+            const value = sign * (val - localMin) * localA;
 
             returnValue = isNumber(localMin) ?
                 (
                     (!axis.isRadial ? correctFloat(value) : value) +
                     cvsOffset +
                     (sign * minPixelPadding) +
-                    (isNumber(pointPlacement) ?
-                        localA * (pointPlacement as any) :
-                        0
-                    )
+                    (isNumber(pointPlacement) ? localA * pointPlacement : 0)
                 ) :
-                void 0 as any;
+                NaN;
         }
 
         return returnValue;
