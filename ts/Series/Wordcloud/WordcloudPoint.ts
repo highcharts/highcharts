@@ -23,7 +23,7 @@ import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
-import DrawPointComposition from '../DrawPointComposition.js';
+import DrawPointComposition from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
