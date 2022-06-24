@@ -26,7 +26,7 @@
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
-import DrawPointComposition from '../DrawPointComposition.js';
+import DrawPointComposition from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

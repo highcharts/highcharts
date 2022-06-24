@@ -24,7 +24,7 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import DrawPointComposition from '../DrawPointComposition.js';
+import DrawPointComposition from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
