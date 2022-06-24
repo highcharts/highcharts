@@ -19,156 +19,120 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
+import U from '../Core/Utilities.js';
+const { isNumber } = U;
+
 /* *
  *
- *  Composition
+ *  Declarations
  *
  * */
 
-namespace DrawPointComposition {
+export interface DrawPointParams {
+    animatableAttribs: SVGAttributes;
+    attribs: SVGAttributes;
+    css?: CSSObject;
+    group: SVGElement;
+    onComplete?: Function;
+    isNew?: boolean;
+    renderer: SVGRenderer;
+    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shapeArgs?: SVGAttributes;
+    shapeType: 'arc'|'circle'|'path'|'rect'|'text';
+}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-    export declare class Composition extends Point {
-        public draw(params: DrawParams): void;
-        public shouldDraw(): boolean;
-    }
+/**
+ * Handles the drawing of a component.
+ * Can be used for any type of component that reserves the graphic property,
+ * and provides a shouldDraw on its context.
+ *
+ * @private
+ *
+ * @todo add type checking.
+ * @todo export this function to enable usage
+ */
+function draw(
+    point: Point,
+    params: DrawPointParams
+): void {
+    const {
+        animatableAttribs,
+        onComplete,
+        css,
+        renderer
+    } = params;
 
-    export interface DrawParams {
-        animatableAttribs: SVGAttributes;
-        attribs: SVGAttributes;
-        css?: CSSObject;
-        group: SVGElement;
-        onComplete?: Function;
-        isNew?: boolean;
-        renderer: SVGRenderer;
-        shadow?: (boolean|Partial<ShadowOptionsObject>);
-        shapeArgs?: SVGAttributes;
-        shapeType: 'arc'|'circle'|'path'|'rect'|'text';
-    }
+    const animation = (point.series && point.series.chart.hasRendered) ?
+        // Chart-level animation on updates
+        void 0 :
+        // Series-level animation on new points
+        (
+            point.series &&
+            point.series.options.animation
+        );
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
+    let graphic = point.graphic;
 
-    const composedClasses: Array<Function> = [];
+    params.attribs = params.attribs || {};
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
+    // Assigning class in dot notation does go well in IE8
+    // eslint-disable-next-line dot-notation
+    params.attribs['class'] = point.getClassName();
 
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    export function compose<T extends typeof Composition>(PointClass: T): (T&typeof Composition) {
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
-            const pointProto = PointClass.prototype as Composition;
-
-            pointProto.draw = draw;
-
-            if (!pointProto.shouldDraw) {
-                pointProto.shouldDraw = shouldDraw;
-            }
+    if (shouldDraw(point)) {
+        if (!graphic) {
+            point.graphic = graphic = params.shapeType === 'text' ?
+                renderer.text() :
+                renderer[params.shapeType](params.shapeArgs || {});
+            graphic.add(params.group);
         }
-
-        return PointClass as (T&typeof Composition);
-    }
-
-    /**
-     * Handles the drawing of a component.
-     * Can be used for any type of component that reserves the graphic property,
-     * and provides a shouldDraw on its context.
-     *
-     * @private
-     *
-     * @todo add type checking.
-     * @todo export this function to enable usage
-     */
-    function draw(
-        this: Composition,
-        params: DrawParams
-    ): void {
-        const {
-            animatableAttribs,
-            onComplete,
-            css,
-            renderer
-        } = params;
-
-        const animation = (this.series && this.series.chart.hasRendered) ?
-            // Chart-level animation on updates
-            void 0 :
-            // Series-level animation on new points
-            (
-                this.series &&
-                this.series.options.animation
+        if (css) {
+            graphic.css(css);
+        }
+        graphic
+            .attr(params.attribs)
+            .animate(
+                animatableAttribs,
+                params.isNew ? false : animation,
+                onComplete
             );
-
-        let graphic = this.graphic;
-
-        params.attribs = params.attribs || {};
-
-        // Assigning class in dot notation does go well in IE8
-        // eslint-disable-next-line dot-notation
-        params.attribs['class'] = this.getClassName();
-
-        if (this.shouldDraw()) {
-            if (!graphic) {
-                this.graphic = graphic = params.shapeType === 'text' ?
-                    renderer.text() :
-                    renderer[params.shapeType](params.shapeArgs || {});
-                graphic.add(params.group);
+    } else if (graphic) {
+        const destroy = (): void => {
+            point.graphic = graphic = (graphic && graphic.destroy());
+            if (typeof onComplete === 'function') {
+                onComplete();
             }
-            if (css) {
-                graphic.css(css);
-            }
-            graphic
-                .attr(params.attribs)
-                .animate(
-                    animatableAttribs,
-                    params.isNew ? false : animation,
-                    onComplete
-                );
-        } else if (graphic) {
-            const destroy = (): void => {
-                this.graphic = graphic = (graphic && graphic.destroy());
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
-            };
+        };
 
-            // animate only runs complete callback if something was animated.
-            if (Object.keys(animatableAttribs).length) {
-                graphic.animate(animatableAttribs, void 0, function (): void {
-                    destroy();
-                });
-            } else {
-                destroy();
-            }
+        // animate only runs complete callback if something was animated.
+        if (Object.keys(animatableAttribs).length) {
+            graphic.animate(
+                animatableAttribs,
+                void 0,
+                (): void => destroy()
+            );
+        } else {
+            destroy();
         }
     }
+}
 
-    /**
-     * @private
-     */
-    function shouldDraw(
-        this: Composition
-    ): boolean {
-        return !this.isNull;
+/**
+ * @private
+ */
+function shouldDraw(point: Point): boolean {
+    switch (point.series && point.series.type) {
+        case 'treemap':
+            return isNumber(point.plotY) && point.y !== null;
+        default:
+            return !point.isNull;
     }
-
 }
 
 /* *
@@ -177,4 +141,9 @@ namespace DrawPointComposition {
  *
  * */
 
-export default DrawPointComposition;
+const DrawPointUtilities = {
+    draw,
+    shouldDraw
+};
+
+export default DrawPointUtilities;

@@ -26,11 +26,14 @@
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
-import DrawPointComposition from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        scatter: ScatterSeries
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -45,7 +48,7 @@ const {
  *
  * */
 
-class VennPoint extends ScatterSeries.prototype.pointClass {
+class VennPoint extends ScatterPoint {
 
     /* *
      *
@@ -88,11 +91,9 @@ class VennPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface VennPoint extends DrawPointComposition.Composition {
+interface VennPoint {
     // nothing to add
 }
-
-DrawPointComposition.compose(VennPoint);
 
 /* *
  *
