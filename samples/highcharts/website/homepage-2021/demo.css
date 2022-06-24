@@ -2,6 +2,8 @@
 
 body {
     margin: 0 !important;
+
+    /* background: linear-gradient(180deg, #201836 0%, #46465C 100%); */
     background-color: transparent !important;
 }
 
@@ -29,6 +31,10 @@ body {
 
 #hero {
     width: 100%;
+}
+
+#hero .highcharts-data-labels {
+    transition: opacity 2s;
 }
 
 #hero .highcharts-background {
@@ -136,7 +142,7 @@ body {
 }
 
 #hero .highcharts-data-label text {
-    fill: #fff;
+    fill: #dedede;
     font-weight: 300;
 }
 
@@ -348,7 +354,7 @@ body {
 }
 
 #hero .highcharts-sankey-series .highcharts-data-label text {
-    fill: white;
+    fill: #dedede;
     text-shadow: none;
     font-size: 1.4em;
     transform: translateX(30px);
@@ -362,7 +368,6 @@ body {
     transition: none;
 }
 
-#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(2) text,
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(9) text,
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(12) text,
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(13) text,
@@ -370,6 +375,11 @@ body {
     fill: white;
     text-shadow: none;
     font-size: 1.4em;
+    transform: translateX(-30px);
+}
+
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(10) text,
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(11) text {
     transform: translateX(-30px);
 }
 

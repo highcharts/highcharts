@@ -18,9 +18,12 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import ColumnSeries from '../Column/ColumnSeries.js';
-import LineSeries from '../Line/LineSeries.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    column: ColumnSeries,
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -40,6 +43,12 @@ const {
  * @private
  */
 class ScatterSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A scatter plot uses cartesian coordinates to display values for two
@@ -226,7 +235,6 @@ class ScatterSeries extends LineSeries {
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     public drawGraph(): void {
         if (this.options.lineWidth) {
@@ -371,4 +379,4 @@ export default ScatterSeries;
  * @apioption series.scatter.data
  */
 
-''; // adds doclets above to transpilat
+''; // keeps doclets above in JS file

@@ -56,8 +56,8 @@ import ZoomComponent from './Components/ZoomComponent.js';
 
 import whcm from './HighContrastMode.js';
 import highContrastTheme from './HighContrastTheme.js';
-import defaultOptionsA11Y from './Options/Options.js';
-import defaultLangOptions from './Options/LangOptions.js';
+import defaultOptionsA11Y from './Options/A11yDefaults.js';
+import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 
 /* *

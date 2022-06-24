@@ -24,6 +24,7 @@ import type {
 } from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -51,6 +52,7 @@ const {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
+        ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         /** @requires modules/export-data */
         downloadCSV(): void;
@@ -459,6 +461,66 @@ addEvent(Chart, 'render', function (): void {
         !this.options.chart.forExport
     ) {
         this.viewData();
+    }
+});
+
+addEvent(Chart, 'afterViewData', function (): void {
+    const chart = this,
+        dataTableDiv = chart.dataTableDiv,
+        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
+        getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
+            tr.children[index].textContent,
+        comparer = (index: number, ascending: boolean) =>
+            (a: HTMLDOMElement, b: HTMLDOMElement): number => {
+                const sort = (v1: any, v2: any): number => (
+                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
+                        v1 - v2 :
+                        v1.toString().localeCompare(v2)
+                );
+
+                return sort(
+                    getCellValue(ascending ? a : b, index),
+                    getCellValue(ascending ? b : a, index)
+                );
+            };
+
+
+    if (dataTableDiv) {
+        row.childNodes.forEach((th: any): void => {
+            const table = th.closest('table');
+
+            th.addEventListener('click', function (): void {
+                const rows = [...dataTableDiv.querySelectorAll(
+                        'tr:not(thead tr)'
+                    ) as unknown as Array<HTMLElement>],
+                    headers = [...th.parentNode.children];
+
+                rows.sort(
+                    comparer(
+                        headers.indexOf(th),
+                        chart.ascendingOrderInTable =
+                            !chart.ascendingOrderInTable
+                    )
+                ).forEach((tr: HTMLDOMElement): void => {
+                    table.appendChild(tr);
+                });
+
+                headers.forEach((th): void => {
+                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
+                        .forEach((className): void => {
+                            if (th.classList.contains(className)) {
+                                th.classList.remove(className);
+                            }
+                        });
+                });
+
+                th.classList.add(
+                    chart.ascendingOrderInTable ?
+                        'highcharts-sort-ascending' :
+                        'highcharts-sort-descending'
+                );
+            });
+        });
     }
 });
 
@@ -1028,7 +1090,7 @@ Chart.prototype.getTableAST = function (
             value: (number|string)
         ): AST.Node {
             let textContent = pick(value, ''),
-                className = 'text' + (classes ? ' ' + classes : '');
+                className = 'highcharts-text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
             if (typeof textContent === 'number') {
@@ -1036,9 +1098,9 @@ Chart.prototype.getTableAST = function (
                 if (decimalPoint === ',') {
                     textContent = textContent.replace('.', decimalPoint);
                 }
-                className = 'number';
+                className = 'highcharts-number';
             } else if (!value) {
-                className = 'empty';
+                className = 'highcharts-empty';
             }
 
             attributes = extend(

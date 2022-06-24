@@ -17,180 +17,14 @@
  * Import
  *
  * */
-import type LangOptions from '../../Core/LangOptions';
+
+import type LangOptions from './LangOptions';
 
 /* *
  *
- * Declarations
+ *  API Options
  *
  * */
-declare module '../../Core/LangOptions'{
-    interface LangOptions {
-        accessibility?: Highcharts.LangAccessibilityOptions;
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LangAccessibilityAnnounceNewDataOptions {
-            newDataAnnounce: string;
-            newSeriesAnnounceSingle: string;
-            newPointAnnounceSingle: string;
-            newSeriesAnnounceMultiple: string;
-            newPointAnnounceMultiple: string;
-        }
-        interface LangAccessibilityAxisOptions {
-            rangeCategories: string;
-            rangeFromTo: string;
-            timeRangeDays: string;
-            timeRangeHours: string;
-            timeRangeMinutes: string;
-            timeRangeSeconds: string;
-            xAxisDescriptionPlural: string;
-            xAxisDescriptionSingular: string;
-            yAxisDescriptionPlural: string;
-            yAxisDescriptionSingular: string;
-        }
-        interface LangAccessibilityChartTypesOptions {
-            barMultiple: string;
-            barSingle: string;
-            boxplotMultiple: string;
-            boxplotSingle: string;
-            bubbleSingle: string;
-            bubbleMultiple: string;
-            columnMultiple: string;
-            columnSingle: string;
-            combinationChart: string;
-            defaultMultiple: string;
-            defaultSingle: string;
-            emptyChart: string;
-            lineMultiple: string;
-            lineSingle: string;
-            mapTypeDescription: string;
-            pieMultiple: string;
-            pieSingle: string;
-            scatterMultiple: string;
-            scatterSingle: string;
-            splineMultiple: string;
-            splineSingle: string;
-            unknownMap: string;
-        }
-        interface LangAccessibilityExportingOptions {
-            chartMenuLabel: string;
-            exportRegionLabel: string;
-            menuButtonLabel: string;
-        }
-        interface LangAccessibilityLegendOptions {
-            legendItem: string;
-            legendLabel: string;
-            legendLabelNoTitle: string;
-        }
-        interface LangAccessibilityOptions {
-            announceNewData: LangAccessibilityAnnounceNewDataOptions;
-            axis: LangAccessibilityAxisOptions;
-            chartContainerLabel: string;
-            chartTypes: LangAccessibilityChartTypesOptions;
-            credits: string;
-            defaultChartTitle: string;
-            drillUpButton: string;
-            exporting: LangAccessibilityExportingOptions;
-            graphicContainerLabel: string;
-            legend: LangAccessibilityLegendOptions;
-            rangeSelector: LangAccessibilityRangeSelectorOptions;
-            screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
-            series: LangAccessibilitySeriesOptions;
-            seriesTypeDescriptions: (
-                LangAccessibilitySeriesTypeDescriptionsOptions
-            );
-            sonification: LangAccessibilitySonificationOptions;
-            svgContainerLabel: string;
-            svgContainerTitle: string;
-            table: LangAccessibilityTableOptions;
-            thousandsSep: string;
-            zoom: LangAccessibilityZoomOptions;
-        }
-        interface LangAccessibilityRangeSelectorOptions {
-            dropdownLabel: string;
-            maxInputLabel: string;
-            minInputLabel: string;
-            clickButtonAnnouncement: string;
-        }
-        interface LangAccessibilityAnnotationOptions {
-            heading: string;
-            descriptionSinglePoint: string;
-            descriptionMultiplePoints: string;
-            descriptionNoPoints: string;
-        }
-        interface LangAccessibilityScreenReaderSectionOptions {
-            afterRegionLabel: string;
-            annotations: LangAccessibilityAnnotationOptions;
-            beforeRegionLabel: string;
-            endOfChartMarker: string;
-        }
-        interface LangAccessibilitySeriesOptions {
-            description: string;
-            nullPointValue: string;
-            pointAnnotationsDescription: string;
-            summary: LangAccessibilitySeriesSummaryOptions;
-            xAxisDescription: string;
-            yAxisDescription: string;
-        }
-        interface LangAccessibilitySeriesSummaryOptions {
-            bar: string;
-            barCombination: string;
-            boxplot: string;
-            boxplotCombination: string;
-            bubble: string;
-            bubbleCombination: string;
-            column: string;
-            columnCombination: string;
-            'default': string;
-            defaultCombination: string;
-            line: string;
-            lineCombination: string;
-            map: string;
-            mapCombination: string;
-            mapbubble: string;
-            mapbubbleCombination: string;
-            mapline: string;
-            maplineCombination: string;
-            pie: string;
-            pieCombination: string;
-            scatter: string;
-            scatterCombination: string;
-            spline: string;
-            splineCombination: string;
-        }
-        interface LangAccessibilitySeriesTypeDescriptionsOptions {
-            arearange: string;
-            areasplinerange: string;
-            boxplot: string;
-            bubble: string;
-            columnrange: string;
-            errorbar: string;
-            funnel: string;
-            pyramid: string;
-            waterfall: string;
-        }
-        interface LangAccessibilitySonificationOptions {
-            playAsSoundButtonText: string;
-            playAsSoundClickAnnouncement: string;
-        }
-        interface LangAccessibilityTableOptions {
-            tableSummary: string;
-            viewAsDataTableButtonText: string;
-        }
-        interface LangAccessibilityZoomOptions {
-            mapZoomIn: string;
-            mapZoomOut: string;
-            resetZoomButton: string;
-        }
-    }
-}
 
 const langOptions: DeepPartial<LangOptions> = {
 
@@ -552,5 +386,11 @@ const langOptions: DeepPartial<LangOptions> = {
         }
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default langOptions;

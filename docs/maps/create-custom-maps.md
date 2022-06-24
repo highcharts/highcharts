@@ -47,7 +47,7 @@ Highcharts Maps can be used for more than geographic data, and more than the fea
 
 ![map-from-svg-10.png](map-from-svg-10.png)
 
-15. Go to [jsfiddle.net/highcharts/TUy7x/](https://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highcharts Maps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](https://jsfiddle.net/highcharts/TUy7x/1/).
+15. Go to this [link](https://jsfiddle.net/highcharts/7pfgqrbe/), where you can find an empty boilerplate for Highcharts Maps. Add a series configuration object and paste your data. It should now look like this [demo](https://jsfiddle.net/highcharts/hw4z12kc/).
 
 ```js
 // Initiate the chart

@@ -48,6 +48,12 @@ const {
     wrap
 } = U;
 
+// Use a blank pixel for clearing canvas (#17182)
+const b64BlankPixel = (
+    /* eslint-disable-next-line max-len */
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+);
+
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike extends Highcharts.BoostTargetObject {
         cvsStrokeBatch?: number;
@@ -259,7 +265,9 @@ const initCanvasBoost = function (): void {
                     );
 
                     if (target === this) {
-                        (target.renderTarget as any).attr({ href: '' });
+                        (target.renderTarget as any).attr({
+                            href: b64BlankPixel
+                        });
                     }
                 };
 
@@ -285,7 +293,7 @@ const initCanvasBoost = function (): void {
                 width: width,
                 height: height,
                 style: 'pointer-events: none',
-                href: ''
+                href: b64BlankPixel
             });
 
             (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
@@ -516,7 +524,7 @@ const initCanvasBoost = function (): void {
                 };
 
             if (this.renderTarget) {
-                this.renderTarget.attr({ 'href': '' });
+                this.renderTarget.attr({ href: b64BlankPixel });
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
@@ -868,7 +876,7 @@ const initCanvasBoost = function (): void {
          */
         function clear(this: Chart): void {
             if (chart.renderTarget) {
-                chart.renderTarget.attr({ href: '' });
+                chart.renderTarget.attr({ href: b64BlankPixel });
             }
 
             if (chart.canvas) {
