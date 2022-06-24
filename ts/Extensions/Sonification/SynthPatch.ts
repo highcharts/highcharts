@@ -15,6 +15,7 @@
 
 import U from '../../Core/Utilities.js';
 const {
+    clamp,
     defined,
     pick
 } = U;
@@ -344,8 +345,8 @@ class Oscillator {
         time: number, frequency: number, glideDuration = 0
     ): void {
         const opts = this.options,
-            f = pick(opts.fixedFrequency, frequency) *
-                (opts.freqMultiplier || 1),
+            f = clamp(pick(opts.fixedFrequency, frequency) *
+                (opts.freqMultiplier || 1), 0, 21000),
             oscTarget = this.getOscTarget(),
             timeConstant = glideDuration / 5000;
 
@@ -451,7 +452,9 @@ class Oscillator {
                         filterOptions.frequencyPitchTrackingMultiplier || 1,
                         frequency
                     ),
-                    f = (filterOptions.frequency || 1000) * multiplier;
+                    f = clamp(
+                        (filterOptions.frequency || 1000) * multiplier, 0, 21000
+                    );
                 filterNode.frequency.cancelScheduledValues(time);
                 filterNode.frequency.setTargetAtTime(f, time, rampTime / 5);
                 filterNode.frequency.setValueAtTime(f, time + rampTime);

@@ -29,7 +29,6 @@ const {
     win
 } = H;
 import defaultSonificationOptions from './Options.js';
-
 import SonificationTimeline from '../../Extensions/Sonification/SonificationTimeline.js';
 import timelineFromChart from './TimelineFromChart.js';
 

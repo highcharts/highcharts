@@ -9,15 +9,7 @@ const el = document.getElementById.bind(document),
         parent.querySelector(childSelector).value,
     SynthPatch = Highcharts.sonification.SynthPatch,
     synths = [],
-    presets = {
-        basic: el('preset-basic').textContent,
-        saxophone: el('preset-saxophone').textContent,
-        piano: el('preset-piano').textContent,
-        vibraphone: el('preset-vibraphone').textContent,
-        synth: el('preset-synth').textContent,
-        rock: el('preset-rock').textContent,
-        whirlwind: el('preset-whirlwind').textContent
-    };
+    presets = Highcharts.sonification.InstrumentPresets;
 
 // Note: always plays the sequence on the first synth.
 function playSequence(notes, durationMultiplier) {
@@ -243,7 +235,7 @@ class Synth {
             )
         };
         this.populateEQSliders();
-        setTimeout(() => this.applyPreset('basic'), 0);
+        setTimeout(() => this.applyPreset('piano'), 0);
     }
 
 
@@ -322,15 +314,15 @@ class Synth {
 
         defs.sort((a, b) => a.frequency - b.frequency).forEach((def, ix) => {
             const sliderContainer = eqContainers[ix];
-            sliderContainer.querySelector('.gain').value = def.gain;
+            sliderContainer.querySelector('.gain').value = def.gain || 0;
             sliderContainer.querySelector('.freq').value = def.frequency;
-            sliderContainer.querySelector('.q').value = def.Q;
+            sliderContainer.querySelector('.q').value = def.Q !== void 0 ? def.Q : 1;
         });
     }
 
 
     applyPreset(presetId) {
-        const options = JSON.parse(presets[presetId]),
+        const options = presets[presetId],
             envToChart = (chart, env) => this.charts[chart].series[0].setData(
                 (env || []).map(o => [o.t, o.vol])
             );
@@ -363,7 +355,7 @@ class Synth {
                     opts[i].releaseEnvelope);
             });
             setTimeout(this.updateFromUI.bind(this), 0);
-            setTimeout(playJingle, 50);
+            setTimeout(playJingle, 150);
         }, 0);
     }
 
@@ -539,7 +531,7 @@ el('startSynth').onclick = function () {
     el('controls').classList.remove('hidden');
     this.classList.add('hidden');
     el('keyStatus').textContent = 'No synth key pressed';
-    setTimeout(playJingle, 50);
+    setTimeout(playJingle, 250);
 };
 
 
