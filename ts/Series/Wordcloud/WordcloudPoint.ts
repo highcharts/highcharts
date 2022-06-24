@@ -23,24 +23,28 @@ import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
-import DrawPointComposition from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        column: ColumnSeries
+        column: {
+            prototype: {
+                pointClass: ColumnPoint
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import WordcloudSeries from './WordcloudSeries';
 
-class WordcloudPoint extends ColumnSeries.prototype.pointClass {
+class WordcloudPoint extends ColumnPoint {
 
     /* *
      *
      * Properties
      *
      * */
+
     public dimensions: SizeObject = void 0 as any;
     public lastCollidedWith?: WordcloudPoint;
     public options: WordcloudPointOptions = void 0 as any;
@@ -66,15 +70,13 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
-interface WordcloudPoint extends DrawPointComposition.Composition {
+interface WordcloudPoint {
     weight: number;
 }
 
 extend(WordcloudPoint.prototype, {
     weight: 1
 });
-
-DrawPointComposition.compose(WordcloudPoint);
 
 /* *
  *
