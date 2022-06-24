@@ -245,7 +245,7 @@ class VariwideSeries extends ColumnSeries {
                     0 as any,
                     0 as any,
                     1 as any
-                ) as any;
+                );
             }
 
             if (this.options.crisp) {

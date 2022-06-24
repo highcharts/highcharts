@@ -1103,12 +1103,12 @@ namespace GridAxis {
                 top = chart.chartHeight - axis.bottom + axis.offset;
                 bottom = top + tickWidth;
             } else {
-                bottom = axis.top + axis.len - (axis.translate(
+                bottom = axis.top + axis.len - axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) || 0);
-                top = axis.top + axis.len - (axis.translate(
+                );
+                top = axis.top + axis.len - axis.translate(
                     reversed ? tickPos : nextTickPos
-                ) || 0);
+                );
             }
 
             // Calculate left and right positions of the cell.
@@ -1119,13 +1119,13 @@ namespace GridAxis {
                 right = axis.left + axis.offset;
                 left = right - tickWidth;
             } else {
-                left = Math.round(axis.left + (axis.translate(
+                left = Math.round(axis.left + axis.translate(
                     reversed ? nextTickPos : tickPos
-                ) || 0)) - crispCorr;
+                )) - crispCorr;
                 right = Math.min( // #15742
-                    Math.round(axis.left + (axis.translate(
+                    Math.round(axis.left + axis.translate(
                         reversed ? tickPos : nextTickPos
-                    ) || 0)) - crispCorr,
+                    )) - crispCorr,
                     axis.left + axis.len
                 );
             }

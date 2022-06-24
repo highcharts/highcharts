@@ -579,7 +579,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old) as any
+            axis.translate(value as any, void 0, void 0, (e as any).old)
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
