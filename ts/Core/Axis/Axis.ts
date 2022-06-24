@@ -823,8 +823,13 @@ class Axis {
         pointPlacement?: number
     ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = (old && axis.old ? axis.old.min : axis.min) || 0,
-            minPixelPadding = axis.minPixelPadding,
+            localMin = (old && axis.old ? axis.old.min : axis.min);
+
+        if (localMin === null) {
+            return NaN;
+        }
+
+        const minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
                 axis.brokenAxis && axis.brokenAxis.hasBreaks ||
@@ -871,14 +876,10 @@ class Axis {
             }
             const value = sign * (val - localMin) * localA;
 
-            returnValue = isNumber(localMin) ?
-                (
-                    (!axis.isRadial ? correctFloat(value) : value) +
-                    cvsOffset +
-                    (sign * minPixelPadding) +
-                    (isNumber(pointPlacement) ? localA * pointPlacement : 0)
-                ) :
-                0;
+            returnValue = (!axis.isRadial ? correctFloat(value) : value) +
+                cvsOffset +
+                (sign * minPixelPadding) +
+                (isNumber(pointPlacement) ? localA * pointPlacement : 0);
         }
 
         return returnValue;
