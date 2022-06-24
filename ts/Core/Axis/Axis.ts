@@ -816,9 +816,9 @@ class Axis {
      */
     public translate(
         val: number,
-        backwards?: (boolean|null),
-        cvsCoord?: (boolean|null),
-        old?: (boolean|null),
+        backwards?: boolean,
+        cvsCoord?: boolean,
+        old?: boolean,
         handleLog?: boolean,
         pointPlacement?: number
     ): number {
@@ -904,7 +904,7 @@ class Axis {
         value: number,
         paneCoordinates?: boolean
     ): number {
-        return this.translate(value, false, !this.horiz, null, true) +
+        return this.translate(value, false, !this.horiz, void 0, true) +
             (paneCoordinates ? 0 : this.pos);
     }
 
@@ -932,7 +932,7 @@ class Axis {
             pixel - (paneCoordinates ? 0 : this.pos as any),
             true,
             !this.horiz,
-            null,
+            void 0,
             true
         );
     }
@@ -999,7 +999,7 @@ class Axis {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, null, null, old)
+                axis.translate(value as any, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).

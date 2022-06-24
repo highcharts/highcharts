@@ -233,9 +233,9 @@ class SolidGaugeSeries extends GaugeSeries {
         if (isNumber(options.threshold)) {
             thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
                 options.threshold,
-                null,
-                null,
-                null,
+                void 0,
+                void 0,
+                void 0,
                 true
             );
         }
@@ -251,9 +251,9 @@ class SolidGaugeSeries extends GaugeSeries {
                     rotation = (yAxis.startAngleRad +
                         yAxis.translate(
                             point.y as any,
-                            null,
-                            null,
-                            null,
+                            void 0,
+                            void 0,
+                            void 0,
                             true
                         )),
                     radius = ((
