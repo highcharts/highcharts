@@ -397,7 +397,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                 point.clientX = point.plotX;
 
                 point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
+                    .translate(point.y, false, true, void 0, true);
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(

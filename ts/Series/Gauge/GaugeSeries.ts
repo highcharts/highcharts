@@ -451,7 +451,7 @@ class GaugeSeries extends Series {
 
             let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + yAxis.translate(
-                    point.y as any, null, null, null, true
+                    point.y as any, void 0, void 0, void 0, true
                 );
 
             // Handle the wrap and overshoot options
