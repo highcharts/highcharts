@@ -1797,6 +1797,10 @@ function removeEvent<T>(
  *        The default function to execute if the other listeners haven't
  *        returned false.
  *
+ *        The `defaultFunction` is also available in the event arguments passed
+ *        to the handlers, allowing handlers to execute code before and after
+ *        the default function.
+ *
  * @return {void}
  */
 function fireEvent<T>(
@@ -1810,6 +1814,7 @@ function fireEvent<T>(
         i;
 
     eventArguments = eventArguments || {};
+    eventArguments.defaultFunction = defaultFunction;
 
     if (doc.createEvent &&
         (
