@@ -20,6 +20,8 @@ import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 import U from '../../Core/Utilities.js';
+import FlowMapPoint from './FlowMapPoint.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 const {
     merge,
     extend
@@ -64,7 +66,15 @@ class FlowMapSeries extends SankeySeries { // Sankey?
      *
      * */
 
+    public data: Array<FlowMapPoint> = void 0 as any;
+
     public options: FlowMapSeriesOptions = void 0 as any;
+
+    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<FlowMapPoint>> = void 0 as any;
+
+    public nodes: Array<FlowMapPoint> = void 0 as any;
+
+    public points: Array<FlowMapPoint> = void 0 as any;
 
 
     /**
