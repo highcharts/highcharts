@@ -6,13 +6,20 @@
 
 'use strict';
 
+import type {
+    AnnotationControllableOptionsObject
+} from '../Mixins/ControllableOptions';
+import type AnnotationsOptions from '../AnnotationsOptions';
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 
@@ -303,7 +310,7 @@ class BasicAnnotation extends Annotation {
 
     public constructor(
         chart: Highcharts.AnnotationChart,
-        options: Highcharts.AnnotationsOptions
+        options: AnnotationsOptions
     ) {
         super(chart, options);
     }
@@ -321,7 +328,7 @@ class BasicAnnotation extends Annotation {
             optionsGroup = options.labels || options.shapes;
 
         optionsGroup.forEach(function (
-            group: Highcharts.AnnotationControllableOptionsObject
+            group: AnnotationControllableOptionsObject
         ): void {
             group.controlPoints = (controlPoints as any)[annotationType];
         });
@@ -358,10 +365,10 @@ interface BasicAnnotation {
 }
 namespace BasicAnnotation {
     export interface ControlPoints {
-        label: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
-        rectangle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
-        ellipse: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
-        circle: DeepPartial<Highcharts.AnnotationControlPointOptionsObject>[];
+        label: DeepPartial<AnnotationControlPointOptionsObject>[];
+        rectangle: DeepPartial<AnnotationControlPointOptionsObject>[];
+        ellipse: DeepPartial<AnnotationControlPointOptionsObject>[];
+        circle: DeepPartial<AnnotationControlPointOptionsObject>[];
     }
 }
 

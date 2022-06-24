@@ -27,7 +27,7 @@ export interface AreaSplineRangePointOptions extends AreaRangePointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
