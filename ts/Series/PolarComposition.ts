@@ -84,8 +84,8 @@ declare module '../Core/Chart/ChartOptions' {
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
-        rectPlotX?: PolarPointComposition['rectPlotX'];
-        rectPlotY?: PolarPointComposition['rectPlotY'];
+        rectPlotX?: PolarPoint['rectPlotX'];
+        rectPlotY?: PolarPoint['rectPlotY'];
         ttBelow?: boolean;
     }
 }
@@ -104,6 +104,11 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
+interface PolarChart extends Chart {
+    axes: Array<RadialAxis.AxisComposition>;
+    series: Array<PolarSeriesComposition>;
+}
+
 interface PolarConnector {
     leftContX: number;
     leftContY: number;
@@ -114,7 +119,7 @@ interface PolarConnector {
     rightContY: number;
 }
 
-interface PolarPointComposition extends Point {
+interface PolarPoint extends Point {
     plotX: number;
     plotY: number;
     polarPlotX: number;
@@ -124,17 +129,18 @@ interface PolarPointComposition extends Point {
     series: PolarSeriesComposition;
 }
 
-interface PolarSeriesComposition extends Series {
-    startAngleRad: number;
+export declare class PolarSeriesComposition extends Series {
+    chart: PolarChart;
     clipCircle: SVGElement;
     connectEnds?: boolean;
-    data: Array<PolarPointComposition>;
+    data: Array<PolarPoint>;
     group: SVGElement;
     hasClipCircleSetter?: boolean;
     kdByAngle?: boolean;
-    points: Array<PolarPointComposition>;
+    points: Array<PolarPoint>;
     polar: PolarAdditions;
     preventPostTranslate?: boolean;
+    startAngleRad: number;
     thresholdAngleRad: number | undefined;
     translatedThreshold?: number;
     animate(init?: boolean): void;
@@ -230,7 +236,7 @@ function findAlignments(
  *        well allows short recurence
  */
 function getConnectors(
-    segment: Array<PolarPointComposition>,
+    segment: Array<PolarPoint>,
     index: number,
     calculateNeighbours?: boolean,
     connectEnds?: boolean
@@ -399,20 +405,23 @@ function onSeriesAfterTranslate(
         if (!series.preventPostTranslate) {
             const points = series.points;
 
-            let i = points.length;
+            let i = points.length,
+                point: PolarPoint;
 
             while (i--) {
+                point = points[i];
+
                 // Translate plotX, plotY from angle and radius to true plot
                 // coordinates
-                series.polar.toXY(points[i]);
+                series.polar.toXY(point);
 
                 // Treat points below Y axis min as null (#10082)
                 if (
                     !chart.hasParallelCoordinates &&
                     !series.yAxis.reversed &&
-                    (points[i].y as any) < (series.yAxis.min as any)
+                    (point.y as any) < series.yAxis.min
                 ) {
-                    points[i].isNull = true;
+                    point.isNull = true;
                 }
             }
         }
@@ -428,7 +437,7 @@ function onSeriesAfterTranslate(
                     if (chart.polar) {
                         // For clipping purposes there is a need for
                         // coordinates from the absolute center
-                        circ = (this.yAxis.pane as any).center;
+                        circ = this.yAxis.pane.center;
 
                         if (!this.clipCircle) {
                             this.clipCircle = clipCircle(
@@ -467,6 +476,7 @@ function wrapChartGet(
     id: string
 ): boolean {
     return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
+        // @todo remove id or define id type:
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 }
@@ -478,10 +488,10 @@ function wrapChartGet(
 function wrapColumnSeriesAlignDataLabel(
     this: (ColumnSeries|PolarSeriesComposition),
     proceed: Function,
-    point: (ColumnPoint|PolarPointComposition),
+    point: (ColumnPoint|PolarPoint),
     dataLabel: SVGLabel,
     options: DataLabelOptions,
-    alignTo: BBoxObject,
+    alignTo: Partial<BBoxObject>,
     isNew?: boolean
 ): void {
     const chart = this.chart,
@@ -492,7 +502,7 @@ function wrapColumnSeriesAlignDataLabel(
         labelPos;
 
     if (chart.polar) {
-        angle = (point as PolarPointComposition).rectPlotX / Math.PI * 180;
+        angle = (point as PolarPoint).rectPlotX / Math.PI * 180;
         if (!chart.inverted) {
             // Align nicely outside the perimeter of the columns
             options = findAlignments(angle, options);
@@ -500,8 +510,8 @@ function wrapColumnSeriesAlignDataLabel(
             // The plotX and plotY are correctly set therefore they
             // don't need to be swapped (inverted argument is false)
             this.forceDL = chart.isInsidePlot(
-                (point as PolarPointComposition).plotX,
-                Math.round((point as PolarPointComposition).plotY)
+                (point as PolarPoint).plotX,
+                Math.round((point as PolarPoint).plotY)
             );
 
             // Checks if labels should be positioned inside
@@ -522,12 +532,12 @@ function wrapColumnSeriesAlignDataLabel(
                         (point as ColumnPoint).pointWidth / 2
                     );
 
-                (alignTo as any) = {
+                alignTo = {
                     x: labelPos.x - chart.plotLeft,
                     y: labelPos.y - chart.plotTop
                 };
             } else if (point.tooltipPos) {
-                (alignTo as any) = {
+                alignTo = {
                     x: point.tooltipPos[0],
                     y: point.tooltipPos[1]
                 };
@@ -584,14 +594,14 @@ function wrapColumnSeriesTranslate(
         visibleRange = endAngleRad - startAngleRad;
 
     let threshold = options.threshold,
-        thresholdAngleRad,
-        points: (Array<ColumnPoint>&Array<PolarPointComposition>),
-        point: (ColumnPoint&PolarPointComposition),
+        thresholdAngleRad = 0,
+        points: (Array<ColumnPoint>&Array<PolarPoint>),
+        point: (ColumnPoint&PolarPoint),
         i: number,
-        yMin: any,
-        yMax: any,
-        start,
-        end,
+        yMin: number,
+        yMax: number,
+        start = 0,
+        end = 0,
         tooltipPos,
         pointX,
         pointY,
@@ -610,8 +620,8 @@ function wrapColumnSeriesTranslate(
     if (xAxis.isRadial) {
         points = series.points;
         i = points.length;
-        yMin = yAxis.translate(yAxis.min as any);
-        yMax = yAxis.translate(yAxis.max as any);
+        yMin = yAxis.translate(yAxis.min);
+        yMax = yAxis.translate(yAxis.max);
         threshold = options.threshold || 0;
 
         if (chart.inverted) {
@@ -637,12 +647,12 @@ function wrapColumnSeriesTranslate(
         while (i--) {
             point = points[i];
             barX = point.barX;
-            pointX = point.x as any;
+            pointX = point.x;
             pointY = point.y as any;
             point.shapeType = 'arc';
 
             if (chart.inverted) {
-                point.plotY = yAxis.translate(pointY) || 0;
+                point.plotY = yAxis.translate(pointY);
 
                 if (stacking && yAxis.stacking) {
                     stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
@@ -651,11 +661,11 @@ function wrapColumnSeriesTranslate(
                     if (series.visible && stack && stack[pointX]) {
                         if (!point.isNull) {
                             stackValues = stack[pointX].points[
-                                (series as any).getStackIndicator(
+                                series.getStackIndicator(
                                     void 0,
                                     pointX,
                                     series.index
-                                ).key];
+                                ).key as any];
 
                             // Translating to radial values
                             start = yAxis.translate(stackValues[0]);
@@ -699,7 +709,7 @@ function wrapColumnSeriesTranslate(
                     }
                 }
 
-                if ((yAxis.min as any) > (yAxis.max as any)) {
+                if (yAxis.min > yAxis.max) {
                     start = end = reversed ? visibleRange : 0;
                 }
 
@@ -731,7 +741,7 @@ function wrapColumnSeriesTranslate(
                 // A correct value for stacked or not fully visible
                 // point
                 point.plotY = (defined(series.translatedThreshold) &&
-                    (start < series.translatedThreshold ? start : end)) -
+                    (start < series.translatedThreshold ? start : end)) as any -
                         startAngleRad;
 
             } else {
@@ -745,7 +755,7 @@ function wrapColumnSeriesTranslate(
                 // element separately.
                 point.shapeArgs = series.polar.arc(
                     (point.yBottom as any),
-                    (point.plotY as any),
+                    point.plotY,
                     start,
                     start + point.pointWidth
                 );
@@ -755,7 +765,7 @@ function wrapColumnSeriesTranslate(
             series.polar.toXY(point);
 
             if (chart.inverted) {
-                tooltipPos = yAxis.postTranslate((point as any).rectPlotY,
+                tooltipPos = yAxis.postTranslate(point.rectPlotY,
                     barX + point.pointWidth / 2);
 
                 point.tooltipPos = [
@@ -763,11 +773,11 @@ function wrapColumnSeriesTranslate(
                     tooltipPos.y - chart.plotTop
                 ];
             } else {
-                (point.tooltipPos as any) = [point.plotX, point.plotY];
+                point.tooltipPos = [point.plotX, point.plotY];
             }
 
             if (center) {
-                point.ttBelow = (point.plotY as any) > center[1];
+                point.ttBelow = point.plotY > center[1];
             }
         }
     }
@@ -781,7 +791,7 @@ function wrapColumnSeriesTranslate(
 function wrapLineSeriesGetGraphPath(
     this: PolarSeriesComposition,
     proceed: Function,
-    points: Array<PolarPointComposition>
+    points: Array<PolarPoint>
 ): SVGPath {
     const series = this;
 
@@ -862,7 +872,6 @@ function wrapPointerGetCoordinates(
     };
 
     if (chart.polar) {
-
         chart.axes.forEach((axis): void => {
 
             // Skip colorAxis
@@ -872,8 +881,8 @@ function wrapPointerGetCoordinates(
 
             const isXAxis = axis.isXAxis,
                 center = axis.center,
-                x = e.chartX - (center as any)[0] - chart.plotLeft,
-                y = e.chartY - (center as any)[1] - chart.plotTop;
+                x = e.chartX - center[0] - chart.plotLeft,
+                y = e.chartY - center[1] - chart.plotTop;
 
             ret[isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,
@@ -883,7 +892,7 @@ function wrapPointerGetCoordinates(
                         // distance from center
                         Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
                     true
-                ) as any
+                )
             });
         });
 
@@ -1002,8 +1011,8 @@ function wrapSeriesAnimate(
 function wrapSplineSeriesGetPointSpline(
     this: PolarSeriesComposition,
     proceed: Function,
-    segment: Array<PolarPointComposition>,
-    point: PolarPointComposition,
+    segment: Array<PolarPoint>,
+    point: PolarPoint,
     i: number
 ): SVGPath {
     let ret,
@@ -1254,7 +1263,7 @@ class PolarAdditions {
      * @private
      */
     public toXY(
-        point: PolarPointComposition
+        point: PolarPoint
     ): void {
         const series = this.series,
             chart = series.chart,
@@ -1271,7 +1280,7 @@ class PolarAdditions {
         // Corrected y position of inverted series other than column
         if (inverted && series && !series.isRadialBar) {
             point.plotY = plotY =
-                typeof pointY === 'number' ? yAxis.translate(pointY) || 0 : 0;
+                isNumber(pointY) ? yAxis.translate(pointY) : 0;
         }
 
         // Save rectangular plotX, plotY for later computation
