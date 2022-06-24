@@ -825,7 +825,7 @@ class Axis {
         const axis = (this.linkedParent || this), // #1417
             localMin = (old && axis.old ? axis.old.min : axis.min);
 
-        if (localMin === null) {
+        if (!isNumber(localMin)) {
             return NaN;
         }
 
