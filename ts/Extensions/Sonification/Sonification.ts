@@ -22,7 +22,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge
+    merge,
+    pick
 } = U;
 import H from '../../Core/Globals.js';
 const {
@@ -108,6 +109,10 @@ class Sonification {
         if (this.audioContext && this.audioDestination) {
             this.timeline = timelineFromChart(
                 this.audioContext, this.audioDestination, this.chart
+            );
+            const sOpts = this.chart.options.sonification;
+            this.timeline.setMasterVolume(
+                pick(sOpts && sOpts.masterVolume, 1)
             );
         }
     }

@@ -37,6 +37,7 @@ class SonificationSpeaker {
     private synthesis: SpeechSynthesis;
     private voice?: SpeechSynthesisVoice;
     private scheduled: number[];
+    private masterVolume = 1;
 
     constructor(private options: Sonification.SpeakerOptions) {
         this.synthesis = window.speechSynthesis;
@@ -60,7 +61,7 @@ class SonificationSpeaker {
             utterance.pitch = options && options.pitch ||
                 this.options.pitch || 1;
             utterance.volume = pick(options && options.volume,
-                this.options.volume, 1);
+                this.options.volume, 1) * this.masterVolume;
 
             this.synthesis.speak(utterance);
         }
@@ -90,7 +91,7 @@ class SonificationSpeaker {
 
 
     setMasterVolume(vol: number): void {
-        this.options.volume = vol;
+        this.masterVolume = vol;
     }
 
 
