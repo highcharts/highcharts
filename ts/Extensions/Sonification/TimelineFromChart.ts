@@ -110,7 +110,7 @@ function getChartExtremesForProps(
         ) {
             continue;
         }
-        const points = series[i].points;
+        const points = series[i].points || [];
         let j = points.length;
         while (j--) {
             let k = numProps;
@@ -409,7 +409,7 @@ function getAvailableDurationForSeries(
         const totalPoints = series.chart.series.reduce(
             (sum, s): number => sum + s.points.length, 0);
         seriesDuration = Math.round(
-            series.points.length / totalPoints * availableDuration
+            (series.points || []).length / totalPoints * availableDuration
         );
     }
 
@@ -860,7 +860,7 @@ function timelineFromChart(
                 // Go through the points and add events to channel
                 let pointGroup: PointGroupItem[] = [],
                     pointGroupTime = -Infinity;
-                series.points.forEach((point, pointIx): void => {
+                (series.points || []).forEach((point, pointIx): void => {
                     const isLastPoint = pointIx === series.points.length - 1;
                     const time = getPointTime(
                         point, startTime, seriesDuration,
