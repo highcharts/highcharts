@@ -169,23 +169,34 @@ class Sonification {
 
 
     // Only continue if sonification enabled. If audioContext is
-    // suspended, retry up to 5 times.
-    private ready(callback: () => void): boolean {
+    // suspended, retry up to 20 times with a small delay.
+    private ready(failCallback: () => void): boolean {
         if (
             !this.audioContext ||
             !this.audioDestination ||
+            !this.chart.options ||
             this.chart.options.sonification &&
             this.chart.options.sonification.enabled === false
         ) {
             return false;
         }
         if (this.audioContext.state === 'suspended') {
-            if (this.retryContextCounter++ < 5) {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                this.audioContext.resume().then(callback);
+            if (this.retryContextCounter++ < 20) {
+                setTimeout((): void => {
+                    if (
+                        this.audioContext &&
+                        this.audioContext.state === 'suspended'
+                    ) {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        this.audioContext.resume().then(failCallback);
+                    } else {
+                        failCallback();
+                    }
+                }, 5);
             }
             return false;
         }
+        this.retryContextCounter = 0;
         return true;
     }
 }
