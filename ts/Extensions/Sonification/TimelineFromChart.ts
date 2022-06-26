@@ -119,7 +119,7 @@ function getChartExtremesForProps(
             }
             k = numSeriesProps;
             while (k--) {
-                updateCache(seriesExtremes, points[j], props[k]);
+                updateCache(seriesExtremes, points[j], perSeriesProps[k]);
             }
         }
         allSeriesExtremes[i] = seriesExtremes;
@@ -140,7 +140,6 @@ function getChartExtremesForProps(
 function buildExtremesCache(chart: Chart): ExtremesCache {
     type MappingOpts = Sonification.InstrumentTrackMappingOptions|
     Sonification.SpeechTrackMappingOptions;
-
     const globalOpts = chart.options.sonification ||
             {} as Sonification.ChartSonificationOptions,
         defaultInstrMapping = (globalOpts.defaultInstrumentOptions || {})
@@ -150,12 +149,15 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
         props: Record<string, boolean> = {},
         perSeriesProps: Record<string, boolean> = {},
         addPropFromMappingParam = (param: string, val: unknown): void => {
-            const propObject = param === 'time' ? perSeriesProps : props;
+            const needsPerSeries = param === 'time';
             if (typeof val === 'string' && param !== 'text') {
                 if (param === 'pitch' && isNoteDefinition(val)) {
                     return;
                 }
-                propObject[val] = true;
+                if (needsPerSeries) {
+                    perSeriesProps[val] = true;
+                }
+                props[val] = true;
                 return;
             }
             if (
@@ -163,7 +165,12 @@ function buildExtremesCache(chart: Chart): ExtremesCache {
                 typeof (val as Sonification.MappingParameterOptions)
                     .mapTo === 'string'
             ) {
-                propObject[(
+                if (needsPerSeries) {
+                    perSeriesProps[(
+                        val as Sonification.MappingParameterOptions
+                    ).mapTo] = true;
+                }
+                props[(
                     val as Sonification.MappingParameterOptions
                 ).mapTo] = true;
                 return;
@@ -317,6 +324,7 @@ function getMappingParameterValue(
     const extremes = extremesCache[
         useContextValue ? contextValueProp : mapTo
     ];
+
     return mapToVirtualAxis(
         value as number, extremes, { min, max },
         isInverted, mapFunc === 'logarithmic'
@@ -714,6 +722,9 @@ function getGroupedPoints(
             }
         });
         if (min && max) {
+            if (min.point === max.point) {
+                return [min.point];
+            }
             return min.time > max.time ?
                 [max.point, min.point] :
                 [min.point, max.point];
@@ -859,7 +870,7 @@ function timelineFromChart(
 
                 // Go through the points and add events to channel
                 let pointGroup: PointGroupItem[] = [],
-                    pointGroupTime = -Infinity;
+                    pointGroupTime = 0;
                 (series.points || []).forEach((point, pointIx): void => {
                     const isLastPoint = pointIx === series.points.length - 1;
                     const time = getPointTime(
@@ -886,36 +897,40 @@ function timelineFromChart(
                         add(context);
                     } else {
                         const dT = time - pointGroupTime,
-                            groupSpan = pointGroupOpts.groupTimespan;
+                            groupSpan = pointGroupOpts.groupTimespan,
+                            spanTime = isLastPoint &&
+                                dT <= groupSpan ? dT : groupSpan;
                         if (isLastPoint || dT > groupSpan) {
                             if (dT <= groupSpan) {
                                 // Only happens if last point is within group
                                 pointGroup.push(context);
                             }
                             if (pointGroup.length === 1) {
-                                add(pointGroup[0]);
+                                add({
+                                    point: pointGroup[0].point,
+                                    time: pointGroupTime + spanTime / 2
+                                });
                             } else {
                                 const points = getGroupedPoints(
                                         pointGroupOpts, pointGroup),
-                                    spanTime = isLastPoint &&
-                                        dT <= groupSpan ? dT : groupSpan,
-                                    t = spanTime / points.length + 1;
-                                points.forEach((p, ix): unknown =>
-                                    add({
-                                        point: p,
-                                        time: Math.min(
-                                            pointGroupTime + t * (ix + 1),
-                                            time
-                                        )
-                                    }));
+                                    t = spanTime / points.length;
+                                points.forEach((p, ix): unknown => add({
+                                    point: p,
+                                    time: pointGroupTime + t / 2 + t * ix
+                                }));
                             }
 
+                            pointGroupTime = Math.floor(time / groupSpan) *
+                                groupSpan;
+
                             if (isLastPoint && dT > groupSpan) {
-                                add(context);
+                                add({
+                                    point: context.point,
+                                    time: pointGroupTime + spanTime / 2
+                                });
                             } else {
                                 pointGroup = [context];
                             }
-                            pointGroupTime = time;
                         } else {
                             pointGroup.push(context);
                         }
