@@ -844,3 +844,47 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
         renderer.destroy();
     }
 });
+
+
+QUnit.test('textPath', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const path = ren
+        .path([
+            ['M', 50, 50],
+            ['L', 550, 350]
+        ])
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 2
+        })
+        .add();
+
+    const text = ren
+        .text('Hello path', 20, 20)
+        .add()
+        .setTextPath(path, {});
+
+    const textPathHref = text.element.querySelector('textPath')
+        .getAttribute('href');
+    assert.ok(
+        textPathHref,
+        'A `textPath` element should be present'
+    );
+
+    text.attr({
+        text: 'Hello updated path'
+    });
+
+    assert.strictEqual(
+        text.element.querySelector('textPath').getAttribute('href'),
+        textPathHref,
+        'The textPath should be preserved after modifying the text'
+    );
+
+    ren.destroy();
+});
