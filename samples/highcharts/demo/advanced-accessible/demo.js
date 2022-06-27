@@ -61,7 +61,7 @@ var chart = Highcharts.chart('container', {
         type: 'lowmedhigh'
     },
     title: {
-        text: 'Age of politicians'
+        text: 'Age and politics'
     },
     subtitle: {
         text:
