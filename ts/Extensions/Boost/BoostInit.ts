@@ -101,7 +101,6 @@ function init(): void {
                 maxVal: (number|undefined),
                 minI: (number|undefined),
                 maxI: (number|undefined),
-                boostOptions: WGLOptions,
                 compareX = options.findNearestPointBy === 'x',
 
                 xDataFull = (
@@ -151,7 +150,7 @@ function init(): void {
 
             chart.boosted = true;
 
-            boostOptions = renderer.settings;
+            const boostOptions = renderer.settings;
 
             if (!this.visible) {
                 return;
@@ -164,7 +163,7 @@ function init(): void {
 
             // If we're rendering per. series we should create the marker groups
             // as usual.
-            if (!chart.boost || !chart.boost.isChartSeriesBoosting()) {
+            if (!chart.isChartSeriesBoosting()) {
                 // If all series were boosting, but are not anymore
                 // restore private markerGroup
                 if (this.markerGroup === chart.markerGroup) {
@@ -419,8 +418,7 @@ function init(): void {
         function canvasToSVG(): void {
             if (
                 chart.ogl &&
-                chart.boost &&
-                chart.boost.isChartSeriesBoosting()
+                chart.isChartSeriesBoosting()
             ) {
                 chart.ogl.render(chart);
             }
@@ -431,9 +429,6 @@ function init(): void {
          * @private
          */
         function preRender(): void {
-            if (!chart.boost) {
-                return;
-            }
 
             // Reset force state
             chart.boostForceChartBoost = void 0;
@@ -448,7 +443,7 @@ function init(): void {
             if (
                 chart.canvas &&
                 chart.ogl &&
-                chart.boost.isChartSeriesBoosting()
+                chart.isChartSeriesBoosting()
             ) {
                 // Allocate
                 chart.ogl.allocateBuffer(chart);

@@ -65,7 +65,7 @@ function createAndAttachRenderer(
             '1.1'
         );
 
-    if (chart.boost && chart.boost.isChartSeriesBoosting()) {
+    if (chart.isChartSeriesBoosting()) {
         target = chart;
     } else {
         target = series;
@@ -184,8 +184,8 @@ function createAndAttachRenderer(
     (target.canvas as any).width = width;
     (target.canvas as any).height = height;
 
-    if (chart.boost && target.boostClipRect) {
-        target.boostClipRect.attr(chart.boost.getBoostClipRect(target));
+    if (target.boostClipRect) {
+        target.boostClipRect.attr(chart.getBoostClipRect(target));
     }
 
     target.boostResizeTarget();

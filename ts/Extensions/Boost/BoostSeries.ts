@@ -586,7 +586,7 @@ function wrapSeriesProcessData(
             return false;
         }
         return (
-            series.chart.boost.isChartSeriesBoosting() ||
+            series.chart.isChartSeriesBoosting() ||
             (
                 (data ? data.length : 0) >=
                 (series.options.boostThreshold || Number.MAX_VALUE)

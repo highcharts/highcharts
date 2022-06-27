@@ -23,14 +23,9 @@ import type BoostTargetObject from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 
 import BU from './BoostUtils.js';
-const {
-    shouldForceChartSeriesBoosting
-} = BU;
+const { shouldForceChartSeriesBoosting } = BU;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
+const { pick } = U;
 
 /* *
  *
@@ -39,13 +34,17 @@ const {
  * */
 
 export declare class BoostChartComposition extends Chart {
-    boost: BoostChartAdditions;
+    getBoostClipRect(target: BoostTargetObject): BBoxObject;
+    isChartSeriesBoosting(): boolean;
 }
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
-        boost?: BoostChartAdditions;
         boosted?: boolean;
+        /** @requires modules/boost */
+        getBoostClipRect(target: BoostTargetObject): BBoxObject;
+        /** @requires modules/boost */
+        isChartSeriesBoosting(): boolean;
     }
 }
 
@@ -59,130 +58,92 @@ const composedClasses: Array<Function> = [];
 
 /* *
  *
- *  Class
+ *  Functions
  *
  * */
 
-class BoostChartAdditions {
+/**
+ * @private
+ */
+function compose<T extends typeof Chart>(
+    ChartClass: T
+): (T&typeof BoostChartComposition) {
 
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
+    if (composedClasses.indexOf(ChartClass) === -1) {
+        composedClasses.push(ChartClass);
 
-    /**
-     * @private
-     */
-    public static compose<T extends typeof Chart>(
-        ChartClass: T
-    ): (T&typeof BoostChartComposition) {
+        const chartProto = ChartClass.prototype as BoostChartComposition;
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
-            addEvent(ChartClass, 'afterInit', function (): void {
-                if (!this.boost) {
-                    this.boost = new BoostChartAdditions(
-                        this as BoostChartComposition
-                    );
-                }
-            });
-        }
-
-        return ChartClass as (T&typeof BoostChartComposition);
+        chartProto.getBoostClipRect = getBoostClipRect;
+        chartProto.isChartSeriesBoosting = isChartSeriesBoosting;
     }
 
-    /* *
-     *
-     *  Constructor
-     *
-     * */
+    return ChartClass as (T&typeof BoostChartComposition);
+}
 
-    public constructor(
-        chart: BoostChartComposition
-    ) {
-        this.chart = chart;
-    }
+/**
+ * Get the clip rectangle for a target, either a series or the chart.
+ * For the chart, we need to consider the maximum extent of its Y axes,
+ * in case of Highcharts Stock panes and navigator.
+ *
+ * @private
+ * @function Highcharts.Chart#getBoostClipRect
+ */
+function getBoostClipRect(
+    this: BoostChartComposition,
+    target: BoostTargetObject
+): BBoxObject {
+    const chart = this,
+        clipBox = {
+            x: chart.plotLeft,
+            y: chart.plotTop,
+            width: chart.plotWidth,
+            height: chart.plotHeight
+        };
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
+    if (target === chart) {
+        const verticalAxes =
+            chart.inverted ? chart.xAxis : chart.yAxis; // #14444
 
-    private chart: BoostChartComposition;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Returns true if the chart is in series boost mode.
-     *
-     * @function Highcharts.Chart#isChartSeriesBoosting
-     *
-     * @param {Highcharts.Chart} chart
-     *        the chart to check
-     *
-     * @return {boolean}
-     *         true if the chart is in series boost mode
-     */
-    public isChartSeriesBoosting(): boolean {
-        const chart = this.chart,
-            threshold = pick(
-                chart.options.boost && chart.options.boost.seriesThreshold,
-                50
+        if (verticalAxes.length <= 1) {
+            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
+            clipBox.height = (
+                verticalAxes[0].pos -
+                chart.plotTop +
+                verticalAxes[0].len
             );
-
-        return (
-            threshold <= chart.series.length ||
-            shouldForceChartSeriesBoosting(chart)
-        );
-    }
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Get the clip rectangle for a target, either a series or the chart.
-     * For the chart, we need to consider the maximum extent of its Y axes,
-     * in case of Highcharts Stock panes and navigator.
-     *
-     * @private
-     * @function Highcharts.Chart#getBoostClipRect
-     */
-    public getBoostClipRect(
-        target: BoostTargetObject
-    ): BBoxObject {
-        const chart = this.chart,
-            clipBox = {
-                x: chart.plotLeft,
-                y: chart.plotTop,
-                width: chart.plotWidth,
-                height: chart.plotHeight
-            };
-
-        if (target === chart) {
-            const verticalAxes =
-                chart.inverted ? chart.xAxis : chart.yAxis; // #14444
-
-            if (verticalAxes.length <= 1) {
-                clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-                clipBox.height = (
-                    verticalAxes[0].pos -
-                    chart.plotTop +
-                    verticalAxes[0].len
-                );
-            } else {
-                clipBox.height = chart.plotHeight;
-            }
+        } else {
+            clipBox.height = chart.plotHeight;
         }
-
-        return clipBox;
     }
 
+    return clipBox;
+}
+
+/**
+ * Returns true if the chart is in series boost mode.
+ *
+ * @function Highcharts.Chart#isChartSeriesBoosting
+ *
+ * @param {Highcharts.Chart} chart
+ *        the chart to check
+ *
+ * @return {boolean}
+ *         true if the chart is in series boost mode
+ */
+function isChartSeriesBoosting(
+    this: BoostChartComposition
+): boolean {
+    const chart = this,
+        threshold = pick(
+            chart.options.boost && chart.options.boost.seriesThreshold,
+            50
+        );
+
+    return (
+        threshold <= chart.series.length ||
+        shouldForceChartSeriesBoosting(chart)
+    );
 }
 
 /* *
@@ -191,4 +152,8 @@ class BoostChartAdditions {
  *
  * */
 
-export default BoostChartAdditions;
+const BoostChart = {
+    compose
+};
+
+export default BoostChart;

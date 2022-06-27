@@ -233,7 +233,7 @@ const initCanvasBoost = function (): void {
                     proceed.call(this, y, x, a, b, c, d);
                 };
 
-            if (chart.boost && chart.boost.isChartSeriesBoosting()) {
+            if (chart.isChartSeriesBoosting()) {
                 target = chart as any;
                 targetGroup = chart.seriesGroup;
             }
@@ -304,8 +304,8 @@ const initCanvasBoost = function (): void {
                 href: b64BlankPixel
             });
 
-            if (chart.boost && target.boostClipRect) {
-                target.boostClipRect.attr(chart.boost.getBoostClipRect(target));
+            if (target.boostClipRect) {
+                target.boostClipRect.attr(chart.getBoostClipRect(target));
             }
 
             return ctx;
@@ -318,10 +318,7 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#canvasToSVG
          */
         canvasToSVG: function (this: Series): void {
-            if (
-                !this.chart.boost ||
-                !this.chart.boost.isChartSeriesBoosting()
-            ) {
+            if (!this.chart.isChartSeriesBoosting()) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
                 }
