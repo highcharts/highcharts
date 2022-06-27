@@ -22,7 +22,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in february, 2022'
+        text: 'Browser market shares in February, 2022'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -53,10 +53,10 @@ Highcharts.chart('container', {
         name: 'Share',
         data: [
             { name: 'Chrome', y: 74.03 },
-            { name: 'Internet Explorer', y: 2.31 },
-            { name: 'Firefox', y: 4.96 },
             { name: 'Edge', y: 12.66 },
+            { name: 'Firefox', y: 4.96 },
             { name: 'Safari', y: 2.49 },
+            { name: 'Internet Explorer', y: 2.31 },
             { name: 'Other', y: 3.398 }
         ]
     }]
