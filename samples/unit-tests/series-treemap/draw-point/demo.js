@@ -22,12 +22,6 @@ QUnit.test('drawPoint', assert => {
     };
 
     /**
-     * Some of the tests are async
-     */
-    const done = assert.async();
-    assert.expect(3);
-
-    /**
      * First render of the point graphic.
      */
     point.draw(params);
@@ -48,18 +42,4 @@ QUnit.test('drawPoint', assert => {
         'should on update remove the previous class attribute, and set it to the last result of point.getClassName.'
     );
 
-    /**
-     * Destroy the graphic
-     * TODO: the graphic is only de
-     */
-    point.shouldDraw = () => false;
-    params.onComplete = function () {
-        assert.strictEqual(
-            point.graphic,
-            undefined,
-            'should destroy the point.graphic when point.shouldDraw returns false.'
-        );
-        done();
-    };
-    point.draw(params);
 });

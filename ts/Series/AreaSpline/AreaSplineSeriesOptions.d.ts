@@ -30,7 +30,7 @@ export interface AreaSplineSeriesOptions extends SplineSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

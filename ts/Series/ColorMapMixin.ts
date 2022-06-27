@@ -62,11 +62,12 @@ const PointMixin = {
      * @private
      */
     isValid: function (this: ColorMapMixin.ColorMapPoint): boolean {
-        // undefined is allowed
         return (
             this.value !== null &&
             this.value !== Infinity &&
-            this.value !== -Infinity
+            this.value !== -Infinity &&
+            // undefined is allowed, but NaN is not (#17279)
+            (this.value === void 0 || !isNaN(this.value))
         );
     }
 

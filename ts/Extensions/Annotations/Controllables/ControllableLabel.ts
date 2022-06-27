@@ -15,7 +15,8 @@
 import '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type { AnnotationsLabelOptions } from '../AnnotationsOptions';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -233,7 +234,7 @@ class ControllableLabel implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsLabelOptions,
+        options: AnnotationsLabelOptions,
         index: number
     ) {
         this.init(annotation, options, index);
@@ -474,7 +475,7 @@ class ControllableLabel implements ControllableMixin.Type {
                 };
 
                 itemPosition = ControllableLabel.alignedPosition(
-                    extend<Highcharts.AnnotationsLabelOptions|BBoxObject>(
+                    extend<AnnotationsLabelOptions|BBoxObject>(
                         itemOptions, {
                             width,
                             height
@@ -520,7 +521,7 @@ class ControllableLabel implements ControllableMixin.Type {
 interface ControllableLabel extends ControllableMixin.Type {
     // adds mixin property types, created during init
     itemType: 'label';
-    options: Highcharts.AnnotationsLabelOptions;
+    options: AnnotationsLabelOptions;
 }
 
 export default ControllableLabel;

@@ -4,7 +4,11 @@
  *
  * */
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
+import type AnnotationsOptions from '../AnnotationsOptions';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import type EventCallback from '../../../Core/EventCallback';
