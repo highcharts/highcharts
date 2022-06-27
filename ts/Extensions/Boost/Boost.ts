@@ -29,65 +29,54 @@ import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
-const {
-    error
-} = U;
+const { error } = U;
 
 /* *
  *
- *  Composition
+ *  Constants
  *
  * */
 
-namespace Boost {
+const composedClasses: Array<Function> = [];
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-    const composedClasses: Array<Function> = [];
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart,
+    SeriesClass: typeof Series,
+    ColorClass?: typeof Color
+): void {
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * @private
-     */
-    export function compose(
-        ChartClass: typeof Chart,
-        SeriesClass: typeof Series,
-        ColorClass?: typeof Color
-    ): void {
-        if (!BU.hasWebGLSupport()) {
-            if (typeof initCanvasBoost !== 'undefined') {
-                // Fallback to canvas boost
-                initCanvasBoost();
-            } else {
-                error(26);
-            }
+    if (!BU.hasWebGLSupport()) {
+        if (typeof initCanvasBoost !== 'undefined') {
+            // Fallback to canvas boost
+            initCanvasBoost();
         } else {
-            // WebGL support is alright, and we're good to go.
-            init();
+            error(26);
         }
-
-        if (ColorClass && composedClasses.indexOf(ColorClass) === -1) {
-            composedClasses.push(ColorClass);
-
-            ColorClass.names = {
-                ...ColorClass.names,
-                ...NamedColors.defaultHTMLColorMap
-            };
-        }
-
-        BoostChart.compose(ChartClass);
-        BoostSeries.compose(SeriesClass);
+    } else {
+        // WebGL support is alright, and we're good to go.
+        init();
     }
 
+    if (ColorClass && composedClasses.indexOf(ColorClass) === -1) {
+        composedClasses.push(ColorClass);
+
+        ColorClass.names = {
+            ...ColorClass.names,
+            ...NamedColors.defaultHTMLColorMap
+        };
+    }
+
+    BoostChart.compose(ChartClass);
+    BoostSeries.compose(SeriesClass);
 }
 
 /* *
@@ -95,6 +84,10 @@ namespace Boost {
  *  Default Export
  *
  * */
+
+const Boost = {
+    compose
+};
 
 export default Boost;
 
