@@ -23,14 +23,15 @@ Highcharts.chart('container', {
         name: 'Medals',
         data: [
             ['Norway', 16],
-            ['ROC', 6],
             ['Germany', 12],
-            ['Canada', 4],
             ['USA', 8],
             ['Sweden', 8],
+            ['Netherlands', 8],
+            ['ROC', 6],
             ['Austria', 7],
-            ['Japan', 3],
-            ['Netherlands', 8]
+            ['Canada', 4],
+            ['Japan', 3]
+
         ]
     }]
 });
