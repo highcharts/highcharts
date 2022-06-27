@@ -8,6 +8,8 @@
  *
  * */
 
+import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
+
 /* *
  *
  *  Imports
@@ -20,7 +22,7 @@
  *
  * */
 
-interface FlowMapSeriesOptions {
+interface FlowMapSeriesOptions extends SankeySeriesOptions {
 
 }
 
