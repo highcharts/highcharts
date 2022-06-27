@@ -50,10 +50,10 @@ Highcharts.chart('container', {
         name: 'Share',
         data: [
             { name: 'Chrome', y: 73.24 },
-            { name: 'Internet Explorer', y: 1.65 },
-            { name: 'Firefox', y: 4.73 },
             { name: 'Edge', y: 12.93 },
+            { name: 'Firefox', y: 4.73 },
             { name: 'Safari', y: 2.50 },
+            { name: 'Internet Explorer', y: 1.65 },
             { name: 'Other', y: 4.93 }
         ]
     }]
