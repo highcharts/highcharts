@@ -37,19 +37,13 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
-import BU from './BoostUtils.js';
-const {
-    allocateIfNotSeriesBoosting,
-    boostEnabled,
-    eachAsync,
-    renderIfNotSeriesBoosting
-} = BU;
 import DefaultOptions from '../../Core/DefaultOptions.js';
 const { getOptions } = DefaultOptions;
 import H from '../../Core/Globals.js';
 const {
     doc,
-    noop
+    noop,
+    win
 } = H;
 import U from '../../Core/Utilities.js';
 const {
@@ -130,6 +124,8 @@ export declare class BoostSeriesComposition extends Series {
  *
  * */
 
+const CHUNK_SIZE = 3000;
+
 const composedClasses: Array<Function> = [];
 
 /* *
@@ -146,6 +142,43 @@ let index: (number|string),
  *  Functions
  *
  * */
+
+/**
+ * @private
+ */
+function allocateIfNotSeriesBoosting(
+    renderer: WGLRenderer,
+    series: Series
+): void {
+    if (renderer &&
+        series.renderTarget &&
+        series.canvas &&
+        !(series.chart.isChartSeriesBoosting())
+    ) {
+        renderer.allocateBufferForSingleSeries(series);
+    }
+}
+
+/**
+ * Return true if ths boost.enabled option is true
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ * The chart
+ * @return {boolean}
+ * True, if boost is enabled.
+ */
+function boostEnabled(chart: Chart): boolean {
+    return pick(
+        (
+            chart &&
+            chart.options &&
+            chart.options.boost &&
+            chart.options.boost.enabled
+        ),
+        true
+    );
+}
 
 /**
  * @private
@@ -511,6 +544,66 @@ function createAndAttachRenderer(
 }
 
 /**
+ * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
+ * UI thread.
+ *
+ * @private
+ * @param {Array<unknown>} arr
+ * The array to loop through.
+ * @param {Function} fn
+ * The callback to call for each item.
+ * @param {Function} finalFunc
+ * The callback to call when done.
+ * @param {number} [chunkSize]
+ * The number of iterations per timeout.
+ * @param {number} [i]
+ * The current index.
+ * @param {boolean} [noTimeout]
+ * Set to true to skip timeouts.
+ */
+function eachAsync(
+    arr: Array<unknown>,
+    fn: Function,
+    finalFunc: Function,
+    chunkSize?: number,
+    i?: number,
+    noTimeout?: boolean
+): void {
+    i = i || 0;
+    chunkSize = chunkSize || CHUNK_SIZE;
+
+    const threshold = i + chunkSize;
+
+    let proceed = true;
+
+    while (proceed && i < threshold && i < arr.length) {
+        proceed = fn(arr[i], i);
+        ++i;
+    }
+
+    if (proceed) {
+        if (i < arr.length) {
+
+            if (noTimeout) {
+                eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
+            } else if (win.requestAnimationFrame) {
+                // If available, do requestAnimationFrame - shaves off a few ms
+                win.requestAnimationFrame(function (): void {
+                    eachAsync(arr, fn, finalFunc, chunkSize, i);
+                });
+            } else {
+                setTimeout(function (): void {
+                    eachAsync(arr, fn, finalFunc, chunkSize, i);
+                });
+            }
+
+        } else if (finalFunc) {
+            finalFunc();
+        }
+    }
+}
+
+/**
  * Extend series.destroy to also remove the fake k-d-tree points (#5137).
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
@@ -550,6 +643,27 @@ function onSeriesHide(
             this.ogl.clear();
         }
         this.boostClear();
+    }
+}
+
+/**
+ * Performs the actual render if the renderer is
+ * attached to the series.
+ * @private
+ */
+function renderIfNotSeriesBoosting(
+    renderer: WGLRenderer,
+    series: Series,
+    chart?: Chart
+): void {
+    chart = chart || series.chart;
+
+    if (renderer &&
+        series.renderTarget &&
+        series.canvas &&
+        !(chart.isChartSeriesBoosting())
+    ) {
+        renderer.render(chart);
     }
 }
 

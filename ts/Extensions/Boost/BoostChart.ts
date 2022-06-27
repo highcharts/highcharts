@@ -23,8 +23,7 @@ import type BoostTargetObject from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 
-import BU from './BoostUtils.js';
-const { shouldForceChartSeriesBoosting } = BU;
+import BoostableMap from './BoostableMap.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -45,6 +44,7 @@ export declare class BoostChartComposition extends Chart {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike extends BoostTargetObject {
         boosted?: boolean;
+        boostForceChartBoost?: boolean;
         markerGroup?: Series['markerGroup'];
         /** @requires modules/boost */
         getBoostClipRect(target: BoostTargetObject): BBoxObject;
@@ -251,6 +251,107 @@ function onChartCallback(
             }
         }
     });
+}
+
+/**
+ * Tolerant max() function.
+ *
+ * @private
+ * @param {...Array<Array<unknown>>} args
+ * Max arguments
+ * @return {number}
+ * Max value
+ */
+function patientMax(...args: Array<Array<unknown>>): number {
+    let r = -Number.MAX_VALUE;
+
+    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+        if (
+            typeof t !== 'undefined' &&
+            t !== null &&
+            typeof t.length !== 'undefined'
+        ) {
+            // r = r < t.length ? t.length : r;
+            if (t.length > 0) {
+                r = t.length;
+                return true;
+            }
+        }
+    });
+
+    return r;
+}
+
+/**
+ * Returns true if we should force boosting the chart.
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ * The chart to check for forcing on
+ * @return {boolean}
+ * True, if boosting should be forced.
+ */
+function shouldForceChartSeriesBoosting(chart: Chart): boolean {
+    const allowBoostForce = pick(
+        chart.options.boost && chart.options.boost.allowForce,
+        true
+    );
+
+    // If there are more than five series currently boosting,
+    // we should boost the whole chart to avoid running out of webgl contexts.
+    let sboostCount = 0,
+        canBoostCount = 0,
+        series;
+
+    if (typeof chart.boostForceChartBoost !== 'undefined') {
+        return chart.boostForceChartBoost;
+    }
+
+    if (chart.series.length > 1) {
+        for (let i = 0; i < chart.series.length; i++) {
+
+            series = chart.series[i];
+
+            // Don't count series with boostThreshold set to 0
+            // See #8950
+            // Also don't count if the series is hidden.
+            // See #9046
+            if (series.options.boostThreshold === 0 ||
+                series.visible === false) {
+                continue;
+            }
+
+            // Don't count heatmap series as they are handled differently.
+            // In the future we should make the heatmap/treemap path compatible
+            // with forcing. See #9636.
+            if (series.type === 'heatmap') {
+                continue;
+            }
+
+            if (BoostableMap[series.type]) {
+                ++canBoostCount;
+            }
+
+            if (patientMax(
+                series.processedXData,
+                series.options.data as any,
+                // series.xData,
+                series.points
+            ) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
+                ++sboostCount;
+            }
+        }
+    }
+
+    chart.boostForceChartBoost = allowBoostForce && (
+        (
+            canBoostCount === chart.series.length &&
+            sboostCount > 0
+        ) ||
+        sboostCount > 5
+    );
+
+    return chart.boostForceChartBoost;
 }
 
 /* *

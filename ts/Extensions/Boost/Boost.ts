@@ -25,7 +25,11 @@ import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 
 import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
-import BU from './BoostUtils.js';
+import H from '../../Core/Globals.js';
+const {
+    win,
+    doc
+} = H;
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
@@ -38,6 +42,13 @@ const { error } = U;
  * */
 
 const composedClasses: Array<Function> = [];
+
+const contexts = [
+    'webgl',
+    'experimental-webgl',
+    'moz-webgl',
+    'webkit-3d'
+];
 
 /* *
  *
@@ -54,7 +65,7 @@ function compose(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     ColorClass?: typeof Color
 ): void {
-    const wglMode = BU.hasWebGLSupport();
+    const wglMode = hasWebGLSupport();
 
     if (!wglMode) {
         if (typeof initCanvasBoost !== 'undefined') {
@@ -80,6 +91,32 @@ function compose(
     BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
 }
 
+/**
+ * Returns true if the current browser supports webgl
+ * @private
+ */
+function hasWebGLSupport(): boolean {
+    let canvas,
+        gl: (false|RenderingContext|null) = false;
+
+    if (typeof win.WebGLRenderingContext !== 'undefined') {
+        canvas = doc.createElement('canvas');
+
+        for (let i = 0; i < contexts.length; ++i) {
+            try {
+                gl = canvas.getContext(contexts[i]);
+                if (typeof gl !== 'undefined' && gl !== null) {
+                    return true;
+                }
+            } catch (e) {
+                // silent error
+            }
+        }
+    }
+
+    return false;
+}
+
 /* *
  *
  *  Default Export
@@ -87,7 +124,8 @@ function compose(
  * */
 
 const Boost = {
-    compose
+    compose,
+    hasWebGLSupport
 };
 
 export default Boost;
