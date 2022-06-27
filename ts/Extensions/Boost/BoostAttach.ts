@@ -54,12 +54,12 @@ function createAndAttachRenderer(
     chart: Chart,
     series: Series
 ): WGLRenderer {
+    const targetGroup = chart.seriesGroup || series.group,
+        alpha = 1;
 
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: BoostTargetObject = chart,
-        targetGroup = chart.seriesGroup || series.group,
-        alpha = 1,
         foSupported: boolean = doc.implementation.hasFeature(
             'www.http://w3.org/TR/SVG11/feature#Extensibility',
             '1.1'

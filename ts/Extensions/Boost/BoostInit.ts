@@ -158,8 +158,8 @@ function init(): void {
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.boost && (this.points || this.graph)) {
-                this.boost.destroyGraphics();
+            if (this.points || this.graph) {
+                this.destroyGraphics();
             }
 
             // If we're rendering per. series we should create the marker groups

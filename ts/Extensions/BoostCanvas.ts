@@ -541,8 +541,8 @@ const initCanvasBoost = function (): void {
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.boost && (this.points || this.graph)) {
-                this.boost.destroyGraphics();
+            if (this.points || this.graph) {
+                this.destroyGraphics();
             }
 
             // The group

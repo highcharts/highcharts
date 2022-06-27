@@ -81,7 +81,7 @@ class BoostChartAdditions {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
-            addEvent(ChartClass, 'init', function (): void {
+            addEvent(ChartClass, 'afterInit', function (): void {
                 if (!this.boost) {
                     this.boost = new BoostChartAdditions(
                         this as BoostChartComposition
