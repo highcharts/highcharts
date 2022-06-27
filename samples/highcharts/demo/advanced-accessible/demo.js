@@ -60,11 +60,13 @@ var chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
-
     title: {
-        text: 'Daily company fruit consumption 2019'
+        text: 'Age of politicians'
     },
-
+    subtitle: {
+        text:
+            'Source: <a href="https://www.linkedin.com/pulse/age-politics-mustapha-mekhatria-mba/" target="_blank">LinkedIn</a>'
+    },
     accessibility: {
         point: {
             descriptionFormatter: function (point) {
@@ -77,29 +79,27 @@ var chart = Highcharts.chart('container', {
                     point.median + ', high ' + point.high;
             }
         },
-
         series: {
             descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
         },
-
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
-
+    legend: {
+        enabled: false
+    },
     xAxis: [{
         accessibility: {
-            description: 'Months of the year'
+            description: 'Countries'
         },
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        categories: ['Finland', 'Iceland', 'Norway', 'Sweden', 'Japan', 'Russia', 'France', 'UK', 'Canada'],
         crosshair: true
     }],
-
     yAxis: {
         title: {
-            text: 'Fruits consumed'
+            text: 'Age'
         },
         min: 0
     },
-
     responsive: {
         rules: [{
             condition: {
@@ -107,70 +107,31 @@ var chart = Highcharts.chart('container', {
             },
             chartOptions: {
                 xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    categories: ['Finland', 'Iceland', 'Norway', 'Sweden', 'Japan', 'Russia', 'France', 'UK', 'Canada']
                 }
             }
         }]
     },
-
     tooltip: {
         shared: true
     },
-
     plotOptions: {
         series: {
             stickyTracking: true,
             whiskerWidth: 5
         }
     },
-
     series: [{
-        name: 'Plums',
         data: [
-            [0, 8, 19],
-            [1, 11, 23],
-            [3, 16, 28],
-            [2, 15, 28],
-            [1, 15, 27],
-            [0, 9, 21],
-            null,
-            null,
-            [1, 6, 19],
-            [2, 8, 21],
-            [2, 9, 22],
-            [1, 11, 19]
-        ]
-    }, {
-        name: 'Bananas',
-        data: [
-            [0, 3, 6],
-            [1, 2, 4],
-            [0, 2, 5],
-            [2, 2, 5],
-            [1, 3, 6],
-            [0, 1, 3],
-            [1, 1, 2],
-            [0, 1, 3],
-            [1, 1, 3],
-            [0, 2, 4],
-            [1, 2, 5],
-            [1, 3, 5]
-        ]
-    }, {
-        name: 'Apples',
-        data: [
-            [1, 4, 6],
-            [2, 4, 5],
-            [1, 3, 6],
-            [2, 3, 6],
-            [1, 3, 4],
-            [0, 2, 4],
-            [0, 1, 2],
-            [0, 1, 2],
-            [0, 1, 2],
-            [0, 2, 4],
-            [1, 2, 4],
-            [1, 3, 4]
+            [32, 45, 61],
+            [32, 48, 62],
+            [34, 48, 58],
+            [39, 49, 71],
+            [54, 65, 79],
+            [37, 50.5, 69],
+            [37, 55.5, 72],
+            [37, 48.5, 56],
+            [32, 51, 73]
         ]
     }]
 });
