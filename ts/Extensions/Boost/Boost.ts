@@ -21,11 +21,11 @@
 import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
 import type Series from '../../Core/Series/Series';
+import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 
 import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import BU from './BoostUtils.js';
-import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
@@ -51,19 +51,18 @@ const composedClasses: Array<Function> = [];
 function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series,
+    seriesTypes: typeof SeriesRegistry.seriesTypes,
     ColorClass?: typeof Color
 ): void {
+    const wglMode = BU.hasWebGLSupport();
 
-    if (!BU.hasWebGLSupport()) {
+    if (!wglMode) {
         if (typeof initCanvasBoost !== 'undefined') {
             // Fallback to canvas boost
             initCanvasBoost();
         } else {
             error(26);
         }
-    } else {
-        // WebGL support is alright, and we're good to go.
-        init();
     }
 
     if (ColorClass && composedClasses.indexOf(ColorClass) === -1) {
@@ -75,8 +74,10 @@ function compose(
         };
     }
 
-    BoostChart.compose(ChartClass);
-    BoostSeries.compose(SeriesClass);
+    // WebGL support is alright, and we're good to go.
+
+    BoostChart.compose(ChartClass, wglMode);
+    BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
 }
 
 /* *
