@@ -89,7 +89,8 @@ class TextBuilder {
      */
     public buildSVG(): void {
         const wrapper = this.svgElement,
-            textNode = wrapper.element,
+            element = wrapper.element,
+            textNode = element.querySelector('textPath') || element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
@@ -149,7 +150,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(ast.nodes);
 
-            ast.addToDOM(wrapper.element);
+            ast.addToDOM(textNode);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
