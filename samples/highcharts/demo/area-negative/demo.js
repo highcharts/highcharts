@@ -23,7 +23,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
-        name: 'Total prduction',
+        name: 'Total production',
         data: [37.8, 29.3, 30.8, 36.8, 40.5, 35.3, 34.9, 43.6, 45.7, 35.9, 32.7
         ]
     }, {
