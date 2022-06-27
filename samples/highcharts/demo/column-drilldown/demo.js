@@ -56,19 +56,14 @@ Highcharts.chart('container', {
                     drilldown: "Chrome"
                 },
                 {
-                    name: "Firefox",
-                    y: 4.18,
-                    drilldown: "Firefox"
-                },
-                {
-                    name: "Internet Explorer",
-                    y: 0.45,
-                    drilldown: "Internet Explorer"
-                },
-                {
                     name: "Safari",
                     y: 19.84,
                     drilldown: "Safari"
+                },
+                {
+                    name: "Firefox",
+                    y: 4.18,
+                    drilldown: "Firefox"
                 },
                 {
                     name: "Edge",
@@ -79,6 +74,11 @@ Highcharts.chart('container', {
                     name: "Opera",
                     y: 2.33,
                     drilldown: "Opera"
+                },
+                {
+                    name: "Internet Explorer",
+                    y: 0.45,
+                    drilldown: "Internet Explorer"
                 },
                 {
                     name: "Other",
