@@ -41,10 +41,10 @@ Highcharts.chart('container', {
         innerSize: '50%',
         data: [
             ['Chrome', 73.86],
-            ['Firefox', 5.52],
-            ['Internet Explorer', 1.90],
             ['Edge', 11.97],
+            ['Firefox', 5.52],
             ['Safari', 2.98],
+            ['Internet Explorer', 1.90],
             {
                 name: 'Other',
                 y: 3.77,
