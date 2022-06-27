@@ -36,23 +36,23 @@ Highcharts.chart('container', {
             sliced: true,
             selected: true
         }, {
-            name: 'Internet Explorer',
-            y: 1.53
-        }, {
-            name: 'Firefox',
-            y: 4.86
-        }, {
             name: 'Edge',
             y: 14.77
+        },  {
+            name: 'Firefox',
+            y: 4.86
         }, {
             name: 'Safari',
             y: 2.63
         }, {
-            name: 'Sogou Explorer',
-            y: 0.84
-        }, {
+            name: 'Internet Explorer',
+            y: 1.53
+        },  {
             name: 'Opera',
             y: 1.40
+        }, {
+            name: 'Sogou Explorer',
+            y: 0.84
         }, {
             name: 'QQ',
             y: 0.51
