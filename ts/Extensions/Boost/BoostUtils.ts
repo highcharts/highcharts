@@ -25,7 +25,6 @@ import type WGLRenderer from './WGLRenderer';
 
 import boostableMap from './BoostableMap.js';
 import Chart from '../../Core/Chart/Chart.js';
-import createAndAttachRenderer from './BoostAttach.js';
 import H from '../../Core/Globals.js';
 const {
     win,
@@ -320,36 +319,6 @@ function hasWebGLSupport(): boolean {
 
 /* eslint-disable no-invalid-this */
 
-/**
- * Used for treemap|heatmap.drawPoints
- * @private
- */
-function pointDrawHandler(this: Series, proceed: Function): void {
-    let enabled = true;
-
-    if (this.chart.options && this.chart.options.boost) {
-        enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
-            true :
-            this.chart.options.boost.enabled;
-    }
-
-    if (!enabled || !this.boosted) {
-        return proceed.call(this);
-    }
-
-    this.chart.boosted = true;
-
-    // Make sure we have a valid OGL context
-    const renderer = createAndAttachRenderer(this.chart, this);
-
-    if (renderer) {
-        allocateIfNotSeriesBoosting(renderer, this);
-        renderer.pushSeries(this);
-    }
-
-    renderIfNotSeriesBoosting(renderer, this);
-}
-
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 /* *
@@ -364,7 +333,6 @@ const BoostUtils = {
     eachAsync,
     hasWebGLSupport,
     patientMax,
-    pointDrawHandler,
     renderIfNotSeriesBoosting,
     shouldForceChartSeriesBoosting
 };

@@ -19,6 +19,8 @@
  * */
 
 import type { BoostChartComposition } from './BoostChart';
+import type BoostTargetObject from './BoostTargetObject';
+import type Chart from '../../Core/Chart/Chart';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
@@ -32,9 +34,7 @@ import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type WGLRenderer from './WGLRenderer';
 
-import createAndAttachRenderer from './BoostAttach.js';
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
 import BU from './BoostUtils.js';
@@ -47,7 +47,10 @@ const {
 import DefaultOptions from '../../Core/DefaultOptions.js';
 const { getOptions } = DefaultOptions;
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    doc,
+    noop
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -59,6 +62,7 @@ const {
     pick,
     wrap
 } = U;
+import WGLRenderer from './WGLRenderer.js';
 
 /* *
  *
@@ -74,7 +78,7 @@ declare interface BoostAlteredObject {
 }
 
 declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+    interface SeriesLike extends BoostTargetObject {
         boosted?: boolean;
         fill?: boolean;
         fillOpacity?: boolean;
@@ -134,7 +138,8 @@ const composedClasses: Array<Function> = [];
  *
  * */
 
-let index: (number|string);
+let index: (number|string),
+    mainCanvas: (HTMLCanvasElement|undefined);
 
 /* *
  *
@@ -162,6 +167,7 @@ function compose<T extends typeof Series>(
         composedClasses.push(SeriesClass);
 
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
+        addEvent(SeriesClass, 'hide', onSeriesHide);
 
         const seriesProto = SeriesClass.prototype as BoostSeriesComposition;
 
@@ -306,12 +312,202 @@ function compose<T extends typeof Series>(
         [HeatmapSeries, TreemapSeries].forEach((SC): void => {
             if (SC && composedClasses.indexOf(SC) === -1) {
                 composedClasses.push(SC);
-                wrap(SC.prototype, 'drawPoints', BU.pointDrawHandler);
+                wrap(SC.prototype, 'drawPoints', wrapSeriesDrawPoints);
             }
         });
     }
 
     return SeriesClass as (T&typeof BoostSeriesComposition);
+}
+
+/**
+ * Create a canvas + context and attach it to the target
+ *
+ * @private
+ * @function createAndAttachRenderer
+ *
+ * @param {Highcharts.Chart} chart
+ * the chart
+ *
+ * @param {Highcharts.Series} series
+ * the series
+ *
+ * @return {Highcharts.BoostGLRenderer}
+ * the canvas renderer
+ */
+function createAndAttachRenderer(
+    chart: Chart,
+    series: Series
+): WGLRenderer {
+    const ChartClass = chart.constructor as typeof Chart,
+        targetGroup = chart.seriesGroup || series.group,
+        alpha = 1;
+
+    let width = chart.chartWidth,
+        height = chart.chartHeight,
+        target: BoostTargetObject = chart,
+        foSupported: boolean = doc.implementation.hasFeature(
+            'www.http://w3.org/TR/SVG11/feature#Extensibility',
+            '1.1'
+        );
+
+    if (chart.isChartSeriesBoosting()) {
+        target = chart;
+    } else {
+        target = series;
+    }
+
+    // Support for foreignObject is flimsy as best.
+    // IE does not support it, and Chrome has a bug which messes up
+    // the canvas draw order.
+    // As such, we force the Image fallback for now, but leaving the
+    // actual Canvas path in-place in case this changes in the future.
+    foSupported = false;
+
+    if (!mainCanvas) {
+        mainCanvas = doc.createElement('canvas');
+    }
+
+    if (!target.renderTarget) {
+        target.canvas = mainCanvas;
+
+        // Fall back to image tag if foreignObject isn't supported,
+        // or if we're exporting.
+        if (chart.renderer.forExport || !foSupported) {
+            target.renderTarget = chart.renderer.image(
+                '',
+                0,
+                0,
+                width,
+                height
+            )
+                .addClass('highcharts-boost-canvas')
+                .add(targetGroup);
+
+            target.boostClear = function (): void {
+                (target.renderTarget as any).attr({
+                    // Insert a blank pixel (#17182)
+                    /* eslint-disable-next-line max-len*/
+                    href: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+                });
+            };
+
+            target.boostCopy = function (): void {
+                target.boostResizeTarget();
+                (target.renderTarget as any).attr({
+                    href: (target.canvas as any).toDataURL('image/png')
+                });
+            };
+
+        } else {
+            target.renderTargetFo = chart.renderer
+                .createElement('foreignObject')
+                .add(targetGroup);
+
+            target.renderTarget = doc.createElement('canvas') as any;
+            target.renderTargetCtx =
+                (target.renderTarget as any).getContext('2d');
+
+            target.renderTargetFo.element.appendChild(
+                target.renderTarget as any
+            );
+
+            target.boostClear = function (): void {
+                (target.renderTarget as any).width =
+                    (target.canvas as any).width;
+                (target.renderTarget as any).height =
+                    (target.canvas as any).height;
+            };
+
+            target.boostCopy = function (): void {
+                (target.renderTarget as any).width =
+                    (target.canvas as any).width;
+                (target.renderTarget as any).height =
+                    (target.canvas as any).height;
+
+                (target.renderTargetCtx as any)
+                    .drawImage(target.canvas as any, 0, 0);
+            };
+        }
+
+        target.boostResizeTarget = function (): void {
+            width = chart.chartWidth;
+            height = chart.chartHeight;
+
+            (target.renderTargetFo || (target.renderTarget as any))
+                .attr({
+                    x: 0,
+                    y: 0,
+                    width,
+                    height
+                })
+                .css({
+                    pointerEvents: 'none',
+                    mixedBlendMode: 'normal',
+                    opacity: alpha
+                });
+
+            if (target instanceof ChartClass) {
+                (target.markerGroup as any).translate(
+                    chart.plotLeft,
+                    chart.plotTop
+                );
+            }
+        };
+
+        target.boostClipRect = chart.renderer.clipRect();
+
+        (target.renderTargetFo || (target.renderTarget as any))
+            .clip(target.boostClipRect);
+
+        if (target instanceof ChartClass) {
+            target.markerGroup = target.renderer.g().add(targetGroup);
+
+            target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
+        }
+    }
+
+    (target.canvas as any).width = width;
+    (target.canvas as any).height = height;
+
+    if (target.boostClipRect) {
+        target.boostClipRect.attr(chart.getBoostClipRect(target));
+    }
+
+    target.boostResizeTarget();
+    target.boostClear();
+
+    if (!target.ogl) {
+        target.ogl = new WGLRenderer((ogl): void => {
+            if (ogl.settings.debug.timeBufferCopy) {
+                console.time('buffer copy'); // eslint-disable-line no-console
+            }
+
+            target.boostCopy();
+
+            if (ogl.settings.debug.timeBufferCopy) {
+                console.timeEnd('buffer copy'); // eslint-disable-line no-console
+            }
+        });
+
+        if (!target.ogl.init(target.canvas)) {
+            // The OGL renderer couldn't be inited.
+            // This likely means a shader error as we wouldn't get to this point
+            // if there was no WebGL support.
+            error('[highcharts boost] - unable to init WebGL renderer');
+        }
+
+        // target.ogl.clear();
+        target.ogl.setOptions(chart.options.boost || {});
+
+        if (target instanceof ChartClass) {
+            target.ogl.allocateBuffer(chart);
+        }
+    }
+
+    target.ogl.setSize(width, height);
+
+    return target.ogl;
 }
 
 /**
@@ -340,6 +536,20 @@ function onSeriesDestroy(
 
     if (chart.hoverPoint && chart.hoverPoint.series === series) {
         chart.hoverPoint = null as any;
+    }
+}
+
+/**
+ * @private
+ */
+function onSeriesHide(
+    this: Series
+): void {
+    if (this.canvas && this.renderTarget) {
+        if (this.ogl) {
+            this.ogl.clear();
+        }
+        this.boostClear();
     }
 }
 
@@ -536,38 +746,6 @@ function seriesHasExtremes(
             (!colorAxis ||
                 (isNumber(colorAxis.min) && isNumber(colorAxis.max))
             );
-}
-
-/**
- * For inverted series, we need to swap X-Y values before running base
- * methods.
- * @private
- */
-function wrapPointHaloPath(
-    this: Point,
-    proceed: Function
-): SVGPath {
-    const point = this,
-        series = point.series,
-        chart = series.chart,
-        plotX: number = point.plotX || 0,
-        plotY: number = point.plotY || 0,
-        inverted = chart.inverted;
-
-    if (series.boosted && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    const halo: SVGPath =
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    if (series.boosted && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return halo;
 }
 
 /**
@@ -848,6 +1026,71 @@ function seriesRenderCanvas(this: Series): void {
             doneProcessing
         );
     }
+}
+
+/**
+ * For inverted series, we need to swap X-Y values before running base
+ * methods.
+ * @private
+ */
+function wrapPointHaloPath(
+    this: Point,
+    proceed: Function
+): SVGPath {
+    const point = this,
+        series = point.series,
+        chart = series.chart,
+        plotX: number = point.plotX || 0,
+        plotY: number = point.plotY || 0,
+        inverted = chart.inverted;
+
+    if (series.boosted && inverted) {
+        point.plotX = series.yAxis.len - plotY;
+        point.plotY = series.xAxis.len - plotX;
+    }
+
+    const halo: SVGPath =
+        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    if (series.boosted && inverted) {
+        point.plotX = plotX;
+        point.plotY = plotY;
+    }
+
+    return halo;
+}
+
+/**
+ * Used for treemap|heatmap.drawPoints
+ * @private
+ */
+function wrapSeriesDrawPoints(
+    this: Series,
+    proceed: Function
+): void {
+    let enabled = true;
+
+    if (this.chart.options && this.chart.options.boost) {
+        enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
+            true :
+            this.chart.options.boost.enabled;
+    }
+
+    if (!enabled || !this.boosted) {
+        return proceed.call(this);
+    }
+
+    this.chart.boosted = true;
+
+    // Make sure we have a valid OGL context
+    const renderer = createAndAttachRenderer(this.chart, this);
+
+    if (renderer) {
+        allocateIfNotSeriesBoosting(renderer, this);
+        renderer.pushSeries(this);
+    }
+
+    renderIfNotSeriesBoosting(renderer, this);
 }
 
 /**

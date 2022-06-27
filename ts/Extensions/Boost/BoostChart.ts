@@ -43,7 +43,7 @@ export declare class BoostChartComposition extends Chart {
 }
 
 declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+    interface ChartLike extends BoostTargetObject {
         boosted?: boolean;
         markerGroup?: Series['markerGroup'];
         /** @requires modules/boost */
