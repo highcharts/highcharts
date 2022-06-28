@@ -83,12 +83,14 @@ class TemperatureMapSeries extends MapBubbleSeries {
              * @type {Array<ColorType>}
              */
             temperatureColors: [
-                '#0000ff',
-                '#00ffff',
-                '#00ff00',
+                '#ff0000',
                 '#ffff00',
-                '#ff0000'
-            ]
+                '#00ff00',
+                '#00ffff',
+                '#0000ff'
+            ],
+            minSize: 20,
+            maxSize: 100
         }
     );
 
@@ -157,15 +159,15 @@ class TemperatureMapSeries extends MapBubbleSeries {
         // QUESTION: Why colors from chart.options?
         // let temperatureColors: any = series.options.temperatureColors ||
         // series.chart.options.temperatureColors,
-        let temperatureColors: any = series.options.temperatureColors,
+        let temperatureColors: any =
+            series.options.temperatureColors.slice().reverse(),
             i: number;
 
         const colorsLength = temperatureColors.length;
         const options: any = series.options;
 
-        temperatureColors = temperatureColors.map(
-            (color: ColorType | GradientColorStop | any, ii: number): any => {
-
+        temperatureColors = temperatureColors.forEach(
+            (color: ColorType | GradientColorStop | any, ii: number): void => {
                 if (isArray(color)) {
                     (this as any).colorStop = color[0];
                 }
@@ -235,16 +237,12 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                     i++;
                 }
-
-                return {
-                    fillColor
-                };
             });
 
         // Clean up for animation (else the first color is as small as the last)
-        if (options.marker) {
-            options.marker.fillColor = temperatureColors[0].fillColor;
-        }
+        // if (options.marker) {
+        //     options.marker.fillColor = temperatureColors[0].fillColor;
+        // }
 
         // series.options.maxSize = temperatureColors[0].size;
         // series.getRadii(); // recalc. radii
