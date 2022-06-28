@@ -141,8 +141,11 @@ QUnit.test('Legend redraws', function (assert) {
         }
     });
 
-    assert.strictEqual(chart.legend.group.attr('visibility'), 'hidden',
-        'Legend title is not visible (#17167)');
+    assert.strictEqual(
+        chart.legend.group.attr('visibility'),
+        'hidden',
+        'Legend title should not be visible (#17167)'
+    );
 });
 
 QUnit.test(
