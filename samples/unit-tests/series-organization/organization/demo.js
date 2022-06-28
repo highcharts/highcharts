@@ -18,7 +18,7 @@ QUnit.test('Organization data', assert => {
 
     assert.strictEqual(
         chart.series[0].nodes[4].graphic.element.getAttribute('fill'),
-        Highcharts.defaultOptions.colors[4],
+        Highcharts.color(Highcharts.defaultOptions.colors[4]).get('rgb'),
         'The last element should be rendered and filled accoring to colorByPoint'
     );
 

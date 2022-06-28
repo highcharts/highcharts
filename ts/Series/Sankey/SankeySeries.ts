@@ -264,6 +264,13 @@ class SankeySeries extends ColumnSeries {
         linkOpacity: 0.5,
 
         /**
+         * Opacity for the nodes in the sankey diagram.
+         *
+         * @private
+         */
+        nodeOpacity: 1,
+
+        /**
          * The minimal width for a line of a sankey. By default,
          * 0 values are not shown.
          *
@@ -307,7 +314,12 @@ class SankeySeries extends ColumnSeries {
                  * Opacity for the links between nodes in the sankey diagram in
                  * hover mode.
                  */
-                linkOpacity: 1
+                linkOpacity: 1,
+
+                /**
+                 * Opacity for the nodes in the sankey diagram in hover mode.
+                 */
+                nodeOpacity: 1
             },
             /**
              * The opposite state of a hover for a single point node/link.
@@ -320,6 +332,12 @@ class SankeySeries extends ColumnSeries {
                  * inactive mode.
                  */
                 linkOpacity: 0.1,
+
+                /**
+                 * Opacity for the links between nodes in the sankey diagram in
+                 * inactive mode.
+                 */
+                nodeOpacity: 0.1,
 
                 /**
                  * Opacity of inactive markers.
@@ -572,7 +590,11 @@ class SankeySeries extends ColumnSeries {
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
             values: AnyRecord = [
-                'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
+                'colorByPoint',
+                'borderColor',
+                'borderWidth',
+                'linkOpacity',
+                'nodeOpacity'
             ].reduce(function (
                 obj: AnyRecord,
                 key: string
@@ -594,8 +616,10 @@ class SankeySeries extends ColumnSeries {
         // Node attributes
         if (point.isNode) {
             return {
-                fill: color,
-                stroke: values.borderColor,
+                fill: Color.parse(color).setOpacity(values.nodeOpacity).get(),
+                stroke: Color.parse(values.borderColor)
+                    .setOpacity(values.nodeOpacity)
+                    .get(),
                 'stroke-width': values.borderWidth
             };
         }
