@@ -116,7 +116,6 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
     plotBorderWidth?: number;
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
-    polar?: boolean;
     reflow?: boolean;
     renderTo?: (string|HTMLDOMElement);
     resetZoomButton?: ChartResetZoomButtonOptions;

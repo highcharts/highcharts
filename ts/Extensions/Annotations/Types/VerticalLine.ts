@@ -6,8 +6,14 @@
 
 'use strict';
 
-import Annotation from '../Annotations.js';
+import type {
+    AnnotationsLabelOptions,
+    AnnotationsOptions,
+    AnnotationsShapeOptions,
+    AnnotationsTypeOptions
+} from '../AnnotationsOptions';
 import type MockPointOptions from '../MockPointOptions';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -199,14 +205,14 @@ VerticalLine.prototype.defaultOptions = merge(
 );
 
 namespace VerticalLine {
-    export interface Options extends Highcharts.AnnotationsOptions {
+    export interface Options extends AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends Highcharts.AnnotationsLabelOptions {
+    export interface TypeLabelOptions extends AnnotationsLabelOptions {
         offset: number;
     }
-    export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
-        connector: Highcharts.AnnotationsShapeOptions;
+    export interface TypeOptions extends AnnotationsTypeOptions {
+        connector: AnnotationsShapeOptions;
         label: TypeLabelOptions;
         yOffset: number;
     }

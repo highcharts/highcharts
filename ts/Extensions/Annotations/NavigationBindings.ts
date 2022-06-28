@@ -10,12 +10,13 @@
 
 'use strict';
 
+import type AnnotationsOptions from './AnnotationsOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-import Annotation from './Annotations.js';
+import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import F from '../../Core/FormatUtilities.js';
@@ -58,9 +59,15 @@ declare module '../../Core/PointerEvent' {
     }
 }
 
+declare module './AnnotationsOptions' {
+    interface AnnotationsOptions {
+        langKey?: string;
+    }
+}
+
 declare module '../Exporting/NavigationOptions' {
     interface NavigationOptions {
-        annotationsOptions?: DeepPartial<Highcharts.AnnotationsOptions>;
+        annotationsOptions?: DeepPartial<AnnotationsOptions>;
         bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
         bindingsClassName?: string;
         events?: Highcharts.NavigationEventsOptions;
@@ -93,9 +100,6 @@ declare global {
         }
         interface AnnotationNonEditableObject {
             rectangle: Array<string>;
-        }
-        interface AnnotationsOptions {
-            langKey?: string;
         }
         interface LangNavigationOptions {
             popup?: PopupOptions;

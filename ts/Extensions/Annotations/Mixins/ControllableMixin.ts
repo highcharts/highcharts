@@ -6,7 +6,13 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type {
+    AnnotationControllableOptionsObject
+} from './ControllableOptions';
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type MockPointOptions from '../MockPointOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -148,20 +154,6 @@ declare global {
                 newOptions: AnnotationControllableOptionsObject
             ): void;
         }
-        interface AnnotationControllableOptionsObject {
-            className?: string;
-            controlPoints?: Array<AnnotationControlPointOptionsObject>;
-            id?: (number|string);
-            markerEnd?: string;
-            markerStart?: string;
-            point?: (string|MockPointOptions);
-            points?: Array<(string|MockPointOptions)>;
-            r?: number;
-            rx?: number;
-            ry?: number;
-            x?: number;
-            y?: number;
-        }
     }
 }
 
@@ -218,7 +210,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     init: function (
         this: Highcharts.AnnotationControllable,
         annotation: Annotation,
-        options: Highcharts.AnnotationControllableOptionsObject,
+        options: AnnotationControllableOptionsObject,
         index: number
     ): void {
         this.annotation = annotation;
@@ -268,7 +260,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     attrsFromOptions: function (
         this: Highcharts.AnnotationControllable,
-        options: Highcharts.AnnotationControllableOptionsObject
+        options: AnnotationControllableOptionsObject
     ): SVGAttributes {
         let map: SVGAttributes = (this.constructor as any).attrsMap,
             attrs: SVGAttributes = {},
@@ -421,9 +413,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
 
         (controlPointsOptions || []).forEach(
             function (
-                controlPointOptions: (
-                    Highcharts.AnnotationControlPointOptionsObject
-                ),
+                controlPointOptions: AnnotationControlPointOptionsObject,
                 i: number
             ): void {
                 const options = merge(
@@ -698,7 +688,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     update: function (
         this: Highcharts.AnnotationControllable,
-        newOptions: Highcharts.AnnotationControllableOptionsObject
+        newOptions: AnnotationControllableOptionsObject
     ): void {
         const annotation = this.annotation,
             options = merge(true, this.options, newOptions),

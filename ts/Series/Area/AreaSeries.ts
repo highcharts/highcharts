@@ -333,7 +333,7 @@ class AreaSeries extends LineSeries {
             stacks = yAxis.stacking.stacks[this.stackKey as any],
             threshold = options.threshold,
             translatedThreshold = Math.round( // #10909
-                yAxis.getThreshold(options.threshold as any) as any
+                yAxis.getThreshold(options.threshold as any)
             ),
             connectNulls = pick( // #10574
                 options.connectNulls,
@@ -599,7 +599,7 @@ class AreaSeries extends LineSeries {
                     y = pick(y, 0);
                     y = yAxis.translate(// #6272
                         y, 0 as any, 1 as any, 0 as any, 1 as any
-                    ) as any;
+                    );
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272

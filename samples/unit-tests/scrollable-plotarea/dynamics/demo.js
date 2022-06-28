@@ -46,7 +46,6 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
 QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'column',
             scrollablePlotArea: {
                 minHeight: 400
             },
@@ -54,7 +53,7 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         },
         series: [
             {
-                data: [1]
+                data: [0, 1, 2, 3, 4]
             }
         ]
     });
@@ -65,6 +64,20 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         document.getElementsByClassName('highcharts-scrolling')[0]
             .clientHeight > 300,
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
+    );
+
+    document.getElementById('container').style.height = "190px";
+    chart.reflow();
+
+    document.getElementById('container').style.height = "400px";
+    chart.reflow();
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.notOk(
+        chart.tooltip.isHidden,
+        `After updating the scrollablePlotArea, the tooltip should be still
+        visible, #17352.`
     );
 });
 

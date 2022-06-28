@@ -14,8 +14,11 @@
  *
  * */
 
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -151,7 +154,7 @@ class TimeCycles extends CrookedLine {
             'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
-            (option: Highcharts.AnnotationControlPointOptionsObject): void => {
+            (option: AnnotationControlPointOptionsObject): void => {
                 const controlPointsOptions = merge(
                     options.controlPointOptions,
                     option
@@ -303,7 +306,7 @@ namespace TimeCycles {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: Highcharts.AnnotationControlPointOptionsObject[];
+        controlPointOptions: AnnotationControlPointOptionsObject[];
     }
 }
 

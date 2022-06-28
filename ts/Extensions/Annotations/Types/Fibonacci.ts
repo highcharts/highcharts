@@ -10,7 +10,7 @@ import type ColorString from '../../../Core/Color/ColorString';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';

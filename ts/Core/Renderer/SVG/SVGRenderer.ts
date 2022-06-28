@@ -683,7 +683,7 @@ class SVGRenderer implements SVGRendererLike {
         x: number,
         y: number,
         callback: EventCallback<SVGElement>,
-        theme?: ButtonThemeObject,
+        theme: ButtonThemeObject = {},
         hoverState?: SVGAttributes,
         selectState?: SVGAttributes,
         disabledState?: SVGAttributes,
@@ -702,26 +702,23 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            states = (theme && theme.states) || {};
+            states = theme.states || {};
 
-        if (theme) {
-            delete theme.states;
-        }
+        let curState = 0;
 
-        let curState = 0,
-            // Make a copy of normalState (#13798)
-            // (reference to options.rangeSelector.buttonTheme)
-            normalState: SVGAttributes = theme ? merge(theme) : {};
+        theme = merge(theme);
+        delete theme.states;
 
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
             fontWeight: 'normal'
-        }, normalState.style);
-        delete normalState.style;
+        }, theme.style);
+        delete theme.style;
 
-        // Remove stylable attributes
-        normalState = AST.filterUserAttributes(normalState);
+        // Remove stylable attributes. Pass in the ButtonThemeObject and get the
+        // SVGAttributes subset back.
+        let normalState = AST.filterUserAttributes(theme);
 
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
@@ -828,9 +825,9 @@ class SVGRenderer implements SVGRendererLike {
 
         // Presentational attributes
         if (!styledMode) {
-            (label
-                .attr(normalState) as any)
-                .css(extend({ cursor: 'default' }, normalStyle));
+            label
+                .attr(normalState)
+                .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
         }
 
         return label
@@ -1708,7 +1705,7 @@ class SVGRenderer implements SVGRendererLike {
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
-            win.getComputedStyle // old IE doesn't support it
+            (win.getComputedStyle) // old IE doesn't support it
         ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,

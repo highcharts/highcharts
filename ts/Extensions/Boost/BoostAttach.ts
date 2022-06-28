@@ -122,7 +122,11 @@ function createAndAttachRenderer(
                 .add(targetGroup);
 
             target.boostClear = function (): void {
-                (target.renderTarget as any).attr({ href: '' });
+                (target.renderTarget as any).attr({
+                    // Insert a blank pixel (#17182)
+                    /* eslint-disable-next-line max-len*/
+                    href: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+                });
             };
 
             target.boostCopy = function (): void {
