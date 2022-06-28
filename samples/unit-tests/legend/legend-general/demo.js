@@ -131,7 +131,7 @@ QUnit.test('Legend redraws', function (assert) {
 
     assert.strictEqual(visible, false, 'Legend item text has changed (#2165)');
 
-    chart.series[0].remove();
+    chart.series[0].remove(false);
 
     chart.update({
         legend: {
@@ -141,7 +141,8 @@ QUnit.test('Legend redraws', function (assert) {
         }
     });
 
-    assert.strictEqual(chart.legend.group.visibility === 'hidden', true, 'Legend title is not visible (#17167)');
+    assert.strictEqual(chart.legend.group.attr('visibility'), 'hidden',
+        'Legend title is not visible (#17167)');
 });
 
 QUnit.test(
