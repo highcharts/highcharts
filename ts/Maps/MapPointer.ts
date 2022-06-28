@@ -11,7 +11,9 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type MapPoint from '../Series/Map/MapPoint';
 import type PointerEvent from '../Core/PointerEvent';
+
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {

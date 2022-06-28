@@ -26,7 +26,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../ColorMapComposition.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -729,50 +729,47 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries {
-    axisTypes: ColorMapMixin.ColorMapSeries['axisTypes'];
-    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
-    colorKey: ColorMapMixin.ColorMapSeries['colorKey'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
-    getSymbol: typeof Series.prototype.getSymbol;
-    parallelArrays: ColorMapMixin.ColorMapSeries['parallelArrays'];
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
-    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
+    trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    getSymbol: typeof Series.prototype.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
+
+    axisTypes: ColorMapComposition.seriesMembers.axisTypes,
+
+    colorKey: ColorMapComposition.seriesMembers.colorKey,
+
+    directTouch: true,
+
+    getExtremesFromAll: true,
+
+    parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
+
+    pointArrayMap: ['y', 'value'],
+
+    pointClass: HeatmapPoint,
+
+    trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
      * @private
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
-
-    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
-
-    colorKey: ColorMapMixin.SeriesMixin.colorKey,
-
-    directTouch: true,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
     /**
      * @private
      */
     drawLegendSymbol: LegendSymbol.drawRectangle,
 
-    getExtremesFromAll: true,
-
-    getSymbol: Series.prototype.getSymbol,
-
-    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
-
-    pointArrayMap: ['y', 'value'],
-
-    pointClass: HeatmapPoint,
-
-    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups
+    getSymbol: Series.prototype.getSymbol
 
 });
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *
