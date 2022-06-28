@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type ScatterPoint from '../Series/Scatter/ScatterPoint';
-import type ScatterSeries from '../Series/Scatter/ScatterSeries';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterSeries from './Scatter/ScatterSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../Core/Globals.js';
