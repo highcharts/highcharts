@@ -492,7 +492,7 @@ class Chart {
                     zooming.resetButton,
                     optionsChart.resetZoomButton
                 );
-            };
+            }
             zooming.singleTouch = pick(
                 zooming.singleTouch,
                 optionsChart.zoomBySingleTouch
@@ -3521,7 +3521,7 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
-        
+
         const chart = this,
             lang = defaultOptions.lang,
             btnOptions = chart.options.chart.zooming.resetButton as any,
