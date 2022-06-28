@@ -479,28 +479,28 @@ class Chart {
 
             const zooming = optionsChart.zooming = optionsChart.zooming || {};
 
-            if (zooming) {
-                zooming.key = pick(
-                    zooming.key,
-                    optionsChart.zoomKey
-                );
-                zooming.pinchType = pick(
-                    zooming.pinchType,
-                    optionsChart.pinchType
-                );
-                zooming.resetButton = pick(
+            zooming.key = pick(
+                zooming.key,
+                optionsChart.zoomKey
+            );
+            zooming.pinchType = pick(
+                zooming.pinchType,
+                optionsChart.pinchType
+            );
+            if (!(userOptions.chart as any).zooming) {
+                zooming.resetButton = merge(
                     zooming.resetButton,
                     optionsChart.resetZoomButton
                 );
-                zooming.singleTouch = pick(
-                    zooming.singleTouch,
-                    optionsChart.zoomBySingleTouch
-                );
-                zooming.type = pick(
-                    zooming.type,
-                    optionsChart.zoomType
-                );
-            }
+            };
+            zooming.singleTouch = pick(
+                zooming.singleTouch,
+                optionsChart.zoomBySingleTouch
+            );
+            zooming.type = pick(
+                zooming.type,
+                optionsChart.zoomType
+            );
 
             /**
              * The options structure for the chart after merging
@@ -3523,9 +3523,10 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
+        
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.resetZoomButton as any,
+            btnOptions = chart.options.chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
