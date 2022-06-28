@@ -74,6 +74,12 @@ class TemperatureMapSeries extends MapBubbleSeries {
     public static defaultOptions: TemperatureMapSeriesOptions = merge(
         MapBubbleSeries.defaultOptions,
         {
+            marker: {
+                lineColor: 'transparent'
+            },
+            maxSize: 100,
+            minSize: 20,
+            opacity: 0.75,
             /**
              * TO DO: add a description
              *
@@ -88,9 +94,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 '#00ff00',
                 '#00ffff',
                 '#0000ff'
-            ],
-            minSize: 20,
-            maxSize: 100
+            ]
         }
     );
 
@@ -239,20 +243,14 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 }
             });
 
-        // Clean up for animation (else the first color is as small as the last)
-        // if (options.marker) {
-        //     options.marker.fillColor = temperatureColors[0].fillColor;
-        // }
+        // Set color for legend item marker
+        if (options.marker) {
+            options.marker.fillColor = series.color;
+        }
 
         // series.options.maxSize = temperatureColors[0].size;
         // series.getRadii(); // recalc. radii
         // series.translateBubble(); // use radii
-
-        // Change opacity of the whole series
-        // this should be done in a better place
-        series.group && series.group.attr({
-            opacity: 0.75
-        });
     }
 
     /* *
@@ -285,16 +283,6 @@ interface TemperatureMapSeries {
     colorStop: number;
     adjustMinSize: boolean;
     temperatureColorIndex: null|number;
-    // type: string;
-    // getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
-    // pointArrayMap: Array<string>;
-    // pointClass: typeof TemperatureMapPoint;
-    // setData: typeof MapSeries.prototype['setData'];
-    // processData: typeof MapSeries.prototype['processData'];
-    // projectPoint: typeof MapPointSeries.prototype['projectPoint'];
-    // setOptions: typeof MapSeries.prototype['setOptions'];
-    // updateData: typeof MapSeries.prototype['updateData'];
-    // xyFromShape: boolean;
 }
 
 /* *
