@@ -334,8 +334,7 @@ class SankeySeries extends ColumnSeries {
                 linkOpacity: 0.1,
 
                 /**
-                 * Opacity for the links between nodes in the sankey diagram in
-                 * inactive mode.
+                 * Opacity of the nodes in the sankey diagram in inactive mode.
                  */
                 opacity: 0.1,
 
@@ -612,7 +611,8 @@ class SankeySeries extends ColumnSeries {
                 stroke: Color.parse(values.borderColor)
                     .setOpacity(values.opacity)
                     .get(),
-                'stroke-width': values.borderWidth
+                'stroke-width': values.borderWidth,
+                opacity: values.opacity
             };
         }
 
