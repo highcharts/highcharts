@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
 * */
 
 declare class PCPoint extends SMAPoint {
+    public middle?: number;
     public series: PCIndicator;
 }
 
