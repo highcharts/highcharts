@@ -268,7 +268,7 @@ class SankeySeries extends ColumnSeries {
          *
          * @private
          */
-        nodeOpacity: 1,
+        opacity: 1,
 
         /**
          * The minimal width for a line of a sankey. By default,
@@ -319,7 +319,7 @@ class SankeySeries extends ColumnSeries {
                 /**
                  * Opacity for the nodes in the sankey diagram in hover mode.
                  */
-                nodeOpacity: 1
+                opacity: 1
             },
             /**
              * The opposite state of a hover for a single point node/link.
@@ -336,14 +336,6 @@ class SankeySeries extends ColumnSeries {
                 /**
                  * Opacity for the links between nodes in the sankey diagram in
                  * inactive mode.
-                 */
-                nodeOpacity: 0.1,
-
-                /**
-                 * Opacity of inactive markers.
-                 *
-                 * @type      {number}
-                 * @apioption plotOptions.series.states.inactive.opacity
                  */
                 opacity: 0.1,
 
@@ -594,7 +586,7 @@ class SankeySeries extends ColumnSeries {
                 'borderColor',
                 'borderWidth',
                 'linkOpacity',
-                'nodeOpacity'
+                'opacity'
             ].reduce(function (
                 obj: AnyRecord,
                 key: string
@@ -616,9 +608,9 @@ class SankeySeries extends ColumnSeries {
         // Node attributes
         if (point.isNode) {
             return {
-                fill: Color.parse(color).setOpacity(values.nodeOpacity).get(),
+                fill: Color.parse(color).setOpacity(values.opacity).get(),
                 stroke: Color.parse(values.borderColor)
-                    .setOpacity(values.nodeOpacity)
+                    .setOpacity(values.opacity)
                     .get(),
                 'stroke-width': values.borderWidth
             };
