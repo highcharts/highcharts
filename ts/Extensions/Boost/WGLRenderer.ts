@@ -14,7 +14,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
-import type ColorMapMixin from '../../Series/ColorMapComposition';
+import type ColorMapComposition from '../../Series/ColorMapComposition';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -630,9 +630,9 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as ColorMapMixin.ColorMapSeries)
+                        (point.series as ColorMapComposition.SeriesComposition)
                             .colorAttribs(
-                                point as ColorMapMixin.ColorMapPoint
+                                point as ColorMapComposition.PointComposition
                             ) :
                         pointAttr = point.series.pointAttribs(point);
 

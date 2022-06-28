@@ -26,7 +26,7 @@ import type Projection from '../../Maps/Projection';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import ColorMapMixin from '../ColorMapComposition.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import MapUtilities from '../../Maps/MapUtilities.js';
 const {
     boundsFromPath
@@ -225,20 +225,18 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface MapPoint {
+interface MapPoint extends ColorMapComposition.PointComposition {
     bounds?: MapBounds;
-    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
-    isValid: ColorMapMixin.ColorMapPoint['isValid'];
     middleX?: number;
     middleY?: number;
-    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
     properties?: Record<string, (number|string)>;
-    value: ColorMapMixin.ColorMapPoint['value'];
+    value: ColorMapComposition.PointComposition['value'];
+    isValid: ColorMapComposition.PointComposition['isValid'];
 }
 extend(MapPoint.prototype, {
-    dataLabelOnNull: ColorMapMixin.PointMixin.dataLabelOnNull,
-    isValid: ColorMapMixin.PointMixin.isValid,
-    moveToTopOnHover: ColorMapMixin.PointMixin.moveToTopOnHover
+    dataLabelOnNull: ColorMapComposition.pointMembers.dataLabelOnNull,
+    moveToTopOnHover: ColorMapComposition.pointMembers.moveToTopOnHover,
+    isValid: ColorMapComposition.pointMembers.isValid
 });
 
 /* *
