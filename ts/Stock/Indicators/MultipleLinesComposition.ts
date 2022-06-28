@@ -16,19 +16,18 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
-import type SMAPoint from './SMA/SMAPoint';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type LinePoint from '../../Series/Line/LinePoint';
+import type Point from '../../Core/Series/Point';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type SMAOptions from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: { prototype: smaProto }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -38,32 +37,10 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        toYData?(point: Point): Array<number>;
-    }
-}
-
-/* *
- *
  *  Composition
  *
  * */
 
-/**
- * Composition useful for all indicators that have more than one line. Compose
- * it with your implementation where you will provide the `getValues` method
- * appropriate to your indicator and `pointArrayMap`, `pointValKey`,
- * `linesApiNames` properties. Notice that `pointArrayMap` should be consistent
- * with the amount of lines calculated in the `getValues` method.
- *
- * @private
- * @mixin multipleLinesMixin
- */
 namespace MultipleLinesComposition {
 
     /* *
@@ -72,29 +49,25 @@ namespace MultipleLinesComposition {
      *
      * */
 
-    export declare class Composition extends SMAIndicator {
+    export declare class IndicatorComposition extends SMAIndicator {
         areaLinesNames: Array<string>;
         linesApiNames: Array<string>;
         nextPoints?: Array<SMAPoint>;
-        options: Options;
-        pointArrayMap: Array<string>;
+        options: IndicatorOptions;
+        pointArrayMap: Array<keyof this['pointClass']['prototype']>;
         pointValKey: string;
-        drawGraph(): void;
-        getTranslatedLinesNames(excludedValue?: string): Array<string>;
-        toYData(point: Point): Array<number>;
-        translate(): void;
     }
 
-    export interface Options {
+    export interface IndicatorOptions extends SMAOptions {
         fillColor?: SVGAttributes['fill'];
         gapSize?: number;
     }
 
     /* *
-     *
-     *  Constants
-     *
-     * */
+    *
+    *  Constants
+    *
+    * */
 
     const composedClasses: Array<Function> = [];
 
@@ -105,7 +78,6 @@ namespace MultipleLinesComposition {
      * relative to pointArrayMap (without pointValKey).
      *
      * @private
-     * @name multipleLinesMixin.linesApiNames
      * @type {Array<string>}
      */
     const linesApiNames = ['bottomLine'];
@@ -118,7 +90,6 @@ namespace MultipleLinesComposition {
      * getValues method from your implementation.
      *
      * @private
-     * @name multipleLinesMixin.pointArrayMap
      * @type {Array<string>}
      */
     const pointArrayMap = ['top', 'bottom'];
@@ -128,39 +99,44 @@ namespace MultipleLinesComposition {
      * If the drawing of the area should
      * be disabled for some indicators, leave this option as an empty array.
      * Names should be the same as the names in the pointArrayMap.
+     *
      * @private
-     * @name multipleLinesMixin.areaLinesNames
      * @type {Array<string>}
      */
     const areaLinesNames: Array<string> = ['top'];
+
     /**
      * Main line id.
      *
      * @private
-     * @name multipleLinesMixin.pointValKey
      * @type {string}
      */
     const pointValKey = 'top';
 
     /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
+    *
+    *  Functions
+    *
+    * */
 
     /**
+     * Composition useful for all indicators that have more than one line.
+     * Compose it with your implementation where you will provide the
+     * `getValues` method appropriate to your indicator and `pointArrayMap`,
+     * `pointValKey`, `linesApiNames` properties. Notice that `pointArrayMap`
+     * should be consistent with the amount of lines calculated in the
+     * `getValues` method.
+     *
      * @private
      */
     export function compose<T extends typeof SMAIndicator>(
         IndicatorClass: T
-    ): (T&typeof Composition) {
+    ): (T&typeof IndicatorComposition) {
 
         if (composedClasses.indexOf(IndicatorClass) === -1) {
             composedClasses.push(IndicatorClass);
 
-            const proto = IndicatorClass.prototype as Composition;
+            const proto = IndicatorClass.prototype as IndicatorComposition;
 
             proto.linesApiNames = (
                 proto.linesApiNames ||
@@ -180,70 +156,64 @@ namespace MultipleLinesComposition {
                 areaLinesNames.slice()
             );
 
-            proto.drawGraph = drawGraph;
-            proto.getGraphPath = getGraphPath;
-            proto.toYData = toYData;
-            proto.translate = translate;
-            proto.getTranslatedLinesNames = getTranslatedLinesNames;
+            proto.drawGraph = indicatorDrawGraph;
+            proto.getGraphPath = indicatorGetGraphPath;
+            proto.toYData = indicatorToYData;
+            proto.translate = indicatorTranslate;
         }
 
-        return IndicatorClass as (T&typeof Composition);
+        return IndicatorClass as (T&typeof IndicatorComposition);
     }
 
+    /**
+     * Generate the API name of the line
+     *
+     * @private
+     * @param propertyName name of the line
+     */
+    function getLineName(
+        propertyName: string
+    ): keyof Point {
+        return (
+            'plot' +
+            propertyName.charAt(0).toUpperCase() +
+            propertyName.slice(1)
+        ) as keyof Point;
+    }
 
     /**
-     * Create the path based on points provided as argument.
-     * If indicator.nextPoints option is defined, create the areaFill.
+     * Create translatedLines Collection based on pointArrayMap.
      *
-     * @param points Points on which the path should be created
+     * @private
+     * @param {string} [excludedValue]
+     *        Main line id
+     * @return {Array<string>}
+     *         Returns translated lines names without excluded value.
      */
-    function getGraphPath(this: Composition, points: Array<LinePoint>): SVGPath {
-        const indicator = this;
-        let areaPath: SVGPath,
-            path: SVGPath = [],
-            higherAreaPath: SVGPath = [];
+    function getTranslatedLinesNames(
+        indicator: SMAIndicator,
+        excludedValue?: string
+    ): Array<keyof Point> {
+        const translatedLines: Array<keyof Point> = [];
 
-        points = points || this.points;
-
-        // Render Span
-        if (indicator.fillGraph && indicator.nextPoints) {
-            areaPath = SMAIndicator.prototype.getGraphPath.call(
-                indicator,
-                indicator.nextPoints
-            );
-
-            if (areaPath && areaPath.length) {
-                areaPath[0][0] = 'L';
-
-                path = SMAIndicator.prototype.getGraphPath.call(
-                    indicator,
-                    points
-                );
-
-                higherAreaPath = areaPath.slice(0, path.length);
-
-                // Reverse points, so that the areaFill will start from the end:
-                for (let i = higherAreaPath.length - 1; i >= 0; i--) {
-                    path.push(higherAreaPath[i]);
-                }
+        (indicator.pointArrayMap || []).forEach((propertyName): void => {
+            if (propertyName !== excludedValue) {
+                translatedLines.push(getLineName(propertyName));
             }
-        } else {
-            path = SMAIndicator.prototype.getGraphPath.apply(
-                indicator,
-                arguments
-            );
-        }
-        return path;
+        });
+
+        return translatedLines;
     }
 
     /**
      * Draw main and additional lines.
      *
      * @private
-     * @function multipleLinesMixin.drawGraph
      */
-    function drawGraph(this: MultipleLinesComposition.Composition): void {
-        const indicator = this,
+    function indicatorDrawGraph(
+        this: SMAIndicator
+    ): void {
+        const indicator = this as IndicatorComposition,
             pointValKey = indicator.pointValKey,
             linesApiNames = indicator.linesApiNames,
             areaLinesNames = indicator.areaLinesNames,
@@ -257,7 +227,8 @@ namespace MultipleLinesComposition {
             },
             // additional lines point place holders:
             secondaryLines = [] as Array<Array<SMAPoint>>,
-            secondaryLinesNames = indicator.getTranslatedLinesNames(
+            secondaryLinesNames = getTranslatedLinesNames(
+                indicator,
                 pointValKey
             );
 
@@ -266,10 +237,7 @@ namespace MultipleLinesComposition {
 
 
         // Generate points for additional lines:
-        secondaryLinesNames.forEach(function (
-            plotLine: string,
-            index: number
-        ): void {
+        secondaryLinesNames.forEach((plotLine, index): void => {
 
             // create additional lines point place holders
             secondaryLines[index] = [];
@@ -279,8 +247,8 @@ namespace MultipleLinesComposition {
                 secondaryLines[index].push({
                     x: point.x,
                     plotX: point.plotX,
-                    plotY: (point as any)[plotLine],
-                    isNull: !defined((point as any)[plotLine])
+                    plotY: point[plotLine] as number,
+                    isNull: !defined(point[plotLine])
                 } as any);
             }
 
@@ -288,7 +256,7 @@ namespace MultipleLinesComposition {
         });
 
         // Modify options and generate area fill:
-        if (this.userOptions.fillColor && areaLinesNames.length) {
+        if (indicator.userOptions.fillColor && areaLinesNames.length) {
             const index = secondaryLinesNames.indexOf(
                     getLineName(areaLinesNames[0])
                 ),
@@ -305,7 +273,7 @@ namespace MultipleLinesComposition {
             indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;
             indicator.color = (
-                this.userOptions.fillColor as SVGAttributes['fill']
+                indicator.userOptions.fillColor as SVGAttributes['fill']
             );
             indicator.options = merge(
                 mainLinePoints,
@@ -313,7 +281,7 @@ namespace MultipleLinesComposition {
             ) as any;
             indicator.graph = indicator.area;
             indicator.fillGraph = true;
-            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+            smaProto.drawGraph.call(indicator);
 
             indicator.area = indicator.graph;
             // Clean temporary properties:
@@ -323,7 +291,7 @@ namespace MultipleLinesComposition {
         }
 
         // Modify options and generate additional lines:
-        linesApiNames.forEach(function (lineName: string, i: number): void {
+        linesApiNames.forEach((lineName, i): void => {
             if (secondaryLines[i]) {
                 indicator.points = secondaryLines[i];
                 if ((mainLineOptions as any)[lineName]) {
@@ -335,12 +303,11 @@ namespace MultipleLinesComposition {
                     error(
                         'Error: "There is no ' + lineName +
                         ' in DOCS options declared. Check if linesApiNames' +
-                        ' are consistent with your DOCS line names."' +
-                        ' at mixin/multiple-line.js:34'
+                        ' are consistent with your DOCS line names."'
                     );
                 }
                 indicator.graph = (indicator as any)['graph' + lineName];
-                SMAIndicator.prototype.drawGraph.call(indicator);
+                smaProto.drawGraph.call(indicator);
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
@@ -357,67 +324,65 @@ namespace MultipleLinesComposition {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
-        SMAIndicator.prototype.drawGraph.call(indicator);
+        smaProto.drawGraph.call(indicator);
     }
 
     /**
-     * Create translatedLines Collection based on pointArrayMap.
+     * Create the path based on points provided as argument.
+     * If indicator.nextPoints option is defined, create the areaFill.
      *
      * @private
-     * @function multipleLinesMixin.getTranslatedLinesNames
-     * @param {string} [excludedValue]
-     *        Main line id
-     * @return {Array<string>}
-     *         Returns translated lines names without excluded value.
+     * @param points Points on which the path should be created
      */
-    function getTranslatedLinesNames(
-        this: MultipleLinesComposition.Composition,
-        excludedValue?: string
-    ): Array<string> {
-        const translatedLines: Array<string> = [];
+    function indicatorGetGraphPath(
+        this: IndicatorComposition,
+        points: Array<LinePoint>
+    ): SVGPath {
+        let areaPath: SVGPath,
+            path: SVGPath = [],
+            higherAreaPath: SVGPath = [];
 
-        (this.pointArrayMap || []).forEach(
-            function (propertyName: string): void {
-                if (propertyName !== excludedValue) {
-                    translatedLines.push(getLineName(propertyName));
+        points = points || this.points;
+
+        // Render Span
+        if (this.fillGraph && this.nextPoints) {
+            areaPath = smaProto.getGraphPath.call(this, this.nextPoints);
+
+            if (areaPath && areaPath.length) {
+                areaPath[0][0] = 'L';
+
+                path = smaProto.getGraphPath.call(this, points);
+
+                higherAreaPath = areaPath.slice(0, path.length);
+
+                // Reverse points, so that the areaFill will start from the end:
+                for (let i = higherAreaPath.length - 1; i >= 0; i--) {
+                    path.push(higherAreaPath[i]);
                 }
             }
-        );
-
-        return translatedLines;
-    }
-
-    /**
-     * Generate the API name of the line
-     * @param propertyName name of the line
-     */
-    function getLineName(propertyName: string): string {
-        return (
-            'plot' +
-            propertyName.charAt(0).toUpperCase() +
-            propertyName.slice(1)
-        );
+        } else {
+            path = smaProto.getGraphPath.apply(this, arguments);
+        }
+        return path;
     }
 
     /**
      * @private
-     * @function multipleLinesMixin.toYData
      * @param {Highcharts.Point} point
      *        Indicator point
      * @return {Array<number>}
      *         Returns point Y value for all lines
      */
-    function toYData(
-        this: MultipleLinesComposition.Composition,
+    function indicatorToYData(
+        this: IndicatorComposition,
         point: Point
     ): Array<number> {
         const pointColl: Array<number> = [];
 
-        (this.pointArrayMap || []).forEach(
-            function (propertyName: string): void {
-                pointColl.push((point as any)[propertyName]);
-            }
-        );
+        (this.pointArrayMap || []).forEach((propertyName): void => {
+            pointColl.push(point[propertyName] as number);
+        });
+
         return pointColl;
     }
 
@@ -425,33 +390,31 @@ namespace MultipleLinesComposition {
      * Add lines plot pixel values.
      *
      * @private
-     * @function multipleLinesMixin.translate
      */
-    function translate(this: Composition): void {
-        const indicator = this,
-            pointArrayMap: Array<string> = (indicator.pointArrayMap as any);
-        let LinesNames = [] as Array<string>,
-            value;
+    function indicatorTranslate(
+        this: IndicatorComposition
+    ): void {
+        const pointArrayMap = this.pointArrayMap;
 
-        LinesNames = indicator.getTranslatedLinesNames();
+        let LinesNames: Array<keyof Point> = [],
+            value: number;
 
-        SMAIndicator.prototype.translate.apply(indicator, arguments as any);
+        LinesNames = getTranslatedLinesNames(this);
 
-        indicator.points.forEach(function (point: Point): void {
-            pointArrayMap.forEach(function (
-                propertyName: string,
-                i: number
-            ): void {
-                value = (point as any)[propertyName];
+        smaProto.translate.apply(this, arguments);
+
+        this.points.forEach((point): void => {
+            pointArrayMap.forEach((propertyName, i): void => {
+                value = point[propertyName] as number;
 
                 // If the modifier, like for example compare exists,
                 // modified the original value by that method, #15867.
-                if (indicator.dataModify) {
-                    value = indicator.dataModify.modifyValue(value);
+                if (this.dataModify) {
+                    value = this.dataModify.modifyValue(value);
                 }
 
                 if (value !== null) {
-                    (point as any)[LinesNames[i]] = indicator.yAxis.toPixels(
+                    (point as any)[LinesNames[i]] = this.yAxis.toPixels(
                         value,
                         true
                     );
@@ -459,7 +422,6 @@ namespace MultipleLinesComposition {
             });
         });
     }
-
 }
 
 /* *
