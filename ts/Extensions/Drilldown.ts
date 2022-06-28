@@ -528,8 +528,16 @@ defaultOptions.drilldown = {
      * @product highcharts highmaps
      */
     animation: {
+
+        /**
+         * @type      {string}
+         * @default   easeInOutSine
+         * @apioption drilldown.animation.easing
+         */
+
         /** @internal */
         duration: 500
+
     },
 
     /**

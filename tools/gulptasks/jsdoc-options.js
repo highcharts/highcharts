@@ -53,6 +53,10 @@ function createErrorHtml() {
         <html>
             <head>
                 <meta charset="utf-8" />
+                <meta
+                    http-equiv="refresh"
+                    content="1;url=/highcharts/index.html"
+                />
                 <script type="text/javascript">
                     if (location.pathname.endsWith('.html')) {
                         location.href = '/highcharts/index.html';

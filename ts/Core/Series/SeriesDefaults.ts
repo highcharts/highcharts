@@ -181,16 +181,24 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     animation: {
+
+        /**
+         * @type      {number}
+         * @default   0
+         * @since     8.2.0
+         * @apioption plotOptions.series.animation.defer
+         */
+
+        /**
+         * @type      {string}
+         * @default   easeInOutSine
+         * @apioption plotOptions.series.animation.easing
+         */
+
         /** @internal */
         duration: 1000
-    },
 
-    /**
-     * @default   0
-     * @type      {number}
-     * @since     8.2.0
-     * @apioption plotOptions.series.animation.defer
-     */
+    },
 
     /**
      * An additional class name to apply to the series' graphical elements.
