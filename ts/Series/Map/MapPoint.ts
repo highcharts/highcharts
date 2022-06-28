@@ -26,7 +26,7 @@ import type Projection from '../../Maps/Projection';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import ColorMapMixin from '../ColorMapMixin.js';
+import ColorMapMixin from '../ColorMapComposition.js';
 import MapUtilities from '../../Maps/MapUtilities.js';
 const {
     boundsFromPath
