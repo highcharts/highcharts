@@ -26,7 +26,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
-import type EventCallback from '../../../Core/EventCallback';
+import type { EventCallback } from '../../../Core/Callback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
 import type SVGAttributes from './SVGAttributes';

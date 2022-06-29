@@ -11,7 +11,7 @@ import type {
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
-import type EventCallback from '../../../Core/EventCallback';
+import type { EventCallback } from '../../../Core/Callback';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';

@@ -22,7 +22,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
-import type EventCallback from '../Core/EventCallback';
+import type { EventCallback } from '../Core/Callback';
 import type GanttPoint from '../Series/Gantt//GanttPoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';

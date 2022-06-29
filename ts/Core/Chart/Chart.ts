@@ -316,7 +316,7 @@ class Chart {
     public containerWidth?: string;
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions: Record<string, EventCallback<(Axis|Chart|Series), Event>> = void 0 as any;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;

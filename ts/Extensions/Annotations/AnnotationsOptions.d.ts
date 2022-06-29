@@ -29,7 +29,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
 import type Point from '../../Core/Series/Point';

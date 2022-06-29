@@ -18,7 +18,7 @@
  *
  * */
 
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
