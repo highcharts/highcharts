@@ -1303,7 +1303,7 @@ class SVGElement implements SVGElementLike {
      * @private
      */
     public destroyTextPath(
-        elem: SVGDOMElement,
+        elem: DOMElementType,
         path: SVGElement
     ): void {
         const textElement = elem.getElementsByTagName('text')[0];
@@ -1920,15 +1920,16 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#setTextPath
-     * @param {Highcharts.SVGElement} path
-     * Path to follow.
+     * @param {Highcharts.SVGElement|undefined} path
+     * Path to follow. If undefined, it allows changing options for the existing
+     * path.
      * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
      * Options.
      * @return {Highcharts.SVGElement}
      * Returns the SVGElement for chaining.
      */
     public setTextPath(
-        path: SVGElement,
+        path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
         const elem = this.element,
@@ -1942,6 +1943,8 @@ class SVGElement implements SVGElementLike {
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
             firstTime = !textPathWrapper;
+
+        path = path || this.path;
 
         // Defaults
         textPathOptions = merge(true, {
@@ -2070,13 +2073,17 @@ class SVGElement implements SVGElementLike {
             this.updateTransform = noop;
             this.applyTextOutline = noop;
 
-        } else if (textPathWrapper) {
+            // Refer the path for updating
+            this.path = path;
+
+        } else if (textPathWrapper && path) {
             // Reset to prototype
             delete (this as any).updateTransform;
             delete (this as any).applyTextOutline;
 
             // Restore DOM structure:
-            this.destroyTextPath(elem as any, path);
+            this.destroyTextPath(elem, path);
+            delete this.path;
 
             // Bring attributes back
             this.updateTransform();
