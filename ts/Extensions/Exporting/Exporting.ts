@@ -21,7 +21,7 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type {
     ExportingOptions,
     ExportingButtonOptions

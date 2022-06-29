@@ -2127,6 +2127,7 @@ namespace Pointer {
     }
     export interface SelectEventObject {
         originalEvent: Event;
+        resetSelection?: boolean;
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }

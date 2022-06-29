@@ -18,24 +18,24 @@ export interface Callback<TScope, TReturn> extends CallbackLike {
     (this: TScope): TReturn;
 }
 
-export interface CallbackLike {
-    (this: any): any;
+export interface CallbackLike extends Function {
+    // interface to add function members
 }
 
-export interface EventCallback<TScope, TEvent extends object> extends EventCallbackLike {
+export interface EventCallback<TScope, TEvent = AnyRecord> extends EventCallbackLike {
     (this: TScope, e: TEvent): (boolean|void);
 }
 
-export interface EventCallbackLike {
-    (this: any, e: object): (boolean|void);
+export interface EventCallbackLike extends Function {
+    // interface to add function members
 }
 
-export interface FormatterCallback<TScope, TEvent extends object> extends Callback<TScope, string> {
+export interface FormatterCallback<TScope, TEvent> extends FormatterCallbackLike {
     (this: TScope, e: TEvent): string;
 }
 
-export interface FormatterCallbackLike {
-    (this: any, e: object): string;
+export interface FormatterCallbackLike extends Function {
+    // interface to add function members
 }
 
 /* *

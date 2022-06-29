@@ -75,6 +75,7 @@ declare global {
             background?: Array<PaneBackgroundOptions>;
             center?: Array<(string|number)>;
             endAngle?: number;
+            id?: string;
             innerSize?: (number|string);
             size?: (number|string);
             startAngle?: number;

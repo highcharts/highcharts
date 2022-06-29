@@ -22,7 +22,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from './Renderer/DOMElementType';
-import type EventCallback from './EventCallback';
+import type { EventCallback } from './Callback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
@@ -1609,10 +1609,13 @@ objectEach({
  * @return {Function}
  *         A callback function to remove the added event.
  */
-function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+function addEvent<TScope, TEvent>(
+    el: (Element|TScope|Utilities.Class<TScope>),
     type: string,
-    fn: (EventCallback<T>|Function),
+    fn: (
+        EventCallback<TScope, (TEvent&Utilities.EventObject<TScope>)>|
+        Function
+    ),
     options: Utilities.EventOptions = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
@@ -1669,8 +1672,8 @@ function addEvent<T>(
 
     // Order the calls
     events[type].sort((
-        a: Utilities.EventWrapperObject<T>,
-        b: Utilities.EventWrapperObject<T>
+        a: Utilities.EventWrapperObject<TScope>,
+        b: Utilities.EventWrapperObject<TScope>
     ): number => a.order - b.order);
 
     // Return a function that can be called to remove this event.
@@ -1698,10 +1701,10 @@ function addEvent<T>(
  *
  * @return {void}
  */
-function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+function removeEvent<TScope, TEvent>(
+    el: (Element|TScope|Utilities.Class<TScope>),
     type?: string,
-    fn?: (EventCallback<T>|Function)
+    fn?: (Function|EventCallback<TScope, TEvent>)
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -1710,7 +1713,7 @@ function removeEvent<T>(
      */
     function removeOneEvent(
         type: string,
-        fn: (EventCallback<T>|Function)
+        fn: (Function|EventCallback<TScope, TEvent>)
     ): void {
         const removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
@@ -1755,7 +1758,7 @@ function removeEvent<T>(
         if (type) {
             const typeEvents = (
                 events[type] || []
-            ) as Utilities.EventWrapperObject<T>[];
+            ) as Utilities.EventWrapperObject<TScope>[];
 
             if (fn) {
                 events[type] = typeEvents.filter(
@@ -1803,55 +1806,55 @@ function removeEvent<T>(
  *
  * @return {void}
  */
-function fireEvent<T>(
-    el: T,
+function fireEvent<TScope, TEvent extends AnyRecord>(
+    target: (Element|TScope|Utilities.Class<TScope>),
     type: string,
-    eventArguments?: (AnyRecord|Event),
-    defaultFunction?: (EventCallback<T>|Function)
+    eventArguments?: TEvent,
+    defaultFunction?: (
+        EventCallback<TScope, (TEvent&Utilities.EventObject<TScope>)>|
+        Function
+    )
 ): void {
-    /* eslint-enable valid-jsdoc */
-    let e,
-        i;
 
-    eventArguments = eventArguments || {};
-    eventArguments.defaultFunction = defaultFunction;
+    let e = (eventArguments || {}) as (TEvent&Utilities.EventObject<TScope>);
 
-    if (doc.createEvent &&
+    e.defaultFunction = defaultFunction;
+
+    if (
+        doc.createEvent &&
         (
-            (el as any).dispatchEvent ||
-            (
-                (el as any).fireEvent &&
-                // Enable firing events on Highcharts instance.
-                (el as any) !== H
-            )
+            (target as Element).dispatchEvent ||
+            (target as Element).fireEvent &&
+            // Enable firing events on Highcharts instance.
+            (target as AnyRecord) !== H
         )
     ) {
-        e = doc.createEvent('Events');
-        e.initEvent(type, true, true);
+        const domEvent = doc.createEvent('Events');
 
-        eventArguments = extend(e, eventArguments);
+        domEvent.initEvent(type, true, true);
 
-        if ((el as any).dispatchEvent) {
-            (el as any).dispatchEvent(eventArguments);
+        e = extend(domEvent, e) as typeof e;
+
+        if ((target as Element).dispatchEvent) {
+            (target as Element).dispatchEvent(e as Event);
         } else {
-            (el as any).fireEvent(type, eventArguments);
+            (target as Element).fireEvent(type, e as Event);
         }
 
-    } else if ((el as any).hcEvents) {
+    } else if ((target as AnyRecord).hcEvents) {
 
-        if (!(eventArguments as any).target) {
+        if (!e.target) {
             // We're running a custom event
-
-            extend(eventArguments as any, {
+            extend<AnyRecord>(e, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
                 preventDefault: function (): void {
-                    (eventArguments as any).defaultPrevented = true;
+                    e.defaultPrevented = true;
                 },
                 // Setting target to native events fails with clicking
                 // the zoom-out button in Chrome.
-                target: el,
+                target,
                 // If the type is not set, we're running a custom event
                 // (#2297). If it is set, we're running a browser event,
                 // and setting it will cause en error in IE8 (#2465).
@@ -1859,23 +1862,23 @@ function fireEvent<T>(
             });
         }
 
-        const events: Array<Utilities.EventWrapperObject<any>> = [];
-        let object: any = el;
+        const events: Array<Utilities.EventWrapperObject<TScope>> = [];
+        let obj = target as AnyRecord;
         let multilevel = false;
 
         // Recurse up the inheritance chain and collect hcEvents set as own
         // objects on the prototypes.
-        while (object.hcEvents) {
+        while (obj.hcEvents) {
             if (
-                Object.hasOwnProperty.call(object, 'hcEvents') &&
-                object.hcEvents[type]
+                Object.hasOwnProperty.call(obj, 'hcEvents') &&
+                obj.hcEvents[type]
             ) {
                 if (events.length) {
                     multilevel = true;
                 }
-                events.unshift.apply(events, object.hcEvents[type]);
+                events.unshift.apply(events, obj.hcEvents[type]);
             }
-            object = Object.getPrototypeOf(object);
+            obj = Object.getPrototypeOf(obj);
         }
 
         // For performance reasons, only sort the event handlers in case we are
@@ -1884,8 +1887,8 @@ function fireEvent<T>(
         if (multilevel) {
             // Order the calls
             events.sort((
-                a: Utilities.EventWrapperObject<T>,
-                b: Utilities.EventWrapperObject<T>
+                a: Utilities.EventWrapperObject<TScope>,
+                b: Utilities.EventWrapperObject<TScope>
             ): number => a.order - b.order);
         }
 
@@ -1893,16 +1896,16 @@ function fireEvent<T>(
         events.forEach((obj): void => {
             // If the event handler returns false, prevent the default handler
             // from executing
-            if (obj.fn.call(el, eventArguments as any) === false) {
-                (eventArguments as any).preventDefault();
+            if (obj.fn.call(target, e) === false) {
+                e.preventDefault();
             }
         });
 
     }
 
     // Run the default if not prevented
-    if (defaultFunction && !eventArguments.defaultPrevented) {
-        (defaultFunction as Function).call(el, eventArguments);
+    if (defaultFunction && !e.defaultPrevented) {
+        (defaultFunction as Function).call(target, e);
     }
 }
 
@@ -2039,12 +2042,21 @@ namespace Utilities {
         message?: string;
         params?: Record<string, string>;
     }
+    export interface EventObject<TScope> extends Partial<Event>{
+        detail?: AnyRecord;
+        defaultFunction?: (EventCallback<TScope, AnyRecord>|Function);
+        defaultPrevented?: boolean;
+        target: (TScope&EventTarget);
+        type: string;
+        preventDefault(): void;
+        stopPropagation(): void;
+    }
     export interface EventOptions {
         order?: number;
         passive?: boolean;
     }
-    export interface EventWrapperObject<T> {
-        fn: EventCallback<T>;
+    export interface EventWrapperObject<TScope> {
+        fn: EventCallback<TScope, AnyRecord>;
         order: number;
     }
     export interface FindCallback<T> {

@@ -23,9 +23,9 @@ import type { LabelsItemsOptions } from '../../Core/Options';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type GradientColor from '../../Core/Color/GradientColor';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -93,8 +93,8 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/EventCallback' {
-    interface EventCallback<T> {
+declare module '../../Core/Callback' {
+    interface EventCallback<TScope, TEvent> {
         /** @requires highcharts/modules/oldies */
         hcKey?: string;
     }
@@ -372,13 +372,13 @@ declare global {
         function addEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
-            fn: EventCallback<T>
+            fn: EventCallback<T, Event>
         ): void;
         /** @requires highcharts/modules/oldies */
         function removeEventListenerPolyfill<T extends EventTarget> (
             this: T,
             type: string,
-            fn: EventCallback<T>
+            fn: EventCallback<T, Event>
         ): void;
     }
 
@@ -431,13 +431,15 @@ declare global {
         /** @deprecated */
         mozRequestFullScreen: Function;
         /** @deprecated */
-        msMatchesSelector: Element['matches'];
-        /** @deprecated */
         msRequestFullscreen: Function;
         /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
-        /** @deprecated */
         webkitRequestFullScreen: Function;
+        /** @deprecated */
+        fireEvent(type: string, e: Event): void;
+        /** @deprecated */
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitMatchesSelector: Element['matches'];
     }
 
     class MSPointerEvent implements Partial<PointerEvent> {
@@ -693,7 +695,7 @@ if (!svg) {
     H.addEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: EventCallback<T>
+        fn: EventCallback<T, Event>
     ): void {
         const el = this;
 
@@ -730,7 +732,7 @@ if (!svg) {
     H.removeEventListenerPolyfill = function<T extends EventTarget> (
         this: T,
         type: string,
-        fn: EventCallback<T>
+        fn: EventCallback<T, Event>
     ): void {
         if (this.detachEvent) {
             fn = (this.hcEventsIE as any)[fn.hcKey as any];
@@ -1061,7 +1063,7 @@ if (!svg) {
         on: function (
             this: Highcharts.VMLElement,
             eventType: string,
-            handler: EventCallback<void>
+            handler: EventCallback<void, Event>
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
