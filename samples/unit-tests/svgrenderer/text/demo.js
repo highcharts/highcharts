@@ -866,8 +866,8 @@ QUnit.test('textPath', assert => {
 
     const text = ren
         .text('Hello path', 20, 20)
-        .add()
-        .setTextPath(path, {});
+        .setTextPath(path, {})
+        .add();
 
     const textPathHref = text.element.querySelector('textPath')
         .getAttribute('href');
@@ -884,6 +884,19 @@ QUnit.test('textPath', assert => {
         text.element.querySelector('textPath').getAttribute('href'),
         textPathHref,
         'The textPath should be preserved after modifying the text'
+    );
+
+    text.setTextPath(undefined, { attributes: { dy: 20 } });
+
+    assert.strictEqual(
+        text.element.querySelector('textPath').getAttribute('href'),
+        textPathHref,
+        'The textPath should be preserved after modifying options'
+    );
+    assert.strictEqual(
+        text.element.getAttribute('dy'),
+        '20',
+        'The text path options should be updated'
     );
 
     ren.destroy();
