@@ -137,7 +137,7 @@ class ZoomComponent extends AccessibilityComponent {
 
         [
             'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
-        ].forEach(function (eventType: string): void {
+        ].forEach((eventType): void => {
             component.addEvent(chart, eventType, function (): void {
                 component.updateProxyOverlays();
             });
@@ -154,10 +154,7 @@ class ZoomComponent extends AccessibilityComponent {
 
         // Make map zoom buttons accessible
         if (chart.mapNavigation) {
-            chart.mapNavigation.navButtons.forEach(function (
-                button: SVGElement,
-                i: number
-            ): void {
+            chart.mapNavigation.navButtons.forEach((button, i): void => {
                 unhideChartElementFromAT(chart, button.element);
                 component.setMapNavButtonAttrs(
                     button.element,
