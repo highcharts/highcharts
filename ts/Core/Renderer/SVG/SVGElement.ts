@@ -1331,8 +1331,8 @@ class SVGElement implements SVGElementLike {
                 textElement.removeChild(this.textPathWrapper.element);
             }
         } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
-            // Remove textPath attributes from elem
-            // to get correct text-outline position
+            // Remove textPath attributes from elem to get correct text-outline
+            // position
             elem.removeAttribute('dx');
             elem.removeAttribute('dy');
         }
@@ -1934,16 +1934,14 @@ class SVGElement implements SVGElementLike {
     ): this {
         const elem = this.element,
             textWrapper = this.text || this,
-            textNode = textWrapper.element,
-            attribsMap = {
-                textAnchor: 'text-anchor'
-            };
+            textNode = textWrapper.element;
 
         let adder = false,
             textPathElement: DOMElementType,
             textPathId,
-            textPathWrapper: SVGElement = this.textPathWrapper as any,
-            firstTime = !textPathWrapper;
+            textPathWrapper = this.textPathWrapper;
+
+        const firstTime = !textPathWrapper;
 
         path = path || this.path;
 
@@ -1968,16 +1966,16 @@ class SVGElement implements SVGElementLike {
             if (!textPathWrapper) {
                 // Create <textPath>, defer the DOM adder
                 this.textPathWrapper = textPathWrapper =
-                    this.renderer.createElement('textPath') as any;
+                    this.renderer.createElement('textPath');
                 adder = true;
             }
 
             textPathElement = textPathWrapper.element;
 
             // Set ID for the path
-            textPathId = path.element.getAttribute('id');
+            textPathId = path.attr('id');
             if (!textPathId) {
-                path.element.setAttribute('id', textPathId = uniqueKey());
+                path.attr('id', textPathId = uniqueKey());
             }
 
             // Change DOM structure, by placing <textPath> tag in <text>
@@ -1991,9 +1989,11 @@ class SVGElement implements SVGElementLike {
 
                 // Move all <tspan>'s and text nodes to the <textPath> node. Do
                 // not move other elements like <title> or <path>
-                const childNodes = [].slice.call(textNode.childNodes);
+                const childNodes: ChildNode[] = [].slice.call(
+                    textNode.childNodes
+                );
                 for (let i = 0; i < childNodes.length; i++) {
-                    const childNode: any = childNodes[i];
+                    const childNode = childNodes[i];
                     if (
                         childNode.nodeType === win.Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
@@ -2021,23 +2021,17 @@ class SVGElement implements SVGElementLike {
             // dx/dy options must by set on <text> (parent), the rest should be
             // set on <textPath>
             if (defined(attrs.dy)) {
-                // textPathElement.parentNode.setAttribute('dy', attrs.dy);
                 textWrapper.attr('dy', attrs.dy);
                 delete attrs.dy;
             }
             if (defined(attrs.dx)) {
-                // textPathElement.parentNode.setAttribute('dx', attrs.dx);
                 textWrapper.attr('dx', attrs.dx);
                 delete attrs.dx;
             }
 
             // Additional attributes
-            objectEach(attrs, function (val, key): void {
-                textPathElement.setAttribute(
-                    (attribsMap as any)[key] || key,
-                    val as any
-                );
-            });
+            attrs['text-anchor'] = (attrs as any).textAnchor; // hyphenate
+            attr(textPathElement, attrs);
 
             // Remove translation, text that follows path does not need that
             elem.removeAttribute('transform');
@@ -2045,7 +2039,7 @@ class SVGElement implements SVGElementLike {
             // Remove shadows and text outlines
             this.removeTextOutline.call(textPathWrapper);
 
-            // Remove background and border for label(), see #10545
+            // Remove background and border for label(), see #10545.
             // Alternatively, we can disable setting background rects in
             // series.drawDataLabels()
             if (this.text && !this.renderer.styledMode) {
@@ -2075,7 +2069,7 @@ class SVGElement implements SVGElementLike {
             this.updateTransform();
 
             // Set textOutline back for text()
-            if (this.options && this.options.rotation) {
+            if (this.options) {
                 this.applyTextOutline(this.options.style.textOutline);
             }
         }
