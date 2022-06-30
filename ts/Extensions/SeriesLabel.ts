@@ -16,6 +16,10 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type FormatUtilities from '../Core/FormatUtilities';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type {
+    LabelIntersectBoxObject,
+    SeriesLabelOptions
+} from './SeriesLabel/SeriesLabelOptions';
 import type SplineSeries from '../Series/Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -29,6 +33,12 @@ const { format } = F;
 import D from '../Core/DefaultOptions.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
+import SeriesLabelDefaults from './SeriesLabel/SeriesLabelDefaults.js';
+import SLU from './SeriesLabel/SeriesLabelUtilities.js';
+const {
+    boxIntersectLine,
+    intersectRect
+} = SLU;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
@@ -43,7 +53,7 @@ const {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
+        boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
         seriesLabelTimer?: number;
@@ -69,7 +79,7 @@ declare module '../Core/Series/SeriesLike' {
             y: number,
             bBox: BBoxObject,
             checkDistance?: boolean
-        ): (boolean|Highcharts.LabelClearPointObject);
+        ): (boolean|LabelClearPointObject);
         drawSeriesLabels(): void;
         getPointsOnGraph(): (Array<Point>|undefined);
         labelFontSize(minFontSize: number, maxFontSize: number): string;
@@ -78,39 +88,13 @@ declare module '../Core/Series/SeriesLike' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        label?: Highcharts.SeriesLabelOptionsObject;
+        label?: SeriesLabelOptions;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LabelClearPointObject extends PositionObject {
-            connectorPoint?: Point;
-            weight: number;
-        }
-        interface LabelIntersectBoxObject {
-            bottom: number;
-            left: number;
-            right: number;
-            top: number;
-        }
-        interface SeriesLabelOptionsObject {
-            boxesToAvoid?: Array<LabelIntersectBoxObject>;
-            connectorAllowed?: boolean;
-            connectorNeighbourDistance?: number;
-            enabled?: boolean;
-            format?: string;
-            formatter?: FormatUtilities.FormatterCallback<Series>;
-            maxFontSize?: (number|null);
-            minFontSize?: (number|null);
-            onArea?: (boolean|null);
-            style?: CSSObject;
-        }
-    }
+interface LabelClearPointObject extends PositionObject {
+    connectorPoint?: Point;
+    weight: number;
 }
 
 /**
@@ -149,200 +133,9 @@ declare global {
 
 const labelDistance = 3;
 
-setOptions({
-
-    /**
-     * @optionparent plotOptions
-     *
-     * @private
-     */
-    plotOptions: {
-
-        series: {
-            /**
-             * Series labels are placed as close to the series as possible in a
-             * natural way, seeking to avoid other series. The goal of this
-             * feature is to make the chart more easily readable, like if a
-             * human designer placed the labels in the optimal position.
-             *
-             * The series labels currently work with series types having a
-             * `graph` or an `area`.
-             *
-             * @sample highcharts/series-label/line-chart
-             *         Line chart
-             * @sample highcharts/demo/streamgraph
-             *         Stream graph
-             * @sample highcharts/series-label/stock-chart
-             *         Stock chart
-             *
-             * @declare  Highcharts.SeriesLabelOptionsObject
-             * @since    6.0.0
-             * @product  highcharts highstock gantt
-             * @requires modules/series-label
-             */
-            label: {
-
-                /**
-                 * Enable the series label per series.
-                 */
-                enabled: true,
-
-                /**
-                 * Allow labels to be placed distant to the graph if necessary,
-                 * and draw a connector line to the graph. Setting this option
-                 * to true may decrease the performance significantly, since the
-                 * algorithm with systematically search for open spaces in the
-                 * whole plot area. Visually, it may also result in a more
-                 * cluttered chart, though more of the series will be labeled.
-                 */
-                connectorAllowed: false,
-
-                /**
-                 * If the label is closer than this to a neighbour graph, draw a
-                 * connector.
-                 */
-                connectorNeighbourDistance: 24,
-
-                /**
-                 * A format string for the label, with support for a subset of
-                 * HTML. Variables are enclosed by curly brackets. Available
-                 * variables are `name`, `options.xxx`, `color` and other
-                 * members from the `series` object. Use this option also to set
-                 * a static text for the label.
-                 *
-                 * @type string
-                 * @since 8.1.0
-                 */
-                format: void 0,
-
-                /**
-                 * Callback function to format each of the series' labels. The
-                 * `this` keyword refers to the series object. By default the
-                 * `formatter` is undefined and the `series.name` is rendered.
-                 *
-                 * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since 8.1.0
-                 */
-                formatter: void 0,
-
-                /**
-                 * For area-like series, allow the font size to vary so that
-                 * small areas get a smaller font size. The default applies this
-                 * effect to area-like series but not line-like series.
-                 *
-                 * @type {number|null}
-                 */
-                minFontSize: null,
-
-                /**
-                 * For area-like series, allow the font size to vary so that
-                 * small areas get a smaller font size. The default applies this
-                 * effect to area-like series but not line-like series.
-                 *
-                 * @type {number|null}
-                 */
-                maxFontSize: null,
-
-                /**
-                 * Draw the label on the area of an area series. By default it
-                 * is drawn on the area. Set it to `false` to draw it next to
-                 * the graph instead.
-                 *
-                 * @type {boolean|null}
-                 */
-                onArea: null,
-
-                /**
-                 * Styles for the series label. The color defaults to the series
-                 * color, or a contrast color if `onArea`.
-                 *
-                 * @type {Highcharts.CSSObject}
-                 */
-                style: {
-                    /** @internal */
-                    fontWeight: 'bold'
-                },
-
-                /**
-                 * An array of boxes to avoid when laying out the labels. Each
-                 * item has a `left`, `right`, `top` and `bottom` property.
-                 *
-                 * @type {Array<Highcharts.LabelIntersectBoxObject>}
-                 */
-                boxesToAvoid: []
-
-            }
-
-        }
-
-    }
-
-});
+setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
 
 /* eslint-disable valid-jsdoc */
-
-/**
- * Counter-clockwise, part of the fast line intersection logic.
- *
- * @private
- * @function ccw
- */
-function ccw(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number
-): boolean {
-    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
-
-    return cw > 0 ? true : !(cw < 0);
-}
-
-/**
- * Detect if two lines intersect.
- *
- * @private
- * @function intersectLine
- */
-function intersectLine(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number,
-    x4: number,
-    y4: number
-): boolean {
-    return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
-        ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4);
-}
-
-/**
- * Detect if a box intersects with a line.
- *
- * @private
- * @function boxIntersectLine
- */
-function boxIntersectLine(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-): boolean {
-    return (
-        intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // top of label
-        intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
-        intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
-        intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
-    );
-}
 
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
@@ -580,7 +373,7 @@ Series.prototype.checkClearPoint = function (
     y: number,
     bBox: BBoxObject,
     checkDistance?: boolean
-): (boolean|Highcharts.LabelClearPointObject) {
+): (boolean|LabelClearPointObject) {
     const chart = this.chart,
         onArea = pick((this.options.label as any).onArea, !!this.area),
         findDistanceToOthers = (
@@ -599,19 +392,6 @@ Series.prototype.checkClearPoint = function (
         yDist: (number|undefined),
         i: (number|undefined),
         j: (number|undefined);
-
-    /**
-     * @private
-     */
-    function intersectRect(
-        r1: Highcharts.LabelIntersectBoxObject,
-        r2: Highcharts.LabelIntersectBoxObject
-    ): boolean {
-        return !(r2.left > r1.right ||
-            r2.right < r1.left ||
-            r2.top > r1.bottom ||
-            r2.bottom < r1.top);
-    }
 
     /**
      * Get the weight in order to determine the ideal position. Larger distance
@@ -804,7 +584,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
         series.interpolatedPoints = series.getPointsOnGraph();
 
         ((series.options.label as any).boxesToAvoid || []).forEach(function (
-            box: Highcharts.LabelIntersectBoxObject
+            box: LabelIntersectBoxObject
         ): void {
             (chart.boxesToAvoid as any).push(box);
         });
@@ -835,7 +615,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
-            results: Array<Highcharts.LabelClearPointObject> = [];
+            results: Array<LabelClearPointObject> = [];
 
         let bBox: (BBoxObject|undefined),
             x: (number|undefined),
@@ -1051,12 +831,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
             if (results.length) {
 
-                results.sort(function (
-                    a: Highcharts.LabelClearPointObject,
-                    b: Highcharts.LabelClearPointObject
-                ): number {
-                    return b.weight - a.weight;
-                });
+                results.sort((a, b): number => b.weight - a.weight);
 
                 best = results[0];
 
@@ -1165,8 +940,7 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            const options: Highcharts.SeriesLabelOptionsObject =
-                    series.options.label as any,
+            const options: SeriesLabelOptions = series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;
 
