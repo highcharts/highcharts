@@ -1818,7 +1818,11 @@ function fireEvent<TScope, TEvent extends AnyRecord>(
 
     let e = (eventArguments || {}) as (TEvent&Utilities.EventObject<TScope>);
 
-    e.defaultFunction = defaultFunction;
+    e.defaultFunction = (): void => {
+        if (defaultFunction) {
+            defaultFunction.call(target, e);
+        }
+    };
 
     if (
         doc.createEvent &&
@@ -1858,7 +1862,7 @@ function fireEvent<TScope, TEvent extends AnyRecord>(
                 // If the type is not set, we're running a custom event
                 // (#2297). If it is set, we're running a browser event,
                 // and setting it will cause en error in IE8 (#2465).
-                type: type
+                type
             });
         }
 
@@ -2044,7 +2048,7 @@ namespace Utilities {
     }
     export interface EventObject<TScope> extends Partial<Event>{
         detail?: AnyRecord;
-        defaultFunction?: (EventCallback<TScope, AnyRecord>|Function);
+        defaultFunction: Function;
         defaultPrevented?: boolean;
         target: (TScope&EventTarget);
         type: string;
