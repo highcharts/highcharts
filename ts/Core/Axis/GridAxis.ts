@@ -94,7 +94,6 @@ declare module './AxisOptions' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         marginRight: ChartOptions['marginRight'];
-        polar: ChartOptions['polar'];
     }
 }
 

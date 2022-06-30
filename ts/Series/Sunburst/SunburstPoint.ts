@@ -24,7 +24,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -147,7 +146,7 @@ class SunburstPoint extends TreemapPoint {
  *
  * */
 
-interface SunburstPoint extends DrawPointComposition.Composition {
+interface SunburstPoint {
     setState: typeof Point.prototype.setState;
     setVisible: typeof TreemapPoint.prototype.setVisible;
 }
@@ -157,8 +156,6 @@ extend(SunburstPoint.prototype, {
     haloPath: Point.prototype.haloPath,
     setState: Point.prototype.setState
 });
-
-DrawPointComposition.compose(SunburstPoint);
 
 /* *
  *
