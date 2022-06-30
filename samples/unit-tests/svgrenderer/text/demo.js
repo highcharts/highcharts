@@ -899,5 +899,25 @@ QUnit.test('textPath', assert => {
         'The text path options should be updated'
     );
 
+    text.css({
+        width: '100px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+    });
+    assert.ok(
+        text.element.textContent.indexOf('\u2026') !== -1,
+        'Width set, the text should have an ellipsis'
+    );
+
+    text.css({
+        width: 'auto',
+        overflow: 'auto',
+        textOverflow: 'none'
+    });
+    assert.ok(
+        text.element.textContent.indexOf('\u2026') === -1,
+        'Width unset, the text should not have an ellipsis'
+    );
+
     ren.destroy();
 });

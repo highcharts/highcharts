@@ -280,7 +280,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // Mark as inverted
-        this.parentInverted = parent && (parent as any).inverted;
+        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -1933,7 +1933,8 @@ class SVGElement implements SVGElementLike {
         textPathOptions: AnyRecord
     ): this {
         const elem = this.element,
-            textNode = this.text ? this.text.element : elem,
+            textWrapper = this.text || this,
+            textNode = textWrapper.element,
             attribsMap = {
                 textAnchor: 'text-anchor'
             };
@@ -1959,21 +1960,6 @@ class SVGElement implements SVGElementLike {
         const attrs = AST.filterUserAttributes(textPathOptions.attributes);
 
         if (path && textPathOptions && textPathOptions.enabled) {
-            // In case of fixed width for a text, string is rebuilt
-            // (e.g. ellipsis is applied), so we need to rebuild textPath too
-            if (
-                textPathWrapper &&
-                textPathWrapper.element.parentNode === null
-            ) {
-                // When buildText functionality was triggered again
-                // and deletes textPathWrapper parentNode
-                firstTime = true;
-                textPathWrapper = textPathWrapper.destroy() as any;
-            } else if (textPathWrapper) {
-                // Case after drillup when spans were added into
-                // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(textPathWrapper.parentGroup);
-            }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
                 attrs.dx = -this.options.padding;
@@ -2019,7 +2005,7 @@ class SVGElement implements SVGElementLike {
 
             // Add <textPath> to the DOM
             if (adder && textPathWrapper) {
-                textPathWrapper.add({ element: textNode } as any);
+                textPathWrapper.add(textWrapper);
             }
 
             // Set basic options:
@@ -2032,16 +2018,16 @@ class SVGElement implements SVGElementLike {
 
             // Presentation attributes:
 
-            // dx/dy options must by set on <text> (parent),
-            // the rest should be set on <textPath>
+            // dx/dy options must by set on <text> (parent), the rest should be
+            // set on <textPath>
             if (defined(attrs.dy)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dy', attrs.dy);
+                // textPathElement.parentNode.setAttribute('dy', attrs.dy);
+                textWrapper.attr('dy', attrs.dy);
                 delete attrs.dy;
             }
             if (defined(attrs.dx)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dx', attrs.dx);
+                // textPathElement.parentNode.setAttribute('dx', attrs.dx);
+                textWrapper.attr('dx', attrs.dx);
                 delete attrs.dx;
             }
 
