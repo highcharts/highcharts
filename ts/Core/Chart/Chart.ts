@@ -993,31 +993,40 @@ class Chart {
      * The retrieved item.
      */
     public get(id: string): (Axis|Series|Point|undefined) {
-        const series = this.series;
+        const detail = {
+                id,
+                result: void 0 as (Axis|Series|Point|undefined)
+            },
+            e = { detail };
 
-        /**
-         * @private
-         */
-        function itemById(item: (Axis|Series)): boolean {
-            return (
-                (item as Series).id === id ||
-                (item.options && item.options.id === id)
-            );
-        }
+        fireEvent(this, 'get', e, (e): void => {
+            const detail = e.detail,
+                series = this.series;
 
-        let ret: (Axis|Series|Point|undefined) =
-            // Search axes
-            find(this.axes, itemById) ||
+            /**
+             * @private
+             */
+            function itemById(item: (Axis|Point|Series)): boolean {
+                return (
+                    (item as Series).id === id ||
+                    (item.options && item.options.id === id)
+                );
+            }
 
-            // Search series
-            find(this.series, itemById);
+            detail.result =
+                // Search axes
+                find(this.axes, itemById) ||
 
-        // Search points
-        for (let i = 0; !ret && i < series.length; i++) {
-            ret = find((series[i].points as any) || [], itemById);
-        }
+                // Search series
+                find(this.series, itemById);
 
-        return ret;
+            // Search points
+            for (let i = 0; !detail.result && i < series.length; i++) {
+                detail.result = find(series[i].points || [], itemById);
+            }
+        });
+
+        return detail.result;
     }
 
     /**
@@ -3544,7 +3553,12 @@ class Chart {
      * @emits Highcharts.Chart#event:selection
      */
     public zoomOut(): void {
-        fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
+        fireEvent(
+            this,
+            'selection',
+            { resetSelection: true } as Pointer.SelectEventObject,
+            this.zoom
+        );
     }
 
     /**
@@ -3564,8 +3578,8 @@ class Chart {
             hasZoomed;
 
         // If zoom is called with no arguments, reset the axes
-        if (!event || (event as any).resetSelection) {
-            chart.axes.forEach(function (axis): void {
+        if (!event || event.resetSelection) {
+            chart.axes.forEach((axis): void => {
                 hasZoomed = (axis.zoom as any)();
             });
             pointer.initiated = false; // #6804

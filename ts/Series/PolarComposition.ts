@@ -340,6 +340,29 @@ function onChartAfterDrawChartBox(
     });
 }
 
+/**
+ * Extend chart.get to also search in panes. Used internally in
+ * responsiveness and chart.update.
+ * @private
+ */
+function onChartGet(
+    this: Chart,
+    e: U.EventObject<Chart>
+): void {
+    const detail = e.detail = e.detail || {};
+
+    detail.result = find(
+        (this.pane || []),
+        (pane: Highcharts.Pane): boolean =>
+            // @todo remove id or define id type:
+            (pane.options.id === detail.id)
+    );
+
+    if (detail.result) {
+        e.preventDefault();
+    }
+}
+
 function onChartGetAxes(
     this: Chart
 ): void {
@@ -463,22 +486,6 @@ function onSeriesAfterTranslate(
             );
         }
     }
-}
-
-/**
- * Extend chart.get to also search in panes. Used internally in
- * responsiveness and chart.update.
- * @private
- */
-function wrapChartGet(
-    this: Chart,
-    proceed: Function,
-    id: string
-): boolean {
-    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
-        // @todo remove id or define id type:
-        return (pane.options as any).id === id;
-    }) || proceed.call(this, id);
 }
 
 /**
@@ -1091,11 +1098,8 @@ class PolarAdditions {
             composedClasses.push(ChartClass);
 
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
+            addEvent(ChartClass, 'get', onChartGet);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
-
-            const chartProto = ChartClass.prototype;
-
-            wrap(chartProto, 'get', wrapChartGet);
         }
 
         if (composedClasses.indexOf(PointerClass) === -1) {
