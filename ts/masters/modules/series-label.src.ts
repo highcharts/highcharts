@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/SeriesLabel.js';
+import '../../Extensions/SeriesLabel/SeriesLabel.js';

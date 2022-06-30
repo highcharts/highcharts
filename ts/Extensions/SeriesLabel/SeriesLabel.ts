@@ -10,38 +10,38 @@
 
 'use strict';
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type FormatUtilities from '../Core/FormatUtilities';
-import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type FormatUtilities from '../../Core/FormatUtilities';
+import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import type {
     LabelIntersectBoxObject,
     SeriesLabelOptions
-} from './SeriesLabel/SeriesLabelOptions';
-import type SplineSeries from '../Series/Spline/SplineSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from './SeriesLabelOptions';
+import type SplineSeries from '../../Series/Spline/SplineSeries';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import D from '../Core/DefaultOptions.js';
+import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
-import Series from '../Core/Series/Series.js';
-import SeriesLabelDefaults from './SeriesLabel/SeriesLabelDefaults.js';
-import SLU from './SeriesLabel/SeriesLabelUtilities.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesLabelDefaults from './SeriesLabelDefaults.js';
+import SLU from './SeriesLabelUtilities.js';
 const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -51,7 +51,7 @@ const {
     syncTimeout
 } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
@@ -61,7 +61,7 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         chartCenterY?: number;
         chartX?: number;
@@ -69,7 +69,7 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         interpolatedPoints?: Array<Point>;
         labelBySeries?: SVGElement;
@@ -86,7 +86,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         label?: SeriesLabelOptions;
     }
@@ -137,7 +137,7 @@ setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
 
 /* eslint-disable valid-jsdoc */
 
-declare module '../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/SeriesLabel */
         connector: SymbolFunction;
