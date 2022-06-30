@@ -207,7 +207,7 @@ class Axis {
     public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: string = void 0 as any;
+    public coll: ('colorAxis'|'xAxis'|'yAxis'|'zAxis') = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
