@@ -139,7 +139,7 @@ class TextBuilder {
 
             if (tempParent) {
                 // attach it to the DOM to read offset width
-                tempParent.appendChild(textNode);
+                tempParent.appendChild(element);
             }
 
             // Step 1. Parse the markup safely and directly into a tree
@@ -170,7 +170,7 @@ class TextBuilder {
                 );
             }
             if (tempParent) {
-                tempParent.removeChild(textNode);
+                tempParent.removeChild(element);
             }
         }
 

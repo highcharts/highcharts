@@ -1010,7 +1010,7 @@ var colors = Highcharts.getOptions().colors,
             overflow: 'none',
             color: 'black',
             style: {
-                textOutline: 'none',
+                // textOutline: 'none',
                 fontWeight: 'normal'
             }
         },
