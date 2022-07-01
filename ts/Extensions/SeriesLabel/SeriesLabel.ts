@@ -8,7 +8,27 @@
  *
  * */
 
+/*
+ * Highcharts module to place labels next to a series in a natural position.
+ *
+ * TODO:
+ * - add column support (box collision detection, boxesToAvoid logic)
+ * - avoid data labels, when data labels above, show series label below.
+ * - add more options (connector, format, formatter)
+ *
+ * https://jsfiddle.net/highcharts/L2u9rpwr/
+ * https://jsfiddle.net/highcharts/y5A37/
+ * https://jsfiddle.net/highcharts/264Nm/
+ * https://jsfiddle.net/highcharts/y5A37/
+ */
+
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
@@ -31,8 +51,8 @@ const { animObject } = A;
 import Chart from '../../Core/Chart/Chart.js';
 import FU from '../../Core/FormatUtilities.js';
 const { format } = FU;
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
 import Series from '../../Core/Series/Series.js';
 import SeriesLabelDefaults from './SeriesLabelDefaults.js';
 import SLU from './SeriesLabelUtilities.js';
@@ -49,6 +69,12 @@ const {
     pick,
     syncTimeout
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -81,53 +107,6 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-interface LabelClearPointObject extends PositionObject {
-    connectorPoint?: Point;
-    weight: number;
-}
-
-/**
- * Containing the position of a box that should be avoided by labels.
- *
- * @interface Highcharts.LabelIntersectBoxObject
- *//**
- * @name Highcharts.LabelIntersectBoxObject#bottom
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#left
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#right
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#top
- * @type {number}
- */
-
-/*
- * Highcharts module to place labels next to a series in a natural position.
- *
- * TODO:
- * - add column support (box collision detection, boxesToAvoid logic)
- * - avoid data labels, when data labels above, show series label below.
- * - add more options (connector, format, formatter)
- *
- * https://jsfiddle.net/highcharts/L2u9rpwr/
- * https://jsfiddle.net/highcharts/y5A37/
- * https://jsfiddle.net/highcharts/264Nm/
- * https://jsfiddle.net/highcharts/y5A37/
- */
-
-''; // detach doclets above
-
-const composedClasses: Array<Function> = [];
-
-const labelDistance = 3;
-
-setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
-
-/* eslint-disable valid-jsdoc */
-
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/SeriesLabel */
@@ -135,12 +114,26 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
+interface LabelClearPointObject extends PositionObject {
+    connectorPoint?: Point;
+    weight: number;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+const labelDistance = 3;
+
 /* *
  *
  *  Functions
  *
  * */
-
 
 /**
  * Check whether a proposed label position is clear of other elements.
@@ -361,6 +354,12 @@ function compose(
         composedClasses.push(SVGRendererClass);
 
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
+    }
+
+    if (composedClasses.indexOf(setOptions) === -1) {
+        composedClasses.push(setOptions);
+
+        setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 
 }
@@ -1025,11 +1024,40 @@ function symbolConnector(
     return path || [];
 }
 
-/* eslint-disable no-invalid-this */
-
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 const SeriesLabel = {
     compose
 };
 
 export default SeriesLabel;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Containing the position of a box that should be avoided by labels.
+ *
+ * @interface Highcharts.LabelIntersectBoxObject
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#bottom
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#right
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#top
+ * @type {number}
+ */
+
+(''); // keeps doclets above in JS file

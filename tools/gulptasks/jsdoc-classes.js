@@ -59,7 +59,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
-    'js/Extensions/SeriesLabel.js',
+    'js/Extensions/SeriesLabel/SeriesLabel.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
     'js/Series/Networkgraph/*.js',
