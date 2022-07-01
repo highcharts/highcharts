@@ -9,8 +9,15 @@
 import type Annotation from '../Annotation';
 import type { AnnotationsShapeOptions } from '../AnnotationsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
+import Controllable from './Controllable.js';
 import ControllableLabel from './ControllableLabel.js';
-import ControllableMixin from '../Mixins/ControllableMixin.js';
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        image: typeof ControllableImage;
+    }
+}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -32,7 +39,7 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
  * @param {number} index
  * Index of the image.
  */
-class ControllableImage implements ControllableMixin.Type {
+class ControllableImage extends Controllable {
 
     /* *
      *
@@ -63,8 +70,7 @@ class ControllableImage implements ControllableMixin.Type {
         options: AnnotationsShapeOptions,
         index: number
     ) {
-        this.init(annotation, options, index);
-        this.collection = 'shapes';
+        super(annotation, options, index, 'shape');
     }
 
     /* *
@@ -73,33 +79,9 @@ class ControllableImage implements ControllableMixin.Type {
      *
      * */
 
-    public addControlPoints = ControllableMixin.addControlPoints;
-    public anchor = ControllableMixin.anchor;
-    public attr = ControllableMixin.attr;
-    public attrsFromOptions = ControllableMixin.attrsFromOptions;
-    public destroy = ControllableMixin.destroy;
-    public getPointsOptions = ControllableMixin.getPointsOptions;
-    public init = ControllableMixin.init;
-    public linkPoints = ControllableMixin.linkPoints;
-    public point = ControllableMixin.point;
-    public rotate = ControllableMixin.rotate;
-    public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = (
-        ControllableMixin.setControlPointsVisibility
-    );
-    public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
-    public transform = ControllableMixin.transform;
-    public transformPoint = ControllableMixin.transformPoint;
-    public translatePoint = ControllableMixin.translatePoint;
-    public translateShape = ControllableMixin.translateShape;
-    public update = ControllableMixin.update;
-
-    /**
-     * @type 'image'
-     */
     public type = 'image';
 
-    public translate = ControllableMixin.translateShape;
+    public translate = super.translateShape;
 
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options),
@@ -113,37 +95,41 @@ class ControllableImage implements ControllableMixin.Type {
         this.graphic.width = options.width;
         this.graphic.height = options.height;
 
-        ControllableMixin.render.call(this);
+        super.render();
     }
 
     public redraw(animation?: boolean): void {
-        const anchor = this.anchor(this.points[0]),
-            position = ControllableLabel.prototype.position.call(
-                this,
-                anchor
-            );
 
-        if (position) {
-            this.graphic[animation ? 'animate' : 'attr']({
-                x: position.x,
-                y: position.y
-            });
-        } else {
-            this.graphic.attr({
-                x: 0,
-                y: -9e9
-            });
+        if (this.graphic) {
+            const anchor = this.anchor(this.points[0]),
+                position = ControllableLabel.prototype.position.call(
+                    this,
+                    anchor
+                );
+
+            if (position) {
+                this.graphic[animation ? 'animate' : 'attr']({
+                    x: position.x,
+                    y: position.y
+                });
+            } else {
+                this.graphic.attr({
+                    x: 0,
+                    y: -9e9
+                });
+            }
+
+            this.graphic.placed = Boolean(position);
         }
 
-        this.graphic.placed = Boolean(position);
-
-        ControllableMixin.redraw.call(this, animation);
+        super.redraw(animation);
     }
 
 }
 
-interface ControllableImage extends ControllableMixin.Type {
-    // adds mixin property types, created during init
+interface ControllableImage {
+    collections: 'shapes';
+    itemType: 'shape';
     options: AnnotationsShapeOptions;
 }
 

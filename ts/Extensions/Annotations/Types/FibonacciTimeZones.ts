@@ -27,15 +27,15 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationControllable {
-            secondLineEdgePoints: [Function, Function];
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Controllables/ControllableLike' {
+    interface ControllableLike {
+        secondLineEdgePoints: [Function, Function];
     }
 }
 

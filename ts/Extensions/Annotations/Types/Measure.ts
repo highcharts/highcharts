@@ -14,6 +14,7 @@ import type {
     AnnotationsTypeOptions
 } from '../AnnotationsOptions';
 import type Axis from '../../../Core/Axis/Axis';
+import type Controllable from '../Controllables/Controllable';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -796,7 +797,7 @@ class Measure extends Annotation {
 
     public translate(dx: number, dy: number): void {
         this.shapes.forEach(function (
-            item: Highcharts.AnnotationShapeType
+            item
         ): void {
             item.translate(dx, dy);
         });
@@ -1013,7 +1014,7 @@ Measure.prototype.defaultOptions = merge(
         },
         controlPointOptions: {
             positioner: function (
-                this: Highcharts.AnnotationControllable,
+                this: Controllable,
                 target: Measure
             ): PositionObject {
                 let cpIndex = this.index,
