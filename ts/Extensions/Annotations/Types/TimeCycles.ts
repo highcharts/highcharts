@@ -26,17 +26,6 @@ import MockPointOptions from '../MockPointOptions';
 import SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 const { merge, isNumber, defined } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationControllable {
-            secondLineEdgePoints: [Function, Function];
-        }
-    }
-}
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;

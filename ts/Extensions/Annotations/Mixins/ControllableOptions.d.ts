@@ -9,6 +9,9 @@ import type {
     AnnotationControlPointPositionerFunction
 } from '../ControlPointOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
 
@@ -35,18 +38,6 @@ export interface AnnotationControllableOptionsObject {
 
 export interface AnnotationControlPointEventsOptionsObject {
     drag?: AnnotationControlPointDragEventFunction;
-}
-
-export interface AnnotationControlPointOptionsObject {
-    draggable?: undefined;
-    events: AnnotationControlPointEventsOptionsObject;
-    height: number;
-    index?: number;
-    positioner: AnnotationControlPointPositionerFunction;
-    style: CSSObject;
-    symbol: SymbolKey;
-    visible: boolean;
-    width: number;
 }
 
 /* *

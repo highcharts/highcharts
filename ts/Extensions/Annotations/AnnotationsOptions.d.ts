@@ -26,6 +26,10 @@ import type {
 } from './ControlPointOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from './Controllables/ControllableOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
@@ -94,10 +98,10 @@ export interface AnnotationsOptions extends AnnotationControllableOptionsObject 
     events: AnnotationsEventsOptions;
     id?: (number|string);
     itemType?: string;
-    labelOptions?: AnnotationsLabelOptions;
-    labels: Array<AnnotationsLabelsOptions>;
-    shapeOptions: AnnotationsShapeOptions;
-    shapes?: Array<AnnotationsShapesOptions>;
+    labelOptions?: ControllableLabelOptions;
+    labels: Array<ControllableLabelOptions>;
+    shapeOptions: ControllableShapeOptions;
+    shapes?: Array<ControllableShapeOptions>;
     type?: string;
     typeOptions: AnnotationsTypeOptions;
     visible: boolean;
@@ -109,7 +113,7 @@ export interface AnnotationsShapeOptions extends AnnotationControllableOptionsOb
     height?: number;
     r: number;
     ry: number;
-    shapes: Array<AnnotationsShapeOptions>;
+    shapes: Array<ControllableShapeOptions>;
     snap: number;
     src: string;
     stroke: ColorString;
@@ -124,9 +128,9 @@ export interface AnnotationsShapesOptions extends AnnotationsShapeOptions {
     points?: Array<(string|MockPointOptions)>;
 }
 export interface AnnotationsTypeOptions {
-    background?: AnnotationsShapeOptions;
+    background?: Partial<AnnotationsShapeOptions>;
     height?: number;
-    line?: AnnotationsShapeOptions;
+    line?: Partial<AnnotationsShapeOptions>;
     point: MockPointOptions;
     points?: Array<AnnotationsTypePointsOptions>;
     xAxis?: number;

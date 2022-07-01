@@ -16,14 +16,15 @@ import '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
-import type { AnnotationsLabelOptions } from '../AnnotationsOptions';
+import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
+import type { ControllableLabelOptions } from './ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
-import ControllableMixin from '../Mixins/ControllableMixin.js';
+import Controllable from './Controllable.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
@@ -36,6 +37,12 @@ const {
     isNumber,
     pick
 } = U;
+
+declare module './ControllableType' {
+    interface ControllableLabelTypeRegistry {
+        label: typeof ControllableLabel;
+    }
+}
 
 /**
  * Internal types.
@@ -68,7 +75,7 @@ declare global {
  * @param {number} index
  * Index of the label.
  */
-class ControllableLabel implements ControllableMixin.Type {
+class ControllableLabel extends Controllable {
 
     /* *
      *
@@ -234,11 +241,10 @@ class ControllableLabel implements ControllableMixin.Type {
 
     public constructor(
         annotation: Annotation,
-        options: AnnotationsLabelOptions,
+        options: ControllableLabelOptions,
         index: number
     ) {
-        this.init(annotation, options, index);
-        this.collection = 'labels';
+        super(annotation, options, index, 'label');
     }
 
     /* *
@@ -246,25 +252,6 @@ class ControllableLabel implements ControllableMixin.Type {
      *  Properties
      *
      * */
-
-    public addControlPoints = ControllableMixin.addControlPoints;
-    public attr = ControllableMixin.attr;
-    public attrsFromOptions = ControllableMixin.attrsFromOptions;
-    public destroy = ControllableMixin.destroy;
-    public getPointsOptions = ControllableMixin.getPointsOptions;
-    public init = ControllableMixin.init;
-    public linkPoints = ControllableMixin.linkPoints;
-    public point = ControllableMixin.point;
-    public rotate = ControllableMixin.rotate;
-    public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = (
-        ControllableMixin.setControlPointsVisibility
-    );
-    public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
-    public transform = ControllableMixin.transform;
-    public transformPoint = ControllableMixin.transformPoint;
-    public translateShape = ControllableMixin.translateShape;
-    public update = ControllableMixin.update;
 
     public text?: string;
 
@@ -282,7 +269,7 @@ class ControllableLabel implements ControllableMixin.Type {
      * @param {number} dy translation for y coordinate
      */
     public translatePoint(dx: number, dy: number): void {
-        ControllableMixin.translatePoint.call(this, dx, dy, 0);
+        super.translatePoint(dx, dy, 0);
     }
 
     /**
@@ -357,7 +344,7 @@ class ControllableLabel implements ControllableMixin.Type {
 
         this.graphic.labelrank = (options as any).labelrank;
 
-        ControllableMixin.render.call(this);
+        super.render();
     }
 
     public redraw(animation?: boolean): void {
@@ -365,6 +352,11 @@ class ControllableLabel implements ControllableMixin.Type {
             text = this.text || options.format || options.text,
             label = this.graphic,
             point = this.points[0];
+
+        if (!label) {
+            this.redraw(animation);
+            return;
+        }
 
         label.attr({
             text: text ?
@@ -395,7 +387,7 @@ class ControllableLabel implements ControllableMixin.Type {
 
         label.placed = !!attrs;
 
-        ControllableMixin.redraw.call(this, animation);
+        super.redraw(animation);
     }
 
     /**
@@ -405,8 +397,8 @@ class ControllableLabel implements ControllableMixin.Type {
      */
     public anchor(
         _point: Highcharts.AnnotationPointType
-    ): Highcharts.AnnotationAnchorObject {
-        const anchor = ControllableMixin.anchor.apply(this, arguments),
+    ): ControllableAnchorObject {
+        const anchor = super.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
 
@@ -423,7 +415,7 @@ class ControllableLabel implements ControllableMixin.Type {
      * Returns the label position relative to its anchor.
      */
     public position(
-        anchor: Highcharts.AnnotationAnchorObject
+        anchor: ControllableAnchorObject
     ): (PositionObject|null|undefined) {
         const item = this.graphic,
             chart = this.annotation.chart,
@@ -441,9 +433,8 @@ class ControllableLabel implements ControllableMixin.Type {
                 point.series.visible &&
                 MockPoint.prototype.isInsidePlot.call(point);
 
-        const { width = 0, height = 0 } = item;
-
-        if (showItem) {
+        if (item && showItem) {
+            const { width = 0, height = 0 } = item;
 
             if (itemOptions.distance) {
                 itemPosition = Tooltip.prototype.getPosition.call(
@@ -475,7 +466,7 @@ class ControllableLabel implements ControllableMixin.Type {
                 };
 
                 itemPosition = ControllableLabel.alignedPosition(
-                    extend<AnnotationsLabelOptions|BBoxObject>(
+                    extend<ControllableLabelOptions|BBoxObject>(
                         itemOptions, {
                             width,
                             height
@@ -518,10 +509,10 @@ class ControllableLabel implements ControllableMixin.Type {
     }
 }
 
-interface ControllableLabel extends ControllableMixin.Type {
-    // adds mixin property types, created during init
+interface ControllableLabel {
+    collection: 'labels';
     itemType: 'label';
-    options: AnnotationsLabelOptions;
+    options: ControllableLabelOptions;
 }
 
 export default ControllableLabel;

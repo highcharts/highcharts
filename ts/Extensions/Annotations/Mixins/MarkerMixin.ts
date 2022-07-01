@@ -44,6 +44,13 @@ declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
+declare module '../Controllables/ControllableLike' {
+    interface ControllableLike {
+        markerEnd?: SVGElement;
+        markerStart?: SVGElement;
+    }
+}
+
 /**
  * Internal types.
  * @private

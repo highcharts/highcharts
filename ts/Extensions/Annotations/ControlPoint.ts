@@ -7,7 +7,7 @@
 import type {
     AnnotationControlPointOptionsObject
 } from './ControlPointOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Controllable from './Controllables/Controllable';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 declare module './MockPointOptions' {
@@ -25,7 +25,7 @@ declare global {
         class AnnotationControlPoint implements AnnotationEventEmitter {
             public constructor(
                 chart: AnnotationChart,
-                target: AnnotationControllable,
+                target: Controllable,
                 options: Partial<AnnotationControlPointOptionsObject>,
                 index?: number
             );
@@ -50,7 +50,7 @@ declare global {
             public removeDocEvents: AnnotationEventEmitterMixin[
                 'removeDocEvents'
             ];
-            public target: AnnotationControllable;
+            public target: Controllable;
             public destroy(): void;
             public redraw(animation?: boolean): void;
             public render(): void;
@@ -107,7 +107,7 @@ import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
 class ControlPoint implements eventEmitterMixin.Type {
     public constructor(
         chart: Highcharts.AnnotationChart,
-        target: Highcharts.AnnotationControllable,
+        target: Controllable,
         options: AnnotationControlPointOptionsObject,
         index?: number
     ) {
@@ -135,7 +135,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public onMouseUp = eventEmitterMixin.onMouseUp;
     public options: AnnotationControlPointOptionsObject;
     public removeDocEvents = eventEmitterMixin.removeDocEvents;
-    public target: Highcharts.AnnotationControllable;
+    public target: Controllable;
 
     /**
      *

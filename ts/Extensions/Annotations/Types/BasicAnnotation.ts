@@ -13,6 +13,7 @@ import type AnnotationsOptions from '../AnnotationsOptions';
 import type {
     AnnotationControlPointOptionsObject
 } from '../ControlPointOptions';
+import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
 import type ControllableRect from '../Controllables/ControllableRect';
@@ -42,7 +43,7 @@ class BasicAnnotation extends Annotation {
             symbol: 'triangle-down',
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
-                target: Highcharts.AnnotationControllable
+                target: Controllable
             ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
@@ -77,7 +78,7 @@ class BasicAnnotation extends Annotation {
             symbol: 'square',
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
-                target: Highcharts.AnnotationControllable
+                target: Controllable
             ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
@@ -98,7 +99,7 @@ class BasicAnnotation extends Annotation {
                 drag: function (
                     this: Annotation,
                     e: Highcharts.AnnotationEventObject,
-                    target: Highcharts.AnnotationControllable
+                    target: Controllable
                 ): void {
                     const xy = this.mouseMoveToTranslation(e);
                     target.translate(xy.x, xy.y);
@@ -153,7 +154,7 @@ class BasicAnnotation extends Annotation {
         circle: [{
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
-                target: Highcharts.AnnotationControllable
+                target: Controllable
             ): PositionObject {
                 const xy = MockPoint.pointToPixels(target.points[0]),
                     r: number = target.options.r as any;

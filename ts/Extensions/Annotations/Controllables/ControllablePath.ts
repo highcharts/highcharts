@@ -12,13 +12,20 @@ import type {
 } from '../AnnotationsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import ControllableMixin from '../Mixins/ControllableMixin.js';
+
+import Controllable from './Controllable.js';
 import H from '../../../Core/Globals.js';
 import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend
 } = U;
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        path: typeof ControllablePath;
+    }
+}
 
 /**
  * Internal types.
@@ -57,7 +64,7 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  * @param {number} index
  * Index of the path.
  */
-class ControllablePath implements ControllableMixin.Type {
+class ControllablePath extends Controllable {
 
     /* *
      *
@@ -90,8 +97,7 @@ class ControllablePath implements ControllableMixin.Type {
         options: AnnotationsShapeOptions,
         index: number
     ) {
-        this.init(annotation, options, index);
-        this.collection = 'shapes';
+        super(annotation, options, index, 'shape');
     }
 
     /* *
@@ -100,31 +106,8 @@ class ControllablePath implements ControllableMixin.Type {
      *
      * */
 
-    public addControlPoints = ControllableMixin.addControlPoints;
-    public anchor = ControllableMixin.anchor;
-    public attr = ControllableMixin.attr;
-    public attrsFromOptions = ControllableMixin.attrsFromOptions;
-    public destroy = ControllableMixin.destroy;
-    public getPointsOptions = ControllableMixin.getPointsOptions;
-    public init = ControllableMixin.init;
-    public linkPoints = ControllableMixin.linkPoints;
-    public point = ControllableMixin.point;
-    public rotate = ControllableMixin.rotate;
-    public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = (
-        ControllableMixin.setControlPointsVisibility
-    );
     public setMarkers = MarkerMixin.setItemMarkers;
-    public transform = ControllableMixin.transform;
-    public transformPoint = ControllableMixin.transformPoint;
-    public translate = ControllableMixin.translate;
-    public translatePoint = ControllableMixin.translatePoint;
-    public translateShape = ControllableMixin.translateShape;
-    public update = ControllableMixin.update;
 
-    /**
-     * @type 'path'
-     */
     public type = 'path';
 
     /* *
@@ -177,16 +160,15 @@ class ControllablePath implements ControllableMixin.Type {
             }
         }
 
-        return showPath ?
-            this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
-            null;
+        return (
+            showPath && this.graphic ?
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
+                null
+        );
     }
 
     public shouldBeDrawn(): boolean {
-        return (
-            ControllableMixin.shouldBeDrawn.call(this) ||
-            Boolean(this.options.d)
-        );
+        return super.shouldBeDrawn() || !!this.options.d;
     }
 
     public render(parent: SVGElement): void {
@@ -220,7 +202,7 @@ class ControllablePath implements ControllableMixin.Type {
             });
         }
 
-        ControllableMixin.render.call(this);
+        super.render();
 
         extend(this.graphic, {
             markerStartSetter: MarkerMixin.markerStartSetter,
@@ -232,25 +214,28 @@ class ControllablePath implements ControllableMixin.Type {
 
     public redraw(animation?: boolean): void {
 
-        const d = this.toD(),
-            action = animation ? 'animate' : 'attr';
+        if (this.graphic) {
+            const d = this.toD(),
+                action = animation ? 'animate' : 'attr';
 
-        if (d) {
-            this.graphic[action]({ d: d });
-            this.tracker[action]({ d: d });
-        } else {
-            this.graphic.attr({ d: 'M 0 ' + -9e9 });
-            this.tracker.attr({ d: 'M 0 ' + -9e9 });
+            if (d) {
+                this.graphic[action]({ d: d });
+                this.tracker[action]({ d: d });
+            } else {
+                this.graphic.attr({ d: 'M 0 ' + -9e9 });
+                this.tracker.attr({ d: 'M 0 ' + -9e9 });
+            }
+
+            this.graphic.placed = this.tracker.placed = !!d;
         }
 
-        this.graphic.placed = this.tracker.placed = Boolean(d);
-
-        ControllableMixin.redraw.call(this, animation);
+        super.redraw(animation);
     }
 }
 
-interface ControllablePath extends ControllableMixin.Type {
-    // adds mixin property types, created during init
+interface ControllablePath {
+    collections: 'shapes';
+    itemType: 'shape';
     options: AnnotationsShapeOptions;
     tracker: Highcharts.SVGAnnotationElement;
 }
