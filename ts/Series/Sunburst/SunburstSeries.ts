@@ -176,7 +176,7 @@ function getDlOptions(
                 // Trigger the destroyTextPath function
                 if (
                     point.dataLabel &&
-                    point.dataLabel.textPathWrapper &&
+                    point.dataLabel.textPath &&
                     rotationMode === 'circular'
                 ) {
                     options.textPath = {
