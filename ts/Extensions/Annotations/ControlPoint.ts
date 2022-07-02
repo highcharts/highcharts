@@ -4,6 +4,7 @@
  *
  * */
 
+import type Annotation from './Annotation';
 import type {
     AnnotationControlPointOptionsObject
 } from './ControlPointOptions';

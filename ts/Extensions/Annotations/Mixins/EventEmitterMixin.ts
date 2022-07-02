@@ -41,7 +41,7 @@ declare global {
             removeDrag?: Function;
             removeMouseUp?: Function;
             shapes?: Array<ControllableShapeType>;
-            target?: Controllable;
+            target?: (Annotation|Controllable);
             redraw(animation?: boolean): void;
         }
         interface AnnotationEventEmitterMixin {

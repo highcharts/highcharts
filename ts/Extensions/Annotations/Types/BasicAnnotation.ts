@@ -6,9 +6,6 @@
 
 'use strict';
 
-import type {
-    AnnotationControllableOptionsObject
-} from '../Mixins/ControllableOptions';
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type {
     AnnotationControlPointOptionsObject
@@ -328,9 +325,7 @@ class BasicAnnotation extends Annotation {
             annotationType = this.basicType,
             optionsGroup = options.labels || options.shapes;
 
-        optionsGroup.forEach(function (
-            group: AnnotationControllableOptionsObject
-        ): void {
+        optionsGroup.forEach((group): void => {
             group.controlPoints = (controlPoints as any)[annotationType];
         });
     }

@@ -150,7 +150,7 @@ class Fibonacci extends Tunnel {
         if (!point) {
             retracements[pointIndex] = new MockPoint(
                 this.chart,
-                this,
+                this as any,
                 {
                     x: x,
                     y: y,

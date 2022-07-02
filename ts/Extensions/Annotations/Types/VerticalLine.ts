@@ -7,12 +7,14 @@
 'use strict';
 
 import type {
-    AnnotationsLabelOptions,
     AnnotationsOptions,
-    AnnotationsShapeOptions,
     AnnotationsTypeOptions
 } from '../AnnotationsOptions';
 import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
@@ -209,11 +211,11 @@ namespace VerticalLine {
     export interface Options extends AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends AnnotationsLabelOptions {
+    export interface TypeLabelOptions extends ControllableLabelOptions {
         offset: number;
     }
     export interface TypeOptions extends AnnotationsTypeOptions {
-        connector: Partial<AnnotationsShapeOptions>;
+        connector: Partial<ControllableShapeOptions>;
         label: TypeLabelOptions;
         yOffset: number;
     }
