@@ -35,6 +35,7 @@ import U from '../../Utilities.js';
 const {
     attr,
     extend,
+    fireEvent,
     isString,
     objectEach,
     pick
@@ -89,8 +90,7 @@ class TextBuilder {
      */
     public buildSVG(): void {
         const wrapper = this.svgElement,
-            element = wrapper.element,
-            textNode = element.querySelector('textPath') || element,
+            textNode = wrapper.element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
@@ -139,7 +139,7 @@ class TextBuilder {
 
             if (tempParent) {
                 // attach it to the DOM to read offset width
-                tempParent.appendChild(element);
+                tempParent.appendChild(textNode);
             }
 
             // Step 1. Parse the markup safely and directly into a tree
@@ -170,7 +170,7 @@ class TextBuilder {
                 );
             }
             if (tempParent) {
-                tempParent.removeChild(element);
+                tempParent.removeChild(textNode);
             }
         }
 
@@ -479,6 +479,8 @@ class TextBuilder {
         };
 
         nodes.forEach(modifyChild);
+
+        fireEvent(this.svgElement, 'afterModifyTree', { nodes });
     }
 
     /*

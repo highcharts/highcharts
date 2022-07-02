@@ -72,6 +72,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -90,6 +91,11 @@ declare module '../CSSObject' {
         stroke?: ColorString;
         strokeWidth?: (number|string);
     }
+}
+
+interface TextPathObject {
+    path: SVGElement;
+    undo: Function;
 }
 
 /* *
@@ -191,7 +197,7 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     // @todo public textWidth?: number;
-    public textPathWrapper?: SVGElement;
+    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
@@ -1299,9 +1305,9 @@ class SVGElement implements SVGElementLike {
         this.shadows = void 0;
     }
 
-    /**
+    /*
      * @private
-     */
+     * /
     public destroyTextPath(
         elem: DOMElementType,
         path: SVGElement
@@ -1341,6 +1347,7 @@ class SVGElement implements SVGElementLike {
             this.textPathWrapper = this.textPathWrapper.destroy();
         }
     }
+    */
 
     /**
      * @private
@@ -1918,6 +1925,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
+     * Set a text path for the text to follow
      * @private
      * @function Highcharts.SVGElement#setTextPath
      * @param {Highcharts.SVGElement|undefined} path
@@ -1932,6 +1940,106 @@ class SVGElement implements SVGElementLike {
         path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
+        /*
+        @todo Text path refactoring
+        - Do not apply text shadow when `textPath` exists. But first check if it
+          can be done to preserve text shadow.
+        - Feature parity.
+            - Ask Pawel if doubt. x/dx hack...
+            - Label and options.padding
+            - Remove background and border
+            - Must updateTransform be overridden?
+        - Modify implementations to run setTextPath before add
+        - Sunburst (and others?): Do not add path inside the label "group"
+          (which is actually the <text>), because it gets deleted by buildText.
+        - Check Safari (the href namespace comment)
+        */
+
+        // Defaults
+        textPathOptions = merge(true, {
+            enabled: true,
+            attributes: {
+                dy: -5,
+                startOffset: '50%',
+                textAnchor: 'middle'
+            }
+        }, textPathOptions);
+
+        const url = this.renderer.url,
+            textWrapper = this.text || this,
+            textPath = textWrapper.textPath,
+            { attributes, enabled } = textPathOptions;
+
+        path = path || (textPath && textPath.path);
+
+        // Remove previously added event
+        if (textPath) {
+            textPath.undo();
+        }
+
+        if (path && enabled) {
+            const undo = addEvent(textWrapper, 'afterModifyTree', (
+                e: AnyRecord
+            ): void => {
+
+                const textNode = e.nodes[0];
+
+                if (path && enabled) {
+
+                    // Set ID for the path
+                    let textPathId = path.attr('id');
+                    if (!textPathId) {
+                        path.attr('id', textPathId = uniqueKey());
+                    }
+
+                    const textAttribs: SVGAttributes = {
+                        // dx/dy options must by set on <text> (parent), the
+                        // rest should be set on <textPath>
+                        y: 0,
+                        // Remove translation, text that follows path does not
+                        // need that
+                        transform: ''
+                    };
+
+                    if (defined(attributes.dx)) {
+                        textAttribs.dx = attributes.dx;
+                        textAttribs.x = -attributes.dx;
+                        delete attributes.dx;
+                    }
+                    if (defined(attributes.dy)) {
+                        textAttribs.dy = attributes.dy;
+                        delete attributes.dy;
+                    }
+                    textWrapper.attr(textAttribs);
+
+                    e.nodes[0] = {
+                        tagName: 'textPath',
+                        attributes: extend(attributes, {
+                            'text-anchor': attributes.textAnchor,
+                            href: `${url}#${textPathId}`
+                        }),
+                        children: [textNode]
+                    };
+                }
+            });
+
+            // Set the reference
+            textWrapper.textPath = { path, undo };
+
+        } else {
+            textWrapper.attr({ dx: 0, dy: 0 });
+            delete textWrapper.textPath;
+        }
+
+        if (this.added) {
+
+            // Rebuild text after added
+            textWrapper.textCache = '';
+            this.renderer.buildText(textWrapper);
+        }
+
+        /*
+
         const elem = this.element,
             textWrapper = this.text || this,
             textNode = textWrapper.element;
@@ -2073,7 +2181,7 @@ class SVGElement implements SVGElementLike {
                 this.applyTextOutline(this.options.style.textOutline);
             }
         }
-
+        */
         return this;
     }
 
