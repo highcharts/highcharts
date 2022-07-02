@@ -580,7 +580,7 @@ abstract class Controllable {
      * @private
      */
     public update(
-        newOptions: ControllableOptions
+        newOptions: DeepPartial<ControllableOptions>
     ): void {
         const annotation = this.annotation,
             options = merge(true, this.options, newOptions),

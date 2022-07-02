@@ -80,7 +80,7 @@ class CrookedLine extends Annotation {
             ): void {
                 const controlPoint = new ControlPoint(
                     this.chart,
-                    this,
+                    this as any,
                     merge(
                         this.options.controlPointOptions,
                         pointOptions.controlPoint

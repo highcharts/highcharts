@@ -84,7 +84,7 @@ class Tunnel extends CrookedLine {
             typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.heightControlPoint

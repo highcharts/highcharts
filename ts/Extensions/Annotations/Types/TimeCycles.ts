@@ -91,15 +91,19 @@ class TimeCycles extends CrookedLine {
         index?: number
     ): void {
         if (defined(options.yAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.yAxis = options.yAxis;
-            });
+            (options.points as MockPointOptions[]).forEach(
+                (point): void => {
+                    point.yAxis = options.yAxis;
+                }
+            );
         }
 
         if (defined(options.xAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.xAxis = options.xAxis;
-            });
+            (options.points as MockPointOptions[]).forEach(
+                (point): void => {
+                    point.xAxis = options.xAxis;
+                }
+            );
         }
         super.init.call(this, annotation, options, index);
     }
@@ -150,7 +154,7 @@ class TimeCycles extends CrookedLine {
                 );
                 const controlPoint = new ControlPoint(
                     this.chart,
-                    this,
+                    this as any,
                     controlPointsOptions,
                     0
                 );

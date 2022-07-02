@@ -17,11 +17,7 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type {
-    AnnotationsLabelsOptions,
-    AnnotationsOptions,
-    AnnotationsShapesOptions
-} from './AnnotationsOptions';
+import type AnnotationsOptions from './AnnotationsOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type AxisType from '../../Core/Axis/AxisType';
@@ -33,6 +29,7 @@ import type {
 } from './Controllables/ControllableType';
 import type {
     ControllableLabelOptions,
+    ControllableOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
@@ -397,13 +394,13 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
                             basicOptions: (
-                                AnnotationsLabelsOptions|
-                                AnnotationsShapesOptions
+                                ControllableLabelOptions|
+                                ControllableShapeOptions
                             ),
                             i: number
                         ): (
-                            AnnotationsLabelsOptions|
-                            AnnotationsShapesOptions
+                            ControllableLabelOptions|
+                            ControllableShapeOptions
                             ) {
                             return merge(someBaseOptions[i], basicOptions);
                         }
@@ -724,7 +721,7 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
         options.shapes = labelsAndShapes.shapes;
 
         this.destroy();
-        (this as any).constructor(chart, options);
+        this.constructor(chart, options);
 
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
@@ -753,7 +750,7 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
      * shapes.index.
      */
     public initShape(
-        shapeOptions: Partial<AnnotationsShapesOptions>,
+        shapeOptions: Partial<ControllableShapeOptions>,
         index: number
     ): ControllableShapeType {
         const options = merge(
@@ -897,7 +894,7 @@ interface Annotation extends EventEmitterMixin.Type, Controllable {
 merge<Annotation>(
     true,
     Annotation.prototype,
-    Controllable.prototype,
+    Controllable.prototype as any,
     EventEmitterMixin,
     // restore original Annotation implementation after mixin overwrite
     merge(

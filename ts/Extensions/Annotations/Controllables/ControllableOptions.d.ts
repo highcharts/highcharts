@@ -23,6 +23,7 @@ import type {
 } from '../ControlPointOptions';
 import type ColorType from '../../../Core/Color/ColorType';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
     DataLabelOverflowValue
 } from '../../../Core/Series/DataLabelOptions';
@@ -44,8 +45,13 @@ import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
 export interface ControllableLabelOptions extends ControllableOptions {
     align: AlignValue;
     allowOverlap: boolean;
-    backgroundColor: ColorType;
+    backgroundColor?: ColorType;
+    color?: ColorType;
+    borderColor?: ColorType;
+    borderRadius?: number;
+    borderWidth?: number;
     crop: boolean;
+    dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
     formatter: FormatUtilities.FormatterCallback<Point>;
@@ -58,7 +64,9 @@ export interface ControllableLabelOptions extends ControllableOptions {
     useHTML: boolean;
     verticalAlign: VerticalAlignValue;
     x: number;
+    xAxis?: number|string;
     y: number;
+    yAxis?: number|string;
 }
 
 export interface ControllableOptions {
@@ -79,9 +87,15 @@ export interface ControllableOptions {
 }
 
 export interface ControllableShapeOptions extends ControllableOptions {
-    d?: SVGPath;
+    d?: (string|Function|SVGPath);
+    fill?: ColorType;
+    height?: number;
     r: number;
+    snap?: number;
+    src?: string;
+    stroke?: ColorType;
     type: string;
+    width?: number;
 }
 
 /* *

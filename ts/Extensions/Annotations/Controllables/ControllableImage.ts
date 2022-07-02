@@ -7,7 +7,7 @@
 'use strict';
 
 import type Annotation from '../Annotation';
-import type { AnnotationsShapeOptions } from '../AnnotationsOptions';
+import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import Controllable from './Controllable.js';
@@ -67,7 +67,7 @@ class ControllableImage extends Controllable {
 
     public constructor(
         annotation: Annotation,
-        options: AnnotationsShapeOptions,
+        options: ControllableShapeOptions,
         index: number
     ) {
         super(annotation, options, index, 'shape');
@@ -130,7 +130,7 @@ class ControllableImage extends Controllable {
 interface ControllableImage {
     collections: 'shapes';
     itemType: 'shape';
-    options: AnnotationsShapeOptions;
+    options: ControllableShapeOptions;
 }
 
 export default ControllableImage;

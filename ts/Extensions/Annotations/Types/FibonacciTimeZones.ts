@@ -174,7 +174,7 @@ class FibonacciTimeZones extends CrookedLine {
             typeOptions = options.typeOptions as FibonacciTimeZones.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.controlPointOptions

@@ -7,9 +7,7 @@
 'use strict';
 
 import type Annotation from '../Annotation';
-import type {
-    AnnotationsShapeOptions
-} from '../AnnotationsOptions';
+import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
@@ -94,7 +92,7 @@ class ControllablePath extends Controllable {
 
     public constructor(
         annotation: Annotation,
-        options: AnnotationsShapeOptions,
+        options: ControllableShapeOptions,
         index: number
     ) {
         super(annotation, options, index, 'shape');
@@ -236,7 +234,7 @@ class ControllablePath extends Controllable {
 interface ControllablePath {
     collections: 'shapes';
     itemType: 'shape';
-    options: AnnotationsShapeOptions;
+    options: ControllableShapeOptions;
     tracker: Highcharts.SVGAnnotationElement;
 }
 
