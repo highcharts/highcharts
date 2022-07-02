@@ -645,8 +645,9 @@ class SVGElement implements SVGElementLike {
 
             // For each of the tspans and text nodes, create a copy in the
             // outline.
+            const parentElem = elem.querySelector('textPath') || elem;
             [].forEach.call(
-                elem.childNodes,
+                parentElem.childNodes,
                 (childNode: ChildNode): void => {
                     const clone = childNode.cloneNode(true);
                     if ((clone as any).removeAttribute) {
@@ -673,7 +674,7 @@ class SVGElement implements SVGElementLike {
 
             // Insert the outline
             outline.appendChild(br);
-            elem.insertBefore(outline, elem.firstChild);
+            parentElem.insertBefore(outline, parentElem.firstChild);
 
         }
     }
@@ -1942,17 +1943,14 @@ class SVGElement implements SVGElementLike {
     ): this {
         /*
         @todo Text path refactoring
-        - Do not apply text shadow when `textPath` exists. But first check if it
-          can be done to preserve text shadow.
         - Feature parity.
             - Ask Pawel if doubt. x/dx hack...
             - Label and options.padding
             - Remove background and border
             - Must updateTransform be overridden?
-        - Modify implementations to run setTextPath before add
         - Sunburst (and others?): Do not add path inside the label "group"
           (which is actually the <text>), because it gets deleted by buildText.
-        - Check Safari (the href namespace comment)
+          Find another strategy to make sure it is destroyed.
         */
 
         // Defaults
@@ -1982,8 +1980,6 @@ class SVGElement implements SVGElementLike {
                 e: AnyRecord
             ): void => {
 
-                const textNode = e.nodes[0];
-
                 if (path && enabled) {
 
                     // Set ID for the path
@@ -2012,13 +2008,15 @@ class SVGElement implements SVGElementLike {
                     }
                     textWrapper.attr(textAttribs);
 
+                    const children = e.nodes.slice(0);
+                    e.nodes.length = 0;
                     e.nodes[0] = {
                         tagName: 'textPath',
                         attributes: extend(attributes, {
                             'text-anchor': attributes.textAnchor,
                             href: `${url}#${textPathId}`
                         }),
-                        children: [textNode]
+                        children
                     };
                 }
             });
