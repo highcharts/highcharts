@@ -395,7 +395,8 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        const style = this.text.element.style,
+        const text = this.text,
+            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
@@ -406,8 +407,8 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.widthSetting) ||
                     !isNumber(this.heightSetting) ||
                     this.textAlign
-                ) && defined(this.text.textStr)) ?
-                    this.text.getBBox() :
+                ) && defined(text.textStr)) ?
+                    text.getBBox() :
                     SVGLabel.emptyBBox
             );
 
@@ -418,7 +419,7 @@ class SVGLabel extends SVGElement {
 
         const metrics = this.renderer.fontMetrics(
             style && style.fontSize,
-            this.text
+            text
         );
 
         // Update the label-scoped y offset. Math.min because of inline
@@ -436,7 +437,7 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        if (this.needsBox && !this.textPath) {
+        if (this.needsBox && !text.textPath) {
 
             // Create the border box if it is not already present
             if (!this.box) {
@@ -479,8 +480,8 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        if (!this.textPath) {
-            const text = this.text;
+        const text = this.text;
+        if (!text.textPath) {
 
             this.updateBoxSize();
 
