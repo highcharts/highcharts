@@ -36,7 +36,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { extend } = U;
+const { wrap } = U;
 
 /* *
  *
@@ -97,22 +97,27 @@ class DependencyWheelPoint extends SankeyPoint {
                         Math.abs(start) - Math.abs(end)
                     ) < Math.PI ? 0 : 1
                 })
-                // Add it inside the data label group so it gets destroyed
-                // with the label
-                .add(label);
-        }
+                .attr({
+                    x: shapeArgs.x,
+                    y: shapeArgs.y,
+                    r: (
+                        shapeArgs.r +
+                        ((this.dataLabel as any).options.distance || 0)
+                    ),
+                    start: (upperHalf ? start : end),
+                    end: (upperHalf ? end : start),
+                    clockwise: +upperHalf
+                })
+                .add(renderer.defs);
 
-        this.dataLabelPath.attr({
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (
-                shapeArgs.r +
-                ((this.dataLabel as any).options.distance || 0)
-            ),
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf
-        });
+            // Destroy the path with the label
+            wrap(label, 'destroy', (proceed): undefined => {
+                if (this.dataLabelPath) {
+                    this.dataLabelPath = this.dataLabelPath.destroy();
+                }
+                return proceed.call(label);
+            });
+        }
 
         return this.dataLabelPath;
     }

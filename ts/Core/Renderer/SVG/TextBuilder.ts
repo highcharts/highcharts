@@ -125,6 +125,7 @@ class TextBuilder {
             !hasMarkup &&
             !this.ellipsis &&
             !this.width &&
+            !wrapper.textPath &&
             (
                 textStr.indexOf(' ') === -1 ||
                 (this.noWrap && !regexMatchBreaks.test(textStr))

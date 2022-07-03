@@ -1306,50 +1306,6 @@ class SVGElement implements SVGElementLike {
         this.shadows = void 0;
     }
 
-    /*
-     * @private
-     * /
-    public destroyTextPath(
-        elem: DOMElementType,
-        path: SVGElement
-    ): void {
-        const textElement = elem.getElementsByTagName('text')[0];
-        let childNodes: NodeListOf<ChildNode>;
-
-        if (textElement) {
-            // Remove textPath attributes
-            textElement.removeAttribute('dx');
-            textElement.removeAttribute('dy');
-
-            // Remove ID's:
-            path.element.setAttribute('id', '');
-            // Check if textElement includes textPath,
-            if (
-                this.textPathWrapper &&
-                textElement.getElementsByTagName('textPath').length
-            ) {
-                // Move nodes to <text>
-                childNodes = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s and text nodes to the <textPath> node
-                while (childNodes.length) {
-                    textElement.appendChild(childNodes[0]);
-                }
-                // Remove <textPath> from the DOM
-                textElement.removeChild(this.textPathWrapper.element);
-            }
-        } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
-            // Remove textPath attributes from elem to get correct text-outline
-            // position
-            elem.removeAttribute('dx');
-            elem.removeAttribute('dy');
-        }
-        if (this.textPathWrapper) {
-            // Set textPathWrapper to undefined and destroy it
-            this.textPathWrapper = this.textPathWrapper.destroy();
-        }
-    }
-    */
-
     /**
      * @private
      * @function Highcharts.SVGElement#dSettter
@@ -1943,13 +1899,7 @@ class SVGElement implements SVGElementLike {
     ): this {
         /*
         @todo Text path refactoring
-        - Feature parity.
-            - Ask Pawel if doubt. x/dx hack...
-            - Label and options.padding
-        - Sunburst (and others?): Do not add path inside the label "group"
-          (which is actually the <text>), because it gets deleted by buildText.
-          Find another strategy to make sure it is destroyed.
-        - Text outline on multiline string
+        - Text outline fails on multiline text
         - Docs and demo
         */
 
@@ -1965,7 +1915,7 @@ class SVGElement implements SVGElementLike {
 
         const url = this.renderer.url,
             textWrapper = this.text || this,
-            textPath = this.textPath,
+            textPath = textWrapper.textPath,
             { attributes, enabled } = textPathOptions;
 
         path = path || (textPath && textPath.path);
@@ -2025,11 +1975,11 @@ class SVGElement implements SVGElementLike {
             });
 
             // Set the reference
-            this.textPath = { path, undo };
+            textWrapper.textPath = { path, undo };
 
         } else {
             textWrapper.attr({ dx: 0, dy: 0 });
-            delete this.textPath;
+            delete textWrapper.textPath;
         }
 
         if (this.added) {
@@ -2039,150 +1989,6 @@ class SVGElement implements SVGElementLike {
             this.renderer.buildText(textWrapper);
         }
 
-        /*
-
-        const elem = this.element,
-            textWrapper = this.text || this,
-            textNode = textWrapper.element;
-
-        let adder = false,
-            textPathElement: DOMElementType,
-            textPathId,
-            textPathWrapper = this.textPathWrapper;
-
-        const firstTime = !textPathWrapper;
-
-        path = path || this.path;
-
-        // Defaults
-        textPathOptions = merge(true, {
-            enabled: true,
-            attributes: {
-                dy: -5,
-                startOffset: '50%',
-                textAnchor: 'middle'
-            }
-        }, textPathOptions);
-
-        const attrs = AST.filterUserAttributes(textPathOptions.attributes);
-
-        if (path && textPathOptions && textPathOptions.enabled) {
-            // label() has padding, text() doesn't
-            if (this.options && this.options.padding) {
-                attrs.dx = -this.options.padding;
-            }
-
-            if (!textPathWrapper) {
-                // Create <textPath>, defer the DOM adder
-                this.textPathWrapper = textPathWrapper =
-                    this.renderer.createElement('textPath');
-                adder = true;
-            }
-
-            textPathElement = textPathWrapper.element;
-
-            // Set ID for the path
-            textPathId = path.attr('id');
-            if (!textPathId) {
-                path.attr('id', textPathId = uniqueKey());
-            }
-
-            // Change DOM structure, by placing <textPath> tag in <text>
-            if (firstTime) {
-
-                // Adjust the position
-                textNode.setAttribute('y', 0); // Firefox
-                if (isNumber(attrs.dx)) {
-                    textNode.setAttribute('x', -attrs.dx);
-                }
-
-                // Move all <tspan>'s and text nodes to the <textPath> node. Do
-                // not move other elements like <title> or <path>
-                const childNodes: ChildNode[] = [].slice.call(
-                    textNode.childNodes
-                );
-                for (let i = 0; i < childNodes.length; i++) {
-                    const childNode = childNodes[i];
-                    if (
-                        childNode.nodeType === win.Node.TEXT_NODE ||
-                        childNode.nodeName === 'tspan'
-                    ) {
-                        textPathElement.appendChild(childNode);
-                    }
-                }
-            }
-
-            // Add <textPath> to the DOM
-            if (adder && textPathWrapper) {
-                textPathWrapper.add(textWrapper);
-            }
-
-            // Set basic options:
-            // Use `setAttributeNS` because Safari needs this..
-            textPathElement.setAttributeNS(
-                'http://www.w3.org/1999/xlink',
-                'href',
-                this.renderer.url + '#' + textPathId
-            );
-
-            // Presentation attributes:
-
-            // dx/dy options must by set on <text> (parent), the rest should be
-            // set on <textPath>
-            if (defined(attrs.dy)) {
-                textWrapper.attr('dy', attrs.dy);
-                delete attrs.dy;
-            }
-            if (defined(attrs.dx)) {
-                textWrapper.attr('dx', attrs.dx);
-                delete attrs.dx;
-            }
-
-            // Additional attributes
-            attrs['text-anchor'] = (attrs as any).textAnchor; // hyphenate
-            attr(textPathElement, attrs);
-
-            // Remove translation, text that follows path does not need that
-            elem.removeAttribute('transform');
-
-            // Remove shadows and text outlines
-            this.removeTextOutline.call(textPathWrapper);
-
-            // Remove background and border for label(), see #10545.
-            // Alternatively, we can disable setting background rects in
-            // series.drawDataLabels()
-            if (this.text && !this.renderer.styledMode) {
-                this.attr({
-                    fill: 'none',
-                    'stroke-width': 0
-                });
-            }
-
-            // Disable some functions
-            this.updateTransform = noop;
-            this.applyTextOutline = noop;
-
-            // Refer the path for updating
-            this.path = path;
-
-        } else if (textPathWrapper && path) {
-            // Reset to prototype
-            delete (this as any).updateTransform;
-            delete (this as any).applyTextOutline;
-
-            // Restore DOM structure:
-            this.destroyTextPath(elem, path);
-            delete this.path;
-
-            // Bring attributes back
-            this.updateTransform();
-
-            // Set textOutline back for text()
-            if (this.options) {
-                this.applyTextOutline(this.options.style.textOutline);
-            }
-        }
-        */
         return this;
     }
 
@@ -2651,7 +2457,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !wrapper.textPath) {
+        if (transform.length && !(wrapper.text || wrapper).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }
