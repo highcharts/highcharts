@@ -108,11 +108,23 @@ class SunburstPoint extends TreemapPoint {
             moreThanHalf = true;
         }
 
-        if (this.dataLabelPath && this.dataLabelPath.renderer) {
+        // First time
+        if (!this.dataLabelPath) {
+            // Destroy the path with the label
+            wrap(label, 'destroy', (proceed): undefined => {
+                if (this.dataLabelPath) {
+                    this.dataLabelPath = this.dataLabelPath.destroy();
+                }
+                return proceed.call(label);
+            });
+
+        // Subsequent times
+        } else {
             this.dataLabelPath.destroy();
             delete this.dataLabelPath;
         }
 
+        // All times
         this.dataLabelPath = renderer
             .arc({
                 open: true,
@@ -127,14 +139,6 @@ class SunburstPoint extends TreemapPoint {
                 r: (r + shapeArgs.innerR) / 2
             })
             .add(renderer.defs);
-
-        // Destroy the path with the label
-        wrap(label, 'destroy', (proceed): undefined => {
-            if (this.dataLabelPath) {
-                this.dataLabelPath = this.dataLabelPath.destroy();
-            }
-            return proceed.call(label);
-        });
 
         return this.dataLabelPath;
     }
