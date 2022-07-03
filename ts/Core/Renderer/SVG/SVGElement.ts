@@ -1946,11 +1946,11 @@ class SVGElement implements SVGElementLike {
         - Feature parity.
             - Ask Pawel if doubt. x/dx hack...
             - Label and options.padding
-            - Remove background and border
-            - Must updateTransform be overridden?
         - Sunburst (and others?): Do not add path inside the label "group"
           (which is actually the <text>), because it gets deleted by buildText.
           Find another strategy to make sure it is destroyed.
+        - Text outline on multiline string
+        - Docs and demo
         */
 
         // Defaults
@@ -1965,7 +1965,7 @@ class SVGElement implements SVGElementLike {
 
         const url = this.renderer.url,
             textWrapper = this.text || this,
-            textPath = textWrapper.textPath,
+            textPath = this.textPath,
             { attributes, enabled } = textPathOptions;
 
         path = path || (textPath && textPath.path);
@@ -1988,18 +1988,16 @@ class SVGElement implements SVGElementLike {
                         path.attr('id', textPathId = uniqueKey());
                     }
 
+                    // Set attributes for the <text>
                     const textAttribs: SVGAttributes = {
                         // dx/dy options must by set on <text> (parent), the
                         // rest should be set on <textPath>
-                        y: 0,
-                        // Remove translation, text that follows path does not
-                        // need that
-                        transform: ''
+                        x: 0,
+                        y: 0
                     };
 
                     if (defined(attributes.dx)) {
                         textAttribs.dx = attributes.dx;
-                        textAttribs.x = -attributes.dx;
                         delete attributes.dx;
                     }
                     if (defined(attributes.dy)) {
@@ -2008,6 +2006,11 @@ class SVGElement implements SVGElementLike {
                     }
                     textWrapper.attr(textAttribs);
 
+
+                    // Set attributes for the <g> of a label
+                    this.attr({ transform: '' });
+
+                    // Wrap the nodes in a textPath
                     const children = e.nodes.slice(0);
                     e.nodes.length = 0;
                     e.nodes[0] = {
@@ -2022,11 +2025,11 @@ class SVGElement implements SVGElementLike {
             });
 
             // Set the reference
-            textWrapper.textPath = { path, undo };
+            this.textPath = { path, undo };
 
         } else {
             textWrapper.attr({ dx: 0, dy: 0 });
-            delete textWrapper.textPath;
+            delete this.textPath;
         }
 
         if (this.added) {
@@ -2648,7 +2651,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length) {
+        if (transform.length && !wrapper.textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }
