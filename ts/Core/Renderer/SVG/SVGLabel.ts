@@ -436,7 +436,7 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        if (this.needsBox) {
+        if (this.needsBox && !this.textPath) {
 
             // Create the border box if it is not already present
             if (!this.box) {
@@ -479,42 +479,44 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        const text = this.text;
+        if (!this.textPath) {
+            const text = this.text;
 
-        this.updateBoxSize();
+            this.updateBoxSize();
 
-        // Determine y based on the baseline
-        const textY = this.baseline ? 0 : this.baselineOffset;
+            // Determine y based on the baseline
+            const textY = this.baseline ? 0 : this.baselineOffset;
 
-        let textX = pick(this.paddingLeft, this.padding);
+            let textX = pick(this.paddingLeft, this.padding);
 
-        // compensate for alignment
-        if (
-            defined(this.widthSetting) &&
-            this.bBox &&
-            (this.textAlign === 'center' || this.textAlign === 'right')
-        ) {
-            textX += { center: 0.5, right: 1 }[
-                this.textAlign as ('center'|'right')
-            ] * (this.widthSetting - this.bBox.width);
-        }
-
-        // update if anything changed
-        if (textX !== text.x || textY !== text.y) {
-            text.attr('x', textX);
-            // #8159 - prevent misplaced data labels in treemap
-            // (useHTML: true)
-            if (text.hasBoxWidthChanged) {
-                this.bBox = text.getBBox(true);
+            // compensate for alignment
+            if (
+                defined(this.widthSetting) &&
+                this.bBox &&
+                (this.textAlign === 'center' || this.textAlign === 'right')
+            ) {
+                textX += { center: 0.5, right: 1 }[
+                    this.textAlign as ('center'|'right')
+                ] * (this.widthSetting - this.bBox.width);
             }
-            if (typeof textY !== 'undefined') {
-                text.attr('y', textY);
-            }
-        }
 
-        // record current values
-        text.x = textX;
-        text.y = textY;
+            // update if anything changed
+            if (textX !== text.x || textY !== text.y) {
+                text.attr('x', textX);
+                // #8159 - prevent misplaced data labels in treemap
+                // (useHTML: true)
+                if (text.hasBoxWidthChanged) {
+                    this.bBox = text.getBBox(true);
+                }
+                if (typeof textY !== 'undefined') {
+                    text.attr('y', textY);
+                }
+            }
+
+            // record current values
+            text.x = textX;
+            text.y = textY;
+        }
     }
 
     public widthSetter(value: (number|string)): void {
