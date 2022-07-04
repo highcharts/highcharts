@@ -1866,6 +1866,8 @@ function fireEvent<TScope, TEvent extends AnyRecord>(
             });
         }
 
+        e.args = e.args || {};
+
         const events: Array<Utilities.EventWrapperObject<TScope>> = [];
         let obj = target as AnyRecord;
         let multilevel = false;
@@ -2047,9 +2049,10 @@ namespace Utilities {
         params?: Record<string, string>;
     }
     export interface EventObject<TScope> extends Partial<Event>{
-        detail?: AnyRecord;
+        args: AnyRecord;
         defaultFunction: Function;
         defaultPrevented?: boolean;
+        result?: unknown;
         target: (TScope&EventTarget);
         type: string;
         preventDefault(): void;
