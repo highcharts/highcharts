@@ -906,7 +906,7 @@ QUnit.test('Sankey and point updates', assert => {
 
     assert.strictEqual(
         series.nodes[0].graphic.attr('fill'),
-        Highcharts.color('black').get('rgb'),
+        'black',
         'After an update, node defined in options should use new color.'
     );
 
@@ -939,7 +939,7 @@ QUnit.test('Sankey and point updates', assert => {
 
     assert.strictEqual(
         series.nodes[1].graphic.attr('fill'),
-        Highcharts.color('green').get('rgb'),
+        'green',
         'After an update, node without config should use new color.'
     );
 

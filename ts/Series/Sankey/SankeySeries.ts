@@ -607,10 +607,8 @@ class SankeySeries extends ColumnSeries {
         // Node attributes
         if (point.isNode) {
             return {
-                fill: Color.parse(color).setOpacity(values.opacity).get(),
-                stroke: Color.parse(values.borderColor)
-                    .setOpacity(values.opacity)
-                    .get(),
+                fill: color,
+                stroke: values.borderColor,
                 'stroke-width': values.borderWidth,
                 opacity: values.opacity
             };
