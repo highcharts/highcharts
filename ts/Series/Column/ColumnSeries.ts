@@ -24,6 +24,7 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type StackItem from '../../Core/Axis/Stacking/Stacking';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -804,7 +805,7 @@ class ColumnSeries extends Series {
             // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Record<string, Highcharts.StackItem>): void => {
+                (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 

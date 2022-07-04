@@ -58,7 +58,7 @@ const {
 
 declare module '../AxisOptions' {
     interface AxisOptions {
-        stackLabels?: Highcharts.YAxisStackLabelsOptions;
+        stackLabels?: StackLabelsOptions;
     }
 }
 
@@ -80,15 +80,15 @@ declare module '../../Series/SeriesLike' {
         isRadialBar?: boolean;
         negStacks?: any; // @todo
         singleStacks?: any; // @todo
-        stack?: Highcharts.OptionsStackingValue;
+        stack?: OptionsStackingValue;
         stackedYData?: Array<number>;
         stackKey?: string;
         getStackIndicator(
-            stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+            stackIndicator: (StackItemIndicatorObject|undefined),
             x: number,
             index: number,
             key?: string
-        ): Highcharts.StackItemIndicatorObject;
+        ): StackItemIndicatorObject;
         modifyStacks(): void;
         percentStacker(
             pointExtremes: Array<number>,
@@ -105,107 +105,56 @@ declare module '../../Series/SeriesLike' {
 declare module '../../Series/SeriesOptions' {
     interface SeriesOptions {
         stack?: (number|string);
-        stacking?: Highcharts.OptionsStackingValue;
+        stacking?: OptionsStackingValue;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type OptionsStackingValue = (
-            'normal'|'overlap'|'percent'|'stream'|'group'
-        );
-        interface StackItemIndicatorObject {
-            index: number;
-            key?: string;
-            stackKey?: string;
-            x: number;
-        }
-        interface StackItemObject {
-            alignOptions: AlignObject;
-            axis: StackingAxis.Composition;
-            cumulative?: number;
-            crop?: boolean;
-            isNegative: boolean;
-            label: SVGElement;
-            options: YAxisStackLabelsOptions;
-            overflow?: OptionsOverflowValue;
-            padding: number;
-            rotation: number;
-            total: number;
-            x: number;
-        }
-        interface YAxisStackLabelsOptions {
-            animation?: (false|Partial<AnimationOptions>);
-            align?: AlignValue;
-            allowOverlap?: boolean;
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            crop?: boolean;
-            enabled?: boolean;
-            format?: string;
-            formatter?: FormatUtilities.FormatterCallback<StackItemObject>;
-            overflow?: DataLabelOverflowValue;
-            rotation?: number;
-            style?: CSSObject;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface AttrObject {
-            [key: string]: any;
-        }
-        class StackItem {
-            public constructor(
-                axis: StackingAxis.Composition,
-                options: YAxisStackLabelsOptions,
-                isNegative: boolean,
-                x: number,
-                stackOption?: OptionsStackingValue
-            );
-            public alignOptions: AlignObject;
-            public axis: StackingAxis.Composition;
-            public base?: string;
-            public cumulative?: (null|number);
-            public hasValidPoints: boolean;
-            public isNegative: boolean;
-            public label?: SVGLabel;
-            public leftCliff: number;
-            public options: YAxisStackLabelsOptions;
-            public points: Record<string, Array<number>>;
-            public rightCliff: number;
-            public stack?: OptionsStackingValue;
-            public textAlign: AlignValue;
-            public total: (null|number);
-            public touched?: number;
-            public x: number;
-            public destroy(): void;
-            public getStackBox(
-                chart: Chart,
-                stackItem: StackItem,
-                x: number,
-                y: number,
-                xWidth: number,
-                h: number,
-                axis: Axis
-            ): BBoxObject;
-            public render(group: SVGElement): void;
-            public setOffset(
-                xOffset: number,
-                xWidth: number,
-                boxBottom?: number,
-                boxTop?: number,
-                defaultX?: number
-            ): void;
-        }
-    }
+type OptionsStackingValue = (
+    'normal'|'overlap'|'percent'|'stream'|'group'
+);
+
+interface StackItemIndicatorObject {
+    index: number;
+    key?: string;
+    stackKey?: string;
+    x: number;
+}
+
+export interface StackItemObject {
+    alignOptions: AlignObject;
+    axis: StackingAxis.Composition;
+    cumulative?: number;
+    crop?: boolean;
+    isNegative: boolean;
+    label: SVGElement;
+    options: StackLabelsOptions;
+    overflow?: OptionsOverflowValue;
+    padding: number;
+    rotation: number;
+    total: number;
+    x: number;
+}
+
+interface StackLabelsOptions {
+    animation?: (false|Partial<AnimationOptions>);
+    align?: AlignValue;
+    allowOverlap?: boolean;
+    backgroundColor?: ColorType;
+    borderColor?: ColorType;
+    borderRadius?: number;
+    borderWidth?: number;
+    crop?: boolean;
+    enabled?: boolean;
+    format?: string;
+    formatter?: FormatUtilities.FormatterCallback<StackItemObject>;
+    overflow?: DataLabelOverflowValue;
+    rotation?: number;
+    style?: CSSObject;
+    textAlign?: AlignValue;
+    useHTML?: boolean;
+    verticalAlign?: VerticalAlignValue;
+    x?: number;
+    y?: number;
 }
 
 /* *
@@ -232,10 +181,10 @@ declare global {
 class StackItem {
     public constructor(
         axis: StackingAxis.Composition,
-        options: Highcharts.YAxisStackLabelsOptions,
+        options: StackLabelsOptions,
         isNegative: boolean,
         x: number,
-        stackOption?: Highcharts.OptionsStackingValue
+        stackOption?: OptionsStackingValue
     ) {
 
         const inverted = axis.chart.inverted;
@@ -288,10 +237,10 @@ class StackItem {
     public isNegative: boolean;
     public label?: SVGLabel;
     public leftCliff: number;
-    public options: Highcharts.YAxisStackLabelsOptions;
+    public options: StackLabelsOptions;
     public points: Record<string, Array<number>>;
     public rightCliff: number;
-    public stack?: Highcharts.OptionsStackingValue;
+    public stack?: OptionsStackingValue;
     public textAlign: AlignValue;
     public total: (null|number);
     public touched?: number;
@@ -316,7 +265,7 @@ class StackItem {
         let chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
-            attr: Highcharts.AttrObject = {},
+            attr: AnyRecord = {},
             str = formatOption ? // format the text in the label
                 format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
@@ -508,7 +457,7 @@ class StackItem {
      */
     public getStackBox(
         chart: Chart,
-        stackItem: Highcharts.StackItem,
+        stackItem: StackItem,
         x: number,
         y: number,
         xWidth: number,
@@ -651,7 +600,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         yAxis = series.yAxis as StackingAxis.Composition,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks,
-        stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+        stackIndicator: (StackItemIndicatorObject|undefined),
         isNegative,
         stack,
         other,
@@ -802,7 +751,7 @@ Series.prototype.modifyStacks = function (): void {
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
         processedXData = series.processedXData,
-        stackIndicator: Highcharts.StackItemIndicatorObject,
+        stackIndicator: StackItemIndicatorObject,
         stacking = series.options.stacking;
 
     if ((series as any)[stacking + 'Stacker']) { // Modifier function exists
@@ -843,7 +792,7 @@ Series.prototype.modifyStacks = function (): void {
  */
 Series.prototype.percentStacker = function (
     pointExtremes: Array<number>,
-    stack: Highcharts.StackItem,
+    stack: StackItem,
     i: number
 ): void {
     const totalFactor = stack.total ? 100 / stack.total : 0;
@@ -863,11 +812,11 @@ Series.prototype.percentStacker = function (
  * @function Highcharts.Series#getStackIndicator
  */
 Series.prototype.getStackIndicator = function (
-    stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+    stackIndicator: (StackItemIndicatorObject|undefined),
     x: number,
     index: number,
     key?: string
-): Highcharts.StackItemIndicatorObject {
+): StackItemIndicatorObject {
     // Update stack indicator, when:
     // first point in a stack || x changed || stack type (negative vs positive)
     // changed:
@@ -891,7 +840,7 @@ Series.prototype.getStackIndicator = function (
     return stackIndicator;
 };
 
-H.StackItem = StackItem; // @todo -> master
+(H as any).StackItem = StackItem; // @todo -> master
 
 /* *
  *
@@ -899,7 +848,13 @@ H.StackItem = StackItem; // @todo -> master
  *
  * */
 
-export default H.StackItem;
+export default StackItem;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Stack of data points

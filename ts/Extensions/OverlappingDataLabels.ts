@@ -18,6 +18,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type StackItem from '../Core/Axis/Stacking/Stacking';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
@@ -64,10 +65,10 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             !yAxis.options.stackLabels.allowOverlap
         ) {
             objectEach(yAxis.stacking.stacks, function (
-                stack: Record<string, Highcharts.StackItem>
+                stack: Record<string, StackItem>
             ): void {
                 objectEach(stack, function (
-                    stackItem: Highcharts.StackItem
+                    stackItem: StackItem
                 ): void {
                     if (stackItem.label) {
                         labels.push(stackItem.label);

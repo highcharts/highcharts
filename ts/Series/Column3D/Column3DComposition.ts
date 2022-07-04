@@ -581,10 +581,10 @@ wrap(Series.prototype, 'alignDataLabel', function (
 
 // Added stackLabels position calculation for 3D charts.
 wrap(StackItem.prototype, 'getStackBox', function (
-    this: Highcharts.StackItem,
+    this: StackItem,
     proceed: Function,
     chart: Chart,
-    stackItem: Highcharts.StackItem,
+    stackItem: StackItem,
     x: number,
     y: number,
     xWidth: number,

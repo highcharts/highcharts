@@ -307,9 +307,9 @@ namespace StackingAxis {
 
             // Render each stack total
             objectEach(stacks, function (
-                type: Record<string, Highcharts.StackItem>
+                type: Record<string, StackItem>
             ): void {
-                objectEach(type, function (stack: Highcharts.StackItem): void {
+                objectEach(type, function (stack: StackItem): void {
                     stack.render(stackTotalGroup);
                 });
             });

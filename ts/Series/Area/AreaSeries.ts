@@ -20,6 +20,7 @@ import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
+import type StackItem from '../../Core/Axis/Stacking/Stacking';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
@@ -501,7 +502,7 @@ class AreaSeries extends LineSeries {
 
             // Sort the keys (#1651)
             objectEach(stack, function (
-                stackX: Highcharts.StackItem,
+                stackX: StackItem,
                 x: string
             ): void {
                 // nulled after switching between
