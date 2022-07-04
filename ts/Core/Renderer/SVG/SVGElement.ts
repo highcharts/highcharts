@@ -1884,25 +1884,29 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Set a text path for the text to follow
-     * @private
+     * Set a text path for a `text` or `label` element, allowing the text to
+     * flow along a path.
+     *
+     * In order to unset the path for an existing element, call `setTextPath`
+     * with `{ enabled: false }` as the second argument.
+     *
+     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+     *
      * @function Highcharts.SVGElement#setTextPath
+     *
      * @param {Highcharts.SVGElement|undefined} path
-     * Path to follow. If undefined, it allows changing options for the existing
-     * path.
+     *        Path to follow. If undefined, it allows changing options for the
+     *        existing path.
+     *
      * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     * Options.
-     * @return {Highcharts.SVGElement}
-     * Returns the SVGElement for chaining.
+     *        Options.
+     *
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public setTextPath(
         path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
-        /*
-        @todo Text path refactoring
-        - Docs and demo
-        */
 
         // Defaults
         textPathOptions = merge(true, {
