@@ -2775,15 +2775,17 @@ class Chart {
      * Emit console warning if the a11y module is not loaded.
      */
     public warnIfA11yModuleNotLoaded():void {
-        const opts = this.options;
-        if (opts && !this.accessibility) {
+        const { options, title } = this;
+        if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
-                'aria-label': opts.title && opts.title.text || ''
+                'aria-label': (title && title.element.textContent) || ''
             });
 
-            if (!(opts.accessibility && opts.accessibility.enabled === false)) {
+            if (!(
+                options.accessibility && options.accessibility.enabled === false
+            )) {
                 error(
                     'Highcharts warning: Consider including the ' +
                     '"accessibility.js" module to make your chart more ' +
