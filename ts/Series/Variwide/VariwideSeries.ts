@@ -18,7 +18,7 @@
  *
  * */
 
-import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

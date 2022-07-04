@@ -16,14 +16,14 @@
  *
  * */
 
-import type Series from '../Series/Series';
-import type StackItem from '../../Extensions/Stacking';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type Series from '../../Series/Series';
+import type StackItem from '../../../Extensions/Stacking';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
 
-import A from '../Animation/AnimationUtilities.js';
+import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
-import Axis from './Axis.js';
-import U from '../Utilities.js';
+import Axis from '../Axis.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
@@ -38,13 +38,13 @@ const {
  *
  * */
 
-declare module './AxisComposition' {
+declare module '../AxisComposition' {
     interface AxisComposition {
         stacking?: StackingAxis.Additions;
     }
 }
 
-declare module './AxisType' {
+declare module '../AxisType' {
     interface AxisTypeRegistry {
         StackingAxis: StackingAxis.Composition;
     }

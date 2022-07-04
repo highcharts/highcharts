@@ -19,7 +19,7 @@
 import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 

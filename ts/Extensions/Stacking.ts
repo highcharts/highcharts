@@ -38,7 +38,7 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
-import StackingAxis from '../Core/Axis/StackingAxis.js';
+import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,
