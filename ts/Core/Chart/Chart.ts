@@ -479,6 +479,10 @@ class Chart {
 
             const zooming = optionsChart.zooming = optionsChart.zooming || {};
 
+            // Other options have no default so just pick
+            if (userOptions.chart && !userOptions.chart.zooming) {
+                zooming.resetButton = optionsChart.resetZoomButton;
+            }
             zooming.key = pick(
                 zooming.key,
                 optionsChart.zoomKey
@@ -487,12 +491,6 @@ class Chart {
                 zooming.pinchType,
                 optionsChart.pinchType
             );
-            if (!(userOptions.chart as any).zooming) {
-                zooming.resetButton = merge(
-                    zooming.resetButton,
-                    optionsChart.resetZoomButton
-                );
-            }
             zooming.singleTouch = pick(
                 zooming.singleTouch,
                 optionsChart.zoomBySingleTouch
