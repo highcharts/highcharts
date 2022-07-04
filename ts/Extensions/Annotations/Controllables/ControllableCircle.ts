@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -13,17 +19,13 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
-declare module './ControllableType' {
-    interface ControllableShapeTypeRegistry {
-        circle: typeof ControllableCircle;
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable circle class.
@@ -138,10 +140,34 @@ class ControllableCircle extends Controllable {
 
 }
 
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
 interface ControllableCircle {
     collection: 'shapes';
     itemType: 'shape';
     options: ControllableShapeOptions;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        circle: typeof ControllableCircle;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllableCircle;

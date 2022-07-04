@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -13,13 +19,11 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Controllable from './Controllable.js';
 import ControllableLabel from './ControllableLabel.js';
 
-declare module './ControllableType' {
-    interface ControllableShapeTypeRegistry {
-        image: typeof ControllableImage;
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable image class.
@@ -127,10 +131,34 @@ class ControllableImage extends Controllable {
 
 }
 
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
 interface ControllableImage {
     collections: 'shapes';
     itemType: 'shape';
     options: ControllableShapeOptions;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        image: typeof ControllableImage;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllableImage;
