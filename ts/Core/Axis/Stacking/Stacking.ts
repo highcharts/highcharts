@@ -20,26 +20,26 @@ import type {
     AlignObject,
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type { YAxisOptions } from '../Core/Axis/AxisOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColorType from '../Core/Color/ColorType';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
-import type FormatUtilities from '../Core/FormatUtilities';
-import type { OptionsOverflowValue } from '../Core/Options';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
+} from '../../Renderer/AlignObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
+import type { YAxisOptions } from '../AxisOptions';
+import type BBoxObject from '../../Renderer/BBoxObject';
+import type ColorType from '../../Color/ColorType';
+import type CSSObject from '../../Renderer/CSSObject';
+import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
+import type FormatUtilities from '../../FormatUtilities';
+import type { OptionsOverflowValue } from '../../Options';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import Axis from '../Axis.js';
+import Chart from '../../Chart/Chart.js';
+import F from '../../FormatUtilities.js';
 const { format } = F;
-import H from '../Core/Globals.js';
-import Series from '../Core/Series/Series.js';
-import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
-import U from '../Core/Utilities.js';
+import H from '../../Globals.js';
+import Series from '../../Series/Series.js';
+import StackingAxis from './StackingAxis.js';
+import U from '../../Utilities.js';
 const {
     correctFloat,
     defined,
@@ -56,26 +56,26 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisOptions' {
+declare module '../AxisOptions' {
     interface AxisOptions {
         stackLabels?: Highcharts.YAxisStackLabelsOptions;
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Chart/ChartLike'{
     interface ChartLike {
         getStacks(): void;
     }
 }
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Series/PointLike' {
     interface PointLike {
         leftCliff?: number;
         rightCliff?: number;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Series/SeriesLike' {
     interface SeriesLike {
         isRadialBar?: boolean;
         negStacks?: any; // @todo
@@ -102,7 +102,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Series/SeriesOptions' {
     interface SeriesOptions {
         stack?: (number|string);
         stacking?: Highcharts.OptionsStackingValue;

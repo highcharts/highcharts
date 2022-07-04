@@ -17,7 +17,7 @@
  * */
 
 import type Series from '../../Series/Series';
-import type StackItem from '../../../Extensions/Stacking';
+import type StackItem from './Stacking';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 
 import A from '../../Animation/AnimationUtilities.js';

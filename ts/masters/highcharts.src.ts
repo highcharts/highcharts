@@ -31,7 +31,7 @@ import MSPointer from '../Core/MSPointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
-import '../Extensions/Stacking.js';
+import '../Core/Axis/Stacking/Stacking.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import '../Series/Line/LineSeries.js';
