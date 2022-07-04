@@ -12,8 +12,6 @@
  *
  * */
 
-import '../../../Core/Renderer/SVG/SVGRenderer.js';
-
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
 import type { ControllableAnchorObject } from './Controllable';
@@ -23,13 +21,13 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
+import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
 
 import Controllable from './Controllable.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -38,26 +36,95 @@ const {
     pick
 } = U;
 
-declare module './ControllableType' {
-    interface ControllableLabelTypeRegistry {
-        label: typeof ControllableLabel;
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/ControllableLabel */
+        connector: SymbolFunction;
     }
 }
+
+interface ControllableAlignObject extends AlignObject {
+    height?: number;
+    width?: number;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
- * Internal types.
+ * General symbol definition for labels with connector
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface AnnotationAlignObject extends AlignObject {
-            height?: number;
-            width?: number;
+function symbolConnector(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
+    const anchorX = options && options.anchorX,
+        anchorY = options && options.anchorY;
+
+    let path: (SVGPath|undefined),
+        yOffset: number,
+        lateral = w / 2;
+
+    if (isNumber(anchorX) && isNumber(anchorY)) {
+
+        path = [['M', anchorX, anchorY]];
+
+        // Prefer 45 deg connectors
+        yOffset = y - anchorY;
+        if (yOffset < 0) {
+            yOffset = -h - yOffset;
+        }
+        if (yOffset < w) {
+            lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
+        }
+
+        // Anchor below label
+        if (anchorY > y + h) {
+            path.push(['L', x + lateral, y + h]);
+
+            // Anchor above label
+        } else if (anchorY < y) {
+            path.push(['L', x + lateral, y]);
+
+            // Anchor left of label
+        } else if (anchorX < x) {
+            path.push(['L', x, y + h / 2]);
+
+            // Anchor right of label
+        } else if (anchorX > x + w) {
+            path.push(['L', x + w, y + h / 2]);
         }
     }
+
+    return path || [];
 }
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable label class.
@@ -124,7 +191,7 @@ class ControllableLabel extends Controllable {
      * Aligned position.
      */
     public static alignedPosition(
-        alignOptions: Highcharts.AnnotationAlignObject,
+        alignOptions: ControllableAlignObject,
         box: BBoxObject
     ): PositionObject {
         const align = alignOptions.align,
@@ -159,6 +226,20 @@ class ControllableLabel extends Controllable {
         };
     }
 
+    public static compose(
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+
+        if (composedClasses.indexOf(SVGRendererClass) === -1) {
+            composedClasses.push(SVGRendererClass);
+
+            const svgRendererProto = SVGRendererClass.prototype;
+
+            svgRendererProto.symbols.connector = symbolConnector;
+        }
+
+    }
+
     /**
      * Returns new alignment options for a label if the label is outside the
      * plot area. It is almost a one-to-one copy from
@@ -168,15 +249,15 @@ class ControllableLabel extends Controllable {
     public static justifiedOptions(
         chart: Highcharts.AnnotationChart,
         label: SVGElement,
-        alignOptions: Highcharts.AnnotationAlignObject,
+        alignOptions: ControllableAlignObject,
         alignAttr: SVGAttributes
-    ): Highcharts.AnnotationAlignObject {
+    ): ControllableAlignObject {
         const align = alignOptions.align,
             verticalAlign = alignOptions.verticalAlign,
             padding = label.box ? 0 : (label.padding || 0),
             bBox = label.getBBox(),
             //
-            options: Highcharts.AnnotationAlignObject = {
+            options: ControllableAlignObject = {
                 align: align,
                 verticalAlign: verticalAlign,
                 x: alignOptions.x,
@@ -509,64 +590,34 @@ class ControllableLabel extends Controllable {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface ControllableLabel {
     collection: 'labels';
     itemType: 'label';
     options: ControllableLabelOptions;
 }
 
-export default ControllableLabel;
+/* *
+ *
+ *  Registry
+ *
+ * */
 
-/* ********************************************************************** */
-
-declare module '../../../Core/Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        /** @requires Extensions/ControllableLabel */
-        connector: SymbolFunction;
+declare module './ControllableType' {
+    interface ControllableLabelTypeRegistry {
+        label: typeof ControllableLabel;
     }
 }
-/**
- * General symbol definition for labels with connector
- * @private
- */
-symbols.connector = function (x, y, w, h, options): SVGPath {
-    const anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY;
 
-    let path: (SVGPath|undefined),
-        yOffset: number,
-        lateral = w / 2;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-    if (isNumber(anchorX) && isNumber(anchorY)) {
-
-        path = [['M', anchorX, anchorY]];
-
-        // Prefer 45 deg connectors
-        yOffset = y - anchorY;
-        if (yOffset < 0) {
-            yOffset = -h - yOffset;
-        }
-        if (yOffset < w) {
-            lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
-        }
-
-        // Anchor below label
-        if (anchorY > y + h) {
-            path.push(['L', x + lateral, y + h]);
-
-            // Anchor above label
-        } else if (anchorY < y) {
-            path.push(['L', x + lateral, y]);
-
-            // Anchor left of label
-        } else if (anchorX < x) {
-            path.push(['L', x, y + h / 2]);
-
-            // Anchor right of label
-        } else if (anchorX > x + w) {
-            path.push(['L', x + w, y + h / 2]);
-        }
-    }
-
-    return path || [];
-};
+export default ControllableLabel;
