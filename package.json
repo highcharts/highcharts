@@ -57,7 +57,6 @@
     "cross-env": "^7.0.3",
     "cypress": "7.7.0",
     "dtslint": "^4.2.1",
-    "eslint": "^8.14.0",
     "eslint-config-eslint": "^7.0.0",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
     "eslint-plugin-jsdoc": "^39.2.9",

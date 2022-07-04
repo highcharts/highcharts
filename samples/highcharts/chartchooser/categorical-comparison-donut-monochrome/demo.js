@@ -12,10 +12,10 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Source:<a href="https://cleantechnica.com/2020/03/07/pioneering-norway-rises-above-68-plug-in-vehicle-market-share-in-february/">cleantechnica</a>'
+        text: 'Source: <a href="https://cleantechnica.com/2020/03/07/pioneering-norway-rises-above-68-plug-in-vehicle-market-share-in-february/">CleanTechnica</a>'
     },
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
     },
     plotOptions: {
         pie: {
