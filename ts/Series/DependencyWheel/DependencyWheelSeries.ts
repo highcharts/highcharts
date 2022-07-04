@@ -277,6 +277,7 @@ class DependencyWheelSeries extends SankeySeries {
                     centerY = center[1],
                     r = center[2] / 2,
                     innerR = r - (options.nodeWidth as any),
+                    radius = r - innerR,
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
                         factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0)),
@@ -290,10 +291,11 @@ class DependencyWheelSeries extends SankeySeries {
                     x: centerX,
                     y: centerY,
                     r: r,
+                    radius: radius,
                     innerR: innerR,
                     start: start,
                     end: end
-                };
+                } as any;
 
                 node.dlBox = {
                     x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
