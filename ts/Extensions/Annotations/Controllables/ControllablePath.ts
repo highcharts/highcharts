@@ -13,15 +13,54 @@
  * */
 
 import type Annotation from '../Annotation';
+import type AST from '../../../Core/Renderer/HTML/AST';
+import type Chart from '../../../Core/Chart/Chart';
 import type { ControllableShapeOptions } from './ControllableOptions';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
 
 import Controllable from './Controllable.js';
+import ControllableDefaults from './ControllableDefaults.js';
+const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
-import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
-const { extend } = U;
+const {
+    addEvent,
+    defined,
+    extend,
+    merge,
+    uniqueKey
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './ControllableLike' {
+    interface ControllableLike {
+        markerEnd?: SVGElement;
+        markerStart?: SVGElement;
+    }
+}
+declare module '../../../Core/Options'{
+    interface Options {
+        defs?: Record<string, AST.Node>;
+    }
+}
+
+declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        addMarker(id: string, markerOptions: AST.Node): SVGElement;
+    }
+}
+
+interface MarkerSetterFunction {
+    (this: SVGElement, value: string): void;
+}
 
 /* *
  *
@@ -29,8 +68,93 @@ const { extend } = U;
  *
  * */
 
+const composedClasses: Array<Function> = [];
+
+const markerEndSetter = createMarkerSetter('marker-end');
+
+const markerStartSetter = createMarkerSetter('marker-start');
+
 // See TRACKER_FILL in highcharts.src.js
 const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function createMarkerSetter(
+    markerType: string
+): MarkerSetterFunction {
+    return function (this: SVGElement, value: string): void {
+        this.attr(markerType, 'url(#' + value + ')');
+    };
+}
+
+/**
+ * @private
+ */
+function onChartAfterGetContainer(
+    this: Chart
+): void {
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
+
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
+}
+
+/**
+ * @private
+ */
+function svgRendererAddMarker(
+    this: SVGRenderer,
+    id: string,
+    markerOptions: AST.Node
+): SVGElement {
+    const options: AST.Node = { attributes: { id } };
+
+    const attrs: SVGAttributes = {
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
+    };
+
+    options.children = (
+        markerOptions.children &&
+        markerOptions.children.map(
+            function (child: AST.Node): AST.Node {
+                return merge(attrs, child);
+            }
+        )
+    );
+
+    const ast = merge(true, {
+        attributes: {
+            markerWidth: 20,
+            markerHeight: 20,
+            refX: 0,
+            refY: 0,
+            orient: 'auto'
+        }
+    }, markerOptions, options);
+
+    const marker = this.definition(ast);
+
+    marker.id = id;
+
+    return marker;
+}
 
 /* *
  *
@@ -80,6 +204,32 @@ class ControllablePath extends Controllable {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
+        }
+
+        if (composedClasses.indexOf(SVGRendererClass) === -1) {
+            composedClasses.push(SVGRendererClass);
+
+            const svgRendererProto = SVGRendererClass.prototype;
+
+            svgRendererProto.addMarker = svgRendererAddMarker;
+        }
+    }
+
+    /* *
+     *
      *  Constructors
      *
      * */
@@ -97,8 +247,6 @@ class ControllablePath extends Controllable {
      *  Properties
      *
      * */
-
-    public setMarkers = MarkerMixin.setItemMarkers;
 
     public type = 'path';
 
@@ -197,10 +345,7 @@ class ControllablePath extends Controllable {
 
         super.render();
 
-        extend(this.graphic, {
-            markerStartSetter: MarkerMixin.markerStartSetter,
-            markerEndSetter: MarkerMixin.markerEndSetter
-        });
+        extend(this.graphic, { markerStartSetter, markerEndSetter });
 
         this.setMarkers(this);
     }
@@ -224,6 +369,66 @@ class ControllablePath extends Controllable {
 
         super.redraw(animation);
     }
+
+    /**
+     * Set markers.
+     * @private
+     * @param {Highcharts.AnnotationControllablePath} item
+     */
+    public setMarkers(item: ControllablePath): void {
+        const itemOptions = item.options,
+            chart = item.chart,
+            defs = chart.options.defs,
+            fill = itemOptions.fill,
+            color = defined(fill) && fill !== 'none' ?
+                fill :
+                itemOptions.stroke;
+
+        const setMarker = function (
+            markerType: ('markerEnd'|'markerStart')
+        ): void {
+            let markerId = itemOptions[markerType],
+                def,
+                predefinedMarker,
+                key,
+                marker;
+
+            if (markerId) {
+                for (key in defs) { // eslint-disable-line guard-for-in
+                    def = defs[key];
+
+                    if (
+                        (
+                            markerId === (
+                                def.attributes && def.attributes.id
+                            ) ||
+                            // Legacy, for
+                            // unit-tests/annotations/annotations-shapes
+                            markerId === (def as any).id
+                        ) &&
+                        def.tagName === 'marker'
+                    ) {
+                        predefinedMarker = def;
+                        break;
+                    }
+                }
+
+                if (predefinedMarker) {
+                    marker = item[markerType] = chart.renderer
+                        .addMarker(
+                            (itemOptions.id || uniqueKey()) + '-' + markerId,
+                            merge(predefinedMarker, { color: color })
+                        );
+
+                    item.attr(markerType, marker.getAttribute('id'));
+                }
+            }
+        };
+
+        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>)
+            .forEach(setMarker);
+    }
+
 }
 
 /* *

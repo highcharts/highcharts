@@ -29,7 +29,6 @@ import type {
 } from './Controllables/ControllableType';
 import type {
     ControllableLabelOptions,
-    ControllableOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
@@ -219,10 +218,11 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
      * */
 
     public static compose(
+        ChartClass: typeof Chart,
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
         ControllableLabel.compose(SVGRendererClass);
+        ControllablePath.compose(ChartClass, SVGRendererClass);
     }
 
     /* *
