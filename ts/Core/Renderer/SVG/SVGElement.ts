@@ -646,6 +646,7 @@ class SVGElement implements SVGElementLike {
             // For each of the tspans and text nodes, create a copy in the
             // outline.
             const parentElem = elem.querySelector('textPath') || elem;
+            let totalHeight = 0;
             [].forEach.call(
                 parentElem.childNodes,
                 (childNode: ChildNode): void => {
@@ -653,6 +654,9 @@ class SVGElement implements SVGElementLike {
                     if ((clone as any).removeAttribute) {
                         ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
                             (prop): void => (clone as any).removeAttribute(prop)
+                        );
+                        totalHeight += Number(
+                            (clone as any).getAttribute('dy')
                         );
                     }
                     outline.appendChild(clone);
@@ -664,12 +668,10 @@ class SVGElement implements SVGElementLike {
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
 
-            // Copy x and y if not null
-            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
-                const value = elem.getAttribute(key);
-                if (value) {
-                    br.setAttribute(key, value);
-                }
+            // Reset the position for the following text
+            attr(br, {
+                x: Number(elem.getAttribute('x')),
+                dy: -totalHeight
             });
 
             // Insert the outline
@@ -1899,7 +1901,6 @@ class SVGElement implements SVGElementLike {
     ): this {
         /*
         @todo Text path refactoring
-        - Text outline fails on multiline text
         - Docs and demo
         */
 
