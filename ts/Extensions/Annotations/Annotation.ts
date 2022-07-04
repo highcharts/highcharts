@@ -37,6 +37,7 @@ import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -210,6 +211,19 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
      * @private
      */
     public static types = {} as AnnotationTypeRegistry;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+
+        ControllableLabel.compose(SVGRendererClass);
+    }
 
     /* *
      *
