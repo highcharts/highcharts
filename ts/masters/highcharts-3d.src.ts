@@ -24,5 +24,5 @@ const G: AnyRecord = Highcharts;
 // Compositions
 SVGRenderer3D.compose(G.SVGRenderer);
 Chart3D.compose(G.Chart, G.Fx);
-ZAxis.ZChartComposition.compose(G.Chart);
+ZAxis.compose(G.Chart);
 Axis3D.compose(G.Axis);
