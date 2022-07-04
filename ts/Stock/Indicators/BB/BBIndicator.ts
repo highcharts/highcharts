@@ -288,20 +288,19 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
-interface BBIndicator extends MultipleLinesComposition.Composition {
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    nameComponents: Array<string>;
+interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<keyof BBPoint>;
     pointClass: typeof BBPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
+    pointValKey: string;
 }
 extend(BBIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+    linesApiNames: ['topLine', 'bottomLine'],
     nameComponents: ['period', 'standardDeviation'],
-    linesApiNames: ['topLine', 'bottomLine']
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
 MultipleLinesComposition.compose(BBIndicator);
 

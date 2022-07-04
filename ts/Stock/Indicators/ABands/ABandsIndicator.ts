@@ -262,13 +262,12 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
-interface ABandsIndicator extends MultipleLinesComposition.Composition {
+interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof ABandsPoint>;
     pointValKey: string;
     pointClass: typeof ABandsPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(ABandsIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
