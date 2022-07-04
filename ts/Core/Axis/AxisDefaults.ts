@@ -21,7 +21,7 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type { StackItemObject } from './Stacking/Stacking';
+import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -3044,10 +3044,10 @@ namespace AxisDefaults {
              * @since   2.1.5
              * @product highcharts
              */
-            formatter: function (this: StackItemObject): string {
+            formatter: function (this: StackItem): string {
                 const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total, -1);
+                return numberFormatter(this.total || 0, -1);
             },
 
             /**
