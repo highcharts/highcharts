@@ -71,7 +71,7 @@ class StackItem {
      * */
 
     public constructor(
-        axis: StackingAxis.Composition,
+        axis: StackingAxis,
         options: StackLabelOptions,
         isNegative: boolean,
         x: number,
@@ -122,7 +122,7 @@ class StackItem {
     }
 
     public alignOptions: AlignObject;
-    public axis: StackingAxis.Composition;
+    public axis: StackingAxis;
     public base?: string;
     public cumulative: (number|null);
     public hasValidPoints: boolean;
