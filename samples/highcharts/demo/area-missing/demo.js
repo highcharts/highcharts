@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         text: 'Born persons, by boys\' name'
     },
     subtitle: {
-        text: '* The name Yasin was not given this year.',
+        text: '* Missing data for Yasin this year.',
         align: 'right',
         verticalAlign: 'bottom'
     },
@@ -22,15 +22,15 @@ Highcharts.chart('container', {
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
-    xAxis: {
-        categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
-    },
     yAxis: {
         title: {
             text: 'Amount'
         }
     },
     plotOptions: {
+        series: {
+            pointStart: 2014
+        },
         area: {
             fillOpacity: 0.5
         }
