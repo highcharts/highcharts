@@ -1,4 +1,4 @@
-const color = [{
+const colors = [{
     pattern: {
         ...Highcharts.patterns[1],
         color: "#1493ff"
@@ -14,6 +14,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },
+    colors,
     accessibility: {
         point: {
             valueSuffix: '%'
@@ -40,18 +41,15 @@ Highcharts.chart('container', {
         colorByPoint: true,
         data: [{
             name: 'Salt water',
-            y: 97,
-            color: color[0]
+            y: 97
         }, {
             name: 'Ice',
-            y: 2,
-            color: color[1]
+            y: 2
         }, {
             name: 'Fresh water',
             sliced: true,
             selected: true,
-            y: 1,
-            color: color[2]
+            y: 1
         }]
     }]
 });

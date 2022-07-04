@@ -39,7 +39,7 @@ Highcharts.chart('container', {
             data: [14.8, 7.4, 15.7, 12.4, 8, 59, 2.9, 8, 0.9, 1.6]
         },
         {
-            name: 'Ohter renewable',
+            name: 'Other renewable',
             data: [2.2, 4.8, 0.1, 5, 4.2, 3.3, 17.6, 3.6, 0.6, 40.3]
         },
         {

@@ -35,7 +35,7 @@ Highcharts.chart("container", {
             color: "white",
             dataLabels: {
                 enabled: true,
-                format: "{series.name}: {point.series.userOptions.height}",
+                format: "{series.name}: {point.series.options.custom.height}",
                 color: "black",
                 style: {
                     textOutline: false
