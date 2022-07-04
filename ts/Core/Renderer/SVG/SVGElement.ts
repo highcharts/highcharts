@@ -1962,8 +1962,11 @@ class SVGElement implements SVGElementLike {
                     textWrapper.attr(textAttribs);
 
 
-                    // Set attributes for the <g> of a label
+                    // Handle label properties
                     this.attr({ transform: '' });
+                    if (this.box) {
+                        this.box = this.box.destroy();
+                    }
 
                     // Wrap the nodes in a textPath
                     const children = e.nodes.slice(0);
