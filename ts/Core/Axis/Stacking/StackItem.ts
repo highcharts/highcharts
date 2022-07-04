@@ -24,7 +24,10 @@ import type Axis from '../Axis';
 import type BBoxObject from '../../Renderer/BBoxObject';
 import type Chart from '../../Chart/Chart';
 import type StackingAxis from './StackingAxis';
-import type StackLabelOptions from './StackLabelOptions';
+import type {
+    StackLabelOptions,
+    StackOverflowValue
+} from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
@@ -39,14 +42,6 @@ const {
     isNumber,
     pick
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-export type StackOverlowValue = ('normal'|'overlap'|'percent'|'stream'|'group');
 
 /* *
  *
@@ -80,7 +75,7 @@ class StackItem {
         options: StackLabelOptions,
         isNegative: boolean,
         x: number,
-        stackOption?: StackOverlowValue
+        stackOption?: StackOverflowValue
     ) {
 
         const inverted = axis.chart.inverted;
@@ -139,7 +134,7 @@ class StackItem {
     public points: Record<string, Array<number>>;
     public rightCliff: number;
     public rotation?: number;
-    public stack?: StackOverlowValue;
+    public stack?: StackOverflowValue;
     public textAlign: AlignValue;
     public total: (number|null);
     public touched?: number;
@@ -393,3 +388,51 @@ class StackItem {
  * */
 
 export default StackItem;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Stack of data points
+ *
+ * @product highcharts
+ *
+ * @interface Highcharts.StackItemObject
+ *//**
+ * Alignment settings
+ * @name Highcharts.StackItemObject#alignOptions
+ * @type {Highcharts.AlignObject}
+ *//**
+ * Related axis
+ * @name Highcharts.StackItemObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Cumulative value of the stacked data points
+ * @name Highcharts.StackItemObject#cumulative
+ * @type {number}
+ *//**
+ * True if on the negative side
+ * @name Highcharts.StackItemObject#isNegative
+ * @type {boolean}
+ *//**
+ * Related SVG element
+ * @name Highcharts.StackItemObject#label
+ * @type {Highcharts.SVGElement}
+ *//**
+ * Related stack options
+ * @name Highcharts.StackItemObject#options
+ * @type {Highcharts.YAxisStackLabelsOptions}
+ *//**
+ * Total value of the stacked data points
+ * @name Highcharts.StackItemObject#total
+ * @type {number}
+ *//**
+ * Shared x value of the stack
+ * @name Highcharts.StackItemObject#x
+ * @type {number}
+ */
+
+''; // keeps doclets above in JS file

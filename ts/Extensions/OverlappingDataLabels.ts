@@ -18,8 +18,9 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
-import type StackItem from '../Core/Axis/Stacking/Stacking';
+import type StackItem from '../Core/Axis/Stacking/StackItem';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {

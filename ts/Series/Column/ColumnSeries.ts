@@ -24,7 +24,7 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
-import type StackItem from '../../Core/Axis/Stacking/Stacking';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

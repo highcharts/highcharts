@@ -15,18 +15,14 @@
  * */
 
 import type {
-    AlignObject,
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type { YAxisOptions } from '../AxisOptions';
-import type BBoxObject from '../../Renderer/BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
 import type FormatUtilities from '../../FormatUtilities';
-import type { OptionsOverflowValue } from '../../Options';
 import type StackItem from './StackItem';
 
 /* *
@@ -41,7 +37,14 @@ declare module '../AxisOptions' {
     }
 }
 
-interface StackLabelOptions {
+declare module '../../Series/SeriesOptions' {
+    interface SeriesOptions {
+        stack?: (number|string);
+        stacking?: StackOverflowValue;
+    }
+}
+
+export interface StackLabelOptions {
     animation?: (false|Partial<AnimationOptions>);
     align?: AlignValue;
     allowOverlap?: boolean;
@@ -62,6 +65,10 @@ interface StackLabelOptions {
     x?: number;
     y?: number;
 }
+
+export type StackOverflowValue = (
+    'normal'|'overlap'|'percent'|'stream'|'group'
+);
 
 /* *
  *

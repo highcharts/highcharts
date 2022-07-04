@@ -20,7 +20,7 @@ import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart.js';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
-import StackItem from './Stacking/Stacking.js';
+import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
     addEvent,

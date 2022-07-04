@@ -36,7 +36,7 @@ import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import StackItem from '../../Core/Axis/Stacking/Stacking.js';
+import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
