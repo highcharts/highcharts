@@ -15,4 +15,4 @@ import Annotation from '../../Extensions/Annotations/Annotation.js';
 import '../../Extensions/Annotations/NavigationBindings.js';
 import '../../Extensions/Annotations/Popup.js';
 const G: AnyRecord = Highcharts;
-Annotation.compose(G.SVGRenderer);
+Annotation.compose(G.Chart, G.SVGRenderer);

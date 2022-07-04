@@ -26,4 +26,4 @@ import '../../Extensions/Annotations/Types/Measure.js';
 import '../../Extensions/Annotations/NavigationBindings.js';
 import '../../Extensions/Annotations/Popup.js';
 const G: AnyRecord = Highcharts;
-Annotation.compose(G.SVGRenderer);
+Annotation.compose(G.Chart, G.SVGRenderer);
