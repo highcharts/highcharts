@@ -993,15 +993,13 @@ class Chart {
      * The retrieved item.
      */
     public get(id: string): (Axis|Series|Point|undefined) {
-        const detail = {
-                id,
-                result: void 0 as (Axis|Series|Point|undefined)
-            },
-            e = { detail };
+        const e = {
+            args: { id },
+            result: void 0 as (Axis|Series|Point|undefined)
+        };
 
         fireEvent(this, 'get', e, (e): void => {
-            const detail = e.detail,
-                series = this.series;
+            const series = this.series;
 
             /**
              * @private
@@ -1013,7 +1011,7 @@ class Chart {
                 );
             }
 
-            detail.result =
+            e.result =
                 // Search axes
                 find(this.axes, itemById) ||
 
@@ -1021,12 +1019,12 @@ class Chart {
                 find(this.series, itemById);
 
             // Search points
-            for (let i = 0; !detail.result && i < series.length; i++) {
-                detail.result = find(series[i].points || [], itemById);
+            for (let i = 0; !e.result && i < series.length; i++) {
+                e.result = find(series[i].points || [], itemById);
             }
         });
 
-        return detail.result;
+        return e.result;
     }
 
     /**

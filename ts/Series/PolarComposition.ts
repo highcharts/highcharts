@@ -349,16 +349,15 @@ function onChartGet(
     this: Chart,
     e: U.EventObject<Chart>
 ): void {
-    const detail = e.detail = e.detail || {};
 
-    detail.result = find(
+    e.result = find(
         (this.pane || []),
         (pane: Highcharts.Pane): boolean =>
             // @todo remove id or define id type:
-            (pane.options.id === detail.id)
+            (pane.options.id === e.args.id)
     );
 
-    if (detail.result) {
+    if (e.result) {
         e.preventDefault();
     }
 }
