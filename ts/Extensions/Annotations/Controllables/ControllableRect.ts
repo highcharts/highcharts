@@ -4,6 +4,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -11,24 +19,13 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
-declare module './ControllableType' {
-    interface ControllableShapeTypeRegistry {
-        rect: typeof ControllableRect;
-    }
-}
-
-/**
- * @typedef {Annotation.ControllablePath.AttrsMap}
- *          Annotation.ControllableRect.AttrsMap
- * @property {string} width=width
- * @property {string} height=height
- */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable rect class.
@@ -133,10 +130,33 @@ class ControllableRect extends Controllable {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface ControllableRect {
     collections: 'shapes';
     itemType: 'shape';
     options: ControllableShapeOptions;
 }
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        rect: typeof ControllableRect;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllableRect;

@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -23,13 +29,11 @@ const {
     defined
 } = U;
 
-declare module './ControllableType' {
-    interface ControllableShapeTypeRegistry {
-        ellipse: typeof ControllableEllipse;
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 interface EllipseShapeOptions extends ControllableShapeOptions {
     yAxis: number;
@@ -50,6 +54,12 @@ interface ReferencePointsOptions {
     y: number;
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * A controllable ellipse class.
  *
@@ -63,8 +73,6 @@ interface ReferencePointsOptions {
  * @param {Highcharts.AnnotationsShapeOptions} options a shape's options
  * @param {number} index of the Ellipse
  */
-
-
 class ControllableEllipse extends Controllable {
 
     /* *
@@ -184,7 +192,7 @@ class ControllableEllipse extends Controllable {
             point2.x * point1.y - point2.y * point1.x
         ) / Math.sqrt(
             (point2.y - point1.y) * (point2.y - point1.y) +
-                (point2.x - point1.x) * (point2.x - point1.x)
+            (point2.x - point1.x) * (point2.x - point1.x)
         );
     }
 
@@ -309,10 +317,34 @@ class ControllableEllipse extends Controllable {
     }
 }
 
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
 interface ControllableEllipse {
     collection: 'shapes';
     itemType: 'shape'
     options: EllipseShapeOptions;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        ellipse: typeof ControllableEllipse;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllableEllipse;

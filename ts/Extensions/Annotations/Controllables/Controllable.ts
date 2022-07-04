@@ -187,11 +187,12 @@ abstract class Controllable {
     public attrsFromOptions(
         options: ControllableOptions
     ): SVGAttributes {
-        let map = (this.constructor as AnyRecord).attrsMap as AttrsMapObject,
+        const map = (this.constructor as AnyRecord).attrsMap as AttrsMapObject,
             attrs: SVGAttributes = {},
-            key: keyof ControllableOptions,
-            mappedKey: keyof SVGAttributes,
             styledMode = this.chart.styledMode;
+
+        let key: keyof ControllableOptions,
+            mappedKey: keyof SVGAttributes;
 
         for (key in options) { // eslint-disable-line guard-for-in
             mappedKey = map[key];
@@ -282,10 +283,11 @@ abstract class Controllable {
      *         An array of point-like objects.
      */
     public linkPoints(): (Array<Highcharts.AnnotationPointType>|undefined) {
-        let pointsOptions = this.getPointsOptions(),
+        const pointsOptions = this.getPointsOptions(),
             points = this.points,
-            len = (pointsOptions && pointsOptions.length) || 0,
-            i: number,
+            len = (pointsOptions && pointsOptions.length) || 0;
+
+        let i: number,
             point: (Highcharts.AnnotationPointType|null);
 
         for (i = 0; i < len; i++) {

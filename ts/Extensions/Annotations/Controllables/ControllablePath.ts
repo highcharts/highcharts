@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -15,34 +21,22 @@ import Controllable from './Controllable.js';
 import H from '../../../Core/Globals.js';
 import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
-declare module './ControllableType' {
-    interface ControllableShapeTypeRegistry {
-        path: typeof ControllablePath;
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface SVGAnnotationElement extends SVGElement {
-            markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
-            markerStartSetter?: AnnotationMarkerMixin['markerStartSetter'];
-            placed?: boolean;
-        }
-    }
-}
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // See TRACKER_FILL in highcharts.src.js
 const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable path class.
@@ -129,14 +123,15 @@ class ControllablePath extends Controllable {
                 dOption;
         }
 
-        let points = this.points,
+        const points = this.points,
             len = points.length,
-            showPath: boolean = len as any,
+            d: SVGPath = [];
+
+        let showPath: boolean = len as any,
             point = points[0],
             position = showPath && this.anchor(point).absolutePosition,
             pointIndex = 0,
-            command,
-            d: SVGPath = [];
+            command;
 
         if (position) {
             d.push(['M', position.x, position.y]);
@@ -231,11 +226,35 @@ class ControllablePath extends Controllable {
     }
 }
 
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
 interface ControllablePath {
     collections: 'shapes';
     itemType: 'shape';
     options: ControllableShapeOptions;
-    tracker: Highcharts.SVGAnnotationElement;
+    tracker: SVGElement;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        path: typeof ControllablePath;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllablePath;
