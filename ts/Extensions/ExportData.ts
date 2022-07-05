@@ -16,6 +16,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Exporting from '../Extensions/Exporting/Exporting';
 import type Point from '../Core/Series/Point';
 import type {
@@ -25,6 +31,7 @@ import type {
 import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -50,10 +57,17 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
+        isDataTableVisible?: boolean;
         /** @requires modules/export-data */
         downloadCSV(): void;
         /** @requires modules/export-data */
@@ -69,15 +83,13 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/export-data */
         getTableAST(useLocalDecimalPoint?: boolean): AST.Node;
         /** @requires modules/export-data */
-        setUpKeyToAxis(): void;
+        hideData(): void;
         /** @requires modules/export-data */
-        viewData(): void;
+        setUpKeyToAxis(): void;
         /** @requires modules/export-data */
         toggleDataTable(show?: boolean): void;
         /** @requires modules/export-data */
-        hideData(): void;
-        /** @requires modules/export-data */
-        isDataTableVisible: boolean;
+        viewData(): void;
     }
 }
 
@@ -85,7 +97,7 @@ declare module '../Core/LangOptions'{
     interface LangOptions {
         downloadCSV?: string;
         downloadXLS?: string;
-        exportData?: Highcharts.ExportDataOptions;
+        exportData?: ExportingLangOptions;
         viewData?: string;
         hideData?: string;
     }
@@ -106,53 +118,51 @@ declare module '../Core/Series/SeriesOptions' {
 
 declare module './Exporting/ExportingOptions' {
     interface ExportingOptions {
-        csv?: Highcharts.ExportingCsvOptions;
+        csv?: ExportingCsvOptions;
         showTable?: boolean;
         tableCaption?: (boolean|string);
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
-        type ExportingDateTimeMap = Record<string, Array<string>>;
+type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
 
-        interface ExportingCategoryDateTimeMap {
-            categoryMap: ExportingCategoryMap;
-            dateTimeValueAxisMap: ExportingDateTimeMap;
-        }
-        interface AnnotationInDataTable {
-            itemDelimiter?: string;
-            join?: boolean;
-        }
-        interface ExportingCsvOptions {
-            annotations?: AnnotationInDataTable;
-            columnHeaderFormatter?: (Function|null);
-            dateFormat?: string;
-            decimalPoint?: (string|null);
-            itemDelimiter?: (string|null);
-            lineDelimiter?: string;
-        }
-        interface ExportDataPoint {
-            series: ExportDataSeries;
-            x?: number;
-        }
-        interface ExportDataSeries {
-            autoIncrement: Series['autoIncrement'];
-            chart: Chart;
-            options: SeriesOptions;
-            pointArrayMap?: Array<string>;
-        }
-        interface ExportDataOptions {
-            annotationHeader?: string;
-            categoryHeader?: string;
-            categoryDatetimeHeader?: string;
-        }
-    }
+type ExportingDateTimeMap = Record<string, Array<string>>;
+
+interface AnnotationInDataTableOptions {
+    itemDelimiter?: string;
+    join?: boolean;
+}
+
+interface ExportingCategoryDateTimeMap {
+    categoryMap: ExportingCategoryMap;
+    dateTimeValueAxisMap: ExportingDateTimeMap;
+}
+
+interface ExportDataPoint {
+    series: ExportDataSeries;
+    x?: number;
+}
+
+interface ExportDataSeries {
+    autoIncrement: Series['autoIncrement'];
+    chart: Chart;
+    options: SeriesOptions;
+    pointArrayMap?: Array<string>;
+}
+
+interface ExportingCsvOptions {
+    annotations?: AnnotationInDataTableOptions;
+    columnHeaderFormatter?: (Function|null);
+    dateFormat?: string;
+    decimalPoint?: (string|null);
+    itemDelimiter?: (string|null);
+    lineDelimiter?: string;
+}
+
+interface ExportingLangOptions {
+    annotationHeader?: string;
+    categoryHeader?: string;
+    categoryDatetimeHeader?: string;
 }
 
 /**
@@ -587,7 +597,7 @@ Chart.prototype.getDataRows = function (
         x,
         xTitle: string,
         langOptions = this.options.lang,
-        exportDataOptions: Highcharts.ExportDataOptions = (
+        exportDataOptions: ExportingLangOptions = (
             langOptions.exportData as any
         ),
         categoryHeader = exportDataOptions.categoryHeader as any,
@@ -635,9 +645,9 @@ Chart.prototype.getDataRows = function (
             series: Series,
             pointArrayMap: Array<string>,
             pIdx?: number
-        ): Highcharts.ExportingCategoryDateTimeMap {
-            const categoryMap: Highcharts.ExportingCategoryMap = {},
-                dateTimeValueAxisMap: Highcharts.ExportingDateTimeMap = {};
+        ): ExportingCategoryDateTimeMap {
+            const categoryMap: ExportingCategoryMap = {},
+                dateTimeValueAxisMap: ExportingDateTimeMap = {};
 
             pointArrayMap.forEach(function (prop: string): void {
                 const axisName = (
@@ -710,7 +720,7 @@ Chart.prototype.getDataRows = function (
                 series,
                 pointArrayMap
             ),
-            mockSeries: Highcharts.ExportDataSeries,
+            mockSeries: ExportDataSeries,
             j: number;
 
         if (
@@ -771,7 +781,7 @@ Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportDataPoint|Point);
+                    point: (ExportDataPoint|Point);
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -931,8 +941,7 @@ Chart.prototype.getCSV = function (
 ): string {
     let csv = '';
     const rows = this.getDataRows(),
-        csvOptions: Highcharts.ExportingCsvOptions =
-            (this.options.exporting as any).csv,
+        csvOptions: ExportingCsvOptions = (this.options.exporting as any).csv,
         decimalPoint = pick(
             csvOptions.decimalPoint,
             csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
