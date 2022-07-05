@@ -305,23 +305,17 @@ function chartGetDataRows(
     this: Chart,
     multiLevelHeaders?: boolean
 ): Array<Array<(number|string)>> {
-    let hasParallelCoords = this.hasParallelCoordinates,
+    const hasParallelCoords = this.hasParallelCoordinates,
         time = this.time,
         csvOptions = (
             (this.options.exporting && this.options.exporting.csv) || {}
         ),
-        xAxis: Axis,
         xAxes = this.xAxis,
         rows: Record<string, (Array<any>&AnyRecord)> =
             {},
         rowArr = [],
-        dataRows,
         topLevelColumnTitles: Array<string> = [],
         columnTitles: Array<string> = [],
-        columnTitleObj: (string|Record<string, string>),
-        i: number,
-        x,
-        xTitle: string,
         langOptions = this.options.lang,
         exportDataOptions: ExportDataLangOptions = (
             langOptions.exportData as any
@@ -429,8 +423,12 @@ function chartGetDataRows(
         },
         xAxisIndices: Array<Array<number>> = [];
 
-    // Loop the series and index values
-    i = 0;
+    let xAxis: Axis,
+        dataRows,
+        columnTitleObj: (string|Record<string, string>),
+        i = 0, // Loop the series and index values
+        x,
+        xTitle: string;
 
     this.series.forEach(function (series: Series): void {
         const keys = series.options.keys,
@@ -440,6 +438,7 @@ function chartGetDataRows(
             xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis);
+
         let categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
@@ -501,11 +500,11 @@ function chartGetDataRows(
                 options: (PointOptions|PointShortOptions),
                 pIdx: number
             ): void {
+                const mockPoint: ExportDataPoint = { series: mockSeries };
+
                 let key: (number|string),
                     prop: string,
-                    val: number,
-                    name: (string|undefined),
-                    point: (ExportDataPoint|Point);
+                    val: number;
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -517,13 +516,13 @@ function chartGetDataRows(
                     );
                 }
 
-                point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(
-                    point,
+                    mockPoint,
                     [options]
                 );
-                key = point.x as any;
-                name = series.data[pIdx] && series.data[pIdx].name;
+                key = mockPoint.x as any;
+
+                const name = series.data[pIdx] && series.data[pIdx].name;
 
                 j = 0;
 
@@ -549,13 +548,13 @@ function chartGetDataRows(
                     // Contain the X values from one or more X axes
                     rows[key].xValues = [];
                 }
-                rows[key].x = point.x;
+                rows[key].x = mockPoint.x;
                 rows[key].name = name;
-                rows[key].xValues[xAxisIndex] = point.x;
+                rows[key].xValues[xAxisIndex] = mockPoint.x;
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
-                    val = (point as any)[prop];
+                    val = (mockPoint as any)[prop];
                     rows[key as any][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
@@ -680,10 +679,11 @@ function chartGetTable(
         let html = `<${node.tagName}`;
 
         if (attributes) {
-            Object.keys(attributes).forEach((key): void => {
-                const value = (attributes as any)[key];
-                html += ` ${key}="${value}"`;
-            });
+            (Object.keys(attributes) as Array<keyof typeof attributes>)
+                .forEach((key): void => {
+                    const value = attributes[key];
+                    html += ` ${key}="${value}"`;
+                });
         }
         html += '>';
 
