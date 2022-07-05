@@ -533,55 +533,59 @@ class ColumnSeries extends Series {
      *        Whether to initialize the animation or run it
      */
     public animate(init: boolean): void {
-        const series = this,
-            yAxis = this.yAxis,
-            options = series.options,
-            inverted = this.chart.inverted,
-            attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ?
-                'translateX' :
-                'translateY';
-        let translateStart: number,
-            translatedThreshold;
+        const e = { args: { init } };
 
-        if (init) {
-            attr.scaleY = 0.001;
-            translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
-                yAxis.pos,
-                yAxis.pos + yAxis.len
-            );
-            if (inverted) {
-                attr.translateX = translatedThreshold - yAxis.len;
-            } else {
-                attr.translateY = translatedThreshold;
-            }
+        fireEvent(this, 'animate', e, (e): void => {
+            const series = this,
+                yAxis = this.yAxis,
+                options = series.options,
+                inverted = this.chart.inverted,
+                attr: SVGAttributes = {},
+                translateProp: 'translateX'|'translateY' = inverted ?
+                    'translateX' :
+                    'translateY';
+            let translateStart: number,
+                translatedThreshold;
 
-            // apply finnal clipping (used in Highcharts Stock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
-            if (series.clipBox) {
-                series.setClip();
-            }
+            if (e.args.init) {
+                attr.scaleY = 0.001;
+                translatedThreshold = clamp(
+                    yAxis.toPixels(options.threshold as any),
+                    yAxis.pos,
+                    yAxis.pos + yAxis.len
+                );
+                if (inverted) {
+                    attr.translateX = translatedThreshold - yAxis.len;
+                } else {
+                    attr.translateY = translatedThreshold;
+                }
 
-            series.group.attr(attr);
+                // apply finnal clipping (used in Highcharts Stock) (#7083)
+                // animation is done by scaleY, so cliping is for panes
+                if (series.clipBox) {
+                    series.setClip();
+                }
 
-        } else { // run the animation
-            translateStart = Number(series.group.attr(translateProp));
-            series.group.animate(
-                { scaleY: 1 },
-                extend(animObject(series.options.animation), {
-                    // Do the scale synchronously to ensure smooth
-                    // updating (#5030, #7228)
-                    step: function (val: any, fx: any): void {
-                        if (series.group) {
-                            attr[translateProp] = translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
-                            series.group.attr(attr);
+                series.group.attr(attr);
+
+            } else { // run the animation
+                translateStart = Number(series.group.attr(translateProp));
+                series.group.animate(
+                    { scaleY: 1 },
+                    extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth
+                        // updating (#5030, #7228)
+                        step: function (val: any, fx: any): void {
+                            if (series.group) {
+                                attr[translateProp] = translateStart +
+                                    fx.pos * (yAxis.pos - translateStart);
+                                series.group.attr(attr);
+                            }
                         }
-                    }
-                })
-            );
-        }
+                    })
+                );
+            }
+        });
     }
 
     /**

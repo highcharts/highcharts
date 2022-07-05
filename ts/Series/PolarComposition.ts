@@ -46,6 +46,10 @@ const { animObject } = A;
 import H from '../Core/Globals.js';
 import Pane from '../Extensions/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
+import SeriesTypeRegistry from '../Core/Series/SeriesRegistry.js';
+const {
+    pie: { prototype: pieProto }
+} = SeriesTypeRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -487,6 +491,108 @@ function onSeriesAfterTranslate(
     }
 }
 
+
+/**
+ * Define the animate method for regular series
+ * @private
+ */
+function onSeriesAnimate(
+    this: Series,
+    e: U.EventObject<PolarSeriesComposition>
+): void {
+    const series = this as PolarSeriesComposition,
+        chart = series.chart,
+        group = series.group,
+        init = e.args.init,
+        markerGroup = series.markerGroup,
+        center = series.xAxis && series.xAxis.center,
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop;
+
+    let animation = series.options.animation,
+        attribs: SVGAttributes,
+        paneInnerR: number,
+        graphic,
+        shapeArgs,
+        r,
+        innerR;
+
+    // Specific animation for polar charts
+    if (chart.polar) {
+        if (series.isRadialBar) {
+            if (!init) {
+                // Run the pie animation for radial bars
+                series.startAngleRad = pick(series.translatedThreshold,
+                    series.xAxis.startAngleRad);
+                pieProto.animate.call(series, init);
+            }
+        } else {
+            // Enable animation on polar charts only in SVG. In VML, the scaling
+            // is different, plus animation would be so slow it would't matter.
+            if (chart.renderer.isSVG) {
+                animation = animObject(animation);
+
+                // A different animation needed for column like series
+                if (series.is('column')) {
+                    if (!init) {
+                        paneInnerR = center[3] / 2;
+                        series.points.forEach((point): void => {
+                            graphic = point.graphic;
+                            shapeArgs = point.shapeArgs;
+                            r = shapeArgs && shapeArgs.r;
+                            innerR = shapeArgs && shapeArgs.innerR;
+
+                            if (graphic && shapeArgs) {
+                                // start values
+                                graphic.attr({
+                                    r: paneInnerR,
+                                    innerR: paneInnerR
+                                });
+                                // animate
+                                graphic.animate({
+                                    r: r,
+                                    innerR: innerR
+                                }, series.options.animation);
+                            }
+                        });
+                    }
+                } else {
+                    // Initialize the animation
+                    if (init) {
+                        // Scale down the group and place it in the center
+                        attribs = {
+                            translateX: center[0] + plotLeft,
+                            translateY: center[1] + plotTop,
+                            scaleX: 0.001,
+                            scaleY: 0.001
+                        };
+                        group.attr(attribs);
+                        if (markerGroup) {
+                            markerGroup.attr(attribs);
+                        }
+                        // Run the animation
+                    } else {
+                        attribs = {
+                            translateX: plotLeft,
+                            translateY: plotTop,
+                            scaleX: 1,
+                            scaleY: 1
+                        };
+                        group.animate(attribs, animation);
+                        if (markerGroup) {
+                            markerGroup.animate(attribs, animation);
+                        }
+                    }
+                }
+            }
+        }
+
+        e.preventDefault();
+    }
+
+    // For non-polar charts, continue with default basic animation
+}
+
 /**
  * Align column data labels outside the columns. #1199.
  * @private
@@ -910,107 +1016,6 @@ function wrapPointerGetCoordinates(
 }
 
 /**
- * Define the animate method for regular series
- * @private
- */
-function wrapSeriesAnimate(
-    this: PolarSeriesComposition,
-    proceed: Function,
-    init?: boolean
-): void {
-    const series = this,
-        chart = this.chart,
-        group = this.group,
-        markerGroup = this.markerGroup,
-        center = this.xAxis && this.xAxis.center,
-        plotLeft = chart.plotLeft,
-        plotTop = chart.plotTop;
-
-    let animation = this.options.animation,
-        attribs: SVGAttributes,
-        paneInnerR: number,
-        graphic,
-        shapeArgs,
-        r,
-        innerR;
-
-    // Specific animation for polar charts
-    if (chart.polar) {
-        if (series.isRadialBar) {
-            if (!init) {
-                // Run the pie animation for radial bars
-                series.startAngleRad = pick(series.translatedThreshold,
-                    series.xAxis.startAngleRad);
-                H.seriesTypes.pie.prototype.animate.call(series, init);
-            }
-        } else {
-            // Enable animation on polar charts only in SVG. In VML, the scaling
-            // is different, plus animation would be so slow it would't matter.
-            if (chart.renderer.isSVG) {
-                animation = animObject(animation);
-
-                // A different animation needed for column like series
-                if (series.is('column')) {
-                    if (!init) {
-                        paneInnerR = center[3] / 2;
-                        series.points.forEach((point): void => {
-                            graphic = point.graphic;
-                            shapeArgs = point.shapeArgs;
-                            r = shapeArgs && shapeArgs.r;
-                            innerR = shapeArgs && shapeArgs.innerR;
-
-                            if (graphic && shapeArgs) {
-                                // start values
-                                graphic.attr({
-                                    r: paneInnerR,
-                                    innerR: paneInnerR
-                                });
-                                // animate
-                                graphic.animate({
-                                    r: r,
-                                    innerR: innerR
-                                }, series.options.animation);
-                            }
-                        });
-                    }
-                } else {
-                    // Initialize the animation
-                    if (init) {
-                        // Scale down the group and place it in the center
-                        attribs = {
-                            translateX: center[0] + plotLeft,
-                            translateY: center[1] + plotTop,
-                            scaleX: 0.001,
-                            scaleY: 0.001
-                        };
-                        group.attr(attribs);
-                        if (markerGroup) {
-                            markerGroup.attr(attribs);
-                        }
-                        // Run the animation
-                    } else {
-                        attribs = {
-                            translateX: plotLeft,
-                            translateY: plotTop,
-                            scaleX: 1,
-                            scaleY: 1
-                        };
-                        group.animate(attribs, animation);
-                        if (markerGroup) {
-                            markerGroup.animate(attribs, animation);
-                        }
-                    }
-                }
-            }
-        }
-
-    // For non-polar charts, revert to the basic animation
-    } else {
-        proceed.call(this, init);
-    }
-}
-
-/**
  * Overridden method for calculating a spline from one point to the next
  * @private
  */
@@ -1119,11 +1124,7 @@ class PolarAdditions {
                 onSeriesAfterTranslate,
                 { order: 2 } // Run after translation of ||-coords
             );
-
-
-            const seriesProto = SeriesClass.prototype;
-
-            wrap(seriesProto, 'animate', wrapSeriesAnimate);
+            addEvent(SeriesClass, 'animate', onSeriesAnimate);
         }
 
         if (
@@ -1135,7 +1136,6 @@ class PolarAdditions {
             const columnProto = ColumnSeriesClass.prototype;
 
             wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
-            wrap(columnProto, 'animate', wrapSeriesAnimate);
             wrap(columnProto, 'translate', wrapColumnSeriesTranslate);
         }
 
