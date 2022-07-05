@@ -16,7 +16,6 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['2016', '2017', '2018', '2019', '2020'],
         labels: {
             skew3d: true,
             style: {
@@ -43,6 +42,9 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
+        series: {
+            pointStart: 2016
+        },
         column: {
             stacking: 'normal',
             depth: 40
