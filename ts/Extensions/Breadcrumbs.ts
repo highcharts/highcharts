@@ -270,7 +270,7 @@ class Breadcrumbs {
          * and Hebrew.
          *
          * @type       {boolean}
-         * @since      next
+         * @since 10.2.0
          * @sample     {highcharts} highcharts/breadcrumbs/rtl
          *             Breadcrumbs in RTL
          */
