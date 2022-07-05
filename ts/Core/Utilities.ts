@@ -1461,8 +1461,6 @@ function offset(el: Element): Utilities.OffsetObject {
  *
  * @param {T} [ctx]
  *        The context.
- *
- * @return {void}
  */
 function objectEach<TObject, TContext>(
     obj: TObject,

@@ -1077,7 +1077,7 @@ H.Popup.prototype = {
          */
         filterSeries: function (
             this: Highcharts.Popup,
-            series: Series,
+            series: (Record<string, Series>|SeriesTypePlotOptions),
             filter?: string
         ): Array<Highcharts.FilteredSeries> {
             const popup = this,
@@ -1086,22 +1086,20 @@ H.Popup.prototype = {
                 indicatorAliases = lang &&
                     lang.navigation &&
                     lang.navigation.popup &&
-                    lang.navigation.popup.indicatorAliases;
-            let filteredSeriesArray: Array<Highcharts.FilteredSeries> = [],
-                filteredSeries: Highcharts.FilteredSeries;
+                    lang.navigation.popup.indicatorAliases,
+                filteredSeriesArray: Array<Highcharts.FilteredSeries> = [];
 
-            objectEach(series, function (
-                series: Series,
-                value: string
-            ): void {
-                const seriesOptions = series.options;
+            let filteredSeries: Highcharts.FilteredSeries;
+
+            objectEach(series, (series, value): void => {
+                const seriesOptions = series && (series as Series).options;
                 // Allow only indicators.
                 if (
                     (series as any).params || seriesOptions &&
                     (seriesOptions as any).params
                 ) {
                     const { indicatorFullName, indicatorType } =
-                        indicators.getNameType(series, value);
+                        indicators.getNameType(series as any, value);
 
                     if (filter) {
                         // Replace invalid characters.
@@ -1122,7 +1120,7 @@ H.Popup.prototype = {
                             filteredSeries = {
                                 indicatorFullName,
                                 indicatorType,
-                                series
+                                series: series as any
                             };
 
                             filteredSeriesArray.push(filteredSeries);
@@ -1131,7 +1129,7 @@ H.Popup.prototype = {
                         filteredSeries = {
                             indicatorFullName,
                             indicatorType,
-                            series
+                            series: series as any
                         };
 
                         filteredSeriesArray.push(filteredSeries);
