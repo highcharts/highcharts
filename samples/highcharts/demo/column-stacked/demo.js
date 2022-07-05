@@ -30,8 +30,8 @@ Highcharts.chart('container', {
         }
     },
     legend: {
-        align: 'right',
-        x: -400,
+        align: 'left',
+        x: 70,
         verticalAlign: 'top',
         y: 70,
         floating: true,
