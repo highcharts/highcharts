@@ -369,7 +369,7 @@ class ControllableLabel implements ControllableMixin.Type {
         label.attr({
             text: text ?
                 format(
-                    text,
+                    String(text),
                     point.getLabelConfig(),
                     this.annotation.chart
                 ) :
