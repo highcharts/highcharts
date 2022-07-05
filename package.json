@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "module": "es-modules/masters/highcharts.src.js",
@@ -125,6 +125,7 @@
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
     "@highcharts/map-collection": "^2.0.0",
+    "cloudflare": "^2.9.1",
     "jspdf": "^2.5.0",
     "svg2pdf.js": "^2.2.0"
   }

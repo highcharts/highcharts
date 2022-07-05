@@ -128,6 +128,7 @@ declare module './SeriesLike' {
         invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
+        toYData?(point: Point): Array<number>;
     }
 }
 

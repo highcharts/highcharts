@@ -8,129 +8,6 @@
  *
  * */
 
-'use strict';
-
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type FormatUtilities from '../Core/FormatUtilities';
-import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type SplineSeries from '../Series/Spline/SplineSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-
-import A from '../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
-import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
-const { format } = F;
-import D from '../Core/DefaultOptions.js';
-const { setOptions } = D;
-import Series from '../Core/Series/Series.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
-
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
-        labelSeries?: Array<Series>;
-        labelSeriesMaxSum?: number;
-        seriesLabelTimer?: number;
-        drawSeriesLabels(): void;
-    }
-}
-
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-        chartCenterY?: number;
-        chartX?: number;
-        chartY?: number;
-    }
-}
-
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        interpolatedPoints?: Array<Point>;
-        labelBySeries?: SVGElement;
-        sum?: number;
-        checkClearPoint(
-            x: number,
-            y: number,
-            bBox: BBoxObject,
-            checkDistance?: boolean
-        ): (boolean|Highcharts.LabelClearPointObject);
-        drawSeriesLabels(): void;
-        getPointsOnGraph(): (Array<Point>|undefined);
-        labelFontSize(minFontSize: number, maxFontSize: number): string;
-    }
-}
-
-declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        label?: Highcharts.SeriesLabelOptionsObject;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LabelClearPointObject extends PositionObject {
-            connectorPoint?: Point;
-            weight: number;
-        }
-        interface LabelIntersectBoxObject {
-            bottom: number;
-            left: number;
-            right: number;
-            top: number;
-        }
-        interface SeriesLabelOptionsObject {
-            boxesToAvoid?: Array<LabelIntersectBoxObject>;
-            connectorAllowed?: boolean;
-            connectorNeighbourDistance?: number;
-            enabled?: boolean;
-            format?: string;
-            formatter?: FormatUtilities.FormatterCallback<Series>;
-            maxFontSize?: (number|null);
-            minFontSize?: (number|null);
-            onArea?: (boolean|null);
-            style?: CSSObject;
-        }
-    }
-}
-
-/**
- * Containing the position of a box that should be avoided by labels.
- *
- * @interface Highcharts.LabelIntersectBoxObject
- *//**
- * @name Highcharts.LabelIntersectBoxObject#bottom
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#left
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#right
- * @type {number}
- *//**
- * @name Highcharts.LabelIntersectBoxObject#top
- * @type {number}
- */
-
 /*
  * Highcharts module to place labels next to a series in a natural position.
  *
@@ -145,473 +22,147 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-''; // detach doclets above
+'use strict';
 
-const labelDistance = 3;
+/* *
+ *
+ *  Imports
+ *
+ * */
 
-setOptions({
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type {
+    LabelIntersectBoxObject,
+    SeriesLabelOptions
+} from './SeriesLabelOptions';
+import type SplineSeries from '../../Series/Spline/SplineSeries';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 
-    /**
-     * @optionparent plotOptions
-     *
-     * @private
-     */
-    plotOptions: {
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
+import Chart from '../../Core/Chart/Chart.js';
+import FU from '../../Core/FormatUtilities.js';
+const { format } = FU;
+import D from '../../Core/DefaultOptions.js';
+const { setOptions } = D;
+import Series from '../../Core/Series/Series.js';
+import SeriesLabelDefaults from './SeriesLabelDefaults.js';
+import SLU from './SeriesLabelUtilities.js';
+const {
+    boxIntersectLine,
+    intersectRect
+} = SLU;
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    isNumber,
+    pick,
+    syncTimeout
+} = U;
 
-        series: {
-            /**
-             * Series labels are placed as close to the series as possible in a
-             * natural way, seeking to avoid other series. The goal of this
-             * feature is to make the chart more easily readable, like if a
-             * human designer placed the labels in the optimal position.
-             *
-             * The series labels currently work with series types having a
-             * `graph` or an `area`.
-             *
-             * @sample highcharts/series-label/line-chart
-             *         Line chart
-             * @sample highcharts/demo/streamgraph
-             *         Stream graph
-             * @sample highcharts/series-label/stock-chart
-             *         Stock chart
-             *
-             * @declare  Highcharts.SeriesLabelOptionsObject
-             * @since    6.0.0
-             * @product  highcharts highstock gantt
-             * @requires modules/series-label
-             */
-            label: {
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-                /**
-                 * Enable the series label per series.
-                 */
-                enabled: true,
-
-                /**
-                 * Allow labels to be placed distant to the graph if necessary,
-                 * and draw a connector line to the graph. Setting this option
-                 * to true may decrease the performance significantly, since the
-                 * algorithm with systematically search for open spaces in the
-                 * whole plot area. Visually, it may also result in a more
-                 * cluttered chart, though more of the series will be labeled.
-                 */
-                connectorAllowed: false,
-
-                /**
-                 * If the label is closer than this to a neighbour graph, draw a
-                 * connector.
-                 */
-                connectorNeighbourDistance: 24,
-
-                /**
-                 * A format string for the label, with support for a subset of
-                 * HTML. Variables are enclosed by curly brackets. Available
-                 * variables are `name`, `options.xxx`, `color` and other
-                 * members from the `series` object. Use this option also to set
-                 * a static text for the label.
-                 *
-                 * @type string
-                 * @since 8.1.0
-                 */
-                format: void 0,
-
-                /**
-                 * Callback function to format each of the series' labels. The
-                 * `this` keyword refers to the series object. By default the
-                 * `formatter` is undefined and the `series.name` is rendered.
-                 *
-                 * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since 8.1.0
-                 */
-                formatter: void 0,
-
-                /**
-                 * For area-like series, allow the font size to vary so that
-                 * small areas get a smaller font size. The default applies this
-                 * effect to area-like series but not line-like series.
-                 *
-                 * @type {number|null}
-                 */
-                minFontSize: null,
-
-                /**
-                 * For area-like series, allow the font size to vary so that
-                 * small areas get a smaller font size. The default applies this
-                 * effect to area-like series but not line-like series.
-                 *
-                 * @type {number|null}
-                 */
-                maxFontSize: null,
-
-                /**
-                 * Draw the label on the area of an area series. By default it
-                 * is drawn on the area. Set it to `false` to draw it next to
-                 * the graph instead.
-                 *
-                 * @type {boolean|null}
-                 */
-                onArea: null,
-
-                /**
-                 * Styles for the series label. The color defaults to the series
-                 * color, or a contrast color if `onArea`.
-                 *
-                 * @type {Highcharts.CSSObject}
-                 */
-                style: {
-                    /** @internal */
-                    fontWeight: 'bold'
-                },
-
-                /**
-                 * An array of boxes to avoid when laying out the labels. Each
-                 * item has a `left`, `right`, `top` and `bottom` property.
-                 *
-                 * @type {Array<Highcharts.LabelIntersectBoxObject>}
-                 */
-                boxesToAvoid: []
-
-            }
-
-        }
-
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        boxesToAvoid?: Array<LabelIntersectBoxObject>;
+        labelSeries?: Array<Series>;
+        labelSeriesMaxSum?: number;
+        seriesLabelTimer?: number;
     }
-
-});
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * Counter-clockwise, part of the fast line intersection logic.
- *
- * @private
- * @function ccw
- */
-function ccw(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number
-): boolean {
-    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
-
-    return cw > 0 ? true : !(cw < 0);
 }
 
-/**
- * Detect if two lines intersect.
- *
- * @private
- * @function intersectLine
- */
-function intersectLine(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number,
-    x4: number,
-    y4: number
-): boolean {
-    return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
-        ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4);
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        chartCenterY?: number;
+        chartX?: number;
+        chartY?: number;
+    }
 }
 
-/**
- * Detect if a box intersects with a line.
- *
- * @private
- * @function boxIntersectLine
- */
-function boxIntersectLine(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-): boolean {
-    return (
-        intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // top of label
-        intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
-        intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
-        intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
-    );
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        interpolatedPoints?: Array<Point>;
+        labelBySeries?: SVGElement;
+        sum?: number;
+    }
 }
 
-declare module '../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        label?: SeriesLabelOptions;
+    }
+}
+
+declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/SeriesLabel */
         connector: SymbolFunction;
     }
 }
-/**
- * General symbol definition for labels with connector.
- */
-symbols.connector = function (x, y, w, h, options): SVGPath {
-    const anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY;
 
-    let path: (SVGPath|undefined),
-        yOffset: number,
-        lateral = w / 2;
+interface LabelClearPointObject extends PositionObject {
+    connectorPoint?: Point;
+    weight: number;
+}
 
-    if (isNumber(anchorX) && isNumber(anchorY)) {
-
-        path = [['M', anchorX, anchorY]];
-
-        // Prefer 45 deg connectors
-        yOffset = y - anchorY;
-        if (yOffset < 0) {
-            yOffset = -h - yOffset;
-        }
-        if (yOffset < w) {
-            lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
-        }
-
-        // Anchor below label
-        if (anchorY > y + h) {
-            path.push(['L', x + lateral, y + h]);
-
-        // Anchor above label
-        } else if (anchorY < y) {
-            path.push(['L', x + lateral, y]);
-
-        // Anchor left of label
-        } else if (anchorX < x) {
-            path.push(['L', x, y + h / 2]);
-
-        // Anchor right of label
-        } else if (anchorX > x + w) {
-            path.push(['L', x + w, y + h / 2]);
-        }
-    }
-    return path || [];
-};
-
-/**
- * Points to avoid. In addition to actual data points, the label should avoid
- * interpolated positions.
+/* *
  *
- * @private
- * @function Highcharts.Series#getPointsOnGraph
- */
-Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
-
-    if (!this.xAxis && !this.yAxis) {
-        return;
-    }
-
-    const distance = 16,
-        points = this.points,
-        interpolated: Array<Point> = [],
-        graph: SVGElement = this.graph || (this.area as any),
-        node: SVGPathElement = graph.element as any,
-        inverted = this.chart.inverted,
-        xAxis = this.xAxis,
-        yAxis = this.yAxis,
-        paneLeft: number = inverted ? yAxis.pos : (xAxis.pos as any),
-        paneTop: number = inverted ? xAxis.pos : (yAxis.pos as any),
-        onArea = pick((this.options.label as any).onArea, !!this.area),
-        translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
-        grid: Record<string, number> = {};
-
-    let point: Point,
-        last: Point,
-        i: (number|undefined),
-        deltaX: (number|undefined),
-        deltaY: (number|undefined),
-        delta: (number|undefined),
-        len: (number|undefined),
-        n: (number|undefined),
-        j: (number|undefined),
-        d: (SVGPath|undefined);
-
-    /**
-     * Push the point to the interpolated points, but only if that position in
-     * the grid has not been occupied. As a performance optimization, we divide
-     * the plot area into a grid and only add one point per series (#9815).
-     * @private
-     */
-    function pushDiscrete(point: Point): void {
-        const cellSize = 8,
-            key = Math.round((point.plotX as any) / cellSize) + ',' +
-            Math.round((point.plotY as any) / cellSize);
-
-        if (!grid[key]) {
-            grid[key] = 1;
-            interpolated.push(point);
-        }
-    }
-
-    // For splines, get the point at length (possible caveat: peaks are not
-    // correctly detected)
-    if (
-        (this as SplineSeries).getPointSpline &&
-        (node.getPointAtLength) &&
-        !onArea &&
-        // Not performing well on complex series, node.getPointAtLength is too
-        // heavy (#9815)
-        points.length < (this.chart.plotSizeX as any) / distance
-    ) {
-        // If it is animating towards a path definition, use that briefly, and
-        // reset
-        if (graph.toD) {
-            d = graph.attr('d') as any;
-            graph.attr({ d: graph.toD });
-        }
-        len = node.getTotalLength();
-        for (i = 0; i < len; i += distance) {
-            point = node.getPointAtLength(i) as any;
-            pushDiscrete({
-                chartX: paneLeft + (point.x as any),
-                chartY: paneTop + (point.y as any),
-                plotX: point.x as any,
-                plotY: point.y as any
-            } as any);
-        }
-        if (d) {
-            graph.attr({ d: d });
-        }
-        // Last point
-        point = points[points.length - 1];
-        point.chartX = paneLeft + (point.plotX as any);
-        point.chartY = paneTop + (point.plotY as any);
-        pushDiscrete(point);
-
-    // Interpolate
-    } else {
-        len = points.length;
-        for (i = 0; i < len; i += 1) {
-
-            point = points[i];
-            last = points[i - 1];
-
-            // Absolute coordinates so we can compare different panes
-            point.chartX = paneLeft + (point.plotX as any);
-            point.chartY = paneTop + (point.plotY as any);
-            if (onArea) {
-                // Vertically centered inside area
-                point.chartCenterY = paneTop + (
-                    (point.plotY as any) +
-                    pick(point.yBottom, translatedThreshold)
-                ) / 2;
-            }
-
-            // Add interpolated points
-            if (i > 0) {
-                deltaX = Math.abs((point.chartX as any) - (last.chartX as any));
-                deltaY = Math.abs((point.chartY as any) - (last.chartY as any));
-                delta = Math.max(deltaX, deltaY);
-                if (delta > distance) {
-
-                    n = Math.ceil(delta / distance);
-
-                    for (j = 1; j < n; j += 1) {
-                        pushDiscrete({
-                            chartX: (last.chartX as any) +
-                                ((point.chartX as any) - (last.chartX as any)) *
-                                (j / n),
-                            chartY: (last.chartY as any) +
-                                ((point.chartY as any) - (last.chartY as any)) *
-                                (j / n),
-                            chartCenterY: (last.chartCenterY as any) +
-                                ((point.chartCenterY as any) -
-                                (last.chartCenterY as any)) * (j / n),
-                            plotX: (last.plotX as any) +
-                                ((point.plotX as any) - (last.plotX as any)) *
-                                (j / n),
-                            plotY: (last.plotY as any) +
-                                ((point.plotY as any) - (last.plotY as any)) *
-                                (j / n)
-                        } as any);
-                    }
-                }
-            }
-
-            // Add the real point in order to find positive and negative peaks
-            if (isNumber(point.plotY)) {
-                pushDiscrete(point);
-            }
-        }
-    }
-
-    // Get the bounding box so we can do a quick check first if the bounding
-    // boxes overlap.
-    /*
-    interpolated.bBox = node.getBBox();
-    interpolated.bBox.x += paneLeft;
-    interpolated.bBox.y += paneTop;
-    */
-    return interpolated;
-};
-
-/**
- * Overridable function to return series-specific font sizes for the labels. By
- * default it returns bigger font sizes for series with the greater sum of y
- * values.
+ *  Constants
  *
- * @private
- * @function Highcharts.Series#labelFontSize
- */
-Series.prototype.labelFontSize = function (
-    minFontSize: number,
-    maxFontSize: number
-): string {
-    return minFontSize + (
-        ((this.sum as any) / (this.chart.labelSeriesMaxSum as any)) *
-        (maxFontSize - minFontSize)
-    ) + 'px';
-};
+ * */
+
+const composedClasses: Array<Function> = [];
+
+const labelDistance = 3;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Check whether a proposed label position is clear of other elements.
- *
  * @private
- * @function Highcharts.Series#checkClearPoint
  */
-Series.prototype.checkClearPoint = function (
+function checkClearPoint(
+    series: Series,
     x: number,
     y: number,
     bBox: BBoxObject,
     checkDistance?: boolean
-): (boolean|Highcharts.LabelClearPointObject) {
-    const chart = this.chart,
-        onArea = pick((this.options.label as any).onArea, !!this.area),
-        findDistanceToOthers = (
-            onArea || (this.options.label as any).connectorAllowed
-        ),
+): (boolean|LabelClearPointObject) {
+    const chart = series.chart,
+        onArea = pick((series.options.label as any).onArea, !!series.area),
+        findDistanceToOthers =
+            (onArea || (series.options.label as any).connectorAllowed),
         leastDistance = 16;
 
     let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
-        series: (Series|undefined),
+        serie: (Series|undefined),
         points: (Array<Point>|undefined),
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
         yDist: (number|undefined),
         i: (number|undefined),
         j: (number|undefined);
-
-    /**
-     * @private
-     */
-    function intersectRect(
-        r1: Highcharts.LabelIntersectBoxObject,
-        r2: Highcharts.LabelIntersectBoxObject
-    ): boolean {
-        return !(r2.left > r1.right ||
-            r2.right < r1.left ||
-            r2.top > r1.bottom ||
-            r2.bottom < r1.top);
-    }
 
     /**
      * Get the weight in order to determine the ideal position. Larger distance
@@ -641,9 +192,9 @@ Series.prototype.checkClearPoint = function (
     // For each position, check if the lines around the label intersect with any
     // of the graphs.
     for (i = 0; i < chart.series.length; i += 1) {
-        series = chart.series[i];
-        points = series.interpolatedPoints;
-        if (series.visible && points) {
+        serie = chart.series[i];
+        points = serie.interpolatedPoints;
+        if (serie.visible && points) {
             for (j = 1; j < points.length; j += 1) {
 
                 if (
@@ -677,7 +228,7 @@ Series.prototype.checkClearPoint = function (
 
                     // But if it is too far away (a padded box doesn't
                     // intersect), also return.
-                    if (this === series && !withinRange && checkDistance) {
+                    if (series === serie && !withinRange && checkDistance) {
                         withinRange = boxIntersectLine(
                             x - leastDistance,
                             y - leastDistance,
@@ -695,7 +246,7 @@ Series.prototype.checkClearPoint = function (
                 // area series, avoid its own graph.
                 if (
                     (findDistanceToOthers || withinRange) &&
-                    (this !== series || onArea)
+                    (series !== serie || onArea)
                 ) {
                     xDist = x + bBox.width / 2 - (points[j].chartX as any);
                     yDist = y + bBox.height / 2 - (points[j].chartY as any);
@@ -710,11 +261,12 @@ Series.prototype.checkClearPoint = function (
             if (
                 !onArea &&
                 findDistanceToOthers &&
-                this === series &&
+                series === serie &&
                 (
                     (checkDistance && !withinRange) ||
                     distToOthersSquared < Math.pow(
-                        (this.options.label as any).connectorNeighbourDistance,
+                        (series.options.label as any)
+                            .connectorNeighbourDistance,
                         2
                     )
                 )
@@ -780,7 +332,37 @@ Series.prototype.checkClearPoint = function (
         connectorPoint: connectorPoint
     } : false;
 
-};
+}
+
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart,
+    SVGRendererClass: typeof SVGRenderer
+): void {
+
+    if (composedClasses.indexOf(ChartClass) === -1) {
+        composedClasses.push(ChartClass);
+
+        // Leave both events, we handle animation differently (#9815)
+        addEvent(Chart, 'load', onChartRedraw);
+        addEvent(Chart, 'redraw', onChartRedraw);
+    }
+
+    if (composedClasses.indexOf(SVGRendererClass) === -1) {
+        composedClasses.push(SVGRendererClass);
+
+        SVGRendererClass.prototype.symbols.connector = symbolConnector;
+    }
+
+    if (composedClasses.indexOf(setOptions) === -1) {
+        composedClasses.push(setOptions);
+
+        setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
+    }
+
+}
 
 /**
  * The main initialize method that runs on chart level after initialization and
@@ -790,21 +372,20 @@ Series.prototype.checkClearPoint = function (
  * @private
  * @function Highcharts.Chart#drawSeriesLabels
  */
-Chart.prototype.drawSeriesLabels = function (): void {
+function drawSeriesLabels(chart: Chart): void {
 
     // console.time('drawSeriesLabels');
 
-    const chart = this,
-        labelSeries: Array<Series> = this.labelSeries as any;
+    const labelSeries: Array<Series> = chart.labelSeries as any;
 
     chart.boxesToAvoid = [];
 
     // Build the interpolated points
     labelSeries.forEach(function (series): void {
-        series.interpolatedPoints = series.getPointsOnGraph();
+        series.interpolatedPoints = getPointsOnGraph(series);
 
         ((series.options.label as any).boxesToAvoid || []).forEach(function (
-            box: Highcharts.LabelIntersectBoxObject
+            box: LabelIntersectBoxObject
         ): void {
             (chart.boxesToAvoid as any).push(box);
         });
@@ -835,7 +416,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
-            results: Array<Highcharts.LabelClearPointObject> = [];
+            results: Array<LabelClearPointObject> = [];
 
         let bBox: (BBoxObject|undefined),
             x: (number|undefined),
@@ -929,7 +510,11 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 // Adapt label sizes to the sum of the data
                 if (minFontSize && maxFontSize) {
                     label.css({
-                        fontSize: series.labelFontSize(minFontSize, maxFontSize)
+                        fontSize: labelFontSize(
+                            series,
+                            minFontSize,
+                            maxFontSize
+                        )
                     });
                 }
 
@@ -954,11 +539,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     x = (points[i].chartX as any) - bBox.width / 2;
                     y = (points[i].chartCenterY as any) - bBox.height / 2;
                     if (insidePane(x, y, bBox)) {
-                        best = series.checkClearPoint(
-                            x,
-                            y,
-                            bBox
-                        );
+                        best = checkClearPoint(series, x, y, bBox);
                     }
                     if (best) {
                         results.push(best as any);
@@ -971,7 +552,8 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     x = (points[i].chartX as any) + labelDistance;
                     y = (points[i].chartY as any) - bBox.height - labelDistance;
                     if (insidePane(x as any, y as any, bBox)) {
-                        best = series.checkClearPoint(
+                        best = checkClearPoint(
+                            series,
                             x as any,
                             y as any,
                             bBox,
@@ -986,7 +568,8 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     x = (points[i].chartX as any) + labelDistance;
                     y = (points[i].chartY as any) + labelDistance;
                     if (insidePane(x as any, y as any, bBox)) {
-                        best = series.checkClearPoint(
+                        best = checkClearPoint(
+                            series,
                             x as any,
                             y as any,
                             bBox,
@@ -1001,7 +584,8 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     x = (points[i].chartX as any) - bBox.width - labelDistance;
                     y = (points[i].chartY as any) + labelDistance;
                     if (insidePane(x as any, y as any, bBox)) {
-                        best = series.checkClearPoint(
+                        best = checkClearPoint(
+                            series,
                             x as any,
                             y as any,
                             bBox,
@@ -1016,7 +600,8 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     x = (points[i].chartX as any) - bBox.width - labelDistance;
                     y = (points[i].chartY as any) - bBox.height - labelDistance;
                     if (insidePane(x as any, y as any, bBox)) {
-                        best = series.checkClearPoint(
+                        best = checkClearPoint(
+                            series,
                             x as any,
                             y as any,
                             bBox,
@@ -1041,7 +626,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                         y < paneTop + paneHeight - bBox.height;
                         y += 16
                     ) {
-                        clearPoint = series.checkClearPoint(x, y, bBox, true);
+                        clearPoint = checkClearPoint(series, x, y, bBox, true);
                         if (clearPoint) {
                             results.push(clearPoint as any);
                         }
@@ -1051,12 +636,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
             if (results.length) {
 
-                results.sort(function (
-                    a: Highcharts.LabelClearPointObject,
-                    b: Highcharts.LabelClearPointObject
-                ): number {
-                    return b.weight - a.weight;
-                });
+                results.sort((a, b): number => b.weight - a.weight);
 
                 best = results[0];
 
@@ -1141,17 +721,188 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
     fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
-};
+}
 
-/* eslint-disable no-invalid-this */
+/**
+ * Points to avoid. In addition to actual data points, the label should avoid
+ * interpolated positions.
+ *
+ * @private
+ * @function Highcharts.Series#getPointsOnGraph
+ */
+function getPointsOnGraph(series: Series): (Array<Point>|undefined) {
+
+    if (!series.xAxis && !series.yAxis) {
+        return;
+    }
+
+    const distance = 16,
+        points = series.points,
+        interpolated: Array<Point> = [],
+        graph: SVGElement = series.graph || (series.area as any),
+        node: SVGPathElement = graph.element as any,
+        inverted = series.chart.inverted,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        paneLeft: number = inverted ? yAxis.pos : (xAxis.pos as any),
+        paneTop: number = inverted ? xAxis.pos : (yAxis.pos as any),
+        onArea = pick((series.options.label as any).onArea, !!series.area),
+        translatedThreshold =
+            yAxis.getThreshold(series.options.threshold as any),
+        grid: Record<string, number> = {};
+
+    let point: Point,
+        last: Point,
+        i: (number|undefined),
+        deltaX: (number|undefined),
+        deltaY: (number|undefined),
+        delta: (number|undefined),
+        len: (number|undefined),
+        n: (number|undefined),
+        j: (number|undefined),
+        d: (SVGPath|undefined);
+
+    /**
+     * Push the point to the interpolated points, but only if that position in
+     * the grid has not been occupied. As a performance optimization, we divide
+     * the plot area into a grid and only add one point per series (#9815).
+     * @private
+     */
+    function pushDiscrete(point: Point): void {
+        const cellSize = 8,
+            key = Math.round((point.plotX as any) / cellSize) + ',' +
+            Math.round((point.plotY as any) / cellSize);
+
+        if (!grid[key]) {
+            grid[key] = 1;
+            interpolated.push(point);
+        }
+    }
+
+    // For splines, get the point at length (possible caveat: peaks are not
+    // correctly detected)
+    if (
+        (series as SplineSeries).getPointSpline &&
+        (node.getPointAtLength) &&
+        !onArea &&
+        // Not performing well on complex series, node.getPointAtLength is too
+        // heavy (#9815)
+        points.length < (series.chart.plotSizeX as any) / distance
+    ) {
+        // If it is animating towards a path definition, use that briefly, and
+        // reset
+        if (graph.toD) {
+            d = graph.attr('d') as any;
+            graph.attr({ d: graph.toD });
+        }
+        len = node.getTotalLength();
+        for (i = 0; i < len; i += distance) {
+            point = node.getPointAtLength(i) as any;
+            pushDiscrete({
+                chartX: paneLeft + (point.x as any),
+                chartY: paneTop + (point.y as any),
+                plotX: point.x as any,
+                plotY: point.y as any
+            } as any);
+        }
+        if (d) {
+            graph.attr({ d: d });
+        }
+        // Last point
+        point = points[points.length - 1];
+        point.chartX = paneLeft + (point.plotX as any);
+        point.chartY = paneTop + (point.plotY as any);
+        pushDiscrete(point);
+
+    // Interpolate
+    } else {
+        len = points.length;
+        for (i = 0; i < len; i += 1) {
+
+            point = points[i];
+            last = points[i - 1];
+
+            // Absolute coordinates so we can compare different panes
+            point.chartX = paneLeft + (point.plotX as any);
+            point.chartY = paneTop + (point.plotY as any);
+            if (onArea) {
+                // Vertically centered inside area
+                point.chartCenterY = paneTop + (
+                    (point.plotY as any) +
+                    pick(point.yBottom, translatedThreshold)
+                ) / 2;
+            }
+
+            // Add interpolated points
+            if (i > 0) {
+                deltaX = Math.abs((point.chartX as any) - (last.chartX as any));
+                deltaY = Math.abs((point.chartY as any) - (last.chartY as any));
+                delta = Math.max(deltaX, deltaY);
+                if (delta > distance) {
+
+                    n = Math.ceil(delta / distance);
+
+                    for (j = 1; j < n; j += 1) {
+                        pushDiscrete({
+                            chartX: (last.chartX as any) +
+                                ((point.chartX as any) - (last.chartX as any)) *
+                                (j / n),
+                            chartY: (last.chartY as any) +
+                                ((point.chartY as any) - (last.chartY as any)) *
+                                (j / n),
+                            chartCenterY: (last.chartCenterY as any) +
+                                ((point.chartCenterY as any) -
+                                (last.chartCenterY as any)) * (j / n),
+                            plotX: (last.plotX as any) +
+                                ((point.plotX as any) - (last.plotX as any)) *
+                                (j / n),
+                            plotY: (last.plotY as any) +
+                                ((point.plotY as any) - (last.plotY as any)) *
+                                (j / n)
+                        } as any);
+                    }
+                }
+            }
+
+            // Add the real point in order to find positive and negative peaks
+            if (isNumber(point.plotY)) {
+                pushDiscrete(point);
+            }
+        }
+    }
+
+    // Get the bounding box so we can do a quick check first if the bounding
+    // boxes overlap.
+    /*
+    interpolated.bBox = node.getBBox();
+    interpolated.bBox.x += paneLeft;
+    interpolated.bBox.y += paneTop;
+    */
+    return interpolated;
+}
+
+/**
+ * Overridable function to return series-specific font sizes for the labels. By
+ * default it returns bigger font sizes for series with the greater sum of y
+ * values.
+ * @private
+ */
+function labelFontSize(
+    series: Series,
+    minFontSize: number,
+    maxFontSize: number
+): string {
+    return minFontSize + (
+        ((series.sum as any) / (series.chart.labelSeriesMaxSum as any)) *
+        (maxFontSize - minFontSize)
+    ) + 'px';
+}
 
 /**
  * Prepare drawing series labels.
- *
  * @private
- * @function drawLabels
  */
-function drawLabels(this: Chart, e: Event): void {
+function onChartRedraw(this: Chart, e: Event): void {
 
     if (this.renderer) {
         const chart = this;
@@ -1165,8 +916,7 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            const options: Highcharts.SeriesLabelOptionsObject =
-                    series.options.label as any,
+            const options: SeriesLabelOptions = series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;
 
@@ -1216,13 +966,98 @@ function drawLabels(this: Chart, e: Event): void {
 
         chart.seriesLabelTimer = syncTimeout(function (): void {
             if (chart.series && chart.labelSeries) { // #7931, chart destroyed
-                chart.drawSeriesLabels();
+                drawSeriesLabels(chart);
             }
         }, chart.renderer.forExport || !delay ? 0 : delay);
     }
 
 }
 
-// Leave both events, we handle animation differently (#9815)
-addEvent(Chart, 'load', drawLabels);
-addEvent(Chart, 'redraw', drawLabels);
+/**
+ * General symbol definition for labels with connector.
+ * @private
+ */
+function symbolConnector(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
+    const anchorX = options && options.anchorX,
+        anchorY = options && options.anchorY;
+
+    let path: (SVGPath|undefined),
+        yOffset: number,
+        lateral = w / 2;
+
+    if (isNumber(anchorX) && isNumber(anchorY)) {
+
+        path = [['M', anchorX, anchorY]];
+
+        // Prefer 45 deg connectors
+        yOffset = y - anchorY;
+        if (yOffset < 0) {
+            yOffset = -h - yOffset;
+        }
+        if (yOffset < w) {
+            lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
+        }
+
+        // Anchor below label
+        if (anchorY > y + h) {
+            path.push(['L', x + lateral, y + h]);
+
+        // Anchor above label
+        } else if (anchorY < y) {
+            path.push(['L', x + lateral, y]);
+
+        // Anchor left of label
+        } else if (anchorX < x) {
+            path.push(['L', x, y + h / 2]);
+
+        // Anchor right of label
+        } else if (anchorX > x + w) {
+            path.push(['L', x + w, y + h / 2]);
+        }
+    }
+    return path || [];
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const SeriesLabel = {
+    compose
+};
+
+export default SeriesLabel;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Containing the position of a box that should be avoided by labels.
+ *
+ * @interface Highcharts.LabelIntersectBoxObject
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#bottom
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#right
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#top
+ * @type {number}
+ */
+
+(''); // keeps doclets above in JS file
