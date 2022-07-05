@@ -123,21 +123,6 @@ describe('Stock Tools annotation popup, #15725', () => {
                 '#17425: Editing labels of Elliott3 line should not hide the line.'
             )
         );
-
-        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
-        cy.get('.highcharts-annotation-edit-button').click();
-
-        cy.get('input[name="highcharts-annotation-0"]').clear().type(undefined);
-
-        cy.get('div.highcharts-popup-bottom-row button').click();
-
-        cy.chart().should(chart =>
-            assert.strictEqual(
-                chart.annotations[0].graphic.opacity,
-                1,
-                '#17425: Editing labels of Elliott3 line should not hide the line.'
-            )
-        );
     });
 });
 
@@ -194,7 +179,6 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.get('.highcharts-indicator-list li:first')
             .should('contain.text', 'BB');
     });
-
 
     it('Popup should warn when no items are found using the filter, #16019.', () => {
         cy.get('input[name="highcharts-input-search-indicators"]')
