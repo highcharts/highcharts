@@ -2497,91 +2497,97 @@ class Series {
      * Initialize the animation.
      */
     public animate(init?: boolean): void {
-        const { chart, group, markerGroup } = this,
-            inverted = chart.inverted,
-            animation = animObject(this.options.animation),
-            // The key for temporary animation clips
-            animationClipKey = [
-                this.getSharedClipKey(),
-                animation.duration,
-                animation.easing,
-                animation.defer
-            ].join(',');
+        const e = { args: { init } };
 
-        let animationClipRect = chart.sharedClips[animationClipKey],
-            markerAnimationClipRect = chart.sharedClips[animationClipKey + 'm'];
+        fireEvent(this, 'animate', e, (e): void => {
+            const { chart, group, markerGroup } = this,
+                inverted = chart.inverted,
+                animation = animObject(this.options.animation),
+                // The key for temporary animation clips
+                animationClipKey = [
+                    this.getSharedClipKey(),
+                    animation.duration,
+                    animation.easing,
+                    animation.defer
+                ].join(',');
 
-        // Initialize the animation. Set up the clipping rectangle.
-        if (init && group) {
-            const clipBox = this.getClipBox();
+            let animationClipRect = chart.sharedClips[animationClipKey],
+                markerAnimationClipRect =
+                    chart.sharedClips[animationClipKey + 'm'];
 
-            // Create temporary animation clips
-            if (!animationClipRect) {
-                clipBox.width = 0;
-                if (inverted) {
-                    clipBox.x = chart.plotHeight;
+            // Initialize the animation. Set up the clipping rectangle.
+            if (e.args.init && group) {
+                const clipBox = this.getClipBox();
+
+                // Create temporary animation clips
+                if (!animationClipRect) {
+                    clipBox.width = 0;
+                    if (inverted) {
+                        clipBox.x = chart.plotHeight;
+                    }
+                    animationClipRect = chart.renderer.clipRect(clipBox);
+                    chart.sharedClips[animationClipKey] = animationClipRect;
+
+                    const markerClipBox = {
+                        // Include the width of the first marker
+                        x: inverted ? (chart.plotSizeX || 0) + 99 : -99,
+                        y: inverted ? -chart.plotLeft : -chart.plotTop,
+                        width: 99,
+                        height: inverted ? chart.chartWidth : chart.chartHeight
+                    };
+                    markerAnimationClipRect = chart.renderer.clipRect(
+                        markerClipBox
+                    );
+                    chart.sharedClips[
+                        animationClipKey + 'm'
+                    ] = markerAnimationClipRect;
+                } else {
+                    // When height changes during animation, typically due to
+                    // responsive settings
+                    animationClipRect.attr('height', clipBox.height);
                 }
-                animationClipRect = chart.renderer.clipRect(clipBox);
-                chart.sharedClips[animationClipKey] = animationClipRect;
 
-                const markerClipBox = {
-                    // Include the width of the first marker
-                    x: inverted ? (chart.plotSizeX || 0) + 99 : -99,
-                    y: inverted ? -chart.plotLeft : -chart.plotTop,
-                    width: 99,
-                    height: inverted ? chart.chartWidth : chart.chartHeight
-                };
-                markerAnimationClipRect = chart.renderer.clipRect(
-                    markerClipBox
-                );
-                chart.sharedClips[
-                    animationClipKey + 'm'
-                ] = markerAnimationClipRect;
-            } else {
-                // When height changes during animation, typically due to
-                // responsive settings
-                animationClipRect.attr('height', clipBox.height);
+                group.clip(animationClipRect);
+                if (markerGroup) {
+                    markerGroup.clip(markerAnimationClipRect);
+                }
+
+
+            // Run the animation
+            } else if (
+                animationClipRect &&
+                // Only first series in this pane
+                !animationClipRect.hasClass('highcharts-animating')
+            ) {
+                const finalBox = this.getClipBox(),
+                    step = animation.step;
+
+                // Only do this when there are actually markers
+                if (markerGroup && markerGroup.element.childNodes.length) {
+
+                    // To provide as smooth animation as possible, update the
+                    // marker group clipping in steps of the main group
+                    // animation
+                    animation.step = function (val, fx): void {
+                        if (step) {
+                            step.apply(fx, arguments);
+                        }
+                        if (
+                            markerAnimationClipRect &&
+                            markerAnimationClipRect.element
+                        ) {
+                            markerAnimationClipRect.attr(
+                                fx.prop,
+                                fx.prop === 'width' ? val + 99 : val
+                            );
+                        }
+                    };
+                }
+                animationClipRect
+                    .addClass('highcharts-animating')
+                    .animate(finalBox, animation);
             }
-
-            group.clip(animationClipRect);
-            if (markerGroup) {
-                markerGroup.clip(markerAnimationClipRect);
-            }
-
-
-        // Run the animation
-        } else if (
-            animationClipRect &&
-            // Only first series in this pane
-            !animationClipRect.hasClass('highcharts-animating')
-        ) {
-            const finalBox = this.getClipBox(),
-                step = animation.step;
-
-            // Only do this when there are actually markers
-            if (markerGroup && markerGroup.element.childNodes.length) {
-
-                // To provide as smooth animation as possible, update the marker
-                // group clipping in steps of the main group animation
-                animation.step = function (val, fx): void {
-                    if (step) {
-                        step.apply(fx, arguments);
-                    }
-                    if (
-                        markerAnimationClipRect &&
-                        markerAnimationClipRect.element
-                    ) {
-                        markerAnimationClipRect.attr(
-                            fx.prop,
-                            fx.prop === 'width' ? val + 99 : val
-                        );
-                    }
-                };
-            }
-            animationClipRect
-                .addClass('highcharts-animating')
-                .animate(finalBox, animation);
-        }
+        });
     }
 
     /**

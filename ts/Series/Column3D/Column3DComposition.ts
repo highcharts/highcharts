@@ -275,22 +275,19 @@ columnProto.translate3dShapes = function (): void {
     series.z = z;
 };
 
-wrap(columnProto, 'animate', function (
+addEvent(columnProto, 'animate', function (
     this: ColumnSeries,
-    proceed: Function
+    e: U.EventObject<ColumnSeries>
 ): void {
-    if (!this.chart.is3d()) {
-        proceed.apply(this, [].slice.call(arguments, 1));
-    } else {
-        const args = arguments,
-            init = args[1],
+    if (this.chart.is3d()) {
+        const init = e.args.init,
             yAxis = this.yAxis,
             series = this,
             reversed = this.yAxis.reversed;
 
         if (svg) { // VML is too slow anyway
             if (init) {
-                series.data.forEach(function (point): void {
+                series.data.forEach((point): void => {
                     if (point.y !== null) {
                         point.height = (point.shapeArgs as any).height;
                         point.shapey = (point.shapeArgs as any).y; // #2968
@@ -314,7 +311,7 @@ wrap(columnProto, 'animate', function (
                 });
 
             } else { // run the animation
-                series.data.forEach(function (point): void {
+                series.data.forEach((point): void => {
                     if (point.y !== null) {
                         (point.shapeArgs as any).height = point.height;
                         (point.shapeArgs as any).y = point.shapey; // #2968
@@ -336,6 +333,8 @@ wrap(columnProto, 'animate', function (
                 this.drawDataLabels();
             }
         }
+
+        e.preventDefault();
     }
 });
 
