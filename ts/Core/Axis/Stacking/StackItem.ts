@@ -28,6 +28,7 @@ import type {
     StackLabelOptions,
     StackOverflowValue
 } from './StackingOptions';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
@@ -52,15 +53,7 @@ const {
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
  * or positive, has its own stack item.
- *
  * @private
- * @class
- * @name Highcharts.StackItem
- * @param {Highcharts.Axis} axis
- * @param {Highcharts.YAxisStackLabelsOptions} options
- * @param {boolean} isNegative
- * @param {number} x
- * @param {Highcharts.OptionsStackingValue} [stackOption]
  */
 class StackItem {
 
@@ -142,7 +135,6 @@ class StackItem {
 
     /**
      * @private
-     * @function Highcharts.StackItem#destroy
      */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
@@ -150,16 +142,12 @@ class StackItem {
 
     /**
      * Renders the stack total label and adds it to the stack label group.
-     *
      * @private
-     * @function Highcharts.StackItem#render
-     * @param {Highcharts.SVGElement} group
      */
     public render(group: SVGElement): void {
-        let chart = this.axis.chart,
+        const chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
-            attr: AnyRecord = {},
             str = formatOption ? // format the text in the label
                 format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
@@ -183,7 +171,7 @@ class StackItem {
                     'stack-labels'
                 );
 
-            attr = {
+            const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
                 rotation: (options as any).rotation,
@@ -213,14 +201,7 @@ class StackItem {
     /**
      * Sets the offset that the stack has from the x value and repositions the
      * label.
-     *
      * @private
-     * @function Highcarts.StackItem#setOffset
-     * @param {number} xOffset
-     * @param {number} xWidth
-     * @param {number} [boxBottom]
-     * @param {number} [boxTop]
-     * @param {number} [defaultX]
      */
     public setOffset(
         xOffset: number,
@@ -229,8 +210,7 @@ class StackItem {
         boxTop?: number,
         defaultX?: number
     ): void {
-        let stackItem = this,
-            axis = stackItem.axis,
+        const axis = this.axis,
             chart = axis.chart,
             // stack value translated mapped to chart coordinates
             y = axis.translate(
@@ -238,39 +218,38 @@ class StackItem {
                     100 :
                     (boxTop ?
                         boxTop :
-                        (stackItem.total as any)),
+                        (this.total as any)),
                 0 as any,
                 0 as any,
                 0 as any,
                 1 as any
             ),
             yZero = axis.translate(boxBottom ? boxBottom : 0), // stack origin
-            // stack height:
-            h = defined(y) && Math.abs((y as any) - (yZero as any)),
             // x position:
-            x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
+            x = pick(defaultX, chart.xAxis[0].translate(this.x)) +
                 xOffset,
-            stackBox = defined(y) && stackItem.getStackBox(
+            stackBox = defined(y) && this.getStackBox(
                 chart,
-                stackItem,
+                this,
                 x,
-                y as any,
+                y,
                 xWidth,
-                h as any,
+                // stack height:
+                Math.abs(y - yZero),
                 axis
             ),
-            label = stackItem.label,
-            isNegative = stackItem.isNegative,
-            isJustify = pick(stackItem.options.overflow,
-                'justify') === 'justify',
-            textAlign = stackItem.textAlign,
-            visible;
+            label = this.label,
+            isNegative = this.isNegative,
+            textAlign = this.textAlign;
 
         if (label && stackBox) {
-            let bBox = label.getBBox(),
-                padding = label.padding,
-                boxOffsetX,
-                boxOffsetY;
+            const bBox = label.getBBox(),
+                padding = label.padding;
+
+            let boxOffsetX,
+                isJustify =
+                    pick(this.options.overflow, 'justify') === 'justify',
+                visible;
 
             if (textAlign === 'left') {
                 boxOffsetX = chart.inverted ? -padding : padding;
@@ -286,24 +265,24 @@ class StackItem {
                 }
             }
 
-            boxOffsetY = chart.inverted ?
+            const boxOffsetY = chart.inverted ?
                 bBox.height / 2 : (isNegative ? -padding : bBox.height);
 
             // Reset alignOptions property after justify #12337
-            stackItem.alignOptions.x = pick(stackItem.options.x, 0);
-            stackItem.alignOptions.y = pick(stackItem.options.y, 0);
+            this.alignOptions.x = pick(this.options.x, 0);
+            this.alignOptions.y = pick(this.options.y, 0);
 
             // Set the stackBox position
             stackBox.x -= boxOffsetX;
             stackBox.y -= boxOffsetY;
 
             // Align the label to the box
-            label.align(stackItem.alignOptions, null as any, stackBox);
+            label.align(this.alignOptions, null as any, stackBox);
 
             // Check if label is inside the plotArea #12294
             if (chart.isInsidePlot(
-                label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
-                label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y
+                label.alignAttr.x + boxOffsetX - this.alignOptions.x,
+                label.alignAttr.y + boxOffsetY - this.alignOptions.y
             )) {
                 label.show();
             } else {
@@ -317,7 +296,7 @@ class StackItem {
                 Series.prototype.justifyDataLabel.call(
                     this.axis,
                     label,
-                    stackItem.alignOptions,
+                    this.alignOptions,
                     label.alignAttr,
                     bBox,
                     stackBox
@@ -328,7 +307,7 @@ class StackItem {
                 y: label.alignAttr.y
             });
 
-            if (pick(!isJustify && stackItem.options.crop, true)) {
+            if (pick(!isJustify && this.options.crop, true)) {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
