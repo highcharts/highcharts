@@ -22,6 +22,8 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type {
     ExportDataLangOptions,
     ExportingCsvOptions
@@ -37,8 +39,6 @@ import type {
 import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
-import Axis from '../../Core/Axis/Axis.js';
-import Chart from '../../Core/Chart/Chart.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import ExportDataDefaults from './ExportDataDefaults.js';
 import H from '../../Core/Globals.js';
@@ -55,12 +55,15 @@ import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    arearange: AreaRangeSeries,
-    gantt: GanttSeries,
-    map: MapSeries,
-    mapbubble: MapBubbleSeries,
-    treemap: TreemapSeries
-} = SeriesRegistry.seriesTypes;
+    series: SeriesClass,
+    seriesTypes: {
+        arearange: AreaRangeSeries,
+        gantt: GanttSeries,
+        map: MapSeries,
+        mapbubble: MapBubbleSeries,
+        treemap: TreemapSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -99,8 +102,6 @@ declare module '../../Core/Chart/ChartLike'{
         getTableAST(useLocalDecimalPoint?: boolean): AST.Node;
         /** @requires modules/export-data */
         hideData(): void;
-        /** @requires modules/export-data */
-        setUpKeyToAxis(): void;
         /** @requires modules/export-data */
         toggleDataTable(show?: boolean): void;
         /** @requires modules/export-data */
@@ -144,105 +145,145 @@ interface ExportDataSeries {
 
 const composedClasses: Array<Function> = [];
 
-/* eslint-disable no-invalid-this */
-
-// Add an event listener to handle the showTable option
-addEvent(Chart, 'render', function (): void {
-    if (
-        this.options &&
-        this.options.exporting &&
-        this.options.exporting.showTable &&
-        !this.options.chart.forExport
-    ) {
-        this.viewData();
-    }
-});
-
-addEvent(Chart, 'afterViewData', function (): void {
-    const chart = this,
-        dataTableDiv = chart.dataTableDiv,
-        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
-        getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
-            tr.children[index].textContent,
-        comparer = (index: number, ascending: boolean) =>
-            (a: HTMLDOMElement, b: HTMLDOMElement): number => {
-                const sort = (v1: any, v2: any): number => (
-                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
-                        v1 - v2 :
-                        v1.toString().localeCompare(v2)
-                );
-
-                return sort(
-                    getCellValue(ascending ? a : b, index),
-                    getCellValue(ascending ? b : a, index)
-                );
-            };
-
-
-    if (dataTableDiv) {
-        row.childNodes.forEach((th: any): void => {
-            const table = th.closest('table');
-
-            th.addEventListener('click', function (): void {
-                const rows = [...dataTableDiv.querySelectorAll(
-                        'tr:not(thead tr)'
-                    ) as unknown as Array<HTMLElement>],
-                    headers = [...th.parentNode.children];
-
-                rows.sort(
-                    comparer(
-                        headers.indexOf(th),
-                        chart.ascendingOrderInTable =
-                            !chart.ascendingOrderInTable
-                    )
-                ).forEach((tr: HTMLDOMElement): void => {
-                    table.appendChild(tr);
-                });
-
-                headers.forEach((th): void => {
-                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
-                        .forEach((className): void => {
-                            if (th.classList.contains(className)) {
-                                th.classList.remove(className);
-                            }
-                        });
-                });
-
-                th.classList.add(
-                    chart.ascendingOrderInTable ?
-                        'highcharts-sort-ascending' :
-                        'highcharts-sort-descending'
-                );
-            });
-        });
-    }
-});
-
-/* eslint-enable no-invalid-this */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
- * Set up key-to-axis bindings. This is used when the Y axis is datetime or
- * categorized. For example in an arearange series, the low and high values
- * should be formatted according to the Y axis type, and in order to link them
- * we need this map.
+ * Generates a data URL of CSV for local download in the browser. This is the
+ * default action for a click on the 'Download CSV' button.
  *
- * @private
- * @function Highcharts.Chart#setUpKeyToAxis
+ * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
+ *
+ * @function Highcharts.Chart#downloadCSV
+ *
+ * @requires modules/exporting
  */
-Chart.prototype.setUpKeyToAxis = function (): void {
-    if (AreaRangeSeries) {
-        AreaRangeSeries.prototype.keyToAxis = {
-            low: 'y',
-            high: 'y'
+function chartDownloadCSV(
+    this: Exporting.ChartComposition
+): void {
+    const csv = this.getCSV(true);
+
+    downloadURL(
+        getBlobFromContent(csv, 'text/csv') ||
+            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        this.getFilename() + '.csv'
+    );
+}
+
+/**
+ * Generates a data URL of an XLS document for local download in the browser.
+ * This is the default action for a click on the 'Download XLS' button.
+ *
+ * See {@link Highcharts.Chart#getTable} to get the table data itself.
+ *
+ * @function Highcharts.Chart#downloadXLS
+ *
+ * @requires modules/exporting
+ */
+function chartDownloadXLS(
+    this: Exporting.ChartComposition
+): void {
+    const uri = 'data:application/vnd.ms-excel;base64,',
+        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+            'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+            'xmlns="http://www.w3.org/TR/REC-html40">' +
+            '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
+            '<x:ExcelWorksheets><x:ExcelWorksheet>' +
+            '<x:Name>Ark1</x:Name>' +
+            '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>' +
+            '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>' +
+            '</xml><![endif]-->' +
+            '<style>td{border:none;font-family: Calibri, sans-serif;} ' +
+            '.number{mso-number-format:"0.00";} ' +
+            '.text{ mso-number-format:"\@";}</style>' +
+            '<meta name=ProgId content=Excel.Sheet>' +
+            '<meta charset=UTF-8>' +
+            '</head><body>' +
+            this.getTable(true) +
+            '</body></html>',
+        base64 = function (s: string): string {
+            return win.btoa(unescape(encodeURIComponent(s))); // #50
         };
-    }
-    if (GanttSeries) {
-        GanttSeries.prototype.keyToAxis = {
-            start: 'x',
-            end: 'x'
-        };
-    }
-};
+
+    downloadURL(
+        getBlobFromContent(template, 'application/vnd.ms-excel') ||
+            uri + base64(template),
+        this.getFilename() + '.xls'
+    );
+}
+
+/**
+ * Export-data module required. Returns the current chart data as a CSV string.
+ *
+ * @function Highcharts.Chart#getCSV
+ *
+ * @param {boolean} [useLocalDecimalPoint]
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {string}
+ *         CSV representation of the data
+ */
+function chartGetCSV(
+    this: Chart,
+    useLocalDecimalPoint?: boolean
+): string {
+    let csv = '';
+    const rows = this.getDataRows(),
+        csvOptions: ExportingCsvOptions = (this.options.exporting as any).csv,
+        decimalPoint = pick(
+            csvOptions.decimalPoint,
+            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.'
+        ),
+        // use ';' for direct to Excel
+        itemDelimiter = pick(
+            csvOptions.itemDelimiter,
+            decimalPoint === ',' ? ';' : ','
+        ),
+        // '\n' isn't working with the js csv data extraction
+        lineDelimiter = csvOptions.lineDelimiter;
+
+    // Transform the rows to CSV
+    rows.forEach((row: Array<(number|string|undefined)>, i: number): void => {
+        let val: (number|string|undefined) = '',
+            j = row.length;
+
+        while (j--) {
+            val = row[j];
+            if (typeof val === 'string') {
+                val = '"' + val + '"';
+            }
+            if (typeof val === 'number') {
+                if (decimalPoint !== '.') {
+                    val = val.toString().replace('.', decimalPoint);
+                }
+            }
+            row[j] = val;
+        }
+
+        // The first row is the header - it defines the number of columns.
+        // Empty columns between not-empty cells are covered in the getDataRows
+        // method.
+        // Now add empty values only to the end of the row so all rows have
+        // the same number of columns, #17186
+        row.length = rows.length ? rows[0].length : 0;
+
+        // Add the values
+        csv += row.join(itemDelimiter);
+
+        // Add the line delimiter
+        if (i < rows.length - 1) {
+            csv += lineDelimiter;
+        }
+    });
+    return csv;
+}
 
 /**
  * Export-data module required. Returns a two-dimensional array containing the
@@ -260,7 +301,8 @@ Chart.prototype.setUpKeyToAxis = function (): void {
  *
  * @emits Highcharts.Chart#event:exportData
  */
-Chart.prototype.getDataRows = function (
+function chartGetDataRows(
+    this: Chart,
     multiLevelHeaders?: boolean
 ): Array<Array<(number|string)>> {
     let hasParallelCoords = this.hasParallelCoordinates,
@@ -308,7 +350,7 @@ Chart.prototype.getDataRows = function (
                 return categoryHeader;
             }
 
-            if (item instanceof Axis) {
+            if (!(item instanceof SeriesClass)) {
                 return (item.options.title && item.options.title.text) ||
                     (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }
@@ -389,8 +431,6 @@ Chart.prototype.getDataRows = function (
 
     // Loop the series and index values
     i = 0;
-
-    this.setUpKeyToAxis();
 
     this.series.forEach(function (series: Series): void {
         const keys = series.options.keys,
@@ -605,76 +645,7 @@ Chart.prototype.getDataRows = function (
     fireEvent(this, 'exportData', { dataRows: dataRows });
 
     return dataRows;
-};
-
-/**
- * Export-data module required. Returns the current chart data as a CSV string.
- *
- * @function Highcharts.Chart#getCSV
- *
- * @param {boolean} [useLocalDecimalPoint]
- *        Whether to use the local decimal point as detected from the browser.
- *        This makes it easier to export data to Excel in the same locale as the
- *        user is.
- *
- * @return {string}
- *         CSV representation of the data
- */
-Chart.prototype.getCSV = function (
-    useLocalDecimalPoint?: boolean
-): string {
-    let csv = '';
-    const rows = this.getDataRows(),
-        csvOptions: ExportingCsvOptions = (this.options.exporting as any).csv,
-        decimalPoint = pick(
-            csvOptions.decimalPoint,
-            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.'
-        ),
-        // use ';' for direct to Excel
-        itemDelimiter = pick(
-            csvOptions.itemDelimiter,
-            decimalPoint === ',' ? ';' : ','
-        ),
-        // '\n' isn't working with the js csv data extraction
-        lineDelimiter = csvOptions.lineDelimiter;
-
-    // Transform the rows to CSV
-    rows.forEach((row: Array<(number|string|undefined)>, i: number): void => {
-        let val: (number|string|undefined) = '',
-            j = row.length;
-
-        while (j--) {
-            val = row[j];
-            if (typeof val === 'string') {
-                val = '"' + val + '"';
-            }
-            if (typeof val === 'number') {
-                if (decimalPoint !== '.') {
-                    val = val.toString().replace('.', decimalPoint);
-                }
-            }
-            row[j] = val;
-        }
-
-        // The first row is the header - it defines the number of columns.
-        // Empty columns between not-empty cells are covered in the getDataRows
-        // method.
-        // Now add empty values only to the end of the row so all rows have
-        // the same number of columns, #17186
-        row.length = rows.length ? rows[0].length : 0;
-
-        // Add the values
-        csv += row.join(itemDelimiter);
-
-        // Add the line delimiter
-        if (i < rows.length - 1) {
-            csv += lineDelimiter;
-        }
-    });
-    return csv;
-};
+}
 
 /**
  * Export-data module required. Build a HTML table with the chart's current
@@ -695,7 +666,8 @@ Chart.prototype.getCSV = function (
  *
  * @emits Highcharts.Chart#event:afterGetTable
  */
-Chart.prototype.getTable = function (
+function chartGetTable(
+    this: Chart,
     useLocalDecimalPoint?: boolean
 ): string {
     const serialize = (node: AST.Node): string => {
@@ -727,7 +699,7 @@ Chart.prototype.getTable = function (
 
     const tree = this.getTableAST(useLocalDecimalPoint);
     return serialize(tree);
-};
+}
 
 /**
  * Get the AST of a HTML table representing the chart data.
@@ -744,7 +716,8 @@ Chart.prototype.getTable = function (
  * @return {Highcharts.ASTNode}
  *         The abstract syntax tree
  */
-Chart.prototype.getTableAST = function (
+function chartGetTableAST(
+    this: Chart,
     useLocalDecimalPoint?: boolean
 ): AST.Node {
     let rowLength = 0;
@@ -980,139 +953,26 @@ Chart.prototype.getTableAST = function (
     fireEvent(this, 'aftergetTableAST', e);
 
     return e.tree;
-};
-
-
-/**
- * Get a blob object from content, if blob is supported
- *
- * @private
- * @param {string} content
- *        The content to create the blob from.
- * @param {string} type
- *        The type of the content.
- * @return {string|undefined}
- *         The blob object, or undefined if not supported.
- */
-function getBlobFromContent(
-    content: string,
-    type: string
-): (string|undefined) {
-    const nav = win.navigator,
-        webKit = (
-            nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
-        domurl = win.URL || win.webkitURL || win;
-
-    try {
-        // MS specific
-        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
-            const blob = new win.MSBlobBuilder();
-            blob.append(content);
-            return blob.getBlob('image/svg+xml') as any;
-        }
-
-        // Safari requires data URI since it doesn't allow navigation to blob
-        // URLs.
-        if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        }
-    } catch (e) {
-        // Ignore
-    }
 }
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * Generates a data URL of CSV for local download in the browser. This is the
- * default action for a click on the 'Download CSV' button.
- *
- * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
- *
- * @function Highcharts.Chart#downloadCSV
- *
- * @requires modules/exporting
- */
-Chart.prototype.downloadCSV = function (
-    this: Exporting.ChartComposition
-): void {
-    const csv = this.getCSV(true);
-
-    downloadURL(
-        getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        this.getFilename() + '.csv'
-    );
-};
-
-/**
- * Generates a data URL of an XLS document for local download in the browser.
- * This is the default action for a click on the 'Download XLS' button.
- *
- * See {@link Highcharts.Chart#getTable} to get the table data itself.
- *
- * @function Highcharts.Chart#downloadXLS
- *
- * @requires modules/exporting
- */
-Chart.prototype.downloadXLS = function (
-    this: Exporting.ChartComposition
-): void {
-    const uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
-            'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
-            'xmlns="http://www.w3.org/TR/REC-html40">' +
-            '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
-            '<x:ExcelWorksheets><x:ExcelWorksheet>' +
-            '<x:Name>Ark1</x:Name>' +
-            '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>' +
-            '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>' +
-            '</xml><![endif]-->' +
-            '<style>td{border:none;font-family: Calibri, sans-serif;} ' +
-            '.number{mso-number-format:"0.00";} ' +
-            '.text{ mso-number-format:"\@";}</style>' +
-            '<meta name=ProgId content=Excel.Sheet>' +
-            '<meta charset=UTF-8>' +
-            '</head><body>' +
-            this.getTable(true) +
-            '</body></html>',
-        base64 = function (s: string): string {
-            return win.btoa(unescape(encodeURIComponent(s))); // #50
-        };
-
-    downloadURL(
-        getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
-        this.getFilename() + '.xls'
-    );
-};
-
-/**
- * Export-data module required. View the data in a table below the chart.
- *
- * @function Highcharts.Chart#viewData
- *
- * @emits Highcharts.Chart#event:afterViewData
- */
-Chart.prototype.viewData = function (): void {
-    this.toggleDataTable(true);
-};
 
 /**
  * Export-data module required. Hide the data table when visible.
  *
  * @function Highcharts.Chart#hideData
  */
-Chart.prototype.hideData = function (): void {
+function chartHideData(
+    this: Chart
+): void {
     this.toggleDataTable(false);
-};
+}
 
-Chart.prototype.toggleDataTable = function (show?: boolean): void {
+/**
+ * @private
+ */
+function chartToggleDataTable(
+    this: Chart,
+    show?: boolean
+): void {
 
     show = pick(show, !this.isDataTableVisible);
 
@@ -1172,7 +1032,20 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
             );
         }
     }
-};
+}
+
+/**
+ * Export-data module required. View the data in a table below the chart.
+ *
+ * @function Highcharts.Chart#viewData
+ *
+ * @emits Highcharts.Chart#event:afterViewData
+ */
+function chartViewData(
+    this: Chart
+): void {
+    this.toggleDataTable(true);
+}
 
 /**
  * @private
@@ -1183,6 +1056,22 @@ function compose(
 
     if (composedClasses.indexOf(ChartClass) === -1) {
         composedClasses.push(ChartClass);
+
+        // Add an event listener to handle the showTable option
+        addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
+        addEvent(ChartClass, 'render', onChartRenderer);
+
+        const chartProto = ChartClass.prototype;
+
+        chartProto.downloadCSV = chartDownloadCSV;
+        chartProto.downloadXLS = chartDownloadXLS;
+        chartProto.getCSV = chartGetCSV;
+        chartProto.getDataRows = chartGetDataRows;
+        chartProto.getTable = chartGetTable;
+        chartProto.getTableAST = chartGetTableAST;
+        chartProto.hideData = chartHideData;
+        chartProto.toggleDataTable = chartToggleDataTable;
+        chartProto.viewData = chartViewData;
     }
 
     if (composedClasses.indexOf(setOptions) === -1) {
@@ -1231,6 +1120,22 @@ function compose(
         setOptions(ExportDataDefaults);
     }
 
+    if (AreaRangeSeries && composedClasses.indexOf(AreaRangeSeries) === -1) {
+        composedClasses.push(AreaRangeSeries);
+        AreaRangeSeries.prototype.keyToAxis = {
+            low: 'y',
+            high: 'y'
+        };
+    }
+
+    if (GanttSeries && composedClasses.indexOf(GanttSeries) === -1) {
+        composedClasses.push(GanttSeries);
+        GanttSeries.prototype.keyToAxis = {
+            start: 'x',
+            end: 'x'
+        };
+    }
+
     if (MapSeries && composedClasses.indexOf(MapSeries) === -1) {
         composedClasses.push(MapSeries);
         MapSeries.prototype.exportKey = 'name';
@@ -1246,6 +1151,131 @@ function compose(
         TreemapSeries.prototype.exportKey = 'name';
     }
 
+}
+
+/**
+ * Get a blob object from content, if blob is supported
+ *
+ * @private
+ * @param {string} content
+ *        The content to create the blob from.
+ * @param {string} type
+ *        The type of the content.
+ * @return {string|undefined}
+ *         The blob object, or undefined if not supported.
+ */
+function getBlobFromContent(
+    content: string,
+    type: string
+): (string|undefined) {
+    const nav = win.navigator,
+        webKit = (
+            nav.userAgent.indexOf('WebKit') > -1 &&
+            nav.userAgent.indexOf('Chrome') < 0
+        ),
+        domurl = win.URL || win.webkitURL || win;
+
+    try {
+        // MS specific
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
+            const blob = new win.MSBlobBuilder();
+            blob.append(content);
+            return blob.getBlob('image/svg+xml') as any;
+        }
+
+        // Safari requires data URI since it doesn't allow navigation to blob
+        // URLs.
+        if (!webKit) {
+            return domurl.createObjectURL(new win.Blob(
+                ['\uFEFF' + content], // #7084
+                { type: type }
+            ));
+        }
+    } catch (e) {
+        // Ignore
+    }
+}
+
+/**
+ * @private
+ */
+function onChartAfterViewData(
+    this: Chart
+): void {
+    const chart = this,
+        dataTableDiv = chart.dataTableDiv,
+        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
+        getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
+            tr.children[index].textContent,
+        comparer = (index: number, ascending: boolean) =>
+            (a: HTMLDOMElement, b: HTMLDOMElement): number => {
+                const sort = (v1: any, v2: any): number => (
+                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
+                        v1 - v2 :
+                        v1.toString().localeCompare(v2)
+                );
+
+                return sort(
+                    getCellValue(ascending ? a : b, index),
+                    getCellValue(ascending ? b : a, index)
+                );
+            };
+
+
+    if (dataTableDiv) {
+        row.childNodes.forEach((th: any): void => {
+            const table = th.closest('table');
+
+            th.addEventListener('click', function (): void {
+                const rows = [...dataTableDiv.querySelectorAll(
+                        'tr:not(thead tr)'
+                    ) as unknown as Array<HTMLElement>],
+                    headers = [...th.parentNode.children];
+
+                rows.sort(
+                    comparer(
+                        headers.indexOf(th),
+                        chart.ascendingOrderInTable =
+                            !chart.ascendingOrderInTable
+                    )
+                ).forEach((tr: HTMLDOMElement): void => {
+                    table.appendChild(tr);
+                });
+
+                headers.forEach((th): void => {
+                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
+                        .forEach((className): void => {
+                            if (th.classList.contains(className)) {
+                                th.classList.remove(className);
+                            }
+                        });
+                });
+
+                th.classList.add(
+                    chart.ascendingOrderInTable ?
+                        'highcharts-sort-ascending' :
+                        'highcharts-sort-descending'
+                );
+            });
+        });
+    }
+}
+
+/**
+ * Handle the showTable option
+ * @private
+ */
+function onChartRenderer(
+    this: Chart
+): void {
+    if (
+        this.options &&
+        this.options.exporting &&
+        this.options.exporting.showTable &&
+        !this.options.chart.forExport
+    ) {
+        this.viewData();
+    }
 }
 
 /* *
