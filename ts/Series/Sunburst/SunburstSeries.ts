@@ -439,12 +439,12 @@ class SunburstSeries extends TreemapSeries {
     public static defaultOptions: SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
 
         /**
-         * Breadcrumbs options.
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the traversed levels.
          *
-         *
-         * @since     next
+         * @since 10.0.0
          * @product   highcharts
-         * @extends breadcrumbs
+         * @extends   navigation.breadcrumbs
          * @optionparent plotOptions.sunburst.breadcrumbs
          */
 
@@ -821,7 +821,7 @@ class SunburstSeries extends TreemapSeries {
                 if (s.dataLabelsGroup) {
                     s.dataLabelsGroup.animate({
                         opacity: 1,
-                        visibility: 'visible'
+                        visibility: 'inherit'
                     });
                 }
             };
@@ -1038,7 +1038,7 @@ class SunburstSeries extends TreemapSeries {
     public translate(this: SunburstSeries): void {
         let series = this,
             options = series.options,
-            positions = series.center = getCenter.call(series),
+            positions = series.center = series.getCenter(),
             radians = series.startAndEndRadians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -1138,11 +1138,15 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
+    getCenter: typeof CU['getCenter'];
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    getCenter: getCenter,
+    // Mark that the sunburst is supported by the series on point feature.
+    onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
     utils: SunburstUtilities

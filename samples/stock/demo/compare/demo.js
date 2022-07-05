@@ -4,7 +4,7 @@ var seriesOptions = [],
 
 /**
  * Create the chart when all data is loaded
- * @returns {undefined}
+ * @return {undefined}
  */
 function createChart() {
 

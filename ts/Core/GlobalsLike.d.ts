@@ -50,7 +50,7 @@ export interface GlobalsLike {
     readonly isWebKit: boolean;
     readonly marginNames: ReadonlyArray<string>;
     readonly nav: Navigator;
-    readonly noop: (this: unknown, ...args: Array<unknown>) => unknown;
+    readonly noop: (this: any, ...args: Array<any>) => any;
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
     readonly supportsPassiveEvents: boolean;

@@ -251,7 +251,7 @@ const getFile = url => new Promise((resolve, reject) => {
 
         fs.writeFileSync(
             filename,
-            marked(md),
+            marked.parse(md),
             'utf8'
         );
 

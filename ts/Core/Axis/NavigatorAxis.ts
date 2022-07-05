@@ -102,10 +102,10 @@ class NavigatorAxisAdditions {
         let fixedRange = chart && chart.fixedRange,
             halfPointRange = (axis.pointRange || 0) / 2,
             newMin = pick<number|undefined, number>(
-                fixedMin, axis.translate(pxMin as any, true, !axis.horiz) as any
+                fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
             ),
             newMax = pick<number|undefined, number>(
-                fixedMax, axis.translate(pxMax as any, true, !axis.horiz) as any
+                fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
             ),
             changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 

@@ -4,9 +4,17 @@
  *
  * */
 
-import type Annotation from './Annotations';
+import type {
+    AnnotationControlPointOptionsObject
+} from './ControlPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+declare module './MockPointOptions' {
+    interface MockPointOptions {
+        controlPoint?: AnnotationControlPointOptionsObject;
+    }
+}
 
 /**
  * Internal types.
@@ -50,19 +58,6 @@ declare global {
             public update(
                 userOptions: Partial<AnnotationControlPointOptionsObject>
             ): void;
-        }
-        interface AnnotationControlPointDragEventFunction {
-            (
-                this: Annotation,
-                e: AnnotationEventObject,
-                target: AnnotationControllable
-            ): void;
-        }
-        interface AnnotationControlPointPositionerFunction {
-            (
-                this: AnnotationControlPoint,
-                target: AnnotationControllable
-            ): PositionObject;
         }
     }
 }
@@ -113,7 +108,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public constructor(
         chart: Highcharts.AnnotationChart,
         target: Highcharts.AnnotationControllable,
-        options: Highcharts.AnnotationControlPointOptionsObject,
+        options: AnnotationControlPointOptionsObject,
         index?: number
     ) {
         this.chart = chart;
@@ -138,7 +133,7 @@ class ControlPoint implements eventEmitterMixin.Type {
     public onDrag = eventEmitterMixin.onDrag;
     public onMouseDown = eventEmitterMixin.onMouseDown;
     public onMouseUp = eventEmitterMixin.onMouseUp;
-    public options: Highcharts.AnnotationControlPointOptionsObject;
+    public options: AnnotationControlPointOptionsObject;
     public removeDocEvents = eventEmitterMixin.removeDocEvents;
     public target: Highcharts.AnnotationControllable;
 
@@ -167,8 +162,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      *
      */
     public setVisibility(visible: boolean): void {
-        this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
-
+        this.graphic[visible ? 'show' : 'hide']();
         this.options.visible = visible as any;
     }
 
@@ -234,7 +228,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      *
      */
     public update(
-        userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>
+        userOptions: Partial<AnnotationControlPointOptionsObject>
     ): void {
         const chart = this.chart,
             target = this.target,

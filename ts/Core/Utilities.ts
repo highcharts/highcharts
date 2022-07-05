@@ -25,6 +25,7 @@ import type {
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Time from './Time';
 
 import H from './Globals.js';
 const {
@@ -931,7 +932,7 @@ function getMagnitude(num: number): number {
  */
 function normalizeTickInterval(
     interval: number,
-    multiples?: Array<any>,
+    multiples?: Array<number>,
     magnitude?: number,
     allowDecimals?: boolean,
     hasTickAmount?: boolean
@@ -940,8 +941,8 @@ function normalizeTickInterval(
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = pick(magnitude, 1);
-    const normalized = interval / (magnitude as any);
+    magnitude = pick(magnitude, getMagnitude(interval));
+    const normalized = interval / magnitude;
 
     // multiples for a linear scale
     if (!multiples) {
@@ -960,8 +961,8 @@ function normalizeTickInterval(
                 multiples = multiples.filter(function (num: number): boolean {
                     return num % 1 === 0;
                 });
-            } else if ((magnitude as any) <= 0.1) {
-                multiples = [1 / (magnitude as any)];
+            } else if (magnitude <= 0.1) {
+                multiples = [1 / magnitude];
             }
         }
     }
@@ -973,7 +974,7 @@ function normalizeTickInterval(
         if (
             (
                 hasTickAmount &&
-                retInterval * (magnitude as any) >= interval
+                retInterval * magnitude >= interval
             ) ||
             (
                 !hasTickAmount &&
@@ -1161,7 +1162,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<string, number> = {
+const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,

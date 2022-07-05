@@ -1,5 +1,5 @@
 ---
- name: Prince Edward Island - Highmaps
- description: Highmaps demo
+ name: Prince Edward Island - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

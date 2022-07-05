@@ -1,5 +1,5 @@
 ---
- name: Troms og Finnmark - Highmaps
- description: Highmaps demo
+ name: Troms og Finnmark - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

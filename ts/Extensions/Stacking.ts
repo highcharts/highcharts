@@ -121,6 +121,7 @@ declare global {
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
+            stackKey?: string;
             x: number;
         }
         interface StackItemObject {
@@ -404,7 +405,7 @@ class StackItem {
             // stack height:
             h = defined(y) && Math.abs((y as any) - (yZero as any)),
             // x position:
-            x = pick(defaultX, (chart.xAxis[0].translate(stackItem.x) as any)) +
+            x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
                 xOffset,
             stackBox = defined(y) && stackItem.getStackBox(
                 chart,
@@ -464,7 +465,7 @@ class StackItem {
                 label.show();
             } else {
                 // Move label away to avoid the overlapping issues
-                label.alignAttr.y = -9999;
+                label.hide();
                 isJustify = false;
             }
 
@@ -872,12 +873,13 @@ Series.prototype.getStackIndicator = function (
     // changed:
     if (!defined(stackIndicator) ||
         stackIndicator.x !== x ||
-        (key && stackIndicator.key !== key)
+        (key && stackIndicator.stackKey !== key)
     ) {
         stackIndicator = {
             x: x,
             index: 0,
-            key: key
+            key: key,
+            stackKey: key
         };
     } else {
         (stackIndicator).index++;

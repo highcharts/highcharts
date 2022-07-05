@@ -95,6 +95,7 @@ export interface ChartOptions {
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    allowMutatingData?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
     ignoreHiddenSeries?: boolean;
@@ -115,7 +116,6 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
     plotBorderWidth?: number;
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
-    polar?: boolean;
     reflow?: boolean;
     renderTo?: (string|HTMLDOMElement);
     resetZoomButton?: ChartResetZoomButtonOptions;

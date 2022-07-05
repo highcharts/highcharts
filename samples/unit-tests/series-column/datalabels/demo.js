@@ -93,7 +93,7 @@ QUnit.test('Cropping of rotated data labels (#4779)', function (assert) {
     chart.series.forEach(function (series) {
         series.points.forEach(function (point) {
             assert.strictEqual(
-                point.dataLabel.attr('y') === -9999,
+                point.dataLabel.attr('visibility') === 'hidden',
                 expected.shift(),
                 'Hidden as expected'
             );

@@ -1,60 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['no-aa-928', 0],
-    ['no-aa-914', 1],
-    ['no-aa-911', 2],
-    ['no-aa-912', 3],
-    ['no-aa-940', 4],
-    ['no-aa-901', 5],
-    ['no-aa-906', 6],
-    ['no-aa-929', 7],
-    ['no-aa-904', 8],
-    ['no-aa-919', 9],
-    ['no-aa-941', 10],
-    ['no-aa-926', 11],
-    ['no-va-938', 12],
-    ['no-aa-937', 13],
-    ['no-aa-935', 14]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/no-2019/no-aa-all-2019'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/no-2019/no-aa-all-2019.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['no-aa-928', 10], ['no-aa-914', 11], ['no-aa-911', 12],
+        ['no-aa-912', 13], ['no-aa-940', 14], ['no-aa-901', 15],
+        ['no-aa-906', 16], ['no-aa-929', 17], ['no-aa-904', 18],
+        ['no-aa-919', 19], ['no-aa-941', 20], ['no-aa-926', 21],
+        ['no-va-938', 22], ['no-aa-937', 23], ['no-aa-935', 24]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-aa-all-2019.js">Aust-Agder (2019)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-aa-all-2019.topo.json">Aust-Agder (2019)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

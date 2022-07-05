@@ -276,7 +276,7 @@ class OrganizationSeries extends SankeySeries {
          *         Every indent decreases the nodes' width
          *
          * @type {Highcharts.OrganizationHangingIndentTranslationValue}
-         * @since next
+         * @since 10.0.0
          * @default inherit
          */
         hangingIndentTranslation: 'inherit',

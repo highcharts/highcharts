@@ -68,7 +68,7 @@ class ArcDiagramSeries extends SankeySeries {
      *         Arc Diagram
      *
      * @extends      plotOptions.sankey
-     * @since        next
+     * @since 10.0.0
      * @product      highcharts
      * @requires     modules/arc-diagram
      * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
@@ -85,7 +85,7 @@ class ArcDiagramSeries extends SankeySeries {
          * another
          *
          * @type    {boolean}
-         * @since next
+         * @since 10.0.0
          * @default false
          * @product highcharts
          */
@@ -98,7 +98,7 @@ class ArcDiagramSeries extends SankeySeries {
          * is set, an arc extending to the given value is rendered.
          *
          * @type    {number}
-         * @since next
+         * @since 10.0.0
          * @default undefined
          * @product highcharts
          * @apioption series.arcdiagram.linkRadius
@@ -111,7 +111,7 @@ class ArcDiagramSeries extends SankeySeries {
          * touching the bottom border of the `plotArea`.
          *
          * @type    {string}
-         * @since next
+         * @since 10.0.0
          * @default '100%'
          * @product highcharts
          * @apioption series.arcdiagram.offset
@@ -123,7 +123,7 @@ class ArcDiagramSeries extends SankeySeries {
          * depending on the weight value.
          *
          * @type    {number}
-         * @since next
+         * @since 10.0.0
          * @default undefined
          * @product highcharts
          * @apioption series.arcdiagram.linkWeight
@@ -136,7 +136,7 @@ class ArcDiagramSeries extends SankeySeries {
          * `marker.radius` option.
          *
          * @type    {boolean}
-         * @since next
+         * @since 10.0.0
          * @default false
          * @product highcharts
          */
@@ -146,7 +146,7 @@ class ArcDiagramSeries extends SankeySeries {
          * `plotArea`.
          *
          * @type    {boolean}
-         * @since next
+         * @since 10.0.0
          * @default false
          * @product highcharts
          */
@@ -171,11 +171,18 @@ class ArcDiagramSeries extends SankeySeries {
              * **Note:** Only SVG-based renderer supports this option. Setting
              * `useHTML` to true will disable this option.
              *
-             * @extends plotOptions.arcdiagram.dataLabels.linkTextPath
-             * @since   next
+             * @extends plotOptions.networkgraph.dataLabels.linkTextPath
+             * @since 10.0.0
              */
             linkTextPath: {
+                /**
+                 * @type    {Highcharts.SVGAttributes}
+                 * @default {"startOffset":"25%"}
+                 */
                 attributes: {
+                    /**
+                     * @ignore-option
+                     */
                     startOffset: '25%'
                 }
             }
@@ -471,6 +478,7 @@ class ArcDiagramSeries extends SankeySeries {
 
         // Pass test in drawPoints
         point.y = point.plotY = 1;
+        point.x = point.plotX = 1;
 
         if (!point.color) {
             point.color = fromNode.color;
@@ -632,6 +640,15 @@ class ArcDiagramSeries extends SankeySeries {
             return attrs;
         }
         return super.pointAttribs.apply(this, arguments);
+    }
+
+    public markerAttribs(
+        point: ArcDiagramPoint
+    ): SVGAttributes {
+        if (point.isNode) {
+            return super.markerAttribs.apply(this, arguments);
+        }
+        return {};
     }
     /* eslint-enable valid-jsdoc */
 }

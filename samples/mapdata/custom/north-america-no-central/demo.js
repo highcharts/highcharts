@@ -1,67 +1,57 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['gl', 0],
-    ['lc', 1],
-    ['um', 2],
-    ['us', 3],
-    ['vi', 4],
-    ['ca', 5],
-    ['cu', 6],
-    ['kn', 7],
-    ['gd', 8],
-    ['dm', 9],
-    ['ag', 10],
-    ['tt', 11],
-    ['sw', 12],
-    ['bb', 13],
-    ['jm', 14],
-    ['bu', 15],
-    ['bs', 16],
-    ['vc', 17],
-    ['ht', 18],
-    ['do', 19],
-    ['mx', 20],
-    ['pr', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/north-america-no-central'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['gl', 10], ['lc', 11], ['um', 12], ['us', 13], ['vi', 14], ['ca', 15],
+        ['cu', 16], ['kn', 17], ['gd', 18], ['dm', 19], ['ag', 20], ['tt', 21],
+        ['sw', 22], ['bb', 23], ['jm', 24], ['bu', 25], ['bs', 26], ['vc', 27],
+        ['ht', 28], ['do', 29], ['mx', 30], ['pr', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/north-america-no-central.js">North America without central</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json">North America without central</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

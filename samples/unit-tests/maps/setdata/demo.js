@@ -1,6 +1,6 @@
 QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // Prepare demo data
-    var data = [
+    const data = [
         {
             'hc-key': 'dz',
             value: 0
@@ -805,6 +805,10 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     // Initialize the chart
     const chart = Highcharts.mapChart('container', {
+        accessibility: {
+            enabled: false
+        },
+
         title: {
             text: ''
         },
@@ -830,7 +834,6 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
         series: [
             {
-                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: 'hc-key',
                 name: 'Random data',
@@ -847,9 +850,73 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         ]
     });
 
-    data[148].value = 1;
+    const series = chart.series[0],
+        mapView = chart.mapView;
 
-    const mapView = $('#container').highcharts().mapView;
+    let centerBeforeUpdate,
+        zoomBeforeUpdate;
+
+    series.setData([{
+        'hc-key': 'us',
+        value: 155
+    }]);
+
+    // Check both updates: "allAreas: true" and back to "allAreas: false"
+    // The view should be changed.
+    for (let i = 0; i < 2; i++) {
+        centerBeforeUpdate = mapView.center;
+        zoomBeforeUpdate = mapView.zoom;
+
+        series.update({
+            allAreas: !series.options.allAreas
+        });
+
+        assert.notDeepEqual(
+            centerBeforeUpdate,
+            mapView.center,
+            `When updating "allAreas: ${series.options.allAreas}", the mapView
+            should fit view (center), #17012.`
+        );
+
+        assert.notEqual(
+            zoomBeforeUpdate,
+            mapView.zoom,
+            `When updating "allAreas: ${series.options.allAreas}", the mapView
+            should fit view (zoom), #17012.`
+        );
+    }
+
+    mapView.update({
+        center: [660, 8054],
+        zoom: -2.4
+    });
+
+    // Check both updates: "allAreas: true" and back to "allAreas: false" with
+    // center and zoom set by a user. The view should not be changed.
+    for (let i = 0; i < 2; i++) {
+        centerBeforeUpdate = mapView.center;
+        zoomBeforeUpdate = mapView.zoom;
+
+        series.update({
+            allAreas: !series.options.allAreas
+        });
+
+        assert.deepEqual(
+            centerBeforeUpdate,
+            mapView.center,
+            `When updating "allAreas: ${series.options.allAreas}" with center
+            set by a user in userOptions, the view shouldn't be changed.`
+        );
+
+        assert.equal(
+            zoomBeforeUpdate,
+            mapView.zoom,
+            `When updating "allAreas: ${series.options.allAreas}" with zoom set
+            by a user in userOptions, the view shouldn't be changed.`
+        );
+    }
+
+    data[148].value = 1;
 
     const before = Object.assign(
         {},
@@ -857,7 +924,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         mapView.zoom
     );
 
-    Highcharts.charts[0].series[0].setData(data);
+    series.setData(data);
 
     const after = Object.assign(
         {},
@@ -869,6 +936,62 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         after,
         before,
         'The view should not change after updating data values'
+    );
+
+
+    mapView.update({
+        center: undefined,
+        zoom: undefined
+    });
+
+    let ruPoint = series.points[148];
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        'rgb(229,234,245)',
+        `The point's color should be correct.`
+    );
+
+    // Remove ru point from data
+    const removedPoint = data.splice(148, 1)[0];
+    series.setData(data);
+
+    ruPoint = series.points[216]; // null point
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked null point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        series.options.nullColor,
+        `The ru null point's color should be correct.`
+    );
+
+    // #17057
+    series.update({}, false);
+    series.addPoint(removedPoint);
+
+    ruPoint = series.points[199];
+
+    assert.strictEqual(
+        ruPoint['hc-key'],
+        'ru',
+        'Making sure that picked point is actually ru.'
+    );
+
+    assert.strictEqual(
+        ruPoint.graphic.attr('fill'),
+        'rgb(229,234,245)',
+        'The ru point should be added correctly (no nullColor), #17057.'
     );
 
     // #15782 Right side
@@ -961,5 +1084,21 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         mapNavY < expBtnEdge,
         '#15782, mapNav should not overlap with ' +
             'export icon (Bottom right side).'
+    );
+
+    // Verify that bounds adapt when setting data (#17013)
+    const worldScale = chart.series[0].transformGroups[0].scaleX;
+    chart.series[0].update({
+        allAreas: false
+    });
+
+    chart.series[0].setData([{
+        'hc-key': 'ru',
+        value: 148
+    }]);
+
+    assert.ok(
+        chart.series[0].transformGroups[0].scaleX / worldScale > 2,
+        'The view should be zoomed into the new point (#17013)'
     );
 });

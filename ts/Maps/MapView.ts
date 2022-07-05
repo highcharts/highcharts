@@ -50,7 +50,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
-    defined,
     fireEvent,
     isArray,
     isNumber,
@@ -142,6 +141,9 @@ class MapView {
 
     public chart: Chart;
 
+    protected eventsToUnbind: Array<Function> = [];
+
+
     /* *
      * Return the composite bounding box of a collection of bounding boxes
      */
@@ -161,6 +163,48 @@ class MapView {
         }
         return;
     };
+
+    // Merge two collections of insets by the id
+    private static mergeInsets(
+        a: DeepPartial<MapViewInsetsOptions|undefined>[],
+        b: DeepPartial<MapViewInsetsOptions|undefined>[]
+    ): DeepPartial<MapViewInsetsOptions|undefined>[] {
+        type DeepInsetOptions = DeepPartial<MapViewInsetsOptions|undefined>;
+        const toObject = (
+            insets: DeepInsetOptions[]
+        ): Record<string, DeepInsetOptions> => {
+            const ob = {} as Record<string, DeepInsetOptions>;
+            insets.forEach((inset, i): void => {
+                ob[inset && inset.id || `i${i}`] = inset;
+            });
+            return ob;
+        };
+
+        const insetsObj = merge(
+                toObject(a),
+                toObject(b)
+            ),
+            insets = Object
+                .keys(insetsObj)
+                .map((key): DeepInsetOptions => insetsObj[key]);
+
+        return insets;
+    }
+
+    // Create MapViewInset instances from insets options
+    private createInsets(): void {
+        const options = this.options,
+            insets = options.insets;
+        if (insets) {
+            insets.forEach((item): void => {
+                const inset = new MapViewInset(
+                    this,
+                    merge(options.insetOptions, item)
+                );
+                this.insets.push(inset);
+            });
+        }
+    }
 
     public constructor(
         chart: Chart,
@@ -236,30 +280,10 @@ class MapView {
         );
 
         // Merge the inset collections by id, or index if id missing
-        if (
-            recommendedMapView && recommendedMapView.insets &&
-            options &&
-            options.insets
-        ) {
-            type DeepInsetOptions = DeepPartial<MapViewInsetsOptions|undefined>;
-            const toObject = (
-                insets: DeepInsetOptions[]
-            ): Record<string, DeepInsetOptions> => {
-                const ob = {} as Record<string, DeepInsetOptions>;
-                insets.forEach((inset, i): void => {
-                    ob[inset && inset.id || `i${i}`] = inset;
-                });
-                return ob;
-            };
-
-            const insetsObj = merge(
-                    toObject(recommendedMapView.insets),
-                    toObject(options.insets)
-                ),
-                insets = Object
-                    .keys(insetsObj)
-                    .map((key): DeepInsetOptions => insetsObj[key]);
-            (o as any).insets = insets;
+        const recInsets = recommendedMapView && recommendedMapView.insets,
+            optInsets = options && options.insets;
+        if (recInsets && optInsets) {
+            (o as any).insets = MapView.mergeInsets(recInsets, optInsets);
         }
 
         this.chart = chart;
@@ -287,35 +311,33 @@ class MapView {
         this.zoom = o.zoom || 0;
 
         // Create the insets
-        const insets = o.insets;
-        if (insets) {
-            insets.forEach((item): void => {
-                const inset = new MapViewInset(
-                    this,
-                    merge(o.insetOptions, item)
-                );
-                this.insets.push(inset);
-            });
-        }
+        this.createInsets();
 
         // Initialize and respond to chart size changes
-        addEvent(chart, 'afterSetChartSize', (): void => {
-            this.playingField = this.getField();
-            if (
-                this.minZoom === void 0 || // When initializing the chart
-                this.minZoom === this.zoom // When resizing the chart
-            ) {
+        this.eventsToUnbind.push(
+            addEvent(chart, 'afterSetChartSize', (): void => {
+                this.playingField = this.getField();
+                if (
+                    this.minZoom === void 0 || // When initializing the chart
+                    this.minZoom === this.zoom // When resizing the chart
+                ) {
 
-                this.fitToBounds(void 0, void 0, false);
+                    this.fitToBounds(void 0, void 0, false);
 
-                if (isNumber(this.userOptions.zoom)) {
-                    this.zoom = this.userOptions.zoom;
+                    if (
+                        // Set zoom only when initializing the chart
+                        // (do not overwrite when zooming in/out, #17082)
+                        !this.chart.hasRendered &&
+                        isNumber(this.userOptions.zoom)
+                    ) {
+                        this.zoom = this.userOptions.zoom;
+                    }
+                    if (this.userOptions.center) {
+                        merge(true, this.center, this.userOptions.center);
+                    }
                 }
-                if (this.userOptions.center) {
-                    merge(true, this.center, this.userOptions.center);
-                }
-            }
-        });
+            })
+        );
 
         this.setUpEvents();
 
@@ -472,7 +494,7 @@ class MapView {
      * Convert map coordinates in longitude/latitude to pixels
      *
      * @function Highcharts.MapView#lonLatToPixels
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject|undefined}
@@ -496,7 +518,7 @@ class MapView {
      *
      * @function Highcharts.MapView#lonLatToProjectedUnits
      *
-     * @since next
+     * @since 10.0.0
      * @sample maps/series/latlon-to-point/ Find a point from lon/lat
      *
      * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
@@ -570,7 +592,7 @@ class MapView {
      *
      * @function Highcharts.MapView#projectedUnitsToLonLat
      *
-     * @since next
+     * @since 10.0.0
      *
      * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
      *
@@ -671,7 +693,11 @@ class MapView {
             if (typeof this.options.maxZoom === 'number') {
                 zoom = Math.min(zoom, this.options.maxZoom);
             }
-            this.zoom = zoom;
+
+            // Use isNumber to prevent Infinity (#17205)
+            if (isNumber(zoom)) {
+                this.zoom = zoom;
+            }
         }
 
         const bounds = this.getProjectedBounds();
@@ -776,7 +802,7 @@ class MapView {
      * Convert pixel position to longitude and latitude.
      *
      * @function Highcharts.MapView#pixelsToLonLat
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.PositionObject} pos
      *         The position in pixels
      * @return {Highcharts.MapLonLatObject|undefined}
@@ -986,26 +1012,53 @@ class MapView {
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const newProjection = options.projection;
-        const isDirtyProjection = newProjection && (
-            (
-                Projection.toString(newProjection) !==
-                Projection.toString(this.options.projection)
-            )
-        );
+        let isDirtyProjection = newProjection && (
+                (
+                    Projection.toString(newProjection) !==
+                    Projection.toString(this.options.projection)
+                )
+            ),
+            isDirtyInsets = false;
 
         merge(true, this.userOptions, options);
         merge(true, this.options, options);
 
-        if (isDirtyProjection) {
+        // If anything changed with the insets, destroy them all and create
+        // again below
+        if ('insets' in options) {
+            this.insets.forEach((inset): void => inset.destroy());
+            this.insets.length = 0;
+            isDirtyInsets = true;
+        }
+
+        if (isDirtyProjection || isDirtyInsets) {
             this.chart.series.forEach((series): void => {
+                const groups = series.transformGroups;
                 if (series.clearBounds) {
                     series.clearBounds();
                 }
                 series.isDirty = true;
                 series.isDirtyData = true;
+
+                // Destroy inset transform groups
+                if (isDirtyInsets && groups) {
+                    while (groups.length > 1) {
+                        const group = groups.pop();
+                        if (group) {
+                            group.destroy();
+                        }
+                    }
+                }
             });
 
-            this.projection = new Projection(this.options.projection);
+            if (isDirtyProjection) {
+                this.projection = new Projection(this.options.projection);
+            }
+
+            // Create new insets
+            if (isDirtyInsets) {
+                this.createInsets();
+            }
 
             // Fit to natural bounds if center/zoom are not explicitly given
             if (!options.center && !isNumber(options.zoom)) {
@@ -1263,6 +1316,13 @@ class MapViewInset extends MapView {
             // Apply the border path
             this.border[animate ? 'animate' : 'attr']({ d });
         }
+    }
+
+    public destroy(): void {
+        if (this.border) {
+            this.border = this.border.destroy();
+        }
+        this.eventsToUnbind.forEach((f): void => f());
     }
 
     // No chart-level events for insets

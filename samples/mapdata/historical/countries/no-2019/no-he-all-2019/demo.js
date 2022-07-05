@@ -1,67 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['no-he-441', 0],
-    ['no-he-439', 1],
-    ['no-he-438', 2],
-    ['no-he-437', 3],
-    ['no-he-436', 4],
-    ['no-he-434', 5],
-    ['no-he-430', 6],
-    ['no-he-428', 7],
-    ['no-he-423', 8],
-    ['no-he-432', 9],
-    ['no-he-402', 10],
-    ['no-he-427', 11],
-    ['no-he-403', 12],
-    ['no-he-429', 13],
-    ['no-he-415', 14],
-    ['no-he-420', 15],
-    ['no-he-417', 16],
-    ['no-he-425', 17],
-    ['no-he-412', 18],
-    ['no-he-426', 19],
-    ['no-he-418', 20],
-    ['no-he-419', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/no-2019/no-he-all-2019'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/no-2019/no-he-all-2019.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['no-he-441', 10], ['no-he-439', 11], ['no-he-438', 12],
+        ['no-he-437', 13], ['no-he-436', 14], ['no-he-434', 15],
+        ['no-he-430', 16], ['no-he-428', 17], ['no-he-423', 18],
+        ['no-he-432', 19], ['no-he-402', 20], ['no-he-427', 21],
+        ['no-he-403', 22], ['no-he-429', 23], ['no-he-415', 24],
+        ['no-he-420', 25], ['no-he-417', 26], ['no-he-425', 27],
+        ['no-he-412', 28], ['no-he-426', 29], ['no-he-418', 30],
+        ['no-he-419', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-he-all-2019.js">Hedmark (2019)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-he-all-2019.topo.json">Hedmark (2019)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

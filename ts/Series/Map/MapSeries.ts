@@ -17,11 +17,12 @@
  * */
 
 import type {
+    AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type { GeoJSON, Polygon, TopoJSON } from '../../Maps/GeoJSON';
-import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
+import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -36,7 +37,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import ColorMapMixin from '../ColorMapMixin.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -78,18 +79,12 @@ const {
  *  Declarations
  *
  * */
-type SVGTransformType = {
-    scaleX: number;
-    scaleY: number;
-    translateX: number;
-    translateY: number;
-};
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
+        transformGroups?: Array<SVGElement>|undefined;
         useMapGeometry?: boolean;
     }
 }
@@ -103,31 +98,6 @@ declare module '../../Core/Series/SeriesOptions' {
     {
         brightness?: number;
         color?: ColorType;
-    }
-}
-
-declare global {
-    namespace Highcharts {
-        class MapPoint extends ScatterPoint {
-            public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapMixin.ColorMapPoint[
-                'dataLabelOnNull'
-            ];
-            public isValid: ColorMapMixin.ColorMapPoint['isValid'];
-            public middleX: number;
-            public middleY: number;
-            public options: MapPointOptions;
-            public path: SVGPath;
-            public properties?: object;
-            public series: MapSeries;
-            public value: ColorMapMixin.ColorMapPoint['value'];
-            public applyOptions(
-                options: (MapPointOptions|PointShortOptions),
-                x?: number
-            ): MapPoint;
-            public onMouseOver(e?: PointerEvent): void;
-            public zoomTo(): void;
-        }
     }
 }
 
@@ -173,7 +143,7 @@ class MapSeries extends ScatterSeries {
          * @sample maps/series/affectsmapview/
          *         US map with world map backdrop
          *
-         * @since next
+         * @since 10.0.0
          */
         affectsMapView: true,
 
@@ -588,6 +558,7 @@ class MapSeries extends ScatterSeries {
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
+            delete point.insetIndex;
             delete point.projectedPath;
         });
         delete this.bounds;
@@ -626,8 +597,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        const { chart, group, transformGroups = [] } = this;
-        const { mapView, renderer } = chart;
+        const series = this,
+            { chart, group, transformGroups = [] } = this,
+            { mapView, renderer } = chart;
 
         if (!mapView) {
             return;
@@ -636,18 +608,22 @@ class MapSeries extends ScatterSeries {
         // Set groups that handle transform during zooming and panning in order
         // to preserve clipping on series.group
         this.transformGroups = transformGroups;
-        if (!transformGroups.length) {
-            [mapView].concat(mapView.insets).forEach((view): void => {
-                const transformGroup = renderer.g().add(group);
-                transformGroups.push(transformGroup);
-            });
+        if (!transformGroups[0]) {
+            transformGroups[0] = renderer.g().add(group);
         }
+        mapView.insets.forEach((inset, i): void => {
+            if (!transformGroups[i + 1]) {
+                transformGroups.push(renderer.g().add(group));
+            }
+        });
 
         // Draw the shapes again
         if (this.doFullTranslate()) {
 
             // Individual point actions.
             this.points.forEach((point): void => {
+
+                const { graphic, shapeArgs } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -656,9 +632,15 @@ class MapSeries extends ScatterSeries {
                         0
                 ];
 
+                // When the point has been moved between insets after
+                // MapView.update
+                if (graphic && graphic.parentGroup !== point.group) {
+                    graphic.add(point.group);
+                }
+
                 // Restore state color on update/redraw (#3529)
-                if (point.shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    point.shapeArgs.fill = this.pointAttribs(
+                if (shapeArgs && chart.hasRendered && !chart.styledMode) {
+                    shapeArgs.fill = this.pointAttribs(
                         point,
                         point.state
                     ).fill;
@@ -670,7 +652,10 @@ class MapSeries extends ScatterSeries {
 
             // Add class names
             this.points.forEach((point): void => {
-                if (point.graphic) {
+                const graphic = point.graphic;
+
+                if (graphic) {
+                    const animate = graphic.animate;
                     let className = '';
                     if (point.name) {
                         className +=
@@ -683,32 +668,74 @@ class MapSeries extends ScatterSeries {
                             point.properties['hc-key'].toString().toLowerCase();
                     }
                     if (className) {
-                        point.graphic.addClass(className);
+                        graphic.addClass(className);
                     }
 
                     // In styled mode, apply point colors by CSS
                     if (chart.styledMode) {
-                        point.graphic.css(
+                        graphic.css(
                             this.pointAttribs(
                                 point,
                                 point.selected && 'select' || void 0
                             ) as any
                         );
                     }
+
+                    graphic.animate = function (params,
+                        options, complete): SVGElement {
+
+                        let switchBack = false;
+                        // When strokeWidth is animating
+                        if (params['stroke-width']) {
+
+                            const strokeWidth = pick(
+                                    series.getStrokeWidth(series.options),
+                                    1 // Styled mode
+                                ),
+                                inheritedStrokeWidth = (
+                                    strokeWidth /
+                                    (
+                                        chart.mapView &&
+                                        chart.mapView.getScale() ||
+                                        1
+                                    )
+                                );
+                            // For animating from inherit,
+                            // .attr() reads the property as the starting point
+                            if (graphic['stroke-width'] === 'inherit') {
+                                graphic['stroke-width'] = inheritedStrokeWidth;
+                            }
+                            // For animating to inherit
+                            if (params['stroke-width'] === ('inherit' as any)) {
+                                params['stroke-width'] = inheritedStrokeWidth;
+                                switchBack = true;
+                            }
+                        }
+                        const ret = animate.call(
+                            graphic, params, options,
+                            switchBack ? function (this: SVGElement): void {
+                                // Switch back to "inherit" for zooming
+                                // to work with the existing logic + complete
+                                graphic.attr({
+                                    'stroke-width': ('inherit' as any)
+                                });
+                                // Proceed
+                                if (complete) {
+                                    complete.apply(this, arguments);
+                                }
+                            } : complete);
+                        return ret;
+                    };
                 }
             });
         }
-
 
         // Apply the SVG transform
         transformGroups.forEach((transformGroup, i): void => {
             const view = i === 0 ? mapView : mapView.insets[i - 1],
                 svgTransform = view.getSVGTransform(),
                 strokeWidth = pick(
-                    (this.options as any)[(
-                        this.pointAttrToOptions &&
-                        (this.pointAttrToOptions as any)['stroke-width']
-                    ) || 'borderWidth'],
+                    this.getStrokeWidth(this.options),
                     1 // Styled mode
                 );
 
@@ -793,8 +820,7 @@ class MapSeries extends ScatterSeries {
     public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds && this.chart.mapView) {
 
-            const MAX_VALUE = Number.MAX_VALUE,
-                { insets, projection } = this.chart.mapView,
+            const { insets, projection } = this.chart.mapView,
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
@@ -868,6 +894,24 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
+     * Return the stroke-width either from a series options or point options
+     * object. This function is used by both the map series where the
+     * `borderWidth` sets the stroke-width, and the mapline series where the
+     * `lineWidth` sets the stroke-width.
+     * @private
+     */
+    private getStrokeWidth(
+        options: MapSeries['options']|MapPoint['options']
+    ): number|undefined {
+        const pointAttrToOptions = this.pointAttrToOptions;
+
+        return (options as any)[
+            pointAttrToOptions &&
+            (pointAttrToOptions as any)['stroke-width'] || 'borderWidth'
+        ];
+    }
+
+    /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
      * @private
@@ -894,23 +938,35 @@ class MapSeries extends ScatterSeries {
             );
 
         // Individual stroke width
-        let pointStrokeWidth = (point.options as any)[
-            (
-                this.pointAttrToOptions &&
-                (this.pointAttrToOptions as any)['stroke-width']
-            ) || 'borderWidth'
-        ];
+        let pointStrokeWidth = this.getStrokeWidth(point.options);
+
+        // Handle state specific border or line width
+        if (state) {
+            const stateOptions = merge(
+                (this.options as any).states[state],
+                point.options.states &&
+                (point.options.states as any)[state] ||
+                {}
+            );
+            pointStrokeWidth = this.getStrokeWidth(stateOptions);
+        }
+
         if (pointStrokeWidth && mapView) {
             pointStrokeWidth /= mapView.getScale();
         }
 
         // In order for dash style to avoid being scaled, set the transformed
         // stroke width on the item
-        if (attr.dashstyle && mapView && this.options.borderWidth) {
-            pointStrokeWidth = this.options.borderWidth / mapView.getScale();
+        const seriesStrokeWidth = this.getStrokeWidth(this.options);
+        if (
+            attr.dashstyle &&
+            mapView &&
+            isNumber(seriesStrokeWidth)
+        ) {
+            pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
-        attr['stroke-width'] = pick(
+        (attr as any)['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
             // point graphics inherit. That way we don't have to iterate over
@@ -922,15 +978,37 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
+     * @private
+     */
+    public updateData(): boolean {
+        // #16782
+        if (this.processedData) {
+            return false;
+        }
+
+        return super.updateData.apply(this, arguments);
+    }
+
+    /**
      * Extend setData to call processData and generatePoints immediately.
      * @private
      */
-    public setData(): void {
+    public setData(
+        data: Array<(PointOptions|PointShortOptions)>,
+        redraw: boolean = true,
+        animation?: (boolean|Partial<AnimationOptions>),
+        updatePoints?: boolean
+    ): void {
 
-        super.setData.apply(this, arguments);
+        delete this.bounds;
+        super.setData.call(this, data, false, void 0, updatePoints);
 
         this.processData();
         this.generatePoints();
+
+        if (redraw) {
+            this.chart.redraw(animation);
+        }
     }
 
     /**
@@ -1154,8 +1232,20 @@ class MapSeries extends ScatterSeries {
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
             this.processData();
             this.generatePoints();
+
             delete this.bounds;
-            this.getProjectedBounds();
+            if (
+                mapView &&
+                !mapView.userOptions.center &&
+                !isNumber(mapView.userOptions.zoom)
+            ) {
+                // Not only recalculate bounds but also fit view
+                mapView.fitToBounds(void 0, void 0, false); // #17012
+            } else {
+                // If center and zoom is defined in user options, get bounds but
+                // don't change view
+                this.getProjectedBounds();
+            }
         }
 
         if (mapView) {
@@ -1205,14 +1295,13 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries {
-    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
+interface MapSeries extends ColorMapComposition.SeriesComposition {
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
-    pointArrayMap: ColorMapMixin.ColorMapSeries['pointArrayMap'];
+    pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
-    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
+    trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     animate(init?: boolean): void;
     animateDrilldown(init?: boolean): void;
     animateDrillupTo(init?: boolean): void;
@@ -1229,11 +1318,11 @@ interface MapSeries {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
+    axisTypes: ColorMapComposition.seriesMembers.axisTypes,
 
-    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
-    colorKey: ColorMapMixin.SeriesMixin.colorKey,
+    colorKey: ColorMapComposition.seriesMembers.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1254,27 +1343,28 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: ColorMapMixin.SeriesMixin.getSymbol,
+    getSymbol: noop,
 
     isCartesian: false,
 
-    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
+    parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 
-    pointArrayMap: ColorMapMixin.SeriesMixin.pointArrayMap,
+    pointArrayMap: ColorMapComposition.seriesMembers.pointArrayMap,
 
     pointClass: MapPoint,
 
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
-    searchPoint: noop as any,
+    searchPoint: noop,
 
-    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups,
+    trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     // Get axis extremes from paths, not values
     useMapGeometry: true
 
 });
+ColorMapComposition.compose(MapSeries);
 
 /* *
  *

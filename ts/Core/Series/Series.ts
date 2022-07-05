@@ -128,6 +128,7 @@ declare module './SeriesLike' {
         invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
+        toYData?(point: Point): Array<number>;
     }
 }
 
@@ -1217,7 +1218,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && oldData[i].update) {
+                if (point !== oldData[i].y && (oldData[i].update)) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -1327,9 +1328,23 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null;
+            firstPoint = null,
+            copiedData;
 
-        data = data || [];
+        if (!chart.options.chart.allowMutatingData) { // #4259
+            // Remove old reference
+            if (options.data) {
+                delete series.options.data;
+            }
+            if (series.userOptions.data) {
+                delete series.userOptions.data;
+            }
+            copiedData = merge(true, data);
+
+        }
+        data = copiedData || data || [];
+
+
         const dataLength = data.length;
         redraw = pick(redraw, true);
 
@@ -1340,6 +1355,7 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
+            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&
@@ -1453,7 +1469,7 @@ class Series {
             // destroy old points
             i = oldDataLength;
             while (i--) {
-                if (oldData[i] && oldData[i].destroy) {
+                if (oldData[i] && (oldData[i].destroy)) {
                     oldData[i].destroy();
                 }
             }
@@ -2272,7 +2288,7 @@ class Series {
             point.yBottom = defined(yBottom) ?
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any) :
+                )) :
                 null as any;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2311,7 +2327,7 @@ class Series {
                     0 as any,
                     1 as any,
                     pointPlacement
-                ) as any) :
+                )) :
                 plotX; // #1514, #5383, #5518
 
             // Negative points. For bubble charts, this means negative z
@@ -2779,9 +2795,9 @@ class Series {
             );
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
-            radius = pick(
+            radius: number|undefined = pick(
                 pointMarkerOptions.radius,
-                (seriesMarkerOptions as any).radius
+                seriesMarkerOptions && seriesMarkerOptions.radius
             );
 
         // Handle hover and select states
@@ -2793,7 +2809,7 @@ class Series {
             radius = pick(
                 pointStateOptions && pointStateOptions.radius,
                 seriesStateOptions && seriesStateOptions.radius,
-                radius + (
+                radius && radius + (
                     seriesStateOptions && seriesStateOptions.radiusPlus ||
                     0
                 )
@@ -2805,13 +2821,13 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = {
+        const attribs: SVGAttributes = isNumber(radius) ? {
             // Math.floor for #1843:
             x: seriesOptions.crisp ?
                 Math.floor(point.plotX as any - radius) :
                 (point.plotX as any) - radius,
             y: (point.plotY as any) - radius
-        };
+        } : {};
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -3171,10 +3187,10 @@ class Series {
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
-                graph.show(true);
+                graph.show();
             }
             if (area) {
-                area.show(true);
+                area.show();
             }
         }
     }
@@ -3830,7 +3846,7 @@ class Series {
 
             series.tracker = renderer.path(trackerPath)
                 .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
+                    visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
                 })
                 .addClass(
@@ -3994,7 +4010,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && data[0].remove) {
+            if (data[0] && (data[0].remove)) {
                 data[0].remove(false);
             } else {
                 data.shift();
@@ -4242,6 +4258,9 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+
+                'processedData', // #17057
+
                 'processedXData',
                 'processedYData',
                 'xIncrement',

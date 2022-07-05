@@ -25,10 +25,6 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
-import MU from '../Maps/MapUtilities.js';
-const {
-    pointInPolygon
-} = MU;
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -384,7 +380,7 @@ Chart.prototype.transformToLatLon = function (
         sinAngle = transform.sinAngle ||
             (transform.rotation && Math.sin(transform.rotation)),
         // Note: Inverted sinAngle to reverse rotation direction
-        projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
+        projected = proj4(transform.crs, 'WGS84', transform.rotation ? {
             x: normalized.x * cosAngle + normalized.y * -sinAngle,
             y: normalized.x * sinAngle + normalized.y * cosAngle
         } : normalized);
@@ -516,7 +512,8 @@ function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
         copyrightUrl: topology.copyrightUrl,
         features,
         'hc-recommended-mapview': object['hc-recommended-mapview'],
-        bbox: topology.bbox
+        bbox: topology.bbox,
+        title: topology.title
     };
 
     object['hc-decoded-geojson'] = geojson;
@@ -536,7 +533,7 @@ function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
  * @requires modules/map
  *
  * @sample maps/demo/geojson/ Simple areas
- * @sample maps/demo/geojson-multiple-types/ Multiple types
+ * @sample maps/demo/mapline-mappoint/ Multiple types
  * @sample maps/series/mapdata-multiple/ Multiple map sources
  *
  * @function Highcharts.geojson

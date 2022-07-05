@@ -27,10 +27,8 @@ import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type {
     TreemapSeriesLayoutAlgorithmValue,
-    TreemapSeriesOptions,
-    TreemapSeriesUpButtonOptions
+    TreemapSeriesOptions
 } from './TreemapSeriesOptions';
-import type { SeriesOptions, SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -38,7 +36,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../ColorMapMixin.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -152,12 +150,13 @@ class TreemapSeries extends ScatterSeries {
         borderRadius: 0,
 
         /**
-         * Breadcrumbs options.
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the traversed levels.
          *
          *
-         * @since     next
+         * @since 10.0.0
          * @product   highcharts
-         * @extends breadcrumbs
+         * @extends   navigation.breadcrumbs
          * @optionparent plotOptions.treemap.breadcrumbs
          */
         /**
@@ -1326,9 +1325,6 @@ class TreemapSeries extends ScatterSeries {
 
         let setOptionsEvent;
 
-        // If color series logic is loaded, add some properties
-        this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
-
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
         ): void {
@@ -1459,8 +1455,8 @@ class TreemapSeries extends ScatterSeries {
             level = point && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
             attr: SVGAttributes,
-            stateOptions: SeriesStateHoverOptions =
-                (state && (options.states as any)[state]) || {},
+            stateOptions =
+                state && options.states && options.states[state] || {},
             className = (point && point.getClassName()) || '',
             opacity: number;
 
@@ -1915,8 +1911,8 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
-interface TreemapSeries extends TU.Series {
-    colorAttribs?: ColorMapMixin.ColorMapSeries['colorAttribs'];
+interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
+    colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
@@ -1932,6 +1928,7 @@ interface TreemapSeries extends TU.Series {
 }
 extend(TreemapSeries.prototype, {
     buildKDTree: noop,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
     drawLegendSymbol: LegendSymbol.drawRectangle,
@@ -1946,6 +1943,7 @@ extend(TreemapSeries.prototype, {
         recursive: TreemapUtilities.recursive
     }
 });
+ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *

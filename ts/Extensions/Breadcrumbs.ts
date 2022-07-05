@@ -74,6 +74,11 @@ declare module '../Series/Treemap/TreemapSeriesOptions' {
         breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
     }
 }
+declare module '../Extensions/Exporting/NavigationOptions' {
+    interface NavigationOptions {
+        breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
+    }
+}
 
 /**
  * Internal types
@@ -119,7 +124,7 @@ extend(
      */
     {
         /**
-         * @since    next
+         * @since 10.0.0
          * @product  highcharts
          */
         mainBreadcrumb: 'Main'
@@ -140,11 +145,14 @@ extend(
  */
 class Breadcrumbs {
     /**
-     * Options for breadcrumbs
+     * Options for breadcrumbs. Breadcrumbs general options are defined in
+     * `navigation.breadcrumbs`. Specific options for drilldown are set in
+     * `drilldown.breadcrumbs` and for tree-like series traversing, in
+     * `plotOptions[series].breadcrumbs`.
      *
-     * @since   next
+     * @since 10.0.0
      * @product highcharts
-     * @optionparent breadcrumbs
+     * @optionparent navigation.breadcrumbs
      */
     public static defaultBreadcrumbsOptions = {
         /**
@@ -160,7 +168,7 @@ class Breadcrumbs {
          *         Themed, single button
          *
          * @type       {Highcharts.SVGAttributes}
-         * @since      next
+         * @since 10.0.0
          * @product    highcharts
          */
         buttonTheme: {
@@ -189,7 +197,7 @@ class Breadcrumbs {
          * The default padding for each button and separator in each direction.
          *
          * @type      {number}
-         * @since     next
+         * @since 10.0.0
          */
         buttonSpacing: 5,
 
@@ -208,8 +216,8 @@ class Breadcrumbs {
          * Return false to stop default buttons click action.
          *
          * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
-         * @since     next
-         * @apioption breadcrumbs.events.click
+         * @since 10.0.0
+         * @apioption navigation.breadcrumbs.events.click
          */
 
         /**
@@ -220,7 +228,7 @@ class Breadcrumbs {
          * @sample highcharts/breadcrumbs/single-button
          *         Floating button
          * @type      {boolean}
-         * @since     next
+         * @since 10.0.0
          */
         floating: false,
 
@@ -230,7 +238,7 @@ class Breadcrumbs {
          * options.
          *
          * @type      {string|undefined}
-         * @since     next
+         * @since 10.0.0
          * @default   undefined
          * @sample {highcharts} highcharts/breadcrumbs/format Display custom
          *          values in breadcrumb button.
@@ -241,9 +249,9 @@ class Breadcrumbs {
          * Callback function to format the breadcrumb text from scratch.
          *
          * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
-         * @since     next
+         * @since 10.0.0
          * @default   undefined
-         * @apioption breadcrumbs.formatter
+         * @apioption navigation.breadcrumbs.formatter
          */
 
         /**
@@ -252,10 +260,21 @@ class Breadcrumbs {
          *
          * @type       {Highcharts.ButtonRelativeToValue}
          * @default    plotBox
-         * @since      next
+         * @since 10.0.0
          * @product    highcharts highmaps
          */
         relativeTo: 'plotBox',
+
+        /**
+         * Whether to reverse the order of buttons. This is common in Arabic
+         * and Hebrew.
+         *
+         * @type       {boolean}
+         * @since      next
+         * @sample     {highcharts} highcharts/breadcrumbs/rtl
+         *             Breadcrumbs in RTL
+         */
+        rtl: false,
 
         /**
          * Positioning for the button row. The breadcrumbs buttons will be
@@ -263,7 +282,7 @@ class Breadcrumbs {
          * legend, range selector) for the custom chart layout set the position
          * properties.
          * @type       {Highcharts.BreadcrumbsAlignOptions}
-         * @since      next
+         * @since 10.0.0
          * @product    highcharts highmaps
          * @sample     {highcharts} highcharts/breadcrumbs/single-button
          *             Single, right aligned button
@@ -303,12 +322,12 @@ class Breadcrumbs {
         /**
          * Options object for Breadcrumbs separator.
          *
-         * @since next
+         * @since 10.0.0
          */
         separator: {
             /**
              * @type {string}
-             * @since next
+             * @since 10.0.0
              * @product highcharts
              */
             text: '/',
@@ -318,7 +337,7 @@ class Breadcrumbs {
              * In styled mode, the breadcrumbs separators are styled by the
              * `.highcharts-separator` rule with its different states.
              *  @type {Highcharts.CSSObject}
-             *  @since     next
+             *  @since 10.0.0
              */
             style: {
                 color: Palette.neutralColor60
@@ -329,7 +348,7 @@ class Breadcrumbs {
          * Show full path or only a single button.
          *
          * @type      {boolean}
-         * @since     next
+         * @since 10.0.0
          * @sample {highcharts} highcharts/breadcrumbs/single-button
          *          Single, styled button
          */
@@ -339,10 +358,10 @@ class Breadcrumbs {
          * CSS styles for all breadcrumbs.
          *
          * In styled mode, the breadcrumbs buttons are styled by the
-         * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+         * `.highcharts-breadcrumbs-buttons .highcharts-button` rule with its
          * different states.
          *  @type {Highcharts.SVGAttributes}
-         *  @since     next
+         *  @since 10.0.0
          */
         style: {},
 
@@ -350,15 +369,15 @@ class Breadcrumbs {
          * Whether to use HTML to render the breadcrumbs items texts.
          *
          * @type      {boolean}
-         * @since     next
+         * @since 10.0.0
          */
         useHTML: false,
 
         /**
-         * The zIndex of the group.
+         * The z index of the breadcrumbs group.
          *
          * @type      {number}
-         * @since     next
+         * @since 10.0.0
          */
         zIndex: 7
     };
@@ -383,6 +402,7 @@ class Breadcrumbs {
             chart.options.drilldown &&
                 chart.options.drilldown.drillUpButton,
             Breadcrumbs.defaultBreadcrumbsOptions,
+            chart.options.navigation && chart.options.navigation.breadcrumbs,
             userOptions
         );
 
@@ -660,6 +680,10 @@ class Breadcrumbs {
                 newPositions.x += xOffset;
             }
 
+            if (breadcrumbs.options.rtl) {
+                newPositions.x += positionOptions.width;
+            }
+
             newPositions.y = pick(newPositions.y, this.yOffset, 0);
 
             breadcrumbs.group.align(
@@ -695,10 +719,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            buttonTheme = merge(breadcrumbsOptions.buttonTheme),
-            states = buttonTheme.states;
-
-        delete buttonTheme.states;
+            buttonTheme = merge(breadcrumbsOptions.buttonTheme);
 
         const button: SVGElement = chart.renderer
             .button(
@@ -731,10 +752,7 @@ class Breadcrumbs {
                         fireEvent(breadcrumbs, 'up', e);
                     }
                 },
-                buttonTheme,
-                states && states.hover,
-                states && states.select,
-                states && states.disabled
+                buttonTheme
             )
             .addClass('highcharts-breadcrumbs-button')
             .add(breadcrumbs.group);
@@ -930,16 +948,26 @@ class Breadcrumbs {
      *        Breadcrumbs class.
      */
     public updateListElements(): void {
-        const updateXPosition = function (
+        const breadcrumbs = this,
+            elementList = breadcrumbs.elementList,
+            buttonSpacing = breadcrumbs.options.buttonSpacing,
+            list = breadcrumbs.list,
+            rtl = breadcrumbs.options.rtl,
+            rtlFactor = rtl ? -1 : 1,
+            updateXPosition = function (
                 element: SVGElement,
                 spacing: number
             ): number {
-                return element.getBBox().width + spacing;
+                return rtlFactor * element.getBBox().width +
+                    rtlFactor * spacing;
             },
-            breadcrumbs = this,
-            elementList = breadcrumbs.elementList,
-            buttonSpacing = breadcrumbs.options.buttonSpacing,
-            list = breadcrumbs.list;
+            adjustToRTL = function (
+                element: SVGElement,
+                posX: number,
+                posY: number
+            ): void {
+                element.translate(posX - element.getBBox().width, posY);
+            };
 
         // Inital position for calculating the breadcrumbs group.
         let posX = breadcrumbs.group ?
@@ -964,9 +992,12 @@ class Breadcrumbs {
                     !isLast
                 ) {
                     // Add spacing for the next separator
-                    posX += buttonSpacing;
+                    posX += rtlFactor * buttonSpacing;
                     currentBreadcrumb.separator =
                         breadcrumbs.renderSeparator(posX, posY);
+                    if (rtl) {
+                        adjustToRTL(currentBreadcrumb.separator, posX, posY);
+                    }
                     posX += updateXPosition(
                         currentBreadcrumb.separator,
                         buttonSpacing
@@ -982,11 +1013,17 @@ class Breadcrumbs {
             } else {
                 // Render a button.
                 button = breadcrumbs.renderButton(breadcrumb, posX, posY);
+                if (rtl) {
+                    adjustToRTL(button, posX, posY);
+                }
                 posX += updateXPosition(button, buttonSpacing);
 
                 // Render a separator.
                 if (!isLast) {
                     separator = breadcrumbs.renderSeparator(posX, posY);
+                    if (rtl) {
+                        adjustToRTL(separator, posX, posY);
+                    }
                     posX += updateXPosition(separator, buttonSpacing);
                 }
                 elementList[breadcrumb.level] = {
@@ -1100,6 +1137,7 @@ namespace Breadcrumbs {
         format?: string;
         formatter?: BreadcrumbsButtonsFormatter;
         relativeTo?: ButtonRelativeToValue;
+        rtl: boolean;
         position: BreadcrumbsAlignOptions;
         separator: SeparatorOptions;
         showFullPath: boolean;
@@ -1246,7 +1284,7 @@ export default Breadcrumbs;
 /**
  * Button theme.
  * @name Highcharts.BreadcrumbsOptions#buttonTheme
- * @type { SVGAttributes | BreadcrumbsButtonThemeOptions | undefined }
+ * @type { SVGAttributes | undefined }
  */
 
 (''); // Keeps doclets above in JS file

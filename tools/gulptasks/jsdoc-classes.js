@@ -43,7 +43,7 @@ const SOURCE_GLOBS = [
     'js/Core/Utilities.js',
     'js/Data/DataTable.js',
     'js/Extensions/Annotations/Mixins/ControllableMixin.js',
-    'js/Extensions/Annotations/Annotations.js',
+    'js/Extensions/Annotations/Annotation.js',
     'js/Extensions/Annotations/ControlPoint.js',
     'js/Extensions/Annotations/NavigationBindings.js',
     'js/Extensions/Sonification/*.js',
@@ -59,7 +59,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
-    'js/Extensions/SeriesLabel.js',
+    'js/Extensions/SeriesLabel/SeriesLabel.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
     'js/Series/Networkgraph/*.js',
@@ -77,7 +77,8 @@ const SOURCE_GLOBS = [
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
 
 const TEMPLATE_DIRECTORY = Path.join(
-    'node_modules', 'highcharts-documentation-generators', 'docstrap'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'docstrap'
 );
 
 /* *

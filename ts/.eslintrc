@@ -97,7 +97,7 @@
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
-        "@typescript-eslint/restrict-plus-operands": 1, // @todo
+        "@typescript-eslint/restrict-plus-operands": 0, // @todo
         "@typescript-eslint/restrict-template-expressions": 1, // @todo
         "@typescript-eslint/semi": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
@@ -131,6 +131,7 @@
                 ]
             }
         ],
+        "jsdoc/check-types": 0,
         "jsdoc/require-description": 1,
         "jsdoc/require-jsdoc": 1, // @todo
         "jsdoc/require-param": 0, // @todo

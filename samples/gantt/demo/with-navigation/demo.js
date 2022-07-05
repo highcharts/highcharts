@@ -14,7 +14,10 @@ Highcharts.ganttChart('container', {
         series: {
             type: 'gantt',
             pointPlacement: 0.5,
-            pointPadding: 0.25
+            pointPadding: 0.25,
+            accessibility: {
+                enabled: false
+            }
         },
         yAxis: {
             min: 0,
@@ -23,12 +26,44 @@ Highcharts.ganttChart('container', {
             categories: []
         }
     },
+
     scrollbar: {
         enabled: true
     },
+
     rangeSelector: {
         enabled: true,
         selected: 0
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var completedValue = point.completed ?
+                        point.completed.amount || point.completed : null,
+                    completed = completedValue ?
+                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        '';
+                return Highcharts.format(
+                    '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
+                    { point, completed }
+                );
+            }
+        },
+        series: {
+            descriptionFormatter: function (series) {
+                return series.name;
+            }
+        }
+    },
+
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
+                yAxisDescriptionPlural: 'The chart has one Y axis showing task categories.'
+            }
+        }
     },
 
     series: [{

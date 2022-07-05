@@ -1,5 +1,5 @@
 ---
- name: Somalia - Highmaps
- description: Highmaps demo
+ name: Somalia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

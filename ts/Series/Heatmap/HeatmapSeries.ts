@@ -26,7 +26,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../ColorMapMixin.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -433,27 +433,6 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
-                    // @todo
-                    // Applying the border radius here is not optimal. It should
-                    // be set in the shapeArgs or returned from `markerAttribs`.
-                    // However, Series.drawPoints does not pick up markerAttribs
-                    // to be passed over to `renderer.symbol`. Also, image
-                    // symbols are not positioned by their top left corner like
-                    // other symbols are. This should be refactored, then we
-                    // could save ourselves some tests for .hasImage etc. And
-                    // the evaluation of borderRadius would be moved to
-                    // `markerAttribs`.
-                    if (this.options.borderRadius) {
-                        point.graphic.attr({
-                            r: this.options.borderRadius
-                        });
-                    }
-
-                    // Saving option for reapplying later
-                    // when changing point's states (#16165)
-                    (point.shapeArgs || {}).r = this.options.borderRadius;
-                    (point.shapeArgs || {}).d = point.graphic.pathArray;
-
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
                     }
@@ -524,6 +503,19 @@ class HeatmapSeries extends ScatterSeries {
 
         // Bind new symbol names
         symbols.ellipse = symbols.circle;
+
+        // @todo
+        //
+        // Setting the border radius here is a workaround. It should be set in
+        // the shapeArgs or returned from `markerAttribs`. However,
+        // Series.drawPoints does not pick up markerAttribs to be passed over to
+        // `renderer.symbol`. Also, image symbols are not positioned by their
+        // top left corner like other symbols are. This should be refactored,
+        // then we could save ourselves some tests for .hasImage etc. And the
+        // evaluation of borderRadius would be moved to `markerAttribs`.
+        if (options.marker) {
+            (options.marker as any).r = options.borderRadius;
+        }
     }
 
     /**
@@ -708,7 +700,8 @@ class HeatmapSeries extends ScatterSeries {
                         shapeArgs.x,
                         shapeArgs.y,
                         shapeArgs.width,
-                        shapeArgs.height
+                        shapeArgs.height,
+                        { r: options.borderRadius }
                     )
                 })
             };
@@ -736,50 +729,47 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries {
-    axisTypes: ColorMapMixin.ColorMapSeries['axisTypes'];
-    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
-    colorKey: ColorMapMixin.ColorMapSeries['colorKey'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
-    getSymbol: typeof Series.prototype.getSymbol;
-    parallelArrays: ColorMapMixin.ColorMapSeries['parallelArrays'];
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
-    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
+    trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    getSymbol: typeof Series.prototype.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
+
+    axisTypes: ColorMapComposition.seriesMembers.axisTypes,
+
+    colorKey: ColorMapComposition.seriesMembers.colorKey,
+
+    directTouch: true,
+
+    getExtremesFromAll: true,
+
+    parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
+
+    pointArrayMap: ['y', 'value'],
+
+    pointClass: HeatmapPoint,
+
+    trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
      * @private
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
-
-    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
-
-    colorKey: ColorMapMixin.SeriesMixin.colorKey,
-
-    directTouch: true,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
     /**
      * @private
      */
     drawLegendSymbol: LegendSymbol.drawRectangle,
 
-    getExtremesFromAll: true,
-
-    getSymbol: Series.prototype.getSymbol,
-
-    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
-
-    pointArrayMap: ['y', 'value'],
-
-    pointClass: HeatmapPoint,
-
-    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups
+    getSymbol: Series.prototype.getSymbol
 
 });
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

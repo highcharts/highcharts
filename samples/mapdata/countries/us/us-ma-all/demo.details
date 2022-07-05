@@ -1,5 +1,5 @@
 ---
- name: Massachusetts - Highmaps
- description: Highmaps demo
+ name: Massachusetts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

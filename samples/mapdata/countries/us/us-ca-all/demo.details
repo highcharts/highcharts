@@ -1,5 +1,5 @@
 ---
- name: California - Highmaps
- description: Highmaps demo
+ name: California - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

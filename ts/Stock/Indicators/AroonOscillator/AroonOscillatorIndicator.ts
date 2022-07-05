@@ -139,8 +139,9 @@ class AroonOscillatorIndicator extends AroonIndicator {
  *
  * */
 
-interface AroonOscillatorIndicator extends MultipleLinesComposition.Composition {
+interface AroonOscillatorIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
+    pointArrayMap: Array<keyof AroonOscillatorPoint>;
     pointClass: typeof AroonOscillatorPoint;
 }
 extend(AroonOscillatorIndicator.prototype, {

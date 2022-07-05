@@ -1,5 +1,5 @@
 ---
- name: Cuba - Highmaps
- description: Highmaps demo
+ name: Cuba - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

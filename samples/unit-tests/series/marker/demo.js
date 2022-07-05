@@ -239,7 +239,7 @@ QUnit.test('visibility', assert => {
     );
     assert.strictEqual(
         series1.stateMarkerGraphic.visibility,
-        'visible',
+        'inherit',
         'Should have stateMarkerGraphic on Series 1 with visibility "visible"'
     );
     assert.ok(

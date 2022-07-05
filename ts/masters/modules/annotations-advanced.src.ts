@@ -10,7 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Annotations/Annotations.js';
+import '../../Extensions/Annotations/Annotation.js';
 import '../../Extensions/Annotations/Types/BasicAnnotation.js';
 import '../../Extensions/Annotations/Types/CrookedLine.js';
 import '../../Extensions/Annotations/Types/ElliottWave.js';

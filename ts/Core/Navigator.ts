@@ -1367,7 +1367,7 @@ class Navigator {
 
         if (navigatorEnabled) {
             navigator.navigatorGroup.attr({
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             // Place elements
             verb = rendered && !navigator.hasDragged ? 'animate' : 'attr';
@@ -2050,13 +2050,13 @@ class Navigator {
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value) as any;
+                    return this.translate(value);
                 },
                 toValue: function (
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value, true) as any;
+                    return this.translate(value, true);
                 }
             } as unknown as NavigatorAxis;
 
