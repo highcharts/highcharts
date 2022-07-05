@@ -52,7 +52,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/DataGrouping.js',
     'js/Extensions/DraggablePoints.js',
     'js/Extensions/Drilldown.js',
-    'js/Extensions/ExportData.js',
+    'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
     'js/Extensions/FullScreen.js',
     'js/Extensions/GeoJSON.js',

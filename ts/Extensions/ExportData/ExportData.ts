@@ -27,6 +27,8 @@ import type {
     ExportingCsvOptions
 } from './ExportDataOptions';
 import type Exporting from '../Exporting/Exporting';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -34,7 +36,6 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -43,7 +44,6 @@ import ExportDataDefaults from './ExportDataDefaults.js';
 import H from '../../Core/Globals.js';
 const {
     doc,
-    seriesTypes,
     win
 } = H;
 import D from '../../Core/DefaultOptions.js';
@@ -51,6 +51,16 @@ const {
     getOptions,
     setOptions
 } = D;
+import DownloadURL from '../DownloadURL.js';
+const { downloadURL } = DownloadURL;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    arearange: AreaRangeSeries,
+    gantt: GanttSeries,
+    map: MapSeries,
+    mapbubble: MapBubbleSeries,
+    treemap: TreemapSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -109,7 +119,6 @@ type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
 
 type ExportingDateTimeMap = Record<string, Array<string>>;
 
-
 interface ExportingCategoryDateTimeMap {
     categoryMap: ExportingCategoryMap;
     dateTimeValueAxisMap: ExportingDateTimeMap;
@@ -127,37 +136,13 @@ interface ExportDataSeries {
     pointArrayMap?: Array<string>;
 }
 
-/**
- * Function callback to execute while data rows are processed for exporting.
- * This allows the modification of data rows before processed into the final
- * format.
+/* *
  *
- * @callback Highcharts.ExportDataCallbackFunction
- * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *  Constants
  *
- * @param {Highcharts.Chart} this
- * Chart context where the event occured.
- *
- * @param {Highcharts.ExportDataEventObject} event
- * Event object with data rows that can be modified.
- */
+ * */
 
-/**
- * Contains information about the export data event.
- *
- * @interface Highcharts.ExportDataEventObject
- *//**
- * Contains the data rows for the current export task and can be modified.
- * @name Highcharts.ExportDataEventObject#dataRows
- * @type {Array<Array<string>>}
- */
-
-
-import DownloadURL from '../DownloadURL.js';
-import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-const { downloadURL } = DownloadURL;
-
-setOptions(ExportDataDefaults);
+const composedClasses: Array<Function> = [];
 
 /* eslint-disable no-invalid-this */
 
@@ -245,14 +230,14 @@ addEvent(Chart, 'afterViewData', function (): void {
  * @function Highcharts.Chart#setUpKeyToAxis
  */
 Chart.prototype.setUpKeyToAxis = function (): void {
-    if (seriesTypes.arearange) {
-        seriesTypes.arearange.prototype.keyToAxis = {
+    if (AreaRangeSeries) {
+        AreaRangeSeries.prototype.keyToAxis = {
             low: 'y',
             high: 'y'
         };
     }
-    if (seriesTypes.gantt) {
-        seriesTypes.gantt.prototype.keyToAxis = {
+    if (GanttSeries) {
+        GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
         };
@@ -1169,8 +1154,8 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         lang = this.options.lang;
 
     if (
-        exportingOptions &&
-        exportingOptions.menuItemDefinitions &&
+        options &&
+        options.menuItemDefinitions &&
         lang &&
         lang.viewData &&
         lang.hideData &&
@@ -1189,49 +1174,121 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
     }
 };
 
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart
+): void {
 
-// Add "Download CSV" to the exporting menu.
-const exportingOptions = getOptions().exporting;
-if (exportingOptions) {
+    if (composedClasses.indexOf(ChartClass) === -1) {
+        composedClasses.push(ChartClass);
+    }
 
-    extend(exportingOptions.menuItemDefinitions, {
-        downloadCSV: {
-            textKey: 'downloadCSV',
-            onclick: function (): void {
-                this.downloadCSV();
-            }
-        },
-        downloadXLS: {
-            textKey: 'downloadXLS',
-            onclick: function (): void {
-                this.downloadXLS();
-            }
-        },
-        viewData: {
-            textKey: 'viewData',
-            onclick: function (): void {
-                this.toggleDataTable();
+    if (composedClasses.indexOf(setOptions) === -1) {
+        composedClasses.push(setOptions);
+
+        const exportingOptions = getOptions().exporting;
+
+        // Add "Download CSV" to the exporting menu.
+        // @todo consider move to defaults
+        if (exportingOptions) {
+
+            extend(exportingOptions.menuItemDefinitions, {
+                downloadCSV: {
+                    textKey: 'downloadCSV',
+                    onclick: function (): void {
+                        this.downloadCSV();
+                    }
+                },
+                downloadXLS: {
+                    textKey: 'downloadXLS',
+                    onclick: function (): void {
+                        this.downloadXLS();
+                    }
+                },
+                viewData: {
+                    textKey: 'viewData',
+                    onclick: function (): void {
+                        this.toggleDataTable();
+                    }
+                }
+            } as Record<string, Exporting.MenuObject>);
+
+            if (
+                exportingOptions.buttons &&
+                exportingOptions.buttons.contextButton.menuItems
+            ) {
+                exportingOptions.buttons.contextButton.menuItems.push(
+                    'separator',
+                    'downloadCSV',
+                    'downloadXLS',
+                    'viewData'
+                );
             }
         }
-    } as Record<string, Exporting.MenuObject>);
 
-    if (exportingOptions.buttons) {
-        (exportingOptions.buttons.contextButton.menuItems as any).push(
-            'separator',
-            'downloadCSV',
-            'downloadXLS',
-            'viewData'
-        );
+        setOptions(ExportDataDefaults);
     }
+
+    if (MapSeries && composedClasses.indexOf(MapSeries) === -1) {
+        composedClasses.push(MapSeries);
+        MapSeries.prototype.exportKey = 'name';
+    }
+
+    if (MapBubbleSeries && composedClasses.indexOf(MapBubbleSeries) === -1) {
+        composedClasses.push(MapBubbleSeries);
+        MapBubbleSeries.prototype.exportKey = 'name';
+    }
+
+    if (TreemapSeries && composedClasses.indexOf(TreemapSeries) === -1) {
+        composedClasses.push(TreemapSeries);
+        TreemapSeries.prototype.exportKey = 'name';
+    }
+
 }
 
-// Series specific
-if (seriesTypes.map) {
-    seriesTypes.map.prototype.exportKey = 'name';
-}
-if (seriesTypes.mapbubble) {
-    seriesTypes.mapbubble.prototype.exportKey = 'name';
-}
-if (seriesTypes.treemap) {
-    seriesTypes.treemap.prototype.exportKey = 'name';
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const ExportData = {
+    compose
+};
+
+export default ExportData;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Function callback to execute while data rows are processed for exporting.
+ * This allows the modification of data rows before processed into the final
+ * format.
+ *
+ * @callback Highcharts.ExportDataCallbackFunction
+ * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *
+ * @param {Highcharts.Chart} this
+ * Chart context where the event occured.
+ *
+ * @param {Highcharts.ExportDataEventObject} event
+ * Event object with data rows that can be modified.
+ */
+
+/**
+ * Contains information about the export data event.
+ *
+ * @interface Highcharts.ExportDataEventObject
+ *//**
+ * Contains the data rows for the current export task and can be modified.
+ * @name Highcharts.ExportDataEventObject#dataRows
+ * @type {Array<Array<string>>}
+ */
+
+(''); // keeps doclets above in JS file
