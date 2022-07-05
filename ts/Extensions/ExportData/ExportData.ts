@@ -22,31 +22,31 @@
  *
  * */
 
-import type Exporting from '../Extensions/Exporting/Exporting';
-import type Point from '../Core/Series/Point';
+import type Exporting from '../Exporting/Exporting';
+import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series.js';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+} from '../../Core/Series/PointOptions';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../Core/Chart/Chart.js';
-import AST from '../Core/Renderer/HTML/AST.js';
-import H from '../Core/Globals.js';
+import Axis from '../../Core/Axis/Axis.js';
+import Chart from '../../Core/Chart/Chart.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
+import H from '../../Core/Globals.js';
 const {
     doc,
     seriesTypes,
     win
 } = H;
-import D from '../Core/DefaultOptions.js';
+import D from '../../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
 } = D;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -63,7 +63,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
@@ -93,7 +93,7 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../../Core/LangOptions'{
     interface LangOptions {
         downloadCSV?: string;
         downloadXLS?: string;
@@ -103,20 +103,20 @@ declare module '../Core/LangOptions'{
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         exportKey?: string;
         keyToAxis?: Record<string, string>;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         includeInDataExport?: boolean;
     }
 }
 
-declare module './Exporting/ExportingOptions' {
+declare module '../Exporting/ExportingOptions' {
     interface ExportingOptions {
         csv?: ExportingCsvOptions;
         showTable?: boolean;
@@ -191,8 +191,8 @@ interface ExportingLangOptions {
  */
 
 
-import DownloadURL from '../Extensions/DownloadURL.js';
-import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import DownloadURL from '../DownloadURL.js';
+import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
 
 setOptions({
