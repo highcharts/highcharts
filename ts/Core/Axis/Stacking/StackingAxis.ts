@@ -69,10 +69,10 @@ declare module '../../Series/PointLike' {
 declare module '../../Series/SeriesLike' {
     interface SeriesLike {
         isRadialBar?: boolean;
-        negStacks?: any; // @todo
-        singleStacks?: any; // @todo
+        negStacks?: boolean;
+        singleStacks?: false;
         stack?: StackOverflowValue;
-        stackedYData?: Array<number>;
+        stackedYData?: (Array<number>|Array<Array<number>>);
         stackKey?: string;
         getStackIndicator(
             stackIndicator: (StackItemIndicatorObject|undefined),
@@ -91,6 +91,15 @@ declare module '../../Series/SeriesLike' {
             stackingParam?: string
         ): void;
     }
+}
+
+interface StackerFunction {
+    (
+        this: Series,
+        pointExtremes: Array<number>,
+        stack: StackItem,
+        i: number
+    ): void;
 }
 
 interface StackItemIndicatorObject {
@@ -123,13 +132,13 @@ function chartGetStacks(
         inverted = chart.inverted;
 
     // reset stacks for each yAxis
-    chart.yAxis.forEach(function (axis): void {
+    chart.yAxis.forEach((axis): void => {
         if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
             axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
 
-    chart.series.forEach(function (series): void {
+    chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
         if (
@@ -234,38 +243,37 @@ function seriesGetStackIndicator(
 function seriesModifyStacks(
     this: Series
 ): void {
-    let series = this,
+    const series = this,
         yAxis = series.yAxis as StackingAxis,
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
         processedXData = series.processedXData,
-        stackIndicator: StackItemIndicatorObject,
-        stacking = series.options.stacking;
+        stacking = series.options.stacking,
+        stacker: (StackerFunction|undefined) =
+            (series as AnyRecord)[stacking + 'Stacker'];
 
-    if ((series as any)[stacking + 'Stacker']) { // Modifier function exists
-        [stackKey, '-' + stackKey].forEach(function (
-            key: (string|undefined)
-        ): void {
-            let i = (processedXData as any).length,
+    let stackIndicator: StackItemIndicatorObject;
+
+    if (stacker) { // Modifier function exists (Series.percentStacker etc.)
+        [stackKey, '-' + stackKey].forEach((key): void => {
+            let i = processedXData.length,
                 x,
                 stack,
                 pointExtremes;
 
             while (i--) {
-                x = (processedXData as any)[i];
+                x = processedXData[i];
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
                     x,
-                    series.index as any,
+                    series.index,
                     key
                 );
                 stack = stacks[key as any] && stacks[key as any][x];
                 pointExtremes =
                     stack && stack.points[stackIndicator.key as any];
                 if (pointExtremes) {
-                    (series as any)[stacking + 'Stacker'](
-                        pointExtremes, stack, i
-                    );
+                    stacker.call(series, pointExtremes, stack, i);
                 }
             }
         });
@@ -351,7 +359,7 @@ function seriesSetStackedPoints(
         return;
     }
 
-    let series = this,
+    const series = this,
         xData = series.processedXData,
         yData = series.processedYData,
         stackedYData = [],
@@ -365,8 +373,9 @@ function seriesSetStackedPoints(
         negStacks = series.negStacks,
         yAxis = series.yAxis as StackingAxis,
         stacks = yAxis.stacking.stacks,
-        oldStacks = yAxis.stacking.oldStacks,
-        stackIndicator: (StackItemIndicatorObject|undefined),
+        oldStacks = yAxis.stacking.oldStacks;
+
+    let stackIndicator: (StackItemIndicatorObject|undefined),
         isNegative,
         stack,
         other,
@@ -411,7 +420,7 @@ function seriesSetStackedPoints(
                 stacks[key as any][x] = new StackItem(
                     yAxis,
                     (yAxis.options as YAxisOptions).stackLabels as any,
-                    isNegative,
+                    !!isNegative,
                     x,
                     stackOption as any
                 );
