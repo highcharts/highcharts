@@ -17,18 +17,18 @@
  *
  * */
 
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type PositionObject from '../Renderer/PositionObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
-import type Tick from './Tick';
+import type ColorType from '../../Color/ColorType';
+import type CSSObject from '../../Renderer/CSSObject';
+import type PositionObject from '../../Renderer/PositionObject';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Renderer/SVG/SVGRenderer';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
+import type Tick from '../Tick';
 import type TreeGridAxis from './TreeGridAxis';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../Utilities.js';
+import { Palette } from '../../Color/Palettes.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     isObject,
