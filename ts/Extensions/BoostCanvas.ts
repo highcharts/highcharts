@@ -26,6 +26,11 @@ import type {
 } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
+import BoostChart from './Boost/BoostChart.js';
+const {
+    getBoostClipRect,
+    isChartSeriesBoosting
+} = BoostChart;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -233,7 +238,7 @@ const initCanvasBoost = function (): void {
                     proceed.call(this, y, x, a, b, c, d);
                 };
 
-            if (chart.isChartSeriesBoosting()) {
+            if (isChartSeriesBoosting(chart)) {
                 target = chart as any;
                 targetGroup = chart.seriesGroup;
             }
@@ -305,7 +310,7 @@ const initCanvasBoost = function (): void {
             });
 
             if (target.boostClipRect) {
-                target.boostClipRect.attr(chart.getBoostClipRect(target));
+                target.boostClipRect.attr(getBoostClipRect(chart, target));
             }
 
             return ctx;
@@ -318,7 +323,7 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#canvasToSVG
          */
         canvasToSVG: function (this: Series): void {
-            if (!this.chart.isChartSeriesBoosting()) {
+            if (!isChartSeriesBoosting(this.chart)) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
                 }

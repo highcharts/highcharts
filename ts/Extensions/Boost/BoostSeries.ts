@@ -37,6 +37,11 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
+import BoostChart from './BoostChart.js';
+const {
+    getBoostClipRect,
+    isChartSeriesBoosting
+} = BoostChart;
 import DefaultOptions from '../../Core/DefaultOptions.js';
 const { getOptions } = DefaultOptions;
 import H from '../../Core/Globals.js';
@@ -153,7 +158,7 @@ function allocateIfNotSeriesBoosting(
     if (renderer &&
         series.renderTarget &&
         series.canvas &&
-        !(series.chart.isChartSeriesBoosting())
+        !isChartSeriesBoosting(series.chart)
     ) {
         renderer.allocateBufferForSingleSeries(series);
     }
@@ -384,7 +389,7 @@ function createAndAttachRenderer(
             '1.1'
         );
 
-    if (chart.isChartSeriesBoosting()) {
+    if (isChartSeriesBoosting(chart)) {
         target = chart;
     } else {
         target = series;
@@ -481,7 +486,7 @@ function createAndAttachRenderer(
                 });
 
             if (target instanceof ChartClass) {
-                (target.markerGroup as any).translate(
+                (target.boost as any).markerGroup.translate(
                     chart.plotLeft,
                     chart.plotTop
                 );
@@ -494,9 +499,10 @@ function createAndAttachRenderer(
             .clip(target.boostClipRect);
 
         if (target instanceof ChartClass) {
-            target.markerGroup = target.renderer.g().add(targetGroup);
-
-            target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
+            (target.boost as any).markerGroup = target.renderer
+                .g()
+                .add(targetGroup)
+                .translate(series.xAxis.pos, series.yAxis.pos);
         }
     }
 
@@ -504,7 +510,7 @@ function createAndAttachRenderer(
     (target.canvas as any).height = height;
 
     if (target.boostClipRect) {
-        target.boostClipRect.attr(chart.getBoostClipRect(target));
+        target.boostClipRect.attr(getBoostClipRect(chart, target));
     }
 
     target.boostResizeTarget();
@@ -615,7 +621,10 @@ function onSeriesDestroy(
     const series = this,
         chart = series.chart;
 
-    if (chart.markerGroup === series.markerGroup) {
+    if (
+        chart.boost &&
+        chart.boost.markerGroup === series.markerGroup
+    ) {
         series.markerGroup = null as any;
     }
 
@@ -661,7 +670,7 @@ function renderIfNotSeriesBoosting(
     if (renderer &&
         series.renderTarget &&
         series.canvas &&
-        !(chart.isChartSeriesBoosting())
+        !isChartSeriesBoosting(chart)
     ) {
         renderer.render(chart);
     }
@@ -961,10 +970,13 @@ function seriesRenderCanvas(this: Series): void {
 
     // If we're rendering per. series we should create the marker groups
     // as usual.
-    if (!chart.isChartSeriesBoosting()) {
+    if (!isChartSeriesBoosting(chart)) {
         // If all series were boosting, but are not anymore
         // restore private markerGroup
-        if (this.markerGroup === chart.markerGroup) {
+        if (
+            chart.boost &&
+            this.markerGroup === chart.boost.markerGroup
+        ) {
             this.markerGroup = void 0;
         }
 
@@ -980,12 +992,12 @@ function seriesRenderCanvas(this: Series): void {
         // and use common markerGroup
         if (
             this.markerGroup &&
-            this.markerGroup !== chart.markerGroup
+            this.markerGroup !== chart.boost.markerGroup
         ) {
             this.markerGroup.destroy();
         }
         // Use a single group for the markers
-        this.markerGroup = chart.markerGroup;
+        this.markerGroup = chart.boost.markerGroup;
 
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
@@ -1348,7 +1360,7 @@ function wrapSeriesProcessData(
             return false;
         }
         return (
-            series.chart.isChartSeriesBoosting() ||
+            isChartSeriesBoosting(series.chart) ||
             (
                 (data ? data.length : 0) >=
                 (series.options.boostThreshold || Number.MAX_VALUE)
