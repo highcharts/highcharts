@@ -1242,39 +1242,41 @@ function trimPath(
 
     path[0][0] = 'M';
 
-    let x1 = path[0][1],
-        y1 = path[0][2],
-        x2 = path[1][1],
-        y2 = path[1][2];
+    // Commented out temporarily as a solution for incorrect
+    // grid line paths
+    // let x1 = path[0][1],
+    //     y1 = path[0][2],
+    //     x2 = path[1][1],
+    //     y2 = path[1][2];
 
-    let scale = (Math.abs(start) % tickInterval) / tickInterval;
+    // let scale = (Math.abs(start) % tickInterval) / tickInterval;
 
-    // For negative numbers
-    if (start < 0) {
-        scale = 1 - scale;
-    }
+    // // For negative numbers
+    // if (start < 0) {
+    //     scale = 1 - scale;
+    // }
 
-    let xValue = x1 - scale * (x1 - x2),
-        yValue = y1 - scale * (y1 - y2);
+    // let xValue = x1 - scale * (x1 - x2),
+    //     yValue = y1 - scale * (y1 - y2);
 
-    x1 = path[path.length - 1][1];
-    y1 = path[path.length - 1][2];
-    x2 = path[path.length - 2][1];
-    y2 = path[path.length - 2][2];
+    // x1 = path[path.length - 1][1];
+    // y1 = path[path.length - 1][2];
+    // x2 = path[path.length - 2][1];
+    // y2 = path[path.length - 2][2];
 
-    scale = (tickInterval - (Math.abs(end) % tickInterval)) /
-        tickInterval;
+    // scale = (tickInterval - (Math.abs(end) % tickInterval)) /
+    //     tickInterval;
 
-    // For negative numbers or and scale should never reach 1
-    if (end < 0 || scale === 1) {
-        scale = 1 - scale;
-    }
+    // // For negative numbers or and scale should never reach 1
+    // if (end < 0 || scale === 1) {
+    //     scale = 1 - scale;
+    // }
 
-    path[0] = ['M', xValue, yValue];
+    // path[0] = ['M', xValue, yValue];
 
-    xValue = x1 - scale * (x1 - x2);
-    yValue = y1 - scale * (y1 - y2);
-    path[path.length - 1] = ['L', xValue, yValue];
+    // xValue = x1 - scale * (x1 - x2);
+    // yValue = y1 - scale * (y1 - y2);
+    // path[path.length - 1] = ['L', xValue, yValue];
 
     return path;
 }
