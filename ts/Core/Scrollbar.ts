@@ -846,7 +846,9 @@ class Scrollbar {
         return (
             pick(
                 this.options.liveRedraw,
-                H.svg && !H.isTouchDevice && !this.chart.isBoosting
+                H.svg &&
+                !H.isTouchDevice &&
+                !this.chart.boosted
             ) ||
             // Mouseup always should change extremes
             eventType === 'mouseup' ||

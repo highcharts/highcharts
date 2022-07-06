@@ -16,6 +16,7 @@
 'use strict';
 
 import type AreaSeries from '../Series/Area/AreaSeries';
+import type BoostTargetObject from './Boost/BoostTargetObject';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
@@ -48,6 +49,20 @@ const {
     wrap
 } = U;
 
+declare module './Boost/BoostOptions' {
+    interface BoostOptions {
+        timeRendering?: boolean;
+        timeSeriesProcessing?: boolean;
+        timeSetup?: boolean;
+    }
+}
+
+declare module './Boost/BoostTargetObject' {
+    interface BoostTargetObject {
+        ctx?: (CanvasRenderingContext2D|null);
+    }
+}
+
 // Use a blank pixel for clearing canvas (#17182)
 const b64BlankPixel = (
     /* eslint-disable-next-line max-len */
@@ -55,7 +70,7 @@ const b64BlankPixel = (
 );
 
 declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike extends Highcharts.BoostTargetObject {
+    interface SeriesLike extends BoostTargetObject {
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;
@@ -95,6 +110,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
+
 /**
  * Internal types
  * @private
@@ -103,14 +119,6 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost-canvas */
         function initCanvasBoost(): void;
-        interface BoostOptions {
-            timeRendering?: boolean;
-            timeSeriesProcessing?: boolean;
-            timeSetup?: boolean;
-        }
-        interface BoostTargetObject {
-            ctx?: (CanvasRenderingContext2D|null);
-        }
     }
 }
 
@@ -210,7 +218,7 @@ const initCanvasBoost = function (): void {
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
-                target: Highcharts.BoostTargetObject = this,
+                target: BoostTargetObject = this,
                 ctx: (CanvasRenderingContext2D|null|undefined),
                 swapXY = function (
                     this: CanvasRenderingContext2D,
@@ -296,7 +304,9 @@ const initCanvasBoost = function (): void {
                 href: b64BlankPixel
             });
 
-            (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
+            if (target.boostClipRect) {
+                target.boostClipRect.attr(chart.getBoostClipRect(target));
+            }
 
             return ctx;
         },

@@ -1326,7 +1326,7 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
