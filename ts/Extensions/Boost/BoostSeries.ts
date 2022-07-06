@@ -97,7 +97,16 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         boostData?: Array<unknown>;
         xData?: Array<number>;
+        yData?: Array<(number|null)>;
     }
+}
+
+interface BoostMockupPoint {
+    x: (false|number);
+    clientX: number;
+    plotX: number;
+    plotY: number;
+    i: number;
 }
 
 export declare class BoostPointComposition extends Point {
@@ -876,14 +885,12 @@ function seriesHasExtremes(
  * @function Highcharts.Series#renderCanvas
  */
 function seriesRenderCanvas(this: Series): void {
-    let series = this,
-        options = series.options || {},
-        renderer: WGLRenderer = false as any,
-        chart = series.chart,
+    const options = this.options || {},
+        chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
-        xData = (options as any).xData || series.processedXData,
-        yData = (options as any).yData || series.processedYData,
+        xData = options.xData || this.processedXData,
+        yData = options.yData || this.processedYData,
         rawData = options.data,
         xExtremes = xAxis.getExtremes(),
         xMin = xExtremes.min,
@@ -892,36 +899,89 @@ function seriesRenderCanvas(this: Series): void {
         yMin = yExtremes.min,
         yMax = yExtremes.max,
         pointTaken: Record<string, boolean> = {},
-        lastClientX: (number|undefined),
-        sampling = !!series.sampling,
-        points: Array<Record<string, number>>,
+        sampling = !!this.sampling,
         enableMouseTracking = options.enableMouseTracking !== false,
         threshold: number = options.threshold as any,
-        yBottom = yAxis.getThreshold(threshold),
-        isRange = series.pointArrayMap &&
-            series.pointArrayMap.join(',') === 'low,high',
+        isRange = this.pointArrayMap &&
+            this.pointArrayMap.join(',') === 'low,high',
         isStacked = !!options.stacking,
-        cropStart = series.cropStart || 0,
-        requireSorting = series.requireSorting,
+        cropStart = this.cropStart || 0,
+        requireSorting = this.requireSorting,
         useRaw = !xData,
+        compareX = options.findNearestPointBy === 'x',
+        xDataFull = (
+            this.xData ||
+            this.options.xData ||
+            this.processedXData ||
+            false
+        );
+
+    let renderer: WGLRenderer = false as any,
+        lastClientX: (number|undefined),
+        yBottom = yAxis.getThreshold(threshold),
         minVal: (number|undefined),
         maxVal: (number|undefined),
         minI: (number|undefined),
-        maxI: (number|undefined),
-        compareX = options.findNearestPointBy === 'x',
+        maxI: (number|undefined);
 
-        xDataFull = (
-            this.xData ||
-            (this.options as any).xData ||
-            this.processedXData ||
-            false
-        ),
+    // Get or create the renderer
+    renderer = createAndAttachRenderer(chart, this);
 
-        addKDPoint = function (
+    chart.boosted = true;
+
+    if (!this.visible) {
+        return;
+    }
+
+    // If we are zooming out from SVG mode, destroy the graphics
+    if (this.points || this.graph) {
+        this.destroyGraphics();
+    }
+
+    // If we're rendering per. series we should create the marker groups
+    // as usual.
+    if (!isChartSeriesBoosting(chart)) {
+        // If all series were boosting, but are not anymore
+        // restore private markerGroup
+        if (
+            chart.boost &&
+            this.markerGroup === chart.boost.markerGroup
+        ) {
+            this.markerGroup = void 0;
+        }
+
+        this.markerGroup = this.plotGroup(
+            'markerGroup',
+            'markers',
+            true as any,
+            1,
+            chart.seriesGroup
+        );
+    } else {
+        // If series has a private markeGroup, remove that
+        // and use common markerGroup
+        if (
+            this.markerGroup &&
+            this.markerGroup !== chart.boost.markerGroup
+        ) {
+            this.markerGroup.destroy();
+        }
+        // Use a single group for the markers
+        this.markerGroup = chart.boost.markerGroup;
+
+        // When switching from chart boosting mode, destroy redundant
+        // series boosting targets
+        if (this.renderTarget) {
+            this.renderTarget = this.renderTarget.destroy();
+        }
+    }
+
+    const points: Array<BoostMockupPoint> = this.points = [],
+        addKDPoint = (
             clientX: number,
             plotY: number,
             i: number
-        ): void {
+        ): void => {
 
             // We need to do ceil on the clientX to make things
             // snap to pixel values. The renderer will frequently
@@ -952,68 +1012,12 @@ function seriesRenderCanvas(this: Series): void {
             }
         };
 
-    // Get or create the renderer
-    renderer = createAndAttachRenderer(chart, series);
-
-    chart.boosted = true;
-
-    const boostOptions = renderer.settings;
-
-    if (!this.visible) {
-        return;
-    }
-
-    // If we are zooming out from SVG mode, destroy the graphics
-    if (this.points || this.graph) {
-        this.destroyGraphics();
-    }
-
-    // If we're rendering per. series we should create the marker groups
-    // as usual.
-    if (!isChartSeriesBoosting(chart)) {
-        // If all series were boosting, but are not anymore
-        // restore private markerGroup
-        if (
-            chart.boost &&
-            this.markerGroup === chart.boost.markerGroup
-        ) {
-            this.markerGroup = void 0;
-        }
-
-        this.markerGroup = series.plotGroup(
-            'markerGroup',
-            'markers',
-            true as any,
-            1,
-            chart.seriesGroup
-        );
-    } else {
-        // If series has a private markeGroup, remove that
-        // and use common markerGroup
-        if (
-            this.markerGroup &&
-            this.markerGroup !== chart.boost.markerGroup
-        ) {
-            this.markerGroup.destroy();
-        }
-        // Use a single group for the markers
-        this.markerGroup = chart.boost.markerGroup;
-
-        // When switching from chart boosting mode, destroy redundant
-        // series boosting targets
-        if (this.renderTarget) {
-            this.renderTarget = this.renderTarget.destroy();
-        }
-    }
-
-    points = this.points = [];
-
     // Do not start building while drawing
-    series.buildKDTree = noop;
+    this.buildKDTree = noop;
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
-        renderer.pushSeries(series);
+        renderer.pushSeries(this);
         // Perform the actual renderer if we're on series level
         renderIfNotSeriesBoosting(renderer, this, chart);
     }
@@ -1026,13 +1030,13 @@ function seriesRenderCanvas(this: Series): void {
         d: (number|Array<number>|Record<string, number>),
         i: number
     ): boolean {
+        const chartDestroyed = typeof chart.index === 'undefined';
+
         let x: number,
             y: number,
             clientX,
             plotY,
-            isNull,
             low: number = false as any,
-            chartDestroyed = typeof chart.index === 'undefined',
             isYInside = true;
 
         if (typeof d === 'undefined') {
@@ -1045,7 +1049,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i];
+                y = yData[i] as any;
             }
 
             // Resolve low and high for range series
@@ -1061,14 +1065,12 @@ function seriesRenderCanvas(this: Series): void {
                 low = y - (d as any).y;
             }
 
-            isNull = y === null;
-
             // Optimize for scatter zooming
             if (!requireSorting) {
-                isYInside = y >= yMin && y <= yMax;
+                isYInside = (y || 0) >= yMin && y <= yMax;
             }
 
-            if (!isNull && x >= xMin && x <= xMax && isYInside) {
+            if (y !== null && x >= xMin && x <= xMax && isYInside) {
 
                 clientX = xAxis.toPixels(x, true);
 
@@ -1127,17 +1129,18 @@ function seriesRenderCanvas(this: Series): void {
     /**
      * @private
      */
-    function doneProcessing(): void {
-        fireEvent(series, 'renderedCanvas');
+    const boostOptions = renderer.settings,
+        doneProcessing = (): void => {
+            fireEvent(this, 'renderedCanvas');
 
-        // Go back to prototype, ready to build
-        delete (series as Partial<typeof series>).buildKDTree;
-        series.buildKDTree();
+            // Go back to prototype, ready to build
+            delete (this as Partial<typeof this>).buildKDTree;
+            this.buildKDTree();
 
-        if (boostOptions.debug.timeKDTree) {
-            console.timeEnd('kd tree building'); // eslint-disable-line no-console
-        }
-    }
+            if (boostOptions.debug.timeKDTree) {
+                console.timeEnd('kd tree building'); // eslint-disable-line no-console
+            }
+        };
 
     // Loop over the points to build the k-d tree - skip this if
     // exporting
@@ -1147,7 +1150,7 @@ function seriesRenderCanvas(this: Series): void {
         }
 
         eachAsync(
-            isStacked ? series.data : (xData || rawData),
+            isStacked ? this.data : (xData || rawData),
             processPoint,
             doneProcessing
         );
