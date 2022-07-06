@@ -21,29 +21,29 @@ import type {
     AxisBreakOptions,
     AxisLabelOptions,
     AxisOptions
-} from './AxisOptions';
-import type Chart from '../Chart/Chart';
-import type ColorType from '../Color/ColorType';
-import type GanttPoint from '../../Series/Gantt/GanttPoint';
-import type GanttPointOptions from '../../Series/Gantt/GanttPointOptions';
-import type GanttSeries from '../../Series/Gantt/GanttSeries';
+} from '../AxisOptions';
+import type Chart from '../../Chart/Chart';
+import type ColorType from '../../Color/ColorType';
+import type GanttPoint from '../../../Series/Gantt/GanttPoint';
+import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
+import type GanttSeries from '../../../Series/Gantt/GanttSeries';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Series/PointOptions';
-import type Series from '../Series/Series';
-import type SizeObject from '../Renderer/SizeObject';
-import type { ChartAddSeriesEventObject } from '../Chart/ChartOptions';
+} from '../../Series/PointOptions';
+import type Series from '../../Series/Series';
+import type SizeObject from '../../Renderer/SizeObject';
+import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
 
-import type Axis from './Axis.js';
-import BrokenAxis from './BrokenAxis.js';
-import GridAxis from './GridAxis.js';
-import type Tick from './Tick.js';
-import Tree from '../../Gantt/Tree.js';
+import type Axis from '../Axis.js';
+import BrokenAxis from '../BrokenAxis.js';
+import GridAxis from '../GridAxis.js';
+import type Tick from '../Tick.js';
+import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TU from '../../Series/TreeUtilities.js';
+import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
-import U from '../Utilities.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     find,
@@ -63,25 +63,25 @@ const {
  *
  * */
 
-declare module './AxisComposition' {
+declare module '../AxisComposition' {
     interface AxisComposition {
         treeGrid?: TreeGridAxis['treeGrid'];
     }
 }
 
-declare module './AxisLike' {
+declare module '../AxisLike' {
     interface AxisLike {
         utils: TreeGridAxisUtilsObject;
     }
 }
 
-declare module './AxisType' {
+declare module '../AxisType' {
     interface AxisTypeRegistry {
         TreeGridAxis: TreeGridAxis;
     }
 }
 
-declare module '../Series/PointOptions' {
+declare module '../../Series/PointOptions' {
     interface PointOptions extends Highcharts.TreePointOptionsObject {
         collapsed?: boolean;
         seriesIndex?: number;
