@@ -36,20 +36,20 @@ const {
  *
  * */
 
+interface BoostChartAdditions {
+    forceChartBoost?: boolean;
+    markerGroup?: Series['markerGroup'];
+}
+
 export declare class BoostChartComposition extends Chart {
-    getBoostClipRect(target: BoostTargetObject): BBoxObject;
-    isChartSeriesBoosting(): boolean;
+    boosted?: boolean;
+    boost: BoostChartAdditions;
 }
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike extends BoostTargetObject {
         boosted?: boolean;
-        boostForceChartBoost?: boolean;
-        markerGroup?: Series['markerGroup'];
-        /** @requires modules/boost */
-        getBoostClipRect(target: BoostTargetObject): BBoxObject;
-        /** @requires modules/boost */
-        isChartSeriesBoosting(): boolean;
+        boost?: BoostChartAdditions;
     }
 }
 
@@ -68,6 +68,23 @@ const composedClasses: Array<Function> = [];
  * */
 
 /**
+ * @private
+ */
+function compose<T extends typeof Chart>(
+    ChartClass: T,
+    wglMode?: boolean
+): T {
+
+    if (wglMode && composedClasses.indexOf(ChartClass) === -1) {
+        composedClasses.push(ChartClass);
+
+        ChartClass.prototype.callbacks.push(onChartCallback);
+    }
+
+    return ChartClass;
+}
+
+/**
  * Get the clip rectangle for a target, either a series or the chart.
  * For the chart, we need to consider the maximum extent of its Y axes,
  * in case of Highcharts Stock panes and navigator.
@@ -75,17 +92,16 @@ const composedClasses: Array<Function> = [];
  * @private
  * @function Highcharts.Chart#getBoostClipRect
  */
-function chartGetBoostClipRect(
-    this: BoostChartComposition,
+function getBoostClipRect(
+    chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
-    const chart = this,
-        clipBox = {
-            x: chart.plotLeft,
-            y: chart.plotTop,
-            width: chart.plotWidth,
-            height: chart.plotHeight
-        };
+    const clipBox = {
+        x: chart.plotLeft,
+        y: chart.plotTop,
+        width: chart.plotWidth,
+        height: chart.plotHeight
+    };
 
     if (target === chart) {
         const verticalAxes =
@@ -117,45 +133,19 @@ function chartGetBoostClipRect(
  * @return {boolean}
  *         true if the chart is in series boost mode
  */
-function chartIsChartSeriesBoosting(
-    this: BoostChartComposition
-): boolean {
-    const chart = this,
-        threshold = pick(
-            chart.options.boost && chart.options.boost.seriesThreshold,
-            50
-        );
+function isChartSeriesBoosting(
+    chart: Chart
+): chart is BoostChartComposition {
+    const threshold = pick(
+        chart.options.boost && chart.options.boost.seriesThreshold,
+        50
+    );
+    chart.boost = chart.boost || {};
 
     return (
         threshold <= chart.series.length ||
         shouldForceChartSeriesBoosting(chart)
     );
-}
-
-/**
- * @private
- */
-function compose<T extends typeof Chart>(
-    ChartClass: T,
-    wglMode?: boolean
-): (T&typeof BoostChartComposition) {
-
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        const chartProto = ChartClass.prototype as BoostChartComposition;
-
-        composedClasses.push(ChartClass);
-
-        chartProto.getBoostClipRect = chartGetBoostClipRect;
-        chartProto.isChartSeriesBoosting = chartIsChartSeriesBoosting;
-
-        if (wglMode) {
-            chartProto.propsRequireUpdateSeries.push('boost');
-
-            ChartClass.prototype.callbacks.push(onChartCallback);
-        }
-    }
-
-    return ChartClass as (T&typeof BoostChartComposition);
 }
 
 /**
@@ -173,7 +163,7 @@ function onChartCallback(
     function canvasToSVG(): void {
         if (
             chart.ogl &&
-            chart.isChartSeriesBoosting()
+            isChartSeriesBoosting(chart)
         ) {
             chart.ogl.render(chart);
         }
@@ -186,8 +176,9 @@ function onChartCallback(
     function preRender(): void {
 
         // Reset force state
-        chart.boostForceChartBoost = void 0;
-        chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
+        chart.boost = chart.boost || {};
+        chart.boost.forceChartBoost = void 0;
+        chart.boost.forceChartBoost = shouldForceChartSeriesBoosting(chart);
         chart.boosted = false;
 
         // Clear the canvas
@@ -198,7 +189,7 @@ function onChartCallback(
         if (
             chart.canvas &&
             chart.ogl &&
-            chart.isChartSeriesBoosting()
+            isChartSeriesBoosting(chart)
         ) {
             // Allocate
             chart.ogl.allocateBuffer(chart);
@@ -206,13 +197,13 @@ function onChartCallback(
 
         // see #6518 + #6739
         if (
-            chart.markerGroup &&
+            chart.boost.markerGroup &&
             chart.xAxis &&
             chart.xAxis.length > 0 &&
             chart.yAxis &&
             chart.yAxis.length > 0
         ) {
-            chart.markerGroup.translate(
+            chart.boost.markerGroup.translate(
                 chart.xAxis[0].pos,
                 chart.yAxis[0].pos
             );
@@ -233,7 +224,9 @@ function onChartCallback(
     addEvent(chart.pointer, 'afterGetHoverData', (): void => {
         const series = chart.hoverSeries;
 
-        if (chart.markerGroup && series) {
+        chart.boost = chart.boost || {};
+
+        if (chart.boost.markerGroup && series) {
             const xAxis = chart.inverted ? series.yAxis : series.xAxis;
             const yAxis = chart.inverted ? series.xAxis : series.yAxis;
 
@@ -244,7 +237,7 @@ function onChartCallback(
                 // #10464: Keep the marker group position in sync with the
                 // position of the hovered series axes since there is only
                 // one shared marker group when boosting.
-                chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+                chart.boost.markerGroup.translate(xAxis.pos, yAxis.pos);
 
                 prevX = xAxis.pos;
                 prevY = yAxis.pos;
@@ -303,8 +296,10 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
         canBoostCount = 0,
         series;
 
-    if (typeof chart.boostForceChartBoost !== 'undefined') {
-        return chart.boostForceChartBoost;
+    chart.boost = chart.boost || {};
+
+    if (typeof chart.boost.forceChartBoost !== 'undefined') {
+        return chart.boost.forceChartBoost;
     }
 
     if (chart.series.length > 1) {
@@ -343,7 +338,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
         }
     }
 
-    chart.boostForceChartBoost = allowBoostForce && (
+    chart.boost.forceChartBoost = allowBoostForce && (
         (
             canBoostCount === chart.series.length &&
             sboostCount > 0
@@ -351,7 +346,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
         sboostCount > 5
     );
 
-    return chart.boostForceChartBoost;
+    return chart.boost.forceChartBoost;
 }
 
 /* *
@@ -361,7 +356,9 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  * */
 
 const BoostChart = {
-    compose
+    compose,
+    getBoostClipRect,
+    isChartSeriesBoosting
 };
 
 export default BoostChart;
