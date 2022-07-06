@@ -14,6 +14,11 @@ const {
     getVersionPaths
 } = require('./lib/uploadS3');
 
+const props = getGitIgnoreMeProperties();
+const cf = require('cloudflare')({
+    token: props['cloudflare.token']
+});
+
 
 /**
  * Adds number of days to the given date.
@@ -42,6 +47,8 @@ const HTTP_EXPIRES = {
     fiveYears: addDays(TODAY, 365 * 5)
 };
 
+let purgeCacheRequests = 0;
+let error429 = false;
 async function cloudflarePurgeCode(files) {
     const argv = require('yargs').argv;
 
@@ -49,14 +56,28 @@ async function cloudflarePurgeCode(files) {
         return;
     }
 
-    const props = getGitIgnoreMeProperties();
-    const cf = require('cloudflare')({
-        token: props['cloudflare.token']
-    });
+    purgeCacheRequests++;
 
-    const resp = await cf.zones.purgeCache(props['cloudflare.zone'], { files });
-
-    console.log('CloudFlare', resp);
+    if (error429) {
+        console.log(`Stopped purgeCache after ${purgeCacheRequests} requests`);
+    } else {
+        const resp = await cf.zones
+            .purgeCache(props['cloudflare.zone'], { files })
+            .catch(e => {
+                if (e.statusCode === 429) {
+                    error429 = true;
+                }
+                console.log(
+                    'CloudFlare Error',
+                    e.statusCode,
+                    e.statusMessage,
+                    purgeCacheRequests
+                );
+            });
+        if (resp && resp.success) {
+            console.log(`CloudFlare: purged ${files.length} files`);
+        }
+    }
 }
 
 /**
@@ -92,7 +113,13 @@ function uploadProductPackage(productProps, options = {}) {
     const promises = [];
     const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
-    const cdnFiles = [];
+    const cdnFiles = [{ to: 'products.js' }];
+
+    // For testing cache purging without uploading:
+    /*
+    const uploadFiles = () => console.log('@uploadFiles overridden');
+    zipFilePaths[0] = '';
+    // */
 
     if (zipFilePaths.length < 1) {
         throw new Error('No zip files found. Did you forget to run gulp dist-compress?');
@@ -203,6 +230,8 @@ function uploadProductPackage(productProps, options = {}) {
         }
         return paths;
     }, []);
+
+    // fs.writeFileSync('files-to-purge.txt', cloudflarePaths.join('\n'));
 
     while (cloudflarePaths.length) {
         promises.push(cloudflarePurgeCode(cloudflarePaths.splice(0, 30)));
