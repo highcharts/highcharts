@@ -40,6 +40,10 @@ const {
     fireEvent,
     merge
 } = U;
+import HU from './Utils/HTMLUtilities.js';
+const {
+    removeElement
+} = HU;
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
@@ -280,6 +284,11 @@ class Accessibility {
         // Destroy proxy provider
         if (this.proxyProvider) {
             this.proxyProvider.destroy();
+        }
+
+        // Remove announcer container
+        if (chart.announcerContainer) {
+            removeElement(chart.announcerContainer);
         }
 
         // Kill keyboard nav
