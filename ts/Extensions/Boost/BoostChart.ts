@@ -20,7 +20,10 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { BoostSeriesComposition } from './BoostSeries';
-import type BoostTargetObject from './BoostTargetObject';
+import type {
+    BoostTargetAdditions,
+    BoostTargetObject
+} from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 
@@ -37,7 +40,7 @@ const {
  *
  * */
 
-interface BoostChartAdditions {
+interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
 }
@@ -164,10 +167,11 @@ function onChartCallback(
      */
     function canvasToSVG(): void {
         if (
-            chart.ogl &&
+            chart.boost &&
+            chart.boost.wgl &&
             isChartSeriesBoosting(chart)
         ) {
-            chart.ogl.render(chart);
+            chart.boost.wgl.render(chart);
         }
     }
 
@@ -184,17 +188,17 @@ function onChartCallback(
         chart.boosted = false;
 
         // Clear the canvas
-        if (chart.boostClear) {
-            chart.boostClear();
+        if (chart.boost.clear) {
+            chart.boost.clear(chart);
         }
 
         if (
-            chart.canvas &&
-            chart.ogl &&
+            chart.boost.canvas &&
+            chart.boost.wgl &&
             isChartSeriesBoosting(chart)
         ) {
             // Allocate
-            chart.ogl.allocateBuffer(chart);
+            chart.boost.wgl.allocateBuffer(chart);
         }
 
         // see #6518 + #6739

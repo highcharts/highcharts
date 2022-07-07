@@ -19,7 +19,10 @@
  * */
 
 import type { BoostChartComposition } from './BoostChart';
-import type BoostTargetObject from './BoostTargetObject';
+import type {
+    BoostTargetAdditions,
+    BoostTargetObject
+} from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
@@ -102,7 +105,7 @@ interface BoostPointMockup {
     i: number;
 }
 
-interface BoostSeriesAdditions {
+interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
     getPoint(
         series: Series,
@@ -124,8 +127,6 @@ export declare class BoostSeriesComposition extends Series {
     boost: BoostSeriesAdditions;
     chart: BoostChartComposition;
     pointClass: typeof BoostPointComposition;
-    enterBoost(): void;
-    exitBoost(): void;
 }
 
 /* *
@@ -160,9 +161,12 @@ function allocateIfNotSeriesBoosting(
     renderer: WGLRenderer,
     series: Series
 ): void {
+    const boost = series.boost;
+
     if (renderer &&
-        series.renderTarget &&
-        series.canvas &&
+        boost &&
+        boost.target &&
+        boost.canvas &&
         !isChartSeriesBoosting(series.chart)
     ) {
         renderer.allocateBufferForSingleSeries(series);
@@ -213,9 +217,6 @@ function compose<T extends typeof Series>(
         addEvent(SeriesClass, 'hide', onSeriesHide);
 
         const seriesProto = SeriesClass.prototype as BoostSeriesComposition;
-
-        seriesProto.enterBoost = seriesEnterBoost;
-        seriesProto.exitBoost = seriesExitBoost;
 
         if (wglMode) {
             seriesProto.renderCanvas = seriesRenderCanvas;
@@ -397,6 +398,10 @@ function createAndAttachRenderer(
         target = series;
     }
 
+    const boost: Required<BoostTargetAdditions> = target.boost =
+        target.boost as Required<BoostTargetAdditions> ||
+        {} as Required<BoostTargetAdditions>;
+
     // Support for foreignObject is flimsy as best.
     // IE does not support it, and Chrome has a bug which messes up
     // the canvas draw order.
@@ -408,13 +413,13 @@ function createAndAttachRenderer(
         mainCanvas = doc.createElement('canvas');
     }
 
-    if (!target.renderTarget) {
-        target.canvas = mainCanvas;
+    if (!boost.target) {
+        boost.canvas = mainCanvas;
 
         // Fall back to image tag if foreignObject isn't supported,
         // or if we're exporting.
         if (chart.renderer.forExport || !foSupported) {
-            target.renderTarget = chart.renderer.image(
+            boost.target = chart.renderer.image(
                 '',
                 0,
                 0,
@@ -424,57 +429,48 @@ function createAndAttachRenderer(
                 .addClass('highcharts-boost-canvas')
                 .add(targetGroup);
 
-            target.boostClear = function (): void {
-                (target.renderTarget as any).attr({
+            boost.clear = function (): void {
+                boost.target.attr({
                     // Insert a blank pixel (#17182)
                     /* eslint-disable-next-line max-len*/
                     href: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
                 });
             };
 
-            target.boostCopy = function (): void {
-                target.boostResizeTarget();
-                (target.renderTarget as any).attr({
-                    href: (target.canvas as any).toDataURL('image/png')
+            boost.copy = function (): void {
+                boost.resize();
+                boost.target.attr({
+                    href: boost.canvas.toDataURL('image/png')
                 });
             };
 
         } else {
-            target.renderTargetFo = chart.renderer
+            boost.targetFo = chart.renderer
                 .createElement('foreignObject')
                 .add(targetGroup);
 
-            target.renderTarget = doc.createElement('canvas') as any;
-            target.renderTargetCtx =
-                (target.renderTarget as any).getContext('2d');
+            boost.target = doc.createElement('canvas') as any;
+            boost.targetCtx = boost.target.getContext('2d');
 
-            target.renderTargetFo.element.appendChild(
-                target.renderTarget as any
-            );
+            boost.targetFo.element.appendChild(boost.target as any);
 
-            target.boostClear = function (): void {
-                (target.renderTarget as any).width =
-                    (target.canvas as any).width;
-                (target.renderTarget as any).height =
-                    (target.canvas as any).height;
+            boost.clear = function (): void {
+                boost.target.width = boost.canvas.width;
+                boost.target.height = boost.canvas.height;
             };
 
-            target.boostCopy = function (): void {
-                (target.renderTarget as any).width =
-                    (target.canvas as any).width;
-                (target.renderTarget as any).height =
-                    (target.canvas as any).height;
-
-                (target.renderTargetCtx as any)
-                    .drawImage(target.canvas as any, 0, 0);
+            boost.copy = function (): void {
+                boost.target.width = boost.canvas.width;
+                boost.target.height = boost.canvas.height;
+                boost.targetCtx.drawImage(boost.canvas, 0, 0);
             };
         }
 
-        target.boostResizeTarget = function (): void {
+        boost.resize = function (): void {
             width = chart.chartWidth;
             height = chart.chartHeight;
 
-            (target.renderTargetFo || (target.renderTarget as any))
+            (boost.targetFo || boost.target)
                 .attr({
                     x: 0,
                     y: 0,
@@ -485,7 +481,7 @@ function createAndAttachRenderer(
                     pointerEvents: 'none',
                     mixedBlendMode: 'normal',
                     opacity: alpha
-                });
+                } as any);
 
             if (target instanceof ChartClass) {
                 (target.boost as any).markerGroup.translate(
@@ -495,10 +491,9 @@ function createAndAttachRenderer(
             }
         };
 
-        target.boostClipRect = chart.renderer.clipRect();
+        boost.clipRect = chart.renderer.clipRect();
 
-        (target.renderTargetFo || (target.renderTarget as any))
-            .clip(target.boostClipRect);
+        (boost.targetFo || boost.target).clip(boost.clipRect);
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
@@ -508,30 +503,30 @@ function createAndAttachRenderer(
         }
     }
 
-    (target.canvas as any).width = width;
-    (target.canvas as any).height = height;
+    boost.canvas.width = width;
+    boost.canvas.height = height;
 
-    if (target.boostClipRect) {
-        target.boostClipRect.attr(getBoostClipRect(chart, target));
+    if (boost.clipRect) {
+        boost.clipRect.attr(getBoostClipRect(chart, target));
     }
 
-    target.boostResizeTarget();
-    target.boostClear();
+    boost.resize();
+    boost.clear(target);
 
-    if (!target.ogl) {
-        target.ogl = new WGLRenderer((ogl): void => {
-            if (ogl.settings.debug.timeBufferCopy) {
+    if (!boost.wgl) {
+        boost.wgl = new WGLRenderer((wgl): void => {
+            if (wgl.settings.debug.timeBufferCopy) {
                 console.time('buffer copy'); // eslint-disable-line no-console
             }
 
-            target.boostCopy();
+            boost.copy();
 
-            if (ogl.settings.debug.timeBufferCopy) {
+            if (wgl.settings.debug.timeBufferCopy) {
                 console.timeEnd('buffer copy'); // eslint-disable-line no-console
             }
         });
 
-        if (!target.ogl.init(target.canvas)) {
+        if (!boost.wgl.init(boost.canvas)) {
             // The OGL renderer couldn't be inited.
             // This likely means a shader error as we wouldn't get to this point
             // if there was no WebGL support.
@@ -539,16 +534,16 @@ function createAndAttachRenderer(
         }
 
         // target.ogl.clear();
-        target.ogl.setOptions(chart.options.boost || {});
+        boost.wgl.setOptions(chart.options.boost || {});
 
         if (target instanceof ChartClass) {
-            target.ogl.allocateBuffer(chart);
+            boost.wgl.allocateBuffer(chart);
         }
     }
 
-    target.ogl.setSize(width, height);
+    boost.wgl.setSize(width, height);
 
-    return target.ogl;
+    return boost.wgl;
 }
 
 /**
@@ -648,13 +643,79 @@ function eachAsync(
                     eachAsync(arr, fn, finalFunc, chunkSize, i);
                 });
             } else {
-                setTimeout(function (): void {
-                    eachAsync(arr, fn, finalFunc, chunkSize, i);
-                });
+                setTimeout(eachAsync, 0, arr, fn, finalFunc, chunkSize, i);
+
             }
 
         } else if (finalFunc) {
             finalFunc();
+        }
+    }
+}
+
+/**
+ * Enter boost mode and apply boost-specific properties.
+ * @private
+ * @function Highcharts.Series#enterBoost
+ */
+function enterBoost(
+    series: Series
+): void {
+    series.boost = series.boost || { getPoint };
+
+    const alteredByBoost: Array<BoostAlteredObject> = series.boost.altered = [];
+
+    // Save the original values, including whether it was an own
+    // property or inherited from the prototype.
+    (
+        ['allowDG', 'directTouch', 'stickyTracking'] as
+        Array<('allowDG'|'directTouch'|'stickyTracking')>
+    ).forEach((prop): void => {
+        alteredByBoost.push({
+            prop: prop,
+            val: series[prop],
+            own: Object.hasOwnProperty.call(series, prop)
+        });
+    });
+
+    series.allowDG = false;
+    series.directTouch = false;
+    series.stickyTracking = true;
+
+    // Prevent animation when zooming in on boosted series(#13421).
+    series.finishedAnimating = true;
+
+    // Hide series label if any
+    if (series.labelBySeries) {
+        series.labelBySeries = series.labelBySeries.destroy();
+    }
+}
+
+/**
+ * Exit from boost mode and restore non-boost properties.
+ * @private
+ * @function Highcharts.Series#exitBoost
+ */
+function exitBoost(
+    series: Series
+): void {
+    const boost = series.boost;
+
+    // Reset instance properties and/or delete instance properties and go back
+    // to prototype
+    if (boost) {
+        (boost.altered || []).forEach((setting): void => {
+            if (setting.own) {
+                series[setting.prop] = setting.val as any;
+            } else {
+                // Revert to prototype
+                delete series[setting.prop];
+            }
+        });
+
+        // Clear previous run
+        if (boost.clear) {
+            boost.clear(series);
         }
     }
 }
@@ -725,11 +786,15 @@ function onSeriesDestroy(
 function onSeriesHide(
     this: Series
 ): void {
-    if (this.canvas && this.renderTarget) {
-        if (this.ogl) {
-            this.ogl.clear();
+    const boost = this.boost;
+
+    if (boost && boost.canvas && boost.target) {
+        if (boost.wgl) {
+            boost.wgl.clear();
         }
-        this.boostClear();
+        if (boost.clear) {
+            boost.clear(this);
+        }
     }
 }
 
@@ -741,84 +806,19 @@ function onSeriesHide(
 function renderIfNotSeriesBoosting(
     renderer: WGLRenderer,
     series: Series,
-    chart?: Chart
+    chart: Chart = series.chart
 ): void {
-    chart = chart || series.chart;
+    const boost = series.boost;
 
-    if (renderer &&
-        series.renderTarget &&
-        series.canvas &&
+    if (
+        renderer &&
+        boost &&
+        boost.target &&
+        boost.canvas &&
         !isChartSeriesBoosting(chart)
     ) {
         renderer.render(chart);
     }
-}
-
-/**
- * Enter boost mode and apply boost-specific properties.
- * @private
- * @function Highcharts.Series#enterBoost
- */
-function seriesEnterBoost(
-    this: BoostSeriesComposition
-): void {
-    this.boost = this.boost || { getPoint };
-
-    const alteredByBoost: Array<BoostAlteredObject> = this.boost.altered = [];
-
-    // Save the original values, including whether it was an own
-    // property or inherited from the prototype.
-    (
-        ['allowDG', 'directTouch', 'stickyTracking'] as
-        Array<('allowDG'|'directTouch'|'stickyTracking')>
-    ).forEach((prop): void => {
-        alteredByBoost.push({
-            prop: prop,
-            val: this[prop],
-            own: Object.hasOwnProperty.call(this, prop)
-        });
-    });
-
-    this.allowDG = false;
-    this.directTouch = false;
-    this.stickyTracking = true;
-
-    // Prevent animation when zooming in on boosted series(#13421).
-    this.finishedAnimating = true;
-
-    // Hide series label if any
-    if (this.labelBySeries) {
-        this.labelBySeries = this.labelBySeries.destroy();
-    }
-}
-
-/**
- * Exit from boost mode and restore non-boost properties.
- * @private
- * @function Highcharts.Series#exitBoost
- */
-function seriesExitBoost(
-    this: Series
-): void {
-
-    // Reset instance properties and/or delete instance properties and go back
-    // to prototype
-    if (this.boost) {
-        (this.boost.altered || []).forEach((setting): void => {
-            if (setting.own) {
-                this[setting.prop] = setting.val as any;
-            } else {
-                // Revert to prototype
-                delete this[setting.prop];
-            }
-        });
-    }
-
-    // Clear previous run
-    if (this.boostClear) {
-        this.boostClear();
-    }
-
 }
 
 /**
@@ -965,8 +965,8 @@ function seriesRenderCanvas(this: Series): void {
 
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
-        if (this.renderTarget) {
-            this.renderTarget = this.renderTarget.destroy();
+        if (this.boost && this.boost.target) {
+            this.boost.target = this.boost.target.destroy();
         }
     }
 
@@ -1403,9 +1403,9 @@ function wrapSeriesProcessData(
                     error(12, false, series.chart);
                 }
             }
-            series.enterBoost();
+            enterBoost(series);
         } else {
-            series.exitBoost();
+            exitBoost(series);
         }
     // The series type is not boostable
     } else {
