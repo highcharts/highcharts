@@ -69,27 +69,13 @@ import WGLRenderer from './WGLRenderer.js';
  *
  * */
 
-declare interface BoostAlteredObject {
-    own: boolean;
-    prop: ('allowDG'|'directTouch'|'stickyTracking');
-    val: unknown;
-    value?: unknown;
-}
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike extends BoostTargetObject {
         boosted?: boolean;
+        boost?: BoostSeriesAdditions;
         fill?: boolean;
         fillOpacity?: boolean;
         sampling?: boolean;
-        /** @requires modules/boost */
-        destroyGraphics(): void;
-        /** @requires modules/boost */
-        getPoint(
-            boostPoint?: (Point|Record<string, number>)
-        ): (BoostPointComposition|undefined);
-        /** @requires modules/boost */
-        hasExtremes(checkX?: boolean): boolean;
     }
 }
 
@@ -101,7 +87,14 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-interface BoostMockupPoint {
+interface BoostAlteredObject {
+    own: boolean;
+    prop: ('allowDG'|'directTouch'|'stickyTracking');
+    val: unknown;
+    value?: unknown;
+}
+
+interface BoostPointMockup {
     x: (false|number);
     clientX: number;
     plotX: number;
@@ -109,27 +102,30 @@ interface BoostMockupPoint {
     i: number;
 }
 
+interface BoostSeriesAdditions {
+    altered?: Array<BoostAlteredObject>;
+    getPoint(
+        series: Series,
+        boostPoint?: (Point|Record<string, number>)
+    ): (BoostPointComposition|undefined);
+}
+
 export declare class BoostPointComposition extends Point {
     series: BoostSeriesComposition;
     init(
-        series: Series,
+        series: BoostSeriesComposition,
         options: (PointOptions|PointShortOptions),
         x?: number
     ): BoostPointComposition;
 }
 
 export declare class BoostSeriesComposition extends Series {
-    alteredByBoost?: Array<BoostAlteredObject>;
     boosted?: boolean;
+    boost: BoostSeriesAdditions;
     chart: BoostChartComposition;
     pointClass: typeof BoostPointComposition;
-    destroyGraphics(): void;
     enterBoost(): void;
     exitBoost(): void;
-    getPoint(
-        boostPoint?: (Point|Record<string, number>)
-    ): (BoostPointComposition|undefined);
-    hasExtremes(checkX?: boolean): boolean;
 }
 
 /* *
@@ -218,11 +214,8 @@ function compose<T extends typeof Series>(
 
         const seriesProto = SeriesClass.prototype as BoostSeriesComposition;
 
-        seriesProto.destroyGraphics = seriesDestroyGraphics;
         seriesProto.enterBoost = seriesEnterBoost;
         seriesProto.exitBoost = seriesExitBoost;
-        seriesProto.getPoint = seriesGetPoint;
-        seriesProto.hasExtremes = seriesHasExtremes;
 
         if (wglMode) {
             seriesProto.renderCanvas = seriesRenderCanvas;
@@ -559,6 +552,54 @@ function createAndAttachRenderer(
 }
 
 /**
+ * If implemented in the core, parts of this can probably be
+ * shared with other similar methods in Highcharts.
+ * @private
+ * @function Highcharts.Series#destroyGraphics
+ */
+function destroyGraphics(
+    series: Series
+): void {
+    const points = series.points;
+
+    if (points) {
+        let point: Point,
+            i: number;
+
+        for (i = 0; i < points.length; i = i + 1) {
+            point = points[i];
+            if (point && point.destroyElements) {
+                point.destroyElements(); // #7557
+            }
+        }
+    }
+
+    (
+        ['graph', 'area', 'tracker'] as
+        Array<('graph'|'area'|'tracker')>
+    ).forEach((prop): void => {
+        const seriesProp = series[prop];
+        if (seriesProp) {
+            series[prop] = seriesProp.destroy();
+        }
+    });
+
+    const zonesSeries = series as (BoostSeriesComposition&LineSeries);
+
+    if (zonesSeries.getZonesGraphs) {
+        const props = zonesSeries.getZonesGraphs(
+            [['graph', 'highcharts-graph']]
+        ) as Array<[keyof LineSeries]>;
+        props.forEach((prop): void => {
+            const zoneGraph: SVGElement = zonesSeries[prop[0]];
+            if (zoneGraph) {
+                (zonesSeries as any)[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
+}
+
+/**
  * An "async" foreach loop. Uses a setTimeout to keep the loop from blocking the
  * UI thread.
  *
@@ -616,6 +657,34 @@ function eachAsync(
             finalFunc();
         }
     }
+}
+
+/**
+ * @private
+ * @function Highcharts.Series#hasExtremes
+ */
+function hasExtremes(
+    series: Series,
+    checkX?: boolean
+): boolean {
+    const options = series.options,
+        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
+        xAxis = series.xAxis && series.xAxis.options,
+        yAxis = series.yAxis && series.yAxis.options,
+        colorAxis = series.colorAxis && series.colorAxis.options;
+
+    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+            // Defined yAxis extremes
+            isNumber(yAxis.min) &&
+            isNumber(yAxis.max) &&
+            // Defined (and required) xAxis extremes
+            (!checkX ||
+                (isNumber(xAxis.min) && isNumber(xAxis.max))
+            ) &&
+            // Defined (e.g. heatmap) colorAxis extremes
+            (!colorAxis ||
+                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
+            );
 }
 
 /**
@@ -686,55 +755,6 @@ function renderIfNotSeriesBoosting(
 }
 
 /**
- * If implemented in the core, parts of this can probably be
- * shared with other similar methods in Highcharts.
- * @private
- * @function Highcharts.Series#destroyGraphics
- */
-function seriesDestroyGraphics(
-    this: BoostSeriesComposition
-): void {
-    const series = this,
-        points = series.points;
-
-    if (points) {
-        let point: Point,
-            i: number;
-
-        for (i = 0; i < points.length; i = i + 1) {
-            point = points[i];
-            if (point && point.destroyElements) {
-                point.destroyElements(); // #7557
-            }
-        }
-    }
-
-    (
-        ['graph', 'area', 'tracker'] as
-        Array<('graph'|'area'|'tracker')>
-    ).forEach((prop): void => {
-        const seriesProp = series[prop];
-        if (seriesProp) {
-            series[prop] = seriesProp.destroy();
-        }
-    });
-
-    const zonesSeries = series as (BoostSeriesComposition&LineSeries);
-
-    if (zonesSeries.getZonesGraphs) {
-        const props = zonesSeries.getZonesGraphs(
-            [['graph', 'highcharts-graph']]
-        ) as Array<[keyof LineSeries]>;
-        props.forEach((prop): void => {
-            const zoneGraph: SVGElement = zonesSeries[prop[0]];
-            if (zoneGraph) {
-                (zonesSeries as any)[prop[0]] = zoneGraph.destroy();
-            }
-        });
-    }
-}
-
-/**
  * Enter boost mode and apply boost-specific properties.
  * @private
  * @function Highcharts.Series#enterBoost
@@ -742,8 +762,9 @@ function seriesDestroyGraphics(
 function seriesEnterBoost(
     this: BoostSeriesComposition
 ): void {
-    const alteredByBoost = this.alteredByBoost =
-        [] as Array<BoostAlteredObject>;
+    this.boost = this.boost || { getPoint };
+
+    const alteredByBoost: Array<BoostAlteredObject> = this.boost.altered = [];
 
     // Save the original values, including whether it was an own
     // property or inherited from the prototype.
@@ -777,19 +798,21 @@ function seriesEnterBoost(
  * @function Highcharts.Series#exitBoost
  */
 function seriesExitBoost(
-    this: BoostSeriesComposition
+    this: Series
 ): void {
 
-    // Reset instance properties and/or delete instance properties and
-    // go back to prototype
-    (this.alteredByBoost || []).forEach((setting): void => {
-        if (setting.own) {
-            this[setting.prop] = setting.val as any;
-        } else {
-            // Revert to prototype
-            delete this[setting.prop];
-        }
-    });
+    // Reset instance properties and/or delete instance properties and go back
+    // to prototype
+    if (this.boost) {
+        (this.boost.altered || []).forEach((setting): void => {
+            if (setting.own) {
+                this[setting.prop] = setting.val as any;
+            } else {
+                // Revert to prototype
+                delete this[setting.prop];
+            }
+        });
+    }
 
     // Clear previous run
     if (this.boostClear) {
@@ -810,27 +833,27 @@ function seriesExitBoost(
  * @return {Highcharts.Point}
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
-function seriesGetPoint(
-    this: BoostSeriesComposition,
+function getPoint(
+    series: Series,
     boostPoint?: (Point&Record<string, number>)
 ): (BoostPointComposition|undefined) {
-    const seriesOptions = this.options,
-        xAxis = this.xAxis,
-        PointClass = this.pointClass;
+    const seriesOptions = series.options,
+        xAxis = series.xAxis,
+        PointClass = series.pointClass as typeof BoostPointComposition;
 
     if (!boostPoint || boostPoint instanceof PointClass) {
         return boostPoint;
     }
 
     const xData = (
-            this.xData ||
+            series.xData ||
             seriesOptions.xData ||
-            this.processedXData ||
+            series.processedXData ||
             false
         ),
         point = (new PointClass()).init(
-            this,
-            (this.options.data as any)[boostPoint.i as any],
+            series as BoostSeriesComposition,
+            (series.options.data as any)[boostPoint.i as any],
             xData ? xData[boostPoint.i as any] : void 0
         );
 
@@ -846,38 +869,9 @@ function seriesGetPoint(
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
     point.index = boostPoint.i;
-    point.isInside = this.isPointInside(boostPoint);
+    point.isInside = series.isPointInside(boostPoint);
 
     return point;
-}
-
-/**
- * @private
- * @function Highcharts.Series#hasExtremes
- */
-function seriesHasExtremes(
-    this: BoostSeriesComposition,
-    checkX?: boolean
-): boolean {
-    const series = this,
-        options = series.options,
-        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
-        xAxis = series.xAxis && series.xAxis.options,
-        yAxis = series.yAxis && series.yAxis.options,
-        colorAxis = series.colorAxis && series.colorAxis.options;
-
-    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
-            // Defined yAxis extremes
-            isNumber(yAxis.min) &&
-            isNumber(yAxis.max) &&
-            // Defined (and required) xAxis extremes
-            (!checkX ||
-                (isNumber(xAxis.min) && isNumber(xAxis.max))
-            ) &&
-            // Defined (e.g. heatmap) colorAxis extremes
-            (!colorAxis ||
-                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-            );
 }
 
 /**
@@ -935,7 +929,7 @@ function seriesRenderCanvas(this: Series): void {
 
     // If we are zooming out from SVG mode, destroy the graphics
     if (this.points || this.graph) {
-        this.destroyGraphics();
+        destroyGraphics(this);
     }
 
     // If we're rendering per. series we should create the marker groups
@@ -976,7 +970,7 @@ function seriesRenderCanvas(this: Series): void {
         }
     }
 
-    const points: Array<BoostMockupPoint> = this.points = [],
+    const points: Array<BoostPointMockup> = this.points = [],
         addKDPoint = (
             clientX: number,
             plotY: number,
@@ -1298,7 +1292,7 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
     if (
         this.boosted &&
-        this.hasExtremes()
+        hasExtremes(this)
     ) {
         return {};
     }
@@ -1384,7 +1378,7 @@ function wrapSeriesProcessData(
             series.type === 'treemap' ||
             // processedYData for the stack (#7481):
             series.options.stacking ||
-            !series.hasExtremes(true)
+            !hasExtremes(series, true)
         ) {
             proceed.apply(series, Array.prototype.slice.call(arguments, 1));
             dataToMeasure = series.processedXData;
@@ -1430,7 +1424,7 @@ function wrapSeriesSearchPoint(
     const result = proceed.apply(this, [].slice.call(arguments, 1));
 
     if (this) {
-        return this.getPoint(result);
+        return getPoint(this, result);
     }
 
     return result;
@@ -1443,7 +1437,9 @@ function wrapSeriesSearchPoint(
  * */
 
 const BoostSeries = {
-    compose
+    compose,
+    destroyGraphics,
+    getPoint
 };
 
 export default BoostSeries;

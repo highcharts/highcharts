@@ -19,6 +19,7 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { BoostSeriesComposition } from './BoostSeries';
 import type BoostTargetObject from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
@@ -44,6 +45,7 @@ interface BoostChartAdditions {
 export declare class BoostChartComposition extends Chart {
     boosted?: boolean;
     boost: BoostChartAdditions;
+    series: Array<BoostSeriesComposition>;
 }
 
 declare module '../../Core/Chart/ChartLike'{
