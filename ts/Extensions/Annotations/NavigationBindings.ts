@@ -369,11 +369,13 @@ class NavigationBindings {
         this.chart = chart;
         this.options = options;
         this.eventsToUnbind = [];
-        this.container = (
-            doc.getElementsByClassName(
-                this.options.bindingsClassName || ''
-            ) as HTMLCollectionOf<HTMLElement>
-        );
+        this.container = this.chart.container
+            .querySelectorAll('.' + this.options.bindingsClassName);
+
+        if (!this.container.length) {
+            this.container = doc
+                .querySelectorAll('.' + this.options.bindingsClassName);
+        }
     }
 
     /* *
@@ -386,7 +388,7 @@ class NavigationBindings {
     public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> =
         void 0 as any;
     public chart: Highcharts.AnnotationChart;
-    public container: HTMLCollectionOf<HTMLDOMElement>;
+    public container: NodeListOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
