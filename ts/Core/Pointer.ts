@@ -795,8 +795,9 @@ class Pointer {
             [hoverSeries as any] :
             // Filter what series to look in.
             series.filter(function (s): boolean {
-                return eventArgs.filter ? eventArgs.filter(s) : filter(s) &&
-                    s.stickyTracking;
+                return eventArgs.filter ?
+                    eventArgs.filter(s) && s.stickyTracking :
+                    filter(s) && s.stickyTracking;
             });
 
         // Use existing hovered point or find the one closest to coordinates.

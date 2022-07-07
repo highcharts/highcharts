@@ -214,10 +214,6 @@ QUnit.test('Tooltip should be shown for value equal to max', function (assert) {
             max: 100
         },
 
-        tooltip: {
-            //shared: true
-        },
-
         series: [
             {
                 data: [99, 100, 101, 36, 47, 16],
@@ -282,5 +278,28 @@ QUnit.test('Hover state when axis is updated (#12569).', function (assert) {
     assert.ok(
         series.halo && series.halo.visibility !== 'hidden',
         'Halo and hover state should be visible.'
+    );
+});
+
+QUnit.test('Polar chart without stickyTracking, #17359.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+            series: [{
+                stickyTracking: false,
+                data: [1, 2, 3, 4, 5]
+            }]
+        }),
+        controller = new TestController(chart),
+        x = 300,
+        y = 120;
+
+    controller.setPosition(x - 1, y - 1);
+    controller.moveTo(x, y);
+
+    assert.ok(
+        chart.tooltip.isHidden,
+        'The tooltip should not be displayed when not hovering over the series.'
     );
 });
