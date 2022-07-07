@@ -31,6 +31,8 @@ const {
     getBoostClipRect,
     isChartSeriesBoosting
 } = BoostChart;
+import BoostSeries from './Boost/BoostSeries.js';
+const { destroyGraphics } = BoostSeries;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -544,7 +546,7 @@ const initCanvasBoost = function (): void {
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-                this.destroyGraphics();
+                destroyGraphics(this);
             }
 
             // The group
