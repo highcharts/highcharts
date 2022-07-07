@@ -14,19 +14,20 @@ import type WGLRenderer from './WGLRenderer';
  *
  * */
 
-export interface BoostTargetObject {
-    boostClipRect?: SVGElement;
+export interface BoostTargetAdditions {
     canvas?: HTMLCanvasElement;
-    ogl?: WGLRenderer;
-    renderTarget?: (HTMLElement|SVGElement);
-    renderTargetCtx?: CanvasRenderingContext2D;
-    renderTargetFo?: SVGElement;
-    /** @requires modules/boost */
-    boostClear(): void;
-    /** @requires modules/boost */
-    boostCopy(): void;
-    /** @requires modules/boost */
-    boostResizeTarget(): void;
+    clipRect?: SVGElement;
+    target?: (HTMLElement|SVGElement);
+    targetCtx?: CanvasRenderingContext2D;
+    targetFo?: SVGElement;
+    wgl?: WGLRenderer;
+    clear?(boostTarget: BoostTargetObject): void;
+    copy?(): void;
+    resize?(): void;
+}
+
+export interface BoostTargetObject {
+    boost?: BoostTargetAdditions;
 }
 
 /* *
