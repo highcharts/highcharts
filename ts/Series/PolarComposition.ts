@@ -146,7 +146,7 @@ export declare class PolarSeriesComposition extends Series {
     animate(init?: boolean): void;
     searchPoint: (
         PolarSeriesComposition['kdByAngle'] extends true ?
-            'searchPointByAngle' :
+            typeof searchPointByAngle :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
