@@ -24,6 +24,6 @@ import '../../Extensions/Annotations/Types/Pitchfork.js';
 import '../../Extensions/Annotations/Types/VerticalLine.js';
 import '../../Extensions/Annotations/Types/Measure.js';
 import '../../Extensions/Annotations/NavigationBindings.js';
-import '../../Extensions/Annotations/Popup.js';
+import '../../Extensions/Annotations/Popup/Popup.js';
 const G: AnyRecord = Highcharts;
 Annotation.compose(G.Chart, G.SVGRenderer);

@@ -10,25 +10,25 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type AnnotationsOptions from './AnnotationsOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type Series from '../../Core/Series/Series';
-import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
+import type Annotation from '../Annotation';
+import type AnnotationsOptions from '../AnnotationsOptions';
+import type Chart from '../../../Core/Chart/Chart';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
+import type Series from '../../../Core/Series/Series';
+import type { SeriesTypePlotOptions } from '../../../Core/Series/SeriesType';
+import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
-import H from '../../Core/Globals.js';
+import AST from '../../../Core/Renderer/HTML/AST.js';
+import H from '../../../Core/Globals.js';
 const {
     doc,
     isFirefox
 } = H;
-import NavigationBindings from './NavigationBindings.js';
-import D from '../../Core/DefaultOptions.js';
+import NavigationBindings from '../NavigationBindings.js';
+import D from '../../../Core/DefaultOptions.js';
 const { getOptions } = D;
-import Pointer from '../../Core/Pointer.js';
-import U from '../../Core/Utilities.js';
+import Pointer from '../../../Core/Pointer.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
