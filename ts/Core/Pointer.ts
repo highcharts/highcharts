@@ -812,10 +812,8 @@ class Pointer {
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
             if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = series.filter(function (s): boolean {
-                    return eventArgs.filter ?
-                        eventArgs.filter(s) : filter(s) && !s.noSharedTooltip;
-                });
+                searchSeries = series.filter((s): boolean => s.stickyTracking &&
+                    (eventArgs.filter || filter)(s));
 
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s): any {
