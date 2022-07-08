@@ -828,7 +828,7 @@ class Pointer {
                         * point for tooltip and states.
                         */
                         if (s.boosted && s.boost) {
-                            point = s.boost.getPoint(s, point);
+                            point = s.boost.getPoint(point);
                         }
                         hoverPoints.push(point);
                     }
