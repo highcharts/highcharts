@@ -16,6 +16,8 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
+import type Popup from './Popup';
+
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
@@ -394,7 +396,7 @@ class NavigationBindings {
     public mouseMoveEvent?: (false|Function);
     public nextEvent?: (false|Function);
     public options: NavigationOptions;
-    public popup?: Highcharts.Popup;
+    public popup?: Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
     public selectedButton: (
         Highcharts.NavigationBindingsOptionsObject|null
