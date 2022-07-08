@@ -32,14 +32,13 @@ import GradientColorStop from '../../Core/Color/GradientColor';
 import U from '../../Core/Utilities.js';
 import ColorType from '../../Core/Color/ColorType';
 import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike';
+import { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 const {
-    correctFloat,
-    defined,
     extend,
     isArray,
     isNumber,
     merge,
-    relativeLength
+    pick
 } = U;
 
 /* *
@@ -80,6 +79,14 @@ class TemperatureMapSeries extends MapBubbleSeries {
             maxSize: 100,
             minSize: 20,
             opacity: 0.75,
+            states: {
+                hover: {
+                    enabled: false
+                },
+                normal: {
+                    enabled: false
+                }
+            },
             /**
              * TO DO: add a description
              *
@@ -148,12 +155,55 @@ class TemperatureMapSeries extends MapBubbleSeries {
         if (isNumber(colorStop)) {
             ret = (ret || 0) * colorStop;
         } else if (temperatureColors && isNumber(colorIndex)) {
-            ret = (ret || 0) * (
-                correctFloat(1 - colorIndex / temperatureColors.length)
-            );
+            ret = (ret || 0) * (1 - colorIndex / temperatureColors.length);
         }
 
         return ret;
+    }
+
+    /**
+     * Perform animation on the bubbles
+     * @private
+     */
+    public animate(init?: boolean): void {
+        if (
+            !init &&
+            this.points.length < (this.options.animationLimit as any) // #8099
+        ) {
+            (this.options as any).temperatureColors.forEach(
+                (color: any, i: number): void => {
+                    this.points.forEach((point): void => {
+                        const graphic = point.graphics[i],
+                            size = {
+                                width: graphic.width,
+                                height: graphic.height,
+                                x: (point.plotX || 0) - graphic.width / 2,
+                                y: (point.plotY || 0) - graphic.height / 2
+                            };
+
+                        if (
+                            graphic &&
+                            graphic.width // URL symbols don't have width
+                        ) {
+                            // Start values
+                            if (!this.hasRendered) {
+                                graphic.attr({
+                                    x: point.plotX,
+                                    y: point.plotY,
+                                    width: 1,
+                                    height: 1
+                                });
+                            }
+
+                            // Run animation
+                            graphic.animate(
+                                size,
+                                this.options.animation
+                            );
+                        }
+                    });
+                });
+        }
     }
 
     public drawPoints(): void {
@@ -204,43 +254,139 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 series.translateBubble(); // use radii
                 series.adjustMinSize = false;
 
-                super.drawPoints.apply(series);
+                const points = series.points,
+                    chart = series.chart,
+                    seriesMarkerOptions = options.marker,
+                    markerGroup = (
+                        (series as any)[series.specialGroup as any] ||
+                        series.markerGroup
+                    );
+
+                let i,
+                    point,
+                    graphic,
+                    verb,
+                    pointMarkerOptions,
+                    hasPointMarker,
+                    markerAttribs;
 
                 this.temperatureColorIndex = null;
 
-                i = 0;
-                while (i < pointLength) {
-                    const point = series.points[i];
+                if (
+                    (seriesMarkerOptions as any).enabled !== false ||
+                    series._hasPointMarkers
+                ) {
 
-                    point.graphics = point.graphics || [];
-
-                    if (point && point.graphic && point.visible) {
-                        if (point.graphics[ii]) {
-                            point.graphics[ii].destroy();
-                            point.graphic.attr({
-                                zIndex: ii
-                            });
-                            point.graphics[ii] = point.graphic;
-                        } else {
-                            point.graphic.attr({
-                                zIndex: ii
-                            });
-
-                            // Last graphic will be as point.graphic instead of
-                            // in the point.graphics array
-                            if (ii !== colorsLength - 1) {
-                                point.graphics.push(point.graphic);
-                            }
+                    for (i = 0; i < points.length; i++) {
+                        point = points[i];
+                        if (!point.graphic) {
+                            point.graphic = chart.renderer.g('point')
+                                .add(series.group);
                         }
+                        point.graphics = point.graphics || [];
+                        graphic = point.graphics[ii];
+                        verb = graphic ? 'animate' : 'attr';
+                        pointMarkerOptions = point.marker || {};
+                        hasPointMarker = !!point.marker;
 
-                        // Don't reset point.graphic in the last iteration
-                        if (ii !== colorsLength - 1) {
-                            point.graphic = void 0;
+                        const shouldDrawMarker = (
+                            (
+                                (seriesMarkerOptions as any).enabled &&
+                                typeof pointMarkerOptions.enabled ===
+                                    'undefined'
+                            ) || pointMarkerOptions.enabled
+                        ) && !point.isNull && point.visible !== false;
+
+                        if (shouldDrawMarker) {
+                            // Shortcuts
+                            const symbol = pick(
+                                pointMarkerOptions.symbol,
+                                series.symbol,
+                                'rect' as SymbolKey
+                            );
+
+                            markerAttribs = series.markerAttribs(
+                                point,
+                                (point.selected && 'select') as any
+                            );
+
+                            if (graphic) { // update
+                                graphic.animate(markerAttribs);
+                            } else if (
+                                (markerAttribs.width || 0) > 0 ||
+                                point.hasImage
+                            ) {
+                                graphic = chart.renderer
+                                    .symbol(
+                                        symbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height,
+                                        hasPointMarker ?
+                                            pointMarkerOptions :
+                                            seriesMarkerOptions
+                                    )
+                                    .add(point.graphic);
+
+                                point.graphics.push(graphic);
+                            }
+
+                            if (graphic) {
+                                if (!chart.styledMode) {
+                                    const pointAttribs = series.pointAttribs(
+                                            point,
+                                            (point.selected && 'select') as any
+                                        ),
+                                        attribs = merge(
+                                            pointAttribs,
+                                            verb === 'animate' ?
+                                                markerAttribs :
+                                                {},
+                                            { zIndex: ii }
+                                        );
+
+                                    graphic[verb](attribs);
+                                } else {
+                                    if (verb === 'animate') {
+                                        graphic.animate(markerAttribs);
+                                    }
+                                }
+
+                                graphic.addClass(point.getClassName(), true);
+                            }
+
+                        } else if (graphic) {
+                            point.graphic = graphic.destroy(); // #1269
                         }
                     }
-
-                    i++;
                 }
+
+                // i = 0;
+                // while (i < pointLength) {
+                //     const point = series.points[i];
+
+                //     if (point && point.graphic && point.visible) {
+                //         if (point.graphics[ii]) {
+
+                //             //point.graphics[ii].destroy();
+                //             //point.graphics[ii] = point.graphic;
+                //         } else {
+                //             // Last graphic will be as point.graphic instead
+                //             // of in the point.graphics array
+                //             if (ii !== colorsLength - 1) {
+                //                 //point.graphics.push(point.graphic);
+                //             }
+                //         }
+
+                //         // Don't reset point.graphic in the last iteration
+                //         if (ii !== colorsLength - 1) {
+                //             //point.graphic = void 0;
+                //         }
+                //     }
+
+                //     i++;
+                // }
             });
 
         // Set color for legend item marker
