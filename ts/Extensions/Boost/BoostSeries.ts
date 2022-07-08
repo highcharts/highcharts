@@ -100,6 +100,8 @@ interface BoostAlteredObject {
 interface BoostPointMockup {
     x: (false|number);
     clientX: number;
+    dist?: number;
+    distX?: number;
     plotX: number;
     plotY: number;
     i: number;
@@ -107,10 +109,7 @@ interface BoostPointMockup {
 
 interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
-    getPoint(
-        series: Series,
-        boostPoint?: (Point|Record<string, number>)
-    ): BoostPointComposition;
+    getPoint(boostPoint: (BoostPointMockup|Point)): BoostPointComposition;
 }
 
 export declare class BoostPointComposition extends Point {
@@ -661,7 +660,10 @@ function eachAsync(
 function enterBoost(
     series: Series
 ): void {
-    series.boost = series.boost || { getPoint };
+    series.boost = series.boost || {
+        // faster than a series bind:
+        getPoint: ((bp): BoostPointComposition => getPoint(series, bp))
+    };
 
     const alteredByBoost: Array<BoostAlteredObject> = series.boost.altered = [];
 
@@ -803,21 +805,17 @@ function onSeriesHide(
  * attached to the series.
  * @private
  */
-function renderIfNotSeriesBoosting(
-    renderer: WGLRenderer,
-    series: Series,
-    chart: Chart = series.chart
-): void {
+function renderIfNotSeriesBoosting(series: Series): void {
     const boost = series.boost;
 
     if (
-        renderer &&
         boost &&
-        boost.target &&
         boost.canvas &&
-        !isChartSeriesBoosting(chart)
+        boost.target &&
+        boost.wgl &&
+        !isChartSeriesBoosting(series.chart)
     ) {
-        renderer.render(chart);
+        boost.wgl.render(series.chart);
     }
 }
 
@@ -833,14 +831,14 @@ function renderIfNotSeriesBoosting(
  */
 function getPoint(
     series: Series,
-    boostPoint: (Point&Record<string, number>)
+    boostPoint: (BoostPointMockup|Point)
 ): BoostPointComposition {
     const seriesOptions = series.options,
         xAxis = series.xAxis,
-        PointClass = series.pointClass as typeof BoostPointComposition;
+        PointClass = series.pointClass;
 
     if (boostPoint instanceof PointClass) {
-        return boostPoint;
+        return boostPoint as BoostPointComposition;
     }
 
     const xData = (
@@ -851,9 +849,9 @@ function getPoint(
         ),
         point = (new PointClass()).init(
             series as BoostSeriesComposition,
-            (series.options.data as any)[boostPoint.i as any],
-            xData ? xData[boostPoint.i as any] : void 0
-        );
+            (series.options.data as any)[boostPoint.i],
+            xData ? xData[boostPoint.i] : void 0
+        ) as BoostPointComposition;
 
     point.category = pick(
         xAxis.categories ?
@@ -867,7 +865,7 @@ function getPoint(
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
     point.index = boostPoint.i;
-    point.isInside = series.isPointInside(boostPoint);
+    point.isInside = series.isPointInside(point);
 
     return point;
 }
@@ -1011,7 +1009,7 @@ function seriesRenderCanvas(this: Series): void {
         allocateIfNotSeriesBoosting(renderer, this);
         renderer.pushSeries(this);
         // Perform the actual renderer if we're on series level
-        renderIfNotSeriesBoosting(renderer, this, chart);
+        renderIfNotSeriesBoosting(this);
     }
 
     /**
@@ -1211,7 +1209,7 @@ function wrapSeriesDrawPoints(
         renderer.pushSeries(this);
     }
 
-    renderIfNotSeriesBoosting(renderer, this);
+    renderIfNotSeriesBoosting(this);
 }
 
 /**
@@ -1421,8 +1419,8 @@ function wrapSeriesSearchPoint(
 ): (Point|undefined) {
     const result = proceed.apply(this, [].slice.call(arguments, 1));
 
-    if (this && result) {
-        return getPoint(this, result);
+    if (this.boost && result) {
+        return this.boost.getPoint(result);
     }
 
     return result;
