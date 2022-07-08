@@ -1077,7 +1077,7 @@ H.Popup.prototype = {
          */
         filterSeries: function (
             this: Highcharts.Popup,
-            series: (Array<Series>|SeriesTypePlotOptions),
+            series: (Record<string, Series>|SeriesTypePlotOptions),
             filter?: string
         ): Array<Highcharts.FilteredSeries> {
             const popup = this,
@@ -1092,7 +1092,7 @@ H.Popup.prototype = {
             let filteredSeries: Highcharts.FilteredSeries;
 
             objectEach(series, (series, value): void => {
-                const seriesOptions = (series as any).options;
+                const seriesOptions = series && (series as Series).options;
                 // Allow only indicators.
                 if (
                     (series as any).params || seriesOptions &&

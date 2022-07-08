@@ -41,7 +41,7 @@ function task() {
 
         promises.push(
             processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --onlyTestTsNext')
+                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --localTs ../../node_modules/typescript/lib')
         );
 
         promises.push(

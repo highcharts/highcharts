@@ -236,7 +236,7 @@ export default MapLineSeries;
  * Pixel width of the mapline line.
  *
  * @type      {number}
- * @since     next
+ * @since 10.2.0
  * @product   highmaps
  * @apioption plotOptions.mapline.states.hover.lineWidth
  */

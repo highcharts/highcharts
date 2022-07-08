@@ -24,7 +24,7 @@ QUnit.test('Boosted series show/hide', function (assert) {
         blankPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
     assert.strictEqual(
-        s.renderTarget.attr('href'),
+        s.boost.target.attr('href'),
         blankPixel,
         'Empty image for the initially hidden series'
     );
@@ -32,14 +32,14 @@ QUnit.test('Boosted series show/hide', function (assert) {
     s.show();
 
     assert.notStrictEqual(
-        s.renderTarget.attr('href'),
+        s.boost.target.attr('href'),
         blankPixel,
         'Painted image for the visible series'
     );
 
     s.hide();
     assert.strictEqual(
-        s.renderTarget.attr('href'),
+        s.boost.target.attr('href'),
         blankPixel,
         'Empty image for the dynamically hidden series'
     );
