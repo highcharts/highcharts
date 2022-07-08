@@ -34,6 +34,7 @@ import ColorType from '../../Core/Color/ColorType';
 import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike';
 import { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 const {
+    correctFloat,
     extend,
     isArray,
     isNumber,
@@ -155,7 +156,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
         if (isNumber(colorStop)) {
             ret = (ret || 0) * colorStop;
         } else if (temperatureColors && isNumber(colorIndex)) {
-            ret = (ret || 0) * (1 - colorIndex / temperatureColors.length);
+            ret = (ret || 0) * (correctFloat(
+                1 - colorIndex / temperatureColors.length
+            ));
         }
 
         return ret;
@@ -173,18 +176,19 @@ class TemperatureMapSeries extends MapBubbleSeries {
             (this.options as any).temperatureColors.forEach(
                 (color: any, i: number): void => {
                     this.points.forEach((point): void => {
-                        const graphic = point.graphics[i],
-                            size = {
+                        const graphic = point.graphics[i];
+
+                        if (
+                            graphic &&
+                            graphic.width // URL symbols don't have width
+                        ) {
+                            const size = {
                                 width: graphic.width,
                                 height: graphic.height,
                                 x: (point.plotX || 0) - graphic.width / 2,
                                 y: (point.plotY || 0) - graphic.height / 2
                             };
 
-                        if (
-                            graphic &&
-                            graphic.width // URL symbols don't have width
-                        ) {
                             // Start values
                             if (!this.hasRendered) {
                                 graphic.attr({
@@ -279,10 +283,6 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                     for (i = 0; i < points.length; i++) {
                         point = points[i];
-                        if (!point.graphic) {
-                            point.graphic = chart.renderer.g('point')
-                                .add(series.group);
-                        }
                         point.graphics = point.graphics || [];
                         graphic = point.graphics[ii];
                         verb = graphic ? 'animate' : 'attr';
@@ -327,7 +327,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
                                             pointMarkerOptions :
                                             seriesMarkerOptions
                                     )
-                                    .add(point.graphic);
+                                    .add(markerGroup);
+
+                                (graphic.element as any).point = point;
 
                                 point.graphics.push(graphic);
                             }
@@ -356,37 +358,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
                                 graphic.addClass(point.getClassName(), true);
                             }
 
-                        } else if (graphic) {
-                            point.graphic = graphic.destroy(); // #1269
                         }
                     }
                 }
-
-                // i = 0;
-                // while (i < pointLength) {
-                //     const point = series.points[i];
-
-                //     if (point && point.graphic && point.visible) {
-                //         if (point.graphics[ii]) {
-
-                //             //point.graphics[ii].destroy();
-                //             //point.graphics[ii] = point.graphic;
-                //         } else {
-                //             // Last graphic will be as point.graphic instead
-                //             // of in the point.graphics array
-                //             if (ii !== colorsLength - 1) {
-                //                 //point.graphics.push(point.graphic);
-                //             }
-                //         }
-
-                //         // Don't reset point.graphic in the last iteration
-                //         if (ii !== colorsLength - 1) {
-                //             //point.graphic = void 0;
-                //         }
-                //     }
-
-                //     i++;
-                // }
             });
 
         // Set color for legend item marker
