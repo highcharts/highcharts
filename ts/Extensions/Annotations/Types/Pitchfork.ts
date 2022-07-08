@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type { AnnotationsShapeOptions } from '../AnnotationsOptions';
+import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotation.js';
@@ -79,7 +79,7 @@ class Pitchfork extends InfinityLine {
             points[0],
             new MockPoint(
                 annotation.chart,
-                target,
+                target as any,
                 annotation.midPointOptions()
             )
         );
@@ -251,8 +251,8 @@ namespace Pitchfork {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
-        innerBackground: AnnotationsShapeOptions;
-        outerBackground: AnnotationsShapeOptions;
+        innerBackground: ControllableShapeOptions;
+        outerBackground: ControllableShapeOptions;
     }
 }
 

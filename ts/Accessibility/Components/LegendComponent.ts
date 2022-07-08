@@ -106,11 +106,13 @@ function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
         legendA11yOptions: LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
-        );
+        ),
+        unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
+            (c): boolean => !c.dataClasses || !c.dataClasses.length);
 
     return !!(
         items && items.length &&
-        !(chart.colorAxis && chart.colorAxis.length) &&
+        !unsupportedColorAxis &&
         legendA11yOptions.enabled !== false
     );
 }
@@ -569,10 +571,12 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public shouldHaveLegendNavigation(): (boolean) {
+        if (!shouldDoLegendA11y(this.chart)) {
+            return false;
+        }
+
         const chart = this.chart,
             legendOptions = chart.options.legend || {},
-            hasLegend = chart.legend && chart.legend.allItems,
-            hasColorAxis = chart.colorAxis && chart.colorAxis.length,
             legendA11yOptions: DeepPartial<(
                 LegendAccessibilityOptions
             )> = (
@@ -580,10 +584,7 @@ class LegendComponent extends AccessibilityComponent {
             );
 
         return !!(
-            hasLegend &&
             chart.legend.display &&
-            !hasColorAxis &&
-            legendA11yOptions.enabled &&
             legendA11yOptions.keyboardNavigation &&
             legendA11yOptions.keyboardNavigation.enabled
         );

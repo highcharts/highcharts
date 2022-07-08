@@ -9,6 +9,7 @@
 import type {
     AnnotationControlPointOptionsObject
 } from '../ControlPointOptions';
+import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
@@ -83,7 +84,7 @@ class Tunnel extends CrookedLine {
             typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.heightControlPoint
@@ -229,7 +230,7 @@ Tunnel.prototype.defaultOptions = merge(
             heightControlPoint: {
                 positioner: function (
                     this: Highcharts.AnnotationControlPoint,
-                    target: Highcharts.AnnotationControllable
+                    target: Controllable
                 ): PositionObject {
                     const startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),

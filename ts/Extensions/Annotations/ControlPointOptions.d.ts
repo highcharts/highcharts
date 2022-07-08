@@ -5,6 +5,7 @@
  * */
 
 import type Annotation from './Annotation';
+import type Controllable from './Controllables/Controllable';
 import type ControlPoint from './ControlPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -20,14 +21,14 @@ export interface AnnotationControlPointDragEventFunction {
     (
         this: Annotation,
         e: Highcharts.AnnotationEventObject,
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): void;
 }
 
 export interface AnnotationControlPointPositionerFunction {
     (
         this: ControlPoint,
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): PositionObject;
 }
 

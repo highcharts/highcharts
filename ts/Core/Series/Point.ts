@@ -119,9 +119,9 @@ class Point {
      * point. For other axes it holds the X value.
      *
      * @name Highcharts.Point#category
-     * @type {string}
+     * @type {number|string}
      */
-    public category: string = void 0 as any;
+    public category: (number|string) = void 0 as any;
 
     public color?: ColorType;
 

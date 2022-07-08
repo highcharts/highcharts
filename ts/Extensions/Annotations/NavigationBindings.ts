@@ -849,7 +849,7 @@ class NavigationBindings {
                 options.shapes && options.shapes[0] &&
                     options.shapes[0].type,
                 options.labels && options.labels[0] &&
-                    options.labels[0].itemType,
+                    options.labels[0].type,
                 'label'
             ),
             nonEditables = (

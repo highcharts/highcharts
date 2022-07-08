@@ -1364,7 +1364,7 @@ class Series {
             series.visible &&
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
-            !series.isSeriesBoosting
+            !series.boosted
         ) {
             updatedData = this.updateData(data, animation);
         }

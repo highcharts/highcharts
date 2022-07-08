@@ -448,9 +448,13 @@ export default SeriesOnPointComposition;
  * */
 
 /**
- * Options for the `Series on point` feature. Only `pie` and `sunburst` series
+ * Options for the _Series on point_ feature. Only `pie` and `sunburst` series
  * are supported at this moment.
  *
+ * @sample      {highcharts} highcharts/series-on-point/series-on-point
+ *              Series on point
+ * @sample      {highmaps} maps/demo/map-pies
+ *              Pies on a map
  * @requires    modules/series-on-point
  * @since 10.2.0
  * @type        {object}

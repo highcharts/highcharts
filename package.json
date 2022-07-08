@@ -54,6 +54,7 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "colors": "^1.4.0",
+    "cloudflare": "^2.9.1",
     "cross-env": "^7.0.3",
     "cypress": "7.7.0",
     "dtslint": "^4.2.1",

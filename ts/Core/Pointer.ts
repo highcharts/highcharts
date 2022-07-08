@@ -827,7 +827,7 @@ class Pointer {
                         * Boost returns a minimal point. Convert it to a usable
                         * point for tooltip and states.
                         */
-                        if (s.chart.isBoosting) {
+                        if (s.boosted) {
                             point = s.getPoint(point);
                         }
                         hoverPoints.push(point as Point);
