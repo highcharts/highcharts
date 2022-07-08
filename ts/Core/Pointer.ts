@@ -830,7 +830,7 @@ class Pointer {
                         if (s.boosted && s.boost) {
                             point = s.boost.getPoint(s, point);
                         }
-                        hoverPoints.push(point as Point);
+                        hoverPoints.push(point);
                     }
                 });
             } else {

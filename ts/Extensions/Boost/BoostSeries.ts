@@ -110,7 +110,7 @@ interface BoostSeriesAdditions extends BoostTargetAdditions {
     getPoint(
         series: Series,
         boostPoint?: (Point|Record<string, number>)
-    ): (BoostPointComposition|undefined);
+    ): BoostPointComposition;
 }
 
 export declare class BoostPointComposition extends Point {
@@ -824,24 +824,22 @@ function renderIfNotSeriesBoosting(
 /**
  * Return a full Point object based on the index.
  * The boost module uses stripped point objects for performance reasons.
+
  * @private
- * @function Highcharts.Series#getPoint
- *
  * @param {object|Highcharts.Point} boostPoint
  *        A stripped-down point object
- *
  * @return {Highcharts.Point}
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 function getPoint(
     series: Series,
-    boostPoint?: (Point&Record<string, number>)
-): (BoostPointComposition|undefined) {
+    boostPoint: (Point&Record<string, number>)
+): BoostPointComposition {
     const seriesOptions = series.options,
         xAxis = series.xAxis,
         PointClass = series.pointClass as typeof BoostPointComposition;
 
-    if (!boostPoint || boostPoint instanceof PointClass) {
+    if (boostPoint instanceof PointClass) {
         return boostPoint;
     }
 
@@ -1423,7 +1421,7 @@ function wrapSeriesSearchPoint(
 ): (Point|undefined) {
     const result = proceed.apply(this, [].slice.call(arguments, 1));
 
-    if (this) {
+    if (this && result) {
         return getPoint(this, result);
     }
 
