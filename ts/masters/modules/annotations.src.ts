@@ -13,6 +13,6 @@
 import Highcharts from '../../Core/Globals.js';
 import Annotation from '../../Extensions/Annotations/Annotation.js';
 import '../../Extensions/Annotations/NavigationBindings.js';
-import '../../Extensions/Annotations/Popup.js';
+import '../../Extensions/Annotations/Popup/Popup.js';
 const G: AnyRecord = Highcharts;
 Annotation.compose(G.Chart, G.SVGRenderer);

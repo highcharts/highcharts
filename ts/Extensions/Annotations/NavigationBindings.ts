@@ -16,7 +16,7 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-import type Popup from './Popup';
+import type Popup from './Popup/Popup';
 
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
