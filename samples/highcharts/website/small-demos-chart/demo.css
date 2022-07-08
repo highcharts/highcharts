@@ -17,6 +17,8 @@ a:hover {
 .chart-container {
     border: 0 solid #000;
     width: 100%;
+    height: 260px !important;
+    overflow: hidden;
 }
 
 #demo-content {
