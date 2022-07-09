@@ -108,20 +108,8 @@ class SunburstPoint extends TreemapPoint {
             moreThanHalf = true;
         }
 
-        // First time
-        if (!this.dataLabelPath) {
-            // Destroy the path with the label
-            wrap(label, 'destroy', (proceed): undefined => {
-                if (this.dataLabelPath) {
-                    this.dataLabelPath = this.dataLabelPath.destroy();
-                }
-                return proceed.call(label);
-            });
-
-        // Subsequent times
-        } else {
-            this.dataLabelPath.destroy();
-            delete this.dataLabelPath;
+        if (this.dataLabelPath) {
+            this.dataLabelPath = this.dataLabelPath.destroy();
         }
 
         // All times

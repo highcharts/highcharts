@@ -573,7 +573,12 @@ class Point {
             props.push('graphic', 'upperGraphic', 'shadowGroup');
         }
         if (kinds.dataLabel) {
-            props.push('dataLabel', 'dataLabelUpper', 'connector');
+            props.push(
+                'dataLabel',
+                'dataLabelPath',
+                'dataLabelUpper',
+                'connector'
+            );
         }
 
         i = props.length;
