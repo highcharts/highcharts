@@ -1,7 +1,12 @@
 (function () {
     function assertNonBoosted(assert, s) {
         assert.ok(
-            !s.renderTarget || s.renderTarget.attr('href') === '',
+            !(s.boost && s.boost.target) ||
+            (
+                s.boost.target.attr('href') ===
+                // Blank pixel
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+            ),
             'No painted image'
         );
 
@@ -18,7 +23,8 @@
 
     function assertBoosted(assert, s) {
         assert.strictEqual(
-            s.renderTarget.attr('href').indexOf('data:image/png;base64,'),
+            s.boost &&
+            s.boost.target.attr('href').indexOf('data:image/png;base64,'),
             0,
             'Painted image for the series'
         );

@@ -12,19 +12,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from '../../Core/Axis/Axis';
+import type BoostOptions from './BoostOptions';
 import type Chart from '../../Core/Chart/Chart';
-import type ColorMapMixin from '../../Series/ColorMapMixin';
-import type ColorString from '../../Core/Color/ColorString';
+import type ColorMapComposition from '../../Series/ColorMapComposition';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type { WGLDrawModeValue } from './WGLDrawMode';
+import type WGLOptions from './WGLOptions';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import GLShader from './WGLShader.js';
-import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
@@ -35,80 +41,57 @@ const {
     objectEach,
     pick
 } = U;
+import WGLDrawMode from './WGLDrawMode.js';
+import WGLShader from './WGLShader.js';
+import WGLVertexBuffer from './WGLVertexBuffer.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface WGLNode {
+    levelDynamic?: number;
+}
+
+interface WGLPoint extends Point {
+    node?: WGLNode;
+}
+
+interface WGLRendererCallbackFunction {
+    (renderer: WGLRenderer): void;
+}
+
+interface WGLSeriesObject {
+    colorData: Array<number>;
+    drawMode: WGLDrawModeValue;
+    hasMarkers: boolean;
+    markerFrom: number;
+    markerTo?: number;
+    segments: Array<Record<string, number>>;
+    series: Series;
+    showMarkers: boolean;
+    skipTranslation?: boolean;
+    zMax: number;
+    zMin: number;
+}
+
+interface WGLTextureCallbackFunction {
+    (ctx: CanvasRenderingContext2D): void;
+}
+
+interface WGLTextureObject {
+    isReady: boolean;
+    texture: HTMLCanvasElement;
+    handle: (WebGLTexture|null);
+}
 
 /**
  * Internal types
  * @private
  */
 declare global {
-    namespace Highcharts {
-        interface BoostGLDebugOptions extends BoostDebugOptions {
-            timeBufferCopy: boolean;
-            timeKDTree: boolean;
-            timeRendering: boolean;
-            timeSeriesProcessing: boolean;
-            timeSetup: boolean;
-            showSkipSummary: boolean;
-        }
-        interface BoostGLNode {
-            levelDynamic?: number;
-        }
-        interface BoostGLOptions extends BoostOptions {
-            debug: BoostGLDebugOptions;
-            fillColor: ColorString;
-            lineWidth: number;
-            pointSize?: number;
-            useAlpha: boolean;
-            useGPUTranslations: boolean;
-            usePreallocated: boolean;
-        }
-        interface BoostGLPoint extends Point {
-            node?: BoostGLNode;
-        }
-        interface BoostGLRenderer {
-            data: Array<Array<number>>;
-            settings: BoostGLOptions;
-            allocateBuffer(chart: Chart): void;
-            allocateBufferForSingleSeries(series: Series): void;
-            clear(): void;
-            destroy(): void;
-            flush(): void;
-            gl(): WebGLRenderingContext;
-            init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean;
-            inited(): boolean;
-            orthoMatrix(width: number, height: number): Array<number>;
-            pushSeries(s: Series): void;
-            render(chart: Chart): (false|undefined);
-            setOptions(options: BoostOptions): void;
-            setSize(w: number, h: number): void;
-            setThreshold(has: boolean, translation: number): void;
-            setXAxis(axis: Axis): void;
-            setYAxis(axis: Axis): void;
-            valid(): boolean;
-        }
-        interface BoostGLSeriesObject {
-            colorData: Array<number>;
-            drawMode: BoostGLDrawModeValue;
-            hasMarkers: boolean;
-            markerFrom: number;
-            markerTo?: number;
-            segments: Array<Record<string, number>>;
-            series: Series;
-            showMarkers: boolean;
-            skipTranslation?: boolean;
-            zMax: number;
-            zMin: number;
-        }
-        interface BoostGLTextureCallbackFunction {
-            (ctx: CanvasRenderingContext2D): void;
-        }
-        interface BoostGLTextureObject {
-            isReady: boolean;
-            texture: HTMLCanvasElement;
-            handle: (WebGLTexture|null);
-        }
-        type BoostGLDrawModeValue = ('line_strip'|'lines'|'points'|'triangles');
-    }
     interface CanvasRenderingContext2D {
         FUNC_MIN: number;
         /** @deprecated */
@@ -128,6 +111,40 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+// Things to draw as "rectangles" (i.e lines)
+const asBar: Record<string, boolean> = {
+    'column': true,
+    'columnrange': true,
+    'bar': true,
+    'area': true,
+    'areaspline': true,
+    'arearange': true
+};
+
+const asCircle: Record<string, boolean> = {
+    'scatter': true,
+    'bubble': true
+};
+
+const contexts = [
+    'webgl',
+    'experimental-webgl',
+    'moz-webgl',
+    'webkit-3d'
+];
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /* eslint-disable valid-jsdoc */
 
 /**
@@ -139,99 +156,46 @@ declare global {
  * - Need to figure out a way to transform the data quicker
  *
  * @private
- * @function GLRenderer
+ *
+ * @param {Function} postRenderCallback
  */
-function GLRenderer(
-    postRenderCallback: Function
-): (false|Highcharts.BoostGLRenderer) {
-    //  // Shader
-    let shader: Highcharts.BoostGLShader = false as any,
-        // Vertex buffers - keyed on shader attribute name
-        vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
-        vlen = 0,
-        // Opengl context
-        gl: WebGLRenderingContext = false as any,
-        // Width of our viewport in pixels
-        width = 0,
-        // Height of our viewport in pixels
-        height = 0,
-        // The data to render - array of coordinates
-        data: Array<number> = false as any,
-        // The marker data
-        markerData: Array<number> = false as any,
-        // Exports
-        exports: (object|Highcharts.BoostGLRenderer) = {},
-        // Is it inited?
-        isInited = false,
-        // The series stack
-        series: Array<Highcharts.BoostGLSeriesObject> = [],
-        // Texture handles
-        textureHandles: Record<string, (
-            Highcharts.BoostGLTextureObject
-        )> = {},
-        // Things to draw as "rectangles" (i.e lines)
-        asBar: Record<string, boolean> = {
-            'column': true,
-            'columnrange': true,
-            'bar': true,
-            'area': true,
-            'areaspline': true,
-            'arearange': true
-        },
-        asCircle: Record<string, boolean> = {
-            'scatter': true,
-            'bubble': true
-        },
-        // Render settings
-        settings: Highcharts.BoostGLOptions = {
-            pointSize: 1,
-            lineWidth: 1,
-            fillColor: '#AA00AA',
-            useAlpha: true,
-            usePreallocated: false,
-            useGPUTranslations: false,
-            debug: {
-                timeRendering: false,
-                timeSeriesProcessing: false,
-                timeSetup: false,
-                timeBufferCopy: false,
-                timeKDTree: false,
-                showSkipSummary: false
-            }
-        };
+class WGLRenderer {
 
-    // /////////////////////////////////////////////////////////////////////////
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     /**
+     * Returns an orthographic perspective matrix
      * @private
+     * @param {number} width
+     * the width of the viewport in pixels
+     * @param {number} height
+     * the height of the viewport in pixels
      */
-    function getPixelRatio(): number {
-        return settings.pixelRatio || win.devicePixelRatio || 1;
+    private static orthoMatrix(width: number, height: number): Array<number> {
+        const near = 0,
+            far = 1;
+
+        return [
+            2 / width, 0, 0, 0,
+            0, -(2 / height), 0, 0,
+            0, 0, -2 / (far - near), 0,
+            -1, 1, -(far + near) / (far - near), 1
+        ];
     }
 
     /**
      * @private
      */
-    function setOptions(options: Highcharts.BoostOptions): void {
-
-        // The pixelRatio defaults to 1. This is an antipattern, we should
-        // refactor the Boost options to include an object of default options as
-        // base for the merge, like other components.
-        if (!('pixelRatio' in options)) {
-            options.pixelRatio = 1;
-        }
-        merge(true, settings, options);
-    }
-
-    /**
-     * @private
-     */
-    function seriesPointCount(series: Series): number {
+    private static seriesPointCount(series: Series): number {
         let isStacked: boolean,
             xData: Array<number>,
             s: number;
 
-        if (series.isSeriesBoosting) {
+        if (series.boosted) {
             isStacked = !!series.options.stacking;
             xData = (
                 series.xData ||
@@ -255,79 +219,149 @@ function GLRenderer(
         return 0;
     }
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(postRenderCallback: WGLRendererCallbackFunction) {
+        this.postRenderCallback = postRenderCallback;
+        this.settings = {
+            pointSize: 1,
+            lineWidth: 1,
+            fillColor: '#AA00AA',
+            useAlpha: true,
+            usePreallocated: false,
+            useGPUTranslations: false,
+            debug: {
+                timeRendering: false,
+                timeSeriesProcessing: false,
+                timeSetup: false,
+                timeBufferCopy: false,
+                timeKDTree: false,
+                showSkipSummary: false
+            }
+        };
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    // Opengl context
+    private gl?: WebGLRenderingContext;
+
+    // The data to render - array of coordinates
+    private data: Array<number> = [];
+
+    // Height of our viewport in pixels
+    private height = 0;
+
+    // Is it inited?
+    private isInited = false;
+
+    // Shader
+    private shader?: WGLShader;
+
+    // The marker data
+    private markerData: Array<number> = [];
+
+    private postRenderCallback?: WGLRendererCallbackFunction;
+
+    // Render settings
+    public settings: WGLOptions;
+
+    // The series stack
+    private series: Array<WGLSeriesObject> = [];
+
+    // Texture handles
+    private textureHandles: Record<string, WGLTextureObject> = {};
+
+    // Vertex buffers - keyed on shader attribute name
+    private vbuffer?: WGLVertexBuffer;
+
+    // Width of our viewport in pixels
+    private width = 0;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    private getPixelRatio(): number {
+        return this.settings.pixelRatio || win.devicePixelRatio || 1;
+    }
+
+    /**
+     * @private
+     */
+    public setOptions(options: BoostOptions): void {
+
+        // The pixelRatio defaults to 1. This is an antipattern, we should
+        // refactor the Boost options to include an object of default options as
+        // base for the merge, like other components.
+        if (!('pixelRatio' in options)) {
+            options.pixelRatio = 1;
+        }
+        merge(true, this.settings, options);
+    }
+
     /**
      * Allocate a float buffer to fit all series
      * @private
      */
-    function allocateBuffer(chart: Chart): void {
+    public allocateBuffer(chart: Chart): void {
+        const vbuffer = this.vbuffer;
+
         let s = 0;
 
-        if (!settings.usePreallocated) {
+        if (!this.settings.usePreallocated) {
             return;
         }
 
-        chart.series.forEach(function (series: Series): void {
-            if (series.isSeriesBoosting) {
-                s += seriesPointCount(series);
+        chart.series.forEach((series: Series): void => {
+            if (series.boosted) {
+                s += WGLRenderer.seriesPointCount(series);
             }
         });
 
-        vbuffer.allocate(s);
+        vbuffer && vbuffer.allocate(s);
     }
 
     /**
      * @private
      */
-    function allocateBufferForSingleSeries(series: Series): void {
+    public allocateBufferForSingleSeries(series: Series): void {
+        const vbuffer = this.vbuffer;
+
         let s = 0;
 
-        if (!settings.usePreallocated) {
+        if (!this.settings.usePreallocated) {
             return;
         }
 
-        if (series.isSeriesBoosting) {
-            s = seriesPointCount(series);
+        if (series.boosted) {
+            s = WGLRenderer.seriesPointCount(series);
         }
 
-        vbuffer.allocate(s);
-    }
-
-    /**
-     * Returns an orthographic perspective matrix
-     * @private
-     * @param {number} width
-     * the width of the viewport in pixels
-     * @param {number} height
-     * the height of the viewport in pixels
-     */
-    function orthoMatrix(width: number, height: number): Array<number> {
-        const near = 0,
-            far = 1;
-
-        return [
-            2 / width, 0, 0, 0,
-            0, -(2 / height), 0, 0,
-            0, 0, -2 / (far - near), 0,
-            -1, 1, -(far + near) / (far - near), 1
-        ];
+        vbuffer && vbuffer.allocate(s);
     }
 
     /**
      * Clear the depth and color buffer
      * @private
      */
-    function clear(): void {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    }
+    public clear(): void {
+        const gl = this.gl;
 
-    /**
-     * Get the WebGL context
-     * @private
-     * @return {WebGLContext}
-     * the context
-     */
-    function getGL(): WebGLRenderingContext {
-        return gl;
+        gl && gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
     /**
@@ -336,11 +370,14 @@ function GLRenderer(
      * aligned correctly in memory
      * @private
      */
-    function pushSeriesData(
+    private pushSeriesData(
         series: Series,
-        inst: Highcharts.BoostGLSeriesObject
+        inst: WGLSeriesObject
     ): void {
-        let isRange = (
+        const data = this.data,
+            settings = this.settings,
+            vbuffer = this.vbuffer,
+            isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
@@ -364,8 +401,6 @@ function GLRenderer(
             ),
             yAxis = series.yAxis,
             xAxis = series.xAxis,
-            // plotHeight = series.chart.plotHeight,
-            plotWidth = series.chart.plotWidth,
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -380,21 +415,29 @@ function GLRenderer(
             // For some reason eslint/TypeScript don't pick up that this is
             // actually used: --- bre1470: it is never read, just set
             // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
-            points: Array<Highcharts.BoostGLPoint> =
+            points: Array<WGLPoint> =
                 series.points || (false as any),
+            sdata = isStacked ? series.data : (xData || rawData),
+            closestLeft = { x: Number.MAX_VALUE, y: 0 },
+            closestRight = { x: -Number.MAX_VALUE, y: 0 },
+            cullXThreshold = 1,
+            cullYThreshold = 1,
+            chartDestroyed = typeof chart.index === 'undefined',
+            drawAsBar = asBar[series.type],
+            zoneAxis = options.zoneAxis || 'y',
+            zones = options.zones || false,
+            threshold: number = options.threshold as any,
+            pixelRatio = this.getPixelRatio();
+
+        let // plotHeight = series.chart.plotHeight,
+            plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
             scolor: Color.RGBA,
-            sdata = isStacked ? series.data : (xData || rawData),
-            closestLeft = { x: Number.MAX_VALUE, y: 0 },
-            closestRight = { x: -Number.MAX_VALUE, y: 0 },
             //
             skipped = 0,
             hadPoints = false,
-            //
-            cullXThreshold = 1,
-            cullYThreshold = 1,
             // The following are used in the builder while loop
             x: number,
             y: number,
@@ -404,21 +447,16 @@ function GLRenderer(
             px: number = false as any,
             nx: number = false as any,
             low: (number|undefined),
-            chartDestroyed = typeof chart.index === 'undefined',
             nextInside = false,
             prevInside = false,
             pcolor: Color.RGBA = false as any,
-            drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
             firstPoint = true,
-            zoneAxis = options.zoneAxis || 'y',
-            zones = options.zones || false,
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
-            threshold: number = options.threshold as any,
             gapSize: number = false as any,
-            pixelRatio = getPixelRatio();
+            vlen = 0;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -433,7 +471,7 @@ function GLRenderer(
         if (zones) {
             zoneColors = [];
 
-            zones.forEach(function (zone, i): void {
+            zones.forEach((zone, i): void => {
                 if (zone.color) {
                     const zoneColor = color(zone.color).rgba as Color.RGBA;
                     zoneColor[0] /= 255.0;
@@ -470,26 +508,26 @@ function GLRenderer(
          * Push color to color buffer - need to do this per vertex.
          * @private
          */
-        function pushColor(color?: Color.RGBA): void {
+        const pushColor = (color?: Color.RGBA): void => {
             if (color) {
                 inst.colorData.push(color[0]);
                 inst.colorData.push(color[1]);
                 inst.colorData.push(color[2]);
                 inst.colorData.push(color[3]);
             }
-        }
+        };
 
         /**
          * Push a vertice to the data buffer.
          * @private
          */
-        function vertice(
+        const vertice = (
             x: number,
             y: number,
             checkTreshold?: boolean,
             pointSize: number = 1,
             color?: Color.RGBA
-        ): void {
+        ): void => {
             pushColor(color);
 
             // Correct for pixel ratio
@@ -504,7 +542,7 @@ function GLRenderer(
                 pointSize *= pixelRatio;
             }
 
-            if (settings.usePreallocated) {
+            if (settings.usePreallocated && vbuffer) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize);
                 vlen += 4;
             } else {
@@ -513,24 +551,24 @@ function GLRenderer(
                 data.push(checkTreshold ? pixelRatio : 0);
                 data.push(pointSize);
             }
-        }
+        };
 
         /**
          * @private
          */
-        function closeSegment(): void {
+        const closeSegment = (): void => {
             if (inst.segments.length) {
                 inst.segments[
                     inst.segments.length - 1
                 ].to = data.length || vlen;
             }
-        }
+        };
 
         /**
          * Create a new segment for the current set.
          * @private
          */
-        function beginSegment(): void {
+        const beginSegment = (): void => {
             // Insert a segment on the series.
             // A segment is just a start indice.
             // When adding a segment, if one exists from before, it should
@@ -551,19 +589,19 @@ function GLRenderer(
                 from: data.length || vlen
             });
 
-        }
+        };
 
         /**
          * Push a rectangle to the data buffer.
          * @private
          */
-        function pushRect(
+        const pushRect = (
             x: number,
             y: number,
             w: number,
             h: number,
             color?: Color.RGBA
-        ): void {
+        ): void => {
             pushColor(color);
             vertice(x + w, y);
             pushColor(color);
@@ -577,7 +615,7 @@ function GLRenderer(
             vertice(x + w, y + h);
             pushColor(color);
             vertice(x + w, y);
-        }
+        };
 
         // Create the first segment
         beginSegment();
@@ -589,14 +627,11 @@ function GLRenderer(
             // translated, so we skip the shader translation.
             inst.skipTranslation = true;
             // Force triangle draw mode
-            inst.drawMode = 'triangles';
+            inst.drawMode = 'TRIANGLES';
 
             // We don't have a z component in the shader, so we need to sort.
             if (points[0].node && points[0].node.levelDynamic) {
-                points.sort(function (
-                    a: Highcharts.BoostGLPoint,
-                    b: Highcharts.BoostGLPoint
-                ): number {
+                points.sort((a, b): number => {
                     if (a.node) {
                         if (
                             (a.node.levelDynamic as any) >
@@ -615,9 +650,10 @@ function GLRenderer(
                 });
             }
 
-            points.forEach(function (point: Point): void {
-                let plotY = point.plotY,
-                    swidth,
+            points.forEach((point: Point): void => {
+                const plotY = point.plotY;
+
+                let swidth,
                     pointAttr;
 
                 if (
@@ -630,9 +666,9 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as ColorMapMixin.ColorMapSeries)
+                        (point.series as ColorMapComposition.SeriesComposition)
                             .colorAttribs(
-                                point as ColorMapMixin.ColorMapPoint
+                                point as ColorMapComposition.PointComposition
                             ) :
                         pointAttr = point.series.pointAttribs(point);
 
@@ -696,7 +732,7 @@ function GLRenderer(
         }
 
         // Extract color axis
-        // (chart.axes || []).forEach(function (a) {
+        // (chart.axes || []).forEach((a): void => {
         //     if (H.ColorAxis && a instanceof H.ColorAxis) {
         //         caxis = a;
         //     }
@@ -866,10 +902,10 @@ function GLRenderer(
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 let zoneColor: Color.RGBA|undefined;
-                zones.some(function ( // eslint-disable-line no-loop-func
+                zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
-                ): boolean {
+                ): boolean => {
                     const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
@@ -922,7 +958,7 @@ function GLRenderer(
                     // If this is  rendered as a point, just skip drawing it
                     // entirely, as we're not dependandt on lineTo'ing to it.
                     // See #8197
-                    if (inst.drawMode === 'points') {
+                    if (inst.drawMode === 'POINTS') {
                         continue;
                     }
 
@@ -1041,13 +1077,10 @@ function GLRenderer(
             console.log('skipped points:', skipped); // eslint-disable-line no-console
         }
 
-        /**
-         * @private
-         */
-        function pushSupplementPoint(
+        const pushSupplementPoint = (
             point: PositionObject,
             atStart?: boolean
-        ): void {
+        ): void => {
             if (!settings.useGPUTranslations) {
                 inst.skipTranslation = true;
                 point.x = xAxis.toPixels(point.x, true);
@@ -1058,7 +1091,7 @@ function GLRenderer(
             // since there's no point here that would have a marker.
 
             if (atStart) {
-                data = [point.x, point.y, 0, 2].concat(data);
+                this.data = [point.x, point.y, 0, 2].concat(this.data);
                 return;
             }
 
@@ -1068,7 +1101,7 @@ function GLRenderer(
                 0 as any,
                 2
             );
-        }
+        };
 
         if (
             !hadPoints &&
@@ -1092,9 +1125,14 @@ function GLRenderer(
      * Push a series to the renderer
      * If we render the series immediatly, we don't have to loop later
      * @private
-     * @param s {Highchart.Series} - the series to push
+     * @param {Highchart.Series} s
+     * The series to push.
      */
-    function pushSeries(s: Series): void {
+    public pushSeries(s: Series): void {
+        const markerData = this.markerData,
+            series = this.series,
+            settings = this.settings;
+
         if (series.length > 0) {
             // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {
@@ -1121,21 +1159,7 @@ function GLRenderer(
                 s.options.marker.enabled !== false :
                 false,
             showMarkers: true,
-            drawMode: (
-                {
-                    'area': 'lines',
-                    'arearange': 'lines',
-                    'areaspline': 'lines',
-                    'column': 'lines',
-                    'columnrange': 'lines',
-                    'bar': 'lines',
-                    'line': 'line_strip',
-                    'scatter': 'points',
-                    'heatmap': 'triangles',
-                    'treemap': 'triangles',
-                    'bubble': 'points'
-                } as Record<string, Highcharts.BoostGLDrawModeValue>
-            )[s.type] || 'line_strip'
+            drawMode: WGLDrawMode[s.type] || 'LINE_STRIP'
         };
 
         if (s.index >= series.length) {
@@ -1145,7 +1169,7 @@ function GLRenderer(
         }
 
         // Add the series data to our buffer(s)
-        pushSeriesData(s, obj);
+        this.pushSeriesData(s, obj);
 
         if (settings.debug.timeSeriesProcessing) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
@@ -1158,10 +1182,12 @@ function GLRenderer(
      * Should be called after clearing and before rendering
      * @private
      */
-    function flush(): void {
-        series = [];
-        (exports as any).data = data = [];
-        markerData = [];
+    private flush(): void {
+        const vbuffer = this.vbuffer;
+
+        this.data = [];
+        this.markerData = [];
+        this.series = [];
 
         if (vbuffer) {
             vbuffer.destroy();
@@ -1171,14 +1197,17 @@ function GLRenderer(
     /**
      * Pass x-axis to shader
      * @private
-     * @param axis {Highcharts.Axis} - the x-axis
+     * @param {Highcharts.Axis} axis
+     * The x-axis.
      */
-    function setXAxis(axis: Axis): void {
+    private setXAxis(axis: Axis): void {
+        const shader = this.shader;
+
         if (!shader) {
             return;
         }
 
-        const pixelRatio = getPixelRatio();
+        const pixelRatio = this.getPixelRatio();
 
         shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
@@ -1194,14 +1223,17 @@ function GLRenderer(
     /**
      * Pass y-axis to shader
      * @private
-     * @param axis {Highcharts.Axis} - the y-axis
+     * @param {Highcharts.Axis} axis
+     * The y-axis.
      */
-    function setYAxis(axis: Axis): void {
+    private setYAxis(axis: Axis): void {
+        const shader = this.shader;
+
         if (!shader) {
             return;
         }
 
-        const pixelRatio = getPixelRatio();
+        const pixelRatio = this.getPixelRatio();
 
         shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
@@ -1217,10 +1249,18 @@ function GLRenderer(
     /**
      * Set the translation threshold
      * @private
-     * @param has {boolean} - has threshold flag
-     * @param translation {Float} - the threshold
+     * @param {boolean} has
+     * Has threshold flag.
+     * @param {numbe} translation
+     * The threshold.
      */
-    function setThreshold(has: boolean, translation: number): void {
+    private setThreshold(has: boolean, translation: number): void {
+        const shader = this.shader;
+
+        if (!shader) {
+            return;
+        }
+
         shader.setUniform('hasThreshold', has as any);
         shader.setUniform('translatedThreshold', translation);
     }
@@ -1230,17 +1270,24 @@ function GLRenderer(
      * This renders all pushed series.
      * @private
      */
-    function render(chart: Chart): (false|undefined) {
+    private renderChart(chart: Chart): (false|undefined) {
+        const gl = this.gl,
+            settings = this.settings,
+            shader = this.shader,
+            vbuffer = this.vbuffer;
 
-        const pixelRatio = getPixelRatio();
+        const pixelRatio = this.getPixelRatio();
         if (chart) {
-            width = chart.chartWidth * pixelRatio;
-            height = chart.chartHeight * pixelRatio;
+            this.width = chart.chartWidth * pixelRatio;
+            this.height = chart.chartHeight * pixelRatio;
         } else {
             return false;
         }
 
-        if (!gl || !width || !height || !shader) {
+        const height = this.height,
+            width = this.width;
+
+        if (!gl || !shader || !width || !height) {
             return false;
         }
 
@@ -1254,25 +1301,26 @@ function GLRenderer(
         shader.bind();
 
         gl.viewport(0, 0, width, height);
-        shader.setPMatrix(orthoMatrix(width, height));
+        shader.setPMatrix(WGLRenderer.orthoMatrix(width, height));
 
         if (settings.lineWidth > 1 && !H.isMS) {
             gl.lineWidth(settings.lineWidth);
         }
 
-        vbuffer.build((exports as any).data, 'aVertexPosition', 4);
-        vbuffer.bind();
+        if (vbuffer) {
+            vbuffer.build(this.data, 'aVertexPosition', 4);
+            vbuffer.bind();
+        }
 
         shader.setInverted(chart.inverted as any);
 
         // Render the series
-        series.forEach(function (
-            s: Highcharts.BoostGLSeriesObject,
+        this.series.forEach((
+            s: WGLSeriesObject,
             si: number
-        ): void {
-            let options = s.series.options,
+        ): void => {
+            const options = s.series.options,
                 shapeOptions = options.marker,
-                sindex,
                 lineWidth = (
                     typeof options.lineWidth !== 'undefined' ?
                         options.lineWidth :
@@ -1282,7 +1330,6 @@ function GLRenderer(
                 hasThreshold = isNumber(threshold),
                 yBottom = s.series.yAxis.getThreshold(threshold),
                 translatedThreshold = yBottom,
-                cbuffer,
                 showMarkers = pick(
                     options.marker ? options.marker.enabled : null,
                     s.series.xAxis.isRadial ? true : null,
@@ -1293,11 +1340,14 @@ function GLRenderer(
                                 10
                         ) || 10)
                 ),
-                fillColor,
-                shapeTexture = textureHandles[
+                shapeTexture = this.textureHandles[
                     (shapeOptions && shapeOptions.symbol) ||
                     (s.series.symbol as any)
-                ] || textureHandles.circle,
+                ] || this.textureHandles.circle;
+
+            let sindex,
+                cbuffer,
+                fillColor,
                 scolor = [];
 
             if (
@@ -1321,7 +1371,7 @@ function GLRenderer(
             } else {
                 fillColor =
                     (
-                        s.drawMode === 'points' && // #14260
+                        s.drawMode === 'POINTS' && // #14260
                         s.series.pointAttribs &&
                         s.series.pointAttribs().fill
                     ) ||
@@ -1346,7 +1396,7 @@ function GLRenderer(
 
             // This is very much temporary
             if (
-                s.drawMode === 'lines' &&
+                s.drawMode === 'LINES' &&
                 settings.useAlpha &&
                 (scolor[3] as any) < 1
             ) {
@@ -1383,24 +1433,24 @@ function GLRenderer(
             // If there are entries in the colorData buffer, build and bind it.
             if (s.colorData.length > 0) {
                 shader.setUniform('hasColor', 1.0);
-                cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
+                cbuffer = new WGLVertexBuffer(gl, shader);
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
             } else {
                 // #15869, a buffer with fewer points might already be bound by
                 // a different series/chart causing out of range errors
                 gl.disableVertexAttribArray(
-                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                    gl.getAttribLocation(shader.getProgram() as any, 'aColor')
                 );
             }
 
             // Set series specific uniforms
             shader.setColor(scolor);
-            setXAxis(s.series.xAxis);
-            setYAxis(s.series.yAxis);
-            setThreshold(hasThreshold, translatedThreshold as any);
+            this.setXAxis(s.series.xAxis);
+            this.setYAxis(s.series.yAxis);
+            this.setThreshold(hasThreshold, translatedThreshold as any);
 
-            if (s.drawMode === 'points') {
+            if (s.drawMode === 'POINTS') {
                 shader.setPointSize(pick(
                     options.marker && options.marker.radius,
                     0.5
@@ -1424,9 +1474,13 @@ function GLRenderer(
                 asCircle[s.series.type] || false
             );
 
+            if (!vbuffer) {
+                return;
+            }
+
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
-            if (lineWidth > 0 || s.drawMode !== 'line_strip') {
+            if (lineWidth > 0 || s.drawMode !== 'LINE_STRIP') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,
@@ -1457,29 +1511,29 @@ function GLRenderer(
             console.timeEnd('gl rendering'); // eslint-disable-line no-console
         }
 
-        if (postRenderCallback) {
-            postRenderCallback();
+        if (this.postRenderCallback) {
+            this.postRenderCallback(this);
         }
 
-        flush();
+        this.flush();
     }
 
     /**
      * Render the data when ready
      * @private
      */
-    function renderWhenReady(chart: Chart): (false|undefined) {
-        clear();
+    public render(chart: Chart): (false|undefined) {
+        this.clear();
 
         if (chart.renderer.forExport) {
-            return render(chart);
+            return this.renderChart(chart);
         }
 
-        if (isInited) {
-            render(chart);
+        if (this.isInited) {
+            this.renderChart(chart);
         } else {
-            setTimeout(function (): void {
-                renderWhenReady(chart);
+            setTimeout((): void => {
+                this.render(chart);
             }, 1);
         }
     }
@@ -1488,37 +1542,30 @@ function GLRenderer(
      * Set the viewport size in pixels
      * Creates an orthographic perspective matrix and applies it.
      * @private
-     * @param w {Integer} - the width of the viewport
-     * @param h {Integer} - the height of the viewport
      */
-    function setSize(w: number, h: number): void {
+    public setSize(width: number, height: number): void {
+        const shader = this.shader;
+
         // Skip if there's no change, or if we have no valid shader
-        if ((width === w && height === h) || !shader) {
+        if (!shader || (this.width === width && this.height === height)) {
             return;
         }
 
-        width = w;
-        height = h;
+        this.width = width;
+        this.height = height;
 
         shader.bind();
-        shader.setPMatrix(orthoMatrix(width, height));
+        shader.setPMatrix(WGLRenderer.orthoMatrix(width, height));
     }
 
     /**
      * Init OpenGL
      * @private
-     * @param canvas {HTMLCanvas} - the canvas to render to
      */
-    function init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
-        let i = 0,
-            contexts = [
-                'webgl',
-                'experimental-webgl',
-                'moz-webgl',
-                'webkit-3d'
-            ];
+    public init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
+        const settings = this.settings;
 
-        isInited = false;
+        this.isInited = false;
 
         if (!canvas) {
             return false;
@@ -1528,18 +1575,20 @@ function GLRenderer(
             console.time('gl setup'); // eslint-disable-line no-console
         }
 
-        for (; i < contexts.length; i++) {
-            gl = canvas.getContext(contexts[i], {
+        for (let i = 0; i < contexts.length; ++i) {
+            this.gl = canvas.getContext(contexts[i], {
             //    premultipliedAlpha: false
             }) as any;
-            if (gl) {
+            if (this.gl) {
                 break;
             }
         }
 
+        const gl = this.gl;
+
         if (gl) {
             if (!noFlush) {
-                flush();
+                this.flush();
             }
         } else {
             return false;
@@ -1552,23 +1601,20 @@ function GLRenderer(
         // gl.depthMask(gl.FALSE);
         gl.depthFunc(gl.LESS);
 
-        shader = GLShader(gl) as any; // eslint-disable-line new-cap
+        const shader = this.shader = new WGLShader(gl);
 
         if (!shader) {
             // We need to abort, there's no shader context
             return false;
         }
 
-        vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
+        this.vbuffer = new WGLVertexBuffer(gl, shader);
 
-        /**
-         * @private
-         */
-        function createTexture(
+        const createTexture = (
             name: string,
-            fn: Highcharts.BoostGLTextureCallbackFunction
-        ): void {
-            const props: Highcharts.BoostGLTextureObject = {
+            fn: WGLTextureCallbackFunction
+        ): void => {
+            const props: WGLTextureObject = {
                     isReady: false,
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()
@@ -1576,7 +1622,7 @@ function GLRenderer(
                 ctx: CanvasRenderingContext2D =
                     props.texture.getContext('2d') as any;
 
-            textureHandles[name] = props;
+            this.textureHandles[name] = props;
 
             props.texture.width = 512;
             props.texture.height = 512;
@@ -1638,10 +1684,10 @@ function GLRenderer(
             } catch (e) {
                 // silent error
             }
-        }
+        };
 
         // Circle shape
-        createTexture('circle', function (ctx: CanvasRenderingContext2D): void {
+        createTexture('circle', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.arc(256, 256, 256, 0, 2 * Math.PI);
             ctx.stroke();
@@ -1649,14 +1695,12 @@ function GLRenderer(
         });
 
         // Square shape
-        createTexture('square', function (ctx: CanvasRenderingContext2D): void {
+        createTexture('square', (ctx: CanvasRenderingContext2D): void => {
             ctx.fillRect(0, 0, 512, 512);
         });
 
         // Diamond shape
-        createTexture('diamond', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
+        createTexture('diamond', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.moveTo(256, 0);
             ctx.lineTo(512, 256);
@@ -1667,9 +1711,7 @@ function GLRenderer(
         });
 
         // Triangle shape
-        createTexture('triangle', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
+        createTexture('triangle', (ctx: CanvasRenderingContext2D): void => {
             ctx.beginPath();
             ctx.moveTo(0, 512);
             ctx.lineTo(256, 0);
@@ -1679,9 +1721,9 @@ function GLRenderer(
         });
 
         // Triangle shape (rotated)
-        createTexture('triangle-down', function (
+        createTexture('triangle-down', (
             ctx: CanvasRenderingContext2D
-        ): void {
+        ): void => {
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(256, 512);
@@ -1690,7 +1732,7 @@ function GLRenderer(
             ctx.fill();
         });
 
-        isInited = true;
+        this.isInited = true;
 
         if (settings.debug.timeSetup) {
             console.timeEnd('gl setup'); // eslint-disable-line no-console
@@ -1700,35 +1742,27 @@ function GLRenderer(
     }
 
     /**
-     * Check if we have a valid OGL context
      * @private
-     * @return {boolean}
-     * true if the context is valid
+     * @todo use it
      */
-    function valid(): boolean {
-        return (gl as any) !== false;
-    }
+    public destroy(): void {
+        const gl = this.gl,
+            shader = this.shader,
+            vbuffer = this.vbuffer;
 
-    /**
-     * Check if the renderer has been initialized
-     * @private
-     * @return {boolean}
-     * true if it has, false if not
-     */
-    function inited(): boolean {
-        return isInited;
-    }
+        this.flush();
 
-    /**
-     * @private
-     */
-    function destroy(): void {
-        flush();
-        vbuffer.destroy();
-        shader.destroy();
+        if (vbuffer) {
+            vbuffer.destroy();
+        }
+
+        if (shader) {
+            shader.destroy();
+        }
+
         if (gl) {
 
-            objectEach(textureHandles, function (texture): void {
+            objectEach(this.textureHandles, (texture): void => {
                 if (texture.handle) {
                     gl.deleteTexture(texture.handle);
                 }
@@ -1739,29 +1773,12 @@ function GLRenderer(
         }
     }
 
-    // /////////////////////////////////////////////////////////////////////////
-    exports = {
-        allocateBufferForSingleSeries: allocateBufferForSingleSeries,
-        pushSeries: pushSeries,
-        setSize: setSize,
-        inited: inited,
-        setThreshold: setThreshold,
-        init: init,
-        render: renderWhenReady,
-        settings: settings,
-        valid: valid,
-        clear: clear,
-        flush: flush,
-        setXAxis: setXAxis,
-        setYAxis: setYAxis,
-        data: data,
-        gl: getGL,
-        allocateBuffer: allocateBuffer,
-        destroy: destroy,
-        setOptions: setOptions
-    };
-
-    return exports as any;
 }
 
-export default GLRenderer;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default WGLRenderer;

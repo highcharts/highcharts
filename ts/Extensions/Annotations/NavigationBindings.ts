@@ -10,12 +10,13 @@
 
 'use strict';
 
+import type AnnotationsOptions from './AnnotationsOptions';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-import Annotation from './Annotations.js';
+import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import F from '../../Core/FormatUtilities.js';
@@ -58,9 +59,15 @@ declare module '../../Core/PointerEvent' {
     }
 }
 
+declare module './AnnotationsOptions' {
+    interface AnnotationsOptions {
+        langKey?: string;
+    }
+}
+
 declare module '../Exporting/NavigationOptions' {
     interface NavigationOptions {
-        annotationsOptions?: DeepPartial<Highcharts.AnnotationsOptions>;
+        annotationsOptions?: DeepPartial<AnnotationsOptions>;
         bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
         bindingsClassName?: string;
         events?: Highcharts.NavigationEventsOptions;
@@ -93,9 +100,6 @@ declare global {
         }
         interface AnnotationNonEditableObject {
             rectangle: Array<string>;
-        }
-        interface AnnotationsOptions {
-            langKey?: string;
         }
         interface LangNavigationOptions {
             popup?: PopupOptions;
@@ -365,11 +369,13 @@ class NavigationBindings {
         this.chart = chart;
         this.options = options;
         this.eventsToUnbind = [];
-        this.container = (
-            doc.getElementsByClassName(
-                this.options.bindingsClassName || ''
-            ) as HTMLCollectionOf<HTMLElement>
-        );
+        this.container = this.chart.container
+            .querySelectorAll('.' + this.options.bindingsClassName);
+
+        if (!this.container.length) {
+            this.container = doc
+                .querySelectorAll('.' + this.options.bindingsClassName);
+        }
     }
 
     /* *
@@ -382,7 +388,7 @@ class NavigationBindings {
     public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> =
         void 0 as any;
     public chart: Highcharts.AnnotationChart;
-    public container: HTMLCollectionOf<HTMLDOMElement>;
+    public container: NodeListOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
@@ -845,7 +851,7 @@ class NavigationBindings {
                 options.shapes && options.shapes[0] &&
                     options.shapes[0].type,
                 options.labels && options.labels[0] &&
-                    options.labels[0].itemType,
+                    options.labels[0].type,
                 'label'
             ),
             nonEditables = (

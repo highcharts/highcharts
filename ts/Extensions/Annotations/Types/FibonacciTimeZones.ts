@@ -14,9 +14,12 @@
  *
  * */
 
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import InfinityLine from './InfinityLine.js';
@@ -24,15 +27,15 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationControllable {
-            secondLineEdgePoints: [Function, Function];
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Controllables/ControllableLike' {
+    interface ControllableLike {
+        secondLineEdgePoints: [Function, Function];
     }
 }
 
@@ -171,7 +174,7 @@ class FibonacciTimeZones extends CrookedLine {
             typeOptions = options.typeOptions as FibonacciTimeZones.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.controlPointOptions
@@ -288,7 +291,7 @@ namespace FibonacciTimeZones {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: Highcharts.AnnotationControlPointOptionsObject;
+        controlPointOptions: AnnotationControlPointOptionsObject;
     }
 }
 

@@ -27,7 +27,10 @@ const chart = Highcharts.chart('container', {
     }],
     drilldown: {
         breadcrumbs: {
-            rtl: true
+            rtl: true,
+            position: {
+                align: 'right'
+            }
         },
         series: [{
             name: 'Fruits',

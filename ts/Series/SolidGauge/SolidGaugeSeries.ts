@@ -231,13 +231,13 @@ class SolidGaugeSeries extends GaugeSeries {
 
         // Handle the threshold option
         if (isNumber(options.threshold)) {
-            thresholdAngleRad = yAxis.startAngleRad + (yAxis.translate(
+            thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
                 options.threshold,
-                null,
-                null,
-                null,
+                void 0,
+                void 0,
+                void 0,
                 true
-            ) as any);
+            );
         }
         this.thresholdAngleRad = pick(
             thresholdAngleRad, yAxis.startAngleRad
@@ -249,13 +249,13 @@ class SolidGaugeSeries extends GaugeSeries {
             if (!point.isNull) { // condition like in pie chart
                 let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
-                        (yAxis.translate(
+                        yAxis.translate(
                             point.y as any,
-                            null,
-                            null,
-                            null,
+                            void 0,
+                            void 0,
+                            void 0,
                             true
-                        ) as any)),
+                        )),
                     radius = ((
                         pInt(
                             pick(

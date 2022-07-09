@@ -18,11 +18,13 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMapComposition';
+import type { DrawPointParams } from '../DrawPointUtilities';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 
-import DrawPointComposition from '../DrawPointComposition.js';
+import DPU from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -91,6 +93,12 @@ class TreemapPoint extends ScatterPoint {
 
     /* eslint-disable valid-jsdoc */
 
+    public draw(
+        params: DrawPointParams
+    ): void {
+        DPU.draw(this, params);
+    }
+
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this),
             series = this.series,
@@ -135,7 +143,7 @@ class TreemapPoint extends ScatterPoint {
     }
 
     public shouldDraw(): boolean {
-        return isNumber(this.plotY) && this.y !== null;
+        return DPU.shouldDraw(this);
     }
 
     /* eslint-enable valid-jsdoc */
@@ -148,14 +156,12 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
-interface TreemapPoint extends DrawPointComposition.Composition {
+interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
     setVisible: PiePoint.prototype.setVisible
 });
-
-DrawPointComposition.compose(TreemapPoint);
 
 /* *
  *

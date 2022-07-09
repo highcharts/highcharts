@@ -519,7 +519,8 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
         the default options, the data should not be grouped.`
     );
     assert.notOk(
-        chart.series[0].boostClipRect,
+        chart.series[0].boost &&
+        chart.series[0].boost.clipRect,
         `When the boost module is present and the chart is initiated with
         the default options, the chart should not be boosted.`
     );
@@ -533,7 +534,9 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
         ordinal positions should be still calculated.`
     );
     assert.notOk(
-        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        chart.series[0].boost &&
+        chart.series[0].boost.clipRect &&
+        chart.series[0].currentDataGrouping,
         `After updating the boostThreshold,
         the chart should not be boosted nor grouped.`
     );
@@ -554,8 +557,8 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
     );
     assert.notOk(
         (
-            chart.series[0].boostClipRect ||
-            chart.boostClipRect
+            (chart.series[0].boost && chart.series[0].boost.clipRect) ||
+            (chart.boost && chart.boost.clipRect)
         ) &&
         chart.series[0].currentDataGrouping,
         `When data grouping is enabled (forced), chart should not be boosted.`
@@ -569,8 +572,8 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
     assert.ok(
         chart.xAxis[0].ordinal.positions.length &&
         (
-            chart.series[0].boostClipRect ||
-            chart.boostClipRect
+            chart.series[0].boost.clipRect ||
+            chart.boost.clipRect
         ),
         `Only after explicitly disabling the data grouping
         chart should be boosted.`

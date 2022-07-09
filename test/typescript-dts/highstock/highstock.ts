@@ -96,17 +96,19 @@ function test_theme() {
             selected: 1
         },
         chart: {
-            resetZoomButton: {
-                theme: {
-                    states: {
-                        hover: {
-                            fill: '#c3d0db',
-                            style: {
-                                color: '#4285F4'
+            zooming: {
+                resetButton: {
+                    theme: {
+                        states: {
+                            hover: {
+                                fill: '#c3d0db',
+                                style: {
+                                    color: '#4285F4'
+                                }
                             }
                         }
-                    }
-                } as any
+                    } as any
+                }
             }
         },
         series: [{
