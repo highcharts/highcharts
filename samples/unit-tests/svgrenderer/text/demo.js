@@ -844,3 +844,80 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
         renderer.destroy();
     }
 });
+
+
+QUnit.test('textPath', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const path = ren
+        .path([
+            ['M', 50, 50],
+            ['L', 550, 350]
+        ])
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 2
+        })
+        .add();
+
+    const text = ren
+        .text('Hello path', 20, 20)
+        .setTextPath(path, {})
+        .add();
+
+    const textPathHref = text.element.querySelector('textPath')
+        .getAttribute('href');
+    assert.ok(
+        textPathHref,
+        'A `textPath` element should be present'
+    );
+
+    text.attr({
+        text: 'Hello updated path'
+    });
+
+    assert.strictEqual(
+        text.element.querySelector('textPath').getAttribute('href'),
+        textPathHref,
+        'The textPath should be preserved after modifying the text'
+    );
+
+    text.setTextPath(undefined, { attributes: { dy: 20 } });
+
+    assert.strictEqual(
+        text.element.querySelector('textPath').getAttribute('href'),
+        textPathHref,
+        'The textPath should be preserved after modifying options'
+    );
+    assert.strictEqual(
+        text.element.getAttribute('dy'),
+        '20',
+        'The text path options should be updated'
+    );
+
+    text.css({
+        width: '100px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+    });
+    assert.ok(
+        text.element.textContent.indexOf('\u2026') !== -1,
+        'Width set, the text should have an ellipsis'
+    );
+
+    text.css({
+        width: 'auto',
+        overflow: 'auto',
+        textOverflow: 'none'
+    });
+    assert.ok(
+        text.element.textContent.indexOf('\u2026') === -1,
+        'Width unset, the text should not have an ellipsis'
+    );
+
+    ren.destroy();
+});

@@ -15,16 +15,16 @@
  * */
 
 import type TreegraphPointOptions from './TreegraphPointOptions';
-import type TreegraphSeries from './TreegraphSeries';
 import type TreegraphNode from './TreegraphNode';
 import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import TreegraphSeries from './TreegraphSeries';
 import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
 import Point from '../../Core/Series/Point.js';
 import { Palette } from '../../Core/Color/Palettes';
-const { merge, addEvent, pick } = U;
+const { merge, addEvent, pick, fireEvent } = U;
 const {
     seriesTypes: {
         treemap: {
@@ -147,6 +147,7 @@ class TreegraphPoint extends TreemapPoint {
 
     toggleCollapse(state?: boolean): void {
         this.collapsed = pick(state, !this.collapsed);
+        fireEvent(this.series, 'toggleCollapse');
         this.series.redraw();
     }
 
