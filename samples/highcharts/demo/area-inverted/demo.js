@@ -14,6 +14,9 @@ Highcharts.chart('container', {
             }
         }
     },
+    tooltip: {
+        pointFormat: '&#8226; {series.name}: <b>{point.y} B</b>'
+    },
     legend: {
         layout: 'vertical',
         align: 'right',
@@ -25,29 +28,27 @@ Highcharts.chart('container', {
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
-    xAxis: {
-        categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
-    },
     yAxis: {
         labels: {
-            formatter(axis) {
-                return axis.value / 100 + ' B';
-            }
+            format: '${text}'
         },
         title: {
-            text: 'Revenue ($)'
+            text: 'Revenue (billions)'
         }
     },
     plotOptions: {
+        series: {
+            pointStart: 2014
+        },
         area: {
             fillOpacity: 0.5
         }
     },
     series: [{
         name: 'Alibaba',
-        data: [1144, 1489, 2140, 3403, 5152, 7049, 9446, 12944]
+        data: [11.44, 14.89, 21.40, 34.03, 51.52, 70.49, 94.46, 129.44]
     }, {
         name: 'Meta (Facebook)',
-        data: [1149, 1708, 2688, 3994, 5501, 6965, 8417, 11793]
+        data: [11.49, 17.08, 26.88, 39.94, 55.01, 69.65, 84.17, 117.93]
     }]
 });
