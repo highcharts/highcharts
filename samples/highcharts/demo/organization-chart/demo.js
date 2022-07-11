@@ -67,11 +67,11 @@ Highcharts.chart('container', {
         }, {
             id: 'CEO',
             title: 'CEO',
-            name: 'Grethe Hjetland',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131126/Highsoft_03862_.jpg'
+            name: 'Atle Sivertsen',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2022/06/30081411/portrett-sorthvitt.jpg'
         }, {
             id: 'HR',
-            title: 'HR/CFO',
+            title: 'CFO',
             name: 'Anne Jorunn Fjærestad',
             color: '#007ad0',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131210/Highsoft_04045_.jpg'
