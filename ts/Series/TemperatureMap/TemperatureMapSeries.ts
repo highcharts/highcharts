@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2021
- *  Rafal Sebestjanski, Piotr Madej, Askel Eirik Johansson
+ *  Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -24,14 +24,8 @@ import TemperatureMapPoint from './TemperatureMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import GradientColorStop from '../../Core/Color/GradientColor';
 
-// const {
-//     seriesTypes: {
-//         mapbubble: MapBubbleSeries
-//     }
-// } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ColorType from '../../Core/Color/ColorType';
-import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike';
 import { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 const {
     correctFloat,
@@ -120,17 +114,10 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
         let sizeFactor: number = colorStop || (1 / temperatureColors.length);
 
-        // Recalculate minPxSize only when translating, not when calculating
-        // radii
+        // Recalculate minPxSize only when translating, but not when
+        // calculating radii
         if (this.adjustMinSize) {
             ret.minPxSize = ret.minPxSize * sizeFactor;
-        }
-
-        if (temperatureColors && temperatureColors.length && !colorStop) {
-            // ret.maxPxSize = Math.max(
-            //     this.getPxSize(this.options.maxSize),
-            //     ret.minPxSize
-            // );
         }
 
         return ret;
@@ -156,7 +143,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
         if (isNumber(colorStop)) {
             ret = (ret || 0) * colorStop;
         } else if (temperatureColors && isNumber(colorIndex)) {
-            ret = (ret || 0) * (correctFloat(
+            ret = (correctFloat(ret || 0) * (
                 1 - colorIndex / temperatureColors.length
             ));
         }
@@ -211,15 +198,10 @@ class TemperatureMapSeries extends MapBubbleSeries {
     }
 
     public drawPoints(): void {
-        const series = this,
-            pointLength = series.points.length;
+        const series = this;
 
-        // QUESTION: Why colors from chart.options?
-        // let temperatureColors: any = series.options.temperatureColors ||
-        // series.chart.options.temperatureColors,
         let temperatureColors: any =
-            series.options.temperatureColors.slice().reverse(),
-            i: number;
+            series.options.temperatureColors.slice().reverse();
 
         const colorsLength = temperatureColors.length;
         const options: any = series.options;
@@ -238,8 +220,6 @@ class TemperatureMapSeries extends MapBubbleSeries {
                         cy: 0.5,
                         r: 0.5
                     },
-                    // TODO, refactor how the array is created.
-                    // There is code that can be shared.
                     stops: [
                         [ii === colorsLength - 1 ? 0 : 0.5, color],
                         [1, (new Color(color)).setOpacity(0).get('rgba')]
@@ -252,7 +232,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                 this.temperatureColorIndex = ii;
 
-                series.getRadii(); // recalc. radii
+                series.getRadii(); // recalculate radii
 
                 series.adjustMinSize = true;
                 series.translateBubble(); // use radii
@@ -367,10 +347,6 @@ class TemperatureMapSeries extends MapBubbleSeries {
         if (options.marker) {
             options.marker.fillColor = series.color;
         }
-
-        // series.options.maxSize = temperatureColors[0].size;
-        // series.getRadii(); // recalc. radii
-        // series.translateBubble(); // use radii
     }
 
     /* *
@@ -383,13 +359,11 @@ class TemperatureMapSeries extends MapBubbleSeries {
     public options: TemperatureMapSeriesOptions = void 0 as any;
     public points: Array<TemperatureMapPoint> = void 0 as any;
 
-
     /**
      *
      *  Functions
      *
      */
-
 
 }
 
