@@ -31,6 +31,7 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
+import type NavigationBindings from './NavigationBindings';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
@@ -55,6 +56,7 @@ import EventEmitterMixin from './Mixins/EventEmitterMixin.js';
 import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
+import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 const {
@@ -217,12 +219,16 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
      *
      * */
 
+    // @todo use NavigationBindings as internal parameter
     public static compose(
         ChartClass: typeof Chart,
+        NavigationBindingsClass: typeof NavigationBindings,
+        PointerClass: typeof Pointer,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
+        PopupComposition.compose(NavigationBindingsClass, PointerClass);
     }
 
     /* *

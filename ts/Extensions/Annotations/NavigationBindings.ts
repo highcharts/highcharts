@@ -1262,6 +1262,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
     );
 }
 
+// @todo internal composition
 if ((H as any).Annotation) {
     // Basic shapes:
     selectableAnnotation(Annotation);
