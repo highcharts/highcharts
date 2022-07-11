@@ -18,6 +18,8 @@
  *
  * */
 
+import type Annotation from '../Annotation';
+import type AnnotationsOptions from '../AnnotationsOptions';
 import type {
     HTMLDOMElement,
     SVGDOMElement
@@ -34,6 +36,19 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+interface PopupConfigObject {
+    annotation: Annotation;
+    formType: string;
+    onSubmit: Function;
+    options: AnnotationsOptions;
+}
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -46,6 +61,9 @@ const composedClasses: Array<Function> = [];
  *
  * */
 
+/**
+ * @private
+ */
 function compose(
     NagivationBindingsClass: typeof NavigationBindings,
     PointerClass: typeof Pointer
@@ -78,15 +96,21 @@ function compose(
     }
 }
 
+/**
+ * @private
+ */
 function onNavigationBindingsClosePopup(this: NavigationBindings): void {
     if (this.popup) {
         this.popup.closePopup();
     }
 }
 
+/**
+ * @private
+ */
 function onNavigationBindingsShowPopup(
     this: NavigationBindings,
-    config: Highcharts.PopupConfigObject
+    config: PopupConfigObject
 ): void {
     if (!this.popup) {
         // Add popup to main container

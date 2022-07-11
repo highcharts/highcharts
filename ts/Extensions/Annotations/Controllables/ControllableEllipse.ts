@@ -319,7 +319,7 @@ class ControllableEllipse extends Controllable {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 

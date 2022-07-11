@@ -18,7 +18,6 @@
  *
  * */
 
-import type Annotation from '../Annotation';
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
@@ -40,32 +39,17 @@ const {
     pick
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface IndicatorNameCouple {
-            indicatorFullName: string;
-            indicatorType: string;
-        }
-        interface PopupConfigObject {
-            annotation: Annotation;
-            formType: string;
-            onSubmit: Function;
-            options: AnnotationsOptions;
-        }
-        interface DropdownParameters {
-            [key: string]: Array<string>;
-        }
-        interface InputAttributes {
-            value?: string;
-            type?: string;
-            htmlFor?: string;
-            labelClassName?: string;
-        }
-    }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface InputAttributes {
+    value?: string;
+    type?: string;
+    htmlFor?: string;
+    labelClassName?: string;
 }
 
 export interface PopupFieldsObject {
@@ -301,7 +285,7 @@ class Popup {
         option: string,
         indicatorType: string,
         parentDiv: HTMLDOMElement,
-        inputAttributes: Highcharts.InputAttributes
+        inputAttributes: InputAttributes
     ): HTMLDOMElement {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
