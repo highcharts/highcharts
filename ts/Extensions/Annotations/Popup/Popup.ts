@@ -26,6 +26,7 @@ import D from '../../../Core/DefaultOptions.js';
 const { getOptions } = D;
 import Pointer from '../../../Core/Pointer.js';
 import PopupIndicators from './PopupIndicators.js';
+import PopupTabs from './PopupTabs.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -92,18 +93,6 @@ declare global {
             linkedTo?: string;
             seriesId?: string;
             type?: string;
-        }
-        interface PopupTabsObject {
-            addContentItem(): HTMLDOMElement;
-            addMenuItem(
-                this: Popup,
-                tabName: string,
-                disableTab?: number
-            ): HTMLDOMElement;
-            deselectAll(this: Popup): void;
-            init(this: Popup, chart: AnnotationChart): void;
-            selectTab(this: Popup, tab: Element, index: number): void;
-            switchTabs(this: Popup, disableTab: number): void;
         }
         interface InputAttributes {
             value?: string;
@@ -395,169 +384,6 @@ const indexFilter = /\d/g,
     SELECT = 'select',
     SPAN = 'span';
 
-const tabs: Highcharts.PopupTabsObject = {
-    /**
-     * Init tabs. Create tab menu items, tabs containers
-     * @private
-     * @param {Highcharts.Chart} chart
-     * Reference to current chart
-     */
-    init: function (
-        this: Popup,
-        chart: Highcharts.AnnotationChart
-    ): void {
-        let tabs = this.tabs,
-            indicatorsCount = this.indicators.getAmount.call(chart),
-            firstTab; // run by default
-
-        if (!chart) {
-            return;
-        }
-
-        // create menu items
-        firstTab = tabs.addMenuItem.call(this, 'add');
-        tabs.addMenuItem.call(this, 'edit', indicatorsCount);
-
-        // create tabs containers
-        (tabs.addContentItem as any).call(this, 'add');
-        (tabs.addContentItem as any).call(this, 'edit');
-
-        tabs.switchTabs.call(this, indicatorsCount);
-
-        // activate first tab
-        tabs.selectTab.call(this, firstTab, 0);
-    },
-    /**
-     * Create tab menu item
-     * @private
-     * @param {string} tabName
-     * `add` or `edit`
-     * @param {number} [disableTab]
-     * Disable tab when 0
-     * @return {Highcharts.HTMLDOMElement}
-     * Created HTML tab-menu element
-     */
-    addMenuItem: function (
-        this: Popup,
-        tabName: string,
-        disableTab?: number
-    ): HTMLDOMElement {
-        let popupDiv = this.container,
-            className = PREFIX + 'tab-item',
-            lang = this.lang,
-            menuItem;
-
-        if (disableTab === 0) {
-            className += ' ' + PREFIX + 'tab-disabled';
-        }
-
-        // tab 1
-        menuItem = createElement(
-            SPAN,
-            {
-                className
-            },
-            void 0,
-            popupDiv
-        );
-        menuItem.appendChild(
-            doc.createTextNode(lang[tabName + 'Button'] || tabName)
-        );
-
-        menuItem.setAttribute(PREFIX + 'data-tab-type', tabName);
-
-        return menuItem;
-    },
-    /**
-     * Create tab content
-     * @private
-     * @return {HTMLDOMElement} - created HTML tab-content element
-     */
-    addContentItem: function (this: Popup): HTMLDOMElement {
-        const popupDiv = this.container;
-
-        return createElement(
-            DIV,
-            {
-                // #12100
-                className: PREFIX + 'tab-item-content ' +
-                    PREFIX + 'no-mousewheel'
-            },
-            void 0,
-            popupDiv
-        );
-    },
-    /**
-     * Add click event to each tab
-     * @private
-     * @param {number} disableTab
-     * Disable tab when 0
-     */
-    switchTabs: function (
-        this: Popup,
-        disableTab: number
-    ): void {
-        let _self = this,
-            popupDiv = this.container,
-            tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
-            dataParam;
-
-        tabs.forEach(function (tab: Element, i: number): void {
-
-            dataParam = tab.getAttribute(PREFIX + 'data-tab-type');
-
-            if (dataParam === 'edit' && disableTab === 0) {
-                return;
-            }
-
-            ['click', 'touchstart'].forEach(function (
-                eventName: string
-            ): void {
-                addEvent(tab, eventName, function (): void {
-
-                    // reset class on other elements
-                    _self.tabs.deselectAll.call(_self);
-                    _self.tabs.selectTab.call(_self, this, i);
-                });
-            });
-        });
-    },
-    /**
-     * Set tab as visible
-     * @private
-     * @param {globals.Element} - current tab
-     * @param {number} - Index of tab in menu
-     */
-    selectTab: function (
-        this: Popup,
-        tab: Element,
-        index: number
-    ): void {
-        const allTabs = this.container
-            .querySelectorAll('.' + PREFIX + 'tab-item-content');
-
-        tab.className += ' ' + PREFIX + 'tab-item-active';
-        allTabs[index].className += ' ' + PREFIX + 'tab-item-show';
-    },
-    /**
-     * Set all tabs as invisible.
-     * @private
-     */
-    deselectAll: function (this: Popup): void {
-        let popupDiv = this.container,
-            tabs = popupDiv
-                .querySelectorAll('.' + PREFIX + 'tab-item'),
-            tabsContent = popupDiv
-                .querySelectorAll('.' + PREFIX + 'tab-item-content'),
-            i;
-
-        for (i = 0; i < tabs.length; i++) {
-            tabs[i].classList.remove(PREFIX + 'tab-item-active');
-            tabsContent[i].classList.remove(PREFIX + 'tab-item-show');
-        }
-    }
-};
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
@@ -591,7 +417,6 @@ class Popup {
         this.chart = chart;
         this.iconsURL = iconsURL;
         this.lang = (getOptions().lang.navigation as any).popup;
-        this.tabs = tabs;
 
         // create popup div
         this.container = createElement(
@@ -636,7 +461,6 @@ class Popup {
     public formType?: string;
     public iconsURL: string;
     public lang: Record<string, string>;
-    public readonly tabs: Highcharts.PopupTabsObject;
 
     /* *
      *
@@ -1024,10 +848,12 @@ class Popup {
 
 interface Popup {
     indicators: typeof PopupIndicators;
+    tabs: typeof PopupTabs;
 }
 
 extend(Popup.prototype, {
-    indicators: PopupIndicators
+    indicators: PopupIndicators,
+    tabs: PopupTabs
 });
 
 addEvent(NavigationBindings, 'showPopup', function (
