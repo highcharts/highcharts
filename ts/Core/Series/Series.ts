@@ -3040,7 +3040,7 @@ class Series {
             clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
-            chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
+            chartSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ],
