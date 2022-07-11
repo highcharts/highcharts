@@ -23,6 +23,7 @@ import type FlagsPoint from '../Series/Flags/FlagsPoint';
 import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
 import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type NavigationBindingOptions from '../Extensions/Annotations/NavigationBindingOptions';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
@@ -49,12 +50,6 @@ const {
     pick,
     uniqueKey
 } = U;
-
-declare module '../Extensions/Exporting/NavigationOptions' {
-    interface NavigationOptions {
-        bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
-    }
-}
 
 /**
  * Internal types
@@ -877,7 +872,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
  *   @sample {highstock} stock/stocktools/custom-stock-tools-bindings
  *     Custom stock tools bindings
  */
-const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
+const stockToolsBindings: Record<string, NavigationBindingOptions> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
