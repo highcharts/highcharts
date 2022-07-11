@@ -22,7 +22,6 @@ import Color from '../../Core/Color/Color.js';
 import MapBubbleSeries from '../MapBubble/MapBubbleSeries.js';
 import TemperatureMapPoint from './TemperatureMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import GradientColorStop from '../../Core/Color/GradientColor';
 
 import U from '../../Core/Utilities.js';
 import ColorType from '../../Core/Color/ColorType';
@@ -160,8 +159,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
             !init &&
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
-            (this.options as any).temperatureColors.forEach(
-                (color: any, i: number): void => {
+            this.options.temperatureColors.forEach((_, i: number): void => {
                     this.points.forEach((point): void => {
                         const graphic = point.graphics[i];
 
@@ -198,21 +196,23 @@ class TemperatureMapSeries extends MapBubbleSeries {
     }
 
     public drawPoints(): void {
-        const series = this;
+        const series = this,
+            options = series.options,
+            temperatureColors =
+            series.options.temperatureColors.slice().reverse(),
+            colorsLength = temperatureColors.length;
 
-        let temperatureColors: any =
-            series.options.temperatureColors.slice().reverse();
-
-        const colorsLength = temperatureColors.length;
-        const options: any = series.options;
-
-        temperatureColors = temperatureColors.forEach(
-            (color: ColorType | GradientColorStop | any, ii: number): void => {
+        temperatureColors.forEach((
+                color: ColorType|[number, ColorType],
+                ii: number
+            ): void => {
                 if (isArray(color)) {
-                    (this as any).colorStop = color[0];
+                    series.colorStop = color[0];
                 }
 
-                color = typeof color === 'string' ? color : color[1];
+                if (isArray(color)) {
+                    color = color[1];
+                }
 
                 const fillColor = {
                     radialGradient: {
@@ -228,9 +228,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                 // Options from point level not supported - API says it should,
                 // but visually is it useful at all?
-                options.marker.fillColor = fillColor;
+                options.marker = merge(options.marker, { fillColor });
 
-                this.temperatureColorIndex = ii;
+                series.temperatureColorIndex = ii;
 
                 series.getRadii(); // recalculate radii
 
@@ -254,7 +254,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                     hasPointMarker,
                     markerAttribs;
 
-                this.temperatureColorIndex = null;
+                    series.temperatureColorIndex = null;
 
                 if (
                     (seriesMarkerOptions as any).enabled !== false ||
@@ -367,15 +367,10 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
 }
 
-/* *
- *
- *  Prototype properties
- *
- * */
-
 interface TemperatureMapSeries {
     colorStop: number;
     adjustMinSize: boolean;
+    temperatureColors: [ColorType|[number, ColorType]];
     temperatureColorIndex: null|number;
 }
 
