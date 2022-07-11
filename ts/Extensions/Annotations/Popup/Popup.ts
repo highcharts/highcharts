@@ -56,18 +56,8 @@ declare global {
             onSubmit: Function;
             options: AnnotationsOptions;
         }
-        interface PopupFieldsDictionary<T> {
-            [key: string]: (T | PopupFieldsDictionary<T>);
-        }
         interface DropdownParameters {
             [key: string]: Array<string>;
-        }
-        interface PopupFieldsObject {
-            actionType: string;
-            fields: PopupFieldsDictionary<string>;
-            linkedTo?: string;
-            seriesId?: string;
-            type?: string;
         }
         interface InputAttributes {
             value?: string;
@@ -78,19 +68,92 @@ declare global {
     }
 }
 
+export interface PopupFieldsObject {
+    actionType: string;
+    fields: PopupFieldsTree;
+    linkedTo?: string;
+    seriesId?: string;
+    type?: string;
+}
+
+export interface PopupFieldsTree {
+    [key: string]: (string | PopupFieldsTree);
+}
+
 /* *
  *
- *  Constants
+ *  Functions
  *
  * */
 
-const indexFilter = /\d/g,
-    PREFIX = 'highcharts-',
-    DIV = 'div',
-    INPUT = 'input',
-    LABEL = 'label',
-    BUTTON = 'button',
-    SELECT = 'select';
+/**
+ * Get values from all inputs and selections then create JSON.
+ *
+ * @private
+ *
+ * @param {Highcharts.HTMLDOMElement} parentDiv
+ * The container where inputs and selections are created.
+ *
+ * @param {string} type
+ * Type of the popup bookmark (add|edit|remove).
+ */
+function getFields(
+    parentDiv: HTMLDOMElement,
+    type: string
+): PopupFieldsObject {
+    const inputList = Array.prototype.slice.call(
+            parentDiv.querySelectorAll('input')
+        ),
+        selectList = Array.prototype.slice.call(
+            parentDiv.querySelectorAll('select')
+        ),
+        optionSeries = '#highcharts-select-series > option:checked',
+        optionVolume = '#highcharts-select-volume > option:checked',
+        linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
+        volumeTo = parentDiv.querySelectorAll(optionVolume)[0];
+
+    const fieldsOutput: PopupFieldsObject = {
+        actionType: type,
+        linkedTo: linkedTo && linkedTo.getAttribute('value') || '',
+        fields: { }
+    };
+
+    inputList.forEach((input: HTMLInputElement): void => {
+        const param = input.getAttribute('highcharts-data-name'),
+            seriesId = input.getAttribute('highcharts-data-series-id');
+
+        // params
+        if (seriesId) {
+            fieldsOutput.seriesId = input.value;
+        } else if (param) {
+            fieldsOutput.fields[param] = input.value;
+        } else {
+            // type like sma / ema
+            fieldsOutput.type = input.value;
+        }
+    });
+
+    selectList.forEach((select: HTMLInputElement): void => {
+        const id = select.id;
+
+        // Get inputs only for the parameters, not for series and volume.
+        if (
+            id !== 'highcharts-select-series' &&
+            id !== 'highcharts-select-volume'
+        ) {
+            const parameter = id.split('highcharts-select-')[1];
+
+            fieldsOutput.fields[parameter] = select.value;
+        }
+    });
+
+    if (volumeTo) {
+        fieldsOutput.fields['params.volumeSeriesID'] = volumeTo
+            .getAttribute('value') || '';
+    }
+
+    return fieldsOutput;
+}
 
 /* *
  *
@@ -117,9 +180,9 @@ class Popup {
 
         // create popup div
         this.container = createElement(
-            DIV,
+            'div',
             {
-                className: PREFIX + 'popup highcharts-no-tooltip'
+                className: 'highcharts-popup highcharts-no-tooltip'
             },
             void 0,
             parentDiv
@@ -185,16 +248,13 @@ class Popup {
      * @private
      */
     public addCloseBtn(): void {
-        let _self = this,
-            closeBtn: HTMLDOMElement;
-
         const iconsURL = this.iconsURL;
 
         // create close popup btn
-        closeBtn = createElement(
-            DIV,
+        const closeBtn = createElement(
+            'div',
             {
-                className: PREFIX + 'popup-close'
+                className: 'highcharts-popup-close'
             },
             void 0,
             this.container
@@ -206,65 +266,15 @@ class Popup {
                         iconsURL : iconsURL + 'close.svg'
                 ) + ')';
 
-        ['click', 'touchstart'].forEach(function (eventName: string): void {
-            addEvent(closeBtn, eventName, function (): void {
-                if (_self.chart) {
-                    fireEvent(_self.chart.navigationBindings, 'closePopup');
+        ['click', 'touchstart'].forEach((eventName: string): void => {
+            addEvent(closeBtn, eventName, (): void => {
+                if (this.chart) {
+                    fireEvent(this.chart.navigationBindings, 'closePopup');
                 } else {
-                    _self.closePopup();
+                    this.closePopup();
                 }
             });
         });
-    }
-
-    /**
-     * Create two columns (divs) in HTML.
-     * @private
-     * @param {Highcharts.HTMLDOMElement} container
-     * Container of columns
-     * @return {Highcharts.Dictionary<Highcharts.HTMLDOMElement>}
-     * Reference to two HTML columns (lhsCol, rhsCol)
-     */
-    public addColsContainer(
-        container: HTMLDOMElement
-    ): Record<string, HTMLDOMElement> {
-        let rhsCol,
-            lhsCol;
-
-        // left column
-        lhsCol = createElement(
-            DIV,
-            {
-                className: PREFIX + 'popup-lhs-col'
-            },
-            void 0,
-            container
-        );
-
-        // right column
-        rhsCol = createElement(
-            DIV,
-            {
-                className: PREFIX + 'popup-rhs-col'
-            },
-            void 0,
-            container
-        );
-
-        // wrapper content
-        createElement(
-            DIV,
-            {
-                className: PREFIX + 'popup-rhs-col-wrapper'
-            },
-            void 0,
-            rhsCol
-        );
-
-        return {
-            lhsCol: lhsCol,
-            rhsCol: rhsCol
-        };
     }
 
     /**
@@ -296,16 +306,15 @@ class Popup {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
-            inputName = PREFIX + indicatorType + '-' + pick(
+            inputName = 'highcharts-' + indicatorType + '-' + pick(
                 inputAttributes.htmlFor,
                 optionName
             );
-        let input;
 
-        if (!inputName.match(indexFilter)) {
+        if (!inputName.match(/\d/g)) {
             // add label
             createElement(
-                LABEL,
+                'label',
                 {
                     htmlFor: inputName,
                     className: inputAttributes.labelClassName
@@ -318,18 +327,20 @@ class Popup {
         }
 
         // add input
-        input = createElement(
-            INPUT,
+        const input = createElement(
+            'input',
             {
                 name: inputName,
                 value: inputAttributes.value,
                 type: inputAttributes.type,
-                className: PREFIX + 'popup-field'
+                className: 'highcharts-popup-field'
             },
             void 0,
             parentDiv
         );
-        input.setAttribute(PREFIX + 'data-name', option);
+
+        input.setAttribute('highcharts-data-name', option);
+
         return input;
     }
 
@@ -356,97 +367,22 @@ class Popup {
         fieldsDiv: HTMLDOMElement,
         callback?: Function
     ): HTMLDOMElement {
-        let _self = this,
-            closePopup = this.closePopup,
-            getFields = this.getFields,
-            button: HTMLDOMElement;
 
-        button = createElement(BUTTON, void 0, void 0, parentDiv);
+        const button = createElement('button', void 0, void 0, parentDiv);
+
         button.appendChild(doc.createTextNode(label));
 
         if (callback) {
-            ['click', 'touchstart'].forEach(function (eventName: string): void {
-                addEvent(button, eventName, function (): void {
-                    closePopup.call(_self);
+            ['click', 'touchstart'].forEach((eventName: string): void => {
+                addEvent(button, eventName, (): void => {
+                    this.closePopup();
 
-                    return callback(
-                        getFields(fieldsDiv, type)
-                    );
+                    return callback(getFields(fieldsDiv, type));
                 });
             });
         }
 
         return button;
-    }
-
-    /**
-     * Get values from all inputs and selections then create JSON.
-     *
-     * @private
-     *
-     * @param {Highcharts.HTMLDOMElement} parentDiv
-     * The container where inputs and selections are created.
-     *
-     * @param {string} type
-     * Type of the popup bookmark (add|edit|remove).
-     */
-    public getFields(
-        parentDiv: HTMLDOMElement,
-        type: string
-    ): Highcharts.PopupFieldsObject {
-        const inputList = Array.prototype.slice.call(
-                parentDiv.querySelectorAll(INPUT)
-            ),
-            selectList = Array.prototype.slice.call(
-                parentDiv.querySelectorAll(SELECT)
-            ),
-            optionSeries = '#' + PREFIX + 'select-series > option:checked',
-            optionVolume = '#' + PREFIX + 'select-volume > option:checked',
-            linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
-            volumeTo = parentDiv.querySelectorAll(optionVolume)[0];
-        let fieldsOutput: Highcharts.PopupFieldsObject;
-
-        fieldsOutput = {
-            actionType: type,
-            linkedTo: linkedTo && linkedTo.getAttribute('value') || '',
-            fields: { }
-        };
-
-        inputList.forEach(function (input: HTMLInputElement): void {
-            const param = input.getAttribute(PREFIX + 'data-name'),
-                seriesId = input.getAttribute(PREFIX + 'data-series-id');
-
-            // params
-            if (seriesId) {
-                fieldsOutput.seriesId = input.value;
-            } else if (param) {
-                fieldsOutput.fields[param] = input.value;
-            } else {
-                // type like sma / ema
-                fieldsOutput.type = input.value;
-            }
-        });
-
-        selectList.forEach(function (select: HTMLInputElement): void {
-            const id = select.id;
-
-            // Get inputs only for the parameters, not for series and volume.
-            if (
-                id !== PREFIX + 'select-series' &&
-                id !== PREFIX + 'select-volume'
-            ) {
-                const parameter = id.split('highcharts-select-')[1];
-
-                fieldsOutput.fields[parameter] = select.value;
-            }
-        });
-
-        if (volumeTo) {
-            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo
-                .getAttribute('value') || '';
-        }
-
-        return fieldsOutput;
     }
 
     /**
@@ -456,9 +392,9 @@ class Popup {
     public showPopup(): void {
 
         const popupDiv = this.container,
-            toolbarClass = PREFIX + 'annotation-toolbar',
+            toolbarClass = 'highcharts-annotation-toolbar',
             popupCloseBtn = popupDiv
-                .querySelectorAll('.' + PREFIX + 'popup-close')[0];
+                .querySelectorAll('.highcharts-popup-close')[0];
 
         this.formType = void 0;
 

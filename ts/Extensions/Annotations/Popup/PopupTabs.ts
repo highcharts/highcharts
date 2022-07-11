@@ -69,17 +69,17 @@ function addMenuItem(
     tabName: string,
     disableTab?: number
 ): HTMLDOMElement {
-    let popupDiv = this.container,
-        className = 'highcharts-tab-item',
-        lang = this.lang,
-        menuItem;
+    const popupDiv = this.container,
+        lang = this.lang;
+
+    let className = 'highcharts-tab-item';
 
     if (disableTab === 0) {
         className += ' highcharts-tab-disabled';
     }
 
     // tab 1
-    menuItem = createElement(
+    const menuItem = createElement(
         'span',
         {
             className
@@ -101,14 +101,13 @@ function addMenuItem(
  * @private
  */
 function deselectAll(this: Popup): void {
-    let popupDiv = this.container,
+    const popupDiv = this.container,
         tabs = popupDiv
             .querySelectorAll('.highcharts-tab-item'),
         tabsContent = popupDiv
-            .querySelectorAll('.highcharts-tab-item-content'),
-        i;
+            .querySelectorAll('.highcharts-tab-item-content');
 
-    for (i = 0; i < tabs.length; i++) {
+    for (let i = 0; i < tabs.length; i++) {
         tabs[i].classList.remove('highcharts-tab-item-active');
         tabsContent[i].classList.remove('highcharts-tab-item-show');
     }
@@ -124,15 +123,15 @@ function init(
     this: Popup,
     chart: Highcharts.AnnotationChart
 ): void {
-    let indicatorsCount = this.indicators.getAmount.call(chart),
-        firstTab; // run by default
 
     if (!chart) {
         return;
     }
 
+    const indicatorsCount = this.indicators.getAmount.call(chart);
+
     // create menu items
-    firstTab = addMenuItem.call(this, 'add');
+    const firstTab = addMenuItem.call(this, 'add'); // run by default
     addMenuItem.call(this, 'edit', indicatorsCount);
 
     // create tabs containers
@@ -173,27 +172,27 @@ function switchTabs(
     this: Popup,
     disableTab: number
 ): void {
-    let _self = this,
+    const popup = this,
         popupDiv = this.container,
-        tabs = popupDiv.querySelectorAll('.highcharts-tab-item'),
-        dataParam;
+        tabs = popupDiv.querySelectorAll('.highcharts-tab-item');
 
-    tabs.forEach(function (tab: Element, i: number): void {
+    tabs.forEach((tab: Element, i: number): void => {
 
-        dataParam = tab.getAttribute('highcharts-data-tab-type');
-
-        if (dataParam === 'edit' && disableTab === 0) {
+        if (
+            disableTab === 0 &&
+            tab.getAttribute('highcharts-data-tab-type') === 'edit'
+        ) {
             return;
         }
 
-        ['click', 'touchstart'].forEach(function (
+        ['click', 'touchstart'].forEach((
             eventName: string
-        ): void {
+        ): void => {
             addEvent(tab, eventName, function (): void {
 
                 // reset class on other elements
-                deselectAll.call(_self);
-                selectTab.call(_self, this, i);
+                deselectAll.call(popup);
+                selectTab.call(popup, this, i);
             });
         });
     });

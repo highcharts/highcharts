@@ -16,7 +16,11 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-import type Popup from './Popup/Popup';
+import type {
+    default as Popup,
+    PopupFieldsObject,
+    PopupFieldsTree
+} from './Popup/Popup';
 
 import Annotation from './Annotation.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -1071,12 +1075,13 @@ class NavigationBindings {
     public getButtonEvents(
         container: HTMLDOMElement,
         event: Event
-    ): Highcharts.NavigationBindingsButtonEventsObject {
-        let navigation = this,
-            classNames = this.getClickedClassNames(container, event),
-            bindings: (
-                Highcharts.NavigationBindingsButtonEventsObject|undefined
-            );
+    ): (Highcharts.NavigationBindingsButtonEventsObject|undefined) {
+        const navigation = this,
+            classNames = this.getClickedClassNames(container, event);
+
+        let bindings: (
+            Highcharts.NavigationBindingsButtonEventsObject|undefined
+        );
 
 
         classNames.forEach(function (
@@ -1090,7 +1095,7 @@ class NavigationBindings {
             }
         });
 
-        return bindings as any;
+        return bindings;
     }
     /**
      * Bindings are just events, so the whole update process is simply
@@ -1209,10 +1214,10 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                     formType: 'annotation-toolbar',
                     options: navigation.annotationToFields(annotation),
                     onSubmit: function (
-                        data: Highcharts.PopupFieldsObject
+                        data: PopupFieldsObject
                     ): void {
 
-                        let config: Highcharts.PopupFieldsDictionary<string> = {},
+                        let config: PopupFieldsTree = {},
                             typeOptions;
 
                         if (data.actionType === 'remove') {
