@@ -21,7 +21,10 @@
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
-import type Popup from './Popup';
+import type {
+    default as Popup,
+    PopupFieldsTree
+} from './Popup';
 import type Series from '../../../Core/Series/Series';
 import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 
@@ -84,6 +87,54 @@ const dropdownParameters: Record<string, Array<string>> = {
  * */
 
 /**
+ * Create two columns (divs) in HTML.
+ * @private
+ * @param {Highcharts.HTMLDOMElement} container
+ * Container of columns
+ * @return {Highcharts.Dictionary<Highcharts.HTMLDOMElement>}
+ * Reference to two HTML columns (lhsCol, rhsCol)
+ */
+function addColsContainer(
+    container: HTMLDOMElement
+): Record<string, HTMLDOMElement> {
+
+    // left column
+    const lhsCol = createElement(
+        'div',
+        {
+            className: 'highcharts-popup-lhs-col'
+        },
+        void 0,
+        container
+    );
+
+    // right column
+    const rhsCol = createElement(
+        'div',
+        {
+            className: 'highcharts-popup-rhs-col'
+        },
+        void 0,
+        container
+    );
+
+    // wrapper content
+    createElement(
+        'div',
+        {
+            className: 'highcharts-popup-rhs-col-wrapper'
+        },
+        void 0,
+        rhsCol
+    );
+
+    return {
+        lhsCol: lhsCol,
+        rhsCol: rhsCol
+    };
+}
+
+/**
  * Create indicator's form. It contains two tabs (ADD and EDIT) with
  * content.
  * @private
@@ -94,11 +145,9 @@ function addForm(
     _options: AnnotationsOptions,
     callback: Function
 ): void {
+    const lang = this.lang;
 
-    let tabsContainers,
-        indicators = this.indicators,
-        lang = this.lang,
-        buttonParentDiv;
+    let buttonParentDiv: HTMLDOMElement;
 
     if (!chart) {
         return;
@@ -108,11 +157,11 @@ function addForm(
     this.tabs.init.call(this, chart);
 
     // get all tabs content divs
-    tabsContainers = this.container
+    const tabsContainers = this.container
         .querySelectorAll('.highcharts-tab-item-content');
 
     // ADD tab
-    this.addColsContainer(tabsContainers[0] as HTMLDOMElement);
+    addColsContainer(tabsContainers[0] as HTMLDOMElement);
     addSearchBox.call(
         this,
         chart,
@@ -124,19 +173,20 @@ function addForm(
         tabsContainers[0] as HTMLDOMElement,
         'add'
     );
+
     buttonParentDiv = tabsContainers[0]
-        .querySelectorAll('.highcharts-popup-rhs-col')[0];
+        .querySelectorAll('.highcharts-popup-rhs-col')[0] as HTMLDOMElement;
 
     this.addButton(
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         lang.addButton || 'add',
         'add',
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         callback
     );
 
     // EDIT tab
-    this.addColsContainer(tabsContainers[1] as HTMLDOMElement);
+    addColsContainer(tabsContainers[1] as HTMLDOMElement);
     addIndicatorList.call(
         this,
         chart,
@@ -145,20 +195,20 @@ function addForm(
     );
 
     buttonParentDiv = tabsContainers[1]
-        .querySelectorAll('.highcharts-popup-rhs-col')[0];
+        .querySelectorAll('.highcharts-popup-rhs-col')[0] as HTMLDOMElement;
 
     this.addButton(
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         lang.saveButton || 'save',
         'edit',
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         callback
     );
     this.addButton(
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         lang.removeButton || 'remove',
         'remove',
-        buttonParentDiv as HTMLDOMElement,
+        buttonParentDiv,
         callback
     );
 }
@@ -300,9 +350,7 @@ function addIndicatorList(
         return;
     }
 
-    let rhsColWrapper: HTMLDOMElement,
-        indicatorList: HTMLDOMElement,
-        item: HTMLDOMElement,
+    let item: HTMLDOMElement,
         filteredSeriesArray: Array<FilteredSeries> = [];
 
     // Filter and sort the series.
@@ -336,7 +384,7 @@ function addIndicatorList(
     }
 
     // Create wrapper for list.
-    indicatorList = createElement(
+    const indicatorList = createElement(
         'ul',
         {
             className: 'highcharts-indicator-list'
@@ -345,7 +393,7 @@ function addIndicatorList(
         lhsCol
     );
 
-    rhsColWrapper = rhsCol.querySelectorAll(
+    const rhsColWrapper = rhsCol.querySelectorAll(
         '.highcharts-popup-rhs-col-wrapper'
     )[0] as HTMLDOMElement;
 
@@ -364,9 +412,9 @@ function addIndicatorList(
             indicatorFullName
         ));
 
-        ['click', 'touchstart'].forEach(function (
+        ['click', 'touchstart'].forEach((
             eventName: string
-        ): void {
+        ): void => {
             addEvent(item, eventName, function (): void {
                 const button = rhsColWrapper.parentNode
                     .children[1] as HTMLDOMElement;
@@ -436,22 +484,19 @@ function addParamInputs(
     this: Popup,
     chart: Highcharts.AnnotationChart,
     parentNode: string,
-    fields: Highcharts.PopupFieldsDictionary<string>,
+    fields: PopupFieldsTree,
     type: string,
     parentDiv: HTMLDOMElement
 ): void {
-    const popup = this,
-        indicators = popup.indicators;
-    let addInput = this.addInput,
-        parentFullName;
-
     if (!chart) {
         return;
     }
 
-    objectEach(fields, function (value, fieldName): void {
+    const addInput = this.addInput;
+
+    objectEach(fields, (value, fieldName): void => {
         // create name like params.styles.fontSize
-        parentFullName = parentNode + '.' + fieldName;
+        const parentFullName = parentNode + '.' + fieldName;
 
         if (
             defined(value) && // skip if field is unnecessary, #15362
@@ -461,14 +506,14 @@ function addParamInputs(
                 // (15733) 'Periods' has an arrayed value. Label must be
                 // created here.
                 addInput.call(
-                    popup,
+                    this,
                     parentFullName,
                     type,
                     parentDiv,
                     {}
                 );
                 addParamInputs.call(
-                    popup,
+                    this,
                     chart,
                     parentFullName,
                     value as any,
@@ -482,7 +527,7 @@ function addParamInputs(
             if (parentFullName in DropdownProperties) {
                 // Add selection boxes.
                 const selectBox = addSelection.call(
-                    popup,
+                    this,
                     type,
                     parentFullName,
                     parentDiv
@@ -490,7 +535,7 @@ function addParamInputs(
 
                 // Add possible dropdown options.
                 addSelectionOptions.call(
-                    popup,
+                    this,
                     chart,
                     parentNode,
                     selectBox,
@@ -504,7 +549,7 @@ function addParamInputs(
                 !isArray(value) // Skip params declared in array.
             ) {
                 addInput.call(
-                    popup,
+                    this,
                     parentFullName,
                     type,
                     parentDiv,
@@ -598,7 +643,7 @@ function addSearchBox(
     });
 
     // Add clear filter click event.
-    ['click', 'touchstart'].forEach(function (eventName: string): void {
+    ['click', 'touchstart'].forEach((eventName: string): void => {
         addEvent(button, eventName, function (): void {
 
             // Clear the input.
@@ -632,10 +677,9 @@ function addSelection(
     parentDiv: HTMLDOMElement
 ): HTMLSelectElement {
     const optionParamList = optionName.split('.'),
-        labelText = optionParamList[optionParamList.length - 1];
-    let selectName = 'highcharts-' + optionName + '-type-' + indicatorType,
-        lang = this.lang,
-        selectBox: HTMLSelectElement;
+        labelText = optionParamList[optionParamList.length - 1],
+        selectName = 'highcharts-' + optionName + '-type-' + indicatorType,
+        lang = this.lang;
 
     // Add a label for the selection box.
     createElement(
@@ -649,7 +693,7 @@ function addSelection(
     ));
 
     // Create a selection box.
-    selectBox = createElement(
+    const selectBox = createElement(
         'select',
         {
             name: selectName,
@@ -702,7 +746,7 @@ function addSelectionOptions(
     // Get and apply selection options for the possible series.
     if (optionName === 'series' || optionName === 'volume') {
         // List all series which have id - mandatory for indicator.
-        chart.series.forEach(function (series): void {
+        chart.series.forEach((series): void => {
             const seriesOptions = series.options,
                 seriesName = seriesOptions.name ||
                 (seriesOptions as any).params ?
@@ -740,7 +784,7 @@ function addSelectionOptions(
         const dropdownKey = parameterName + '-' + indicatorType,
             parameterOption = dropdownParameters[dropdownKey];
 
-        parameterOption.forEach(function (element): void {
+        parameterOption.forEach((element): void => {
             createElement(
                 'option',
                 {
@@ -854,21 +898,16 @@ function filterSeriesArray(
     this: Popup,
     series: Array<Series>
 ): Array<FilteredSeries> {
-    let filteredSeriesArray: Array<FilteredSeries> = [],
-        filteredSeries: FilteredSeries;
+    const filteredSeriesArray: Array<FilteredSeries> = [];
 
     // Allow only indicators.
-    series.forEach(function (series): void {
-        const seriesOptions = series.options;
-
+    series.forEach((series): void => {
         if (series.is('sma')) {
-            filteredSeries = {
+            filteredSeriesArray.push({
                 indicatorFullName: series.name,
                 indicatorType: series.type,
                 series: series as SMAIndicator
-            };
-
-            filteredSeriesArray.push(filteredSeries);
+            });
         }
     });
 
@@ -881,15 +920,12 @@ function filterSeriesArray(
  * @return {number} - Amount of indicators
  */
 function getAmount(this: Chart): number {
-    let series = this.series,
-        counter = 0;
+    let counter = 0;
 
-    series.forEach(function (serie): void {
-        const seriesOptions = serie.options;
-
+    this.series.forEach((serie): void => {
         if (
             (serie as any).params ||
-            seriesOptions && (seriesOptions as any).params
+            (serie.options as any).params
         ) {
             counter++;
         }

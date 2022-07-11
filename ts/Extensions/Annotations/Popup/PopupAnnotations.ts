@@ -39,14 +39,6 @@ const {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const indexFilter = /\d/g;
-
-/* *
- *
  *  Functions
  *
  * */
@@ -71,17 +63,16 @@ function addForm(
     callback: Function,
     isInit?: boolean
 ): void {
-    let popupDiv = this.container,
-        lang = this.lang,
-        bottomRow,
-        lhsCol;
 
     if (!chart) {
         return;
     }
 
+    const popupDiv = this.container,
+        lang = this.lang;
+
     // create title of annotations
-    lhsCol = createElement('h2', {
+    let lhsCol = createElement('h2', {
         className: 'highcharts-popup-main-title'
     }, void 0, popupDiv);
     lhsCol.appendChild(
@@ -102,7 +93,7 @@ function addForm(
         popupDiv
     );
 
-    bottomRow = createElement(
+    const bottomRow = createElement(
         'div',
         {
             className: 'highcharts-popup-bottom-row'
@@ -146,12 +137,10 @@ function addToolbar(
     options: AnnotationsOptions,
     callback: Function
 ): void {
-    let _self = this,
-        lang = this.lang,
+    const lang = this.lang,
         popupDiv = this.container,
         showForm = this.showForm,
-        toolbarClass = 'highcharts-annotation-toolbar',
-        button;
+        toolbarClass = 'highcharts-annotation-toolbar';
 
     // set small size
     if (popupDiv.className.indexOf(toolbarClass) === -1) {
@@ -175,7 +164,7 @@ function addToolbar(
     );
 
     // add buttons
-    button = this.addButton(
+    let button = this.addButton(
         popupDiv,
         lang.removeButton || 'remove',
         'remove',
@@ -192,9 +181,9 @@ function addToolbar(
         lang.editButton || 'edit',
         'edit',
         popupDiv,
-        function (): void {
+        (): void => {
             showForm.call(
-                _self,
+                this,
                 'annotation-edit',
                 chart,
                 options,
@@ -234,21 +223,21 @@ function addFormFields(
     storage: Array<unknown>,
     isRoot?: boolean
 ): void {
-    let _self = this,
-        addInput = this.addInput,
-        lang = this.lang,
-        parentFullName,
-        titleName;
 
     if (!chart) {
         return;
     }
 
-    objectEach(options, function (value, option: string): void {
+    const addInput = this.addInput,
+        lang = this.lang;
+
+    let parentFullName,
+        titleName: string;
+
+    objectEach(options, (value, option: string): void => {
 
         // create name like params.styles.fontSize
-        parentFullName = parentNode !== '' ?
-            parentNode + '.' + option : option;
+        parentFullName = parentNode !== '' ? parentNode + '.' + option : option;
 
         if (isObject(value)) {
             if (
@@ -259,7 +248,7 @@ function addFormFields(
             ) {
                 titleName = lang[option] || option;
 
-                if (!titleName.match(indexFilter)) {
+                if (!titleName.match(/\d/g)) {
                     storage.push([
                         true,
                         titleName,
@@ -268,7 +257,7 @@ function addFormFields(
                 }
 
                 addFormFields.call(
-                    _self,
+                    this,
                     parentDiv,
                     chart,
                     parentFullName,
@@ -278,7 +267,7 @@ function addFormFields(
                 );
             } else {
                 storage.push([
-                    _self,
+                    this,
                     parentFullName,
                     'annotation',
                     parentDiv,
@@ -289,15 +278,15 @@ function addFormFields(
     });
 
     if (isRoot) {
-        stableSort(storage, function (a: any): number {
-            return a[1].match(/format/g) ? -1 : 1;
-        });
+        stableSort(storage, (a: any): number => (
+            a[1].match(/format/g) ? -1 : 1
+        ));
 
         if (isFirefox) {
             storage.reverse(); // (#14691)
         }
 
-        storage.forEach(function (genInput: any): void {
+        storage.forEach((genInput: any): void => {
             if (genInput[0] === true) {
                 createElement(
                     'span',
