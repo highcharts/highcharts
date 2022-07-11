@@ -27,12 +27,6 @@ const {
     doc,
     isFirefox
 } = H;
-import PopupHTML from './PopupHTML.js';
-const {
-    DIV,
-    PREFIX,
-    SPAN
-} = PopupHTML;
 import U from '../../../Core/Utilities.js';
 const {
     createElement,
@@ -88,7 +82,7 @@ function addForm(
 
     // create title of annotations
     lhsCol = createElement('h2', {
-        className: PREFIX + 'popup-main-title'
+        className: 'highcharts-popup-main-title'
     }, void 0, popupDiv);
     lhsCol.appendChild(
         doc.createTextNode(
@@ -98,10 +92,10 @@ function addForm(
 
     // left column
     lhsCol = createElement(
-        DIV,
+        'div',
         {
             className: (
-                PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
+                'highcharts-popup-lhs-col highcharts-popup-lhs-full'
             )
         },
         void 0,
@@ -109,9 +103,9 @@ function addForm(
     );
 
     bottomRow = createElement(
-        DIV,
+        'div',
         {
-            className: PREFIX + 'popup-bottom-row'
+            className: 'highcharts-popup-bottom-row'
         },
         void 0,
         popupDiv
@@ -156,7 +150,7 @@ function addToolbar(
         lang = this.lang,
         popupDiv = this.container,
         showForm = this.showForm,
-        toolbarClass = PREFIX + 'annotation-toolbar',
+        toolbarClass = 'highcharts-annotation-toolbar',
         button;
 
     // set small size
@@ -170,7 +164,7 @@ function addToolbar(
     }
 
     // create label
-    createElement(SPAN, void 0, void 0, popupDiv).appendChild(
+    createElement('span', void 0, void 0, popupDiv).appendChild(
         doc.createTextNode(pick(
             // Advanced annotations:
             lang[options.langKey as any] || options.langKey,
@@ -189,7 +183,7 @@ function addToolbar(
         callback
     );
 
-    button.className += ' ' + PREFIX + 'annotation-remove-button';
+    button.className += ' highcharts-annotation-remove-button';
     button.style['background-image' as any] = 'url(' +
         this.iconsURL + 'destroy.svg)';
 
@@ -209,7 +203,7 @@ function addToolbar(
         }
     );
 
-    button.className += ' ' + PREFIX + 'annotation-edit-button';
+    button.className += ' highcharts-annotation-edit-button';
     button.style['background-image' as any] = 'url(' +
         this.iconsURL + 'edit.svg)';
 
@@ -306,8 +300,9 @@ function addFormFields(
         storage.forEach(function (genInput: any): void {
             if (genInput[0] === true) {
                 createElement(
-                    SPAN, {
-                        className: PREFIX + 'annotation-title'
+                    'span',
+                    {
+                        className: 'highcharts-annotation-title'
                     },
                     void 0,
                     genInput[2]

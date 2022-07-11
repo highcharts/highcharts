@@ -23,12 +23,6 @@ import type Popup from './Popup';
 
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import PopupHTML from './PopupHTML.js';
-const {
-    DIV,
-    PREFIX,
-    SPAN
-} = PopupHTML;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -50,11 +44,10 @@ function addContentItem(this: Popup): HTMLDOMElement {
     const popupDiv = this.container;
 
     return createElement(
-        DIV,
+        'div',
         {
             // #12100
-            className: PREFIX + 'tab-item-content ' +
-                PREFIX + 'no-mousewheel'
+            className: 'highcharts-tab-item-content highcharts-no-mousewheel'
         },
         void 0,
         popupDiv
@@ -77,17 +70,17 @@ function addMenuItem(
     disableTab?: number
 ): HTMLDOMElement {
     let popupDiv = this.container,
-        className = PREFIX + 'tab-item',
+        className = 'highcharts-tab-item',
         lang = this.lang,
         menuItem;
 
     if (disableTab === 0) {
-        className += ' ' + PREFIX + 'tab-disabled';
+        className += ' highcharts-tab-disabled';
     }
 
     // tab 1
     menuItem = createElement(
-        SPAN,
+        'span',
         {
             className
         },
@@ -98,7 +91,7 @@ function addMenuItem(
         doc.createTextNode(lang[tabName + 'Button'] || tabName)
     );
 
-    menuItem.setAttribute(PREFIX + 'data-tab-type', tabName);
+    menuItem.setAttribute('highcharts-data-tab-type', tabName);
 
     return menuItem;
 }
@@ -110,14 +103,14 @@ function addMenuItem(
 function deselectAll(this: Popup): void {
     let popupDiv = this.container,
         tabs = popupDiv
-            .querySelectorAll('.' + PREFIX + 'tab-item'),
+            .querySelectorAll('.highcharts-tab-item'),
         tabsContent = popupDiv
-            .querySelectorAll('.' + PREFIX + 'tab-item-content'),
+            .querySelectorAll('.highcharts-tab-item-content'),
         i;
 
     for (i = 0; i < tabs.length; i++) {
-        tabs[i].classList.remove(PREFIX + 'tab-item-active');
-        tabsContent[i].classList.remove(PREFIX + 'tab-item-show');
+        tabs[i].classList.remove('highcharts-tab-item-active');
+        tabsContent[i].classList.remove('highcharts-tab-item-show');
     }
 }
 
@@ -164,10 +157,10 @@ function selectTab(
     index: number
 ): void {
     const allTabs = this.container
-        .querySelectorAll('.' + PREFIX + 'tab-item-content');
+        .querySelectorAll('.highcharts-tab-item-content');
 
-    tab.className += ' ' + PREFIX + 'tab-item-active';
-    allTabs[index].className += ' ' + PREFIX + 'tab-item-show';
+    tab.className += ' highcharts-tab-item-active';
+    allTabs[index].className += ' highcharts-tab-item-show';
 }
 
 /**
@@ -182,12 +175,12 @@ function switchTabs(
 ): void {
     let _self = this,
         popupDiv = this.container,
-        tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
+        tabs = popupDiv.querySelectorAll('.highcharts-tab-item'),
         dataParam;
 
     tabs.forEach(function (tab: Element, i: number): void {
 
-        dataParam = tab.getAttribute(PREFIX + 'data-tab-type');
+        dataParam = tab.getAttribute('highcharts-data-tab-type');
 
         if (dataParam === 'edit' && disableTab === 0) {
             return;

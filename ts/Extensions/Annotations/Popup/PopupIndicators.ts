@@ -28,19 +28,6 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import PopupHTML from './PopupHTML.js';
-const {
-    A,
-    DIV,
-    H3,
-    INPUT,
-    LABEL,
-    LI,
-    OPTION,
-    PREFIX,
-    SELECT,
-    UL
-} = PopupHTML;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -122,7 +109,7 @@ function addForm(
 
     // get all tabs content divs
     tabsContainers = this.container
-        .querySelectorAll('.' + PREFIX + 'tab-item-content');
+        .querySelectorAll('.highcharts-tab-item-content');
 
     // ADD tab
     this.addColsContainer(tabsContainers[0] as HTMLDOMElement);
@@ -138,7 +125,7 @@ function addForm(
         'add'
     );
     buttonParentDiv = tabsContainers[0]
-        .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
+        .querySelectorAll('.highcharts-popup-rhs-col')[0];
 
     this.addButton(
         buttonParentDiv as HTMLDOMElement,
@@ -158,7 +145,7 @@ function addForm(
     );
 
     buttonParentDiv = tabsContainers[1]
-        .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
+        .querySelectorAll('.highcharts-popup-rhs-col')[0];
 
     this.addButton(
         buttonParentDiv as HTMLDOMElement,
@@ -206,9 +193,9 @@ function addFormFields(
 
     // create title (indicator name in the right column)
     createElement(
-        H3,
+        'h3',
         {
-            className: PREFIX + 'indicator-title'
+            className: 'highcharts-indicator-title'
         },
         void 0,
         rhsColWrapper
@@ -220,10 +207,10 @@ function addFormFields(
 
     // input type
     createElement(
-        INPUT,
+        'input',
         {
             type: 'hidden',
-            name: PREFIX + 'type-' + seriesType,
+            name: 'highcharts-type-' + seriesType,
             value: seriesType
         },
         void 0,
@@ -297,10 +284,10 @@ function addIndicatorList(
     const popup = this,
         lang = popup.lang,
         lhsCol = parentDiv.querySelectorAll(
-            '.' + PREFIX + 'popup-lhs-col'
+            '.highcharts-popup-lhs-col'
         )[0] as HTMLDOMElement,
         rhsCol = parentDiv.querySelectorAll(
-            '.' + PREFIX + 'popup-rhs-col'
+            '.highcharts-popup-rhs-col'
         )[0] as HTMLDOMElement,
         isEdit = listType === 'edit',
         series = (
@@ -350,25 +337,25 @@ function addIndicatorList(
 
     // Create wrapper for list.
     indicatorList = createElement(
-        UL,
+        'ul',
         {
-            className: PREFIX + 'indicator-list'
+            className: 'highcharts-indicator-list'
         },
         void 0,
         lhsCol
     );
 
     rhsColWrapper = rhsCol.querySelectorAll(
-        '.' + PREFIX + 'popup-rhs-col-wrapper'
+        '.highcharts-popup-rhs-col-wrapper'
     )[0] as HTMLDOMElement;
 
     filteredSeriesArray.forEach((seriesSet): void => {
         const { indicatorFullName, indicatorType, series } = seriesSet;
 
         item = createElement(
-            LI,
+            'li',
             {
-                className: PREFIX + 'indicator-list'
+                className: 'highcharts-indicator-list'
             },
             void 0,
             indicatorList
@@ -399,16 +386,16 @@ function addIndicatorList(
                 // add hidden input with series.id
                 if (isEdit && series.options) {
                     createElement(
-                        INPUT,
+                        'input',
                         {
                             type: 'hidden',
-                            name: PREFIX + 'id-' + indicatorType,
+                            name: 'highcharts-id-' + indicatorType,
                             value: series.options.id
                         },
                         void 0,
                         rhsColWrapper
                     ).setAttribute(
-                        PREFIX + 'data-series-id',
+                        'highcharts-data-series-id',
                         (series as any).options.id
                     );
                 }
@@ -549,7 +536,7 @@ function addSearchBox(
 ): void {
     const popup = this,
         lhsCol = parentDiv.querySelectorAll(
-            '.' + PREFIX + 'popup-lhs-col'
+            '.highcharts-popup-lhs-col'
         )[0] as HTMLDOMElement,
         options = 'searchIndicators',
         inputAttributes = {
@@ -560,7 +547,7 @@ function addSearchBox(
         },
         clearFilterText = this.lang.clearFilter,
         inputWrapper = createElement(
-            DIV,
+            'div',
             {
                 className: 'highcharts-input-wrapper'
             },
@@ -582,12 +569,12 @@ function addSearchBox(
     // Add input field with the label and button.
     const input = this.addInput(
             options,
-            INPUT,
+            'input',
             inputWrapper,
             inputAttributes
         ) as HTMLInputElement,
         button = createElement(
-            A,
+            'a',
             {
                 textContent: clearFilterText
             },
@@ -646,13 +633,13 @@ function addSelection(
 ): HTMLSelectElement {
     const optionParamList = optionName.split('.'),
         labelText = optionParamList[optionParamList.length - 1];
-    let selectName = PREFIX + optionName + '-type-' + indicatorType,
+    let selectName = 'highcharts-' + optionName + '-type-' + indicatorType,
         lang = this.lang,
         selectBox: HTMLSelectElement;
 
     // Add a label for the selection box.
     createElement(
-        LABEL, {
+        'label', {
             htmlFor: selectName
         },
         null as any,
@@ -663,17 +650,17 @@ function addSelection(
 
     // Create a selection box.
     selectBox = createElement(
-        SELECT,
+        'select',
         {
             name: selectName,
-            className: PREFIX + 'popup-field',
-            id: PREFIX + 'select-' + optionName
+            className: 'highcharts-popup-field',
+            id: 'highcharts-select-' + optionName
         },
         null as any,
         parentDiv
     ) as HTMLSelectElement;
 
-    selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
+    selectBox.setAttribute('id', 'highcharts-select-' + optionName);
 
     return selectBox;
 }
@@ -723,7 +710,7 @@ function addSelectionOptions(
                     seriesOptions.id || '';
 
             if (
-                seriesOptions.id !== PREFIX + 'navigator-series' &&
+                seriesOptions.id !== 'highcharts-navigator-series' &&
                 seriesOptions.id !== (
                     currentSeries &&
                     currentSeries.options &&
@@ -739,7 +726,7 @@ function addSelectionOptions(
                 }
 
                 createElement(
-                    OPTION,
+                    'option',
                     {
                         value: seriesOptions.id
                     },
@@ -755,7 +742,7 @@ function addSelectionOptions(
 
         parameterOption.forEach(function (element): void {
             createElement(
-                OPTION,
+                'option',
                 {
                     value: element
                 },
