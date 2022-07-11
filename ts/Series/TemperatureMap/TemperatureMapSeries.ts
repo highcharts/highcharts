@@ -82,22 +82,12 @@ class TemperatureMapSeries extends MapBubbleSeries {
                 }
             },
             /**
-             * Set of colors for each point. Can be an array of strings (if 3
-             * colors defined, every next marker is 33.3% smaller) or an array
-             * of color stops (e.g. for `[[0.2, '#ff0000'], [1, '#0000ff']]`
-             * the smallest top marker is 5 times smaller than the biggest
-             * bottom one).
+             * TO DO: add a description
              *
-             * @sample {highmaps} maps/plotoptions/temperaturemap-temperaturecolors/
-             *          Different temperature colors templates
-             * @sample {highmaps} maps/plotoptions/temperaturemap-temperaturecolors-steps/
-             *          Temperature colors with steps
-             *
+             * TO DO: Add a sample
+             * @sample highcharts/demo/parliament-chart
+             *         Parliament chart
              * @type {Array<ColorType>}
-             *
-             * @product   highmaps
-             * @default ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff']
-             *
              */
             temperatureColors: [
                 '#ff0000',
@@ -170,38 +160,38 @@ class TemperatureMapSeries extends MapBubbleSeries {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.options.temperatureColors.forEach((_, i: number): void => {
-                this.points.forEach((point): void => {
-                    const graphic = point.graphics[i];
+                    this.points.forEach((point): void => {
+                        const graphic = point.graphics[i];
 
-                    if (
-                        graphic &&
-                        graphic.width // URL symbols don't have width
-                    ) {
-                        const size = {
-                            width: graphic.width,
-                            height: graphic.height,
-                            x: (point.plotX || 0) - graphic.width / 2,
-                            y: (point.plotY || 0) - graphic.height / 2
-                        };
+                        if (
+                            graphic &&
+                            graphic.width // URL symbols don't have width
+                        ) {
+                            const size = {
+                                width: graphic.width,
+                                height: graphic.height,
+                                x: (point.plotX || 0) - graphic.width / 2,
+                                y: (point.plotY || 0) - graphic.height / 2
+                            };
 
-                        // Start values
-                        if (!this.hasRendered) {
-                            graphic.attr({
-                                x: point.plotX,
-                                y: point.plotY,
-                                width: 1,
-                                height: 1
-                            });
+                            // Start values
+                            if (!this.hasRendered) {
+                                graphic.attr({
+                                    x: point.plotX,
+                                    y: point.plotY,
+                                    width: 1,
+                                    height: 1
+                                });
+                            }
+
+                            // Run animation
+                            graphic.animate(
+                                size,
+                                this.options.animation
+                            );
                         }
-
-                        // Run animation
-                        graphic.animate(
-                            size,
-                            this.options.animation
-                        );
-                    }
+                    });
                 });
-            });
         }
     }
 
@@ -209,149 +199,149 @@ class TemperatureMapSeries extends MapBubbleSeries {
         const series = this,
             options = series.options,
             temperatureColors =
-                series.options.temperatureColors.slice().reverse(),
+            series.options.temperatureColors.slice().reverse(),
             colorsLength = temperatureColors.length;
 
         temperatureColors.forEach((
-            color: ColorType | [number, ColorType],
-            ii: number
-        ): void => {
-            if (isArray(color)) {
-                series.colorStop = color[0];
-            }
+                color: ColorType|[number, ColorType],
+                ii: number
+            ): void => {
+                if (isArray(color)) {
+                    series.colorStop = color[0];
+                }
 
-            if (isArray(color)) {
-                color = color[1];
-            }
+                if (isArray(color)) {
+                    color = color[1];
+                }
 
-            const fillColor = {
-                radialGradient: {
-                    cx: 0.5,
-                    cy: 0.5,
-                    r: 0.5
-                },
-                stops: [
-                    [ii === colorsLength - 1 ? 0 : 0.5, color],
-                    [1, (new Color(color)).setOpacity(0).get('rgba')]
-                ]
-            };
+                const fillColor = {
+                    radialGradient: {
+                        cx: 0.5,
+                        cy: 0.5,
+                        r: 0.5
+                    },
+                    stops: [
+                        [ii === colorsLength - 1 ? 0 : 0.5, color],
+                        [1, (new Color(color)).setOpacity(0).get('rgba')]
+                    ]
+                };
 
-            // Options from point level not supported - API says it should,
-            // but visually is it useful at all?
-            options.marker = merge(options.marker, { fillColor });
+                // Options from point level not supported - API says it should,
+                // but visually is it useful at all?
+                options.marker = merge(options.marker, { fillColor });
 
-            series.temperatureColorIndex = ii;
+                series.temperatureColorIndex = ii;
 
-            series.getRadii(); // recalculate radii
+                series.getRadii(); // recalculate radii
 
-            series.adjustMinSize = true;
-            series.translateBubble(); // use radii
-            series.adjustMinSize = false;
+                series.adjustMinSize = true;
+                series.translateBubble(); // use radii
+                series.adjustMinSize = false;
 
-            const points = series.points,
-                chart = series.chart,
-                seriesMarkerOptions = options.marker,
-                markerGroup = (
-                    (series as any)[series.specialGroup as any] ||
-                    series.markerGroup
-                );
+                const points = series.points,
+                    chart = series.chart,
+                    seriesMarkerOptions = options.marker,
+                    markerGroup = (
+                        (series as any)[series.specialGroup as any] ||
+                        series.markerGroup
+                    );
 
-            let i,
-                point,
-                graphic,
-                verb,
-                pointMarkerOptions,
-                hasPointMarker,
-                markerAttribs;
+                let i,
+                    point,
+                    graphic,
+                    verb,
+                    pointMarkerOptions,
+                    hasPointMarker,
+                    markerAttribs;
 
-            series.temperatureColorIndex = null;
+                    series.temperatureColorIndex = null;
 
-            if (
-                (seriesMarkerOptions as any).enabled !== false ||
-                series._hasPointMarkers
-            ) {
+                if (
+                    (seriesMarkerOptions as any).enabled !== false ||
+                    series._hasPointMarkers
+                ) {
 
-                for (i = 0; i < points.length; i++) {
-                    point = points[i];
-                    point.graphics = point.graphics || [];
-                    graphic = point.graphics[ii];
-                    verb = graphic ? 'animate' : 'attr';
-                    pointMarkerOptions = point.marker || {};
-                    hasPointMarker = !!point.marker;
+                    for (i = 0; i < points.length; i++) {
+                        point = points[i];
+                        point.graphics = point.graphics || [];
+                        graphic = point.graphics[ii];
+                        verb = graphic ? 'animate' : 'attr';
+                        pointMarkerOptions = point.marker || {};
+                        hasPointMarker = !!point.marker;
 
-                    const shouldDrawMarker = (
-                        (
-                            (seriesMarkerOptions as any).enabled &&
-                            typeof pointMarkerOptions.enabled ===
-                            'undefined'
-                        ) || pointMarkerOptions.enabled
-                    ) && !point.isNull && point.visible !== false;
+                        const shouldDrawMarker = (
+                            (
+                                (seriesMarkerOptions as any).enabled &&
+                                typeof pointMarkerOptions.enabled ===
+                                    'undefined'
+                            ) || pointMarkerOptions.enabled
+                        ) && !point.isNull && point.visible !== false;
 
-                    if (shouldDrawMarker) {
-                        // Shortcuts
-                        const symbol = pick(
-                            pointMarkerOptions.symbol,
-                            series.symbol,
-                            'rect' as SymbolKey
-                        );
+                        if (shouldDrawMarker) {
+                            // Shortcuts
+                            const symbol = pick(
+                                pointMarkerOptions.symbol,
+                                series.symbol,
+                                'rect' as SymbolKey
+                            );
 
-                        markerAttribs = series.markerAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        );
+                            markerAttribs = series.markerAttribs(
+                                point,
+                                (point.selected && 'select') as any
+                            );
 
-                        if (graphic) { // update
-                            graphic.animate(markerAttribs);
-                        } else if (
-                            (markerAttribs.width || 0) > 0 ||
-                            point.hasImage
-                        ) {
-                            graphic = chart.renderer
-                                .symbol(
-                                    symbol,
-                                    markerAttribs.x,
-                                    markerAttribs.y,
-                                    markerAttribs.width,
-                                    markerAttribs.height,
-                                    hasPointMarker ?
-                                        pointMarkerOptions :
-                                        seriesMarkerOptions
-                                )
-                                .add(markerGroup);
+                            if (graphic) { // update
+                                graphic.animate(markerAttribs);
+                            } else if (
+                                (markerAttribs.width || 0) > 0 ||
+                                point.hasImage
+                            ) {
+                                graphic = chart.renderer
+                                    .symbol(
+                                        symbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height,
+                                        hasPointMarker ?
+                                            pointMarkerOptions :
+                                            seriesMarkerOptions
+                                    )
+                                    .add(markerGroup);
 
-                            (graphic.element as any).point = point;
+                                (graphic.element as any).point = point;
 
-                            point.graphics.push(graphic);
-                        }
-
-                        if (graphic) {
-                            if (!chart.styledMode) {
-                                const pointAttribs = series.pointAttribs(
-                                        point,
-                                        (point.selected && 'select') as any
-                                    ),
-                                    attribs = merge(
-                                        pointAttribs,
-                                        verb === 'animate' ?
-                                            markerAttribs :
-                                            {},
-                                        { zIndex: ii }
-                                    );
-
-                                graphic[verb](attribs);
-                            } else {
-                                if (verb === 'animate') {
-                                    graphic.animate(markerAttribs);
-                                }
+                                point.graphics.push(graphic);
                             }
 
-                            graphic.addClass(point.getClassName(), true);
-                        }
+                            if (graphic) {
+                                if (!chart.styledMode) {
+                                    const pointAttribs = series.pointAttribs(
+                                            point,
+                                            (point.selected && 'select') as any
+                                        ),
+                                        attribs = merge(
+                                            pointAttribs,
+                                            verb === 'animate' ?
+                                                markerAttribs :
+                                                {},
+                                            { zIndex: ii }
+                                        );
 
+                                    graphic[verb](attribs);
+                                } else {
+                                    if (verb === 'animate') {
+                                        graphic.animate(markerAttribs);
+                                    }
+                                }
+
+                                graphic.addClass(point.getClassName(), true);
+                            }
+
+                        }
                     }
                 }
-            }
-        });
+            });
 
         // Set color for legend item marker
         if (options.marker) {
@@ -380,8 +370,8 @@ class TemperatureMapSeries extends MapBubbleSeries {
 interface TemperatureMapSeries {
     colorStop: number;
     adjustMinSize: boolean;
-    temperatureColors: [ColorType | [number, ColorType]];
-    temperatureColorIndex: null | number;
+    temperatureColors: [ColorType|[number, ColorType]];
+    temperatureColorIndex: null|number;
 }
 
 /* *
