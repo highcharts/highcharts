@@ -28,6 +28,19 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
+import PopupHTML from './PopupHTML.js';
+const {
+    A,
+    DIV,
+    H3,
+    INPUT,
+    LABEL,
+    LI,
+    OPTION,
+    PREFIX,
+    SELECT,
+    UL
+} = PopupHTML;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -67,23 +80,6 @@ enum DropdownProperties {
     'params.algorithm',
     'params.average'
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const A = 'a',
-    DIV = 'div',
-    H3 = 'h3',
-    INPUT = 'input',
-    LABEL = 'label',
-    LI = 'li',
-    OPTION = 'option',
-    PREFIX = 'highcharts-',
-    SELECT = 'select',
-    UL = 'ul';
 
 /**
  * List of available algorithms for the specific indicator.
@@ -459,8 +455,7 @@ function addParamInputs(
 ): void {
     const popup = this,
         indicators = popup.indicators;
-    let addParamInputs = this.indicators.addParamInputs,
-        addInput = this.addInput,
+    let addInput = this.addInput,
         parentFullName;
 
     if (!chart) {
@@ -1028,11 +1023,7 @@ function listAllSeries(
 
 const PopupIndicators = {
     addForm,
-    addParamInputs,
-    filterSeries,
-    filterSeriesArray,
-    getAmount,
-    listAllSeries
+    getAmount
 };
 
 export default PopupIndicators;
