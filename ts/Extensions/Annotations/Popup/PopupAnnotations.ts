@@ -220,7 +220,7 @@ function addFormFields(
     chart: Highcharts.AnnotationChart,
     parentNode: string,
     options: AnnotationsOptions,
-    storage: Array<unknown>,
+    storage: Array<AnyRecord>,
     isRoot?: boolean
 ): void {
 
@@ -234,7 +234,7 @@ function addFormFields(
     let parentFullName,
         titleName: string;
 
-    objectEach(options, (value, option: string): void => {
+    objectEach(options, (value, option): void => {
 
         // create name like params.styles.fontSize
         parentFullName = parentNode !== '' ? parentNode + '.' + option : option;
@@ -278,7 +278,7 @@ function addFormFields(
     });
 
     if (isRoot) {
-        stableSort(storage, (a: any): number => (
+        stableSort(storage, (a): number => (
             a[1].match(/format/g) ? -1 : 1
         ));
 

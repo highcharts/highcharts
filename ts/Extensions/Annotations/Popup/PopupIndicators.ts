@@ -56,6 +56,11 @@ interface FilteredSeries {
     series: SMAIndicator;
 }
 
+interface IndicatorNameCouple {
+    indicatorFullName: string;
+    indicatorType: string;
+}
+
 /* *
  *
  *  Enums
@@ -952,7 +957,7 @@ function getAmount(this: Chart): number {
 function getNameType(
     series: SMAIndicator,
     indicatorType: string
-): Highcharts.IndicatorNameCouple {
+): IndicatorNameCouple {
     const options = series.options;
     // add mode
     let seriesName = (seriesTypes[indicatorType] &&
