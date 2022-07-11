@@ -10,6 +10,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Annotation';
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type Chart from '../../../Core/Chart/Chart';
@@ -17,14 +25,9 @@ import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
-const {
-    doc,
-    isFirefox
-} = H;
-import NavigationBindings from '../NavigationBindings.js';
+const { doc } = H;
 import D from '../../../Core/DefaultOptions.js';
 const { getOptions } = D;
-import Pointer from '../../../Core/Pointer.js';
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
@@ -34,8 +37,7 @@ const {
     createElement,
     extend,
     fireEvent,
-    pick,
-    wrap
+    pick
 } = U;
 
 /**
@@ -76,30 +78,25 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
 const indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
     LABEL = 'label',
     BUTTON = 'button',
-    SELECT = 'select',
-    SPAN = 'span';
+    SELECT = 'select';
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-// onContainerMouseDown blocks internal popup events, due to e.preventDefault.
-// Related issue #4606
-
-wrap(
-    Pointer.prototype,
-    'onContainerMouseDown',
-    function (this: Pointer, proceed: Function, e): void {
-        // elements is not in popup
-        if (!this.inClass(e.target, PREFIX + 'popup')) {
-            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-    }
-);
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Popup {
 
@@ -556,42 +553,6 @@ extend(Popup.prototype, {
     indicators: PopupIndicators,
     tabs: PopupTabs
 });
-
-addEvent(NavigationBindings, 'showPopup', function (
-    this: NavigationBindings,
-    config: Highcharts.PopupConfigObject
-): void {
-    if (!this.popup) {
-        // Add popup to main container
-        this.popup = new Popup(
-            this.chart.container, (
-                this.chart.options.navigation.iconsURL ||
-                (
-                    this.chart.options.stockTools &&
-                    this.chart.options.stockTools.gui.iconsURL
-                ) ||
-                'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-            ), this.chart
-        );
-    }
-
-    this.popup.showForm(
-        config.formType,
-        this.chart,
-        config.options,
-        config.onSubmit
-    );
-});
-
-addEvent(
-    NavigationBindings,
-    'closePopup',
-    function (this: NavigationBindings): void {
-        if (this.popup) {
-            this.popup.closePopup();
-        }
-    }
-);
 
 /* *
  *
