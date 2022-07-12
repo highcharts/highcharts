@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type { AnnotationEventObject } from '../EventEmitter';
 import type {
     AnnotationsOptions,
     AnnotationsTypeOptions,
@@ -220,7 +221,7 @@ CrookedLine.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Controllable
                 ): void {
                     if (

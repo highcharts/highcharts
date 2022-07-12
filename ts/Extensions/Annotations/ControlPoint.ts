@@ -11,6 +11,8 @@ import type {
 import type Controllable from './Controllables/Controllable';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import EventEmitter from './EventEmitter.js';
+
 declare module './MockPointOptions' {
     interface MockPointOptions {
         controlPoint?: AnnotationControlPointOptionsObject;
@@ -23,34 +25,28 @@ declare module './MockPointOptions' {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationControlPoint implements AnnotationEventEmitter {
+        class AnnotationControlPoint implements EventEmitter {
             public constructor(
                 chart: AnnotationChart,
                 target: Controllable,
                 options: Partial<AnnotationControlPointOptionsObject>,
                 index?: number
             );
-            public addEvents: AnnotationEventEmitterMixin['addEvents'];
+            public addEvents: EventEmitter['addEvents'];
             public chart: AnnotationChart;
             public graphic: SVGElement;
             public index: number;
-            public mouseMoveToRadians: AnnotationEventEmitterMixin[
-                'mouseMoveToRadians'
-            ];
-            public mouseMoveToScale: AnnotationEventEmitterMixin[
-                'mouseMoveToScale'
-            ];
-            public mouseMoveToTranslation: AnnotationEventEmitterMixin[
+            public mouseMoveToRadians: EventEmitter['mouseMoveToRadians'];
+            public mouseMoveToScale: EventEmitter['mouseMoveToScale'];
+            public mouseMoveToTranslation: EventEmitter[
                 'mouseMoveToTranslation'
             ];
             public nonDOMEvents: Array<string>;
-            public onDrag: AnnotationEventEmitterMixin['onDrag'];
-            public onMouseDown: AnnotationEventEmitterMixin['onMouseDown'];
-            public onMouseUp: AnnotationEventEmitterMixin['onMouseUp'];
+            public onDrag: EventEmitter['onDrag'];
+            public onMouseDown: EventEmitter['onMouseDown'];
+            public onMouseUp: EventEmitter['onMouseUp'];
             public options: AnnotationControlPointOptionsObject;
-            public removeDocEvents: AnnotationEventEmitterMixin[
-                'removeDocEvents'
-            ];
+            public removeDocEvents: EventEmitter['removeDocEvents'];
             public target: Controllable;
             public destroy(): void;
             public redraw(animation?: boolean): void;
@@ -78,8 +74,6 @@ const {
     pick
 } = U;
 
-import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -105,13 +99,15 @@ import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
  * @param {number} [index]
  * Point index.
  */
-class ControlPoint implements eventEmitterMixin.Type {
+class ControlPoint extends EventEmitter {
     public constructor(
         chart: Highcharts.AnnotationChart,
         target: Controllable,
         options: AnnotationControlPointOptionsObject,
         index?: number
     ) {
+        super();
+
         this.chart = chart;
         this.target = target;
         this.options = options;
@@ -124,18 +120,10 @@ class ControlPoint implements eventEmitterMixin.Type {
      *
      */
 
-    public addEvents = eventEmitterMixin.addEvents;
     public chart: Highcharts.AnnotationChart;
     public graphic: SVGElement = void 0 as any;
     public index: number;
-    public mouseMoveToRadians = eventEmitterMixin.mouseMoveToRadians;
-    public mouseMoveToScale = eventEmitterMixin.mouseMoveToScale;
-    public mouseMoveToTranslation = eventEmitterMixin.mouseMoveToTranslation;
-    public onDrag = eventEmitterMixin.onDrag;
-    public onMouseDown = eventEmitterMixin.onMouseDown;
-    public onMouseUp = eventEmitterMixin.onMouseUp;
     public options: AnnotationControlPointOptionsObject;
-    public removeDocEvents = eventEmitterMixin.removeDocEvents;
     public target: Controllable;
 
     /**
@@ -208,7 +196,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @private
      */
     public destroy(): void {
-        eventEmitterMixin.destroy.call(this);
+        super.destroy();
 
         if (this.graphic) {
             this.graphic = this.graphic.destroy() as any;

@@ -17,6 +17,7 @@
 import type {
     AnnotationControlPointOptionsObject
 } from '../ControlPointOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotation.js';
@@ -254,7 +255,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: FibonacciTimeZones,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: FibonacciTimeZones
                     ): void {
                         const isInsidePlot = target.chart.isInsidePlot(

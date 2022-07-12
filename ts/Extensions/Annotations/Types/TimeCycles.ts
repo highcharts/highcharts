@@ -17,6 +17,7 @@
 import type {
     AnnotationControlPointOptionsObject
 } from '../ControlPointOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
@@ -246,7 +247,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: TimeCycles
                     ): void {
                         const position = target.anchor(
@@ -272,7 +273,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: TimeCycles
                     ): void {
                         const position = target.anchor(
