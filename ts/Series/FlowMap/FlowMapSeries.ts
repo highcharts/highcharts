@@ -94,12 +94,7 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             toPoint = chart.get(point.options.to || ''),
             linkHeight = 10,
             options = this.options,
-            curvy = (
-                (chart.inverted ? -this.colDistance : this.colDistance) *
-                (options.curveFactor as any)
-            ),
-            nodeW = this.nodeWidth,
-            outgoing = point.outgoing;
+            nodeW = this.nodeWidth;
 
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
@@ -107,8 +102,11 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
         let fromY = fromPoint.plotY || 0,
             toY = toPoint.plotY || 0,
-            nodeLeft = fromPoint.plotX || 0,
-            right = toPoint.plotX || 0;
+            fromX = fromPoint.plotX || 0,
+            toX = toPoint.plotX || 0;
+
+        const curve = options.curve as any || 0,
+            thickness = 1.1;
 
         if (chart.inverted) {
             fromY = (chart.plotSizeY as any) - fromY;
@@ -125,30 +123,39 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             toY + linkHeight
         ];
 
-        // Links going from left to right
+        // Links going from `fromPoint` to `toPoint`.
         if (typeof toY === 'number') {
+
+            // Vector between the points.
+            let dX = toX - fromX,
+                dY = toY - fromY;
+
+            // Vector is halved.
+            dX *= 0.5;
+            dY *= 0.5;
+
+            // Vector points exactly between the points.
+            let mX = fromX + dX,
+                mY = fromY + dY;
+
+            // Rotating the halfway distance by 90 anti-clockwise.
+            // We can then use this to create an arc.
+            let tmp = dX;
+            dX = dY;
+            dY = -tmp;
+
+            // Finally, calculate the arc strength.
+            let arcPointX = (mX + dX * curve),
+                arcPointY = (mY + dY * curve),
+                // TODO: Thickness
+                thicknessX = (mX + dX * (curve * thickness)),
+                thicknessY = (mY + dY * (curve * thickness));
+
             point.shapeArgs = {
                 d: [
-                    ['M', nodeLeft + nodeW, fromY],
-                    [
-                        'C',
-                        nodeLeft + nodeW + curvy,
-                        fromY,
-                        right - curvy,
-                        toY,
-                        right,
-                        toY
-                    ],
-                    ['L', right + (outgoing ? nodeW : 0), toY + linkHeight / 2],
-                    ['L', right, toY + linkHeight],
-                    [
-                        'C',
-                        right - curvy,
-                        toY + linkHeight,
-                        nodeLeft + nodeW + curvy,
-                        fromY + linkHeight,
-                        nodeLeft + nodeW, fromY + linkHeight
-                    ],
+                    ['M', fromX, fromY],
+                    ['Q', arcPointX, arcPointY, toX, toY],
+                    ['Q', thicknessX, thicknessY, fromX, fromY],
                     ['Z']
                 ]
             };
@@ -156,7 +163,7 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
         // Place data labels in the middle
         point.dlBox = {
-            x: nodeLeft + (right - nodeLeft + nodeW) / 2,
+            x: fromX + (toX - fromX + nodeW) / 2,
             y: fromY + (toY - fromY) / 2,
             height: linkHeight,
             width: 0
