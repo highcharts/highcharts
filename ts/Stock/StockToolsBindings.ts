@@ -142,7 +142,13 @@ declare global {
     }
 }
 
-const bindingsUtils = (NavigationBindings.prototype as any).utils =
+declare module '../Extensions/Annotations/NavigationBindingsLike' {
+    interface NavigationBindingsLike {
+        utils: Highcharts.StockToolsNavigationBindingsUtilsObject;
+    }
+}
+
+const bindingsUtils = NavigationBindings.prototype.utils =
     { getAssignedAxis } as Highcharts.StockToolsNavigationBindingsUtilsObject,
     PREFIX = 'highcharts-';
 

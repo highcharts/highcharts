@@ -228,6 +228,7 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
     ): void {
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
+        NavigationBindingsClass.compose(Annotation, ChartClass);
         PopupComposition.compose(NavigationBindingsClass, PointerClass);
     }
 
