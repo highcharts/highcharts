@@ -22,6 +22,7 @@
 
 import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotation';
+import type AnnotationPoint from '../../Extensions/Annotations/AnnotationPoint';
 import type {
     ControllableLabelType
 } from '../../Extensions/Annotations/Controllables/ControllableType';
@@ -207,7 +208,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
  * @param {Highcharts.Point} point The data point to get the annotation info from.
  * @return {Array<string>} Annotation texts
  */
-function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<string> {
+function getPointAnnotationTexts(point: AnnotationPoint): Array<string> {
     const labels = getChartAnnotationLabels(point.series.chart);
     const pointLabels = labels
         .filter((label): boolean => label.points.indexOf(point) > -1);
