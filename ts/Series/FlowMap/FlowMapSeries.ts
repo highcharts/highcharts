@@ -95,6 +95,8 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             linkHeight = 10,
             options = this.options,
             nodeW = this.nodeWidth;
+        const curve = point.options.curve as any || 0,
+            thickness = 1.1;
 
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
@@ -104,9 +106,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             toY = toPoint.plotY || 0,
             fromX = fromPoint.plotX || 0,
             toX = toPoint.plotX || 0;
-
-        const curve = options.curve as any || 0,
-            thickness = 1.1;
 
         if (chart.inverted) {
             fromY = (chart.plotSizeY as any) - fromY;

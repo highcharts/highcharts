@@ -23,7 +23,6 @@ import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
  * */
 
 interface FlowMapSeriesOptions extends SankeySeriesOptions {
-    curve?: Number
 }
 
 /* *
