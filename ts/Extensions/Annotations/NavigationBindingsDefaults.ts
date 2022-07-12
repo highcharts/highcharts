@@ -21,11 +21,13 @@ import type ControllableEllipse from './Controllables/ControllableEllipse';
 import type {
     LangOptions,
     NavigationOptions
-} from './NavigationBindingOptions';
+} from './NavigationBindingsOptions';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationBindings from './NavigationBindings';
 import type PointerEvent from '../../Core/PointerEvent';
 
+import NBU from './NavigationBindingsUtilities.js';
+const { getAssignedAxis } = NBU;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -152,8 +154,8 @@ const navigation: NavigationOptions = {
                 e: PointerEvent
             ): Annotation|void {
                 const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                    coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                    coordsX = getAssignedAxis(coords.xAxis),
+                    coordsY = getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 // Exit if clicked out of axes area
@@ -246,8 +248,8 @@ const navigation: NavigationOptions = {
                 e: PointerEvent
             ): Annotation|void {
                 const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                    coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                    coordsX = getAssignedAxis(coords.xAxis),
+                    coordsY = getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 if (!coordsX || !coordsY) {
@@ -345,8 +347,8 @@ const navigation: NavigationOptions = {
                 e: PointerEvent
             ): Annotation|void {
                 const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                    coordsY = this.utils.getAssignedAxis(coords.yAxis);
+                    coordsX = getAssignedAxis(coords.xAxis),
+                    coordsY = getAssignedAxis(coords.yAxis);
 
                 // Exit if clicked out of axes area
                 if (!coordsX || !coordsY) {
@@ -398,8 +400,8 @@ const navigation: NavigationOptions = {
                             []
                         ) as Array<MockPointOptions>,
                         coords = this.chart.pointer.getCoordinates(e),
-                        coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                        coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                        coordsX = getAssignedAxis(coords.xAxis),
+                        coordsY = getAssignedAxis(coords.yAxis),
                         x, y;
 
                     if (coordsX && coordsY) {
@@ -438,8 +440,8 @@ const navigation: NavigationOptions = {
                 e: PointerEvent
             ): Annotation|void {
                 const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                    coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                    coordsX = getAssignedAxis(coords.xAxis),
+                    coordsY = getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 // Exit if clicked out of axes area

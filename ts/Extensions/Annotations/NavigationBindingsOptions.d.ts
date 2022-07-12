@@ -31,7 +31,7 @@ declare module '../../Core/LangOptions'{
 declare module '../Exporting/NavigationOptions' {
     interface NavigationOptions {
         annotationsOptions?: DeepPartial<AnnotationsOptions>;
-        bindings?: Record<string, NavigationBindingOptions>;
+        bindings?: Record<string, NavigationBindingsOptions>;
         bindingsClassName?: string;
         events?: NavigationEventsOptions;
         iconsURL?: string;
@@ -50,7 +50,7 @@ export interface LangOptions {
     navigation: LangNavigationOptions;
 }
 
-interface NavigationBindingOptions {
+interface NavigationBindingsOptions {
     noDataState?: 'normal' | 'disabled';
     className: string;
     end?: Function;
@@ -68,7 +68,7 @@ interface NavigationEventsOptions {
 
 export interface NavigationOptions {
     annotationsOptions?: DeepPartial<AnnotationsOptions>;
-    bindings?: Record<string, NavigationBindingOptions>;
+    bindings?: Record<string, NavigationBindingsOptions>;
     bindingsClassName?: string;
     events?: NavigationEventsOptions;
     iconsURL?: string;
@@ -85,4 +85,4 @@ interface PopupOptions {
  *
  * */
 
-export default NavigationBindingOptions;
+export default NavigationBindingsOptions;

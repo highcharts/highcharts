@@ -11,9 +11,8 @@
 'use strict';
 
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type NavigationBindingOptions from './NavigationBindingOptions';
+import type NavigationBindingsOptions from './NavigationBindingsOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
-import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     default as Popup,
@@ -29,7 +28,13 @@ const { setOptions } = D;
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
-import NavigationBindingDefaults from './NavigationBindingDefaults.js';
+const {
+    doc,
+    win
+} = H;
+import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
+import NBU from './NavigationBindingsUtilities.js';
+const { getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -67,34 +72,12 @@ declare global {
         interface AnnotationChart {
             navigationBindings: NavigationBindings;
         }
-        interface AnnotationEditableObject {
-            basicAnnotation: Array<string>;
-            circle: Array<string>;
-            ellipse: Array<string>;
-            crookedLine: Array<string>;
-            fibonacci: Array<string>;
-            label: Array<string>;
-            measure: Array<string>;
-            nestedOptions: Record<string, Array<string>>;
-            pitchfork: Array<string>;
-            rect: Array<string>;
-            tunnel: Array<string>;
-            verticalLine: Array<string>;
-        }
-        interface AnnotationNonEditableObject {
-            rectangle: Array<string>;
-        }
-        interface NavigationBindingsButtonEventsObject {
-            button: HTMLDOMElement;
-            events: NavigationBindingOptions;
-        }
-        interface NavigationBindingsUtilsObject {
-            getFieldType(
-                value: ('boolean'|'number'|'string')
-            ): ('checkbox'|'number'|'text');
-            updateRectSize(event: PointerEvent, annotation: Annotation): void;
-        }
     }
+}
+
+interface NavigationBindingsButtonEventsObject {
+    button: HTMLDOMElement;
+    events: NavigationBindingsOptions;
 }
 
 /**
@@ -124,10 +107,6 @@ declare global {
  * @type {Array<Function>|undefined}
  */
 
-const doc = H.doc,
-    win = H.win,
-    PREFIX = 'highcharts-';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -155,108 +134,6 @@ function closestPolyfill(el: Element, s: string): (Element|null) {
     }
     return ret;
 }
-
-
-/**
- * @private
- * @interface bindingsUtils
- */
-const bindingsUtils = {
-    /**
-     * Get field type according to value
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
-     *
-     * @param {'boolean'|'number'|'string'} value
-     * Atomic type (one of: string, number, boolean)
-     *
-     * @return {'checkbox'|'number'|'text'}
-     * Field type (one of: text, number, checkbox)
-     */
-    getFieldType: function (
-        value: ('boolean'|'number'|'string')
-    ): ('checkbox'|'number'|'text') {
-        return ({
-            'string': 'text',
-            'number': 'number',
-            'boolean': 'checkbox'
-        } as Record<string, ('checkbox'|'number'|'text')>)[
-            typeof value
-        ];
-    },
-
-    /**
-     * Update size of background (rect) in some annotations: Measure, Simple
-     * Rect.
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject.updateRectSize
-     *
-     * @param {Highcharts.PointerEventObject} event
-     * Normalized browser event
-     *
-     * @param {Highcharts.Annotation} annotation
-     * Annotation to be updated
-     */
-    updateRectSize: function (
-        event: PointerEvent,
-        annotation: Annotation
-    ): void {
-        const chart = annotation.chart,
-            options = annotation.options.typeOptions,
-            xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
-            yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
-
-        if (xAxis && yAxis) {
-            const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
-                y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
-                width = x - options.point.x,
-                height = options.point.y - y;
-
-            annotation.update({
-                typeOptions: {
-                    background: {
-                        width: chart.inverted ? height : width,
-                        height: chart.inverted ? width : height
-                    }
-                }
-            });
-        }
-    },
-
-    /**
-     * Returns the first xAxis or yAxis that was clicked with its value.
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject#getAssignedAxis
-     *
-     * @param {Array<Highcharts.PointerAxisCoordinateObject>} coords
-     *        All the chart's x or y axes with a current pointer's axis value.
-     *
-     * @return {Highcharts.PointerAxisCoordinateObject}
-     *         Object with a first found axis and its value that pointer
-     *         is currently pointing.
-     */
-    getAssignedAxis(
-        coords: Array<Pointer.AxisCoordinateObject>
-    ): Pointer.AxisCoordinateObject {
-        return coords.filter(function (coord): boolean {
-            const extremes = coord.axis.getExtremes(),
-                axisMin = extremes.min,
-                axisMax = extremes.max,
-                // Correct axis edges when axis has series
-                // with pointRange (like column)
-                minPointOffset = pick(coord.axis.minPointOffset, 0);
-
-            return isNumber(axisMin) && isNumber(axisMax) &&
-                coord.value >= (axisMin - minPointOffset) &&
-                coord.value <= (axisMax + minPointOffset) &&
-                // don't count navigator axis
-                !coord.axis.options.isInternal;
-        })[0]; // If the axes overlap, return the first axis that was found.
-    }
-};
 
 /**
  * @private
@@ -344,7 +221,7 @@ class NavigationBindings {
      * */
 
     public activeAnnotation?: (false|Annotation);
-    public boundClassNames: Record<string, NavigationBindingOptions> =
+    public boundClassNames: Record<string, NavigationBindingsOptions> =
         void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public container: NodeListOf<HTMLDOMElement>;
@@ -355,7 +232,7 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (NavigationBindingOptions|null) = void 0 as any;
+    public selectedButton: (NavigationBindingsOptions|null) = void 0 as any;
     public stepIndex?: number;
     public steps?: boolean;
 
@@ -405,7 +282,7 @@ class NavigationBindings {
         navigation.boundClassNames = {};
 
         objectEach((options.bindings || {}), function (
-            value: NavigationBindingOptions
+            value: NavigationBindingsOptions
         ): void {
             navigation.boundClassNames[value.className] = value;
         });
@@ -515,7 +392,7 @@ class NavigationBindings {
      */
     public bindingsButtonClick(
         button: HTMLDOMElement,
-        events: NavigationBindingOptions,
+        events: NavigationBindingsOptions,
         clickEvent: PointerEvent
     ): void {
         const navigation = this,
@@ -559,11 +436,11 @@ class NavigationBindings {
             }
 
             if (events.start || events.steps) {
-                chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+                chart.renderer.boxWrapper.addClass('highcharts-draw-mode');
             }
         } else {
             chart.stockTools && chart.stockTools.toggleButtonAciveClass(button);
-            svgContainer.removeClass(PREFIX + 'draw-mode');
+            svgContainer.removeClass('highcharts-draw-mode');
             navigation.nextEvent = false;
             navigation.mouseMoveEvent = false;
             navigation.selectedButton = null;
@@ -604,7 +481,7 @@ class NavigationBindings {
                 (clickEvent.target as any).parentNode &&
                 // TO DO: Polyfill for IE11?
                 !closestPolyfill(
-                    clickEvent.target as any, '.' + PREFIX + 'popup'
+                    clickEvent.target as any, '.highcharts-popup'
                 )
             ) {
                 fireEvent(navigation, 'closePopup');
@@ -641,7 +518,7 @@ class NavigationBindings {
                     'deselectButton',
                     { button: navigation.selectedButtonElement }
                 );
-                svgContainer.removeClass(PREFIX + 'draw-mode');
+                svgContainer.removeClass('highcharts-draw-mode');
                 navigation.steps = false;
                 navigation.selectedButton = null;
                 // First click is also the last one:
@@ -678,7 +555,7 @@ class NavigationBindings {
                         'deselectButton',
                         { button: navigation.selectedButtonElement }
                     );
-                    svgContainer.removeClass(PREFIX + 'draw-mode');
+                    svgContainer.removeClass('highcharts-draw-mode');
                     // That was the last step, call end():
                     if (selectedButton.end) {
                         selectedButton.end.call(
@@ -802,7 +679,6 @@ class NavigationBindings {
         const options = annotation.options,
             editables = NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,
-            getFieldType = this.utils.getFieldType,
             type = pick(
                 options.type,
                 options.shapes && options.shapes[0] &&
@@ -1026,14 +902,11 @@ class NavigationBindings {
     public getButtonEvents(
         container: HTMLDOMElement,
         event: Event
-    ): (Highcharts.NavigationBindingsButtonEventsObject|undefined) {
+    ): (NavigationBindingsButtonEventsObject|undefined) {
         const navigation = this,
             classNames = this.getClickedClassNames(container, event);
 
-        let bindings: (
-            Highcharts.NavigationBindingsButtonEventsObject|undefined
-        );
-
+        let bindings: (NavigationBindingsButtonEventsObject|undefined);
 
         classNames.forEach(function (
             className: [string, HTMLDOMElement]
@@ -1075,20 +948,6 @@ class NavigationBindings {
         this.removeEvents();
     }
 }
-
-interface NavigationBindings {
-    utils: typeof bindingsUtils;
-}
-
-/**
- * General utils for bindings
- *
- * @private
- * @name Highcharts.NavigationBindings.utils
- * @type {bindingsUtils}
- */
-NavigationBindings.prototype.utils = bindingsUtils;
-
 
 Chart.prototype.initNavigationBindings = function (
     this: Highcharts.AnnotationChart
@@ -1252,7 +1111,7 @@ addEvent(Chart, 'render', function (): void {
         objectEach(
             navigationBindings.boundClassNames,
             function (
-                value: NavigationBindingOptions,
+                value: NavigationBindingsOptions,
                 key: string
             ): void {
 
