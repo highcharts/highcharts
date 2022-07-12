@@ -76,18 +76,6 @@ declare module '../../Core/PointerEvent' {
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationChart {
-            navigationBindings: NavigationBindings;
-        }
-    }
-}
-
 interface NavigationBindingsButtonEventsObject {
     button: HTMLDOMElement;
     events: NavigationBindingsOptions;
@@ -112,12 +100,13 @@ const composedClasses: Array<Function> = [];
  * @private
  */
 function closestPolyfill(el: Element, s: string): (Element|null) {
-    let ElementProto = win.Element.prototype,
+    const ElementProto = win.Element.prototype,
         elementMatches =
             ElementProto.matches ||
             ElementProto.msMatchesSelector ||
-            ElementProto.webkitMatchesSelector,
-        ret: (Element|null) = null;
+            ElementProto.webkitMatchesSelector;
+
+    let ret: (Element|null) = null;
 
     if (ElementProto.closest) {
         ret = ElementProto.closest.call(el, s);
@@ -130,6 +119,7 @@ function closestPolyfill(el: Element, s: string): (Element|null) {
 
         } while (el !== null && el.nodeType === 1);
     }
+
     return ret;
 }
 
@@ -201,8 +191,8 @@ function onChartRender(
             const container = this.navigationBindings.container[0];
 
             objectEach(navigationBindings.boundClassNames, (
-                value: NavigationBindingsOptions,
-                key: string
+                value,
+                key
             ): void => {
 
                 // Get the HTML element coresponding to the className taken
@@ -293,21 +283,19 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                     onSubmit: function (
                         data: PopupFieldsObject
                     ): void {
-
-                        let config: PopupFieldsTree = {},
-                            typeOptions;
-
                         if (data.actionType === 'remove') {
                             navigation.activeAnnotation = false;
                             navigation.chart.removeAnnotation(annotation);
                         } else {
+                            const config: PopupFieldsTree = {};
+
                             navigation.fieldsToOptions(
                                 data.fields as Record<string, string>,
                                 config
                             );
                             navigation.deselectAnnotation();
 
-                            typeOptions = config.typeOptions;
+                            const typeOptions = config.typeOptions;
 
                             if (annotation.options.type === 'measure') {
                                 // Manually disable crooshars according to
@@ -529,9 +517,7 @@ class NavigationBindings {
         // Shorthand object for getting events for buttons:
         navigation.boundClassNames = {};
 
-        objectEach((options.bindings || {}), function (
-            value: NavigationBindingsOptions
-        ): void {
+        objectEach((options.bindings || {}), (value): void => {
             navigation.boundClassNames[value.className] = value;
         });
 
@@ -563,7 +549,7 @@ class NavigationBindings {
             );
         });
 
-        objectEach(options.events || {}, function (callback, eventName): void {
+        objectEach((options.events || {}), (callback, eventName): void => {
             if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(
                     addEvent(
@@ -866,9 +852,8 @@ class NavigationBindings {
         config: T
     ): T {
         objectEach(fields, function (value: string, field: string): void {
-            let parsedValue = parseFloat(value),
+            const parsedValue = parseFloat(value),
                 path = field.split('.'),
-                parent = config,
                 pathLength = path.length - 1;
 
             // If it's a number (not "format" options), parse it:
@@ -882,7 +867,9 @@ class NavigationBindings {
 
             // Remove empty strings or values like 0
             if (value !== '' && value !== 'undefined') {
-                path.forEach(function (name: string, index: number): void {
+                let parent = config;
+
+                path.forEach((name, index): void => {
                     const nextName = pick(path[index + 1], '');
 
                     if (pathLength === index) {
@@ -993,10 +980,7 @@ class NavigationBindings {
                 if (isArray(option)) {
                     parent[key] = [];
 
-                    option.forEach(function (
-                        arrayOption: any,
-                        i: number
-                    ): void {
+                    option.forEach((arrayOption, i): void => {
                         if (!isObject(arrayOption)) {
                             // Simple arrays, e.g. [String, Number, Boolean]
                             traverse(
@@ -1010,10 +994,7 @@ class NavigationBindings {
                             parent[key][i] = {};
                             objectEach(
                                 arrayOption,
-                                function (
-                                    nestedOption: any,
-                                    nestedKey: string
-                                ): void {
+                                (nestedOption, nestedKey): void => {
                                     traverse(
                                         nestedOption,
                                         nestedKey,
@@ -1035,13 +1016,13 @@ class NavigationBindings {
                     }
                     objectEach(
                         option,
-                        function (nestedOption: any, nestedKey: string): void {
+                        (nestedOption, nestedKey): void => {
                             traverse(
                                 nestedOption,
                                 nestedKey,
                                 key === 0 ?
                                     parentEditables :
-                                    (nestedEditables as any)[key],
+                                    nestedEditables[key],
                                 nextParent
                             );
                         }
@@ -1070,7 +1051,7 @@ class NavigationBindings {
                 visualOptions[key] = {};
                 objectEach(
                     options[key],
-                    function (typeOption: any, typeKey: string): void {
+                    (typeOption, typeKey): void => {
                         (traverse as any)(
                             typeOption,
                             typeKey,
@@ -1118,12 +1099,10 @@ class NavigationBindings {
                 classNames = classNames.concat(
                     elemClassName
                         .split(' ')
-                        .map(function (name: string): [string, HTMLDOMElement] { // eslint-disable-line no-loop-func
-                            return [
-                                name,
-                                element
-                            ];
-                        })
+                        // eslint-disable-next-line no-loop-func
+                        .map((name): [string, HTMLDOMElement] => (
+                            [name, element]
+                        ))
                 );
             }
             element = element.parentNode as any;
@@ -1162,9 +1141,7 @@ class NavigationBindings {
 
         let bindings: (NavigationBindingsButtonEventsObject|undefined);
 
-        classNames.forEach(function (
-            className: [string, HTMLDOMElement]
-        ): void {
+        classNames.forEach((className): void => {
             if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {
                     events: navigation.boundClassNames[className[0]],
@@ -1196,9 +1173,7 @@ class NavigationBindings {
      * @function Highcharts.NavigationBindings#removeEvents
      */
     public removeEvents(): void {
-        this.eventsToUnbind.forEach(function (unbinder: Function): void {
-            unbinder();
-        });
+        this.eventsToUnbind.forEach((unbinder: Function): void => unbinder());
     }
 
     /**

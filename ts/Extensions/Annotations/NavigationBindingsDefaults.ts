@@ -192,13 +192,13 @@ const navigation: NavigationOptions = {
                     e: PointerEvent,
                     annotation: Annotation
                 ): void {
-                    const shapes = annotation.options.shapes;
-
-                    let mockPointOpts = (
+                    const shapes = annotation.options.shapes,
+                        mockPointOpts = (
                             (shapes && shapes[0] && shapes[0].point) ||
                             {}
-                        ) as MockPointOptions,
-                        distance;
+                        ) as MockPointOptions;
+
+                    let distance: (number|undefined);
 
                     if (
                         isNumber(mockPointOpts.xAxis) &&
@@ -393,20 +393,18 @@ const navigation: NavigationOptions = {
                     e: PointerEvent,
                     annotation: Annotation
                 ): void {
-                    const shapes = annotation.options.shapes;
-
-                    let points = (
+                    const shapes = annotation.options.shapes,
+                        points = (
                             (shapes && shapes[0] && shapes[0].points) ||
                             []
                         ) as Array<MockPointOptions>,
                         coords = this.chart.pointer.getCoordinates(e),
                         coordsX = getAssignedAxis(coords.xAxis),
-                        coordsY = getAssignedAxis(coords.yAxis),
-                        x, y;
+                        coordsY = getAssignedAxis(coords.yAxis);
 
                     if (coordsX && coordsY) {
-                        x = coordsX.value;
-                        y = coordsY.value;
+                        const x = coordsX.value,
+                            y = coordsY.value;
 
                         // Top right point
                         points[1].x = x;

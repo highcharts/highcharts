@@ -98,6 +98,7 @@ declare global {
         interface AnnotationChart extends Chart {
             annotations: Array<Annotation>;
             controlPointsGroup: SVGElement;
+            navigationBindings: NavigationBindings;
             options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
             addAnnotation(

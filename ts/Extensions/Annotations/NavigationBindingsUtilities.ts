@@ -45,7 +45,7 @@ const {
 function getAssignedAxis(
     coords: Array<Pointer.AxisCoordinateObject>
 ): Pointer.AxisCoordinateObject {
-    return coords.filter(function (coord): boolean {
+    return coords.filter((coord): boolean => {
         const extremes = coord.axis.getExtremes(),
             axisMin = extremes.min,
             axisMax = extremes.max,
