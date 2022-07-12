@@ -101,10 +101,10 @@ abstract class EventEmitter {
             }
         });
 
-        objectEach(emitter.options.events, function (
+        objectEach(emitter.options.events, (
             event: EventCallback<Annotation>,
             type: string
-        ): void {
+        ): void => {
             const eventHandler = function (e: PointerEvent): void {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
@@ -153,6 +153,17 @@ abstract class EventEmitter {
     }
 
     /**
+     * Destroy the event emitter.
+     */
+    public destroy(): void {
+        this.removeDocEvents();
+
+        removeEvent(this);
+
+        this.hcEvents = null;
+    }
+
+    /**
      * Map mouse move event to the radians.
      * @private
      */
@@ -189,16 +200,16 @@ abstract class EventEmitter {
         cx: number,
         cy: number
     ): PositionObject {
-        let prevDx = e.prevChartX - cx,
+        const prevDx = e.prevChartX - cx,
             prevDy = e.prevChartY - cy,
             dx = e.chartX - cx,
-            dy = e.chartY - cy,
-            sx = (dx || 1) / (prevDx || 1),
-            sy = (dy || 1) / (prevDy || 1),
-            temp;
+            dy = e.chartY - cy;
+
+        let sx = (dx || 1) / (prevDx || 1),
+            sy = (dy || 1) / (prevDy || 1);
 
         if (this.chart.inverted) {
-            temp = sy;
+            const temp = sy;
             sy = sx;
             sx = temp;
         }
@@ -259,19 +270,17 @@ abstract class EventEmitter {
                 translation.x = 0;
             }
 
-            if ((this.points as any).length) {
-                (this as any).translate(translation.x, translation.y);
+            const emitter = this as Required<EventEmitter>;
+
+            if (emitter.points.length) {
+                emitter.translate(translation.x, translation.y);
             } else {
-                (this.shapes as any).forEach(function (
-                    shape: SVGElement
-                ): void {
-                    shape.translate(translation.x, translation.y);
-                });
-                (this.labels as any).forEach(function (
-                    label: SVGElement
-                ): void {
-                    label.translate(translation.x, translation.y);
-                });
+                emitter.shapes.forEach((shape): void =>
+                    shape.translate(translation.x, translation.y)
+                );
+                emitter.labels.forEach((label): void =>
+                    label.translate(translation.x, translation.y)
+                );
             }
 
             this.redraw(false);
@@ -285,10 +294,6 @@ abstract class EventEmitter {
     public onMouseDown(
         e: AnnotationEventObject
     ): void {
-        let emitter = this,
-            pointer = emitter.chart.pointer,
-            prevChartX: number,
-            prevChartY: number;
 
         if (e.preventDefault) {
             e.preventDefault();
@@ -299,9 +304,13 @@ abstract class EventEmitter {
             return;
         }
 
+        const emitter = this,
+            pointer = emitter.chart.pointer;
+
         e = pointer.normalize(e);
-        prevChartX = e.chartX;
-        prevChartY = e.chartY;
+
+        let prevChartX = e.chartX,
+            prevChartY = e.chartY;
 
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
@@ -358,13 +367,13 @@ abstract class EventEmitter {
         _e: AnnotationEventObject
     ): void {
         const chart = this.chart,
-            annotation: Annotation = this.target as any || this,
+            annotation = this.target as Annotation || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
 
         this.removeDocEvents();
 
-        (annotationsOptions as any)[index] = annotation.options;
+        annotationsOptions[index] = annotation.options;
     }
 
     abstract redraw(animation?: boolean): void;
@@ -383,16 +392,6 @@ abstract class EventEmitter {
         }
     }
 
-    /**
-     * Destroy the event emitter.
-     */
-    public destroy(): void {
-        this.removeDocEvents();
-
-        removeEvent(this);
-
-        this.hcEvents = null;
-    }
 }
 
 /* *
@@ -416,6 +415,7 @@ interface EventEmitter {
     removeMouseUp?: Function;
     shapes?: Array<ControllableShapeType>;
     target?: (Annotation|Controllable);
+    translate?(dx: number, dy: number): void;
 }
 
 /* *

@@ -913,6 +913,7 @@ class Annotation extends EventEmitter implements Controllable {
 interface Annotation extends Controllable {
     defaultOptions: AnnotationsOptions;
     nonDOMEvents: Array<string>;
+    translate(dx: number, dy: number): void;
 }
 
 merge<Annotation>(
