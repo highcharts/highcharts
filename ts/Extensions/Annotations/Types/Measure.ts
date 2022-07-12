@@ -11,6 +11,7 @@ import type {
     AnnotationsOptions,
     AnnotationsTypeOptions
 } from '../AnnotationsOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
 import type Axis from '../../../Core/Axis/Axis';
 import type Controllable from '../Controllables/Controllable';
 import type {
@@ -678,7 +679,7 @@ class Measure extends Annotation {
         }
     }
 
-    public onDrag(e: Highcharts.AnnotationEventObject): void {
+    public onDrag(e: AnnotationEventObject): void {
         const translation = this.mouseMoveToTranslation(e),
             selectType = this.options.typeOptions.selectType,
             x = selectType === 'y' ? 0 : translation.x,
@@ -1073,7 +1074,7 @@ Measure.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Measure,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Measure
                 ): void {
                     const translation = this.mouseMoveToTranslation(e),

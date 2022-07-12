@@ -52,7 +52,7 @@ import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
-import EventEmitterMixin from './Mixins/EventEmitterMixin.js';
+import EventEmitter from './EventEmitter.js';
 import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
@@ -184,7 +184,7 @@ declare global {
  * @param {Highcharts.Chart} chart a chart instance
  * @param {Highcharts.AnnotationsOptions} userOptions the options object
  */
-class Annotation implements EventEmitterMixin.Type, Controllable {
+class Annotation extends EventEmitter implements Controllable {
 
     /**
      * @private
@@ -243,6 +243,8 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
         chart: Highcharts.AnnotationChart,
         userOptions: AnnotationsOptions
     ) {
+        super();
+
         let labelsAndShapes;
 
         /**
@@ -703,7 +705,7 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
 
         erase(chart.labelCollectors, this.labelCollector);
 
-        EventEmitterMixin.destroy.call(this);
+        super.destroy();
         controllableProto.destroy.call(this);
 
         destroyObjectProperties(this, chart);
@@ -908,7 +910,7 @@ class Annotation implements EventEmitterMixin.Type, Controllable {
     }
 }
 
-interface Annotation extends EventEmitterMixin.Type, Controllable {
+interface Annotation extends Controllable {
     defaultOptions: AnnotationsOptions;
     nonDOMEvents: Array<string>;
 }
@@ -917,7 +919,6 @@ merge<Annotation>(
     true,
     Annotation.prototype,
     Controllable.prototype as any,
-    EventEmitterMixin,
     // restore original Annotation implementation after mixin overwrite
     merge(
         Annotation.prototype,

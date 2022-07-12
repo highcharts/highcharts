@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type { AnnotationEventObject } from '../EventEmitter';
 import type AnnotationsOptions from '../AnnotationsOptions';
 import type {
     AnnotationControlPointOptionsObject
@@ -59,7 +60,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Annotation
                 ): void {
                     const xy = this.mouseMoveToTranslation(e);
@@ -95,7 +96,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Controllable
                 ): void {
                     const xy = this.mouseMoveToTranslation(e);
@@ -167,7 +168,7 @@ class BasicAnnotation extends Annotation {
             // TRANSLATION
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: ControllableCircle
                 ): void {
                     const annotation = target.annotation,
@@ -207,7 +208,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
                     const position =
@@ -237,7 +238,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
                     const position = target.getAbsolutePosition(
@@ -272,7 +273,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
                     const position = target.getAbsolutePosition(

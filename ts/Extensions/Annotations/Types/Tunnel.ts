@@ -9,6 +9,7 @@
 import type {
     AnnotationControlPointOptionsObject
 } from '../ControlPointOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -245,7 +246,7 @@ Tunnel.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: Tunnel,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: Tunnel
                     ): void {
                         if (
@@ -276,7 +277,7 @@ Tunnel.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Tunnel,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Tunnel
                 ): void {
                     if (

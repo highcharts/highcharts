@@ -5,6 +5,7 @@
  * */
 
 import type Annotation from './Annotation';
+import type { AnnotationEventObject } from './EventEmitter';
 import type Controllable from './Controllables/Controllable';
 import type ControlPoint from './ControlPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -20,7 +21,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 export interface AnnotationControlPointDragEventFunction {
     (
         this: Annotation,
-        e: Highcharts.AnnotationEventObject,
+        e: AnnotationEventObject,
         target: Controllable
     ): void;
 }
