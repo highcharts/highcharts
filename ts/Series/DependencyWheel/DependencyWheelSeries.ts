@@ -529,9 +529,16 @@ export default DependencyWheelSeries;
  * The `rotation` and `textPath` option takes precedence over `rotationMode`.
  *
  * @type       {string}
- * @sample {highcharts} highcharts/plotoptions/dependencywheel-datalabels-rotationmode-perpendicular/
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-auto
+ *         Auto rotation mode
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-perpendicular
  *         Perpendicular rotation mode
- * @validvalue ["auto", "perpendicular", "parallel"]
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-parallel
+ *         Parallel rotation mode
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-circular
+ *         Circular rotation mode
+ *
+ * @validvalue ["auto", "perpendicular", "parallel", "circular"]
  * @since      next
  * @default    undefined
  * @apioption  series.dependencywheel.dataLabels.rotationMode
