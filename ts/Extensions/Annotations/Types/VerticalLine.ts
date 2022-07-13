@@ -6,16 +6,19 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type {
-    AnnotationsOptions,
-    AnnotationsTypeOptions
-} from '../AnnotationsOptions';
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
+import type { AnnotationPointType } from '../AnnotationPoint';
 import type Controllable from '../Controllables/Controllable';
 import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from '../Controllables/ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
+
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -86,7 +89,7 @@ class VerticalLine extends Annotation {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         userOptions: VerticalLine.Options
     ) {
         super(chart, userOptions);
@@ -181,7 +184,7 @@ VerticalLine.prototype.defaultOptions = merge(
                 offset: -40,
                 point: function (
                     target: Controllable
-                ): Highcharts.AnnotationPointType {
+                ): AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
                 allowOverlap: true,
@@ -208,13 +211,13 @@ VerticalLine.prototype.defaultOptions = merge(
 );
 
 namespace VerticalLine {
-    export interface Options extends AnnotationsOptions {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
     export interface TypeLabelOptions extends ControllableLabelOptions {
         offset: number;
     }
-    export interface TypeOptions extends AnnotationsTypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         connector: Partial<ControllableShapeOptions>;
         label: TypeLabelOptions;
         yOffset: number;

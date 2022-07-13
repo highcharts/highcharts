@@ -16,7 +16,10 @@
  *
  * */
 
-import type Annotation from './Annotation';
+import type {
+    default as Annotation,
+    AnnotationChart
+} from './Annotation';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsLike from './NavigationBindingsLike';
@@ -155,7 +158,7 @@ function onChartLoad(
 
     if (options && options.navigation && options.navigation.bindings) {
         this.navigationBindings = new NavigationBindings(
-            this as Highcharts.AnnotationChart,
+            this as AnnotationChart,
             options.navigation
         );
         this.navigationBindings.initEvents();
@@ -459,7 +462,7 @@ class NavigationBindings {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: NavigationOptions
     ) {
         this.chart = chart;
@@ -483,7 +486,7 @@ class NavigationBindings {
     public activeAnnotation?: (false|Annotation);
     public boundClassNames: Record<string, NavigationBindingsOptions> =
         void 0 as any;
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
     public container: NodeListOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
@@ -696,7 +699,7 @@ class NavigationBindings {
      *        Browser's click event.
      */
     public bindingsChartClick(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         clickEvent: PointerEvent
     ): void {
         chart = this.chart;

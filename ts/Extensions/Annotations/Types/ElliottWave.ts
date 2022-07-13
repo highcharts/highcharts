@@ -6,23 +6,23 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type {
     ControllableLabelOptions
 } from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
 import type MockPointOptions from '../MockPointOptions';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: ElliottWave.Options
     ) {
         super(chart, options);

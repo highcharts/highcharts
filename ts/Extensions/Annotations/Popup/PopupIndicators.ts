@@ -18,7 +18,8 @@
  *
  * */
 
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type { AnnotationChart } from '../Annotation';
+import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 import type {
@@ -146,8 +147,8 @@ function addColsContainer(
  */
 function addForm(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
-    _options: AnnotationsOptions,
+    chart: AnnotationChart,
+    _options: AnnotationOptions,
     callback: Function
 ): void {
     const lang = this.lang;
@@ -236,7 +237,7 @@ function addForm(
  */
 function addFormFields(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     series: SMAIndicator,
     seriesType: string,
     rhsColWrapper: HTMLDOMElement
@@ -331,7 +332,7 @@ function addFormFields(
  */
 function addIndicatorList(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     parentDiv: HTMLDOMElement,
     listType: string,
     filter?: string
@@ -487,7 +488,7 @@ function addIndicatorList(
  */
 function addParamInputs(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     parentNode: string,
     fields: PopupFieldsTree,
     type: string,
@@ -581,7 +582,7 @@ function addParamInputs(
  */
 function addSearchBox(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     parentDiv: HTMLDOMElement
 ): void {
     const popup = this,
@@ -739,7 +740,7 @@ function addSelection(
  */
 function addSelectionOptions(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     optionName: string,
     selectBox: HTMLSelectElement,
     indicatorType?: string,
@@ -1004,7 +1005,7 @@ function listAllSeries(
     this: Popup,
     indicatorType: string,
     optionName: string,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     parentDiv: HTMLDOMElement,
     currentSeries: SMAIndicator,
     selectedOption?: string

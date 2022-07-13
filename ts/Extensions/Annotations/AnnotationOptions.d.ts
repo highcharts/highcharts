@@ -16,6 +16,7 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Annotation from './Annotation';
+import type AST from '../../Core/Renderer/HTML/AST';
 import type {
     ControllableLabelOptions,
     ControllableOptions,
@@ -24,6 +25,8 @@ import type {
 import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
+import type O from '../../Core/Options';
 
 /* *
  *
@@ -33,18 +36,18 @@ import type MockPointOptions from './MockPointOptions';
 
 export type AnnotationDraggableValue = (''|'x'|'y'|'xy');
 
-export interface AnnotationsEventsOptions {
+export interface AnnotationEventsOptions {
     afterUpdate?: EventCallback<Annotation>;
     add?: EventCallback<Annotation>;
     click?: EventCallback<Annotation>;
     remove?: EventCallback<Annotation>;
 }
-export interface AnnotationsOptions extends ControllableOptions { // @todo AnnotationOptions.d.ts
+export interface AnnotationOptions extends ControllableOptions { // @todo AnnotationOptions.d.ts
     animation: Partial<AnimationOptions>;
     controlPointOptions: ControlPointOptionsObject;
     crop: boolean;
     draggable: AnnotationDraggableValue;
-    events: AnnotationsEventsOptions;
+    events: AnnotationEventsOptions;
     id?: (number|string);
     itemType?: string;
     labelOptions?: ControllableLabelOptions;
@@ -55,25 +58,31 @@ export interface AnnotationsOptions extends ControllableOptions { // @todo Annot
     shapeOptions: ControllableShapeOptions;
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
-    typeOptions: AnnotationsTypeOptions;
+    typeOptions: AnnotationTypeOptions;
     visible: boolean;
     zIndex: number;
 }
-export interface AnnotationsTypeOptions {
+export interface AnnotationTypeOptions {
     background?: Partial<ControllableShapeOptions>;
     height?: number;
     line?: Partial<ControllableShapeOptions>;
     point: MockPointOptions;
-    points?: Array<AnnotationsTypePointsOptions>;
+    points?: Array<AnnotationTypePointsOptions>;
     xAxis?: number;
     yAxis?: number;
 }
-export interface AnnotationsTypePointsOptions {
+export interface AnnotationTypePointsOptions {
     controlPoint?: number;
     x?: number;
     xAxis?: number;
     y?: number;
     yAxis?: number;
+}
+
+export interface Options extends O {
+    annotations: Array<AnnotationOptions>;
+    defs: Record<string, AST.Node>;
+    navigation: NavigationOptions;
 }
 
 /* *
@@ -82,4 +91,4 @@ export interface AnnotationsTypePointsOptions {
  *
  * */
 
-export default AnnotationsOptions;
+export default AnnotationOptions;

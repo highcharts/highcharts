@@ -6,17 +6,19 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
 const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -79,7 +81,7 @@ class Fibonacci extends Tunnel {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: Fibonacci.Options
     ) {
         super(chart, options);

@@ -16,8 +16,12 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type AnnotationsOptions from './AnnotationsOptions';
+import type {
+    default as Annotation,
+    AnnotationChart
+} from './Annotation';
+import type AnnotationOptions from './AnnotationOptions';
+import type { AnnotationPointType } from './AnnotationPoint';
 import type Controllable from './Controllables/Controllable';
 import type {
     ControllableLabelType,
@@ -400,15 +404,15 @@ abstract class EventEmitter {
 
 interface EventEmitter {
     cancelClick?: boolean;
-    chart: Highcharts.AnnotationChart;
+    chart: AnnotationChart;
     graphic: SVGElement;
     hasDragged?: boolean;
     hcEvents?: unknown;
     isUpdating?: boolean;
     labels?: Array<ControllableLabelType>;
     nonDOMEvents?: Array<string>;
-    options: Partial<(ControlPointOptionsObject|AnnotationsOptions)>;
-    points?: Array<Highcharts.AnnotationPointType>;
+    options: Partial<(ControlPointOptionsObject|AnnotationOptions)>;
+    points?: Array<AnnotationPointType>;
     removeDrag?: Function;
     removeMouseUp?: Function;
     shapes?: Array<ControllableShapeType>;

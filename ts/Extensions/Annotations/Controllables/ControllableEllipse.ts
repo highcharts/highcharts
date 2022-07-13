@@ -15,6 +15,7 @@
  * */
 
 import type Annotation from '../Annotation';
+import type { AnnotationPointType } from '../AnnotationPoint';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
@@ -258,7 +259,7 @@ class ControllableEllipse extends Controllable {
      *        MockPoint that is added through options
      */
     public getAbsolutePosition(
-        point: Highcharts.AnnotationPointType
+        point: AnnotationPointType
     ): BBoxObject {
         return this.anchor(point).absolutePosition;
     }
