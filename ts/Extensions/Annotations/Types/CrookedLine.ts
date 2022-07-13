@@ -6,14 +6,14 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationEventObject } from '../EventEmitter';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions,
     AnnotationTypePointsOptions
 } from '../AnnotationOptions';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';

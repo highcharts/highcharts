@@ -82,7 +82,7 @@ export interface AnnotationTypePointsOptions {
     yAxis?: number;
 }
 
-export interface Options extends CoreOptions {
+export interface ChartOptions extends CoreOptions {
     annotations: Array<AnnotationOptions>;
     defs: Record<string, AST.Node>;
     navigation: NavigationOptions;

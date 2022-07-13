@@ -18,7 +18,7 @@
  *
  * */
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';

@@ -21,11 +21,9 @@
 
 
 import type Accessibility from '../Accessibility';
-import type {
-    default as Annotation,
-    AnnotationChart
-} from '../../Extensions/Annotations/Annotation';
-import type AnnotationPoint from '../../Extensions/Annotations/AnnotationPoint';
+import type Annotation from '../../Extensions/Annotations/Annotation';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
+import type AnnotationPoint from '../../Extensions/Annotations/AnnotationSeries';
 import type {
     ControllableLabelType
 } from '../../Extensions/Annotations/Controllables/ControllableType';

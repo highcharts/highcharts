@@ -12,7 +12,7 @@
  *
  * */
 
-import type { AnnotationChart } from './Annotation';
+import type AnnotationChart from './AnnotationChart';
 import type Controllable from './Controllables/Controllable';
 import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

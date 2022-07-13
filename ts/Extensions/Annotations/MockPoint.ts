@@ -12,11 +12,11 @@
  *
  * */
 
-import type { AnnotationChart } from './Annotation';
+import type AnnotationChart from './AnnotationChart';
 import type {
     AnnotationPoint,
     AnnotationPointType
-} from './AnnotationPoint';
+} from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
 import type Controllable from './Controllables/Controllable';
 import type MockPointOptions from './MockPointOptions';
@@ -37,7 +37,7 @@ const {
  *
  * */
 
-declare module './AnnotationPoint' {
+declare module './AnnotationSeries' {
     interface AnnotationPoint {
         command?: string;
         mock: undefined;

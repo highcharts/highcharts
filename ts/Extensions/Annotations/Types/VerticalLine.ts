@@ -6,12 +6,12 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
 } from '../AnnotationOptions';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
 import type {
     ControllableLabelOptions,

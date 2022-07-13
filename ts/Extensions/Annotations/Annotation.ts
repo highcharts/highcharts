@@ -20,10 +20,10 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type {
     AnnotationPoint,
     AnnotationPointType
-} from './AnnotationPoint';
+} from './AnnotationSeries';
 import type {
     AnnotationOptions,
-    Options
+    ChartOptions
 } from './AnnotationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AxisType from '../../Core/Axis/AxisType';
@@ -85,26 +85,6 @@ declare module '../../Core/Options'{
     interface Options {
         annotations?: (AnnotationOptions|Array<AnnotationOptions>);
     }
-}
-
-export interface AnnotationChart extends Chart {
-    annotations: Array<Annotation>;
-    controlPointsGroup: SVGElement;
-    navigationBindings: NavigationBindings;
-    options: Options;
-    plotBoxClip: SVGElement;
-    addAnnotation(
-        userOptions: AnnotationOptions,
-        redraw?: boolean
-    ): Annotation;
-    drawAnnotations(): void;
-    initAnnotation(userOptions: AnnotationOptions): Annotation;
-    removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
-}
-
-export interface AnnotationSeries extends Series {
-    chart: AnnotationChart;
-    points: Array<AnnotationPoint>;
 }
 
 /* *
@@ -217,7 +197,7 @@ class Annotation extends EventEmitter implements Controllable {
         PointerClass: typeof Pointer,
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        AnnotationChart.compose(ChartClass, PointerClass);
+        AnnotationChart.compose(Annotation, ChartClass, PointerClass);
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
         NavigationBindings.compose(Annotation, ChartClass);
@@ -900,7 +880,7 @@ merge<Annotation>(
     true,
     Annotation.prototype,
     Controllable.prototype as any,
-    // restore original Annotation implementation after mixin overwrite
+    // restore original Annotation implementation after mixin overwrite:
     merge(
         Annotation.prototype,
         /** @lends Highcharts.Annotation# */
@@ -920,302 +900,6 @@ merge<Annotation>(
     )
 );
 
-/* *********************************************************************
- *
- * EXTENDING CHART PROTOTYPE
- *
- ******************************************************************** */
-
-extend(chartProto, /** @lends Highcharts.Chart# */ {
-    initAnnotation: function (
-        this: AnnotationChart,
-        userOptions: AnnotationOptions
-    ): Annotation {
-        const Constructor = (Annotation as any)
-                .types[(userOptions as any).type] || Annotation,
-            annotation = new Constructor(this, userOptions);
-
-        this.annotations.push(annotation);
-
-        return annotation;
-    },
-
-    /**
-     * Add an annotation to the chart after render time.
-     *
-     * @param  {Highcharts.AnnotationsOptions} options
-     *         The annotation options for the new, detailed annotation.
-     * @param {boolean} [redraw]
-     * @sample highcharts/annotations/add-annotation/
-     *         Add annotation
-     * @return {Highcharts.Annotation} - The newly generated annotation.
-     */
-    addAnnotation: function (
-        this: AnnotationChart,
-        userOptions: AnnotationOptions,
-        redraw?: boolean
-    ): Annotation {
-        const annotation = this.initAnnotation(userOptions);
-
-        this.options.annotations.push(annotation.options);
-
-        if (pick(redraw, true)) {
-            annotation.redraw();
-            annotation.graphic.attr({
-                opacity: 1
-            });
-        }
-
-        return annotation;
-    },
-
-    /**
-     * Remove an annotation from the chart.
-     *
-     * @param {number|string|Highcharts.Annotation} idOrAnnotation
-     * The annotation's id or direct annotation object.
-     */
-    removeAnnotation: function (
-        this: AnnotationChart,
-        idOrAnnotation: (number|string|Annotation)
-    ): void {
-        const annotations = this.annotations,
-            annotation: Annotation = (
-                (idOrAnnotation as any).coll === 'annotations'
-            ) ?
-                idOrAnnotation :
-                find(
-                    annotations,
-                    function (annotation: Annotation): boolean {
-                        return annotation.options.id === idOrAnnotation;
-                    }
-                ) as any;
-
-        if (annotation) {
-            fireEvent(annotation, 'remove');
-            erase(this.options.annotations, annotation.options);
-            erase(annotations, annotation);
-            annotation.destroy();
-        }
-    },
-
-    drawAnnotations: function (this: AnnotationChart): void {
-        this.plotBoxClip.attr(this.plotBox);
-
-        this.annotations.forEach(function (annotation): void {
-            annotation.redraw();
-            annotation.graphic.animate({
-                opacity: 1
-            }, annotation.animationConfig);
-        });
-    }
-});
-
-// Let chart.update() update annotations
-chartProto.collectionsWithUpdate.push('annotations');
-
-// Let chart.update() create annoations on demand
-chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
-
-// Create lookups initially
-addEvent(
-    Chart as unknown as AnnotationChart,
-    'afterInit',
-    function (this): void {
-        this.annotations = [];
-
-        if (!this.options.annotations) {
-            this.options.annotations = [];
-        }
-
-    }
-);
-
-chartProto.callbacks.push(function (
-    this: AnnotationChart,
-    chart: AnnotationChart
-): void {
-
-    chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
-
-    chart.controlPointsGroup = chart.renderer
-        .g('control-points')
-        .attr({ zIndex: 99 })
-        .clip(chart.plotBoxClip)
-        .add();
-
-    chart.options.annotations.forEach(function (annotationOptions, i): void {
-        if (
-            // Verify that it has not been previously added in a responsive rule
-            !chart.annotations.some((annotation): boolean =>
-                annotation.options === annotationOptions
-            )
-        ) {
-            const annotation = chart.initAnnotation(annotationOptions);
-
-            chart.options.annotations[i] = annotation.options;
-        }
-    });
-
-    chart.drawAnnotations();
-    addEvent(chart, 'redraw', chart.drawAnnotations);
-    addEvent(chart, 'destroy', function (): void {
-        chart.plotBoxClip.destroy();
-        chart.controlPointsGroup.destroy();
-    });
-    addEvent(chart, 'exportData', function (this, event: any): void {
-        const annotations = chart.annotations,
-            csvColumnHeaderFormatter = ((
-                this.options.exporting &&
-                this.options.exporting.csv) ||
-                {}).columnHeaderFormatter,
-            // If second row doesn't have xValues
-            // then it is a title row thus multiple level header is in use.
-            multiLevelHeaders = !event.dataRows[1].xValues,
-            annotationHeader = (
-                chart.options.lang &&
-                chart.options.lang.exportData &&
-                chart.options.lang.exportData.annotationHeader
-            ),
-            columnHeaderFormatter = function (index: any): any {
-                let s;
-                if (csvColumnHeaderFormatter) {
-                    s = csvColumnHeaderFormatter(index);
-                    if (s !== false) {
-                        return s;
-                    }
-                }
-
-                s = annotationHeader + ' ' + index;
-
-                if (multiLevelHeaders) {
-                    return {
-                        columnTitle: s,
-                        topLevelColumnTitle: s
-                    };
-                }
-
-                return s;
-            },
-            startRowLength = event.dataRows[0].length,
-            annotationSeparator = (
-                chart.options.exporting &&
-                chart.options.exporting.csv &&
-                chart.options.exporting.csv.annotations &&
-                chart.options.exporting.csv.annotations.itemDelimiter
-            ),
-            joinAnnotations = (
-                chart.options.exporting &&
-                chart.options.exporting.csv &&
-                chart.options.exporting.csv.annotations &&
-                chart.options.exporting.csv.annotations.join
-            );
-
-        annotations.forEach((annotation): void => {
-
-            if (
-                annotation.options.labelOptions &&
-                annotation.options.labelOptions.includeInDataExport
-            ) {
-
-                annotation.labels.forEach((label): void => {
-                    if (label.options.text) {
-                        const annotationText = label.options.text;
-
-                        label.points.forEach((points): void => {
-                            const annotationX = points.x,
-                                xAxisIndex = points.series.xAxis ?
-                                    points.series.xAxis.options.index :
-                                    -1;
-                            let wasAdded = false;
-
-                            // Annotation not connected to any xAxis -
-                            // add new row.
-                            if (xAxisIndex === -1) {
-                                const n = event.dataRows[0].length,
-                                    newRow: any = new Array(n);
-
-                                for (let i = 0; i < n; ++i) {
-                                    newRow[i] = '';
-                                }
-                                newRow.push(annotationText);
-                                newRow.xValues = [];
-                                newRow.xValues[xAxisIndex] = annotationX;
-                                event.dataRows.push(newRow);
-                                wasAdded = true;
-                            }
-
-                            // Annotation placed on a exported data point
-                            // - add new column
-                            if (!wasAdded) {
-                                event.dataRows.forEach((row: any): void => {
-                                    if (
-                                        !wasAdded &&
-                                        row.xValues &&
-                                        xAxisIndex !== void 0 &&
-                                        annotationX === row.xValues[xAxisIndex]
-                                    ) {
-                                        if (
-                                            joinAnnotations &&
-                                            row.length > startRowLength
-                                        ) {
-                                            row[row.length - 1] += (
-                                                annotationSeparator +
-                                                annotationText
-                                            );
-                                        } else {
-                                            row.push(annotationText);
-                                        }
-                                        wasAdded = true;
-                                    }
-                                });
-                            }
-
-                            // Annotation not placed on any exported data point,
-                            // but connected to the xAxis - add new row
-                            if (!wasAdded) {
-                                const n = event.dataRows[0].length,
-                                    newRow: any = new Array(n);
-
-                                for (let i = 0; i < n; ++i) {
-                                    newRow[i] = '';
-                                }
-                                newRow[0] = annotationX;
-                                newRow.push(annotationText);
-                                newRow.xValues = [];
-
-                                if (xAxisIndex !== void 0) {
-                                    newRow.xValues[xAxisIndex] = annotationX;
-                                }
-                                event.dataRows.push(newRow);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-        let maxRowLen = 0;
-
-        event.dataRows.forEach((row: any): void => {
-            maxRowLen = Math.max(maxRowLen, row.length);
-        });
-
-        const newRows = maxRowLen - event.dataRows[0].length;
-
-        for (let i = 0; i < newRows; i++) {
-            const header = columnHeaderFormatter(i + 1);
-
-            if (multiLevelHeaders) {
-                event.dataRows[0].push(header.topLevelColumnTitle);
-                event.dataRows[1].push(header.columnTitle);
-            } else {
-                event.dataRows[0].push(header);
-            }
-        }
-    });
-} as any);
-
 /* *
  *
  *  Default Export
@@ -1229,7 +913,6 @@ export default Annotation;
  *  API Options
  *
  * */
-
 
 /**
  * Possible directions for draggable annotations. An empty string (`''`)

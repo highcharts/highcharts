@@ -6,11 +6,12 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
+
 import Annotation from '../Annotation.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';

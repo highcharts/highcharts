@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationDraggableValue,
     AnnotationOptions,
@@ -26,6 +26,7 @@ import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';

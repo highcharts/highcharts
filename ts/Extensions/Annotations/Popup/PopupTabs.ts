@@ -18,7 +18,7 @@
  *
  * */
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 import type Popup from './Popup';
 

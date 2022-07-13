@@ -20,7 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
-import type AnnotationPoint from '../../../Extensions/Annotations/AnnotationPoint';
+import type AnnotationPoint from '../../../Extensions/Annotations/AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';

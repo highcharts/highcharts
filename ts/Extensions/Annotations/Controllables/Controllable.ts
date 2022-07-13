@@ -12,11 +12,9 @@
  *
  * */
 
-import type {
-    default as Annotation,
-    AnnotationChart
-} from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type Annotation from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type ControllableLike from './ControllableLike';
 import type ControllableOptions from './ControllableOptions';

@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type {
     ControllableLabelOptions
 } from '../Controllables/ControllableOptions';

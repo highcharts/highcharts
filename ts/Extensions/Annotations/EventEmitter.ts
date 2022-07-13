@@ -16,12 +16,10 @@
  *
  * */
 
-import type {
-    default as Annotation,
-    AnnotationChart
-} from './Annotation';
+import type Annotation from './Annotation';
+import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
-import type { AnnotationPointType } from './AnnotationPoint';
+import type { AnnotationPointType } from './AnnotationSeries';
 import type Controllable from './Controllables/Controllable';
 import type {
     ControllableLabelType,

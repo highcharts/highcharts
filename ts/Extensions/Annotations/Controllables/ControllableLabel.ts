@@ -13,11 +13,9 @@
  * */
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
-import type {
-    default as Annotation,
-    AnnotationChart
-} from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type Annotation from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type { ControllableLabelOptions } from './ControllableOptions';

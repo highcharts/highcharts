@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type { AnnotationChart } from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationEventObject } from '../EventEmitter';
 import type AnnotationOptions from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
