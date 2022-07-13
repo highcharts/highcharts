@@ -16,10 +16,8 @@
  *
  * */
 
-import type {
-    default as Annotation,
-    AnnotationChart
-} from './Annotation';
+import type Annotation from './Annotation';
+import type AnnotationChart from './AnnotationChart';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsLike from './NavigationBindingsLike';

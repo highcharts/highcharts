@@ -21,7 +21,7 @@
 
 
 import type Accessibility from '../Accessibility';
-import type { AnnotationChart } from '../../Extensions/Annotations/Annotation';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,

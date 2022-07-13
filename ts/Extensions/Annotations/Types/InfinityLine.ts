@@ -12,8 +12,8 @@
  *
  * */
 
-import type { AnnotationChart } from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 

@@ -15,7 +15,7 @@
  * */
 
 import type Annotation from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationPoint';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
