@@ -89,7 +89,7 @@ abstract class Controllable {
     public annotation: Annotation;
     public chart: Highcharts.AnnotationChart;
     public collection: ('labels'|'shapes');
-    public controlPoints: Array<Highcharts.AnnotationControlPoint>;
+    public controlPoints: Array<ControlPoint>;
     public graphic: SVGElement = void 0 as any;
     public index: number;
     public itemType: ('label'|'shape');

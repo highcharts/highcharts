@@ -14,18 +14,21 @@
  *
  * */
 
-import type {
-    AnnotationControlPointOptionsObject
-} from '../ControlPointOptions';
 import type { AnnotationEventObject } from '../EventEmitter';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
+import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-import MockPointOptions from '../MockPointOptions';
-import SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-const { merge, isNumber, defined } = U;
+const {
+    merge,
+    isNumber,
+    defined
+} = U;
 
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
@@ -148,7 +151,7 @@ class TimeCycles extends CrookedLine {
             'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
-            (option: AnnotationControlPointOptionsObject): void => {
+            (option: ControlPointOptionsObject): void => {
                 const controlPointsOptions = merge(
                     options.controlPointOptions,
                     option
@@ -233,7 +236,7 @@ TimeCycles.prototype.defaultOptions = merge(
         typeOptions: {
             controlPointOptions: [{
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
+                    this: ControlPoint,
                     target: TimeCycles
                 ): PositionObject {
                     const point = target.points[0],
@@ -259,7 +262,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 }
             }, {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
+                    this: ControlPoint,
                     target: TimeCycles
                 ): PositionObject {
                     const point = target.points[1],
@@ -300,7 +303,7 @@ namespace TimeCycles {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: AnnotationControlPointOptionsObject[];
+        controlPointOptions: ControlPointOptionsObject[];
     }
 }
 

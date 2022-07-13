@@ -18,10 +18,8 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../../Core/Renderer/AlignObject';
-import type {
-    AnnotationControlPointOptionsObject
-} from '../ControlPointOptions';
 import type ColorType from '../../../Core/Color/ColorType';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
@@ -71,8 +69,8 @@ export interface ControllableLabelOptions extends ControllableOptions {
 
 export interface ControllableOptions {
     className?: string;
-    controlPointOptions?: AnnotationControlPointOptionsObject;
-    controlPoints?: Array<AnnotationControlPointOptionsObject>;
+    controlPointOptions?: ControlPointOptionsObject;
+    controlPoints?: Array<ControlPointOptionsObject>;
     id?: (number|string);
     markerEnd?: string;
     markerStart?: string;

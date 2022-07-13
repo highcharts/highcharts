@@ -17,13 +17,11 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Annotation from './Annotation';
 import type {
-    AnnotationControlPointOptionsObject
-} from './ControlPointOptions';
-import type {
     ControllableLabelOptions,
     ControllableOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
+import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
 
@@ -43,7 +41,7 @@ export interface AnnotationsEventsOptions {
 }
 export interface AnnotationsOptions extends ControllableOptions { // @todo AnnotationOptions.d.ts
     animation: Partial<AnimationOptions>;
-    controlPointOptions: AnnotationControlPointOptionsObject;
+    controlPointOptions: ControlPointOptionsObject;
     crop: boolean;
     draggable: AnnotationDraggableValue;
     events: AnnotationsEventsOptions;

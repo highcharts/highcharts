@@ -18,7 +18,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
-export interface AnnotationControlPointDragEventFunction {
+export interface ControlPointDragEventFunction {
     (
         this: Annotation,
         e: AnnotationEventObject,
@@ -26,23 +26,23 @@ export interface AnnotationControlPointDragEventFunction {
     ): void;
 }
 
-export interface AnnotationControlPointPositionerFunction {
+export interface ControlPointPositionerFunction {
     (
         this: ControlPoint,
         target: Controllable
     ): PositionObject;
 }
 
-export interface AnnotationControlPointEventsOptionsObject {
-    drag?: AnnotationControlPointDragEventFunction;
+export interface ControlPointEventsOptionsObject {
+    drag?: ControlPointDragEventFunction;
 }
 
-export interface AnnotationControlPointOptionsObject {
+export interface ControlPointOptionsObject {
     draggable?: undefined;
-    events: AnnotationControlPointEventsOptionsObject;
+    events: ControlPointEventsOptionsObject;
     height: number;
     index?: number;
-    positioner: AnnotationControlPointPositionerFunction;
+    positioner: ControlPointPositionerFunction;
     style: CSSObject;
     symbol: SymbolKey;
     visible: boolean;
@@ -55,4 +55,4 @@ export interface AnnotationControlPointOptionsObject {
  *
  * */
 
-export default AnnotationControlPointOptionsObject;
+export default ControlPointOptionsObject;

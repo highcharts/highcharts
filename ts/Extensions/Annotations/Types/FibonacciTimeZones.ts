@@ -14,10 +14,8 @@
  *
  * */
 
-import type {
-    AnnotationControlPointOptionsObject
-} from '../ControlPointOptions';
 import type { AnnotationEventObject } from '../EventEmitter';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotation.js';
@@ -228,7 +226,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
             },
             controlPointOptions: {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint
+                    this: ControlPoint
                 ): PositionObject {
                     // The control point is in the middle of the second line
                     const target = this.target,
@@ -292,7 +290,7 @@ namespace FibonacciTimeZones {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: AnnotationControlPointOptionsObject;
+        controlPointOptions: ControlPointOptionsObject;
     }
 }
 

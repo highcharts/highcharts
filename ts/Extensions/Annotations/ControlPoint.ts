@@ -4,77 +4,42 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type {
-    AnnotationControlPointOptionsObject
-} from './ControlPointOptions';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Controllable from './Controllables/Controllable';
+import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
-
-declare module './MockPointOptions' {
-    interface MockPointOptions {
-        controlPoint?: AnnotationControlPointOptionsObject;
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AnnotationControlPoint implements EventEmitter {
-            public constructor(
-                chart: AnnotationChart,
-                target: Controllable,
-                options: Partial<AnnotationControlPointOptionsObject>,
-                index?: number
-            );
-            public addEvents: EventEmitter['addEvents'];
-            public chart: AnnotationChart;
-            public graphic: SVGElement;
-            public index: number;
-            public mouseMoveToRadians: EventEmitter['mouseMoveToRadians'];
-            public mouseMoveToScale: EventEmitter['mouseMoveToScale'];
-            public mouseMoveToTranslation: EventEmitter[
-                'mouseMoveToTranslation'
-            ];
-            public nonDOMEvents: Array<string>;
-            public onDrag: EventEmitter['onDrag'];
-            public onMouseDown: EventEmitter['onMouseDown'];
-            public onMouseUp: EventEmitter['onMouseUp'];
-            public options: AnnotationControlPointOptionsObject;
-            public removeDocEvents: EventEmitter['removeDocEvents'];
-            public target: Controllable;
-            public destroy(): void;
-            public redraw(animation?: boolean): void;
-            public render(): void;
-            public setVisibility(visible: boolean): void;
-            public update(
-                userOptions: Partial<AnnotationControlPointOptionsObject>
-            ): void;
-        }
-    }
-}
-
-/**
- * Callback to modify annotation's possitioner controls.
- *
- * @callback Highcharts.AnnotationControlPointPositionerFunction
- * @param {Highcharts.AnnotationControlPoint} this
- * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject}
- */
-
 import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './MockPointOptions' {
+    interface MockPointOptions {
+        controlPoint?: ControlPointOptionsObject;
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A control point class which is a connection between controllable
@@ -100,10 +65,17 @@ const {
  * Point index.
  */
 class ControlPoint extends EventEmitter {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
         chart: Highcharts.AnnotationChart,
         target: Controllable,
-        options: AnnotationControlPointOptionsObject,
+        options: ControlPointOptionsObject,
         index?: number
     ) {
         super();
@@ -114,23 +86,17 @@ class ControlPoint extends EventEmitter {
         this.index = pick((options as any).index, index);
     }
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public chart: Highcharts.AnnotationChart;
-    public graphic: SVGElement = void 0 as any;
-    public index: number;
-    public options: AnnotationControlPointOptionsObject;
-    public target: Controllable;
 
-    /**
-     *
-     * Functions
-     *
-     */
+    public graphic: SVGElement = void 0 as any;
+
+    public index: number;
 
     /**
      * List of events for `anntation.options.events` that should not be
@@ -141,18 +107,41 @@ class ControlPoint extends EventEmitter {
      */
     public nonDOMEvents = ['drag'];
 
+    public options: ControlPointOptionsObject;
+
+    public target: Controllable;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
-     * Set the visibility of the control point.
-     *
-     * @function Highcharts.AnnotationControlPoint#setVisibility
-     *
-     * @param {boolean} visible
-     * Visibility of the control point.
-     *
+     * Destroy the control point.
+     * @private
      */
-    public setVisibility(visible: boolean): void {
-        this.graphic[visible ? 'show' : 'hide']();
-        this.options.visible = visible as any;
+    public destroy(): void {
+        super.destroy();
+
+        if (this.graphic) {
+            this.graphic = this.graphic.destroy() as any;
+        }
+
+        this.chart = null as any;
+        this.target = null as any;
+        this.options = null as any;
+    }
+
+    /**
+     * Redraw the control point.
+     * @private
+     * @param {boolean} [animation]
+     */
+    public redraw(animation?: boolean): void {
+        this.graphic[animation ? 'animate' : 'attr'](
+            this.options.positioner.call(this, this.target)
+        );
     }
 
     /**
@@ -180,31 +169,17 @@ class ControlPoint extends EventEmitter {
     }
 
     /**
-     * Redraw the control point.
-     * @private
-     * @param {boolean} [animation]
+     * Set the visibility of the control point.
+     *
+     * @function Highcharts.AnnotationControlPoint#setVisibility
+     *
+     * @param {boolean} visible
+     * Visibility of the control point.
+     *
      */
-    public redraw(animation?: boolean): void {
-        this.graphic[animation ? 'animate' : 'attr'](
-            this.options.positioner.call(this, this.target)
-        );
-    }
-
-
-    /**
-     * Destroy the control point.
-     * @private
-     */
-    public destroy(): void {
-        super.destroy();
-
-        if (this.graphic) {
-            this.graphic = this.graphic.destroy() as any;
-        }
-
-        this.chart = null as any;
-        this.target = null as any;
-        this.options = null as any;
+    public setVisibility(visible: boolean): void {
+        this.graphic[visible ? 'show' : 'hide']();
+        this.options.visible = visible as any;
     }
 
     /**
@@ -214,10 +189,9 @@ class ControlPoint extends EventEmitter {
      *
      * @param {Partial<Highcharts.AnnotationControlPointOptionsObject>} userOptions
      * New options for the control point.
-     *
      */
     public update(
-        userOptions: Partial<AnnotationControlPointOptionsObject>
+        userOptions: Partial<ControlPointOptionsObject>
     ): void {
         const chart = this.chart,
             target = this.target,
@@ -229,6 +203,30 @@ class ControlPoint extends EventEmitter {
         (this.render as any)(chart.controlPointsGroup);
         this.redraw();
     }
+
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ControlPoint;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Callback to modify annotation's possitioner controls.
+ *
+ * @callback Highcharts.AnnotationControlPointPositionerFunction
+ * @param {Highcharts.AnnotationControlPoint} this
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject}
+ */
+
+(''); // keeps doclets above in JS file
