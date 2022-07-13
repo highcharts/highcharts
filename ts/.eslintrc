@@ -109,7 +109,7 @@
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,
-        "jsdoc/check-alignment": 1,
+        "jsdoc/check-alignment": 0,
         "jsdoc/check-param-names": 1,
         "jsdoc/check-tag-names": [
             "error",
