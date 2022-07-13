@@ -12,6 +12,8 @@
  *
  * */
 
+import type { AnnotationChart } from '../Annotation';
+import type { AnnotationPointType } from '../AnnotationPoint';
 import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
@@ -96,8 +98,8 @@ class InfinityLine extends CrookedLine {
     }
 
     public static findEdgePoint(
-        firstPoint: Highcharts.AnnotationPointType,
-        secondPoint: Highcharts.AnnotationPointType
+        firstPoint: AnnotationPointType,
+        secondPoint: AnnotationPointType
     ): PositionObject {
         let chart = firstPoint.series.chart,
             xAxis: Axis = firstPoint.series.xAxis as any,
@@ -163,7 +165,7 @@ class InfinityLine extends CrookedLine {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: InfinityLine.Options
     ) {
         super(chart, options);

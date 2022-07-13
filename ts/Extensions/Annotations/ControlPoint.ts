@@ -12,6 +12,7 @@
  *
  * */
 
+import type { AnnotationChart } from './Annotation';
 import type Controllable from './Controllables/Controllable';
 import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -73,7 +74,7 @@ class ControlPoint extends EventEmitter {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         target: Controllable,
         options: ControlPointOptionsObject,
         index?: number
@@ -92,7 +93,7 @@ class ControlPoint extends EventEmitter {
      *
      * */
 
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
 
     public graphic: SVGElement = void 0 as any;
 

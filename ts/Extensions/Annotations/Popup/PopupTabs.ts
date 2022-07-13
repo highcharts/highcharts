@@ -18,6 +18,7 @@
  *
  * */
 
+import type { AnnotationChart } from '../Annotation';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 import type Popup from './Popup';
 
@@ -121,7 +122,7 @@ function deselectAll(this: Popup): void {
  */
 function init(
     this: Popup,
-    chart: Highcharts.AnnotationChart
+    chart: AnnotationChart
 ): void {
 
     if (!chart) {

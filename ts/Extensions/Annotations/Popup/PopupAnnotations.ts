@@ -18,7 +18,8 @@
  *
  * */
 
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type { AnnotationChart } from '../Annotation';
+import type AnnotationOptions from '../AnnotationOptions';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 import type Popup from './Popup';
 
@@ -58,8 +59,8 @@ const {
  */
 function addForm(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
-    options: AnnotationsOptions,
+    chart: AnnotationChart,
+    options: AnnotationOptions,
     callback: Function,
     isInit?: boolean
 ): void {
@@ -133,8 +134,8 @@ function addForm(
  */
 function addToolbar(
     this: Popup,
-    chart: Highcharts.AnnotationChart,
-    options: AnnotationsOptions,
+    chart: AnnotationChart,
+    options: AnnotationOptions,
     callback: Function
 ): void {
     const lang = this.lang,
@@ -217,9 +218,9 @@ function addToolbar(
 function addFormFields(
     this: Popup,
     parentDiv: HTMLDOMElement,
-    chart: Highcharts.AnnotationChart,
+    chart: AnnotationChart,
     parentNode: string,
-    options: AnnotationsOptions,
+    options: AnnotationOptions,
     storage: Array<AnyRecord>,
     isRoot?: boolean
 ): void {

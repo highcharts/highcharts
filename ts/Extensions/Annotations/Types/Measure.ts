@@ -6,11 +6,12 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type {
     AnnotationDraggableValue,
-    AnnotationsOptions,
-    AnnotationsTypeOptions
-} from '../AnnotationsOptions';
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 import type { AnnotationEventObject } from '../EventEmitter';
 import type Axis from '../../../Core/Axis/Axis';
 import type Controllable from '../Controllables/Controllable';
@@ -369,7 +370,7 @@ class Measure extends Annotation {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         userOptions: Measure.MeasureOptions
     ) {
         super(chart, userOptions);
@@ -386,7 +387,7 @@ class Measure extends Annotation {
      * @private
      */
     public init(
-        annotationOrChart: (Annotation|Highcharts.AnnotationChart),
+        annotationOrChart: (Annotation|AnnotationChart),
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
@@ -1100,7 +1101,7 @@ Measure.prototype.defaultOptions = merge(
 );
 
 namespace Measure {
-    export interface MeasureOptions extends AnnotationsOptions {
+    export interface MeasureOptions extends AnnotationOptions {
         typeOptions: MeasureTypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {
@@ -1114,7 +1115,7 @@ namespace Measure {
         formatter?: FormatUtilities.FormatterCallback<Measure>;
         style: CSSObject;
     }
-    export interface MeasureTypeOptions extends AnnotationsTypeOptions {
+    export interface MeasureTypeOptions extends AnnotationTypeOptions {
         background: ControllableShapeOptions;
         crosshairX: MeasureTypeCrosshairOptions;
         crosshairY: MeasureTypeCrosshairOptions;

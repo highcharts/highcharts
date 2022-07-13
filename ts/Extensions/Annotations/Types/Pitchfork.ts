@@ -6,6 +6,8 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
+import type { AnnotationPointType } from '../AnnotationPoint';
 import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
@@ -52,9 +54,9 @@ class Pitchfork extends InfinityLine {
     }
 
     public static findEdgePoint(
-        point: Highcharts.AnnotationPointType,
-        firstAnglePoint: Highcharts.AnnotationPointType,
-        secondAnglePoint?: Highcharts.AnnotationPointType
+        point: AnnotationPointType,
+        firstAnglePoint: AnnotationPointType,
+        secondAnglePoint?: AnnotationPointType
     ): PositionObject {
         const angle = Math.atan2(
                 (
@@ -93,7 +95,7 @@ class Pitchfork extends InfinityLine {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: Pitchfork.Options
     ) {
         super(chart, options);

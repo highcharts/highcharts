@@ -21,6 +21,7 @@
 
 
 import type Accessibility from '../Accessibility';
+import type { AnnotationChart } from '../../Extensions/Annotations/Annotation';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
@@ -498,7 +499,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsList = getAnnotationsInfoHTML(
-                chart as Highcharts.AnnotationChart
+                chart as AnnotationChart
             ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',

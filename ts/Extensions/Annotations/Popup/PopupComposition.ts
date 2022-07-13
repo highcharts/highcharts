@@ -19,7 +19,7 @@
  * */
 
 import type Annotation from '../Annotation';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type AnnotationOptions from '../AnnotationOptions';
 import type {
     HTMLDOMElement,
     SVGDOMElement
@@ -44,7 +44,7 @@ interface PopupConfigObject {
     annotation: Annotation;
     formType: string;
     onSubmit: Function;
-    options: AnnotationsOptions;
+    options: AnnotationOptions;
 }
 
 /* *

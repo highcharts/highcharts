@@ -14,7 +14,7 @@
  *
  * */
 
-import type AnnotationsOptions from './AnnotationsOptions';
+import type AnnotationOptions from './AnnotationOptions';
 
 /* *
  *
@@ -30,7 +30,7 @@ declare module '../../Core/LangOptions'{
 
 declare module '../Exporting/NavigationOptions' {
     interface NavigationOptions {
-        annotationsOptions?: DeepPartial<AnnotationsOptions>;
+        annotationsOptions?: DeepPartial<AnnotationOptions>;
         bindings?: Record<string, NavigationBindingsOptions>;
         bindingsClassName?: string;
         events?: NavigationEventsOptions;
@@ -67,7 +67,7 @@ interface NavigationEventsOptions {
 }
 
 export interface NavigationOptions {
-    annotationsOptions?: DeepPartial<AnnotationsOptions>;
+    annotationsOptions?: DeepPartial<AnnotationOptions>;
     bindings?: Record<string, NavigationBindingsOptions>;
     bindingsClassName?: string;
     events?: NavigationEventsOptions;

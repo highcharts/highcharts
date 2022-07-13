@@ -12,7 +12,11 @@
  *
  * */
 
-import type AnnotationPoint from './AnnotationPoint';
+import type { AnnotationChart } from './Annotation';
+import type {
+    AnnotationPoint,
+    AnnotationPointType
+} from './AnnotationPoint';
 import type Axis from '../../Core/Axis/Axis';
 import type Controllable from './Controllables/Controllable';
 import type MockPointOptions from './MockPointOptions';
@@ -54,7 +58,7 @@ export interface MockLabelConfigObject {
 }
 
 interface MockSeries {
-    chart: Highcharts.AnnotationChart;
+    chart: AnnotationChart;
     getPlotBox: Series['getPlotBox'];
     xAxis?: (Axis|null);
     yAxis?: (Axis|null);
@@ -131,7 +135,7 @@ class MockPoint {
      * @return {Highcharts.PositionObject} pixel position
      */
     public static pointToPixels(
-        point: Highcharts.AnnotationPointType,
+        point: AnnotationPointType,
         paneCoordinates?: boolean
     ): PositionObject {
         const series = point.series,
@@ -175,7 +179,7 @@ class MockPoint {
      * A mock point's options.
      */
     public static pointToOptions(
-        point: Highcharts.AnnotationPointType
+        point: AnnotationPointType
     ): MockPointOptions {
 
         return {
@@ -193,7 +197,7 @@ class MockPoint {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         target: (Controllable|null),
         options: (MockPointOptions|Function)
     ) {

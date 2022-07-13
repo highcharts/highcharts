@@ -4,6 +4,8 @@
  *
  * */
 
+import type { AnnotationSeries } from './Annotation';
+import type MockPoint from './MockPoint';
 import type Point from '../../Core/Series/Point';
 
 /* *
@@ -13,8 +15,10 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface AnnotationPoint extends Point {
-    series: Highcharts.AnnotationSeries;
+    series: AnnotationSeries;
 }
+
+export type AnnotationPointType = (MockPoint|AnnotationPoint);
 
 /* *
  *

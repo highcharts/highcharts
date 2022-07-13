@@ -6,8 +6,9 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type { AnnotationEventObject } from '../EventEmitter';
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type AnnotationOptions from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
@@ -305,8 +306,8 @@ class BasicAnnotation extends Annotation {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
-        options: AnnotationsOptions
+        chart: AnnotationChart,
+        options: AnnotationOptions
     ) {
         super(chart, options);
     }

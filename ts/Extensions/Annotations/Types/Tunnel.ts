@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type { AnnotationChart } from '../Annotation';
 import type { AnnotationEventObject } from '../EventEmitter';
 import type Controllable from '../Controllables/Controllable';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
@@ -41,7 +42,7 @@ class Tunnel extends CrookedLine {
      * */
 
     public constructor(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         options: Tunnel.Options
     ) {
         super(chart, options);

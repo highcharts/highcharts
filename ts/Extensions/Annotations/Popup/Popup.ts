@@ -18,7 +18,8 @@
  *
  * */
 
-import type AnnotationsOptions from '../AnnotationsOptions';
+import type { AnnotationChart } from '../Annotation';
+import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
@@ -417,8 +418,8 @@ class Popup {
      */
     public showForm(
         type: string,
-        chart: Highcharts.AnnotationChart,
-        options: AnnotationsOptions,
+        chart: AnnotationChart,
+        options: AnnotationOptions,
         callback: Function
     ): void {
 
