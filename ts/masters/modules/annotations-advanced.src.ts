@@ -25,4 +25,5 @@ import '../../Extensions/Annotations/Types/VerticalLine.js';
 import '../../Extensions/Annotations/Types/Measure.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 const G: AnyRecord = Highcharts;
+G.Annotation = Annotation;
 Annotation.compose(G.Chart, NavigationBindings, G.Pointer, G.SVGRenderer);

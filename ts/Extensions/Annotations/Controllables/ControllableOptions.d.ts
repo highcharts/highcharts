@@ -18,6 +18,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../../Core/Renderer/AlignObject';
+import type AnnotationPoint from '../AnnotationPoint';
 import type ColorType from '../../../Core/Color/ColorType';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
@@ -27,7 +28,6 @@ import type {
 } from '../../../Core/Series/DataLabelOptions';
 import type FormatUtilities from '../../../Core/FormatUtilities';
 import type MockPointOptions from '../MockPointOptions';
-import type Point from '../../../Core/Series/Point';
 import type {
     ShadowOptionsObject
 } from '../../../Core/Renderer/ShadowOptionsObject';
@@ -52,9 +52,10 @@ export interface ControllableLabelOptions extends ControllableOptions {
     dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
-    formatter: FormatUtilities.FormatterCallback<Point>;
+    formatter: FormatUtilities.FormatterCallback<AnnotationPoint>;
     includeInDataExport: boolean;
     overflow: DataLabelOverflowValue;
+    padding?: number;
     shadow: (boolean|Partial<ShadowOptionsObject>);
     shape: SymbolKey;
     style: CSSObject;
@@ -92,7 +93,8 @@ export interface ControllableShapeOptions extends ControllableOptions {
     snap?: number;
     src?: string;
     stroke?: ColorType;
-    type: string;
+    strokeWidth?: number;
+    type?: string;
     width?: number;
 }
 

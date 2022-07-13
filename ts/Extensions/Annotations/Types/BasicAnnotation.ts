@@ -12,6 +12,10 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type ControlPoint from '../ControlPoint';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
@@ -65,7 +69,7 @@ class BasicAnnotation extends Annotation {
 
                     (target.translatePoint as any)(xy.x, xy.y);
 
-                    target.annotation.userOptions.labels[0].point =
+                    (target.annotation.userOptions.labels as any)[0].point =
                         target.options.point;
                     target.redraw(false);
                 }
@@ -100,7 +104,7 @@ class BasicAnnotation extends Annotation {
                     const xy = this.mouseMoveToTranslation(e);
                     target.translate(xy.x, xy.y);
 
-                    target.annotation.userOptions.labels[0].point =
+                    (target.annotation.userOptions.labels as any)[0].point =
                         target.options.point;
 
                     target.redraw(false);
@@ -319,10 +323,19 @@ class BasicAnnotation extends Annotation {
      * */
 
     public addControlPoints(): void {
+        type ControllableOptionsType = (
+            ControllableLabelOptions|
+            ControllableShapeOptions
+        );
+
         const options = this.options,
             controlPoints = BasicAnnotation.basicControlPoints,
             annotationType = this.basicType,
-            optionsGroup = options.labels || options.shapes;
+            optionsGroup: Array<ControllableOptionsType> = (
+                options.labels ||
+                options.shapes ||
+                []
+            );
 
         optionsGroup.forEach((group): void => {
             group.controlPoints = (controlPoints as any)[annotationType];

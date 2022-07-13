@@ -26,7 +26,7 @@ import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
-import type O from '../../Core/Options';
+import type CoreOptions from '../../Core/Options';
 
 /* *
  *
@@ -42,6 +42,7 @@ export interface AnnotationEventsOptions {
     click?: EventCallback<Annotation>;
     remove?: EventCallback<Annotation>;
 }
+
 export interface AnnotationOptions extends ControllableOptions { // @todo AnnotationOptions.d.ts
     animation: Partial<AnimationOptions>;
     controlPointOptions: ControlPointOptionsObject;
@@ -51,7 +52,7 @@ export interface AnnotationOptions extends ControllableOptions { // @todo Annota
     id?: (number|string);
     itemType?: string;
     labelOptions?: ControllableLabelOptions;
-    labels: Array<ControllableLabelOptions>;
+    labels?: Array<ControllableLabelOptions>;
     langKey?: string;
     point?: MockPointOptions;
     points?: Array<MockPointOptions>;
@@ -62,6 +63,7 @@ export interface AnnotationOptions extends ControllableOptions { // @todo Annota
     visible: boolean;
     zIndex: number;
 }
+
 export interface AnnotationTypeOptions {
     background?: Partial<ControllableShapeOptions>;
     height?: number;
@@ -71,6 +73,7 @@ export interface AnnotationTypeOptions {
     xAxis?: number;
     yAxis?: number;
 }
+
 export interface AnnotationTypePointsOptions {
     controlPoint?: number;
     x?: number;
@@ -79,7 +82,7 @@ export interface AnnotationTypePointsOptions {
     yAxis?: number;
 }
 
-export interface Options extends O {
+export interface Options extends CoreOptions {
     annotations: Array<AnnotationOptions>;
     defs: Record<string, AST.Node>;
     navigation: NavigationOptions;
