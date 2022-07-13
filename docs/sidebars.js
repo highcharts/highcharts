@@ -62,6 +62,7 @@ module.exports = {
             'maps/mapline-series',
             'maps/mappoint-series',
             'maps/mapbubble-series',
+            'maps/temperaturemap-series',
             'maps/marker-clusters',
             'maps/tilemap-series'
         ],
