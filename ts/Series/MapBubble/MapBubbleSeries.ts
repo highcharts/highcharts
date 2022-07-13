@@ -70,6 +70,8 @@ class MapBubbleSeries extends BubbleSeries {
      *
      * @extends      plotOptions.bubble
      * @product      highmaps
+     * @excluding    allAreas, boostBlending, boostThreshold, borderColor,
+     *               borderWidth, dragDrop
      * @optionparent plotOptions.mapbubble
      */
     public static defaultOptions: MapBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
@@ -360,6 +362,8 @@ export default MapBubbleSeries;
  * @extends   series,plotOptions.mapbubble
  * @excluding dataParser, dataURL
  * @product   highmaps
+ * @excluding allAreas, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, dragDrop
  * @apioption series.mapbubble
  */
 
