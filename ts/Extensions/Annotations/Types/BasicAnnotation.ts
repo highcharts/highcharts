@@ -8,23 +8,20 @@
 
 import type { AnnotationEventObject } from '../EventEmitter';
 import type AnnotationsOptions from '../AnnotationsOptions';
-import type {
-    AnnotationControlPointOptionsObject
-} from '../ControlPointOptions';
 import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
 import type ControllableRect from '../Controllables/ControllableRect';
+import type ControlPoint from '../ControlPoint';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* eslint-disable no-invalid-this */
 
@@ -40,7 +37,7 @@ class BasicAnnotation extends Annotation {
         label: [{
             symbol: 'triangle-down',
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: Controllable
             ): PositionObject {
                 if (!target.graphic.placed) {
@@ -75,7 +72,7 @@ class BasicAnnotation extends Annotation {
         }, {
             symbol: 'square',
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: Controllable
             ): PositionObject {
                 if (!target.graphic.placed) {
@@ -151,7 +148,7 @@ class BasicAnnotation extends Annotation {
 
         circle: [{
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: Controllable
             ): PositionObject {
                 const xy = MockPoint.pointToPixels(target.points[0]),
@@ -195,7 +192,7 @@ class BasicAnnotation extends Annotation {
         }],
         ellipse: [{
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
                 const position = target.getAbsolutePosition(target.points[0]);
@@ -225,7 +222,7 @@ class BasicAnnotation extends Annotation {
             }
         }, {
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
                 const position = target.getAbsolutePosition(target.points[1]);
@@ -256,7 +253,7 @@ class BasicAnnotation extends Annotation {
             }
         }, {
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: ControllableEllipse
             ): PositionObject {
                 const position = target.getAbsolutePosition(target.points[0]),
@@ -362,10 +359,10 @@ interface BasicAnnotation {
 }
 namespace BasicAnnotation {
     export interface ControlPoints {
-        label: DeepPartial<AnnotationControlPointOptionsObject>[];
-        rectangle: DeepPartial<AnnotationControlPointOptionsObject>[];
-        ellipse: DeepPartial<AnnotationControlPointOptionsObject>[];
-        circle: DeepPartial<AnnotationControlPointOptionsObject>[];
+        label: DeepPartial<ControlPointOptionsObject>[];
+        rectangle: DeepPartial<ControlPointOptionsObject>[];
+        ellipse: DeepPartial<ControlPointOptionsObject>[];
+        circle: DeepPartial<ControlPointOptionsObject>[];
     }
 }
 

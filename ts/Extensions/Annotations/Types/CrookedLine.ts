@@ -206,7 +206,7 @@ CrookedLine.prototype.defaultOptions = merge(
          */
         controlPointOptions: {
             positioner: function (
-                this: Highcharts.AnnotationControlPoint,
+                this: ControlPoint,
                 target: Controllable
             ): PositionObject {
                 const graphic = this.graphic,
