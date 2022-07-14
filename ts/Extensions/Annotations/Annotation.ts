@@ -17,17 +17,12 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type {
-    AnnotationPoint,
-    AnnotationPointType
-} from './AnnotationSeries';
-import type {
-    AnnotationOptions,
-    ChartOptions
-} from './AnnotationOptions';
+import type { AnnotationPointType } from './AnnotationSeries';
+import type AnnotationOptions from './AnnotationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart';
 import type {
     ControllableLabelType,
     ControllableShapeType,
@@ -37,7 +32,6 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
-import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
@@ -45,8 +39,6 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import AnnotationChart from './AnnotationChart.js';
 import AnnotationDefaults from './AnnotationDefaults.js';
-import Chart from '../../Core/Chart/Chart.js';
-const chartProto: AnnotationChart = Chart.prototype as any;
 import Controllable from './Controllables/Controllable.js';
 const controllableProto = Controllable.prototype;
 import ControllableRect from './Controllables/ControllableRect.js';
@@ -92,6 +84,29 @@ declare module '../../Core/Options'{
  *  Functions
  *
  * */
+
+/**
+ * Hide or show annotaiton attached to points.
+ * @private
+ */
+function adjustVisibility(
+    item: ControllableType
+): void { // #9481
+    const label = item.graphic,
+        hasVisiblePoints = item.points.some((point): boolean => (
+            point.series.visible !== false &&
+            point.visible !== false
+        ));
+
+    if (label) {
+        if (!hasVisiblePoints) {
+            label.hide();
+
+        } else if (label.visibility === 'hidden') {
+            label.show();
+        }
+    }
+}
 
 /**
  * @private
@@ -395,29 +410,6 @@ class Annotation extends EventEmitter implements Controllable {
     }
 
     /**
-     * Hide or show annotaiton attached to points.
-     * @private
-     */
-    public adjustVisibility(
-        item: ControllableType
-    ): void { // #9481
-        const label = item.graphic,
-            hasVisiblePoints = item.points.some((point): boolean => (
-                point.series.visible !== false &&
-                point.visible !== false
-            ));
-
-        if (label) {
-            if (!hasVisiblePoints) {
-                label.hide();
-
-            } else if (label.visibility === 'hidden') {
-                label.show();
-            }
-        }
-    }
-
-    /**
      * Destroy the annotation. This function does not touch the chart
      * that the annotation belongs to (all annotations are kept in
      * the chart.annotations array) - it is recommended to use
@@ -598,7 +590,7 @@ class Annotation extends EventEmitter implements Controllable {
             );
 
             if (item.points.length) {
-                this.adjustVisibility(item);
+                adjustVisibility(item);
             }
         }
     }

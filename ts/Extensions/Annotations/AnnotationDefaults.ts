@@ -5,7 +5,7 @@
  * */
 
 import type AnnotationOptions from './AnnotationOptions';
-import type AnnotationPoint from './AnnotationSeries';
+import type { AnnotationPoint } from './AnnotationSeries';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';

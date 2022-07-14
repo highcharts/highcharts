@@ -23,7 +23,7 @@
 import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotation';
 import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
-import type AnnotationPoint from '../../Extensions/Annotations/AnnotationSeries';
+import type { AnnotationPoint } from '../../Extensions/Annotations/AnnotationSeries';
 import type {
     ControllableLabelType
 } from '../../Extensions/Annotations/Controllables/ControllableType';
