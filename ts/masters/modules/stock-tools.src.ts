@@ -12,5 +12,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/StockToolsBindings.js';
+import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
+import StockToolsBindings from '../../Stock/StockToolsBindings.js';
 import '../../Stock/StockToolsGui.js';
+StockToolsBindings.compose(NavigationBindings);

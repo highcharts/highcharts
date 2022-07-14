@@ -23,7 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *
  * */
 
-export type FlagsShapeValue = ('circlepin'|'flag'|'squarepin');
+export type FlagsShapeValue = ('circlepin'|'flag'|'nopin'|'squarepin');
 
 export interface FlagsPointOptions extends ColumnPointOptions {
     fillColor?: ColorType;
@@ -34,5 +34,11 @@ export interface FlagsPointOptions extends ColumnPointOptions {
     title?: string;
     x?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default FlagsPointOptions;
