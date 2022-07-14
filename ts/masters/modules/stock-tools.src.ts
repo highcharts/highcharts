@@ -13,6 +13,6 @@
  */
 'use strict';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import StockToolsBindings from '../../Stock/StockToolsBindings.js';
+import StockTools from '../../Stock/StockTools.js';
 import '../../Stock/StockToolsGui.js';
-StockToolsBindings.compose(NavigationBindings);
+StockTools.compose(NavigationBindings);
