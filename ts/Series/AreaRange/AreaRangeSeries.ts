@@ -65,6 +65,8 @@ const {
  * @excluding    stack, stacking
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
+ *
+ * @private
  */
 const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
@@ -694,6 +696,7 @@ extend(AreaRangeSeries.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;

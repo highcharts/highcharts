@@ -192,37 +192,6 @@ declare global {
     }
 }
 
-/**
- * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
- */
-
-/**
- * The position of the point inside the group.
- *
- * @typedef    {"start"|"middle"|"end"} Highcharts.DataGroupingAnchor
- */
-
-/**
- * The position of the first or last point in the series inside the group.
- *
- * @typedef    {"start"|"middle"|"end"|"firstPoint"|"lastPoint"} Highcharts.DataGroupingAnchorExtremes
- */
-
-/**
- * @interface Highcharts.DataGroupingInfoObject
- *//**
- * @name Highcharts.DataGroupingInfoObject#length
- * @type {number}
- *//**
- * @name Highcharts.DataGroupingInfoObject#options
- * @type {Highcharts.SeriesOptionsType|undefined}
- *//**
- * @name Highcharts.DataGroupingInfoObject#start
- * @type {number}
- */
-
-''; // detach doclets above
-
 import '../Core/Axis/Axis.js';
 
 /* *
@@ -1406,10 +1375,83 @@ addEvent(Axis, 'afterSetScale', function (): void {
     });
 });
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+// @todo move to master
 H.dataGrouping = dataGrouping;
+
 export default dataGrouping;
 
-/* eslint-enable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ */
+
+/**
+ * The position of the point inside the group.
+ *
+ * @typedef    {"start"|"middle"|"end"} Highcharts.DataGroupingAnchor
+ */
+
+/**
+ * The position of the first or last point in the series inside the group.
+ *
+ * @typedef    {"start"|"middle"|"end"|"firstPoint"|"lastPoint"} Highcharts.DataGroupingAnchorExtremes
+ */
+
+/**
+ * Highcharts Stock only.
+ *
+ * @product highstock
+ * @interface Highcharts.DataGroupingInfoObject
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#length
+ * @type {number}
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#options
+ * @type {Highcharts.SeriesOptionsType|undefined}
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#start
+ * @type {number}
+ */
+
+/**
+ * Highcharts Stock only. If a point object is created by data
+ * grouping, it doesn't reflect actual points in the raw
+ * data. In this case, the `dataGroup` property holds
+ * information that points back to the raw data.
+ *
+ * - `dataGroup.start` is the index of the first raw data
+ *   point in the group.
+ *
+ * - `dataGroup.length` is the amount of points in the
+ *   group.
+ *
+ * @sample stock/members/point-datagroup
+ *         Click to inspect raw data points
+ *
+ * @product highstock
+ *
+ * @name Highcharts.Point#dataGroup
+ * @type {Highcharts.DataGroupingInfoObject|undefined}
+ */
+
+(''); // detach doclets above
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * Data grouping is the concept of sampling the data values into larger

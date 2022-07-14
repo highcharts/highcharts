@@ -115,6 +115,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
+ * @private
  */
 namespace Globals {
 

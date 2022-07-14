@@ -254,6 +254,8 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
      *               boostBlending
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
+     *
+     * @private
      */
     public static defaultOptions: Highcharts.NetworkgraphSeriesOptions = merge(Series.defaultOptions, {
         stickyTracking: false,

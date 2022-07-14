@@ -105,6 +105,8 @@ class TimelineSeries extends LineSeries {
      *               boostBlending
      * @requires     modules/timeline
      * @optionparent plotOptions.timeline
+     *
+     * @private
      */
     public static defaultOptions: TimelineSeriesOptions = merge(LineSeries.defaultOptions, {
         colorByPoint: true,

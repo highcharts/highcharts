@@ -108,7 +108,6 @@ declare global {
  * @product   gantt
  * @apioption xAxis.currentDateIndicator
  */
-
 const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
     color: Palette.highlightColor20,
     width: 2,

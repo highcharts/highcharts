@@ -101,6 +101,8 @@ class PieSeries extends Series {
      *               boostBlending
      * @product      highcharts highmaps
      * @optionparent plotOptions.pie
+     *
+     * @private
      */
     public static defaultOptions: PieSeriesOptions = merge(Series.defaultOptions, {
         /**

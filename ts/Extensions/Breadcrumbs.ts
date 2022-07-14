@@ -121,11 +121,15 @@ extend(
     defaultOptions.lang,
     /**
      * @optionparent lang
+     *
+     * @private
      */
     {
         /**
          * @since 10.0.0
          * @product  highcharts
+         *
+         * @private
          */
         mainBreadcrumb: 'Main'
     }
