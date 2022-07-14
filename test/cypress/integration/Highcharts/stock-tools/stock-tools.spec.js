@@ -124,6 +124,22 @@ describe('Stock Tools annotation popup, #15725', () => {
             )
         );
     });
+
+    it('#17425: Editing labels of Elliott3 line to number should not change type of input.', () => {
+        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
+        cy.get('.highcharts-annotation-edit-button').click();
+
+        cy.get('input[name="highcharts-annotation-0"]').clear().type('(X)');
+
+        cy.get('div.highcharts-popup-bottom-row button').click();
+
+        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
+        cy.get('.highcharts-annotation-edit-button').click();
+
+        cy.get('input[name="highcharts-annotation-0"]').should('value', '(X)');
+
+        cy.get('div.highcharts-popup-close').click();
+    });
 });
 
 describe('Indicator popup searchbox, #16019.', () => {
