@@ -29,6 +29,7 @@ import ControllableEllipse from './Controllables/ControllableEllipse';
 const {
     addEvent,
     attr,
+    defined,
     fireEvent,
     isArray,
     isFunction,
@@ -125,6 +126,7 @@ declare global {
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(
+                key: (0|string),
                 value: ('boolean'|'number'|'string')
             ): ('checkbox'|'number'|'text');
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
@@ -216,14 +218,22 @@ const bindingsUtils = {
      * Field type (one of: text, number, checkbox)
      */
     getFieldType: function (
+        key: (0|string),
         value: ('boolean'|'number'|'string')
     ): ('checkbox'|'number'|'text') {
+        const predefinedType = NavigationBindings.annotationsFieldsTypes[key];
+        let fieldType: string = typeof value;
+
+        if (defined(predefinedType)) {
+            fieldType = predefinedType;
+        }
+
         return ({
             'string': 'text',
             'number': 'number',
             'boolean': 'checkbox'
         } as Record<string, ('checkbox'|'number'|'text')>)[
-            typeof value
+            fieldType
         ];
     },
 
@@ -354,6 +364,107 @@ class NavigationBindings {
         rectangle: ['crosshairX', 'crosshairY', 'labelOptions'],
         ellipse: ['labelOptions'],
         circle: ['labelOptions']
+    };
+
+    // Define types for editable fields per annotation
+    public static annotationsFieldsTypes: Record<string, string> = {
+        addButton: 'string',
+        algorithm: 'string',
+        arrowInfinityLine: 'string',
+        arrowRay: 'string',
+        arrowSegment: 'string',
+        average: 'string',
+        background: 'string',
+        backgroundColor: 'string',
+        backgroundColors: 'string',
+        borderColor: 'string',
+        borderRadius: 'string',
+        borderWidth: 'number',
+        bottomBand: 'string',
+        circle: 'string',
+        clearFilter: 'string',
+        color: 'string',
+        connector: 'string',
+        crooked3: 'string',
+        crooked5: 'string',
+        crosshairX: 'string',
+        crosshairY: 'string',
+        decimals: 'number',
+        deviation: 'string',
+        editButton: 'string',
+        elliott3: 'string',
+        elliott5: 'string',
+        ellipse: 'string',
+        factor: 'number',
+        fastAvgPeriod: 'string',
+        fibonacci: 'string',
+        fibonacciTimeZones: 'string',
+        fill: 'string',
+        flags: 'string',
+        fontSize: 'string',
+        format: 'string',
+        height: 'number',
+        highIndex: 'number',
+        horizontalLine: 'string',
+        increment: 'number',
+        index: 'number',
+        infinityLine: 'string',
+        initialAccelerationFactor: 'number',
+        innerBackground: 'string',
+        label: 'string',
+        labelOptions: 'string',
+        labels: 'string',
+        line: 'string',
+        lines: 'string',
+        longPeriod: 'string',
+        lowIndex: 'number',
+        maxAccelerationFactor: 'number',
+        measure: 'string',
+        measureX: 'string',
+        measureXY: 'string',
+        measureY: 'string',
+        multiplier: 'string',
+        multiplierATR: 'string',
+        name: 'string',
+        noFilterMatch: 'string',
+        outerBackground: 'string',
+        padding: 'number',
+        parallelChannel: 'string',
+        period: 'string',
+        periodATR: 'string',
+        periods: 'string',
+        periodSenkouSpanB: 'string',
+        periodTenkan: 'string',
+        pitchfork: 'string',
+        ranges: 'string',
+        ray: 'string',
+        rectangle: 'string',
+        removeButton: 'string',
+        saveButton: 'string',
+        searchIndicators: 'string',
+        segment: 'string',
+        series: 'string',
+        shapeOptions: 'string',
+        shapes: 'string',
+        shortPeriod: 'string',
+        signalPeriod: 'string',
+        simpleShapes: 'string',
+        slowAvgPeriod: 'string',
+        standardDeviation: 'number',
+        stroke: 'string',
+        strokeWidth: 'number',
+        style: 'string',
+        timeCycles: 'string',
+        title: 'string',
+        topBand: 'string',
+        tunnel: 'string',
+        typeOptions: 'string',
+        verticalArrow: 'string',
+        verticalCounter: 'string',
+        verticalLabel: 'string',
+        verticalLine: 'string',
+        volume: 'string',
+        xAxisUnit: 'string'
     };
 
     /* *
@@ -795,8 +906,8 @@ class NavigationBindings {
                 value = parsedValue as any;
             }
 
-            // Remove empty strings or values like 0
-            if (value !== '' && value !== 'undefined') {
+            // Remove values like 0
+            if (value !== 'undefined') {
                 path.forEach(function (name: string, index: number): void {
                     const nextName = pick(path[index + 1], '');
 
@@ -887,13 +998,14 @@ class NavigationBindings {
             option: any,
             key: (0|string),
             parentEditables: any,
-            parent: any
+            parent: any,
+            parentKey: (0|string)
         ): void {
             let nextParent: any;
 
             if (
                 parentEditables &&
-                option &&
+                defined(option) &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (
@@ -918,7 +1030,8 @@ class NavigationBindings {
                                 arrayOption,
                                 0,
                                 nestedEditables[key],
-                                parent[key]
+                                parent[key],
+                                key
                             );
                         } else {
                             // Advanced arrays, e.g. [Object, Object]
@@ -933,7 +1046,8 @@ class NavigationBindings {
                                         nestedOption,
                                         nestedKey,
                                         nestedEditables[key],
-                                        parent[key][i]
+                                        parent[key][i],
+                                        key
                                     );
                                 }
                             );
@@ -957,7 +1071,8 @@ class NavigationBindings {
                                 key === 0 ?
                                     parentEditables :
                                     (nestedEditables as any)[key],
-                                nextParent
+                                nextParent,
+                                key
                             );
                         }
                     );
@@ -972,9 +1087,9 @@ class NavigationBindings {
                             'text'
                         ];
                     } else if (isArray(parent)) {
-                        parent.push([option, getFieldType(option)]);
+                        parent.push([option, getFieldType(parentKey, option)]);
                     } else {
-                        parent[key] = [option, getFieldType(option)];
+                        parent[key] = [option, getFieldType(key, option)];
                     }
                 }
             }
@@ -991,12 +1106,18 @@ class NavigationBindings {
                             typeKey,
                             nestedEditables,
                             visualOptions[key],
-                            true
+                            typeKey
                         );
                     }
                 );
             } else {
-                traverse(option, key, (editables as any)[type], visualOptions);
+                traverse(
+                    option,
+                    key,
+                    (editables as any)[type],
+                    visualOptions,
+                    key
+                );
             }
         });
 
@@ -1130,7 +1251,6 @@ interface NavigationBindings {
  * @type {bindingsUtils}
  */
 NavigationBindings.prototype.utils = bindingsUtils;
-
 
 Chart.prototype.initNavigationBindings = function (
     this: Highcharts.AnnotationChart
