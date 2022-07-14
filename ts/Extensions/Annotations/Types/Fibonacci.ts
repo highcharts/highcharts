@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnnotationChart from '../AnnotationChart';
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
@@ -21,9 +27,16 @@ import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-const createPathDGenerator = function (
+/**
+ * @private
+ */
+function createPathDGenerator(
     retracementIndex: number,
     isBackground?: boolean
 ): Function {
@@ -62,30 +75,23 @@ const createPathDGenerator = function (
 
         return d;
     };
-};
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
     public static levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        options: Fibonacci.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -98,7 +104,7 @@ class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -220,8 +226,15 @@ class Fibonacci extends Tunnel {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Fibonacci {
     defaultOptions: Tunnel['defaultOptions'];
+    options: Fibonacci.Options;
 }
 
 Fibonacci.prototype.defaultOptions = merge(
@@ -303,11 +316,25 @@ Fibonacci.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        fibonacci: typeof Fibonacci;
+    }
+}
+
 Annotation.types.fibonacci = Fibonacci;
 
-interface Fibonacci {
-    options: Fibonacci.Options;
-}
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace Fibonacci {
     export interface Options extends Tunnel.Options {
@@ -326,4 +353,5 @@ namespace Fibonacci {
  *  Default Export
  *
  * */
+
 export default Fibonacci;

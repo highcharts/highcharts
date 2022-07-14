@@ -6,7 +6,12 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     ControllableLabelOptions
 } from '../Controllables/ControllableOptions';
@@ -18,21 +23,20 @@ import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class ElliottWave extends CrookedLine {
-    public constructor(
-        chart: AnnotationChart,
-        options: ElliottWave.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
      * Functions
      *
      * */
+
     public addLabels(): void {
         this.getPointsOptions().forEach(function (
             this: ElliottWave,
@@ -55,6 +59,12 @@ class ElliottWave extends CrookedLine {
         }, this);
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface ElliottWave {
     defaultOptions: CrookedLine['defaultOptions'];
@@ -102,6 +112,12 @@ ElliottWave.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace ElliottWave {
     export interface LabelOptions extends ControllableLabelOptions {
         backgroundColor: ColorType;
@@ -122,16 +138,19 @@ namespace ElliottWave {
  *  Registry
  *
  * */
-Annotation.types.elliottWave = ElliottWave;
-declare module './AnnotationType'{
+
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;
     }
 }
+
+Annotation.types.elliottWave = ElliottWave;
 
 /* *
  *
  *  Default Export
  *
  * */
+
 export default ElliottWave;
