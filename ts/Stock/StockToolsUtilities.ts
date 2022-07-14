@@ -19,11 +19,13 @@
  * */
 
 import type Annotation from '../Extensions/Annotations/Annotation';
+import type { AxisPositions } from './StockTools';
 import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
 import type FlagsPoint from '../Series/Flags/FlagsPoint';
 import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
 import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
+import type NavigationBindings from '../Extensions/Annotations/NavigationBindings';
 import type Point from '../Core/Series/Point';
 import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
@@ -44,6 +46,25 @@ const {
     isNumber,
     uniqueKey
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface NavigationBindingsAttractionObject {
+    x: number;
+    y: number;
+    below: boolean;
+    series: Series;
+    xAxis: number;
+    yAxis: number;
+}
+
+interface StockToolsFieldsObject {
+    [key: string]: any;
+}
 
 /* *
  *
@@ -128,7 +149,7 @@ function addFlagFromForm(
     type: FlagsShapeValue
 ): Function {
     return function (
-        this: Highcharts.StockToolsNavigationBindings,
+        this: NavigationBindings,
         e: PointerEvent
     ): void {
         const navigation = this,
@@ -181,7 +202,7 @@ function addFlagFromForm(
                                     ]
                                 },
                                 onSubmit: function (
-                                    updated: Highcharts.StockToolsFieldsObject
+                                    updated: StockToolsFieldsObject
                                 ): void {
                                     if (updated.actionType === 'remove') {
                                         point.remove();
@@ -219,7 +240,7 @@ function addFlagFromForm(
                 },
                 // Callback on submit:
                 onSubmit: function (
-                    data: Highcharts.StockToolsFieldsObject
+                    data: StockToolsFieldsObject
                 ): void {
                     navigation.fieldsToOptions(
                         data.fields,
@@ -240,7 +261,7 @@ function addFlagFromForm(
 function attractToPoint(
     e: PointerEvent,
     chart: Chart
-): Highcharts.NavigationBindingsAttractionObject | void {
+): NavigationBindingsAttractionObject | void {
     const coords = chart.pointer.getCoordinates(e);
 
     let coordsX: (Pointer.AxisCoordinateObject|undefined),
@@ -327,11 +348,11 @@ function isPriceIndicatorEnabled(
  * @private
  */
 function manageIndicators(
-    this: Highcharts.StockToolsNavigationBindings,
-    data: Highcharts.StockToolsFieldsObject
+    this: NavigationBindings,
+    data: StockToolsFieldsObject
 ): void {
     const chart = this.chart,
-        seriesConfig: Highcharts.StockToolsFieldsObject = {
+        seriesConfig: StockToolsFieldsObject = {
             linkedTo: data.linkedTo,
             type: data.type
         };
@@ -365,7 +386,7 @@ function manageIndicators(
                 const removedYAxisProps = {
                     height: yAxis.options.height,
                     top: yAxis.options.top
-                } as Highcharts.AxisPositions;
+                } as AxisPositions;
                 yAxis.remove(false);
                 this.resizeYAxes(removedYAxisProps);
             }
@@ -454,7 +475,7 @@ function manageIndicators(
  *        Annotation to be updated
  */
 function updateHeight(
-    this: Highcharts.StockToolsNavigationBindings,
+    this: NavigationBindings,
     e: PointerEvent,
     annotation: Annotation
 ): void {
@@ -492,7 +513,7 @@ function updateNthPoint(
     startIndex: number
 ): typeof updateHeight {
     return function (
-        this: Highcharts.StockToolsNavigationBindings,
+        this: NavigationBindings,
         e: PointerEvent,
         annotation: Annotation
     ): void {
@@ -571,6 +592,7 @@ function updateRectSize(
 
 const StockToolsUtilities = {
     indicatorsWithAxes,
+    indicatorsWithVolume,
     addFlagFromForm,
     attractToPoint,
     getAssignedAxis,
