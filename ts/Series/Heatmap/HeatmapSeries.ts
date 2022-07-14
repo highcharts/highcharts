@@ -119,7 +119,12 @@ class HeatmapSeries extends ScatterSeries {
         animation: false,
 
         /**
-         * The border radius for each heatmap item.
+         * The border radius for each heatmap itemdvxv. Border width and color
+         * you can set in marker: plotOptions.heatmap.marker.lineWidth
+         * plotOptions.heatmap.marker.lineColor
+         *
+         * @see [lineWidth](#plotOptions.heatmap.marker.lineWidth)
+         * @see [lineColor](#plotOptions.heatmap.marker.lineColor)
          */
         borderRadius: 0,
 
