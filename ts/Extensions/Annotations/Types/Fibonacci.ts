@@ -12,7 +12,6 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';

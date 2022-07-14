@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationDraggableValue,
@@ -38,7 +44,12 @@ const {
     pick
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class Measure extends Annotation {
 
     /* *
@@ -363,19 +374,6 @@ class Measure extends Annotation {
             return bins;
         }
     };
-
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        userOptions: Measure.MeasureOptions
-    ) {
-        super(chart, userOptions);
-    }
 
     /* *
      *
@@ -813,6 +811,12 @@ class Measure extends Annotation {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Measure {
     average: (''|number);
     bins: (''|number);
@@ -928,7 +932,8 @@ Measure.prototype.defaultOptions = merge(
                 zIndex: 6,
                 /**
                  * The dash or dot style of the crosshair's line. For possible
-                 * values, see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 * values, see
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type      {Highcharts.DashStyleValue}
                  * @default   Dash
@@ -1101,6 +1106,12 @@ Measure.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Measure {
     export interface MeasureOptions extends AnnotationOptions {
         typeOptions: MeasureTypeOptions;
@@ -1132,16 +1143,19 @@ namespace Measure {
  *  Registry
  *
  * */
-Annotation.types.measure = Measure as any;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         measure: typeof Measure;
     }
 }
 
+Annotation.types.measure = Measure as any;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Measure;

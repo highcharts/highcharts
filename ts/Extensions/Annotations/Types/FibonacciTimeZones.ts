@@ -44,8 +44,6 @@ declare module '../Controllables/ControllableLike' {
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 class FibonacciTimeZones extends CrookedLine {
 
     /* *
@@ -300,12 +298,13 @@ namespace FibonacciTimeZones {
  *
  * */
 
-Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         fibonacciTimeZones: typeof FibonacciTimeZones;
     }
 }
+
+Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
 
 /* *
  *

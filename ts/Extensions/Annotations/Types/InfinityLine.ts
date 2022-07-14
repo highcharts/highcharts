@@ -29,21 +29,20 @@ const { merge } = U;
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
 class InfinityLine extends CrookedLine {
 
-    /**
+    /* *
      *
-     * Static Properties
+     *  Static Properties
      *
-     */
+     * */
 
     public static endEdgePoint = InfinityLine.edgePoint(0, 1);
     public static startEdgePoint = InfinityLine.edgePoint(1, 0);
 
     /* *
      *
-     * Static Functions
+     *  Static Functions
      *
      * */
 
@@ -160,19 +159,6 @@ class InfinityLine extends CrookedLine {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        options: InfinityLine.Options
-    ) {
-        super(chart, options);
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -242,12 +228,13 @@ namespace InfinityLine {
  *
  * */
 
-Annotation.types.infinityLine = InfinityLine;
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         infinityLine: typeof InfinityLine;
     }
 }
+
+Annotation.types.infinityLine = InfinityLine;
 
 /* *
  *
