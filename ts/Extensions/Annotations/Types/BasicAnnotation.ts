@@ -373,12 +373,10 @@ interface BasicAnnotation {
     defaultOptions: Annotation['defaultOptions'];
 }
 
-extend(BasicAnnotation.prototype, {
-    defaultOptions: merge(
-        Annotation.prototype.defaultOptions,
-        {}
-    )
-});
+BasicAnnotation.prototype.defaultOptions = merge(
+    Annotation.prototype.defaultOptions,
+    {}
+);
 
 /* *
  *

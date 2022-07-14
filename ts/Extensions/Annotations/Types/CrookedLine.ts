@@ -6,7 +6,12 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AnnotationEventObject } from '../EventEmitter';
 import type {
     AnnotationOptions,
@@ -24,21 +29,13 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class CrookedLine extends Annotation {
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-    public constructor(
-        chart: AnnotationChart,
-        options: CrookedLine.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -123,9 +120,12 @@ class CrookedLine extends Annotation {
     }
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface CrookedLine {
     defaultOptions: Annotation['defaultOptions'];
 }
@@ -258,6 +258,12 @@ CrookedLine.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace CrookedLine {
     export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
@@ -273,16 +279,17 @@ namespace CrookedLine {
  *
  * */
 
-Annotation.types.crookedLine = CrookedLine;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         crookedLine: typeof CrookedLine;
     }
 }
 
+Annotation.types.crookedLine = CrookedLine;
+
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
 
