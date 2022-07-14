@@ -42,7 +42,7 @@ interface IndicatorAliases {
     [key: string]: Array<string>;
 }
 
-interface LangNavigationOptions {
+export interface LangNavigationOptions {
     popup?: PopupOptions;
 }
 
