@@ -6,9 +6,13 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AnnotationEventObject } from '../EventEmitter';
-import type AnnotationOptions from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
@@ -26,9 +30,16 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const { merge } = U;
+const {
+    extend,
+    merge
+} = U;
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class BasicAnnotation extends Annotation {
 
@@ -305,19 +316,6 @@ class BasicAnnotation extends Annotation {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        options: AnnotationOptions
-    ) {
-        super(chart, options);
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -364,13 +362,30 @@ class BasicAnnotation extends Annotation {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface BasicAnnotation {
-    defaultOptions: Annotation['defaultOptions'];
     basicType: string;
+    defaultOptions: Annotation['defaultOptions'];
 }
+
+extend(BasicAnnotation.prototype, {
+    defaultOptions: merge(
+        Annotation.prototype.defaultOptions,
+        {}
+    )
+});
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace BasicAnnotation {
     export interface ControlPoints {
         label: DeepPartial<ControlPointOptionsObject>[];
@@ -380,23 +395,19 @@ namespace BasicAnnotation {
     }
 }
 
-BasicAnnotation.prototype.defaultOptions = merge(
-    Annotation.prototype.defaultOptions,
-    {}
-);
-
 /* *
  *
  *  Registry
  *
  * */
 
-Annotation.types.basicAnnotation = BasicAnnotation;
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         basicAnnotation: typeof BasicAnnotation;
     }
 }
+
+Annotation.types.basicAnnotation = BasicAnnotation;
 
 /* *
  *
