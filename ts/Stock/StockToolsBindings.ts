@@ -12,37 +12,43 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Annotation from '../Extensions/Annotations/Annotation';
 import type {
     AnnotationOptions
 } from '../Extensions/Annotations/AnnotationOptions';
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
-import type Chart from '../Core/Chart/Chart';
-import type FlagsPoint from '../Series/Flags/FlagsPoint';
-import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
-import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../Extensions/Annotations/NavigationBindingsOptions';
-import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import D from '../Core/DefaultOptions.js';
-const {
-    getOptions,
-    setOptions
-} = D;
+const { setOptions } = D;
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import NBU from '../Extensions/Annotations/NavigationBindingsUtilities.js';
-const {
-    getAssignedAxis,
-    getFieldType
-} = NBU;
+const { getAssignedAxis } = NBU;
 import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
+import STU from './StockToolsUtilities.js';
+const {
+    indicatorsWithAxes,
+    addFlagFromForm,
+    attractToPoint,
+    isNotNavigatorYAxis,
+    isPriceIndicatorEnabled,
+    manageIndicators,
+    updateHeight,
+    updateNthPoint,
+    updateRectSize
+} = STU;
 import U from '../Core/Utilities.js';
 import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
 const {
@@ -52,8 +58,7 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick,
-    uniqueKey
+    pick
 } = U;
 
 /**
@@ -64,7 +69,7 @@ declare global {
     namespace Highcharts {
         interface StockToolsNavigationBindings extends NavigationBindings {
             toggledAnnotations?: boolean;
-            utils: StockToolsNavigationBindingsUtilsObject;
+            utils: typeof STU;
             verticalCounter?: number;
             /** @requires modules/stock-tools */
             getYAxisPositions(
@@ -110,32 +115,6 @@ declare global {
             controlledAxis?: Record<string, Array<number>>;
             enabled: boolean;
         }
-        interface StockToolsNavigationBindingsUtilsObject {
-            indicatorsWithAxes: Array<string>;
-
-            addFlagFromForm(this: NavigationBindings, type: string): Function;
-            attractToPoint(
-                e: Event,
-                chart: Chart
-            ): NavigationBindingsAttractionObject|void;
-            getAssignedAxis: typeof getAssignedAxis;
-            isNotNavigatorYAxis(axis: AxisType): boolean;
-            isPriceIndicatorEnabled(series: Series[]): boolean;
-            manageIndicators(
-                this: NavigationBindings,
-                data: StockToolsFieldsObject
-            ): void;
-            updateHeight(
-                this: NavigationBindings,
-                e: PointerEvent,
-                annotation: Annotation
-            ): void;
-            updateNthPoint(
-                startIndex: number
-            ): StockToolsNavigationBindingsUtilsObject['updateHeight'];
-            updateRectSize(event: PointerEvent, annotation: Annotation): void;
-        }
-
         interface StockToolsFieldsObject {
             [key: string]: any;
         }
@@ -144,512 +123,9 @@ declare global {
 
 declare module '../Extensions/Annotations/NavigationBindingsLike' {
     interface NavigationBindingsLike {
-        utils: Highcharts.StockToolsNavigationBindingsUtilsObject;
+        utils: Partial<typeof STU>;
     }
 }
-
-const bindingsUtils = NavigationBindings.prototype.utils =
-    { getAssignedAxis } as Highcharts.StockToolsNavigationBindingsUtilsObject,
-    PREFIX = 'highcharts-';
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * Generates function which will add a flag series using modal in GUI.
- * Method fires an event "showPopup" with config:
- * `{type, options, callback}`.
- *
- * Example: NavigationBindings.utils.addFlagFromForm('url(...)') - will
- * generate function that shows modal in GUI.
- *
- * @private
- * @function bindingsUtils.addFlagFromForm
- *
- * @param {Highcharts.FlagsShapeValue} type
- *        Type of flag series, e.g. "squarepin"
- *
- * @return {Function}
- *         Callback to be used in `start` callback
- */
-bindingsUtils.addFlagFromForm = function (
-    this: Highcharts.StockToolsNavigationBindings,
-    type: FlagsShapeValue
-): Function {
-    return function (
-        this: Highcharts.StockToolsNavigationBindings,
-        e: Event
-    ): void {
-        let navigation = this,
-            chart = navigation.chart,
-            toolbar = chart.stockTools,
-            point = bindingsUtils.attractToPoint(e, chart),
-            pointConfig,
-            seriesOptions: FlagsSeriesOptions;
-
-        if (!point) {
-            return;
-        }
-
-        pointConfig = {
-            x: point.x,
-            y: point.y
-        };
-
-        seriesOptions = {
-            type: 'flags',
-            onSeries: point.series.id,
-            shape: type,
-            data: [pointConfig],
-            xAxis: point.xAxis,
-            yAxis: point.yAxis,
-            point: {
-                events: {
-                    click: function (this: FlagsPoint): void {
-                        const point = this,
-                            options = point.options;
-
-                        fireEvent(
-                            navigation,
-                            'showPopup',
-                            {
-                                point: point,
-                                formType: 'annotation-toolbar',
-                                options: {
-                                    langKey: 'flags',
-                                    type: 'flags',
-                                    title: [
-                                        options.title,
-                                        getFieldType(
-                                            options.title as any
-                                        )
-                                    ],
-                                    name: [
-                                        options.name,
-                                        getFieldType(
-                                            options.name as any
-                                        )
-                                    ]
-                                },
-                                onSubmit: function (
-                                    updated: Highcharts.StockToolsFieldsObject
-                                ): void {
-                                    if (updated.actionType === 'remove') {
-                                        point.remove();
-                                    } else {
-                                        point.update(
-                                            navigation.fieldsToOptions(
-                                                updated.fields,
-                                                {}
-                                            )
-                                        );
-                                    }
-                                }
-                            }
-                        );
-                    } as any
-                }
-            }
-        };
-
-        if (!toolbar || !toolbar.guiEnabled) {
-            chart.addSeries(seriesOptions);
-        }
-
-        fireEvent(
-            navigation,
-            'showPopup',
-            {
-                formType: 'flag',
-                // Enabled options:
-                options: {
-                    langKey: 'flags',
-                    type: 'flags',
-                    title: ['A', getFieldType('A' as any)],
-                    name: ['Flag A', getFieldType('Flag A' as any)]
-                },
-                // Callback on submit:
-                onSubmit: function (
-                    data: Highcharts.StockToolsFieldsObject
-                ): void {
-                    navigation.fieldsToOptions(
-                        data.fields,
-                        (seriesOptions.data as any)[0]
-                    );
-                    chart.addSeries(seriesOptions);
-                }
-            }
-        );
-    };
-};
-
-bindingsUtils.indicatorsWithAxes = [
-    'apo',
-    'ad',
-    'aroon',
-    'aroonoscillator',
-    'atr',
-    'ao',
-    'cci',
-    'chaikin',
-    'cmf',
-
-    'cmo',
-    'disparityindex',
-    'dmi',
-    'dpo',
-    'linearRegressionAngle',
-    'linearRegressionIntercept',
-    'linearRegressionSlope',
-    'klinger',
-    'macd',
-    'mfi',
-    'momentum',
-
-    'natr',
-    'obv',
-    'ppo',
-    'roc',
-    'rsi',
-    'slowstochastic',
-    'stochastic',
-    'trix',
-    'williamsr'
-
-];
-
-bindingsUtils.manageIndicators = function (
-    this: Highcharts.StockToolsNavigationBindings,
-    data: Highcharts.StockToolsFieldsObject
-): void {
-    let navigation = this,
-        chart = navigation.chart,
-        seriesConfig: Highcharts.StockToolsFieldsObject = {
-            linkedTo: data.linkedTo,
-            type: data.type
-        },
-        indicatorsWithVolume = [
-            'ad',
-            'cmf',
-            'klinger',
-            'mfi',
-            'obv',
-            'vbp',
-            'vwap'
-        ],
-        indicatorsWithAxes = bindingsUtils.indicatorsWithAxes,
-        yAxis,
-        parentSeries,
-        defaultOptions,
-        series: Series;
-
-    if (data.actionType === 'edit') {
-        navigation.fieldsToOptions(data.fields, seriesConfig);
-        series = chart.get(data.seriesId) as any;
-
-        if (series) {
-            series.update(seriesConfig, false);
-        }
-    } else if (data.actionType === 'remove') {
-        series = chart.get(data.seriesId) as any;
-        if (series) {
-            yAxis = series.yAxis;
-
-            if (series.linkedSeries) {
-                series.linkedSeries.forEach(function (linkedSeries): void {
-                    linkedSeries.remove(false);
-                });
-            }
-
-            series.remove(false);
-
-            if (indicatorsWithAxes.indexOf(series.type) >= 0) {
-                const removedYAxisProps = {
-                    height: yAxis.options.height,
-                    top: yAxis.options.top
-                } as Highcharts.AxisPositions;
-                yAxis.remove(false);
-                navigation.resizeYAxes(removedYAxisProps);
-            }
-        }
-    } else {
-        seriesConfig.id = uniqueKey();
-        navigation.fieldsToOptions(data.fields, seriesConfig);
-        parentSeries = chart.get(seriesConfig.linkedTo);
-        defaultOptions = getOptions().plotOptions as any;
-
-        // Make sure that indicator uses the SUM approx if SUM approx is used
-        // by parent series (#13950).
-        if (
-            typeof parentSeries !== 'undefined' &&
-            parentSeries instanceof Series &&
-            parentSeries.getDGApproximation() === 'sum' &&
-            // If indicator has defined approx type, use it (e.g. "ranges")
-            !defined(
-                defaultOptions && defaultOptions[seriesConfig.type] &&
-                defaultOptions.dataGrouping &&
-                defaultOptions.dataGrouping.approximation
-            )
-        ) {
-            seriesConfig.dataGrouping = {
-                approximation: 'sum'
-            };
-        }
-
-        if (indicatorsWithAxes.indexOf(data.type) >= 0) {
-            yAxis = chart.addAxis({
-                id: uniqueKey(),
-                offset: 0,
-                opposite: true,
-                title: {
-                    text: ''
-                },
-                tickPixelInterval: 40,
-                showLastLabel: false,
-                labels: {
-                    align: 'left',
-                    y: -2
-                }
-            }, false, false);
-            seriesConfig.yAxis = yAxis.options.id;
-            navigation.resizeYAxes();
-        } else {
-            seriesConfig.yAxis = (
-                chart.get(data.linkedTo) as any
-            ).options.yAxis;
-        }
-
-        if (indicatorsWithVolume.indexOf(data.type) >= 0) {
-            seriesConfig.params.volumeSeriesID = chart.series.filter(
-                function (series): boolean {
-                    return series.options.type === 'column';
-                }
-            )[0].options.id;
-        }
-
-        chart.addSeries(seriesConfig, false);
-    }
-
-    fireEvent(
-        navigation,
-        'deselectButton',
-        {
-            button: navigation.selectedButtonElement
-        }
-    );
-
-    chart.redraw();
-};
-
-/**
- * Update height for an annotation. Height is calculated as a difference
- * between last point in `typeOptions` and current position. It's a value,
- * not pixels height.
- *
- * @private
- * @function bindingsUtils.updateHeight
- *
- * @param {Highcharts.PointerEventObject} e
- *        normalized browser event
- *
- * @param {Highcharts.Annotation} annotation
- *        Annotation to be updated
- *
- * @return {void}
- */
-bindingsUtils.updateHeight = function (
-    this: Highcharts.StockToolsNavigationBindings,
-    e: PointerEvent,
-    annotation: Annotation
-): void {
-    const options = annotation.options.typeOptions,
-        yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
-
-    if (yAxis && options.points) {
-        annotation.update({
-            typeOptions: {
-                height: yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']) -
-                    (options.points[1].y || 0)
-            }
-        });
-    }
-};
-
-// @todo
-// Consider using getHoverData(), but always kdTree (columns?)
-bindingsUtils.attractToPoint = function (
-    e: PointerEvent,
-    chart: Chart
-): Highcharts.NavigationBindingsAttractionObject | void {
-    let coords = chart.pointer.getCoordinates(e),
-        coordsX,
-        coordsY,
-        distX = Number.MAX_VALUE,
-        closestPoint: (Point|undefined),
-        x: number,
-        y: number;
-
-    if (chart.navigationBindings) {
-        coordsX = getAssignedAxis(coords.xAxis);
-        coordsY = getAssignedAxis(coords.yAxis);
-    }
-
-    // Exit if clicked out of axes area.
-    if (!coordsX || !coordsY) {
-        return;
-    }
-
-    x = coordsX.value;
-    y = coordsY.value;
-
-    // Search by 'x' but only in yAxis' series.
-    coordsY.axis.series.forEach(function (series): void {
-        if (series.points) {
-            series.points.forEach(function (point): void {
-                if (point && distX > Math.abs((point.x as any) - x)) {
-                    distX = Math.abs((point.x as any) - x);
-                    closestPoint = point;
-                }
-            });
-        }
-    });
-
-    if (closestPoint && closestPoint.x && closestPoint.y) {
-        return {
-            x: closestPoint.x,
-            y: closestPoint.y,
-            below: y < closestPoint.y,
-            series: closestPoint.series,
-            xAxis: closestPoint.series.xAxis.options.index || 0,
-            yAxis: closestPoint.series.yAxis.options.index || 0
-        };
-    }
-};
-
-/**
- * Shorthand to check if given yAxis comes from navigator.
- *
- * @private
- * @function bindingsUtils.isNotNavigatorYAxis
- *
- * @param {Highcharts.Axis} axis
- * Axis to check.
- *
- * @return {boolean}
- * True, if axis comes from navigator.
- */
-bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
-    return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
-};
-
-/**
- * Check if any of the price indicators are enabled.
- * @private
- * @function bindingsUtils.isLastPriceEnabled
- *
- * @param {Array} series
- *        Array of series.
- *
- * @return {boolean}
- *         Tells which indicator is enabled.
- */
-bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
-
-    return series.some(
-        (s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice
-    );
-};
-
-/**
- * Update each point after specified index, most of the annotations use
- * this. For example crooked line: logic behind updating each point is the
- * same, only index changes when adding an annotation.
- *
- * Example: NavigationBindings.utils.updateNthPoint(1) - will generate
- * function that updates all consecutive points except point with index=0.
- *
- * @private
- * @function bindingsUtils.updateNthPoint
- *
- * @param {number} startIndex
- *        Index from each point should udpated
- *
- * @return {Function}
- *         Callback to be used in steps array
- */
-bindingsUtils.updateNthPoint = function (
-    startIndex: number
-): Highcharts.StockToolsNavigationBindingsUtilsObject['updateHeight'] {
-    return function (
-        this: Highcharts.StockToolsNavigationBindings,
-        e: PointerEvent,
-        annotation: Annotation
-    ): void {
-        const options = annotation.options.typeOptions,
-            xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
-            yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
-
-
-        if (xAxis && yAxis) {
-            (options.points as any).forEach(function (
-                point: Point,
-                index: number
-            ): void {
-                if (index >= startIndex) {
-                    point.x = xAxis.toValue(
-                        e[xAxis.horiz ? 'chartX' : 'chartY']
-                    );
-                    point.y = yAxis.toValue(
-                        e[yAxis.horiz ? 'chartX' : 'chartY']
-                    );
-                }
-            });
-            annotation.update({
-                typeOptions: {
-                    points: options.points
-                }
-            });
-        }
-    };
-};
-
-/**
- * Update size of background (rect) in some annotations: Measure, Simple
- * Rect.
- *
- * @private
- * @function Highcharts.NavigationBindingsUtilsObject.updateRectSize
- *
- * @param {Highcharts.PointerEventObject} event
- * Normalized browser event
- *
- * @param {Highcharts.Annotation} annotation
- * Annotation to be updated
- */
-bindingsUtils.updateRectSize = function (
-    event: PointerEvent,
-    annotation: Annotation
-): void {
-    const chart = annotation.chart,
-        options = annotation.options.typeOptions,
-        xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
-        yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
-
-    if (xAxis && yAxis) {
-        const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
-            y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
-            width = x - options.point.x,
-            height = options.point.y - y;
-
-        annotation.update({
-            typeOptions: {
-                background: {
-                    width: chart.inverted ? height : width,
-                    height: chart.inverted ? width : height
-                }
-            }
-        });
-    }
-};
 
 // Extends NavigationBindigs to support indicators and resizers:
 extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBindings.prototype, {
@@ -825,7 +301,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         const defaultHeight = 20;
         const chart = this.chart,
             // Only non-navigator axes
-            yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis),
+            yAxes = chart.yAxis.filter(isNotNavigatorYAxis),
             plotHeight = chart.plotHeight,
             // Gather current heights (in %)
             { positions, allAxesHeight } = this.getYAxisPositions(
@@ -976,7 +452,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1034,7 +510,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1090,7 +566,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1149,7 +625,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1204,7 +680,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1264,7 +740,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     /**
@@ -1411,8 +887,8 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2)
+            updateNthPoint(1),
+            updateNthPoint(2)
         ]
     },
     /**
@@ -1468,10 +944,10 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2),
-            bindingsUtils.updateNthPoint(3),
-            bindingsUtils.updateNthPoint(4)
+            updateNthPoint(1),
+            updateNthPoint(2),
+            updateNthPoint(3),
+            updateNthPoint(4)
         ]
     },
     /**
@@ -1531,9 +1007,9 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2),
-            bindingsUtils.updateNthPoint(3)
+            updateNthPoint(1),
+            updateNthPoint(2),
+            updateNthPoint(3)
         ]
     },
     /**
@@ -1595,11 +1071,11 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2),
-            bindingsUtils.updateNthPoint(3),
-            bindingsUtils.updateNthPoint(4),
-            bindingsUtils.updateNthPoint(5)
+            updateNthPoint(1),
+            updateNthPoint(2),
+            updateNthPoint(3),
+            updateNthPoint(4),
+            updateNthPoint(5)
         ]
     },
     /**
@@ -1670,7 +1146,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateRectSize
+            updateRectSize
         ]
     },
     /**
@@ -1741,7 +1217,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateRectSize
+            updateRectSize
         ]
     },
     /**
@@ -1810,7 +1286,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateRectSize
+            updateRectSize
         ]
     },
     // Advanced type annotations:
@@ -1872,8 +1348,8 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateHeight
+            updateNthPoint(1),
+            updateHeight
         ]
     },
     /**
@@ -1927,8 +1403,8 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateHeight
+            updateNthPoint(1),
+            updateHeight
         ]
     },
     /**
@@ -1994,8 +1470,8 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
         /** @ignore-option */
         steps: [
-            bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2)
+            updateNthPoint(1),
+            updateNthPoint(2)
         ]
     },
     // Labels with arrow and auto increments
@@ -2017,7 +1493,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: Highcharts.StockToolsNavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+            let closestPoint = attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
                 annotation;
@@ -2082,7 +1558,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+            let closestPoint = attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
                 annotation;
@@ -2121,7 +1597,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         },
 
         steps: [
-            bindingsUtils.updateNthPoint(1)
+            updateNthPoint(1)
         ]
     },
     verticalLabel: {
@@ -2133,7 +1609,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+            let closestPoint = attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
                 annotation;
@@ -2198,7 +1674,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+            let closestPoint = attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
                 annotation;
@@ -2330,7 +1806,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-flag-circlepin',
         /** @ignore-option */
-        start: (bindingsUtils.addFlagFromForm as any)('circlepin')
+        start: addFlagFromForm('circlepin')
     },
     /**
      * A flag series bindings. Includes `start` event. On click, finds the
@@ -2344,7 +1820,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-flag-diamondpin',
         /** @ignore-option */
-        start: (bindingsUtils.addFlagFromForm as any)('flag')
+        start: addFlagFromForm('flag')
     },
     /**
      * A flag series bindings. Includes `start` event.
@@ -2359,7 +1835,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-flag-squarepin',
         /** @ignore-option */
-        start: (bindingsUtils.addFlagFromForm as any)('squarepin')
+        start: addFlagFromForm('squarepin')
     },
     /**
      * A flag series bindings. Includes `start` event.
@@ -2374,7 +1850,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-flag-simplepin',
         /** @ignore-option */
-        start: (bindingsUtils.addFlagFromForm as any)('nopin')
+        start: addFlagFromForm('nopin')
     },
     // Other tools:
     /**
@@ -2676,7 +2152,7 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             const chart = this.chart,
                 series = chart.series,
                 gui = chart.stockTools,
-                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(
+                priceIndicatorEnabled = isPriceIndicatorEnabled(
                     chart.series
                 );
 
@@ -2829,13 +2305,13 @@ const stockToolsBindings: Record<string, NavigationBindingsOptions> = {
             });
 
             chart.yAxis.forEach(function (yAxis: AxisType): void {
-                if (bindingsUtils.isNotNavigatorYAxis(yAxis)) {
+                if (isNotNavigatorYAxis(yAxis)) {
                     yAxes.push(yAxis.options);
                 }
             });
 
             H.win.localStorage.setItem(
-                PREFIX + 'chart',
+                'highcharts-chart',
                 JSON.stringify({
                     annotations: annotations,
                     indicators: indicators,
@@ -2858,3 +2334,36 @@ setOptions({
         bindings: stockToolsBindings
     }
 });
+
+const composedClasses: Array<Function> = [];
+
+/**
+ * @private
+ */
+function compose(
+    NavigationBindingsClass: typeof NavigationBindings
+): void {
+
+    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
+        composedClasses.push(NavigationBindingsClass);
+
+        NavigationBindingsClass.prototype.utils = {
+            indicatorsWithAxes,
+            getAssignedAxis,
+            isPriceIndicatorEnabled,
+            manageIndicators
+        };
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const StockToolsBindings = {
+    compose
+};
+
+export default StockToolsBindings;
