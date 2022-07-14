@@ -48,9 +48,10 @@ class InfinityLine extends CrookedLine {
 
     private static edgePoint(startIndex: number, endIndex: number): Function {
         return function (target: any): PositionObject {
-            let annotation = target.annotation,
-                points = annotation.points,
+            const annotation = target.annotation,
                 type = annotation.options.typeOptions.type;
+
+            let points = annotation.points;
 
             if (type === 'horizontalLine' || type === 'verticalLine') {
                 // Horizontal and vertical lines have only one point,
@@ -100,7 +101,7 @@ class InfinityLine extends CrookedLine {
         firstPoint: AnnotationPointType,
         secondPoint: AnnotationPointType
     ): PositionObject {
-        let chart = firstPoint.series.chart,
+        const chart = firstPoint.series.chart,
             xAxis: Axis = firstPoint.series.xAxis as any,
             yAxis: Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
@@ -116,8 +117,9 @@ class InfinityLine extends CrookedLine {
             edgePoint = {
                 x: deltaX === 0 ? firstPointPixels.x : xLimit,
                 y: deltaY === 0 ? firstPointPixels.y : yLimit
-            },
-            edgePointX,
+            };
+
+        let edgePointX,
             edgePointY,
             swap;
 

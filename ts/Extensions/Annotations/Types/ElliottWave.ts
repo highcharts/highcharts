@@ -38,11 +38,7 @@ class ElliottWave extends CrookedLine {
      * */
 
     public addLabels(): void {
-        this.getPointsOptions().forEach(function (
-            this: ElliottWave,
-            point: MockPointOptions,
-            i: number
-        ): void {
+        this.getPointsOptions().forEach((point, i): void => {
             const typeOptions = (
                     this.options.typeOptions as ElliottWave.TypeOptions
                 ),
@@ -56,7 +52,7 @@ class ElliottWave extends CrookedLine {
                 ), false as any);
 
             point.label = label.options;
-        }, this);
+        });
     }
 }
 

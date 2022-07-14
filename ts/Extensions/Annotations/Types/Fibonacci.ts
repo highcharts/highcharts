@@ -41,10 +41,11 @@ function createPathDGenerator(
 ): Function {
     return function (this: Controllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
+
         if (!annotation.startRetracements || !annotation.endRetracements) {
             return [];
         }
-        let leftTop = this.anchor(
+        const leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
@@ -53,16 +54,14 @@ function createPathDGenerator(
             d: SVGPath = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
-            ],
-            rightBottom: PositionObject,
-            leftBottom: PositionObject;
+            ];
 
         if (isBackground) {
-            rightBottom = this.anchor(
+            const rightBottom = this.anchor(
                 annotation.endRetracements[retracementIndex - 1]
             ).absolutePosition;
 
-            leftBottom = this.anchor(
+            const leftBottom = this.anchor(
                 annotation.startRetracements[retracementIndex - 1]
             ).absolutePosition;
 
@@ -122,7 +121,7 @@ class Fibonacci extends Tunnel {
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
-        Fibonacci.levels.forEach(function (level: number, i: number): void {
+        Fibonacci.levels.forEach((level, i): void => {
             const startRetracement = (points[0].y as any) - startDiff * level,
                 endRetracement = (points[1].y as any) - endDiff * level;
 
@@ -142,7 +141,7 @@ class Fibonacci extends Tunnel {
                 endRetracement,
                 this.endRetracements
             );
-        }, this);
+        });
     }
 
     public linkRetracementPoint(

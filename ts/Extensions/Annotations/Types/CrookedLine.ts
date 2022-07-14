@@ -59,9 +59,9 @@ class CrookedLine extends Annotation {
     public getPointsOptions(): Array<MockPointOptions> {
         const typeOptions = this.options.typeOptions;
 
-        return (typeOptions.points || []).map(function (
-            pointOptions: AnnotationTypePointsOptions
-        ): MockPointOptions {
+        return (typeOptions.points || []).map((
+            pointOptions
+        ): MockPointOptions => {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
 
@@ -102,16 +102,13 @@ class CrookedLine extends Annotation {
             shape = this.initShape(
                 merge(typeOptions.line, {
                     type: 'path',
-                    points: this.points.map(function (
-                        _point: AnnotationPointType,
-                        i: number
-                    ): Function {
-                        return function (
+                    points: this.points.map((_point, i): Function => (
+                        function (
                             target: Controllable
                         ): AnnotationPointType {
                             return target.annotation.points[i];
-                        };
-                    })
+                        }
+                    ))
                 }),
                 0
             );
