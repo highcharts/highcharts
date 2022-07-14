@@ -18,7 +18,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../../Core/Renderer/AlignObject';
-import type AnnotationPoint from '../AnnotationSeries';
+import type { AnnotationPoint } from '../AnnotationSeries';
 import type ColorType from '../../../Core/Color/ColorType';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';

@@ -20,9 +20,7 @@ import type {
     AnnotationOptions,
     ChartOptions
 } from './AnnotationOptions';
-import type {
-    AnnotationSeries
-} from './AnnotationSeries';
+import type AnnotationSeries from './AnnotationSeries';
 import type Chart from '../../Core/Chart/Chart';
 import type NavigationBindings from './NavigationBindings';
 import type Pointer from '../../Core/Pointer';

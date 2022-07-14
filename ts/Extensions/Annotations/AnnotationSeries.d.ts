@@ -32,4 +32,4 @@ export interface AnnotationSeries extends Series {
  *
  * */
 
-export default AnnotationPoint;
+export default AnnotationSeries;
