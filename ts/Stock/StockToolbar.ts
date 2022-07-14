@@ -20,6 +20,12 @@
 
 import type Chart from '../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type {
+    StockToolsGuiDefinitionsButtonsOptions,
+    StockToolsGuiDefinitionsOptions,
+    StockToolsGuiOptions,
+    StockToolsOptions
+} from './StockToolsOptions';
 
 import U from '../Core/Utilities.js';
 const {
@@ -71,7 +77,7 @@ class Toolbar {
      * */
 
     public constructor(
-        options: Highcharts.StockToolsGuiOptions,
+        options: StockToolsGuiOptions,
         langOptions: (Record<string, string>|undefined),
         chart: Chart
     ) {
@@ -114,7 +120,7 @@ class Toolbar {
     public iconsURL: string;
     public lang: (Record<string, string>|undefined);
     public listWrapper: HTMLDOMElement = void 0 as any;
-    public options: Highcharts.StockToolsGuiOptions;
+    public options: StockToolsGuiOptions;
     public placed: boolean;
     public prevOffsetWidth: (number|undefined);
     public showhideBtn: HTMLDOMElement = void 0 as any;
@@ -141,7 +147,7 @@ class Toolbar {
             toolbar = this.toolbar,
             addSubmenu = _self.addSubmenu,
             buttons: Array<string> = guiOptions.buttons as any,
-            defs: Highcharts.StockToolsGuiDefinitionsOptions =
+            defs: StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes;
 
@@ -185,7 +191,7 @@ class Toolbar {
      */
     public addSubmenu(
         parentBtn: Record<string, HTMLDOMElement>,
-        button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
+        button: StockToolsGuiDefinitionsButtonsOptions
     ): void {
         let _self = this,
             submenuArrow = parentBtn.submenuArrow,
@@ -271,7 +277,7 @@ class Toolbar {
      */
     public addSubmenuItems(
         buttonWrapper: HTMLDOMElement,
-        button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
+        button: StockToolsGuiDefinitionsButtonsOptions
     ): void {
         let _self = this,
             submenuWrapper = this.submenu,
@@ -359,13 +365,13 @@ class Toolbar {
     public addButton(
         target: HTMLDOMElement,
         options: (
-            Highcharts.StockToolsGuiDefinitionsButtonsOptions|
-            Highcharts.StockToolsGuiDefinitionsOptions
+            StockToolsGuiDefinitionsButtonsOptions|
+            StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
         lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
-        let btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
+        let btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
@@ -677,7 +683,7 @@ class Toolbar {
      * @private
      */
     public update(
-        options: Highcharts.StockToolsOptions,
+        options: StockToolsOptions,
         redraw?: boolean
     ): void {
         merge(true, this.chart.options.stockTools, options);
