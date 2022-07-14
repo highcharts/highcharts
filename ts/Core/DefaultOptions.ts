@@ -83,6 +83,7 @@ declare module './LangOptions'{
  * @type {Highcharts.Options}
  *//**
  * @optionparent
+ * @private
  */
 const defaultOptions: Options = {
 

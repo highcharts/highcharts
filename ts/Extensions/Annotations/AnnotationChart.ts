@@ -77,12 +77,17 @@ const composedClasses: Array<Function> = [];
 
 /**
  * Add an annotation to the chart after render time.
- * @function Highcharts.Chart#addAnnotation
- * @param  {Highcharts.AnnotationsOptions} options
- *         The annotation options for the new, detailed annotation.
- * @param {boolean} [redraw]
+ *
  * @sample highcharts/annotations/add-annotation/
  *         Add annotation
+ *
+ * @function Highcharts.Chart#addAnnotation
+ *
+ * @param  {Highcharts.AnnotationsOptions} options
+ *         The annotation options for the new, detailed annotation.
+ *
+ * @param {boolean} [redraw]
+ *
  * @return {Highcharts.Annotation}
  *         The newly generated annotation.
  */
@@ -121,7 +126,7 @@ function chartCallback(
         .clip(chart.plotBoxClip)
         .add();
 
-    chart.options.annotations.forEach(function (annotationOptions, i): void {
+    chart.options.annotations.forEach((annotationOptions, i): void => {
         if (
             // Verify that it has not been previously added in a responsive rule
             !chart.annotations.some((annotation): boolean =>
@@ -301,7 +306,7 @@ function chartDrawAnnotations(
 ): void {
     this.plotBoxClip.attr(this.plotBox);
 
-    this.annotations.forEach(function (annotation): void {
+    this.annotations.forEach((annotation): void => {
         annotation.redraw();
         annotation.graphic.animate({
             opacity: 1
@@ -311,7 +316,9 @@ function chartDrawAnnotations(
 
 /**
  * Remove an annotation from the chart.
+ *
  * @function Highcharts.Chart#removeAnnotation
+ *
  * @param {number|string|Highcharts.Annotation} idOrAnnotation
  *        The annotation's id or direct annotation object.
  */
@@ -374,6 +381,9 @@ function wrapPointerOnContainerMouseDown(
  *
  * */
 
+/**
+ * @private
+ */
 namespace AnnotationChart {
 
     /* *
@@ -382,6 +392,9 @@ namespace AnnotationChart {
      *
      * */
 
+    /**
+     * @private
+     */
     export function compose(
         AnnotationClass: typeof Annotation,
         ChartClass: typeof Chart,

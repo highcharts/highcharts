@@ -102,9 +102,9 @@ function getLabelsAndShapesOptions(
 ): AnnotationOptions {
     const mergedOptions = {} as AnnotationOptions;
 
-    (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (
-        name: ('labels'|'shapes')
-    ): void {
+    (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach((
+        name
+    ): void => {
         const someBaseOptions = baseOptions[name];
 
         if (someBaseOptions) {
@@ -146,8 +146,10 @@ function getLabelsAndShapesOptions(
  * @class
  * @name Highcharts.Annotation
  *
- * @param {Highcharts.Chart} chart a chart instance
- * @param {Highcharts.AnnotationsOptions} userOptions the options object
+ * @param {Highcharts.Chart} chart
+ *        A chart instance
+ * @param {Highcharts.AnnotationsOptions} userOptions
+ *        The annotation options
  */
 class Annotation extends EventEmitter implements Controllable {
 
@@ -191,7 +193,9 @@ class Annotation extends EventEmitter implements Controllable {
      *
      * */
 
-    // @todo use NavigationBindings as internal parameter
+    /**
+     * @private
+     */
     public static compose(
         ChartClass: typeof Chart,
         PointerClass: typeof Pointer,
@@ -226,7 +230,7 @@ class Annotation extends EventEmitter implements Controllable {
 
         /**
          * The array of points which defines the annotation.
-         *
+         * @private
          * @name Highcharts.Annotation#points
          * @type {Array<Highcharts.Point>}
          */
@@ -397,19 +401,11 @@ class Annotation extends EventEmitter implements Controllable {
     public adjustVisibility(
         item: ControllableType
     ): void { // #9481
-        let hasVisiblePoints = false,
-            label = item.graphic;
-
-        item.points.forEach(function (
-            point: AnnotationPointType
-        ): void {
-            if (
+        const label = item.graphic,
+            hasVisiblePoints = item.points.some((point): boolean => (
                 point.series.visible !== false &&
                 point.visible !== false
-            ) {
-                hasVisiblePoints = true;
-            }
-        });
+            ));
 
         if (label) {
             if (!hasVisiblePoints) {
@@ -883,9 +879,7 @@ merge<Annotation>(
     // restore original Annotation implementation after mixin overwrite:
     merge(
         Annotation.prototype,
-        /** @lends Highcharts.Annotation# */
         {
-
             /**
              * List of events for `annotation.options.events` that should not be
              * added to `annotation.graphic` but to the `annotation`.

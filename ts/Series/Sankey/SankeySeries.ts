@@ -102,6 +102,8 @@ class SankeySeries extends ColumnSeries {
      *               zones, minPointLength, dataSorting, boostBlending
      * @requires     modules/sankey
      * @optionparent plotOptions.sankey
+     *
+     * @private
      */
     public static defaultOptions: SankeySeriesOptions = merge(ColumnSeries.defaultOptions, {
         borderWidth: 0,

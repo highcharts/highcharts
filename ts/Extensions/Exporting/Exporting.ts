@@ -1784,6 +1784,8 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
  *
  * @requires     modules/exporting
  * @optionparent navigation
+ *
+ * @private
  */
 defaultOptions.navigation = merge(
     ExportingDefaults.navigation,
