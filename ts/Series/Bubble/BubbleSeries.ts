@@ -719,7 +719,7 @@ addEvent(BubbleSeries, 'updatedData', (e): void => {
     delete e.target.chart.bubbleZExtremes;
 });
 
-// After removing series, delete the chart-level Z extremes cache.
+// After removing series, delete the chart-level Z extremes cache, #17502.
 addEvent(BubbleSeries, 'remove', (e): void => {
     delete e.target.chart.bubbleZExtremes;
 });
