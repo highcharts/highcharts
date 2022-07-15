@@ -99,36 +99,35 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'segment',
-                    type: 'crookedLine',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).segment.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'segment',
+                        type: 'crookedLine',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).segment.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -154,39 +153,38 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'arrowSegment',
-                    type: 'crookedLine',
-                    typeOptions: {
-                        line: {
-                            markerEnd: 'arrow'
-                        },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).arrowSegment.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'arrowSegment',
+                        type: 'crookedLine',
+                        typeOptions: {
+                            line: {
+                                markerEnd: 'arrow'
+                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).arrowSegment.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -212,37 +210,36 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'ray',
-                    type: 'infinityLine',
-                    typeOptions: {
-                        type: 'ray',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).ray.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'ray',
+                        type: 'infinityLine',
+                        typeOptions: {
+                            type: 'ray',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).ray.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -268,40 +265,39 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'arrowRay',
-                    type: 'infinityLine',
-                    typeOptions: {
-                        type: 'ray',
-                        line: {
-                            markerEnd: 'arrow'
-                        },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).arrowRay.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'arrowRay',
+                        type: 'infinityLine',
+                        typeOptions: {
+                            type: 'ray',
+                            line: {
+                                markerEnd: 'arrow'
+                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).arrowRay.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -326,37 +322,36 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'infinityLine',
-                    type: 'infinityLine',
-                    typeOptions: {
-                        type: 'line',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).infinityLine.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'infinityLine',
+                        type: 'infinityLine',
+                        typeOptions: {
+                            type: 'line',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).infinityLine.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -382,41 +377,40 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'arrowInfinityLine',
-                    type: 'infinityLine',
-                    typeOptions: {
-                        type: 'line',
-                        line: {
-                            markerEnd: 'arrow'
-                        },
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).arrowInfinityLine
-                    .annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'arrowInfinityLine',
+                        type: 'infinityLine',
+                        typeOptions: {
+                            type: 'line',
+                            line: {
+                                markerEnd: 'arrow'
+                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }, {
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).arrowInfinityLine
+                        .annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -438,35 +432,35 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'horizontalLine',
-                    type: 'infinityLine',
-                    draggable: 'y',
-                    typeOptions: {
-                        type: 'horizontalLine',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).horizontalLine.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'horizontalLine',
+                        type: 'infinityLine',
+                        draggable: 'y',
+                        typeOptions: {
+                            type: 'horizontalLine',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any)
+                        .horizontalLine.annotationsOptions
+                );
 
             this.chart.addAnnotation(options);
         }
@@ -484,35 +478,34 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            let coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'verticalLine',
-                    type: 'infinityLine',
-                    draggable: 'x',
-                    typeOptions: {
-                        type: 'verticalLine',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).verticalLine.annotationsOptions
-            );
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'verticalLine',
+                        type: 'infinityLine',
+                        draggable: 'x',
+                        typeOptions: {
+                            type: 'verticalLine',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).verticalLine.annotationsOptions
+                );
 
             this.chart.addAnnotation(options);
         }
@@ -1175,10 +1168,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = attractToPoint(e, this.chart),
-                navigation = this.chart.options.navigation,
-                options,
-                annotation;
+            const closestPoint = attractToPoint(e, this.chart);
 
             // Exit if clicked out of axes area
             if (!closestPoint) {
@@ -1187,38 +1177,39 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 
             this.verticalCounter = this.verticalCounter || 0;
 
-            options = merge(
-                {
-                    langKey: 'verticalCounter',
-                    type: 'verticalLine',
-                    typeOptions: {
-                        point: {
-                            x: closestPoint.x,
-                            y: closestPoint.y,
-                            xAxis: closestPoint.xAxis,
-                            yAxis: closestPoint.yAxis
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'verticalCounter',
+                        type: 'verticalLine',
+                        typeOptions: {
+                            point: {
+                                x: closestPoint.x,
+                                y: closestPoint.y,
+                                xAxis: closestPoint.xAxis,
+                                yAxis: closestPoint.yAxis
+                            },
+                            label: {
+                                offset: closestPoint.below ? 40 : -40,
+                                text: this.verticalCounter.toString()
+                            }
                         },
-                        label: {
-                            offset: closestPoint.below ? 40 : -40,
-                            text: this.verticalCounter.toString()
+                        labelOptions: {
+                            style: {
+                                color: Palette.neutralColor60,
+                                fontSize: '11px'
+                            }
+                        },
+                        shapeOptions: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            strokeWidth: 1
                         }
                     },
-                    labelOptions: {
-                        style: {
-                            color: Palette.neutralColor60,
-                            fontSize: '11px'
-                        }
-                    },
-                    shapeOptions: {
-                        stroke: 'rgba(0, 0, 0, 0.75)',
-                        strokeWidth: 1
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).verticalCounter.annotationsOptions
-            );
-
-            annotation = this.chart.addAnnotation(options);
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any)
+                        .verticalCounter.annotationsOptions
+                ),
+                annotation = this.chart.addAnnotation(options);
 
             this.verticalCounter++;
 
@@ -1240,39 +1231,38 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            let closestPoint = attractToPoint(e, this.chart),
-                navigation = this.chart.options.navigation,
-                options,
-                annotation;
+            const closestPoint = attractToPoint(e, this.chart);
 
             // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'timeCycles',
-                    type: 'timeCycles',
-                    typeOptions: {
-                        xAxis: closestPoint.xAxis,
-                        yAxis: closestPoint.yAxis,
-                        points: [{
-                            x: closestPoint.x
-                        }, {
-                            x: closestPoint.x
-                        }],
-                        line: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            fill: 'transparent',
-                            strokeWidth: 2
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'timeCycles',
+                        type: 'timeCycles',
+                        typeOptions: {
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis,
+                            points: [{
+                                x: closestPoint.x
+                            }, {
+                                x: closestPoint.x
+                            }],
+                            line: {
+                                stroke: 'rgba(0, 0, 0, 0.75)',
+                                fill: 'transparent',
+                                strokeWidth: 2
+                            }
                         }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).timeCycles.annotationsOptions
-            );
-            annotation = this.chart.addAnnotation(options);
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).timeCycles.annotationsOptions
+                ),
+                annotation = this.chart.addAnnotation(options);
+
             (annotation.options.events.click as any).call(annotation, {});
 
             return annotation;
@@ -1291,47 +1281,45 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = attractToPoint(e, this.chart),
-                navigation = this.chart.options.navigation,
-                options,
-                annotation;
+            const closestPoint = attractToPoint(e, this.chart);
 
             // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'verticalLabel',
-                    type: 'verticalLine',
-                    typeOptions: {
-                        point: {
-                            x: closestPoint.x,
-                            y: closestPoint.y,
-                            xAxis: closestPoint.xAxis,
-                            yAxis: closestPoint.yAxis
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'verticalLabel',
+                        type: 'verticalLine',
+                        typeOptions: {
+                            point: {
+                                x: closestPoint.x,
+                                y: closestPoint.y,
+                                xAxis: closestPoint.xAxis,
+                                yAxis: closestPoint.yAxis
+                            },
+                            label: {
+                                offset: closestPoint.below ? 40 : -40
+                            }
                         },
-                        label: {
-                            offset: closestPoint.below ? 40 : -40
+                        labelOptions: {
+                            style: {
+                                color: Palette.neutralColor60,
+                                fontSize: '11px'
+                            }
+                        },
+                        shapeOptions: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            strokeWidth: 1
                         }
                     },
-                    labelOptions: {
-                        style: {
-                            color: Palette.neutralColor60,
-                            fontSize: '11px'
-                        }
-                    },
-                    shapeOptions: {
-                        stroke: 'rgba(0, 0, 0, 0.75)',
-                        strokeWidth: 1
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).verticalLabel.annotationsOptions
-            );
-
-            annotation = this.chart.addAnnotation(options);
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any)
+                        .verticalLabel.annotationsOptions
+                ),
+                annotation = this.chart.addAnnotation(options);
 
             (annotation.options.events.click as any).call(annotation, {});
         }
@@ -1356,47 +1344,46 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): void {
-            let closestPoint = attractToPoint(e, this.chart),
-                navigation = this.chart.options.navigation,
-                options,
-                annotation;
+            const closestPoint = attractToPoint(e, this.chart);
 
             // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'verticalArrow',
-                    type: 'verticalLine',
-                    typeOptions: {
-                        point: {
-                            x: closestPoint.x,
-                            y: closestPoint.y,
-                            xAxis: closestPoint.xAxis,
-                            yAxis: closestPoint.yAxis
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'verticalArrow',
+                        type: 'verticalLine',
+                        typeOptions: {
+                            point: {
+                                x: closestPoint.x,
+                                y: closestPoint.y,
+                                xAxis: closestPoint.xAxis,
+                                yAxis: closestPoint.yAxis
+                            },
+                            label: {
+                                offset: closestPoint.below ? 40 : -40,
+                                format: ' '
+                            },
+                            connector: {
+                                fill: 'none',
+                                stroke: closestPoint.below ?
+                                    Palette.negativeColor :
+                                    Palette.positiveColor
+                            }
                         },
-                        label: {
-                            offset: closestPoint.below ? 40 : -40,
-                            format: ' '
-                        },
-                        connector: {
-                            fill: 'none',
-                            stroke: closestPoint.below ?
-                                Palette.negativeColor : Palette.positiveColor
+                        shapeOptions: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            strokeWidth: 1
                         }
                     },
-                    shapeOptions: {
-                        stroke: 'rgba(0, 0, 0, 0.75)',
-                        strokeWidth: 1
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).verticalArrow.annotationsOptions
-            );
-
-            annotation = this.chart.addAnnotation(options);
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any)
+                        .verticalArrow.annotationsOptions
+                ),
+                annotation = this.chart.addAnnotation(options);
 
             (annotation.options.events.click as any).call(annotation, {});
         }
