@@ -28,6 +28,7 @@ import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../Extensions/Annotations/NavigationBindingsOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
+import type Toolbar from './StockToolbar';
 
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
@@ -1911,7 +1912,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Highcharts.Toolbar = chart.stockTools as any,
+                gui: Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
             this.toggledAnnotations = !this.toggledAnnotations;
