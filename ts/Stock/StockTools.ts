@@ -174,8 +174,7 @@ function navigationGetYAxisPositions(
     defaultHeight: number,
     removedYAxisProps?: AxisPositions
 ): YAxisPositions {
-    let positions: Array<Record<string, number>>|undefined,
-        allAxesHeight = 0,
+    let allAxesHeight = 0,
         previousAxisHeight: number,
         removedHeight: number,
         removedTop: number;
@@ -193,7 +192,7 @@ function navigationGetYAxisPositions(
         );
     }
 
-    positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
+    const positions = yAxes.map((yAxis, index): Record<string, number> => {
         let height = correctFloat(isPercentage(yAxis.options.height) ?
                 parseFloat(yAxis.options.height as any) / 100 :
                 yAxis.height / plotHeight),

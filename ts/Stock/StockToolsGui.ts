@@ -288,16 +288,18 @@ function onNavigationBindingsDeselectButton(
     this: NavigationBindings,
     event: Record<string, HTMLDOMElement>
 ): void {
-    let button = event.button,
-        className = 'highcharts-submenu-wrapper',
+    const className = 'highcharts-submenu-wrapper',
         gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
+        let button = event.button;
+
         // If deselecting a button from a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        gui.toggleButtonAciveClass(button);
+        // Set active class on the current button
+        gui.toggleButtonActiveClass(button);
     }
 }
 
@@ -309,11 +311,12 @@ function onNavigationBindingsSelectButton(
     this: NavigationBindings,
     event: Record<string, HTMLDOMElement>
 ): void {
-    let button = event.button,
-        className = 'highcharts-submenu-wrapper',
+    const className = 'highcharts-submenu-wrapper',
         gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
+        let button = event.button;
+
         // Unslect other active buttons
         gui.unselectAllButtons(event.button);
 
@@ -322,7 +325,7 @@ function onNavigationBindingsSelectButton(
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        gui.toggleButtonAciveClass(button);
+        gui.toggleButtonActiveClass(button);
     }
 }
 

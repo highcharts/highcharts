@@ -523,32 +523,33 @@ class NavigationBindings {
         });
 
         // Handle multiple containers with the same class names:
-        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (
-            subContainer: HTMLElement
-        ): void {
-            navigation.eventsToUnbind.push(
-                addEvent(subContainer, 'click', function (
-                    event: PointerEvent
-                ): void {
-                    const bindings = navigation.getButtonEvents(
-                        subContainer,
-                        event
-                    );
-
-                    if (
-                        bindings &&
-                        bindings.button.className
-                            .indexOf('highcharts-disabled-btn') === -1
-                    ) {
-                        navigation.bindingsButtonClick(
-                            bindings.button,
-                            bindings.events,
+        ([] as Array<HTMLDOMElement>).forEach.call(
+            bindingsContainer,
+            (subContainer): void => {
+                navigation.eventsToUnbind.push(addEvent(
+                    subContainer,
+                    'click',
+                    (event: PointerEvent): void => {
+                        const bindings = navigation.getButtonEvents(
+                            subContainer,
                             event
                         );
+
+                        if (
+                            bindings &&
+                            bindings.button.className
+                                .indexOf('highcharts-disabled-btn') === -1
+                        ) {
+                            navigation.bindingsButtonClick(
+                                bindings.button,
+                                bindings.events,
+                                event
+                            );
+                        }
                     }
-                })
-            );
-        });
+                ));
+            }
+        );
 
         objectEach((options.events || {}), (callback, eventName): void => {
             if (isFunction(callback)) {
@@ -565,7 +566,6 @@ class NavigationBindings {
 
         navigation.eventsToUnbind.push(
             addEvent(chart.container, 'click', function (
-                this: HTMLDOMElement,
                 e: PointerEvent
             ): void {
                 if (
@@ -674,7 +674,8 @@ class NavigationBindings {
                 chart.renderer.boxWrapper.addClass('highcharts-draw-mode');
             }
         } else {
-            chart.stockTools && chart.stockTools.toggleButtonAciveClass(button);
+            chart.stockTools &&
+                chart.stockTools.toggleButtonActiveClass(button);
             svgContainer.removeClass('highcharts-draw-mode');
             navigation.nextEvent = false;
             navigation.mouseMoveEvent = false;
@@ -852,7 +853,7 @@ class NavigationBindings {
         fields: Record<string, string>,
         config: T
     ): T {
-        objectEach(fields, function (value: string, field: string): void {
+        objectEach(fields, (value, field): void => {
             const parsedValue = parseFloat(value),
                 path = field.split('.'),
                 pathLength = path.length - 1;
@@ -1047,7 +1048,7 @@ class NavigationBindings {
             }
         }
 
-        objectEach(options, function (option: any, key: string): void {
+        objectEach(options, (option, key): void => {
             if (key === 'typeOptions') {
                 visualOptions[key] = {};
                 objectEach(
