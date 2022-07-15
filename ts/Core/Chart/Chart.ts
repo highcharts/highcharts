@@ -214,7 +214,7 @@ declare module '../Series/SeriesLike' {
  *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  */
-class Chart {
+class Chart extends Foundation<typeof Chart> {
 
     /* *
      *
@@ -270,6 +270,9 @@ class Chart {
         return new Chart(a as any, b as any, c);
     }
 
+    public static readonly off = Foundation.createOffFunction(Chart);
+    public static readonly on = Foundation.createOnFunction(Chart);
+
     /* *
      *
      *  Constructors
@@ -290,6 +293,7 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ) {
+        super();
         this.getArgs(a, b, c);
     }
 

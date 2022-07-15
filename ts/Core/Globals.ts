@@ -38,6 +38,10 @@ declare global {
 
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
 
+    type FunctionsOf<T> = {
+        [K in keyof T as T[K] extends Function ? K : never]: T[K];
+    };
+
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
