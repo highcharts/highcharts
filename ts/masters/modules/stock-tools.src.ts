@@ -12,7 +12,12 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 import StockTools from '../../Stock/StockTools.js';
-import '../../Stock/StockToolsGui.js';
+import StockToolsGui from '../../Stock/StockToolsGui.js';
+import Toolbar from '../../Stock/StockToolbar.js';
+const G: AnyRecord = Highcharts;
+G.Toolbar = Toolbar;
 StockTools.compose(NavigationBindings);
+StockToolsGui.compose(G.Chart, NavigationBindings);

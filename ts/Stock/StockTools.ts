@@ -27,6 +27,7 @@ import NBU from '../Extensions/Annotations/NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
 import Series from '../Core/Series/Series.js';
 import StockToolsBindings from './StockToolsBindings.js';
+import StockToolsDefaults from './StockToolsDefaults.js';
 import STU from './StockToolsUtilities.js';
 const {
     isNotNavigatorYAxis,
@@ -48,6 +49,7 @@ const {
 
 declare module '../Extensions/Annotations/NavigationBindingsLike' {
     interface NavigationBindingsLike {
+        /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;
         /** @requires modules/stock-tools */
         getYAxisPositions(
@@ -133,6 +135,7 @@ function compose(
     if (composedClasses.indexOf(setOptions) === -1) {
         composedClasses.push(setOptions);
 
+        setOptions(StockToolsDefaults);
         setOptions({
             navigation: {
                 bindings: StockToolsBindings
