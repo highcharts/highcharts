@@ -15,12 +15,12 @@
  *
  * */
 
-import type FlowMapSeriesOptions from './FlowMapSeriesOptions.js';
+import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
 import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 import U from '../../Core/Utilities.js';
-import FlowMapPoint from './FlowMapPoint.js';
+import FlowMapPoint from './FlowMapPoint';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Point from '../../Core/Series/Point.js';
 const {
@@ -59,7 +59,19 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
     // public static compose = MapBubbleSeries.compose;
 
-    public static defaultOptions: FlowMapSeriesOptions = SankeySeries.defaultOptions; // Sankey?
+    public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
+        /**
+         * DESCRIPTION
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
+         *
+         * @private
+         */
+        dataLabels: {
+            enabled: false
+        }
+
+    } as FlowMapSeriesOptions); // Sankey?
 
     /* *
      *
@@ -95,8 +107,8 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             linkHeight = 10,
             options = this.options,
             nodeW = this.nodeWidth;
-        const curve = point.options.curve as any || 0,
-            thickness = 1.1;
+        const curve = point.options.curve || 0,
+            weight = point.options.weight || 1;
 
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
@@ -140,21 +152,39 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             // Rotating the halfway distance by 90 anti-clockwise.
             // We can then use this to create an arc.
             let tmp = dX;
+
             dX = dY;
             dY = -tmp;
 
+            // Weight vectior calculation
+            let wX = dX,
+                wY = dY,
+                lenght = Math.sqrt(wX * wX + wY * wY);
+
+            wX /= lenght;
+            wY /= lenght;
+
+            wX *= weight;
+            wY *= weight;
+
+            let wXFlipped = wX * -1,
+                wYFlipped = wY * -1;
+
             // Finally, calculate the arc strength.
             let arcPointX = (mX + dX * curve),
-                arcPointY = (mY + dY * curve),
-                // TODO: Thickness
-                thicknessX = (mX + dX * (curve * thickness)),
-                thicknessY = (mY + dY * (curve * thickness));
+                arcPointY = (mY + dY * curve);
 
             point.shapeArgs = {
                 d: [
-                    ['M', fromX, fromY],
-                    ['Q', arcPointX, arcPointY, toX, toY],
-                    ['Q', thicknessX, thicknessY, fromX, fromY],
+                    ['M', fromX + wX, fromY + wY],
+                    ['Q', arcPointX + wX, arcPointY + wY, toX + wX, toY + wY],
+                    ['L', toX + wXFlipped, toY + wYFlipped],
+                    [
+                        'Q', arcPointX + wXFlipped,
+                        arcPointY + wYFlipped,
+                        fromX + wXFlipped,
+                        fromY + wYFlipped
+                    ],
                     ['Z']
                 ]
             };
