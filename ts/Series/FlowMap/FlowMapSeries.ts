@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson
+ *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -174,16 +174,64 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             let arcPointX = (mX + dX * curve),
                 arcPointY = (mY + dY * curve);
 
+            // First point
+            let fromXToArc = arcPointX - fromX,
+                fromYToArc = arcPointY - fromY,
+                arcLenght = Math.sqrt(
+                    fromXToArc * fromXToArc + fromYToArc * fromYToArc
+                );
+
+            fromXToArc /= arcLenght;
+            fromYToArc /= arcLenght;
+
+            fromXToArc *= weight;
+            fromYToArc *= weight;
+
+            tmp = fromXToArc;
+
+            fromXToArc = fromYToArc;
+            fromYToArc = -tmp;
+
+            // Second point
+            let toXToArc = arcPointX - toX,
+                toYToArc = arcPointY - toY;
+
+            toXToArc /= arcLenght;
+            toYToArc /= arcLenght;
+
+            toXToArc *= weight;
+            toYToArc *= weight;
+
+            tmp = toXToArc;
+
+            toXToArc = toYToArc;
+            toYToArc = -tmp;
+
             point.shapeArgs = {
                 d: [
-                    ['M', fromX + wX, fromY + wY],
-                    ['Q', arcPointX + wX, arcPointY + wY, toX + wX, toY + wY],
-                    ['L', toX + wXFlipped, toY + wYFlipped],
                     [
-                        'Q', arcPointX + wXFlipped,
+                        'M',
+                        fromX + fromXToArc,
+                        fromY + fromYToArc
+                    ],
+                    [
+                        'Q',
+                        arcPointX + wX,
+                        arcPointY + wY,
+                        toX - toXToArc,
+                        toY - toYToArc
+                    ],
+                    [
+                        'L',
+                        toX + toXToArc,
+                        toY + toYToArc
+                    ],
+                    [
+                        'Q',
+                        arcPointX + wXFlipped,
                         arcPointY + wYFlipped,
-                        fromX + wXFlipped,
-                        fromY + wYFlipped
+                        fromX - fromXToArc,
+                        fromY - fromYToArc
                     ],
                     ['Z']
                 ]
