@@ -60,7 +60,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
             stacking === 'percent'
         ),
         translatedThreshold = Math.round( // #10909
-            series.yAxis.getThreshold(options.threshold as any) as any
+            series.yAxis.getThreshold(options.threshold as any)
         ),
         options3d;
 

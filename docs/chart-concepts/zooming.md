@@ -4,7 +4,7 @@ Zooming
 ### Highcharts Basic
 
 Zooming in Highcharts can be enabled on the X axes or Y axes separately. The
-[chart.zoomType](https://api.highcharts.com/highcharts/chart.zoomType)
+[chart.zooming.type](https://api.highcharts.com/highcharts/chart.zooming.type)
 option is set to either `"x"`, `"y"` or `"xy"`.
 
 With a mouse pointer, the zooming is performed by dragging out a rectangle in
@@ -35,5 +35,5 @@ navigation, so zooming is disabled by default. Instead, panning is enabled so
 that moving the zoomed area is easier. 
 
 On touch devices, both zooming and panning are enabled through the
-[chart.pinchType](https://api.highcharts.com/highstock/chart.pinchType)
+[chart.zooming.pinchType](https://api.highcharts.com/highstock/chart.zooming.pinchType)
 option, which defaults to `"x"`.

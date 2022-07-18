@@ -484,6 +484,7 @@ const ChartDefaults: ChartOptions = {
      * @default    {highstock} x
      * @since      3.0
      * @product    highcharts highstock gantt
+     * @deprecated
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.pinchType
      */
@@ -613,6 +614,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom.
+     * @deprecated
      */
     resetZoomButton: {
 
@@ -627,6 +629,7 @@ const ChartDefaults: ChartOptions = {
          *
          * @type       {Highcharts.ButtonRelativeToValue}
          * @default    plot
+         * @deprecated
          * @since      2.2
          * @apioption  chart.resetZoomButton.relativeTo
          */
@@ -644,10 +647,14 @@ const ChartDefaults: ChartOptions = {
          *         Theming the button
          *
          * @type {Highcharts.SVGAttributes}
+         * @deprecated
          * @since 2.2
          */
         theme: {
-            /** @internal */
+            /**
+             * @internal
+             * @deprecated
+             */
             zIndex: 6
         },
 
@@ -662,17 +669,20 @@ const ChartDefaults: ChartOptions = {
          *         Above the plot area
          *
          * @type  {Highcharts.AlignObject}
+         * @deprecated
          * @since 2.2
          */
         position: {
 
             /**
              * The horizontal alignment of the button.
+             * @deprecated
              */
             align: 'right',
 
             /**
              * The horizontal offset of the button.
+             * @deprecated
              */
             x: -10,
 
@@ -680,12 +690,14 @@ const ChartDefaults: ChartOptions = {
              * The vertical alignment of the button.
              *
              * @type       {Highcharts.VerticalAlignValue}
+             * @deprecated
              * @default    top
              * @apioption  chart.resetZoomButton.position.verticalAlign
              */
 
             /**
              * The vertical offset of the button.
+             * @deprecated
              */
             y: 10
         }
@@ -982,6 +994,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type       {string}
      * @validvalue ["x", "y", "xy"]
+     * @deprecated
      * @apioption  chart.zoomType
      */
 
@@ -992,13 +1005,161 @@ const ChartDefaults: ChartOptions = {
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since 9.0.0
+     * @since      9.0.0
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
+     * @deprecated
      */
     zoomBySingleTouch: false,
 
+    /**
+     * Chart zooming options.
+     * @since       next
+     */
+    zooming: {
+        /**
+         * Equivalent to [type](#chart.zooming.type), but for multitouch
+         * gestures only. By default, the `pinchType` is the same as the
+         * `type` setting. However, pinching can be enabled separately in
+         * some cases, for example in stock charts where a mouse drag pans the
+         * chart, while pinching is enabled. When [tooltip.followTouchMove](
+         * #tooltip.followTouchMove) is true, pinchType only applies to
+         * two-finger touches.
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @default    {highstock} x
+         * @product    highcharts highstock gantt
+         * @since      next
+         * @validvalue ["x", "y", "xy"]
+         * @apioption  chart.zooming.pinchType
+         */
+
+        /**
+         * Decides in what dimensions the user can zoom by dragging the mouse.
+         * Can be one of `x`, `y` or `xy`.
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @product    highcharts highstock gantt
+         * @validvalue ["x", "y", "xy"]
+         * @since      next
+         * @apioption  chart.zooming.type
+         */
+
+        /**
+        * Set a key to hold when dragging to zoom the chart. This is useful to
+        * avoid zooming while moving points. Should be set different than
+        * [chart.panKey](#chart.panKey).
+        *
+        * @type       {string}
+        * @default    {highcharts} undefined
+        * @since      next
+        * @validvalue ["alt", "ctrl", "meta", "shift"]
+        * @requires   modules/draggable-points
+        * @apioption  chart.zooming.key
+        */
+
+        /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger
+         * pinch will still work as set up by [chart.zooming.pinchType]
+         * (#chart.zooming.pinchType). However, `singleTouch` will interfere
+         * with touch-dragging the chart to read the tooltip. And especially
+         * when vertical zooming is enabled, it will make it hard to scroll
+         * vertically on the page.
+         * @sample     highcharts/chart/zoombysingletouch
+         *             Zoom by single touch enabled, with buttons to toggle
+         * @product    highcharts highstock gantt
+         * @since      next
+         */
+        singleTouch: false,
+
+        /**
+         * The button that appears after a selection zoom, allowing the user
+         * to reset zoom.
+         * @since      next
+         */
+        resetButton: {
+
+            /**
+             * What frame the button placement should be related to. Can be
+             * either `plotBox` or `spacingBox`.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
+             *         Relative to the chart
+             * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+             *         Relative to the chart
+             *
+             * @type       {Highcharts.ButtonRelativeToValue}
+             * @default    plot
+             * @since      next
+             * @apioption  chart.zooming.resetButton.relativeTo
+             */
+
+            /**
+             * A collection of attributes for the button. The object takes SVG
+             * attributes like `fill`, `stroke`, `stroke-width` or `r`, the
+             * border radius. The theme also supports `style`, a collection of
+             * CSS properties for the text. Equivalent attributes for the hover
+             * state are given in `theme.states.hover`.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-theme/
+             *         Theming the button
+             * @sample {highstock} highcharts/chart/resetzoombutton-theme/
+             *         Theming the button
+             *
+             * @type {Highcharts.SVGAttributes}
+             * @since next
+             */
+            theme: {
+                /** @internal */
+                zIndex: 6
+            },
+
+            /**
+             * The position of the button.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             * @sample {highstock} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             * @sample {highmaps} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             *
+             * @type  {Highcharts.AlignObject}
+             * @since next
+             */
+            position: {
+
+                /**
+                 * The horizontal alignment of the button.
+                 */
+                align: 'right',
+
+                /**
+                 * The horizontal offset of the button.
+                 */
+                x: -10,
+
+                /**
+                 * The vertical alignment of the button.
+                 *
+                 * @type       {Highcharts.VerticalAlignValue}
+                 * @since      next
+                 * @default    top
+                 * @apioption  chart.zooming.resetButton.position.verticalAlign
+                 */
+
+                /**
+                 * The vertical offset of the button.
+                 */
+                y: 10
+            }
+        }
+
+    },
     /**
      * An explicit width for the chart. By default (when `null`) the width
      * is calculated from the offset width of the containing element.

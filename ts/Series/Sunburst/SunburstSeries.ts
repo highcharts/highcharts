@@ -152,7 +152,7 @@ function getDlOptions(
                 (point.outerArcLength as any) > (shape.radius as any)
             ) {
                 rotationRad = 0;
-                // Triger setTextPath function to get textOutline etc.
+                // Trigger setTextPath function to get textOutline etc.
                 if (point.dataLabelPath && rotationMode === 'circular') {
                     options.textPath = {
                         enabled: true
@@ -176,7 +176,7 @@ function getDlOptions(
                 // Trigger the destroyTextPath function
                 if (
                     point.dataLabel &&
-                    point.dataLabel.textPathWrapper &&
+                    point.dataLabel.textPath &&
                     rotationMode === 'circular'
                 ) {
                     options.textPath = {

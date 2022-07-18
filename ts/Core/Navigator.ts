@@ -1719,7 +1719,9 @@ class Navigator {
 
                     // By default, don't run live redraw on VML, on touch
                     // devices or if the chart is in boost.
-                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                    H.svg &&
+                    !isTouchDevice &&
+                    !this.chart.boosted
                 )
             ) {
                 (e as any).DOMType = e.type; // DOMType is for IE8
@@ -2050,13 +2052,13 @@ class Navigator {
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value) as any;
+                    return this.translate(value);
                 },
                 toValue: function (
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value, true) as any;
+                    return this.translate(value, true);
                 }
             } as unknown as NavigatorAxis;
 
@@ -2768,8 +2770,10 @@ if (!H.Navigator) {
 
         if (((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled)) &&
-            ((!isTouchDevice && (chartOptions.chart as any).zoomType === 'x') ||
-            (isTouchDevice && (chartOptions.chart as any).pinchType === 'x'))
+            ((!isTouchDevice &&
+            (chartOptions.chart as any).zooming.type === 'x') ||
+            (isTouchDevice &&
+            (chartOptions.chart as any).zooming.pinchType === 'x'))
         ) {
             return false;
         }

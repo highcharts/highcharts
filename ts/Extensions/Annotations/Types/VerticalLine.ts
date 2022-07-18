@@ -7,11 +7,14 @@
 'use strict';
 
 import type {
-    AnnotationsLabelOptions,
     AnnotationsOptions,
-    AnnotationsShapeOptions,
     AnnotationsTypeOptions
 } from '../AnnotationsOptions';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
@@ -32,7 +35,7 @@ class VerticalLine extends Annotation {
      * */
 
     public static connectorFirstPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
         const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
@@ -52,7 +55,7 @@ class VerticalLine extends Annotation {
     }
 
     public static connectorSecondPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
         let annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
@@ -177,7 +180,7 @@ VerticalLine.prototype.defaultOptions = merge(
             label: {
                 offset: -40,
                 point: function (
-                    target: Highcharts.AnnotationControllable
+                    target: Controllable
                 ): Highcharts.AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
@@ -208,11 +211,11 @@ namespace VerticalLine {
     export interface Options extends AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends AnnotationsLabelOptions {
+    export interface TypeLabelOptions extends ControllableLabelOptions {
         offset: number;
     }
     export interface TypeOptions extends AnnotationsTypeOptions {
-        connector: AnnotationsShapeOptions;
+        connector: Partial<ControllableShapeOptions>;
         label: TypeLabelOptions;
         yOffset: number;
     }

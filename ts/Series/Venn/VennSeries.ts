@@ -47,6 +47,7 @@ const {
     isPointInsideAllCircles,
     isPointOutsideAllCircles
 } = CU;
+import DPU from '../DrawPointUtilities.js';
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -570,7 +571,7 @@ class VennSeries extends ScatterSeries {
                 extend(attribs, series.pointAttribs(point, point.state));
             }
             // Draw the point graphic.
-            point.draw({
+            DPU.draw(point, {
                 isNew: !point.graphic,
                 animatableAttribs: shapeArgs,
                 attribs: attribs,

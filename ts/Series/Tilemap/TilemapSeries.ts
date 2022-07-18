@@ -263,7 +263,7 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
         coord2 = Math.round(
             axis.translate(
@@ -272,7 +272,7 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
 
         return {

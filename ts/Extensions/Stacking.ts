@@ -410,7 +410,7 @@ class StackItem {
             // stack height:
             h = defined(y) && Math.abs((y as any) - (yZero as any)),
             // x position:
-            x = pick(defaultX, (chart.xAxis[0].translate(stackItem.x) as any)) +
+            x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
                 xOffset,
             stackBox = defined(y) && stackItem.getStackBox(
                 chart,
