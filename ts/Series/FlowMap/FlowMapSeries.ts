@@ -164,11 +164,13 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             wX /= lenght;
             wY /= lenght;
 
-            wX *= weight;
-            wY *= weight;
+            // Bezier curve create varying thickness when stacking in the path.
+            // Fine-tune the middle width.
 
-            let wXFlipped = wX * -1,
-                wYFlipped = wY * -1;
+            // This looks reasonable
+            const fineTune = 1 + Math.sqrt(curve * curve) * 0.25;
+            wX *= weight * fineTune,
+                wY *= weight * fineTune;
 
             // Finally, calculate the arc strength.
             let arcPointX = (mX + dX * curve),
@@ -228,8 +230,8 @@ class FlowMapSeries extends SankeySeries { // Sankey?
                     ],
                     [
                         'Q',
-                        arcPointX + wXFlipped,
-                        arcPointY + wYFlipped,
+                        arcPointX - wX,
+                        arcPointY - wY,
                         fromX - fromXToArc,
                         fromY - fromYToArc
                     ],
