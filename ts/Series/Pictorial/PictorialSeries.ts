@@ -21,6 +21,7 @@ import '../../Extensions/PatternFill.js';
 
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 
 import PictorialPoint from './PictorialPoint.js';
 import U from '../../Core/Utilities.js';
@@ -30,6 +31,7 @@ import StackItem from '../../Extensions/Stacking.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
+
 
 const {
     seriesTypes: {
@@ -43,6 +45,7 @@ const {
 
 const {
     addEvent,
+    defined,
     merge,
     pick
 } = U;
@@ -233,6 +236,30 @@ class PictorialSeries extends ColumnSeries {
         delete pointAttribs.stroke;
         delete pointAttribs.strokeWidth;
         return pointAttribs;
+    }
+
+    /**
+     * Make sure that path.max is also considered when calculating dataMax.
+     */
+
+    public getExtremes(): DataExtremesObject {
+        const extremes = super.getExtremes.apply(this, arguments),
+            series = this,
+            paths = series.options.paths;
+
+        if (paths) {
+            paths.forEach(function (path: PictorialPathOptions): void {
+                if (
+                    defined(path.max) &&
+                    defined(extremes.dataMax) &&
+                    path.max > extremes.dataMax
+                ) {
+                    extremes.dataMax = path.max;
+                }
+            });
+        }
+
+        return extremes;
     }
 
     /* eslint-enable valid-jsdoc */
