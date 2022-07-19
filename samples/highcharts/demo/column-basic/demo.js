@@ -3,63 +3,61 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Monthly Average Rainfall'
+        text: 'Emissions to air in Norway'
     },
     subtitle: {
-        text: 'Source: WorldClimate.com'
+        text: 'Source: ' +
+            '<a href="https://www.ssb.no/en/statbank/table/08940/" ' +
+            'target="_blank">SSB</a>'
     },
     xAxis: {
-        categories: [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec'
-        ],
-        crosshair: true
+        crosshair: {
+            width: 3,
+            dashStyle: 'shortdot'
+        }
     },
     yAxis: {
-        min: 0,
         title: {
-            text: 'Rainfall (mm)'
+            useHTML: true,
+            text: 'Million tonnes CO<sub>2</sub>-equivalents'
         }
     },
     tooltip: {
         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
         pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+            '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
         footerFormat: '</table>',
         shared: true,
         useHTML: true
     },
     plotOptions: {
+        series: {
+            pointStart: 2010
+        },
         column: {
             pointPadding: 0.2,
             borderWidth: 0
         }
     },
     series: [{
-        name: 'Tokyo',
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        name: 'Oil and gas extraction',
+        data: [13.93, 13.63, 13.73, 13.67, 14.37, 14.89, 14.56,
+            14.32, 14.13, 13.93, 13.21, 12.16]
 
     }, {
-        name: 'New York',
-        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+        name: 'Manufacturing industries and mining',
+        data: [12.24, 12.24, 11.95, 12.02, 11.65, 11.96, 11.59,
+            11.94, 11.96, 11.59, 11.42, 11.76]
 
     }, {
-        name: 'London',
-        data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+        name: 'Road traffic',
+        data: [10.00, 9.93, 9.97, 10.01, 10.23, 10.26, 10.00,
+            9.12, 9.36, 8.72, 8.38, 8.69]
 
     }, {
-        name: 'Berlin',
-        data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+        name: 'Agriculture',
+        data: [4.35, 4.32, 4.34, 4.39, 4.46, 4.52, 4.58, 4.55,
+            4.53, 4.51, 4.49, 4.57]
 
     }]
 });
