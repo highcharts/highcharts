@@ -16,6 +16,7 @@
 
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -52,6 +53,7 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
 
     public options: PictorialPointOptions = void 0 as any;
     public series: PictorialSeries = void 0 as any;
+    public pathDef: string | SVGPath | undefined = void 0 as any;
 
     /* *
      *
@@ -64,7 +66,7 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
 
         super.setState.apply(point, arguments);
         const series = point.series,
-            paths = (series as any).options.paths;
+            paths = series.options.paths;
 
         if (point.graphic && point.shapeArgs && paths) {
             const shape = paths[point.index %

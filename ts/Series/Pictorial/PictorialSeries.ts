@@ -205,8 +205,8 @@ class PictorialSeries extends ColumnSeries {
             const pathDef = shape.definition;
 
             // New pattern, replace
-            if (pathDef !== (point as any).pathDef) {
-                (point as any).pathDef = pathDef;
+            if (pathDef !== point.pathDef) {
+                point.pathDef = pathDef;
 
                 pointAttribs.fill = {
                     pattern: {
@@ -225,7 +225,7 @@ class PictorialSeries extends ColumnSeries {
                         color: '#ff0000'
                     }
                 };
-            } else if ((point as any).pathDef && point.graphic) {
+            } else if (point.pathDef && point.graphic) {
                 delete pointAttribs.fill;
 
                 const fill = point.graphic.attr('fill') as string;
@@ -263,11 +263,12 @@ class PictorialSeries extends ColumnSeries {
  * */
 
 addEvent(PictorialSeries, 'afterRender', function (): void {
-    const series = this;
+    const series = this,
+        paths = series.options.paths;
+
     series.points.forEach(function (point: PictorialPoint): void {
-        if (point.graphic && point.shapeArgs && (series as any).options.paths) {
-            const shape = (series as any).options.paths[point.index %
-                (series as any).options.paths.length];
+        if (point.graphic && point.shapeArgs && paths) {
+            const shape = paths[point.index % paths.length];
 
             rescalePatternFill(
                 point.graphic,
