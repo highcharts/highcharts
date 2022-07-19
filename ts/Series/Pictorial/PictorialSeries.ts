@@ -20,7 +20,6 @@ import '../Column/ColumnSeries.js';
 import '../../Extensions/PatternFill.js';
 
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import type ColorType from '../../Core/Color/ColorType.js';
 
 import PictorialPoint from './PictorialPoint.js';
@@ -44,7 +43,6 @@ const {
 
 const {
     addEvent,
-    defined,
     merge,
     pick
 } = U;
@@ -54,6 +52,8 @@ const {
     invertShadowGroup,
     getStackMetrics
 } = PictorialUtilities;
+
+const fillUrlMatcher = /url\(([^)]+)\)/;
 
 export interface StackShadowOptions {
     borderWidth?: number;
@@ -193,33 +193,58 @@ class PictorialSeries extends ColumnSeries {
     public pointAttribs(
         point?: PictorialPoint
     ): SVGAttributes {
-        const pointAttribs = super.pointAttribs.apply(this, arguments);
-        const seriesOptions = this.options;
-        const series = this;
+        const pointAttribs = super.pointAttribs.apply(this, arguments),
+            seriesOptions = this.options,
+            series = this,
+            paths = seriesOptions.paths;
 
-        if (point && point.shapeArgs && seriesOptions.paths) {
-            const shape = (series as any).options.paths[point.index %
-                (series as any).options.paths.length];
+        if (point && point.shapeArgs && paths) {
+            const shape = paths[point.index % paths.length];
             const { y, height } = getStackMetrics(series.yAxis, shape);
-            pointAttribs.fill = {
-                pattern: {
-                    path: {
-                        d: seriesOptions.paths[
-                            point.index % seriesOptions.paths.length
-                        ].definition,
-                        fill: pointAttribs.fill,
-                        strokeWidth: pointAttribs['stroke-width'],
-                        stroke: pointAttribs.stroke
-                    },
-                    x: point.shapeArgs.x,
-                    y: y,
-                    width: point.shapeArgs.width || 0,
-                    height: height,
-                    patternContentUnits: 'objectBoundingBox',
-                    backgroundColor: 'none',
-                    color: '#ff0000'
+
+            const pathDef = shape.definition;
+
+            // New pattern, replace
+            if (pathDef !== (point as any).pathDef) {
+                (point as any).pathDef = pathDef;
+
+                pointAttribs.fill = {
+                    pattern: {
+                        path: {
+                            d: pathDef,
+                            fill: pointAttribs.fill,
+                            strokeWidth: pointAttribs['stroke-width'],
+                            stroke: pointAttribs.stroke
+                        },
+                        x: point.shapeArgs.x,
+                        y: y,
+                        width: point.shapeArgs.width || 0,
+                        height: height,
+                        patternContentUnits: 'objectBoundingBox',
+                        backgroundColor: 'none',
+                        color: '#ff0000'
+                    }
+                };
+            } else if ((point as any).pathDef && point.graphic) {
+                delete pointAttribs.fill;
+
+                const fill = point.graphic.attr('fill') as string;
+                const match = fill && fill.match(fillUrlMatcher);
+
+                if (match && this.chart.renderer.patternElements) {
+                    const currentPattern =
+                    this.chart.renderer.patternElements[match[1].slice(1)];
+
+                    if (currentPattern) {
+                        currentPattern.animate({
+                            x: point.shapeArgs.x,
+                            y: y,
+                            width: point.shapeArgs.width || 0,
+                            height: height
+                        });
+                    }
                 }
-            };
+            }
         }
 
         delete pointAttribs.stroke;
@@ -240,9 +265,10 @@ class PictorialSeries extends ColumnSeries {
 addEvent(PictorialSeries, 'afterRender', function (): void {
     const series = this;
     series.points.forEach(function (point: PictorialPoint): void {
-        const shape = (series as any).options.paths[point.index %
-        (series as any).options.paths.length];
-        if (point.graphic && point.shapeArgs) {
+        if (point.graphic && point.shapeArgs && (series as any).options.paths) {
+            const shape = (series as any).options.paths[point.index %
+                (series as any).options.paths.length];
+
             rescalePatternFill(
                 point.graphic,
                 getStackMetrics(series.yAxis, shape).height,
@@ -269,14 +295,14 @@ addEvent(StackItem, 'afterRender', function (): void {
         seriesIndex = -1;
     }
     const series = this.axis.chart.series[seriesIndex] as PictorialSeries;
-    const xAxis = series.xAxis;
 
     if (
         series &&
         series.is('pictorial') &&
         this.axis.hasData() &&
-        xAxis.hasData()
+        series.xAxis.hasData()
     ) {
+        const xAxis = series.xAxis;
         const options = this.axis.options;
         const chart = this.axis.chart;
         const stackShadow = this.shadow;
@@ -297,7 +323,8 @@ addEvent(StackItem, 'afterRender', function (): void {
         if (
             !stackShadow &&
             options.stackShadow &&
-            options.stackShadow.enabled
+            options.stackShadow.enabled &&
+            shape
         ) {
             if (!this.shadowGroup) {
                 this.shadowGroup = chart.renderer.g('shadowGroup')
@@ -315,7 +342,7 @@ addEvent(StackItem, 'afterRender', function (): void {
                     fill: {
                         pattern: {
                             path: {
-                                d: paths[index].definition,
+                                d: shape.definition,
                                 fill: options.stackShadow.color || '#dedede',
                                 strokeWidth: strokeWidth,
                                 stroke: options.stackShadow.borderColor ||
@@ -352,29 +379,20 @@ addEvent(StackItem, 'afterRender', function (): void {
                 x,
                 y,
                 width,
-                height,
-                fill: {
-                    pattern: {
-                        path: {
-                            d: paths[index].definition,
-                            fill: options.stackShadow &&
-                                options.stackShadow.color || '#dedede',
-                            strokeWidth: strokeWidth,
-                            stroke: options.stackShadow &&
-                            options.stackShadow.borderColor ||
-                            'transparent'
-                        },
-                        x: x,
-                        y: y,
-                        width: width,
-                        height: height,
-                        patternContentUnits: 'objectBoundingBox',
-                        backgroundColor: 'none',
-                        color: '#dedede'
-                    }
-                }
+                height
             });
 
+            const fill = stackShadow.attr('fill') as string;
+            const match = fill && fill.match(fillUrlMatcher);
+
+            if (match && chart.renderer.patternElements) {
+                chart.renderer.patternElements[match[1].slice(1)].animate({
+                    x,
+                    y,
+                    width,
+                    height
+                });
+            }
             this.shadowGroup.animate({
                 translateX: chart.inverted ?
                     this.axis.pos : xAxis.pos,
@@ -408,7 +426,9 @@ addEvent(StackItem, 'afterRender', function (): void {
 addEvent(StackItem, 'afterSetOffset', function (e): void {
     if (this.shadow) {
         this.shadow.attr({
-            translateX: (e as any).xOffset,
+            translateX: (e as any).xOffset
+        });
+        this.shadow.animate({
             width: (e as any).xWidth
         });
     }

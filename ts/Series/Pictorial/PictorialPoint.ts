@@ -63,10 +63,12 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
         const point = this;
 
         super.setState.apply(point, arguments);
-        const series = point.series;
-        const shape = (series as any).options.paths[point.index %
-            (series as any).options.paths.length];
-        if (point.graphic && point.shapeArgs) {
+        const series = point.series,
+            paths = (series as any).options.paths;
+
+        if (point.graphic && point.shapeArgs && paths) {
+            const shape = paths[point.index %
+                paths.length];
             rescalePatternFill(
                 point.graphic,
                 getStackMetrics(series.yAxis, shape).height,
