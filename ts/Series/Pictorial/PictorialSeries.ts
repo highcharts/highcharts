@@ -227,23 +227,6 @@ class PictorialSeries extends ColumnSeries {
                 };
             } else if (point.pathDef && point.graphic) {
                 delete pointAttribs.fill;
-
-                const fill = point.graphic.attr('fill') as string;
-                const match = fill && fill.match(fillUrlMatcher);
-
-                if (match && this.chart.renderer.patternElements) {
-                    const currentPattern =
-                    this.chart.renderer.patternElements[match[1].slice(1)];
-
-                    if (currentPattern) {
-                        currentPattern.animate({
-                            x: point.shapeArgs.x,
-                            y: y,
-                            width: point.shapeArgs.width || 0,
-                            height: height
-                        });
-                    }
-                }
             }
         }
 
@@ -269,6 +252,23 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     series.points.forEach(function (point: PictorialPoint): void {
         if (point.graphic && point.shapeArgs && paths) {
             const shape = paths[point.index % paths.length];
+            const fill = point.graphic.attr('fill') as string;
+            const match = fill && fill.match(fillUrlMatcher);
+            const { y, height } = getStackMetrics(series.yAxis, shape);
+
+            if (match && series.chart.renderer.patternElements) {
+                const currentPattern =
+                series.chart.renderer.patternElements[match[1].slice(1)];
+
+                if (currentPattern) {
+                    currentPattern.animate({
+                        x: point.shapeArgs.x,
+                        y: y,
+                        width: point.shapeArgs.width || 0,
+                        height: height
+                    });
+                }
+            }
 
             rescalePatternFill(
                 point.graphic,
