@@ -27,6 +27,7 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 export interface FlowMapPointOptions extends SankeyPointOptions {
     curve?: number;
     weight?: number;
+    growTowards?: boolean;
 }
 
 export default FlowMapPointOptions;

@@ -108,7 +108,8 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             options = this.options,
             nodeW = this.nodeWidth;
         const curve = point.options.curve || 0,
-            weight = point.options.weight || 1;
+            weight = point.options.weight || 1,
+            growTowards = point.options.growTowards;
 
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
@@ -164,19 +165,18 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             wX /= lenght;
             wY /= lenght;
 
-            // Bezier curve create varying thickness when stacking in the path.
-            // Fine-tune the middle width.
-
-            // This looks reasonable
+            // There is an obvious mismatch between top and botton curves
+            // in the path for rather extreme curve and weight cases.
+            // The `fineTune` makes this more even.
             const fineTune = 1 + Math.sqrt(curve * curve) * 0.25;
-            wX *= weight * fineTune,
-                wY *= weight * fineTune;
+            wX *= weight * fineTune;
+            wY *= weight * fineTune;
 
             // Finally, calculate the arc strength.
             let arcPointX = (mX + dX * curve),
                 arcPointY = (mY + dY * curve);
 
-            // First point
+            // Calculate edge vectors in the from-point.
             let fromXToArc = arcPointX - fromX,
                 fromYToArc = arcPointY - fromY,
                 arcLenght = Math.sqrt(
@@ -185,16 +185,14 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
             fromXToArc /= arcLenght;
             fromYToArc /= arcLenght;
-
             fromXToArc *= weight;
             fromYToArc *= weight;
 
             tmp = fromXToArc;
-
             fromXToArc = fromYToArc;
             fromYToArc = -tmp;
 
-            // Second point
+            // Calculate edge vectors in the to-point.
             let toXToArc = arcPointX - toX,
                 toYToArc = arcPointY - toY;
 
@@ -205,9 +203,17 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             toYToArc *= weight;
 
             tmp = toXToArc;
-
             toXToArc = toYToArc;
             toYToArc = -tmp;
+
+            // Shrink the starting edge and middle thickness to make it grow
+            // towards the end.
+            if (growTowards) {
+                fromXToArc /= weight;
+                fromYToArc /= weight;
+                wX /= 4;
+                wY /= 4;
+            }
 
             point.shapeArgs = {
                 d: [
