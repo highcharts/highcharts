@@ -1,77 +1,199 @@
-QUnit.test('Temperaturemap API options.', function (assert) {
+QUnit.test('Temperaturemap API options.', assert => {
+    const chart = Highcharts.mapChart('container', {
 
-    const chart = new Highcharts.MapChart('container', {
-        
-        chart: {
-            map: Highcharts.maps['countries/bn/bn-all']
+        accessibility: {
+            enabled: false
         },
-        series: [{}, {
+
+        series: [{
             type: 'temperaturemap',
             data: [{
-                "hc-key": "bn-te",
-                z: 1
+                lat: 0,
+                lon: 0,
+                z: 9
             }, {
-                "hc-key": "bn-be",
+                lat: 50,
+                lon: 50,
+                z: 6
+            }, {
+                lat: 100,
+                lon: 100,
+                z: 6
+            }, {
+                lat: 150,
+                lon: 50,
                 z: 3
             }],
-            sizeBy: 'width',
             minSize: 50,
-            maxSize: 200,
-            color: 'rgba(255,0,255,0)',
-            temperatureColors: ['#0000ff', '#00ffff', '#00ff00', '#ffff00', '#ff0000']
+            maxSize: 150,
+            temperatureColors: ['#00ff00', '#ff0000', '#0000ff']
         }]
     });
 
-    const series = chart.series[1];
+    let series = chart.series[0],
+        points = series.points,
+        temperatureColors = series.options.temperatureColors,
+        colorsLength = temperatureColors.length;
 
-    assert.ok(
-        true,
-        'No errors.'
-    );
+    points.forEach(point => {
+        assert.strictEqual(
+            point.graphics.length,
+            colorsLength,
+            'The point should have a correct number of graphics.'
+        );
 
-    assert.strictEqual(
-        series.data[0].color,
-        'rgba(255,0,255,0)',
-        'Color should have a value of "rgba(255,0,255,0)".'
-    );
+        const firstGraphicWidth = point.graphics[0].attr('width');
 
-    assert.strictEqual(
-        series.data[0].z,
-        1,
-        'The value of z should be 1.'
-    );
+        point.graphics.forEach((graphic, i) => {
+            const graphicIndex = (colorsLength - i) / colorsLength;
 
-    assert.strictEqual(
-        series.joinBy[0],
-        'hc-key',
-        'JoinBy should be defined as "hc-key".'
-    );
+            assert.close(
+                graphic.attr('width'),
+                firstGraphicWidth * graphicIndex,
+                0.000001,
+                `The graphic's size should be correct.`
+            );
 
-    assert.strictEqual(
-        series.options.type,
-        'temperaturemap',
-        'The series type should be "temperaturemap".'
-    );
-
-    assert.strictEqual(
-        series.options.minSize,
-        50,
-        'MinSize should be 50.'
-    );
-
-    assert.strictEqual(
-        series.options.maxSize,
-        200,
-        'MaxSize should be 200.'
-    );
-
-    series.update({
-        temperatureColors: [[0.2, '#0000ff'], [0.4, '#00ffff']]
+            assert.strictEqual(
+                graphic.attr('zIndex'),
+                i,
+                `The graphic's zIndex should be correct.`
+            );
+        });
     });
 
+    series.update({
+        temperatureColors: [[0.7, '#0000ff'], [1, '#00ffff']]
+    });
+
+    temperatureColors = series.options.temperatureColors;
+    colorsLength = temperatureColors.length;
+
+    points.forEach(point => {
+        assert.strictEqual(
+            point.graphics.length,
+            colorsLength,
+            'The point should have a correct number of graphics.'
+        );
+
+        const firstGraphicWidth = point.graphics[0].attr('width');
+
+        point.graphics.forEach((graphic, i) => {
+            assert.close(
+                graphic.attr('width'),
+                firstGraphicWidth * (temperatureColors.slice().reverse())[i][0],
+                0.000001,
+                `The graphic's size should be correct.`
+            );
+
+            assert.strictEqual(
+                graphic.attr('zIndex'),
+                i,
+                `The graphic's zIndex should be correct.`
+            );
+        });
+    });
+
+    series.addPoint({
+        lat: -150,
+        lon: -150,
+        z: 15
+    });
+
+    const addedPoint = series.points[series.points.length - 1];
+
     assert.strictEqual(
-        series.options.temperatureColors[0][0],
-        0.2,
-        'TemperatureColors should have a value for the color.'
+        addedPoint.graphics.length,
+        2,
+        'After addPoint(), the point should have a correct number of graphics.'
     );
+
+    addedPoint.graphics.forEach(graphic => {
+        assert.notStrictEqual(
+            graphic.attr('visibility'),
+            'hidden',
+            'All graphics should be visible.'
+        );
+    });
+
+    addedPoint.setVisible(false);
+
+    addedPoint.graphics.forEach(graphic => {
+        assert.strictEqual(
+            graphic.attr('visibility'),
+            'hidden',
+            'After point.setVisible(false), all graphics should be hidden.'
+        );
+    });
+
+    addedPoint.setVisible(true);
+
+    addedPoint.graphics.forEach(graphic => {
+        assert.notStrictEqual(
+            graphic.attr('visibility'),
+            'hidden',
+            'After point.setVisible(true), all graphics should be visible.'
+        );
+    });
+
+    addedPoint.remove();
+
+    assert.notOk(
+        addedPoint.graphics,
+        true,
+        `After point.remove(), the point's graphics should be destroyed.`
+    );
+
+    series = chart.addSeries({
+        type: 'temperaturemap',
+        data: [{
+            lat: 0,
+            lon: 0,
+            z: 10
+        }, {
+            lat: -50,
+            lon: -50,
+            z: 5
+        }]
+    });
+
+    points = series.points;
+    temperatureColors = series.options.temperatureColors;
+    colorsLength = temperatureColors.length;
+
+    points.forEach(point => {
+        assert.strictEqual(
+            point.graphics.length,
+            colorsLength,
+            'The point should have a correct number of graphics.'
+        );
+
+        const firstGraphicWidth = point.graphics[0].attr('width');
+
+        point.graphics.forEach((graphic, i) => {
+            const graphicIndex = (colorsLength - i) / colorsLength;
+
+            assert.close(
+                graphic.attr('width'),
+                firstGraphicWidth * graphicIndex,
+                0.000001,
+                `The graphic's size should be correct.`
+            );
+
+            assert.strictEqual(
+                graphic.attr('zIndex'),
+                i,
+                `The graphic's zIndex should be correct.`
+            );
+        });
+    });
+
+    series.remove();
+
+    assert.strictEqual(
+        chart.series.length,
+        1,
+        `After series.remove(), there should be only one series.`
+    );
+
 });

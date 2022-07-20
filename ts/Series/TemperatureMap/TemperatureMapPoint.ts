@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2022 Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,7 @@ import U from '../../Core/Utilities.js';
 import Point from '../../Core/Series/Point.js';
 import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike.js';
 const {
-    extend
+    removeEvent
 } = U;
 
 /* *
@@ -49,6 +49,31 @@ class TemperatureMapPoint extends MapBubblePoint {
      *  Functions
      *
      * */
+
+    /**
+     * Destroy a point.
+     *
+     * @private
+     */
+    public destroy(): void {
+        const point = this;
+        let prop;
+
+        // Remove all events and elements
+        if (
+            point.graphic ||
+            point.graphics ||
+            point.dataLabel ||
+            point.dataLabels
+        ) {
+            removeEvent(point);
+            point.destroyElements();
+        }
+
+        for (prop in point) { // eslint-disable-line guard-for-in
+            (point as any)[prop] = null;
+        }
+    }
 
     /**
      * Add graphics prop containing all graphical marker elements to
@@ -90,13 +115,9 @@ class TemperatureMapPoint extends MapBubblePoint {
  *  Prototype properties
  *
  * */
-interface TemperatureMapPoint{
+interface TemperatureMapPoint {
     graphics: Array<SVGElementLike>;
 }
-
-extend(TemperatureMapPoint.prototype, {
-    // pointSetState: AreaRangePoint.prototype.setState
-});
 
 /* *
  *

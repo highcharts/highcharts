@@ -1,7 +1,6 @@
 /* *
  *
- *  (c) 2010-2021
- *  Rafal Sebestjanski
+ *  (c) 2010-2022 Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
