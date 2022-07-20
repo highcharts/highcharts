@@ -50,6 +50,23 @@ QUnit.test('Price indicator.', function (assert) {
         true,
         'No errors when points are missing.'
     );
+
+    chart.xAxis[0].setExtremes(1484663400000, 1484836200000);
+    chart.series[0].update({
+        lastVisiblePrice: {
+            enabled: false
+        },
+        lastPrice: {
+            label: {
+                enabled: true
+            }
+        }
+    });
+
+    assert.ok(
+        true,
+        'There should be no error when the lastPrice label is enabled, #17522.'
+    );
 });
 
 QUnit.test('Datagrouping and setExtremes.', function (assert) {
