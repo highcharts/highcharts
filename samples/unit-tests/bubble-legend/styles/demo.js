@@ -64,22 +64,4 @@ QUnit.test('Bubble legend ranges', function (assert) {
         true,
         'Bubble legend was properly disabled with the legend'
     );
-
-    const initialBubbleZExtremes = chart.bubbleZExtremes;
-    chart.series[0].addPoint([1, 15, 100]);
-    chart.series[0].remove();
-    chart.addSeries({
-        type: 'bubble',
-        data: [
-            [1, 1, 1],
-            [2, 2, 2]
-        ]
-    });
-
-    assert.deepEqual(
-        initialBubbleZExtremes,
-        chart.bubbleZExtremes,
-        `Newly added series and the chart bubbleZExtremes should not be polluted
-        by the previous series that has been removed, #17486.`
-    );
 });
