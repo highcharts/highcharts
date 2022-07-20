@@ -56,7 +56,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
      * multiple bubbles with different colors make one point. Multiple points
      * can represent a temperature map or e.g. density.
      *
-     * @sample maps/demo/mapline-mappoint/ (TO DO: change sample path)
+     * @sample maps/demo/temperaturemap
      *         Temperature map chart
      *
      * @extends      plotOptions.mapbubble
@@ -90,9 +90,10 @@ class TemperatureMapSeries extends MapBubbleSeries {
              * the smallest top marker is 5 times smaller than the biggest
              * bottom one).
              *
-             * TO DO: Add a sample
-             * @sample highcharts/demo/parliament-chart
-             *         Parliament chart
+             * @sample maps/plotoptions/temperaturemap-temperaturecolors
+             *         Temperature colors themes
+             * @sample maps/plotoptions/temperaturemap-temperaturecolors-steps
+             *         Temperature colors with steps
              *
              * @default ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff"]
              * @type {Array<ColorType>}
