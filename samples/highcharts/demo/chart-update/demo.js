@@ -1,17 +1,21 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Chart.update'
+        text: 'Unemployment rates in engineering and ICT subjects, 2021'
     },
     subtitle: {
-        text: 'Plain'
+        text: 'Chart option: Plain | Source: ' +
+            '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
+            'target="_blank">NAV</a>'
     },
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     series: [{
         type: 'column',
+        name: 'Unemployed',
         colorByPoint: true,
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [5412, 4977, 4730, 4437, 3947, 3707, 4143, 3609,
+            3311, 3072, 2899, 2887],
         showInLegend: false
     }]
 });
@@ -23,7 +27,9 @@ document.getElementById('plain').addEventListener('click', () => {
             polar: false
         },
         subtitle: {
-            text: 'Plain'
+            text: 'Chart option: Plain | Source: ' +
+                '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
+                'target="_blank">NAV</a>'
         }
     });
 });
@@ -35,7 +41,9 @@ document.getElementById('inverted').addEventListener('click', () => {
             polar: false
         },
         subtitle: {
-            text: 'Inverted'
+            text: 'Chart option: Inverted | Source: ' +
+                '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
+                'target="_blank">NAV</a>'
         }
     });
 });
@@ -47,7 +55,9 @@ document.getElementById('polar').addEventListener('click', () => {
             polar: true
         },
         subtitle: {
-            text: 'Polar'
+            text: 'Chart option: Polar | Source: ' +
+                '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
+                'target="_blank">NAV</a>'
         }
     });
 });
