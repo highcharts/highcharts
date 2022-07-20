@@ -21,7 +21,10 @@
 
 
 import type Accessibility from '../Accessibility';
-import type Annotation from '../../Extensions/Annotations/Annotations';
+import type Annotation from '../../Extensions/Annotations/Annotation';
+import type {
+    ControllableLabelType
+} from '../../Extensions/Annotations/Controllables/ControllableType';
 import type Point from '../../Core/Series/Point';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
@@ -47,13 +50,13 @@ const {
  */
 function getChartAnnotationLabels(
     chart: Highcharts.AnnotationChart
-): Array<Highcharts.AnnotationLabelType> {
+): Array<ControllableLabelType> {
     const annotations = chart.annotations || [];
 
     return annotations.reduce((
-        acc: Array<Highcharts.AnnotationLabelType>,
+        acc: Array<ControllableLabelType>,
         cur: Annotation
-    ): Array<Highcharts.AnnotationLabelType> => {
+    ): Array<ControllableLabelType> => {
         if (
             cur.options &&
             cur.options.visible !== false
@@ -72,7 +75,7 @@ function getChartAnnotationLabels(
  * @param {Object} label The annotation label object
  * @return {string} The text in the label.
  */
-function getLabelText(label: Highcharts.AnnotationLabelType): string {
+function getLabelText(label: ControllableLabelType): string {
     return (
         (
             label.options &&
@@ -97,7 +100,7 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * @return {string} The description for the label.
  */
 function getAnnotationLabelDescription(
-    label: Highcharts.AnnotationLabelType
+    label: ControllableLabelType
 ): string {
     const a11yDesc = (
         label.options &&

@@ -128,6 +128,7 @@ declare module './SeriesLike' {
         invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
+        toYData?(point: Point): Array<number>;
     }
 }
 
@@ -1363,7 +1364,7 @@ class Series {
             series.visible &&
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
-            !series.isSeriesBoosting
+            !series.boosted
         ) {
             updatedData = this.updateData(data, animation);
         }
@@ -2287,7 +2288,7 @@ class Series {
             point.yBottom = defined(yBottom) ?
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any) :
+                )) :
                 null as any;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2326,7 +2327,7 @@ class Series {
                     0 as any,
                     1 as any,
                     pointPlacement
-                ) as any) :
+                )) :
                 plotX; // #1514, #5383, #5518
 
             // Negative points. For bubble charts, this means negative z

@@ -36,9 +36,11 @@ function test_advanced() {
     const colors = Highcharts.getOptions().colors;
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'x',
             panning: {
                 enabled: true,
+                type: 'x'
+            },
+            zooming: {
                 type: 'x'
             },
             panKey: 'shift',

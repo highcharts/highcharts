@@ -14,8 +14,11 @@
  *
  * */
 
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -23,17 +26,6 @@ import MockPointOptions from '../MockPointOptions';
 import SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 const { merge, isNumber, defined } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationControllable {
-            secondLineEdgePoints: [Function, Function];
-        }
-    }
-}
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;
@@ -99,15 +91,19 @@ class TimeCycles extends CrookedLine {
         index?: number
     ): void {
         if (defined(options.yAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.yAxis = options.yAxis;
-            });
+            (options.points as MockPointOptions[]).forEach(
+                (point): void => {
+                    point.yAxis = options.yAxis;
+                }
+            );
         }
 
         if (defined(options.xAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.xAxis = options.xAxis;
-            });
+            (options.points as MockPointOptions[]).forEach(
+                (point): void => {
+                    point.xAxis = options.xAxis;
+                }
+            );
         }
         super.init.call(this, annotation, options, index);
     }
@@ -151,14 +147,14 @@ class TimeCycles extends CrookedLine {
             'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
-            (option: Highcharts.AnnotationControlPointOptionsObject): void => {
+            (option: AnnotationControlPointOptionsObject): void => {
                 const controlPointsOptions = merge(
                     options.controlPointOptions,
                     option
                 );
                 const controlPoint = new ControlPoint(
                     this.chart,
-                    this,
+                    this as any,
                     controlPointsOptions,
                     0
                 );
@@ -303,7 +299,7 @@ namespace TimeCycles {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: Highcharts.AnnotationControlPointOptionsObject[];
+        controlPointOptions: AnnotationControlPointOptionsObject[];
     }
 }
 

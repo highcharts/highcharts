@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type {
+    AccessibilityAnnounceNewDataOptions
+} from '../../Options/A11yOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
@@ -277,7 +280,7 @@ class NewDataAnnouncer {
         newPoint?: Accessibility.PointComposition
     ): void {
         const chart = this.chart;
-        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =
+        const annOptions: AccessibilityAnnounceNewDataOptions =
             (chart.options.accessibility as any).announceNewData;
 
         if (annOptions.enabled) {

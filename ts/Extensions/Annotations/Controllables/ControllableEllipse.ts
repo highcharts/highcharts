@@ -8,24 +8,34 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Annotation from '../Annotation';
+import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import AxisType from '../../../Core/Axis/AxisType';
 import BBoxObject from '../../../Core/Renderer/BBoxObject';
-import ControllableMixin from '../Mixins/ControllableMixin.js';
+import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../MockPointOptions';
-
 import U from '../../../Core/Utilities.js';
-
 const {
     merge,
     defined
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-interface EllipseShapeOptions extends Highcharts.AnnotationsShapeOptions {
+interface EllipseShapeOptions extends ControllableShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
@@ -44,6 +54,12 @@ interface ReferencePointsOptions {
     y: number;
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * A controllable ellipse class.
  *
@@ -57,9 +73,7 @@ interface ReferencePointsOptions {
  * @param {Highcharts.AnnotationsShapeOptions} options a shape's options
  * @param {number} index of the Ellipse
  */
-
-
-class ControllableEllipse implements ControllableMixin.Type {
+class ControllableEllipse extends Controllable {
 
     /* *
      *
@@ -89,8 +103,7 @@ class ControllableEllipse implements ControllableMixin.Type {
         options: EllipseShapeOptions,
         index: number
     ) {
-        this.init(annotation, options, index);
-        this.collection = 'shapes';
+        super(annotation, options, index, 'shape');
     }
 
     /* *
@@ -98,27 +111,6 @@ class ControllableEllipse implements ControllableMixin.Type {
      *  Properties
      *
      * */
-
-    public addControlPoints = ControllableMixin.addControlPoints;
-    public anchor = ControllableMixin.anchor;
-    public attr = ControllableMixin.attr;
-    public attrsFromOptions = ControllableMixin.attrsFromOptions;
-    public destroy = ControllableMixin.destroy;
-    public getPointsOptions = ControllableMixin.getPointsOptions;
-    public linkPoints = ControllableMixin.linkPoints;
-    public point = ControllableMixin.point;
-    public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = (
-        ControllableMixin.setControlPointsVisibility
-    );
-    public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
-    public transform = ControllableMixin.transform;
-    public translatePoint = ControllableMixin.translatePoint;
-    public transformPoint = ControllableMixin.transformPoint;
-
-    /**
-     * @type 'ellipse'
-     */
 
     public type = 'ellipse';
 
@@ -128,54 +120,66 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
+    /**
+     * @private
+     */
     public init(
         annotation: Annotation,
         options: EllipseShapeOptions,
         index: number
     ): void {
         if (defined(options.yAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.yAxis = options.yAxis;
-            });
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    point.yAxis = options.yAxis;
+                }
+            );
         }
 
         if (defined(options.xAxis)) {
-            (options.points as MockPointOptions[]).forEach((point): void => {
-                point.xAxis = options.xAxis;
-            });
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    point.xAxis = options.xAxis;
+                }
+            );
         }
 
-        ControllableMixin.init.call(this, annotation, options, index);
+        super.init(annotation, options, index);
     }
 
     /**
-     *
      * Render the element
-     * @param parent parent SVG element.
+     * @private
+     * @param parent
+     *        Parent SVG element.
      */
     public render(parent: SVGElement): void {
         this.graphic = this.annotation.chart.renderer.createElement('ellipse')
             .attr(this.attrsFromOptions(this.options))
             .add(parent);
 
-        ControllableMixin.render.call(this);
+        super.render();
     }
 
     /**
-     * Translate the points.
-     * Mostly used to handle dragging of the ellipse.
+     * Translate the points. Mostly used to handle dragging of the ellipse.
+     * @private
      */
-
-    public translate(this: ControllableEllipse, dx: number, dy: number): void {
-        ControllableMixin.translateShape.call(this, dx, dy, true);
+    public translate(dx: number, dy: number): void {
+        super.translateShape(dx, dy, true);
     }
 
     /**
      * Get the distance from the line to the point.
-     * @param point1 first point which is on the line
-     * @param point2 second point
-     * @param x0 point's x value from which you want to calculate the distance from
-     * @param y0 point's y value from which you want to calculate the distance from
+     * @private
+     * @param point1
+     *        First point which is on the line
+     * @param point2
+     *        Second point
+     * @param x0
+     *        Point's x value from which you want to calculate the distance from
+     * @param y0
+     *        Point's y value from which you want to calculate the distance from
      */
     public getDistanceFromLine(
         point1: ReferencePointsOptions,
@@ -188,15 +192,18 @@ class ControllableEllipse implements ControllableMixin.Type {
             point2.x * point1.y - point2.y * point1.x
         ) / Math.sqrt(
             (point2.y - point1.y) * (point2.y - point1.y) +
-                (point2.x - point1.x) * (point2.x - point1.x)
+            (point2.x - point1.x) * (point2.x - point1.x)
         );
     }
 
     /**
      * The fuction calculates the svg attributes of the ellipse, and returns all
      * parameters neccessary to draw the ellipse.
-     * @param position absolute position of the first point in points array
-     * @param position2 absolute position of the second point in points array
+     * @private
+     * @param position
+     *        Absolute position of the first point in points array
+     * @param position2
+     *        Absolute position of the second point in points array
      */
     public getAttrs(
         position: BBoxObject,
@@ -226,6 +233,7 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     /**
      * Get the value of minor radius of the ellipse.
+     * @private
      */
     public getRY(): number {
         const yAxis = this.getYAxis();
@@ -235,7 +243,8 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 
     /**
-     * get the yAxis object to which the ellipse is pinned.
+     * Get the yAxis object to which the ellipse is pinned.
+     * @private
      */
     public getYAxis(): AxisType {
         const yAxisIndex = (this.options as EllipseShapeOptions).yAxis;
@@ -244,7 +253,9 @@ class ControllableEllipse implements ControllableMixin.Type {
 
     /**
      * Get the absolute coordinates of the MockPoint
-     * @param point MockPoint that is added through options
+     * @private
+     * @param point
+     *        MockPoint that is added through options
      */
     public getAbsolutePosition(
         point: Highcharts.AnnotationPointType
@@ -253,41 +264,46 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 
     /**
-     *
      * Redraw the element
-     * @param animation display an annimation
+     * @private
+     * @param animation
+     *        Display an annimation
      */
     public redraw(animation?: boolean): void {
-        const position = this.getAbsolutePosition(this.points[0]),
-            position2 = this.getAbsolutePosition(this.points[1]),
-            attrs = this.getAttrs(position, position2);
 
-        if (position) {
-            this.graphic[animation ? 'animate' : 'attr']({
-                cx: attrs.cx,
-                cy: attrs.cy,
-                rx: attrs.rx,
-                ry: attrs.ry,
-                rotation: attrs.angle,
-                rotationOriginX: attrs.cx,
-                rotationOriginY: attrs.cy
-            });
-        } else {
-            this.graphic.attr({
-                x: 0,
-                y: -9e9
-            });
+        if (this.graphic) {
+            const position = this.getAbsolutePosition(this.points[0]),
+                position2 = this.getAbsolutePosition(this.points[1]),
+                attrs = this.getAttrs(position, position2);
+
+            if (position) {
+                this.graphic[animation ? 'animate' : 'attr']({
+                    cx: attrs.cx,
+                    cy: attrs.cy,
+                    rx: attrs.rx,
+                    ry: attrs.ry,
+                    rotation: attrs.angle,
+                    rotationOriginX: attrs.cx,
+                    rotationOriginY: attrs.cy
+                });
+            } else {
+                this.graphic.attr({
+                    x: 0,
+                    y: -9e9
+                });
+            }
+
+            this.graphic.placed = Boolean(position);
         }
 
-        this.graphic.placed = Boolean(position);
-
-        ControllableMixin.redraw.call(this, animation);
+        super.redraw(animation);
     }
 
     /**
      * Set the radius Y.
-     *
-     * @param {number} ry a radius in y direction to be set
+     * @private
+     * @param {number} ry
+     *        A radius in y direction to be set
      */
     public setYRadius(ry: number): void {
         const shapes = this.annotation.userOptions.shapes;
@@ -301,9 +317,34 @@ class ControllableEllipse implements ControllableMixin.Type {
     }
 }
 
-interface ControllableEllipse extends ControllableMixin.Type {
-    // Adds mixin property types, created during init.
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
+interface ControllableEllipse {
+    collection: 'shapes';
+    itemType: 'shape'
     options: EllipseShapeOptions;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        ellipse: typeof ControllableEllipse;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllableEllipse;

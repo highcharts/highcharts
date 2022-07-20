@@ -30,35 +30,14 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import ChartUtilities from '../Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT
-} = ChartUtilities;
-import H from '../../Core/Globals.js';
-const {
-    noop
-} = H;
+import CU from '../Utils/ChartUtilities.js';
+const { unhideChartElementFromAT } = CU;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    extend,
     pick
 } = U;
-
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
-        /** @requires modules/accessibility */
-        panStep(direction: number, granularity?: number): void;
-    }
-}
 
 
 /* *
@@ -67,7 +46,34 @@ declare module '../../Core/Axis/AxisLike' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
+
+/**
+ * Pan along axis in a direction (1 or -1), optionally with a defined
+ * granularity (number of steps it takes to walk across current view)
+ * @private
+ */
+function axisPanStep(
+    axis: Axis,
+    direction: number,
+    granularity?: number
+): void {
+    const gran = granularity || 3;
+    const extremes = axis.getExtremes();
+    const step = (extremes.max - extremes.min) / gran * direction;
+    let newMax = extremes.max + step;
+    let newMin = extremes.min + step;
+    const size = newMax - newMin;
+
+    if (direction < 0 && newMin < extremes.dataMin) {
+        newMin = extremes.dataMin;
+        newMax = newMin + size;
+    } else if (direction > 0 && newMax > extremes.dataMax) {
+        newMax = extremes.dataMax;
+        newMin = newMax - size;
+    }
+
+    axis.setExtremes(newMin, newMax);
+}
 
 
 /**
@@ -131,7 +137,7 @@ class ZoomComponent extends AccessibilityComponent {
 
         [
             'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
-        ].forEach(function (eventType: string): void {
+        ].forEach((eventType): void => {
             component.addEvent(chart, eventType, function (): void {
                 component.updateProxyOverlays();
             });
@@ -148,10 +154,7 @@ class ZoomComponent extends AccessibilityComponent {
 
         // Make map zoom buttons accessible
         if (chart.mapNavigation) {
-            chart.mapNavigation.navButtons.forEach(function (
-                button: SVGElement,
-                i: number
-            ): void {
+            chart.mapNavigation.navButtons.forEach((button, i): void => {
                 unhideChartElementFromAT(chart, button.element);
                 component.setMapNavButtonAttrs(
                     button.element,
@@ -326,7 +329,7 @@ class ZoomComponent extends AccessibilityComponent {
             stepDirection = (keyCode === keys.left || keyCode === keys.up) ?
                 -1 : 1;
 
-        this.chart[panAxis][0].panStep(stepDirection);
+        axisPanStep(this.chart[panAxis][0], stepDirection);
 
         return keyboardNavigationHandler.response.success;
     }
@@ -502,99 +505,6 @@ class ZoomComponent extends AccessibilityComponent {
             this.getMapZoomNavigation()
         ];
     }
-
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-
-namespace ZoomComponent {
-
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-
-    export declare class AxisComposition extends Axis {
-
-    }
-
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-
-    export const composedClasses: Array<Function> = [];
-
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-
-    /**
-     * @private
-     */
-    export function compose(
-        AxisClass: typeof Axis
-    ): void {
-
-
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
-            const axisProto = AxisClass.prototype as AxisComposition;
-
-            axisProto.panStep = axisPanStep;
-        }
-    }
-
-
-    /**
-     * Pan along axis in a direction (1 or -1), optionally with a defined
-     * granularity (number of steps it takes to walk across current view)
-     *
-     * @private
-     * @function Highcharts.Axis#panStep
-     *
-     * @param {number} direction
-     * @param {number} [granularity]
-     */
-    function axisPanStep(
-        this: AxisComposition,
-        direction: number,
-        granularity?: number
-    ): void {
-        const gran = granularity || 3;
-        const extremes = this.getExtremes();
-        const step = (extremes.max - extremes.min) / gran * direction;
-        let newMax = extremes.max + step;
-        let newMin = extremes.min + step;
-        const size = newMax - newMin;
-
-        if (direction < 0 && newMin < extremes.dataMin) {
-            newMin = extremes.dataMin;
-            newMax = newMin + size;
-        } else if (direction > 0 && newMax > extremes.dataMax) {
-            newMax = extremes.dataMax;
-            newMin = newMax - size;
-        }
-        this.setExtremes(newMin, newMax);
-    }
-
 
 }
 

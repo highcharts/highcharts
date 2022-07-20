@@ -42,7 +42,6 @@ const HTTP_EXPIRES = {
     fiveYears: addDays(TODAY, 365 * 5)
 };
 
-/*
 async function cloudflarePurgeCode(files) {
 
     const props = getGitIgnoreMeProperties();
@@ -54,7 +53,6 @@ async function cloudflarePurgeCode(files) {
 
     console.log('CloudFlare', resp);
 }
-*/
 
 /**
  * Transforms a filepath to a similar named S3 destination path. Specific for highcharts js upload.
@@ -189,18 +187,11 @@ function uploadProductPackage(productProps, options = {}) {
         }
     }));
 
-
-    // Purge CloudFlare cache POC. Currently stopped by rate limiting (1200
-    // requests per 5 minutes)
-    //
-    // @todo: Filter what files are urgent. For example,
-    // maintenance versioned files can be skipped, .map files, possibly es
-    // modules etc.
-    /*
+    // Purge CloudFlare cache POC. Currently stopped by rate limiting?
     const cloudflarePaths = cdnFiles.reduce((paths, f) => {
         if (
-            f.to.indexOf('es-modules') === -1 &&
-            f.to.indexOf('.js.map') === -1 &&
+            // f.to.indexOf('es-modules') === -1 &&
+            // f.to.indexOf('.js.map') === -1 &&
             !/\/[0-9]+\.[0-9]+\.[0-9]+\//u.test(f.to)
         ) {
             paths.push(`https://code.highcharts.com/${f.to}`);
@@ -211,7 +202,6 @@ function uploadProductPackage(productProps, options = {}) {
     while (cloudflarePaths.length) {
         promises.push(cloudflarePurgeCode(cloudflarePaths.splice(0, 30)));
     }
-    */
 
     return Promise.all(promises);
 }

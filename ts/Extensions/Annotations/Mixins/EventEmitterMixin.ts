@@ -4,7 +4,16 @@
  *
  * */
 
-import type Annotation from '../Annotations';
+import type Annotation from '../Annotation';
+import type {
+    AnnotationControlPointOptionsObject
+} from '../ControlPointOptions';
+import type AnnotationsOptions from '../AnnotationsOptions';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelType,
+    ControllableShapeType
+} from '../Controllables/ControllableType';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import type EventCallback from '../../../Core/EventCallback';
@@ -25,14 +34,14 @@ declare global {
             hasDragged?: boolean;
             hcEvents?: unknown;
             isUpdating?: boolean;
-            labels?: Array<AnnotationLabelType>;
+            labels?: Array<ControllableLabelType>;
             nonDOMEvents?: Array<string>;
             options: Partial<(AnnotationControlPointOptionsObject|AnnotationsOptions)>;
             points?: Array<AnnotationPointType>;
             removeDrag?: Function;
             removeMouseUp?: Function;
-            shapes?: Array<AnnotationShapeType>;
-            target?: AnnotationControllable;
+            shapes?: Array<ControllableShapeType>;
+            target?: (Annotation|Controllable);
             redraw(animation?: boolean): void;
         }
         interface AnnotationEventEmitterMixin {

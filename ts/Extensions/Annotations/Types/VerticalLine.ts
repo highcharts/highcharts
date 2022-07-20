@@ -6,8 +6,17 @@
 
 'use strict';
 
-import Annotation from '../Annotations.js';
+import type {
+    AnnotationsOptions,
+    AnnotationsTypeOptions
+} from '../AnnotationsOptions';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
+import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -26,7 +35,7 @@ class VerticalLine extends Annotation {
      * */
 
     public static connectorFirstPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
         const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
@@ -46,7 +55,7 @@ class VerticalLine extends Annotation {
     }
 
     public static connectorSecondPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
         let annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
@@ -171,7 +180,7 @@ VerticalLine.prototype.defaultOptions = merge(
             label: {
                 offset: -40,
                 point: function (
-                    target: Highcharts.AnnotationControllable
+                    target: Controllable
                 ): Highcharts.AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
@@ -199,14 +208,14 @@ VerticalLine.prototype.defaultOptions = merge(
 );
 
 namespace VerticalLine {
-    export interface Options extends Highcharts.AnnotationsOptions {
+    export interface Options extends AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends Highcharts.AnnotationsLabelOptions {
+    export interface TypeLabelOptions extends ControllableLabelOptions {
         offset: number;
     }
-    export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
-        connector: Highcharts.AnnotationsShapeOptions;
+    export interface TypeOptions extends AnnotationsTypeOptions {
+        connector: Partial<ControllableShapeOptions>;
         label: TypeLabelOptions;
         yOffset: number;
     }
