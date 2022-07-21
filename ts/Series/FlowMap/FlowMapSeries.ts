@@ -97,10 +97,28 @@ class FlowMapSeries extends SankeySeries { // Sankey?
      */
 
     /**
+     * Get vector length.
+     * @private
+     */
+    private getLength(x: number, y: number): number {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    /**
+     * Return a normalized vector.
+     * @private
+     */
+    private normalize(x: number, y: number): Array<number> {
+        const length = this.getLength(x, y);
+        return [x / length, y / length];
+    }
+
+    /**
      * Run translation operations for one link.
      * @private
      */
     public translateLink(point: FlowMapPoint): void {
+
         let chart = this.chart,
             fromPoint = chart.get(point.options.from || ''),
             toPoint = chart.get(point.options.to || ''),
@@ -153,38 +171,24 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             // Rotating the halfway distance by 90 anti-clockwise.
             // We can then use this to create an arc.
             let tmp = dX;
-
             dX = dY;
             dY = -tmp;
 
-            // Weight vectior calculation
-            let wX = dX,
-                wY = dY,
-                lenght = Math.sqrt(wX * wX + wY * wY);
+            // Weight vector calculation for the middle of the curve.
+            let [wX, wY] = this.normalize(dX, dY);
 
-            wX /= lenght;
-            wY /= lenght;
-
-            // There is an obvious mismatch between top and botton curves
-            // in the path for rather extreme curve and weight cases.
-            // The `fineTune` makes this more even.
+            // The `fineTune` prevents an obvious mismatch along the curve.
             const fineTune = 1 + Math.sqrt(curve * curve) * 0.25;
             wX *= weight * fineTune;
             wY *= weight * fineTune;
 
-            // Finally, calculate the arc strength.
+            // Ccalculate the arc strength.
             let arcPointX = (mX + dX * curve),
                 arcPointY = (mY + dY * curve);
 
             // Calculate edge vectors in the from-point.
-            let fromXToArc = arcPointX - fromX,
-                fromYToArc = arcPointY - fromY,
-                arcLenght = Math.sqrt(
-                    fromXToArc * fromXToArc + fromYToArc * fromYToArc
-                );
-
-            fromXToArc /= arcLenght;
-            fromYToArc /= arcLenght;
+            let [fromXToArc, fromYToArc] =
+                this.normalize(arcPointX - fromX, arcPointY - fromY);
             fromXToArc *= weight;
             fromYToArc *= weight;
 
@@ -193,12 +197,8 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             fromYToArc = -tmp;
 
             // Calculate edge vectors in the to-point.
-            let toXToArc = arcPointX - toX,
-                toYToArc = arcPointY - toY;
-
-            toXToArc /= arcLenght;
-            toYToArc /= arcLenght;
-
+            let [toXToArc, toYToArc] =
+                this.normalize(arcPointX - toX, arcPointY - toY);
             toXToArc *= weight;
             toYToArc *= weight;
 
