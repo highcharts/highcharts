@@ -175,6 +175,7 @@ export interface ChartSelectionContextObject {
 
 export interface ChartZoomingOptions {
     key?: string;
+    markings?: boolean;
     pinchType?: string;
     resetButton?: ChartResetZoomButtonOptions;
     singleTouch: boolean;

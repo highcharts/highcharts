@@ -1037,6 +1037,18 @@ const ChartDefaults: ChartOptions = {
          */
 
         /**
+         * Corners that appear during zoom. Move the sides in horizontally,
+         * the zoom area increases vertically in full height, move vertically
+         * the zoom area expands horizontally to its full width.
+         *
+         * @type       {boolean}
+         * @default    {highcharts} undefined
+         * @product    highcharts highstock gantt
+         * @since      next
+         * @apioption  chart.zooming.markings
+         */
+
+        /**
          * Decides in what dimensions the user can zoom by dragging the mouse.
          * Can be one of `x`, `y` or `xy`.
          *
