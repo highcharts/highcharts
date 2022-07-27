@@ -255,6 +255,15 @@ const indexFilter = /\d/g,
     H3 = 'h3';
 
 /**
+ * Enum for properties which should have dropdown list.
+ * @private
+ */
+enum DropdownProperties {
+    'params.algorithm',
+    'params.average'
+}
+
+/**
  * List of available algorithms for the specific indicator.
  * @private
  */
@@ -1808,14 +1817,6 @@ H.Popup.prototype = {
             }
 
             objectEach(fields, function (value, fieldName): void {
-                const predefinedType =
-                    NavigationBindings.annotationsFieldsTypes[fieldName];
-                let fieldType = type;
-
-                if (defined(predefinedType)) {
-                    fieldType = predefinedType;
-                }
-
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
@@ -1845,7 +1846,7 @@ H.Popup.prototype = {
 
                     // If the option is listed in dropdown enum,
                     // add the selection box for it.
-                    if (fieldType === 'dropdown') {
+                    if (parentFullName in DropdownProperties) {
                         // Add selection boxes.
                         const selectBox = indicators.addSelection.call(
                             popup,
@@ -1876,8 +1877,8 @@ H.Popup.prototype = {
                             parentDiv,
                             {
                                 value: value as any,
-                                type: 'text'
-                            } // all inputs are text type
+                                type: 'number'
+                            } // all inputs are number type
                         );
                     }
                 }
