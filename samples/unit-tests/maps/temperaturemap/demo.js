@@ -47,10 +47,9 @@ QUnit.test('Temperaturemap API options.', assert => {
         point.graphics.forEach((graphic, i) => {
             const graphicIndex = (colorsLength - i) / colorsLength;
 
-            assert.close(
+            assert.strictEqual(
                 graphic.attr('width'),
-                firstGraphicWidth * graphicIndex,
-                0.000001,
+                Math.ceil(firstGraphicWidth * graphicIndex),
                 `The graphic's size should be correct.`
             );
 
@@ -79,10 +78,11 @@ QUnit.test('Temperaturemap API options.', assert => {
         const firstGraphicWidth = point.graphics[0].attr('width');
 
         point.graphics.forEach((graphic, i) => {
-            assert.close(
+            const colorStop = (temperatureColors.slice().reverse())[i][0];
+
+            assert.strictEqual(
                 graphic.attr('width'),
-                firstGraphicWidth * (temperatureColors.slice().reverse())[i][0],
-                0.000001,
+                Math.ceil(firstGraphicWidth * colorStop),
                 `The graphic's size should be correct.`
             );
 
@@ -173,10 +173,9 @@ QUnit.test('Temperaturemap API options.', assert => {
         point.graphics.forEach((graphic, i) => {
             const graphicIndex = (colorsLength - i) / colorsLength;
 
-            assert.close(
+            assert.strictEqual(
                 graphic.attr('width'),
-                firstGraphicWidth * graphicIndex,
-                0.000001,
+                Math.ceil(firstGraphicWidth * graphicIndex),
                 `The graphic's size should be correct.`
             );
 

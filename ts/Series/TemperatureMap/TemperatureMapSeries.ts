@@ -114,7 +114,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
      *
      */
 
-    public isPointInside(): boolean {
+    public isPointInside(): true {
         return true;
     }
 
@@ -154,12 +154,16 @@ class TemperatureMapSeries extends MapBubbleSeries {
             [zMin, zMax, minSize, maxSize, value, yValue]
         );
 
-        if (isNumber(colorStop)) {
-            ret = (ret || 0) * colorStop;
-        } else if (temperatureColors && isNumber(colorIndex)) {
-            ret = (correctFloat(ret || 0) * (
-                1 - colorIndex / temperatureColors.length
-            ));
+        if (isNumber(ret)) {
+            if (isNumber(colorStop)) {
+                ret = ret * colorStop;
+            } else if (temperatureColors && isNumber(colorIndex)) {
+                ret = correctFloat(ret * (
+                    1 - colorIndex / temperatureColors.length
+                ));
+            }
+
+            return Math.ceil(ret * 2) / 2; // TODO: add comment
         }
 
         return ret;
@@ -283,7 +287,11 @@ class TemperatureMapSeries extends MapBubbleSeries {
                             typeof pointMarkerOptions.enabled ===
                                 'undefined'
                         ) || pointMarkerOptions.enabled
-                    ) && !point.isNull && point.visible !== false;
+                    ) &&
+                    !point.isNull &&
+                    point.visible !== false &&
+                    // Above zThreshold
+                    (point.options as any).z >= (this.options.zMin || 0);
 
                     if (shouldDrawMarker) {
                         // Shortcuts
