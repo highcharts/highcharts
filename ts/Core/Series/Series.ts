@@ -23,6 +23,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
@@ -323,6 +324,8 @@ class Series {
     public stickyTracking?: boolean;
 
     public symbol?: SymbolKey;
+
+    public table?: DataTable;
 
     public tooltipOptions: TooltipOptions = void 0 as any;
 
@@ -1103,7 +1106,7 @@ class Series {
 
     /**
      * Internal function called from setData. If the point count is the same
-     * as is was, or if there are overlapping X values, just run
+     * as it was, or if there are overlapping X values, just run
      * Point.update which is cheaper, allows animation, and keeps references
      * to points. This also allows adding or removing points if the X-es
      * don't match.
@@ -1498,6 +1501,95 @@ class Series {
     }
 
     /**
+     * Experimental integration of the data layer
+     * @private
+     */
+    public setTable(
+        table: DataTable,
+        redraw?: boolean,
+        animation?: (boolean|Partial<AnimationOptions>)
+    ): void {
+        const anySeries: AnyRecord = this,
+            oldData = this.points,
+            parallelArrays = this.parallelArrays,
+            rowCount = table.getRowCount();
+
+        let column: (Readonly<DataTable.Column>|undefined),
+            failure = false,
+            indexAsX = false,
+            key: string;
+
+        for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
+            key = parallelArrays[i];
+            column = table.getColumn(key, true);
+
+            if (!column) {
+                if (key === 'x') {
+                    indexAsX = true;
+                    continue;
+                } else {
+                    failure = true;
+                    break;
+                }
+            }
+
+            anySeries[`${key}Data`] = column;
+        }
+
+        if (failure) {
+            // fallback to index
+            const columnNames = table.getColumnNames(),
+                emptyColumn: DataTable.Column = [];
+
+            emptyColumn.length = rowCount;
+
+            let columnOffset = 0;
+
+            if (columnNames.length === parallelArrays.length - 1) {
+                // table index becomes x
+                columnOffset = 1;
+                indexAsX = true;
+            }
+
+            for (
+                let i = columnOffset,
+                    iEnd = parallelArrays.length;
+                i < iEnd;
+                ++i
+            ) {
+                column = table.getColumn(columnNames[i], true);
+                key = parallelArrays[i];
+
+                anySeries[`${key}Data`] = column || emptyColumn.slice();
+            }
+        }
+
+        this.table = table;
+
+        if (indexAsX && parallelArrays.indexOf('x') !== -1) {
+            column = [];
+
+            for (let x = 0; x < rowCount; ++x) {
+                column.push(x);
+            }
+
+            anySeries.xData = column;
+        }
+
+        if (this.options.legendType === 'point') {
+            this.processData();
+            this.generatePoints();
+        }
+
+        if (redraw) {
+            const chart = this.chart;
+            this.isDirty = chart.isDirtyBox = true;
+            this.isDirtyData = !!oldData;
+            chart.redraw(animation);
+        }
+    }
+
+    /**
      * Internal function to sort series data
      *
      * @private
@@ -1817,13 +1909,14 @@ class Series {
                 options.dataGrouping.groupAll ?
                     cropStart :
                     0
-            );
+            ),
+            table = series.table;
+
         let dataLength,
             cursor,
             point,
             i,
             data = series.data;
-
 
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
@@ -1841,16 +1934,23 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
-                // #970:
-                if (
-                    !point &&
-                    typeof (dataOptions as any)[cursor] !== 'undefined'
-                ) {
-                    data[cursor] = point = (new PointClass()).init(
-                        series,
-                        (dataOptions as any)[cursor],
-                        (processedXData as any)[i]
-                    );
+                if (!point) {
+                    if (table) {
+                        data[cursor] = point = (new PointClass()).init(
+                            series,
+                            processedYData[cursor],
+                            processedXData[i]
+                        );
+                    } else if (
+                        // #970:
+                        typeof dataOptions[cursor] !== 'undefined'
+                    ) {
+                        data[cursor] = point = (new PointClass()).init(
+                            series,
+                            dataOptions[cursor],
+                            processedXData[i]
+                        );
+                    }
                 }
             } else {
                 // splat the y data in case of ohlc data array
