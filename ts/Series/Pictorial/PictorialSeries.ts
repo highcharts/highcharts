@@ -31,6 +31,7 @@ import StackItem from '../../Extensions/Stacking.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
+import Chart from '../../Core/Chart/Chart.js';
 
 
 const {
@@ -47,7 +48,8 @@ const {
     addEvent,
     defined,
     merge,
-    pick
+    pick,
+    objectEach
 } = U;
 
 const {
@@ -308,72 +310,79 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
-addEvent(StackItem, 'afterRender', function (): void {
+function renderStackShadow(
+    stack: StackItem
+): void {
+
     // Get first pictorial series
     const stackKeys = Object
-        .keys(this.points)
+        .keys(stack.points)
         .filter((p): boolean => p.split(',').length > 1);
-    let seriesIndex = parseFloat(
-        stackKeys &&
-        stackKeys[0] &&
-        stackKeys[0].split(',')[0]
-    );
+    let allSeries = stack.axis.chart.series;
+    let seriesIndexes = stackKeys.map((key): number =>
+        parseFloat(key.split(',')[0]));
+    let seriesIndex = -1;
 
-    if (isNaN(seriesIndex)) {
-        seriesIndex = -1;
-    }
-    const series = this.axis.chart.series[seriesIndex] as PictorialSeries;
+    seriesIndexes.forEach((index): void => {
+        if (allSeries[index] && allSeries[index].visible) {
+            seriesIndex = index;
+        }
+    });
+
+    const series = stack.axis.chart.series[seriesIndex] as PictorialSeries;
 
     if (
         series &&
         series.is('pictorial') &&
-        this.axis.hasData() &&
+        stack.axis.hasData() &&
         series.xAxis.hasData()
     ) {
         const xAxis = series.xAxis;
-        const options = this.axis.options;
-        const chart = this.axis.chart;
-        const stackShadow = this.shadow;
-        const xCenter = xAxis.toPixels(this.x, true);
+        const options = stack.axis.options;
+        const chart = stack.axis.chart;
+        const stackShadow = stack.shadow;
+        const xCenter = xAxis.toPixels(stack.x, true);
         const x = chart.inverted ? xAxis.len - xCenter : xCenter;
         const paths = series.options.paths || [];
-        const index = this.x % paths.length;
+        const index = stack.x % paths.length;
         const shape = paths[index];
         const width = series.getColumnMetrics &&
             series.getColumnMetrics().width;
         const { height, y } = getStackMetrics(series.yAxis, shape);
+        const shadowOptions = options.stackShadow;
         const strokeWidth = pick(
-            options.stackShadow && options.stackShadow.borderWidth,
+            shadowOptions && shadowOptions.borderWidth,
             series.options.borderWidth,
             1
         );
 
         if (
             !stackShadow &&
-            options.stackShadow &&
-            options.stackShadow.enabled &&
+            shadowOptions &&
+            shadowOptions.enabled &&
             shape
         ) {
-            if (!this.shadowGroup) {
-                this.shadowGroup = chart.renderer.g('shadowGroup')
+            if (!stack.shadowGroup) {
+                stack.shadowGroup = chart.renderer.g('shadowGroup')
                     .attr({
                         translateX: chart.inverted ?
-                            this.axis.pos : xAxis.pos,
+                            stack.axis.pos : xAxis.pos,
                         translateY: chart.inverted ?
-                            xAxis.pos : this.axis.pos
+                            xAxis.pos : stack.axis.pos
                     })
                     .add();
             }
 
-            this.shadow = chart.renderer.rect(x, y, width, height)
+            stack.shadow = chart.renderer.rect(x, y, width, height)
                 .attr({
                     fill: {
                         pattern: {
                             path: {
                                 d: shape.definition,
-                                fill: options.stackShadow.color || '#dedede',
+                                fill: shadowOptions.color ||
+                                    '#dedede',
                                 strokeWidth: strokeWidth,
-                                stroke: options.stackShadow.borderColor ||
+                                stroke: shadowOptions.borderColor ||
                                 'transparent'
                             },
                             x: x,
@@ -386,23 +395,28 @@ addEvent(StackItem, 'afterRender', function (): void {
                         }
                     }
                 })
-                .add(this.shadowGroup);
+                .add(stack.shadowGroup);
 
             invertShadowGroup(
-                this.shadowGroup,
+                stack.shadowGroup,
                 xAxis,
-                this.axis
+                stack.axis
             );
 
             rescalePatternFill(
-                this.shadow,
+                stack.shadow,
                 height,
                 width,
                 height,
                 strokeWidth
             );
 
-        } else if (stackShadow && this.shadowGroup) {
+            stack.setOffset(
+                series.pointXOffset || 0,
+                series.barW || 0
+            );
+
+        } else if (stackShadow && stack.shadowGroup) {
             stackShadow.animate({
                 x,
                 y,
@@ -414,24 +428,25 @@ addEvent(StackItem, 'afterRender', function (): void {
             const match = fill && fill.match(fillUrlMatcher);
 
             if (match && chart.renderer.patternElements) {
-                chart.renderer.patternElements[match[1].slice(1)].animate({
-                    x,
-                    y,
-                    width,
-                    height
-                });
+                chart.renderer.patternElements[match[1].slice(1)]
+                    .animate({
+                        x,
+                        y,
+                        width,
+                        height
+                    });
             }
-            this.shadowGroup.animate({
+            stack.shadowGroup.animate({
                 translateX: chart.inverted ?
-                    this.axis.pos : xAxis.pos,
+                    stack.axis.pos : xAxis.pos,
                 translateY: chart.inverted ?
-                    xAxis.pos : this.axis.pos
+                    xAxis.pos : stack.axis.pos
             });
 
             invertShadowGroup(
-                this.shadowGroup,
+                stack.shadowGroup,
                 xAxis,
-                this.axis
+                stack.axis
             );
 
             rescalePatternFill(
@@ -441,17 +456,45 @@ addEvent(StackItem, 'afterRender', function (): void {
                 height,
                 strokeWidth
             );
-        }
-    } else if (this.shadow && this.shadowGroup) {
-        this.shadow.destroy();
-        this.shadow = void 0;
 
-        this.shadowGroup.destroy();
-        this.shadowGroup = void 0;
+            stack.setOffset(
+                series.pointXOffset || 0,
+                series.barW || 0
+            );
+
+        }
+    } else if (stack.shadow && stack.shadowGroup) {
+        stack.shadow.destroy();
+        stack.shadow = void 0;
+
+        stack.shadowGroup.destroy();
+        stack.shadowGroup = void 0;
     }
+}
+
+addEvent(Chart, 'render', function (): void {
+    const chart = this;
+
+    chart.axes.forEach(function (axis): void {
+        if (!axis.stacking) {
+            return;
+        }
+
+        const stacks = axis.stacking.stacks;
+        // Render each stack total
+        objectEach(stacks, function (
+            type: Record<string, Highcharts.StackItem>
+        ): void {
+            objectEach(type, function (stack: Highcharts.StackItem): void {
+                renderStackShadow(stack);
+            });
+        });
+    });
+
 });
 
 addEvent(StackItem, 'afterSetOffset', function (e): void {
+
     if (this.shadow) {
         this.shadow.attr({
             translateX: (e as any).xOffset
