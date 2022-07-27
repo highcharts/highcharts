@@ -281,11 +281,11 @@ class FlowMapSeries extends SankeySeries { // Sankey?
     }
 }
 
-addEvent(Series, 'afterRender', function () {
+addEvent(Series, 'afterRender', function (): void {
     if (this.linkedSeries.length) {
         this.linkedSeries[0].redraw();
     }
-})
+});
 
 /* *
  *
