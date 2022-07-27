@@ -51,7 +51,7 @@ QUnit.test('Price indicator.', function (assert) {
         'No errors when points are missing.'
     );
 
-    chart.xAxis[0].setExtremes(1484663400000, 1484836200000);
+    chart.xAxis[0].setExtremes(1484663400000, 1484836200000, false);
     chart.series[0].update({
         lastVisiblePrice: {
             enabled: false
