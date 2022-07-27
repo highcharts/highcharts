@@ -862,7 +862,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @function Highcharts.DataTable#getRow
      *
      * @param {number} rowIndex
-     * Row index.
+     * Row index to retrieve. First row has index 0.
      *
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases in order to retrieve.
