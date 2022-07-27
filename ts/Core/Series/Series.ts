@@ -327,6 +327,8 @@ class Series {
 
     public table?: DataTable;
 
+    private syncTableOff?: Function;
+
     public tooltipOptions: TooltipOptions = void 0 as any;
 
     public tracker?: SVGElement;
@@ -1500,6 +1502,49 @@ class Series {
         }
     }
 
+    private syncTable(
+        table: DataTable,
+        indexAsX?: boolean
+    ): void {
+        const anySeries: AnyRecord = this,
+            onChange = (e: DataTable.Event): void => {
+                if (indexAsX) {
+                    if (e.type === 'afterSetCell') {
+                        anySeries.xData[e.rowIndex] = e.rowIndex;
+                    } else if (e.type === 'afterSetRows') {
+                        for (
+                            let i = e.rowIndex,
+                                iEnd = i + e.rowCount;
+                            i < iEnd;
+                            ++i
+                        ) {
+                            anySeries.xData[i] = i;
+                        }
+                    }
+                }
+
+                const chart = this.chart;
+
+                this.isDirty = chart.isDirtyBox = true;
+                this.isDirtyData = true;
+
+                this.chart.redraw();
+            },
+            disconnects: Array<Function> = [
+                table.on('afterSetCell', onChange),
+                table.on('afterSetRows', onChange)
+            ],
+            offChange = (): void => {
+                for (let i = 0, iEnd = disconnects.length; i < iEnd; ++i) {
+                    disconnects[i]();
+                }
+                disconnects.length = 0;
+            };
+
+        this.syncTableOff && this.syncTableOff();
+        this.syncTableOff = offChange;
+    }
+
     /**
      * Experimental integration of the data layer
      * @private
@@ -1564,8 +1609,6 @@ class Series {
             }
         }
 
-        this.table = table;
-
         if (indexAsX && parallelArrays.indexOf('x') !== -1) {
             column = [];
 
@@ -1576,6 +1619,9 @@ class Series {
             anySeries.xData = column;
         }
 
+        this.syncTable(table, indexAsX);
+        this.table = table;
+
         if (this.options.legendType === 'point') {
             this.processData();
             this.generatePoints();
@@ -1583,8 +1629,10 @@ class Series {
 
         if (redraw) {
             const chart = this.chart;
+
             this.isDirty = chart.isDirtyBox = true;
             this.isDirtyData = !!oldData;
+
             chart.redraw(animation);
         }
     }
