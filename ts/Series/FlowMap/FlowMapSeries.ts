@@ -23,9 +23,11 @@ import U from '../../Core/Utilities.js';
 import FlowMapPoint from './FlowMapPoint';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
 const {
     merge,
-    extend
+    extend,
+    addEvent
 } = U;
 
 /* *
@@ -278,6 +280,12 @@ class FlowMapSeries extends SankeySeries { // Sankey?
         return;
     }
 }
+
+addEvent(Series, 'afterRender', function () {
+    if (this.linkedSeries.length) {
+        this.linkedSeries[0].redraw();
+    }
+})
 
 /* *
  *
