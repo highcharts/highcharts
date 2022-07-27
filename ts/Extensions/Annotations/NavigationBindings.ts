@@ -370,26 +370,16 @@ class NavigationBindings {
     // There is no need to define numbers, because they won't change their type
     // to string.
     public static annotationsFieldsTypes: Record<string, string> = {
-        algorithm: 'dropdown',
-        average: 'dropdown',
         backgroundColor: 'string',
         borderColor: 'string',
         borderRadius: 'string',
         color: 'string',
-        deviation: 'string',
-        fastAvgPeriod: 'string',
         fill: 'string',
         fontSize: 'string',
-        format: 'string',
         labels: 'string',
-        longPeriod: 'string',
-        ranges: 'string',
-        segment: 'string',
-        shortPeriod: 'string',
-        signalPeriod: 'string',
-        slowAvgPeriod: 'string',
+        name: 'string',
         stroke: 'string',
-        xAxisUnit: 'string'
+        title: 'string'
     };
 
     /* *

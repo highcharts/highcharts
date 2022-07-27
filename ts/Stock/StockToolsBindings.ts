@@ -260,8 +260,8 @@ bindingsUtils.addFlagFromForm = function (
                 options: {
                     langKey: 'flags',
                     type: 'flags',
-                    title: ['A', getFieldType('label', 'A' as any)],
-                    name: ['Flag A', getFieldType('label', 'Flag A' as any)]
+                    title: ['A', getFieldType('title', 'A' as any)],
+                    name: ['Flag A', getFieldType('name', 'Flag A' as any)]
                 },
                 // Callback on submit:
                 onSubmit: function (
