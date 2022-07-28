@@ -1311,7 +1311,7 @@ class Series {
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
@@ -1351,7 +1351,6 @@ class Series {
 
 
         const dataLength = data.length;
-        redraw = pick(redraw, true);
 
         if (dataSorting && dataSorting.enabled) {
             data = this.sortData(data);
@@ -1531,7 +1530,7 @@ class Series {
      */
     public setTable(
         table: DataTable,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const anySeries: AnyRecord = this,
