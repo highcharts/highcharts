@@ -1502,47 +1502,27 @@ class Series {
         }
     }
 
-    private syncTable(
-        table: DataTable,
-        indexAsX?: boolean
+    /**
+     * Triggers processing and redrawing
+     * @private
+     */
+    public processTable(
+        redraw?: boolean,
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        const anySeries: AnyRecord = this,
-            onChange = (e: DataTable.Event): void => {
-                if (indexAsX) {
-                    if (e.type === 'afterSetCell') {
-                        anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
-                        for (
-                            let i = e.rowIndex,
-                                iEnd = i + e.rowCount;
-                            i < iEnd;
-                            ++i
-                        ) {
-                            anySeries.xData[i] = i;
-                        }
-                    }
-                }
+        if (this.options.legendType === 'point') {
+            this.processData();
+            this.generatePoints();
+        }
 
-                const chart = this.chart;
+        if (redraw) {
+            const chart = this.chart;
 
-                this.isDirty = chart.isDirtyBox = true;
-                this.isDirtyData = true;
+            this.isDirty = chart.isDirtyBox = true;
+            this.isDirtyData = true;
 
-                this.chart.redraw();
-            },
-            disconnects: Array<Function> = [
-                table.on('afterSetCell', onChange),
-                table.on('afterSetRows', onChange)
-            ],
-            offChange = (): void => {
-                for (let i = 0, iEnd = disconnects.length; i < iEnd; ++i) {
-                    disconnects[i]();
-                }
-                disconnects.length = 0;
-            };
-
-        this.syncTableOff && this.syncTableOff();
-        this.syncTableOff = offChange;
+            chart.redraw(animation);
+        }
     }
 
     /**
@@ -1619,22 +1599,71 @@ class Series {
             anySeries.xData = column;
         }
 
-        this.syncTable(table, indexAsX);
         this.table = table;
 
-        if (this.options.legendType === 'point') {
-            this.processData();
-            this.generatePoints();
-        }
-
         if (redraw) {
-            const chart = this.chart;
-
-            this.isDirty = chart.isDirtyBox = true;
-            this.isDirtyData = !!oldData;
-
-            chart.redraw(animation);
+            this.watchTable(table, indexAsX);
         }
+
+        this.processTable(redraw, oldData && animation);
+    }
+
+    /**
+     * Redraws series and chart on table changes.
+     * @private
+     */
+    private watchTable(
+        table: DataTable,
+        indexAsX?: boolean
+    ): void {
+        const anySeries: AnyRecord = this,
+            onChange = (e: DataTable.Event): void => {
+                if (e.type === 'afterDeleteColumns') {
+                    this.setTable(table, true);
+                    return;
+                }
+                if (indexAsX) {
+                    if (e.type === 'afterSetCell') {
+                        anySeries.xData[e.rowIndex] = e.rowIndex;
+                    } else if (e.type === 'afterSetRows') {
+                        for (
+                            let i = e.rowIndex,
+                                iEnd = i + e.rowCount;
+                            i < iEnd;
+                            ++i
+                        ) {
+                            anySeries.xData[i] = i;
+                        }
+                    }
+                }
+                if (e.type === 'afterDeleteRows') {
+                    for (
+                        let i = e.rowIndex,
+                            iEnd = i + e.rowCount;
+                        i < iEnd;
+                        ++i
+                    ) {
+                        this.removePoint(i);
+                    }
+                }
+
+                this.processTable(true);
+            },
+            disconnects: Array<Function> = [
+                table.on('afterDeleteColumns', onChange),
+                table.on('afterDeleteRows', onChange),
+                table.on('afterSetCell', onChange),
+                table.on('afterSetRows', onChange)
+            ],
+            offChange = (): void => {
+                for (let i = 0, iEnd = disconnects.length; i < iEnd; ++i) {
+                    disconnects[i]();
+                }
+                disconnects.length = 0;
+            };
+
+        this.syncTableOff && this.syncTableOff();
+        this.syncTableOff = offChange;
     }
 
     /**

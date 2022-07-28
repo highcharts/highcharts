@@ -1,7 +1,7 @@
 import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
-Highcharts.chart('chart', {
+const chart = Highcharts.chart('chart', {
     debug: true,
     chart: {
         width: 600
@@ -11,12 +11,17 @@ Highcharts.chart('chart', {
     },
     subtitle: {
         text: 'DataTable management'
-    },
-    series: [{
-        type: 'line'
-    }]
-}, function (chart) {
-    const series = chart.series[0],
+    }
+});
+
+function addSeries(e) {
+    if (chart.series[0]) {
+        chart.series[0].remove();
+    }
+
+    const series = chart.addSeries({
+            type: e.target.innerText.toLowerCase()
+        }),
         table = new DataTable({
             y: [
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
@@ -27,8 +32,34 @@ Highcharts.chart('chart', {
     series.setTable(table, true, true);
 
     window.setTimeout(() => {
-        console.log('timeout');
         table.setRow([101]);
         series.redraw();
-    }, 5000);
-});
+    }, 2000);
+
+    window.setTimeout(() => {
+        table.deleteRows(0, 1);
+        series.redraw();
+    }, 4000);
+}
+
+document
+    .getElementById('line')
+    .addEventListener('click', addSeries);
+
+document
+    .getElementById('column')
+    .addEventListener('click', addSeries);
+
+document
+    .getElementById('pie')
+    .addEventListener('click', addSeries);
+
+document
+    .getElementById('benchmarkSetData')
+    .addEventListener('click', () => {
+    });
+
+document
+    .getElementById('benchmarkSetTable')
+    .addEventListener('click', () => {
+    });
