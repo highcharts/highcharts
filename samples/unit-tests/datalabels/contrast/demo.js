@@ -98,3 +98,68 @@ QUnit.test('Pie dataLabels and contrast', function (assert) {
         'DataLabels outside the pie chart should not get contrast color (#11140).'
     );
 });
+
+QUnit.test('Bar dataLabels and contrast', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: "bar",
+                backgroundColor: '#000000'
+            },
+            series: [{
+                data: [100, 1000],
+                dataLabels: {
+                    enabled: true,
+                    format: "Some long long long long long long long long text"
+                }
+            }]
+        }),
+        points = chart.series[0].points;
+
+    assert.strictEqual(
+        Highcharts.color(
+            points[0].dataLabel.element.childNodes[0].style.color
+        ).get(),
+        Highcharts.color(
+            'rgb(255,255,255)'
+        ).get(),
+        `If background of chart is dark dataLabels outside the bar chart should
+        get the contrast (white) color (#17413).`
+    );
+
+    chart.update({
+        chart: {
+            plotBackgroundColor: '#ffffff'
+        }
+    });
+
+    assert.strictEqual(
+        Highcharts.color(
+            points[0].dataLabel.element.childNodes[0].style.color
+        ).get(),
+        Highcharts.color(
+            'rgb(0,0,0)'
+        ).get(),
+        `If background of chart is dark, but plot background color is light
+        dataLabels outside the bar chart should get the contrast (black) color 
+        (#17413).`
+    );
+
+    chart.update({
+        chart: {
+            backgroundColor: '#ffffff',
+            plotBackgroundColor: '#000000'
+        }
+    });
+
+    assert.strictEqual(
+        Highcharts.color(
+            points[0].dataLabel.element.childNodes[0].style.color
+        ).get(),
+        Highcharts.color(
+            'rgb(255,255,255)'
+        ).get(),
+        `If background of chart is light, but plot background color is dark
+        dataLabels outside the bar chart should get the contrast (black) color 
+        (#17413).`
+    );
+});
