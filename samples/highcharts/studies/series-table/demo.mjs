@@ -40,6 +40,11 @@ function addSeries(e) {
         table.deleteRows(0, 1);
         series.redraw();
     }, 4000);
+
+    window.setTimeout(() => {
+        table.deleteRows(16, 1);
+        series.redraw();
+    }, 6000);
 }
 
 document
