@@ -372,7 +372,6 @@ class NavigationBindings {
     public static annotationsFieldsTypes: Record<string, string> = {
         backgroundColor: 'string',
         borderColor: 'string',
-        borderRadius: 'string',
         color: 'string',
         fill: 'string',
         fontSize: 'string',
