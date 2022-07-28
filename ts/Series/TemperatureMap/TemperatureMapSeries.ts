@@ -90,9 +90,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
              * the smallest top marker is 5 times smaller than the biggest
              * bottom one).
              *
-             * @sample maps/plotoptions/temperaturemap-temperaturecolors
+             * @sample maps/plotoptions/temperaturemap-themes
              *         Temperature colors themes
-             * @sample maps/plotoptions/temperaturemap-temperaturecolors-steps
+             * @sample maps/plotoptions/temperaturemap-color-steps
              *         Temperature colors with steps
              *
              * @default ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff"]
