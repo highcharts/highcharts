@@ -608,6 +608,28 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (point.color || series.color) as any
                                 );
+
+                                const background = chart.chartBackground,
+                                    plotBackground = chart.plotBackground;
+
+                                let elseColor = String(Palette.neutralColor100);
+
+                                if (
+                                    plotBackground &&
+                                    plotBackground.attr('fill') !== 'none'
+                                ) {
+                                    elseColor = renderer.getContrast(
+                                        plotBackground.attr('fill') as any
+                                    );
+                                } else if (
+                                    background &&
+                                    background.attr('fill') !== 'none'
+                                ) {
+                                    elseColor = renderer.getContrast(
+                                        background.attr('fill') as any
+                                    );
+                                }
+
                                 (style as any).color = (
                                     !defined(labelDistance) &&
                                         labelOptions.inside
@@ -615,7 +637,7 @@ namespace DataLabel {
                                     labelDistance < 0 ||
                                     !!seriesOptions.stacking ?
                                     point.contrastColor :
-                                    Palette.neutralColor100;
+                                    elseColor;
                             } else {
                                 delete point.contrastColor;
                             }
