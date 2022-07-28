@@ -54,7 +54,7 @@ Highcharts.chart('container', {
 
 }, chart => {
 
-    document.getElementById('lightThemeBtn').addEventListener('click', function () {
+    document.getElementById('lightThemeBtn').addEventListener('click', () => {
         chart.update({
             colorAxis: {
                 stops: [
@@ -69,7 +69,7 @@ Highcharts.chart('container', {
         });
     });
 
-    document.getElementById('darkThemeBtn').addEventListener('click', function () {
+    document.getElementById('darkThemeBtn').addEventListener('click', () => {
         chart.update({
             colorAxis: {
                 stops: [

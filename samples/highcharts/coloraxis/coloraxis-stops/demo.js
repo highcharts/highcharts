@@ -13,13 +13,12 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'column',
-        axisType: 'x',
         data: [35, 22, 14, 9, 60, 7, 15, 30, 45, 12, 25]
     }]
 
 }, chart => {
 
-    document.getElementById('lightThemeBtn').addEventListener('click', function () {
+    document.getElementById('lightThemeBtn').addEventListener('click', () => {
         chart.update({
             colorAxis: {
                 stops: [
@@ -34,7 +33,7 @@ Highcharts.chart('container', {
         });
     });
 
-    document.getElementById('darkThemeBtn').addEventListener('click', function () {
+    document.getElementById('darkThemeBtn').addEventListener('click', () => {
         chart.update({
             colorAxis: {
                 stops: [
