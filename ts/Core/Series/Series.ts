@@ -1539,10 +1539,38 @@ class Series {
             parallelArrays = this.parallelArrays,
             rowCount = table.getRowCount();
 
+        let key: string;
+
+        if (oldData) {
+            const xAxis = this.xAxis;
+
+            this.colorCounter = 0;
+            this.data = [];
+
+            delete anySeries.points;
+            delete anySeries.processedXData;
+            delete anySeries.processedYData;
+            delete anySeries.xIncrement;
+
+            for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
+                key = parallelArrays[i];
+                anySeries[`${key}Data`] = [];
+            }
+
+            for (let i = 0, iEnd = oldData.length; i < iEnd; ++i) {
+                if (oldData[i] && (oldData[i].destroy)) {
+                    oldData[i].destroy();
+                }
+            }
+
+            if (xAxis) {
+                xAxis.minRange = xAxis.userMinRange;
+            }
+        }
+
         let column: (Readonly<DataTable.Column>|undefined),
             failure = false,
-            indexAsX = false,
-            key: string;
+            indexAsX = false;
 
         for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
             key = parallelArrays[i];
@@ -1614,13 +1642,34 @@ class Series {
      */
     private watchTable(
         table: DataTable,
-        indexAsX?: boolean
+        indexAsX?: boolean,
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const anySeries: AnyRecord = this,
+            oldData = this.points,
             onChange = (e: DataTable.Event): void => {
                 if (e.type === 'afterDeleteColumns') {
-                    this.setTable(table, true);
+                    // deletion affects all points
+                    this.setTable(table, true, animation);
                     return;
+                }
+                if (e.type === 'afterDeleteRows') {
+                    if (
+                        e.rowIndex > 0 &&
+                        e.rowIndex + e.rowCount < this.points.length
+                    ) {
+                        // deletion affects trailing points
+                        this.setTable(table, true, animation);
+                        return;
+                    }
+                    for (
+                        let i = e.rowIndex,
+                            iEnd = i + e.rowCount;
+                        i < iEnd;
+                        ++i
+                    ) {
+                        this.removePoint(i, false);
+                    }
                 }
                 if (indexAsX) {
                     if (e.type === 'afterSetCell') {
@@ -1636,18 +1685,8 @@ class Series {
                         }
                     }
                 }
-                if (e.type === 'afterDeleteRows') {
-                    for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
-                        i < iEnd;
-                        ++i
-                    ) {
-                        this.removePoint(i);
-                    }
-                }
 
-                this.processTable(true);
+                this.processTable(true, animation);
             },
             disconnects: Array<Function> = [
                 table.on('afterDeleteColumns', onChange),
