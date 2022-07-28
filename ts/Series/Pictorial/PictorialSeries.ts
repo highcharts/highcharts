@@ -33,7 +33,6 @@ import PictorialUtilities from './PictorialUtilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 
-
 const {
     seriesTypes: {
         column: ColumnSeries
@@ -47,6 +46,7 @@ const {
 const {
     addEvent,
     defined,
+    extend,
     merge,
     pick,
     objectEach
@@ -475,22 +475,23 @@ function renderStackShadow(
 addEvent(Chart, 'render', function (): void {
     const chart = this;
 
-    chart.axes.forEach(function (axis): void {
-        if (!axis.stacking) {
-            return;
-        }
+    if (chart.axes) {
+        chart.axes.forEach(function (axis): void {
+            if (!axis.stacking) {
+                return;
+            }
 
-        const stacks = axis.stacking.stacks;
-        // Render each stack total
-        objectEach(stacks, function (
-            type: Record<string, Highcharts.StackItem>
-        ): void {
-            objectEach(type, function (stack: Highcharts.StackItem): void {
-                renderStackShadow(stack);
+            const stacks = axis.stacking.stacks;
+            // Render each stack total
+            objectEach(stacks, function (
+                type: Record<string, Highcharts.StackItem>
+            ): void {
+                objectEach(type, function (stack: Highcharts.StackItem): void {
+                    renderStackShadow(stack);
+                });
             });
         });
-    });
-
+    }
 });
 
 addEvent(StackItem, 'afterSetOffset', function (e): void {
