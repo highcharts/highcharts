@@ -25,9 +25,18 @@ const chart = Highcharts.chart('chart', {
     },
     plotOptions: {
         series: {
+            allowMutatingData: true,
+            dataAsColumns: true,
             enableMouseTracking: false
         }
-    }
+    },
+    series: [{
+        type: 'line',
+        data: [
+            [11, 12, 13, 14, 15, 16, 17],
+            [13, 17, 19, 23, 29, 31, 37]
+        ]
+    }]
 });
 
 const data = [];
@@ -201,3 +210,5 @@ document
 document
     .getElementById('benchmark')
     .addEventListener('click', benchmark);
+
+console.log(chart);
