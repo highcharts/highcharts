@@ -1,7 +1,13 @@
 /* eslint-disable no-use-before-define */
 
-import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import DataSeriesComposition from '../../../../code/es-modules/Data/DataSeriesComposition.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
+
+DataSeriesComposition.compose(Highcharts.seriesTypes.line);
+DataSeriesComposition.compose(Highcharts.seriesTypes.column);
+DataSeriesComposition.compose(Highcharts.seriesTypes.pie);
+DataSeriesComposition.compose(Highcharts.seriesTypes.scatter);
 
 const benchmarks = document.getElementById('benchmarks');
 const benchmarkSeries = 'scatter';
@@ -66,7 +72,7 @@ function addSeries(e) {
             ]
         });
 
-    series.setTable(table, true, true);
+    series.datas.setTable(table, true, true);
 
     window.setTimeout(() => {
         table.setRow([101]);
@@ -87,6 +93,10 @@ function addSeries(e) {
 let benchmarking;
 
 function benchmark(e) {
+    if (chart.series[0]) {
+        chart.series[0].remove();
+    }
+
     if (benchmarking) {
         e.target.innerText = 'Benchmark';
         window.clearTimeout(benchmarking);
@@ -142,7 +152,7 @@ function benchmarkSetTable(vs) {
 
     timestamp(true);
 
-    series.setTable(table, benchmarkSize < 1e5);
+    series.datas.setTable(table, benchmarkSize < 1e5);
 
     const result = timestamp();
 

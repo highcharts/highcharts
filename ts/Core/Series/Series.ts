@@ -23,7 +23,6 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
-import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
@@ -324,10 +323,6 @@ class Series {
     public stickyTracking?: boolean;
 
     public symbol?: SymbolKey;
-
-    public table?: DataTable;
-
-    private syncTableOff?: Function;
 
     public tooltipOptions: TooltipOptions = void 0 as any;
 
@@ -1502,209 +1497,6 @@ class Series {
     }
 
     /**
-     * Triggers processing and redrawing
-     * @private
-     */
-    public processTable(
-        redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>)
-    ): void {
-        if (this.options.legendType === 'point') {
-            this.processData();
-            this.generatePoints();
-        }
-
-        if (redraw) {
-            const chart = this.chart;
-
-            this.isDirty = chart.isDirtyBox = true;
-            this.isDirtyData = true;
-
-            chart.redraw(animation);
-        }
-    }
-
-    /**
-     * Experimental integration of the data layer
-     * @private
-     */
-    public setTable(
-        table: DataTable,
-        redraw: boolean = true,
-        animation?: (boolean|Partial<AnimationOptions>)
-    ): void {
-        const anySeries: AnyRecord = this,
-            oldData = this.points,
-            parallelArrays = this.parallelArrays,
-            rowCount = table.getRowCount();
-
-        let key: string;
-
-        if (oldData) {
-            const xAxis = this.xAxis;
-
-            this.colorCounter = 0;
-            this.data = [];
-
-            delete anySeries.points;
-            delete anySeries.processedXData;
-            delete anySeries.processedYData;
-            delete anySeries.xIncrement;
-
-            for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
-                key = parallelArrays[i];
-                anySeries[`${key}Data`] = [];
-            }
-
-            for (let i = 0, iEnd = oldData.length; i < iEnd; ++i) {
-                if (oldData[i] && (oldData[i].destroy)) {
-                    oldData[i].destroy();
-                }
-            }
-
-            if (xAxis) {
-                xAxis.minRange = xAxis.userMinRange;
-            }
-        }
-
-        let column: (Readonly<DataTable.Column>|undefined),
-            failure = false,
-            indexAsX = false;
-
-        for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
-            key = parallelArrays[i];
-            column = table.getColumn(key, true);
-
-            if (!column) {
-                if (key === 'x') {
-                    indexAsX = true;
-                    continue;
-                } else {
-                    failure = true;
-                    break;
-                }
-            }
-
-            anySeries[`${key}Data`] = column;
-        }
-
-        if (failure) {
-            // fallback to index
-            const columnNames = table.getColumnNames(),
-                emptyColumn: DataTable.Column = [];
-
-            emptyColumn.length = rowCount;
-
-            let columnOffset = 0;
-
-            if (columnNames.length === parallelArrays.length - 1) {
-                // table index becomes x
-                columnOffset = 1;
-                indexAsX = true;
-            }
-
-            for (
-                let i = columnOffset,
-                    iEnd = parallelArrays.length;
-                i < iEnd;
-                ++i
-            ) {
-                column = table.getColumn(columnNames[i], true);
-                key = parallelArrays[i];
-
-                anySeries[`${key}Data`] = column || emptyColumn.slice();
-            }
-        }
-
-        if (indexAsX && parallelArrays.indexOf('x') !== -1) {
-            column = [];
-
-            for (let x = 0; x < rowCount; ++x) {
-                column.push(x);
-            }
-
-            anySeries.xData = column;
-        }
-
-        this.table = table;
-
-        if (redraw) {
-            this.watchTable(table, indexAsX);
-        }
-
-        this.processTable(redraw, oldData && animation);
-    }
-
-    /**
-     * Redraws series and chart on table changes.
-     * @private
-     */
-    private watchTable(
-        table: DataTable,
-        indexAsX?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>)
-    ): void {
-        const anySeries: AnyRecord = this,
-            oldData = this.points,
-            onChange = (e: DataTable.Event): void => {
-                if (e.type === 'afterDeleteColumns') {
-                    // deletion affects all points
-                    this.setTable(table, true, animation);
-                    return;
-                }
-                if (e.type === 'afterDeleteRows') {
-                    if (
-                        e.rowIndex > 0 &&
-                        e.rowIndex + e.rowCount < this.points.length
-                    ) {
-                        // deletion affects trailing points
-                        this.setTable(table, true, animation);
-                        return;
-                    }
-                    for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
-                        i < iEnd;
-                        ++i
-                    ) {
-                        this.removePoint(i, false);
-                    }
-                }
-                if (indexAsX) {
-                    if (e.type === 'afterSetCell') {
-                        anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
-                        for (
-                            let i = e.rowIndex,
-                                iEnd = i + e.rowCount;
-                            i < iEnd;
-                            ++i
-                        ) {
-                            anySeries.xData[i] = i;
-                        }
-                    }
-                }
-
-                this.processTable(true, animation);
-            },
-            disconnects: Array<Function> = [
-                table.on('afterDeleteColumns', onChange),
-                table.on('afterDeleteRows', onChange),
-                table.on('afterSetCell', onChange),
-                table.on('afterSetRows', onChange)
-            ],
-            offChange = (): void => {
-                for (let i = 0, iEnd = disconnects.length; i < iEnd; ++i) {
-                    disconnects[i]();
-                }
-                disconnects.length = 0;
-            };
-
-        this.syncTableOff && this.syncTableOff();
-        this.syncTableOff = offChange;
-    }
-
-    /**
      * Internal function to sort series data
      *
      * @private
@@ -2024,14 +1816,13 @@ class Series {
                 options.dataGrouping.groupAll ?
                     cropStart :
                     0
-            ),
-            table = series.table;
-
+            );
         let dataLength,
             cursor,
             point,
             i,
             data = series.data;
+
 
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
@@ -2049,23 +1840,16 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
-                if (!point) {
-                    if (table) {
-                        data[cursor] = point = (new PointClass()).init(
-                            series,
-                            processedYData[cursor],
-                            processedXData[i]
-                        );
-                    } else if (
-                        // #970:
-                        typeof dataOptions[cursor] !== 'undefined'
-                    ) {
-                        data[cursor] = point = (new PointClass()).init(
-                            series,
-                            dataOptions[cursor],
-                            processedXData[i]
-                        );
-                    }
+                // #970:
+                if (
+                    !point &&
+                    typeof (dataOptions as any)[cursor] !== 'undefined'
+                ) {
+                    data[cursor] = point = (new PointClass()).init(
+                        series,
+                        (dataOptions as any)[cursor],
+                        (processedXData as any)[i]
+                    );
                 }
             } else {
                 // splat the y data in case of ohlc data array
