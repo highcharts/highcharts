@@ -5,6 +5,10 @@
  * */
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series';
 
 import DataTable from './DataTable.js';
@@ -12,6 +16,8 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
+    isNumber,
+    merge,
     wrap
 } = U;
 
@@ -24,6 +30,12 @@ const {
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         datas?: DataSeriesAdditions;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        dataAsColumns?: boolean;
     }
 }
 
@@ -52,18 +64,16 @@ function wrapSeriesGeneratePoints(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['generatePoints']
 ): void {
-    const processedXData = this.processedXData,
-        processedYData = this.processedYData,
-        table = this.datas.table;
-
-    if (this.hasGroupedData || !table.getRowCount()) {
+    if (this.hasGroupedData) {
         return proceed.call(this);
     }
 
     const PointClass = this.pointClass,
         cropStart = this.cropStart || 0,
-        data = this.data,
-        points = [];
+        data = this.data || [],
+        points = [],
+        processedXData = this.processedXData,
+        processedYData = this.processedYData;
 
     let cursor: number,
         point: typeof PointClass.prototype;
@@ -82,9 +92,65 @@ function wrapSeriesGeneratePoints(
         points[i] = point;
     }
 
+    this.data = data;
     this.points = points;
 
     fireEvent(this, 'afterGeneratePoints');
+}
+
+/**
+ * @private
+ */
+function wrapSeriesSetData(
+    this: DataSeriesComposition,
+    proceed: DataSeriesComposition['setData'],
+    data: Array<(PointOptions|PointShortOptions)> = [],
+    redraw: boolean = true,
+    animation?: (boolean|Partial<AnimationOptions>)
+): void {
+    const datas = this.datas;
+
+    if (this.hasGroupedData || !this.options.dataAsColumns) {
+        return proceed.call(this, data, redraw, animation);
+    }
+
+    data = this.options.data = this.userOptions.data = (
+        this.chart.options.chart.allowMutatingData ?
+            (data || []) :
+            merge(true, data)
+    );
+
+    const columns: DataTable.ColumnCollection = {},
+        keys = (this.options.keys || this.parallelArrays).slice();
+
+    if (isNumber(data[0]) || keys.length === 1) {
+        // first column is implicit index
+        const xData: Array<number> = columns.x = [];
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+            xData.push(this.autoIncrement());
+        }
+        columns[keys[1] || 'y'] = data as Array<number>;
+    } else {
+        if (keys.indexOf('x') === -1 && keys.length > data.length) {
+            // first column is implicit index
+            const xData: Array<number> = columns.x = [];
+            for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+                xData.push(this.autoIncrement());
+            }
+        }
+        for (
+            let i = 0,
+                iEnd = Math.min(data.length, keys.length);
+            i < iEnd;
+            ++i
+        ) {
+            if (data[i] instanceof Array) {
+                columns[keys[i]] = data[i] as Array<DataTable.CellType>;
+            }
+        }
+    }
+
+    datas.setTable(new DataTable(columns, this.name));
 }
 
 /* *
@@ -101,6 +167,9 @@ class DataSeriesAdditions {
      *
      * */
 
+    /**
+     * @private
+     */
     public static compose(
         SeriesClass: typeof Series
     ): void {
@@ -117,6 +186,7 @@ class DataSeriesAdditions {
             const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             wrap(seriesProto, 'generatePoints', wrapSeriesGeneratePoints);
+            wrap(seriesProto, 'setData', wrapSeriesSetData);
         }
 
     }
@@ -138,7 +208,7 @@ class DataSeriesAdditions {
         }
 
         this.series = series;
-        this.table = new DataTable(columns);
+        this.table = new DataTable();
     }
 
     /* *
@@ -198,7 +268,7 @@ class DataSeriesAdditions {
         const series = this.series,
             anySeries: AnyRecord = series,
             oldData = series.points,
-            parallelArrays = series.parallelArrays,
+            keys = series.parallelArrays,
             rowCount = table.getRowCount();
 
         let key: string;
@@ -214,8 +284,8 @@ class DataSeriesAdditions {
             delete anySeries.processedYData;
             delete anySeries.xIncrement;
 
-            for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
-                key = parallelArrays[i];
+            for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
+                key = keys[i];
                 anySeries[`${key}Data`] = [];
             }
 
@@ -234,8 +304,8 @@ class DataSeriesAdditions {
             failure = false,
             indexAsX = false;
 
-        for (let i = 0, iEnd = parallelArrays.length; i < iEnd; ++i) {
-            key = parallelArrays[i];
+        for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
+            key = keys[i];
             column = table.getColumn(key, true);
 
             if (!column) {
@@ -260,7 +330,7 @@ class DataSeriesAdditions {
 
             let columnOffset = 0;
 
-            if (columnNames.length === parallelArrays.length - 1) {
+            if (columnNames.length === keys.length - 1) {
                 // table index becomes x
                 columnOffset = 1;
                 indexAsX = true;
@@ -268,12 +338,12 @@ class DataSeriesAdditions {
 
             for (
                 let i = columnOffset,
-                    iEnd = parallelArrays.length;
+                    iEnd = keys.length;
                 i < iEnd;
                 ++i
             ) {
                 column = table.getColumn(columnNames[i], true);
-                key = parallelArrays[i];
+                key = keys[i];
 
                 anySeries[`${key}Data`] = column || emptyColumn.slice();
             }
@@ -281,7 +351,7 @@ class DataSeriesAdditions {
 
         this.indexAsX = indexAsX;
 
-        if (indexAsX && parallelArrays.indexOf('x') !== -1) {
+        if (indexAsX && keys.indexOf('x') !== -1) {
             column = [];
 
             for (let x = 0; x < rowCount; ++x) {
@@ -387,3 +457,19 @@ class DataSeriesAdditions {
  * */
 
 export default DataSeriesAdditions;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Indicates data is structured as columns instead of rows.
+ *
+ * @type      {boolean}
+ * @requires  es-modules/Data/DataSeriesComposition.js
+ * @apioption plotOptions.series.dataAsColumns
+ */
+
+(''); // keeps doclets above in JS file
