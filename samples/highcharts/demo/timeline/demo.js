@@ -36,29 +36,23 @@ Highcharts.chart('container', {
     ],
     series: [{
         data: [{
-            name: 'First dogs',
-            label: '1951: First dogs in space',
-            description: '22 July 1951 First dogs in space (Dezik and Tsygan) '
+            name: '2000: Orbiting of an asteroid',
+            description: '14 February 2000, first orbiting of an asteroid (433 Eros).'
         }, {
-            name: 'Sputnik 1',
-            label: '1957: First artificial satellite',
-            description: '4 October 1957 First artificial satellite. First signals from space.'
+            name: '2005: Landing on Titan.',
+            description: '14 January 2005, first soft landing on Titan also first soft landing in the outer Solar System.'
         }, {
-            name: 'First human spaceflight',
-            label: '1961: First human spaceflight (Yuri Gagarin)',
-            description: 'First human spaceflight (Yuri Gagarin), and the first human-crewed orbital flight'
+            name: '2011: Orbit of Mercury',
+            description: '18 March 2011, first spacecraft to orbit Mercury.'
         }, {
-            name: 'First human on the Moon',
-            label: '1969: First human on the Moon',
-            description: 'First human on the Moon, and first space launch from a celestial body other than the Earth. First sample return from the Moon'
+            name: '2015: Food eaten in space',
+            description: '10 August 2015, first food grown in space and eaten (lettuce).'
         }, {
-            name: 'First space station',
-            label: '1971: First space station',
-            description: 'Salyut 1 was the first space station of any kind, launched into low Earth orbit by the Soviet Union on April 19, 1971.'
+            name: '2019: Black hole photograph',
+            description: '10 April 2019, first direct photograph of a black hole and its vicinity.'
         }, {
-            name: 'Apollo–Soyuz Test Project',
-            label: '1975: First multinational manned mission',
-            description: 'The mission included both joint and separate scientific experiments, and provided useful engineering experience for future joint US–Russian space flights, such as the Shuttle–Mir Program and the International Space Station.'
+            name: '2020: Private spaceflight',
+            description: '30 May 2020, first orbital human spaceflight launched by a private company (SpaceX).'
         }]
     }]
 });
