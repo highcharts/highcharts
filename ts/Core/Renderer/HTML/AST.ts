@@ -34,7 +34,8 @@ const {
     isFunction,
     isString,
     objectEach,
-    splat
+    splat,
+    uniqueKey
 } = U;
 const {
     trustedTypes
@@ -51,7 +52,7 @@ const trustedTypesPolicy = (
     trustedTypes &&
     isFunction(trustedTypes.createPolicy) &&
     trustedTypes.createPolicy(
-        'highcharts', {
+        uniqueKey(), {
             createHTML: (s: string): string => s
         }
     )
