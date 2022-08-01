@@ -26,7 +26,6 @@ import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 const {
     merge,
-    extend,
     addEvent
 } = U;
 
@@ -71,7 +70,16 @@ class FlowMapSeries extends SankeySeries { // Sankey?
          */
         dataLabels: {
             enabled: false
-        }
+        },
+
+        /**
+         * DESCRIPTION
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
+         *
+         * @private
+         */
+        keys: ['from', 'to', 'curve', 'weight']
 
     } as FlowMapSeriesOptions); // Sankey?
 
@@ -125,7 +133,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             fromPoint = chart.get(point.options.from || ''),
             toPoint = chart.get(point.options.to || ''),
             linkHeight = 10,
-            options = this.options,
             nodeW = this.nodeWidth;
         const curve = point.options.curve || 0,
             weight = point.options.weight || 1,
