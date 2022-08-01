@@ -147,6 +147,8 @@ class Pointer {
 
     public lastValidTouch: object = {};
 
+    public markings?: any;
+
     public mouseDownX?: number;
 
     public mouseDownY?: number;
@@ -290,6 +292,9 @@ class Pointer {
             chartY = e.chartY,
             clickedInside,
             size,
+            sizeLimit = 20,
+            width,
+            height,
             selectionMarker = this.selectionMarker;
 
         // If the device supports both touch and mouse (like IE11), and we are
@@ -319,7 +324,7 @@ class Pointer {
             Math.pow(mouseDownY - chartY, 2)
         );
 
-        if (this.hasDragged > 10) {
+        if (this.hasDragged > 21) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
                 mouseDownY - plotTop,
@@ -365,20 +370,46 @@ class Pointer {
             // adjust the width of the selection marker
             if (selectionMarker && zoomHor) {
                 size = chartX - mouseDownX;
-                selectionMarker.attr({
-                    width: Math.abs(size),
-                    x: (size > 0 ? 0 : size) + mouseDownX
-                });
+                width = Math.abs(size);
+                if (width < sizeLimit) {
+                    selectionMarker.attr({
+                        width: plotWidth,
+                        x: plotLeft
+                    });
+
+                    sizeLimit = -1;
+                } else {
+                    selectionMarker.attr({
+                      width: width,
+                      x: (size > 0 ? 0 : size) + mouseDownX
+                    });
+                  }
             }
             // adjust the height of the selection marker
             if (selectionMarker && zoomVert) {
                 size = chartY - mouseDownY;
-                selectionMarker.attr({
-                    height: Math.abs(size),
-                    y: (size > 0 ? 0 : size) + mouseDownY
+                height = Math.abs(size);
+                if (height < sizeLimit) {
+                    selectionMarker.attr({
+                        height: plotHeight,
+                        y: plotTop
+                    });
+                    
+                } else {
+                    selectionMarker.attr({
+                      height: height,
+                      y: (size > 0 ? 0 : size) + mouseDownY
+                    });
+                  }
+            }
+            // selection marker is done
+            if (chartOptions.zooming.markings) {
+                this.createMarkings(selectionMarker === undefined || selectionMarker.getBBox(),{
+                    stroke: 'tomato',
+                    strokeWidth: 2,
+                    enabled: true
                 });
             }
-
             // panning
             if (clickedInside &&
                 !selectionMarker &&
@@ -499,6 +530,12 @@ class Pointer {
 
             }
 
+            // Remove markings
+            if (this.selectionMarker) {
+                this.markings.destroy();
+                this.markings = undefined;
+            }
+
             if (isNumber(chart.index)) {
                 this.selectionMarker = this.selectionMarker.destroy();
             }
@@ -517,6 +554,48 @@ class Pointer {
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
         }
+    }
+
+    // /**
+    //  * Markers appearing of the zoom box corners.
+    //  * @private
+    //  * @function Highcharts.Pointer#createMarkings
+    //  */
+    public createMarkings(box: any, options: any): any {
+        let x1 = box.x,
+        y1 = box.y,
+        x2 = x1 + box.width,
+        y2 = y1 + box.height,
+        len = pick(options.switchLength, 10);
+
+        if (!this.markings) {
+            this.markings = this.chart.renderer.path().add();
+        }
+    
+        this.markings.attr({
+            d: [
+                'M', x1, y1,
+                'L', x1 + len, y1,
+                'M', x2 - len, y1,
+                'L', x2, y1,
+                'M', x1, y1,
+                'L', x1, y1 + len,
+                'M', x2, y1,
+                'L', x2, y1 + len,
+                'M', x1, y2,
+                'L', x1 + len, y2,
+                'M', x1, y2,
+                'L', x1, y2 - len,
+                'M', x2, y2,
+                'L', x2 - len, y2,
+                'M', x2, y2,
+                'L', x2, y2 - len,
+              ],
+              'stroke-width': options.strokeWidth,
+              stroke: options.stroke || 'silver',
+              dashstyle: 'solid',
+              zIndex: 8
+        });
     }
 
     /**
