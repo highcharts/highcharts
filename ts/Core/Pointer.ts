@@ -380,10 +380,10 @@ class Pointer {
                     sizeLimit = -1;
                 } else {
                     selectionMarker.attr({
-                      width: width,
-                      x: (size > 0 ? 0 : size) + mouseDownX
+                        width: width,
+                        x: (size > 0 ? 0 : size) + mouseDownX
                     });
-                  }
+                }
             }
             // adjust the height of the selection marker
             if (selectionMarker && zoomVert) {
@@ -394,21 +394,22 @@ class Pointer {
                         height: plotHeight,
                         y: plotTop
                     });
-                    
                 } else {
                     selectionMarker.attr({
-                      height: height,
-                      y: (size > 0 ? 0 : size) + mouseDownY
+                        height: height,
+                        y: (size > 0 ? 0 : size) + mouseDownY
                     });
-                  }
+                }
             }
             // selection marker is done
             if (chartOptions.zooming.markings) {
-                this.createMarkings(selectionMarker === undefined || selectionMarker.getBBox(),{
-                    stroke: 'tomato',
-                    strokeWidth: 2,
-                    enabled: true
-                });
+                this.createMarkings(
+                    selectionMarker === undefined || selectionMarker.getBBox(),
+                    {
+                        stroke: 'tomato',
+                        strokeWidth: 2,
+                        enabled: true
+                    });
             }
             // panning
             if (clickedInside &&
@@ -533,7 +534,6 @@ class Pointer {
             // Remove markings
             if (this.selectionMarker) {
                 this.markings.destroy();
-                this.markings = undefined;
             }
 
             if (isNumber(chart.index)) {
@@ -556,22 +556,21 @@ class Pointer {
         }
     }
 
-    // /**
-    //  * Markers appearing of the zoom box corners.
-    //  * @private
-    //  * @function Highcharts.Pointer#createMarkings
-    //  */
+    /**
+     * Markers appearing of the zoom box corners.
+     * @private
+     * @function Highcharts.Pointer#createMarkings
+     */
     public createMarkings(box: any, options: any): any {
         let x1 = box.x,
-        y1 = box.y,
-        x2 = x1 + box.width,
-        y2 = y1 + box.height,
-        len = pick(options.switchLength, 10);
+            y1 = box.y,
+            x2 = x1 + box.width,
+            y2 = y1 + box.height,
+            len = pick(options.switchLength, 10);
 
         if (!this.markings) {
             this.markings = this.chart.renderer.path().add();
         }
-    
         this.markings.attr({
             d: [
                 'M', x1, y1,
@@ -590,11 +589,11 @@ class Pointer {
                 'L', x2 - len, y2,
                 'M', x2, y2,
                 'L', x2, y2 - len,
-              ],
-              'stroke-width': options.strokeWidth,
-              stroke: options.stroke || 'silver',
-              dashstyle: 'solid',
-              zIndex: 8
+            ],
+            'stroke-width': options.strokeWidth,
+            stroke: options.stroke || 'silver',
+            dashstyle: 'solid',
+            zIndex: 8
         });
     }
 
