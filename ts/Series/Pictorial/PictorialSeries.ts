@@ -46,7 +46,6 @@ const {
 const {
     addEvent,
     defined,
-    extend,
     merge,
     pick,
     objectEach
@@ -364,15 +363,14 @@ function renderStackShadow(
         ) {
             if (!stack.shadowGroup) {
                 stack.shadowGroup = chart.renderer.g('shadowGroup')
-                    .attr({
-                        translateX: chart.inverted ?
-                            stack.axis.pos : xAxis.pos,
-                        translateY: chart.inverted ?
-                            xAxis.pos : stack.axis.pos
-                    })
                     .add();
             }
-
+            stack.shadowGroup.attr({
+                translateX: chart.inverted ?
+                    stack.axis.pos : xAxis.pos,
+                translateY: chart.inverted ?
+                    xAxis.pos : stack.axis.pos
+            });
             stack.shadow = chart.renderer.rect(x, y, width, height)
                 .attr({
                     fill: {
@@ -472,9 +470,7 @@ function renderStackShadow(
     }
 }
 
-addEvent(Chart, 'render', function (): void {
-    const chart = this;
-
+function forEachStack(chart: Chart, callback: Function): void {
     if (chart.axes) {
         chart.axes.forEach(function (axis): void {
             if (!axis.stacking) {
@@ -487,15 +483,18 @@ addEvent(Chart, 'render', function (): void {
                 type: Record<string, Highcharts.StackItem>
             ): void {
                 objectEach(type, function (stack: Highcharts.StackItem): void {
-                    renderStackShadow(stack);
+                    callback(stack);
                 });
             });
         });
     }
+}
+
+addEvent(Chart, 'render', function (): void {
+    forEachStack(this, renderStackShadow);
 });
 
 addEvent(StackItem, 'afterSetOffset', function (e): void {
-
     if (this.shadow) {
         this.shadow.attr({
             translateX: (e as any).xOffset
@@ -504,6 +503,28 @@ addEvent(StackItem, 'afterSetOffset', function (e): void {
             width: (e as any).xWidth
         });
     }
+});
+
+function destroyAllStackShadows(chart: Chart): void {
+    forEachStack(chart, function (stack: Highcharts.StackItem): void {
+        if (stack.shadow && stack.shadowGroup) {
+            stack.shadow.destroy();
+            stack.shadowGroup.destroy();
+
+            delete stack.shadow;
+            delete stack.shadowGroup;
+        }
+    });
+}
+
+// This is a workaround due to no implementation of the animation drilldown.
+
+addEvent(Chart, 'afterDrilldown', function (e): void {
+    destroyAllStackShadows(this);
+});
+
+addEvent(Chart, 'afterDrillUp', function (e): void {
+    destroyAllStackShadows(this);
 });
 
 /* *
