@@ -114,29 +114,38 @@ class TemperatureMapSeries extends MapBubbleSeries {
      *
      */
 
+    /**
+     * @private
+     */
     public isPointInside(): true {
+        // Do not hide cut bubbles outside the plot area
         return true;
     }
 
+    /**
+     * @private
+     */
     public getPxExtremes(): {
         minPxSize: number,
         maxPxSize: number
     } {
         const ret = super.getPxExtremes.apply(this),
             temperatureColors = this.options.temperatureColors,
-            colorStop = this.colorStop;
+            sizeFactor = this.sizeFactor || (1 / temperatureColors.length);
 
-        let sizeFactor: number = colorStop || (1 / temperatureColors.length);
-
-        // Recalculate minPxSize only when translating, but not when
-        // calculating radii
-        if (this.adjustMinSize) {
+        // Recalculate minPxSize to draw smaller bubbles
+        if (this.adjustMinSize) { // only when necessary
             ret.minPxSize = ret.minPxSize * sizeFactor;
         }
 
         return ret;
     }
 
+    /**
+     * Calculate radius of bubbles based on index of the color in the
+     * `series.temperatureColors` array.
+     * @private
+     */
     public getRadius(
         zMin: number,
         zMax: number,
@@ -146,27 +155,24 @@ class TemperatureMapSeries extends MapBubbleSeries {
         yValue?: number | null
     ): number | null {
         const temperatureColors = this.options.temperatureColors,
-            colorIndex = this.temperatureColorIndex,
-            colorStop = this.colorStop;
+            colorIndex = this.temperatureColorIndex || 0;
 
         let ret = super.getRadius.apply(
             this,
             [zMin, zMax, minSize, maxSize, value, yValue]
         );
 
-        if (isNumber(ret)) {
-            if (isNumber(colorStop)) {
-                ret = ret * colorStop;
-            } else if (temperatureColors && isNumber(colorIndex)) {
-                ret = correctFloat(ret * (
-                    1 - colorIndex / temperatureColors.length
-                ));
-            }
-
-            return Math.ceil(ret * 2) / 2; // TODO: add comment
+        if (!isNumber(ret)) {
+            return ret;
         }
 
-        return ret;
+        ret *= this.sizeFactor ?
+            this.sizeFactor :
+            1 - colorIndex / temperatureColors.length;
+
+        // Ceiling like in the bubble series - solves decimal issues and rounds
+        // to 1px
+        return Math.ceil(correctFloat(ret) * 2) / 2;
     }
 
     /**
@@ -186,6 +192,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                         graphic &&
                         graphic.width // URL symbols don't have width
                     ) {
+                        // Save the real bubble size
                         const size = {
                             width: graphic.width,
                             height: graphic.height,
@@ -193,7 +200,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                             y: (point.plotY || 0) - graphic.height / 2
                         };
 
-                        // Start values
+                        // Make the bubble small, prepare for size animation
                         if (!this.hasRendered) {
                             graphic.attr({
                                 x: point.plotX,
@@ -203,7 +210,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                             });
                         }
 
-                        // Run animation
+                        // Run animation from 1x1 to a real size
                         graphic.animate(size, this.options.animation);
                     }
                 });
@@ -211,107 +218,97 @@ class TemperatureMapSeries extends MapBubbleSeries {
         }
     }
 
+    /**
+     * Draw all the bubbles
+     * @private
+     */
     public drawPoints(): void {
         const series = this,
             options = series.options,
-            temperatureColors =
-                series.options.temperatureColors.slice().reverse(),
-            colorsLength = temperatureColors.length;
+            temperatureColors = series.options.temperatureColors
+                .slice().reverse(); // loop form backward (easier calculations)
 
         temperatureColors.forEach((
             color: ColorType|[number, ColorType],
-            ii: number
+            colorIndex: number
         ): void => {
-            if (isArray(color)) {
-                series.colorStop = color[0];
+            // Save size factor for further calculations
+            if (isArray(color)) { // if stops defined
+                series.sizeFactor = color[0];
+
                 color = color[1];
+            } else { // If size decreases evenly
+                series.temperatureColorIndex = colorIndex;
             }
 
-            const fillColor = {
-                radialGradient: {
-                    cx: 0.5,
-                    cy: 0.5,
-                    r: 0.5
-                },
-                stops: [
-                    [ii === colorsLength - 1 ? 0 : 0.5, color],
-                    [1, (new Color(color)).setOpacity(0).get('rgba')]
-                ]
-            };
+            const colorsLength = temperatureColors.length,
+                fillColor = {
+                    radialGradient: {
+                        cx: 0.5,
+                        cy: 0.5,
+                        r: 0.5
+                    },
+                    stops: [
+                        [colorIndex === colorsLength - 1 ? 0 : 0.5, color],
+                        [1, (new Color(color)).setOpacity(0).get('rgba')]
+                    ]
+                };
 
-            // Options from point level not supported - API says it should,
-            // but visually is it useful at all?
             options.marker = merge(options.marker, { fillColor });
-
-            series.temperatureColorIndex = ii;
 
             series.getRadii(); // recalculate radii
 
-            series.adjustMinSize = true;
+            series.adjustMinSize = true; // recalculate minPxSize only here
             series.translateBubble(); // use radii
-            series.adjustMinSize = false;
+            series.adjustMinSize = false; // reset
 
-            const points = series.points,
-                chart = series.chart,
-                seriesMarkerOptions = options.marker,
-                markerGroup = (
-                    (series as any)[series.specialGroup as any] ||
-                    series.markerGroup
-                );
+            if (options.marker.enabled !== false || series._hasPointMarkers) {
+                const points = series.points,
+                    chart = series.chart,
+                    markerGroup = (
+                        (series as any)[series.specialGroup as any] ||
+                        series.markerGroup
+                    );
 
-            let i,
-                point,
-                graphic,
-                verb,
-                pointMarkerOptions,
-                hasPointMarker,
-                markerAttribs;
-
-            series.temperatureColorIndex = null;
-
-            if (
-                (seriesMarkerOptions as any).enabled !== false ||
-                series._hasPointMarkers
-            ) {
-                for (i = 0; i < points.length; i++) {
-                    point = points[i];
+                points.forEach((point): void => {
                     point.graphics = point.graphics || [];
-                    graphic = point.graphics[ii];
-                    verb = graphic ? 'animate' : 'attr';
-                    pointMarkerOptions = point.marker || {};
-                    hasPointMarker = !!point.marker;
 
-                    const shouldDrawMarker = (
-                        (
-                            (seriesMarkerOptions as any).enabled &&
-                            typeof pointMarkerOptions.enabled ===
-                                'undefined'
-                        ) || pointMarkerOptions.enabled
-                    ) &&
-                    !point.isNull &&
-                    point.visible !== false &&
-                    // Above zThreshold
-                    (point.options as any).z >= (this.options.zMin || 0);
+                    let graphic = point.graphics[colorIndex];
+
+                    const pointMarkerOptions = point.marker || {},
+                        hasPointMarker = !!point.marker,
+                        verb = graphic ? 'animate' : 'attr',
+                        shouldDrawMarker = (
+                            (
+                                (options.marker || {}).enabled &&
+                                typeof pointMarkerOptions.enabled ===
+                                    'undefined'
+                            ) || pointMarkerOptions.enabled
+                        ) &&
+                        !point.isNull &&
+                        point.visible !== false &&
+                        // Above zThreshold
+                        (point.options as any).z >= (this.options.zMin || 0);
 
                     if (shouldDrawMarker) {
-                        // Shortcuts
                         const symbol = pick(
-                            pointMarkerOptions.symbol,
-                            series.symbol,
-                            'rect' as SymbolKey
-                        );
+                                pointMarkerOptions.symbol,
+                                series.symbol,
+                                'rect' as SymbolKey
+                            ),
+                            markerAttribs = series.markerAttribs(
+                                point,
+                                point.selected ? 'select' : void 0
+                            );
 
-                        markerAttribs = series.markerAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        );
-
-                        if (graphic) { // update
+                        if (graphic) { // if exists
+                            // Update
                             graphic.animate(markerAttribs);
-                        } else if (
+                        } else if ( // if doesn't exist yet
                             (markerAttribs.width || 0) > 0 ||
                             point.hasImage
                         ) {
+                            // Create
                             graphic = chart.renderer
                                 .symbol(
                                     symbol,
@@ -321,7 +318,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                                     markerAttribs.height,
                                     hasPointMarker ?
                                         pointMarkerOptions :
-                                        seriesMarkerOptions
+                                        options.marker
                                 )
                                 .add(markerGroup);
 
@@ -334,14 +331,14 @@ class TemperatureMapSeries extends MapBubbleSeries {
                             if (!chart.styledMode) {
                                 const pointAttribs = series.pointAttribs(
                                         point,
-                                        (point.selected && 'select') as any
+                                        point.selected ? 'select' : void 0
                                     ),
                                     attribs = merge(
                                         pointAttribs,
                                         verb === 'animate' ?
                                             markerAttribs :
                                             {},
-                                        { zIndex: ii }
+                                        { zIndex: colorIndex }
                                     );
 
                                 graphic[verb](attribs);
@@ -353,9 +350,8 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
                             graphic.addClass(point.getClassName(), true);
                         }
-
                     }
-                }
+                });
             }
         });
 
@@ -379,8 +375,8 @@ class TemperatureMapSeries extends MapBubbleSeries {
 
 interface TemperatureMapSeries {
     adjustMinSize: boolean;
-    colorStop: number;
-    temperatureColorIndex: null|number;
+    sizeFactor?: number;
+    temperatureColorIndex?: number;
     temperatureColors: [ColorType|[number, ColorType]];
 }
 
