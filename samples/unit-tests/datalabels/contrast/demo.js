@@ -81,8 +81,7 @@ QUnit.test(
                 }
             }]
         }, false);
-        chart.yAxis[0].setExtremes(null, 1000, false, false);
-        chart.redraw();
+        chart.yAxis[0].setExtremes(null, 1000);
 
         const points = chart.series[0].points;
 
