@@ -21,13 +21,19 @@ export interface BoostTargetAdditions {
     targetCtx?: CanvasRenderingContext2D;
     targetFo?: SVGElement;
     wgl?: WGLRenderer;
-    clear?(boostTarget: BoostTargetObject): void;
+    clear?(): void;
     copy?(): void;
     resize?(): void;
 }
 
 export interface BoostTargetObject {
     boost?: BoostTargetAdditions;
+    /**
+     * Needed to proper refresh boosted canvas during series replacements.
+     * @deprecated
+     * @todo Fix dependency to use boost.target.
+     */
+    renderTarget?: (HTMLElement|SVGElement);
 }
 
 /* *
