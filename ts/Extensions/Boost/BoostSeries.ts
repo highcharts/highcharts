@@ -418,7 +418,7 @@ function createAndAttachRenderer(
         // Fall back to image tag if foreignObject isn't supported,
         // or if we're exporting.
         if (chart.renderer.forExport || !foSupported) {
-            boost.target = chart.renderer.image(
+            target.renderTarget = boost.target = chart.renderer.image(
                 '',
                 0,
                 0,
@@ -448,7 +448,8 @@ function createAndAttachRenderer(
                 .createElement('foreignObject')
                 .add(targetGroup);
 
-            boost.target = doc.createElement('canvas') as any;
+            target.renderTarget = boost.target =
+                doc.createElement('canvas') as any;
             boost.targetCtx = boost.target.getContext('2d');
 
             boost.targetFo.element.appendChild(boost.target as any);
@@ -510,7 +511,7 @@ function createAndAttachRenderer(
     }
 
     boost.resize();
-    boost.clear(target);
+    boost.clear();
 
     if (!boost.wgl) {
         boost.wgl = new WGLRenderer((wgl): void => {
@@ -717,7 +718,7 @@ function exitBoost(
 
         // Clear previous run
         if (boost.clear) {
-            boost.clear(series);
+            boost.clear();
         }
     }
 }
@@ -795,7 +796,7 @@ function onSeriesHide(
             boost.wgl.clear();
         }
         if (boost.clear) {
-            boost.clear(this);
+            boost.clear();
         }
     }
 }
@@ -962,7 +963,7 @@ function seriesRenderCanvas(this: Series): void {
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
         if (this.boost && this.boost.target) {
-            this.boost.target = this.boost.target.destroy();
+            this.renderTarget = this.boost.target = this.boost.target.destroy();
         }
     }
 
@@ -1168,8 +1169,7 @@ function wrapPointHaloPath(
         point.plotY = series.xAxis.len - plotX;
     }
 
-    const halo: SVGPath =
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    const halo: SVGPath = proceed.apply(this, [].slice.call(arguments, 1));
 
     if (series.boosted && inverted) {
         point.plotX = plotX;
@@ -1264,7 +1264,6 @@ function wrapSeriesFunctions(
     if (method === 'translate') {
         [
             'column',
-            'bar',
             'arearange',
             'columnrange',
             'heatmap',
@@ -1292,7 +1291,7 @@ function wrapSeriesGetExtremes(
     ) {
         return {};
     }
-    return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    return proceed.apply(this, [].slice.call(arguments, 1));
 }
 
 /**
@@ -1315,7 +1314,7 @@ function wrapSeriesMarkerAttribs(
     }
 
     const attribs: SVGAttributes =
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        proceed.apply(this, [].slice.call(arguments, 1));
 
     if (series.boosted && inverted) {
         point.plotX = plotX;
@@ -1376,7 +1375,7 @@ function wrapSeriesProcessData(
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
-            proceed.apply(series, Array.prototype.slice.call(arguments, 1));
+            proceed.apply(series, [].slice.call(arguments, 1));
             dataToMeasure = series.processedXData;
         }
 
@@ -1405,7 +1404,7 @@ function wrapSeriesProcessData(
         }
     // The series type is not boostable
     } else {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        proceed.apply(this, [].slice.call(arguments, 1));
     }
 }
 
