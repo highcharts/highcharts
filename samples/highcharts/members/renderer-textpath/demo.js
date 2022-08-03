@@ -28,35 +28,34 @@ var chart = Highcharts.chart('container', {
 
 chart.renderer
     .text('text(): The quick brown fox jumps over the lazy dog', 0, 0)
-    .add(chart.series[0].group)
     .setTextPath(chart.series[0].graph, {
         enabled: true,
         attributes: {
             dy: 15
         }
-    });
+    })
+    .add(chart.series[0].group);
 
 chart.renderer
     .label('label(): The quick brown fox jumps over the lazy dog', 10, 20)
-    .add(chart.series[0].group)
     .setTextPath(chart.series[0].graph, {
         enabled: true
-    });
+    })
+    .add(chart.series[0].group);
 
 chart.renderer
     .label('label(): The quick brown fox jumps over the lazy dog')
-    .add(chart.series[1].group)
     .setTextPath(chart.series[1].graph, {
         enabled: true,
         attributes: {
             textAnchor: 'left',
             startOffset: 0
         }
-    });
+    })
+    .add(chart.series[1].group);
 
 chart.renderer
     .text('text(): The quick brown fox jumps over the lazy dog')
-    .add(chart.series[1].group)
     .setTextPath(chart.series[1].graph, {
         enabled: true,
         attributes: {
@@ -64,4 +63,5 @@ chart.renderer
             startOffset: 0,
             dy: 15
         }
-    });
+    })
+    .add(chart.series[1].group);

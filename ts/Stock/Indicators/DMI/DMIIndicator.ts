@@ -348,14 +348,13 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator extends MultipleLinesComposition.Composition {
+interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof DMIPoint>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
     areaLinesNames: [],

@@ -22,16 +22,12 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
-import type {
-    LegendAccessibilityOptions
-} from '../Options/A11yOptions';
+import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -48,9 +44,7 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import CU from '../Utils/ChartUtilities.js';
-const {
-    getChartTitle
-} = CU;
+const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
@@ -92,8 +86,6 @@ declare module '../../Core/Series/SeriesLike' {
  * */
 
 
-/* eslint-disable valid-jsdoc */
-
 /**
  * @private
  */
@@ -114,11 +106,13 @@ function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
         legendA11yOptions: LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
-        );
+        ),
+        unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
+            (c): boolean => !c.dataClasses || !c.dataClasses.length);
 
     return !!(
         items && items.length &&
-        !(chart.colorAxis && chart.colorAxis.length) &&
+        !unsupportedColorAxis &&
         legendA11yOptions.enabled !== false
     );
 }
@@ -174,8 +168,6 @@ class LegendComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -243,7 +235,7 @@ class LegendComponent extends AccessibilityComponent {
         const curPage = legend.currentPage || 1;
         const clipHeight = legend.clipHeight || 0;
 
-        items.forEach(function (item: Legend.Item): void {
+        items.forEach((item): void => {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
                 const proxyEl = item.a11yProxyElement.element;
@@ -412,7 +404,7 @@ class LegendComponent extends AccessibilityComponent {
                 this.chart.legend.allItems || []
             );
 
-        items.forEach(function (item: Legend.Item): void {
+        items.forEach((item): void => {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
             }
@@ -513,7 +505,8 @@ class LegendComponent extends AccessibilityComponent {
             terminate: function (): void {
                 component.highlightedLegendItemIx = -1;
                 chart.legend.allItems.forEach(
-                    (item): void => setLegendItemHoverState(false, item));
+                    (item): void => setLegendItemHoverState(false, item)
+                );
             }
         });
     }
@@ -578,10 +571,12 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public shouldHaveLegendNavigation(): (boolean) {
+        if (!shouldDoLegendA11y(this.chart)) {
+            return false;
+        }
+
         const chart = this.chart,
             legendOptions = chart.options.legend || {},
-            hasLegend = chart.legend && chart.legend.allItems,
-            hasColorAxis = chart.colorAxis && chart.colorAxis.length,
             legendA11yOptions: DeepPartial<(
                 LegendAccessibilityOptions
             )> = (
@@ -589,10 +584,7 @@ class LegendComponent extends AccessibilityComponent {
             );
 
         return !!(
-            hasLegend &&
             chart.legend.display &&
-            !hasColorAxis &&
-            legendA11yOptions.enabled &&
             legendA11yOptions.keyboardNavigation &&
             legendA11yOptions.keyboardNavigation.enabled
         );

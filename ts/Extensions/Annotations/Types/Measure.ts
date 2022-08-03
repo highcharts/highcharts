@@ -8,12 +8,15 @@
 
 import type {
     AnnotationDraggableValue,
-    AnnotationsLabelsOptions,
     AnnotationsOptions,
-    AnnotationsShapeOptions,
     AnnotationsTypeOptions
 } from '../AnnotationsOptions';
 import type Axis from '../../../Core/Axis/Axis';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -477,7 +480,7 @@ class Measure extends Annotation {
 
         controlPoint = new ControlPoint(
             this.chart,
-            this,
+            this as any,
             this.options.controlPointOptions,
             0
         );
@@ -488,7 +491,7 @@ class Measure extends Annotation {
         if (selectType !== 'xy') {
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 this.options.controlPointOptions,
                 1
             );
@@ -521,7 +524,7 @@ class Measure extends Annotation {
             );
 
         } else {
-            this.initLabel(extend<Partial<AnnotationsLabelsOptions>>({
+            this.initLabel(extend<Partial<ControllableLabelOptions>>({
                 shape: 'rect',
                 backgroundColor: 'none',
                 color: 'black',
@@ -573,7 +576,7 @@ class Measure extends Annotation {
         }
 
         this.initShape(
-            extend<Partial<AnnotationsShapeOptions>>(
+            extend<Partial<ControllableShapeOptions>>(
                 {
                     type: 'path',
                     points: this.shapePointsOptions()
@@ -657,7 +660,7 @@ class Measure extends Annotation {
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
             this.initShape(
-                extend<Partial<AnnotationsShapeOptions>>(
+                extend<Partial<ControllableShapeOptions>>(
                     { d: pathH },
                     crosshairOptionsX
                 ),
@@ -665,7 +668,7 @@ class Measure extends Annotation {
             );
 
             this.initShape(
-                extend<Partial<AnnotationsShapeOptions>>(
+                extend<Partial<ControllableShapeOptions>>(
                     { d: pathV },
                     crosshairOptionsY
                 ),
@@ -796,7 +799,7 @@ class Measure extends Annotation {
 
     public translate(dx: number, dy: number): void {
         this.shapes.forEach(function (
-            item: Highcharts.AnnotationShapeType
+            item
         ): void {
             item.translate(dx, dy);
         });
@@ -1013,7 +1016,7 @@ Measure.prototype.defaultOptions = merge(
         },
         controlPointOptions: {
             positioner: function (
-                this: Highcharts.AnnotationControllable,
+                this: Controllable,
                 target: Measure
             ): PositionObject {
                 let cpIndex = this.index,
@@ -1111,7 +1114,7 @@ namespace Measure {
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationsTypeOptions {
-        background: AnnotationsShapeOptions;
+        background: ControllableShapeOptions;
         crosshairX: MeasureTypeCrosshairOptions;
         crosshairY: MeasureTypeCrosshairOptions;
         label: MeasureTypeLabelOptions;

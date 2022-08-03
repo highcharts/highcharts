@@ -28,7 +28,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
-        category?: string;
+        category?: (number|string);
         clientX?: number;
         dist?: number;
         distX?: number;

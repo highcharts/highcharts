@@ -163,7 +163,9 @@ class StockChart extends Chart {
                         enabled: true,
                         type: 'x'
                     },
-                    pinchType: 'x'
+                    zooming: {
+                        pinchType: 'x'
+                    }
                 },
                 navigator: {
                     enabled: navigatorEnabled

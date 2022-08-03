@@ -72,6 +72,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -90,6 +91,11 @@ declare module '../CSSObject' {
         stroke?: ColorString;
         strokeWidth?: (number|string);
     }
+}
+
+interface TextPathObject {
+    path: SVGElement;
+    undo: Function;
 }
 
 /* *
@@ -191,7 +197,7 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     // @todo public textWidth?: number;
-    public textPathWrapper?: SVGElement;
+    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
@@ -280,7 +286,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // Mark as inverted
-        this.parentInverted = parent && (parent as any).inverted;
+        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -639,13 +645,18 @@ class SVGElement implements SVGElementLike {
 
             // For each of the tspans and text nodes, create a copy in the
             // outline.
+            const parentElem = elem.querySelector('textPath') || elem;
+            let totalHeight = 0;
             [].forEach.call(
-                elem.childNodes,
+                parentElem.childNodes,
                 (childNode: ChildNode): void => {
                     const clone = childNode.cloneNode(true);
                     if ((clone as any).removeAttribute) {
                         ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
                             (prop): void => (clone as any).removeAttribute(prop)
+                        );
+                        totalHeight += Number(
+                            (clone as any).getAttribute('dy')
                         );
                     }
                     outline.appendChild(clone);
@@ -657,17 +668,15 @@ class SVGElement implements SVGElementLike {
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
 
-            // Copy x and y if not null
-            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
-                const value = elem.getAttribute(key);
-                if (value) {
-                    br.setAttribute(key, value);
-                }
+            // Reset the position for the following text
+            attr(br, {
+                x: Number(elem.getAttribute('x')),
+                dy: -totalHeight
             });
 
             // Insert the outline
             outline.appendChild(br);
-            elem.insertBefore(outline, elem.firstChild);
+            parentElem.insertBefore(outline, parentElem.firstChild);
 
         }
     }
@@ -1301,49 +1310,6 @@ class SVGElement implements SVGElementLike {
 
     /**
      * @private
-     */
-    public destroyTextPath(
-        elem: SVGDOMElement,
-        path: SVGElement
-    ): void {
-        const textElement = elem.getElementsByTagName('text')[0];
-        let childNodes: NodeListOf<ChildNode>;
-
-        if (textElement) {
-            // Remove textPath attributes
-            textElement.removeAttribute('dx');
-            textElement.removeAttribute('dy');
-
-            // Remove ID's:
-            path.element.setAttribute('id', '');
-            // Check if textElement includes textPath,
-            if (
-                this.textPathWrapper &&
-                textElement.getElementsByTagName('textPath').length
-            ) {
-                // Move nodes to <text>
-                childNodes = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s and text nodes to the <textPath> node
-                while (childNodes.length) {
-                    textElement.appendChild(childNodes[0]);
-                }
-                // Remove <textPath> from the DOM
-                textElement.removeChild(this.textPathWrapper.element);
-            }
-        } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
-            // Remove textPath attributes from elem
-            // to get correct text-outline position
-            elem.removeAttribute('dx');
-            elem.removeAttribute('dy');
-        }
-        if (this.textPathWrapper) {
-            // Set textPathWrapper to undefined and destroy it
-            this.textPathWrapper = this.textPathWrapper.destroy();
-        }
-    }
-
-    /**
-     * @private
      * @function Highcharts.SVGElement#dSettter
      * @param {number|string|Highcharts.SVGPathArray} value
      * @param {string} key
@@ -1918,30 +1884,29 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * Set a text path for a `text` or `label` element, allowing the text to
+     * flow along a path.
+     *
+     * In order to unset the path for an existing element, call `setTextPath`
+     * with `{ enabled: false }` as the second argument.
+     *
+     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+     *
      * @function Highcharts.SVGElement#setTextPath
-     * @param {Highcharts.SVGElement} path
-     * Path to follow.
+     *
+     * @param {Highcharts.SVGElement|undefined} path
+     *        Path to follow. If undefined, it allows changing options for the
+     *        existing path.
+     *
      * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     * Options.
-     * @return {Highcharts.SVGElement}
-     * Returns the SVGElement for chaining.
+     *        Options.
+     *
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public setTextPath(
-        path: SVGElement,
+        path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
-        const elem = this.element,
-            textNode = this.text ? this.text.element : elem,
-            attribsMap = {
-                textAnchor: 'text-anchor'
-            };
-
-        let adder = false,
-            textPathElement: DOMElementType,
-            textPathId,
-            textPathWrapper: SVGElement = this.textPathWrapper as any,
-            firstTime = !textPathWrapper;
 
         // Defaults
         textPathOptions = merge(true, {
@@ -1953,138 +1918,83 @@ class SVGElement implements SVGElementLike {
             }
         }, textPathOptions);
 
-        const attrs = AST.filterUserAttributes(textPathOptions.attributes);
+        const url = this.renderer.url,
+            textWrapper = this.text || this,
+            textPath = textWrapper.textPath,
+            { attributes, enabled } = textPathOptions;
 
-        if (path && textPathOptions && textPathOptions.enabled) {
-            // In case of fixed width for a text, string is rebuilt
-            // (e.g. ellipsis is applied), so we need to rebuild textPath too
-            if (
-                textPathWrapper &&
-                textPathWrapper.element.parentNode === null
-            ) {
-                // When buildText functionality was triggered again
-                // and deletes textPathWrapper parentNode
-                firstTime = true;
-                textPathWrapper = textPathWrapper.destroy() as any;
-            } else if (textPathWrapper) {
-                // Case after drillup when spans were added into
-                // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(textPathWrapper.parentGroup);
-            }
-            // label() has padding, text() doesn't
-            if (this.options && this.options.padding) {
-                attrs.dx = -this.options.padding;
-            }
+        path = path || (textPath && textPath.path);
 
-            if (!textPathWrapper) {
-                // Create <textPath>, defer the DOM adder
-                this.textPathWrapper = textPathWrapper =
-                    this.renderer.createElement('textPath') as any;
-                adder = true;
-            }
+        // Remove previously added event
+        if (textPath) {
+            textPath.undo();
+        }
 
-            textPathElement = textPathWrapper.element;
+        if (path && enabled) {
+            const undo = addEvent(textWrapper, 'afterModifyTree', (
+                e: AnyRecord
+            ): void => {
 
-            // Set ID for the path
-            textPathId = path.element.getAttribute('id');
-            if (!textPathId) {
-                path.element.setAttribute('id', textPathId = uniqueKey());
-            }
+                if (path && enabled) {
 
-            // Change DOM structure, by placing <textPath> tag in <text>
-            if (firstTime) {
-
-                // Adjust the position
-                textNode.setAttribute('y', 0); // Firefox
-                if (isNumber(attrs.dx)) {
-                    textNode.setAttribute('x', -attrs.dx);
-                }
-
-                // Move all <tspan>'s and text nodes to the <textPath> node. Do
-                // not move other elements like <title> or <path>
-                const childNodes = [].slice.call(textNode.childNodes);
-                for (let i = 0; i < childNodes.length; i++) {
-                    const childNode: any = childNodes[i];
-                    if (
-                        childNode.nodeType === win.Node.TEXT_NODE ||
-                        childNode.nodeName === 'tspan'
-                    ) {
-                        textPathElement.appendChild(childNode);
+                    // Set ID for the path
+                    let textPathId = path.attr('id');
+                    if (!textPathId) {
+                        path.attr('id', textPathId = uniqueKey());
                     }
+
+                    // Set attributes for the <text>
+                    const textAttribs: SVGAttributes = {
+                        // dx/dy options must by set on <text> (parent), the
+                        // rest should be set on <textPath>
+                        x: 0,
+                        y: 0
+                    };
+
+                    if (defined(attributes.dx)) {
+                        textAttribs.dx = attributes.dx;
+                        delete attributes.dx;
+                    }
+                    if (defined(attributes.dy)) {
+                        textAttribs.dy = attributes.dy;
+                        delete attributes.dy;
+                    }
+                    textWrapper.attr(textAttribs);
+
+
+                    // Handle label properties
+                    this.attr({ transform: '' });
+                    if (this.box) {
+                        this.box = this.box.destroy();
+                    }
+
+                    // Wrap the nodes in a textPath
+                    const children = e.nodes.slice(0);
+                    e.nodes.length = 0;
+                    e.nodes[0] = {
+                        tagName: 'textPath',
+                        attributes: extend(attributes, {
+                            'text-anchor': attributes.textAnchor,
+                            href: `${url}#${textPathId}`
+                        }),
+                        children
+                    };
                 }
-            }
-
-            // Add <textPath> to the DOM
-            if (adder && textPathWrapper) {
-                textPathWrapper.add({ element: textNode } as any);
-            }
-
-            // Set basic options:
-            // Use `setAttributeNS` because Safari needs this..
-            textPathElement.setAttributeNS(
-                'http://www.w3.org/1999/xlink',
-                'href',
-                this.renderer.url + '#' + textPathId
-            );
-
-            // Presentation attributes:
-
-            // dx/dy options must by set on <text> (parent),
-            // the rest should be set on <textPath>
-            if (defined(attrs.dy)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dy', attrs.dy);
-                delete attrs.dy;
-            }
-            if (defined(attrs.dx)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dx', attrs.dx);
-                delete attrs.dx;
-            }
-
-            // Additional attributes
-            objectEach(attrs, function (val, key): void {
-                textPathElement.setAttribute(
-                    (attribsMap as any)[key] || key,
-                    val as any
-                );
             });
 
-            // Remove translation, text that follows path does not need that
-            elem.removeAttribute('transform');
+            // Set the reference
+            textWrapper.textPath = { path, undo };
 
-            // Remove shadows and text outlines
-            this.removeTextOutline.call(textPathWrapper);
+        } else {
+            textWrapper.attr({ dx: 0, dy: 0 });
+            delete textWrapper.textPath;
+        }
 
-            // Remove background and border for label(), see #10545
-            // Alternatively, we can disable setting background rects in
-            // series.drawDataLabels()
-            if (this.text && !this.renderer.styledMode) {
-                this.attr({
-                    fill: 'none',
-                    'stroke-width': 0
-                });
-            }
+        if (this.added) {
 
-            // Disable some functions
-            this.updateTransform = noop;
-            this.applyTextOutline = noop;
-
-        } else if (textPathWrapper) {
-            // Reset to prototype
-            delete (this as any).updateTransform;
-            delete (this as any).applyTextOutline;
-
-            // Restore DOM structure:
-            this.destroyTextPath(elem as any, path);
-
-            // Bring attributes back
-            this.updateTransform();
-
-            // Set textOutline back for text()
-            if (this.options && this.options.rotation) {
-                this.applyTextOutline(this.options.style.textOutline);
-            }
+            // Rebuild text after added
+            textWrapper.textCache = '';
+            this.renderer.buildText(textWrapper);
         }
 
         return this;
@@ -2555,7 +2465,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length) {
+        if (transform.length && !(wrapper.text || wrapper).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }

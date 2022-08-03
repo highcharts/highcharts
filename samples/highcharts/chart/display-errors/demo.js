@@ -5,6 +5,10 @@ Highcharts.chart('container', {
         displayErrors: true
     },
 
+    accessibility: {
+        enabled: false
+    },
+
     title: {
         text: ''
     },
