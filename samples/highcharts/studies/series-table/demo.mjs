@@ -1,6 +1,5 @@
 /* eslint-disable no-use-before-define */
 
-import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import DataSeriesComposition from '../../../../code/es-modules/Data/DataSeriesComposition.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
@@ -11,7 +10,7 @@ DataSeriesComposition.compose(Highcharts.seriesTypes.scatter);
 
 const benchmarks = document.getElementById('benchmarks');
 const benchmarkSeries = 'scatter';
-const benchmarkSize = 19e3;
+const benchmarkSize = 1e5;
 const chart = Highcharts.chart('chart', {
     debug: true,
     chart: {
@@ -26,6 +25,7 @@ const chart = Highcharts.chart('chart', {
     plotOptions: {
         series: {
             allowMutatingData: true,
+            boostThreshold: benchmarkSize < 1e5 ? benchmarkSize + 1 : 1,
             dataAsColumns: true,
             enableMouseTracking: false
         }
@@ -131,7 +131,7 @@ function benchmarkSetData(vs) {
 
     timestamp(true);
 
-    series.setData(data, benchmarkSize < 1e5);
+    series.setData(data, true);
 
     const result = timestamp();
 
@@ -161,7 +161,7 @@ function benchmarkSetTable(vs) {
 
     timestamp(true);
 
-    series.datas.setTable(table, benchmarkSize < 1e5);
+    series.datas.setTable(table, true);
 
     const result = timestamp();
 
