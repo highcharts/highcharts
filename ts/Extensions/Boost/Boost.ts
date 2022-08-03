@@ -366,7 +366,8 @@ export default Boost;
 
 /**
  * If set to true, the whole chart will be boosted if one of the series
- * crosses its threshold, and all the series can be boosted.
+ * crosses its threshold, and all the series can be boosted. If the
+ * `chart.zoomType` option is set, it will default to `false`.
  *
  * @type      {boolean}
  * @default   true

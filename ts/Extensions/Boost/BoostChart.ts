@@ -291,9 +291,16 @@ function patientMax(...args: Array<Array<unknown>>): number {
  * True, if boosting should be forced.
  */
 function shouldForceChartSeriesBoosting(chart: Chart): boolean {
+
+    chart.boost = chart.boost || {};
+
+    if (typeof chart.boost.forceChartBoost !== 'undefined') {
+        return chart.boost.forceChartBoost;
+    }
+
     const allowBoostForce = pick(
         chart.options.boost && chart.options.boost.allowForce,
-        true
+        !chart.options.chart.zoomType
     );
 
     // If there are more than five series currently boosting,
@@ -301,12 +308,6 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     let sboostCount = 0,
         canBoostCount = 0,
         series;
-
-    chart.boost = chart.boost || {};
-
-    if (typeof chart.boost.forceChartBoost !== 'undefined') {
-        return chart.boost.forceChartBoost;
-    }
 
     if (chart.series.length > 1) {
         for (let i = 0; i < chart.series.length; i++) {
@@ -317,8 +318,10 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
             // See #8950
             // Also don't count if the series is hidden.
             // See #9046
-            if (series.options.boostThreshold === 0 ||
-                series.visible === false) {
+            if (
+                series.options.boostThreshold === 0 ||
+                series.visible === false
+            ) {
                 continue;
             }
 
