@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 
@@ -22,7 +23,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
         prototype: {
-            pointClass: Point
+            pointClass: {
+                prototype: pointProto
+            }
         }
     },
     seriesTypes: {
@@ -49,40 +52,56 @@ const {
  * */
 
 class LollipopPoint extends DumbbellPoint {
-    public series: LollipopSeries = void 0 as any;
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public options: LollipopPointOptions = void 0 as any;
+
+    public series: LollipopSeries = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public init(
+        _series: LollipopSeries,
+        options: LollipopPointOptions,
+        _x?: number
+    ): typeof pointProto {
+        if (isObject(options) && 'low' in options) {
+            options.y = options.low;
+            delete options.low;
+        }
+        return pointProto.init.apply(this, arguments);
+    }
+
 }
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface LollipopPoint {
     pointSetState: typeof areaProto.pointClass.prototype.setState;
-    init: typeof Point.prototype.init;
 }
 
 extend(LollipopPoint.prototype, {
     pointSetState: areaProto.pointClass.prototype.setState,
     // Does not work with the inherited `isvalid`
-    isValid: Point.prototype.isValid,
-    init: function (
-        series: LollipopSeries,
-        options: LollipopPointOptions,
-        x?: number
-    ): typeof Point.prototype {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return Point.prototype.init.apply(this, arguments);
-    }
+    isValid: pointProto.isValid
 });
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

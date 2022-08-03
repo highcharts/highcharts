@@ -31,7 +31,7 @@ export interface LollipopSeriesOptions extends DumbbellSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
