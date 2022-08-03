@@ -386,10 +386,7 @@ function createAndAttachRenderer(
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: BoostTargetObject = chart,
-        foSupported: boolean = doc.implementation.hasFeature(
-            'www.http://w3.org/TR/SVG11/feature#Extensibility',
-            '1.1'
-        );
+        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined';
 
     if (isChartSeriesBoosting(chart)) {
         target = chart;
