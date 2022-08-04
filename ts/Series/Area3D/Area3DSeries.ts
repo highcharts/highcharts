@@ -73,21 +73,13 @@ function wrapAreaSeriesGetGraphPath(
         return svgPath;
     }
 
-    let getGraphPath = lineProto.getGraphPath,
+    const getGraphPath = lineProto.getGraphPath,
         options = series.options,
-        stacking = options.stacking,
-        bottomPath,
-        bottomPoints: Array<AreaPoint> = [],
-        graphPoints: Array<AreaPoint> = [],
-        areaPath: SVGPath,
-        connectNulls = pick( // #10574
-            options.connectNulls,
-            stacking === 'percent'
-        ),
         translatedThreshold = Math.round( // #10909
             series.yAxis.getThreshold(options.threshold as any)
-        ),
-        options3d;
+        );
+
+    let bottomPoints: Array<AreaPoint> = [];
 
     if (series.rawPointsX) {
         for (let i = 0; i < series.points.length; i++) {
@@ -100,7 +92,7 @@ function wrapAreaSeriesGetGraphPath(
         }
     }
 
-    options3d = series.chart.options.chart.options3d;
+    const options3d = series.chart.options.chart.options3d;
     bottomPoints = perspective(
         bottomPoints as any, series.chart, true
     ).map((point): AreaPoint => (
@@ -126,7 +118,7 @@ function wrapAreaSeriesGetGraphPath(
     }
 
     (bottomPoints as any).reversed = true;
-    bottomPath = getGraphPath.call(series, bottomPoints, true, true);
+    const bottomPath = getGraphPath.call(series, bottomPoints, true, true);
 
     if (bottomPath[0] && bottomPath[0][0] === 'M') {
         bottomPath[0] = ['L', bottomPath[0][1], bottomPath[0][2]];
@@ -134,7 +126,7 @@ function wrapAreaSeriesGetGraphPath(
 
     if (series.areaPath) {
         // Remove previously used bottomPath and add the new one.
-        areaPath = series.areaPath.splice(
+        const areaPath: SVGPath = series.areaPath.splice(
             0,
             series.areaPath.length / 2
         ).concat(bottomPath);
