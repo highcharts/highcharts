@@ -16,13 +16,14 @@ import ZAxis from '../Core/Axis/ZAxis.js';
 import Axis3D from '../Core/Axis/Axis3D.js';
 import '../Core/Axis/Tick3D.js';
 import '../Core/Series/Series3D.js';
+import Area3DSeries from '../Series/Area3D/Area3DSeries.js';
 import '../Series/Column3D/Column3DComposition.js';
 import '../Series/Pie3D/Pie3DComposition.js';
 import '../Series/Scatter3D/Scatter3DSeries.js';
-import '../Series/Area3DSeries.js';
 const G: AnyRecord = Highcharts;
 // Compositions
 SVGRenderer3D.compose(G.SVGRenderer);
 Chart3D.compose(G.Chart, G.Fx);
 ZAxis.compose(G.Chart);
 Axis3D.compose(G.Axis);
+Area3DSeries.compose(G.seriesTypes.area);
