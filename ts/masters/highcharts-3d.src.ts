@@ -9,7 +9,7 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import '../Extensions/Math3D.js';
+import '../Core/Math3D.js';
 import SVGRenderer3D from '../Core/Renderer/SVG/SVGRenderer3D.js';
 import Chart3D from '../Core/Chart/Chart3D.js';
 import ZAxis from '../Core/Axis/ZAxis.js';

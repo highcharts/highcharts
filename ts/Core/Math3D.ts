@@ -10,46 +10,30 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
-import type Position3DObject from '../Core/Renderer/Position3DObject';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Chart from './Chart/Chart';
+import type Position3DObject from './Renderer/Position3DObject';
+import type PositionObject from './Renderer/PositionObject';
+
+import H from './Globals.js';
+const { deg2rad } = H;
+import U from './Utilities.js';
 const { pick } = U;
 
-declare module '../Core/Chart/ChartLike'{
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './Chart/ChartLike'{
     interface ChartLike {
         scale3d?: number;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        function perspective(
-            points: Array<Position3DObject>,
-            chart: Chart,
-            insidePlotArea?: boolean,
-            useInvertedPersp?: boolean
-        ): Array<Position3DObject>;
-        function perspective3D(
-            coordinate: Position3DObject,
-            origin: Position3DObject,
-            distance: number
-        ): PositionObject;
-        function pointCameraDistance(
-            coordinates: Record<string, number>,
-            chart: Chart
-        ): number;
-        function shapeArea(vertexes: Array<PositionObject>): number;
-        function shapeArea3d(
-            vertexes: Array<Position3DObject>,
-            chart: Chart,
-            insidePlotArea?: boolean
-        ): number;
     }
 }
 
@@ -60,8 +44,11 @@ interface Rotation3DObject {
     sinB: number;
 }
 
-// Mathematical Functionility
-const deg2rad = H.deg2rad;
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable max-len */
 /**
@@ -94,6 +81,7 @@ const deg2rad = H.deg2rad;
 /* eslint-enable max-len */
 
 /**
+ * Rotates the position as defined in angles.
  * @private
  * @param {number} x
  *        X coordinate
@@ -101,9 +89,9 @@ const deg2rad = H.deg2rad;
  *        Y coordinate
  * @param {number} z
  *        Z coordinate
- * @param {Highcharts.Rotation3dObject} angles
+ * @param {Highcharts.Rotation3DObject} angles
  *        Rotation angles
- * @return {Highcharts.Rotation3dObject}
+ * @return {Highcharts.Position3DObject}
  *         Rotated position
  */
 function rotate3D(
@@ -120,45 +108,6 @@ function rotate3D(
             angles.cosA * angles.cosB * z
     };
 }
-
-/**
- * Perspective3D function is available in global Highcharts scope because is
- * needed also outside of perspective() function (#8042).
- * @private
- * @function Highcharts.perspective3D
- *
- * @param {Highcharts.Position3DObject} coordinate
- * 3D position
- *
- * @param {Highcharts.Position3DObject} origin
- * 3D root position
- *
- * @param {number} distance
- * Perspective distance
- *
- * @return {Highcharts.PositionObject}
- * Perspective 3D Position
- *
- * @requires highcharts-3d
- */
-function perspective3D(
-    coordinate: Position3DObject,
-    origin: Position3DObject,
-    distance: number
-): PositionObject {
-    const projection = (
-        (distance > 0) &&
-        (distance < Number.POSITIVE_INFINITY)
-    ) ?
-        distance / (coordinate.z + origin.z + distance) :
-        1;
-
-    return {
-        x: coordinate.x * projection,
-        y: coordinate.y * projection
-    };
-}
-H.perspective3D = perspective3D;
 
 /**
  * Transforms a given array of points according to the angles in chart.options.
@@ -242,7 +191,44 @@ function perspective(
         };
     });
 }
-H.perspective = perspective;
+
+/**
+ * Perspective3D function is available in global Highcharts scope because is
+ * needed also outside of perspective() function (#8042).
+ * @private
+ * @function Highcharts.perspective3D
+ *
+ * @param {Highcharts.Position3DObject} coordinate
+ * 3D position
+ *
+ * @param {Highcharts.Position3DObject} origin
+ * 3D root position
+ *
+ * @param {number} distance
+ * Perspective distance
+ *
+ * @return {Highcharts.PositionObject}
+ * Perspective 3D Position
+ *
+ * @requires highcharts-3d
+ */
+function perspective3D(
+    coordinate: Position3DObject,
+    origin: Position3DObject,
+    distance: number
+): PositionObject {
+    const projection = (
+        (distance > 0) &&
+        (distance < Number.POSITIVE_INFINITY)
+    ) ?
+        distance / (coordinate.z + origin.z + distance) :
+        1;
+
+    return {
+        x: coordinate.x * projection,
+        y: coordinate.y * projection
+    };
+}
 
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
@@ -291,7 +277,6 @@ function pointCameraDistance(
 
     return distance;
 }
-H.pointCameraDistance = pointCameraDistance;
 
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
@@ -319,7 +304,6 @@ function shapeArea(vertexes: Array<PositionObject>): number {
     }
     return area / 2;
 }
-H.shapeArea = shapeArea;
 
 /**
  * Calculate area of a 3D polygon after perspective projection
@@ -348,9 +332,14 @@ function shapeArea3D(
 ): number {
     return shapeArea(perspective(vertexes, chart, insidePlotArea));
 }
-H.shapeArea3d = shapeArea3D;
 
-const mathModule = {
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const Math3D = {
     perspective,
     perspective3D,
     pointCameraDistance,
@@ -358,4 +347,4 @@ const mathModule = {
     shapeArea3D
 };
 
-export default mathModule;
+export default Math3D;
