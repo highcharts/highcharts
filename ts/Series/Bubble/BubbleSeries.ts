@@ -20,6 +20,7 @@ import type Axis from '../../Core/Axis/Axis';
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type Legend from '../../Core/Legend/Legend';
+import type Point from '../../Core/Series/Point';
 import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -30,7 +31,6 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -105,27 +105,27 @@ const composedClasses: Array<Function> = [];
 function axisBeforePadding(
     this: Axis
 ): void {
-    let axis = this,
-        axisLength = this.len,
+    const axisLength = this.len,
         chart = this.chart,
-        pxMin = 0,
-        pxMax = axisLength,
         isXAxis = this.isXAxis,
         dataKey = isXAxis ? 'xData' : 'yData',
         min = this.min,
-        range = (this.max as any) - (min as any),
+        range = (this.max as any) - (min as any);
+
+    let pxMin = 0,
+        pxMax = axisLength,
         transA = axisLength / range,
         hasActiveSeries;
 
     // Handle padding on the second pass, or on redraw
-    this.series.forEach(function (series): void {
+    this.series.forEach((series): void => {
 
         if (
             series.bubblePadding &&
             (series.visible || !chart.options.chart.ignoreHiddenSeries)
         ) {
             // Correction for #1673
-            axis.allowZoomOutside = true;
+            this.allowZoomOutside = true;
 
             hasActiveSeries = true;
 
@@ -143,8 +143,8 @@ function axisBeforePadding(
                 while (i--) {
                     if (
                         isNumber(data[i]) &&
-                        (axis.dataMin as any) <= data[i] &&
-                        data[i] <= (axis.max as any)
+                        (this.dataMin as any) <= data[i] &&
+                        data[i] <= (this.max as any)
                     ) {
                         const radius = series.radii && series.radii[i] || 0;
                         pxMin = Math.min(
@@ -174,18 +174,16 @@ function axisBeforePadding(
                 ['min', 'userMin', pxMin],
                 ['max', 'userMax', pxMax]
             ] as Array<[string, string, number]>
-        ).forEach(
-            function (keys: [string, string, number]): void {
-                if (
-                    typeof pick(
-                        (axis.options as any)[keys[0]],
-                        (axis as any)[keys[1]]
-                    ) === 'undefined'
-                ) {
-                    (axis as any)[keys[0]] += keys[2] / transA;
-                }
+        ).forEach((keys: [string, string, number]): void => {
+            if (
+                typeof pick(
+                    (this.options as any)[keys[0]],
+                    (this as any)[keys[1]]
+                ) === 'undefined'
+            ) {
+                (this as any)[keys[0]] += keys[2] / transA;
             }
-        );
+        });
     }
 
 }
@@ -566,11 +564,12 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
+        const zData = this.zData,
+            yData = this.yData,
+            radii = [] as Array<(number|null)>;
+
         let len: number,
             i: number,
-            zData = this.zData,
-            yData = this.yData,
-            radii = [] as Array<(number|null)>,
             value,
             zExtremes = this.chart.bubbleZExtremes;
 
@@ -637,10 +636,11 @@ class BubbleSeries extends ScatterSeries {
         value: (number|null|undefined),
         yValue?: (number|null|undefined)
     ): (number|null) {
-        let options = this.options,
+        const options = this.options,
             sizeByArea = options.sizeBy !== 'width',
-            zThreshold = options.zThreshold,
-            zRange = zMax - zMin,
+            zThreshold = options.zThreshold;
+
+        let zRange = zMax - zMin,
             pos = 0.5;
 
         // #8608 - bubble should be visible when z is undefined
