@@ -34,16 +34,17 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             marker: {
-                enabled: true
+                enabled: true,
+                radius: 2.5
             }
         }
     },
 
     colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
-    // Define the data points. All series have a dummy year
-    // of 1970/71 in order to be compared on the same x axis. Note
-    // that in JavaScript, months start at 0 for January, 1 for February etc.
+    // Define the data points. All series have a dummy year of 1970/71 in order
+    // to be compared on the same x axis. Note that in JavaScript, months start
+    // at 0 for January, 1 for February etc.
     series: [
         {
             name: "Winter 2019-2020",
@@ -256,22 +257,5 @@ Highcharts.chart('container', {
                 [Date.UTC(1971, 5,  9), 0]
             ]
         }
-    ],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                plotOptions: {
-                    series: {
-                        marker: {
-                            radius: 2.5
-                        }
-                    }
-                }
-            }
-        }]
-    }
+    ]
 });

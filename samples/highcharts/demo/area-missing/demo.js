@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         text: 'Born persons, by boys\' name'
     },
     subtitle: {
-        text: '* Missing data for Yasin this year.',
+        text: '* Missing data for Yasin in 2019',
         align: 'right',
         verticalAlign: 'bottom'
     },
