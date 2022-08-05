@@ -51,6 +51,7 @@ export interface AnnotationsOptions extends ControllableOptions { // @todo Annot
     itemType?: string;
     labelOptions?: ControllableLabelOptions;
     labels: Array<ControllableLabelOptions>;
+    langKey?: string;
     point?: MockPointOptions;
     points?: Array<MockPointOptions>;
     shapeOptions: ControllableShapeOptions;
