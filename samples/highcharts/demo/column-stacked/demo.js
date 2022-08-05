@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Major trophies for some English teams'
+        text: 'Major trophies for some English teams',
+        align: 'left'
     },
     xAxis: {
         categories: ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester United']

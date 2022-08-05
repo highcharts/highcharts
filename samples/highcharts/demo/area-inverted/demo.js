@@ -15,7 +15,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '&#8226; {series.name}: <b>{point.y} B</b>'
+        pointFormat: '&#8226; {series.name}: <b>${point.y} B</b>'
     },
     legend: {
         layout: 'vertical',
@@ -33,7 +33,7 @@ Highcharts.chart('container', {
             format: '${text}'
         },
         title: {
-            text: 'Revenue (billions)'
+            text: 'Revenue (billions USD)'
         }
     },
     plotOptions: {
