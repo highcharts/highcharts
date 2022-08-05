@@ -1376,13 +1376,30 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
                 const radialAxis = chart.hoverPane.axis,
                     tickInterval = radialAxis.tickInterval,
                     min = start - radialAxis.startAngleRad + radialAxis.pos,
-                    max = end - start,
+                    max = end - start;
+
+                let path = (linearAxis as any).getPlotLinePath({
+                        value: linearAxis.max
+                    }),
                     pathStart = radialAxis.toValue(min),
                     pathEnd = radialAxis.toValue(min + max);
 
-                let path = (linearAxis as any).getPlotLinePath({
-                    value: linearAxis.max
-                });
+
+                if (pathStart < radialAxis.getExtremes().min) {
+                    const {min, max} = radialAxis.getExtremes();
+                    pathStart = max - (min - pathStart);
+                }
+
+                if (pathEnd < radialAxis.getExtremes().min) {
+                    const {min, max} = radialAxis.getExtremes();
+                    pathEnd = max - (min - pathEnd);
+                }
+
+
+                if (pathEnd < pathStart) {
+                    // Swapping angles
+                    pathEnd = [pathStart, pathStart = pathEnd][0];
+                }
 
                 // Get trimmed path
                 path = trimPath(path, pathStart, pathEnd, radialAxis);
