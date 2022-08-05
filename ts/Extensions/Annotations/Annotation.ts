@@ -17,26 +17,33 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type {
-    AnnotationsLabelsOptions,
-    AnnotationsOptions,
-    AnnotationsShapesOptions
-} from './AnnotationsOptions';
+import type AnnotationsOptions from './AnnotationsOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type {
+    ControllableLabelType,
+    ControllableShapeType,
+    ControllableType
+} from './Controllables/ControllableType';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from './Controllables/ControllableOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Chart from '../../Core/Chart/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
-import ControllableMixin from './Mixins/ControllableMixin.js';
+import Controllable from './Controllables/Controllable.js';
+const controllableProto = Controllable.prototype;
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
 import ControllableEllipse from './Controllables/ControllableEllipse.js';
@@ -104,11 +111,6 @@ declare global {
             defs: Record<string, AST.Node>;
             navigation: NavigationOptions;
         }
-        type AnnotationLabelType = ControllableLabel;
-        type AnnotationShapeType = (
-            ControllableCircle|ControllableImage|ControllablePath|
-            ControllableRect
-        );
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
@@ -179,7 +181,7 @@ declare global {
  * @param {Highcharts.Chart} chart a chart instance
  * @param {Highcharts.AnnotationsOptions} userOptions the options object
  */
-class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
+class Annotation implements EventEmitterMixin.Type, Controllable {
 
     /**
      * @private
@@ -208,6 +210,20 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @private
      */
     public static types = {} as AnnotationTypeRegistry;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        ControllableLabel.compose(SVGRendererClass);
+        ControllablePath.compose(ChartClass, SVGRendererClass);
+    }
 
     /* *
      *
@@ -327,24 +343,24 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * */
 
-    public annotation: ControllableMixin.Type['annotation'] = void 0 as any;
+    public annotation: Controllable['annotation'] = void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public clipRect?: SVGElement;
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
-    public collection: ControllableMixin.Type['collection'] = void 0 as any;
+    public collection: Controllable['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
     public animationConfig: Partial<AnimationOptions> = void 0 as any;
     public graphic: SVGElement = void 0 as any;
     public group: SVGElement = void 0 as any;
     public isUpdating?: boolean;
     public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
-    public labels: Array<Highcharts.AnnotationLabelType>;
+    public labels: Array<ControllableLabelType>;
     public labelsGroup: SVGElement = void 0 as any;
     public options: AnnotationsOptions;
     public points: Array<Highcharts.AnnotationPointType>;
-    public shapes: Array<Highcharts.AnnotationShapeType>;
+    public shapes: Array<ControllableShapeType>;
     public shapesGroup: SVGElement = void 0 as any;
     public userOptions: AnnotationsOptions;
 
@@ -392,13 +408,13 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
                             basicOptions: (
-                                AnnotationsLabelsOptions|
-                                AnnotationsShapesOptions
+                                ControllableLabelOptions|
+                                ControllableShapeOptions
                             ),
                             i: number
                         ): (
-                            AnnotationsLabelsOptions|
-                            AnnotationsShapesOptions
+                            ControllableLabelOptions|
+                            ControllableShapeOptions
                             ) {
                             return merge(someBaseOptions[i], basicOptions);
                         }
@@ -414,27 +430,19 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public addShapes(): void {
         const shapes = this.options.shapes || [];
-        shapes.forEach(function (
-            this: Annotation,
-            shapeOptions: AnnotationsShapesOptions,
-            i: number
-        ): void {
+        shapes.forEach((shapeOptions, i): void => {
             const shape = this.initShape(shapeOptions, i);
 
             merge(true, shapes[i], shape.options);
-        }, this);
+        });
     }
 
     public addLabels(): void {
-        (this.options.labels || []).forEach(function (
-            this: Annotation,
-            labelsOptions: AnnotationsLabelsOptions,
-            i: number
-        ): void {
+        (this.options.labels || []).forEach((labelsOptions, i): void => {
             const labels = this.initLabel(labelsOptions, i);
 
             merge(true, this.options.labels[i], labels.options);
-        }, this);
+        });
     }
 
     public addClipPaths(): void {
@@ -456,29 +464,23 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             yAxes = this.chart.yAxis,
             linkedAxes: Array<AxisType> = ((
                 this.options.labels || []
-            ) as Array<(AnnotationsLabelsOptions|AnnotationsShapesOptions)>)
+            ) as Array<(ControllableLabelOptions|ControllableShapeOptions)>)
                 .concat(this.options.shapes || [])
-                .reduce(
-                    function (
-                        axes: Array<AxisType>,
-                        labelOrShape: (
-                            AnnotationsLabelsOptions|
-                            AnnotationsShapesOptions
-                        )
-                    ): Array<AxisType> {
-                        const point = labelOrShape &&
-                            (
-                                labelOrShape.point ||
-                                (labelOrShape.points && labelOrShape.points[0])
-                            );
+                .reduce((
+                    axes: Array<AxisType>,
+                    labelOrShape
+                ): Array<AxisType> => {
+                    const point = labelOrShape &&
+                        (
+                            labelOrShape.point ||
+                            (labelOrShape.points && labelOrShape.points[0])
+                        );
 
-                        return [
-                            xAxes[point && (point as any).xAxis] || axes[0],
-                            yAxes[point && (point as any).yAxis] || axes[1]
-                        ];
-                    },
-                    []
-                );
+                    return [
+                        xAxes[point && (point as any).xAxis] || axes[0],
+                        yAxes[point && (point as any).yAxis] || axes[1]
+                    ];
+                }, []);
 
         this.clipXAxis = linkedAxes[0];
         this.clipYAxis = linkedAxes[1];
@@ -502,7 +504,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             return annotation.labels.reduce(
                 function (
                     labels: Array<SVGElement>,
-                    label: Highcharts.AnnotationLabelType
+                    label: ControllableLabelType
                 ): Array<SVGElement> {
                     if (!label.options.allowOverlap) {
                         labels.push(label.graphic);
@@ -543,7 +545,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         this.redrawItems(this.labels, animation);
 
 
-        ControllableMixin.redraw.call(this, animation);
+        controllableProto.redraw.call(this, animation);
     }
 
     /**
@@ -552,7 +554,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @param {boolean} [animation]
      */
     public redrawItems(
-        items: Array<Highcharts.AnnotationControllable>,
+        items: Array<ControllableType>,
         animation?: boolean
     ): void {
         let i = items.length;
@@ -570,7 +572,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @param {Array<Highcharts.AnnotationControllable>} items
      */
     public renderItems(
-        items: Array<Highcharts.AnnotationControllable>
+        items: Array<ControllableType>
     ): void {
         let i = items.length;
 
@@ -622,7 +624,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.addEvents();
 
-        ControllableMixin.render.call(this);
+        controllableProto.render.call(this);
     }
 
     /**
@@ -659,18 +661,12 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public setControlPointsVisibility(visible: boolean): void {
         const setItemControlPointsVisibility = function (
-            item: (
-                Highcharts.AnnotationLabelType|
-                Highcharts.AnnotationShapeType
-            )
+            item: ControllableType
         ): void {
             item.setControlPointsVisibility(visible);
         };
 
-        ControllableMixin.setControlPointsVisibility.call(
-            this,
-            visible
-        );
+        controllableProto.setControlPointsVisibility.call(this, visible);
 
         this.shapes.forEach(setItemControlPointsVisibility);
         this.labels.forEach(setItemControlPointsVisibility);
@@ -686,10 +682,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public destroy(): void {
         const chart = this.chart,
             destroyItem = function (
-                item: (
-                    Highcharts.AnnotationLabelType|
-                    Highcharts.AnnotationShapeType
-                )
+                item: ControllableType
             ): void {
                 item.destroy();
             };
@@ -703,7 +696,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         erase(chart.labelCollectors, this.labelCollector);
 
         EventEmitterMixin.destroy.call(this);
-        ControllableMixin.destroy.call(this);
+        controllableProto.destroy.call(this);
 
         destroyObjectProperties(this, chart);
     }
@@ -771,9 +764,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * shapes.index.
      */
     public initShape(
-        shapeOptions: Partial<AnnotationsShapesOptions>,
+        shapeOptions: Partial<ControllableShapeOptions>,
         index: number
-    ): Highcharts.AnnotationShapeType {
+    ): ControllableShapeType {
         const options = merge(
                 this.options.shapeOptions,
                 {
@@ -799,10 +792,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @private
      */
     public initLabel(
-        labelOptions: Partial<AnnotationsLabelsOptions>,
+        labelOptions: Partial<ControllableLabelOptions>,
         index: number
-    ): Highcharts.AnnotationLabelType {
-        const options = merge(
+    ): ControllableLabelType {
+        const options = merge<ControllableLabelOptions>(
                 this.options.labelOptions,
                 {
                     controlPointOptions: this.options.controlPointOptions
@@ -829,7 +822,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @param {boolean} [animation]
      */
     public redrawItem(
-        item: Highcharts.AnnotationControllable,
+        item: ControllableType,
         animation?: boolean
     ): void {
         item.linkPoints();
@@ -858,7 +851,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
 
     public adjustVisibility(
-        item: Highcharts.AnnotationControllable
+        item: ControllableType
     ): void { // #9481
         let hasVisiblePoints = false,
             label = item.graphic;
@@ -874,11 +867,13 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             }
         });
 
-        if (!hasVisiblePoints) {
-            label.hide();
+        if (label) {
+            if (!hasVisiblePoints) {
+                label.hide();
 
-        } else if (label.visibility === 'hidden') {
-            label.show();
+            } else if (label.visibility === 'hidden') {
+                label.show();
+            }
         }
     }
 
@@ -887,7 +882,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @private
      * @param {Annotation.Label|Annotation.Shape} item
      */
-    public destroyItem(item: Highcharts.AnnotationControllable): void {
+    public destroyItem(item: ControllableType): void {
         // erase from shapes or labels array
         erase((this as any)[item.itemType + 's'], item);
         item.destroy();
@@ -896,7 +891,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * @private
      */
-    public renderItem(item: Highcharts.AnnotationControllable): void {
+    public renderItem(item: ControllableType): void {
         item.render(
             item.itemType === 'label' ?
                 this.labelsGroup :
@@ -905,7 +900,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     }
 }
 
-interface Annotation extends ControllableMixin.Type, EventEmitterMixin.Type {
+interface Annotation extends EventEmitterMixin.Type, Controllable {
     defaultOptions: AnnotationsOptions;
     nonDOMEvents: Array<string>;
 }
@@ -913,7 +908,7 @@ interface Annotation extends ControllableMixin.Type, EventEmitterMixin.Type {
 merge<Annotation>(
     true,
     Annotation.prototype,
-    ControllableMixin,
+    Controllable.prototype as any,
     EventEmitterMixin,
     // restore original Annotation implementation after mixin overwrite
     merge(

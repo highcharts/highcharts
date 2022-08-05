@@ -21,10 +21,8 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -195,13 +193,12 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
-interface PCIndicator extends MultipleLinesComposition.Composition {
+interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof PCPoint>;
     pointClass: typeof PCPoint;
     pointValKey: string;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(PCIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],

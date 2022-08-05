@@ -9,15 +9,15 @@ body {
 
 .hero-container {
     background: transparent;
-    width: 100%;
+    width: 1;
     height: 450px;
 }
 
 .chart-container .highcharts-container {
     position: relative;
     overflow: hidden;
-    width: 100%;
-    opacity: 100%;
+    width: 1;
+    opacity: 1;
     text-align: left;
     line-height: normal;
     z-index: 0;
@@ -30,7 +30,7 @@ body {
 }
 
 #hero {
-    width: 100%;
+    width: 1;
 }
 
 #hero .highcharts-data-labels {
@@ -52,7 +52,7 @@ body {
 }
 
 #hero .highcharts-range-selector-buttons {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #hero .highcharts-range-selector-buttons .highcharts-button.highcharts-button-pressed {
@@ -65,7 +65,7 @@ body {
 #hero .highcharts-area-series.cover {
     fill: url("#bg-gradient");
     fill-opacity: 1;
-    opacity: 0%;
+    opacity: 0;
     stroke: transparent;
 }
 
@@ -123,7 +123,7 @@ body {
     fill: #fff;
     font-size: 2em;
     font-weight: 700;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #hero .highcharts-point {
@@ -135,7 +135,7 @@ body {
     fill: none;
     stroke: #3f3e57;
     stroke-width: 1px;
-    opacity: 0%;
+    opacity: 0;
     transform-origin: top;
     transition: transform 1s;
     transform: rotate(0deg);
@@ -303,7 +303,7 @@ body {
     fill: linear-gradient(90.54deg, #54a0ff 0.24%, #10ac84 99.56%);
     stroke: transparent;
     transition: opacity 2s;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #hero .highcharts-node {

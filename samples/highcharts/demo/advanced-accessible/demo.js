@@ -60,7 +60,6 @@ var chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
-
     title: {
         text: 'Monthly earnings, by level of education in Norway'
     },
@@ -80,32 +79,26 @@ var chart = Highcharts.chart('container', {
                     point.median + ', high ' + point.high;
             }
         },
-
         series: {
             descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
         },
-
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
-
     xAxis: [{
         accessibility: {
             description: 'Year'
         },
         crosshair: true
     }],
-
     yAxis: {
         title: {
             text: 'Monthly earnings (NOK)'
         },
         min: 0
     },
-
     tooltip: {
         shared: true
     },
-
     plotOptions: {
         series: {
             pointStart: 2015,
@@ -113,7 +106,6 @@ var chart = Highcharts.chart('container', {
             whiskerWidth: 5
         }
     },
-
     series: [{
         name: 'Scientific research and development',
         data: [

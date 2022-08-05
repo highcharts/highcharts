@@ -17,7 +17,7 @@ if (chartArray.length > 1) {
     chartToShow = chartArray[1];
 }
 
-//dependency wheel
+// dependency wheel
 function dependencyWheel() {
     Highcharts.chart('container', {
         title: {
@@ -33,7 +33,8 @@ function dependencyWheel() {
             dependencywheel: {
                 dataLabels: {
                     enabled: true
-                }
+                },
+                size: '90%'
             }
         },
         accessibility: {
@@ -77,56 +78,23 @@ function dependencyWheel() {
         responsive: {
             rules: [{
                 condition: {
-                    ///up tp this
+                    // up tp this
                     maxWidth: 219
                 },
                 chartOptions: {
                     chart: {
                         height: 150,
-                        margin: [0, 0, 0, 0]
-                    },
-                    plotOptions: {
-                        dependencywheel: {
-                            nodePadding: 0,
-                            center: ['50%', '50%'],
-                            size: '75%'
-                        }
+                        margin: 10
                     }
                 }
             }, {
                 condition: {
-                    minWidth: 220,
-                    maxWidth: 379
+                    minWidth: 220
                 },
                 chartOptions: {
-                    plotOptions: {
-                        chart: {
-                            height: 260,
-                            margin: [0, 0, 0, 0]
-                        },
-                        dependencywheel: {
-                            nodePadding: 0,
-                            center: ['50%', '50%'],
-                            size: '65%'
-                        }
-                    }
-                }
-            },
-            {
-                condition: {
-                    minWidth: 380
-                },
-                chartOptions: {
-                    plotOptions: {
-                        chart: {
-                            height: 260,
-                            margin: [0, 0, 0, 0]
-                        },
-                        dependencywheel: {
-                            nodePadding: 0,
-                            center: ['50%', '32%'],
-                            size: '60%'
-                        }
+                    chart: {
+                        height: 260,
+                        margin: 10
                     }
                 }
             }
@@ -208,7 +176,7 @@ function area() {
         responsive: {
             rules: [{
                 condition: {
-                    ///up tp this
+                    // up tp this
                     maxWidth: 219
                 },
                 chartOptions: {
@@ -254,7 +222,7 @@ function area() {
     });
 }
 
-///area range line
+// /area range line
 const ranges = [
         [1246406400000, 14.3, 27.7],
         [1246492800000, 14.5, 27.8],
@@ -379,7 +347,7 @@ function range() {
         responsive: {
             rules: [{
                 condition: {
-                    ///up tp this
+                    // /up tp this
                     maxWidth: 219
                 },
                 chartOptions: {
@@ -445,7 +413,7 @@ function bubble() {
             symbolPadding: 2,
             labelFormatter: function () {
                 return this.options.id;
-                //'{point.id}'
+                // '{point.id}'
             }
         },
         plotOptions: {
@@ -956,7 +924,7 @@ function bubble() {
         responsive: {
             rules: [{
                 condition: {
-                    ///up tp this
+                    // /up tp this
                     maxWidth: 219
                 },
                 chartOptions: {

@@ -214,12 +214,14 @@ bindingsUtils.addFlagFromForm = function (
                                     title: [
                                         options.title,
                                         getFieldType(
+                                            'title',
                                             options.title as any
                                         )
                                     ],
                                     name: [
                                         options.name,
                                         getFieldType(
+                                            'name',
                                             options.name as any
                                         )
                                     ]
@@ -258,8 +260,8 @@ bindingsUtils.addFlagFromForm = function (
                 options: {
                     langKey: 'flags',
                     type: 'flags',
-                    title: ['A', getFieldType('A' as any)],
-                    name: ['Flag A', getFieldType('Flag A' as any)]
+                    title: ['A', getFieldType('title', 'A' as any)],
+                    name: ['Flag A', getFieldType('name', 'Flag A' as any)]
                 },
                 // Callback on submit:
                 onSubmit: function (
@@ -2351,7 +2353,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 }
             });
 
@@ -2381,7 +2385,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'y'
+                    zooming: {
+                        type: 'y'
+                    }
                 }
             });
             fireEvent(
@@ -2410,7 +2416,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'xy'
+                    zooming: {
+                        type: 'xy'
+                    }
                 }
             });
 

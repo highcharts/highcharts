@@ -219,13 +219,13 @@ class BulletSeries extends ColumnSeries {
                     targetOptions.width as any,
                     (shapeArgs as any).width
                 );
-                y = (series.yAxis.translate(
+                y = series.yAxis.translate(
                     targetVal,
                     false,
                     true,
                     false,
                     true
-                ) as any) - (targetOptions.height as any) / 2 - 0.5;
+                ) - (targetOptions.height as any) / 2 - 0.5;
 
                 targetShapeArgs = series.crispCol.apply({
                 // Use fake series object to set borderWidth of target

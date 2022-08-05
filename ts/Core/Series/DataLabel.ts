@@ -761,10 +761,6 @@ namespace DataLabel {
                             );
                         }
 
-                        if (!dataLabel.added) {
-                            dataLabel.add(dataLabelsGroup);
-                        }
-
                         if (labelOptions.textPath && !labelOptions.useHTML) {
                             dataLabel.setTextPath(
                                 (
@@ -783,6 +779,10 @@ namespace DataLabel {
                                     point.dataLabelPath.destroy()
                                 );
                             }
+                        }
+
+                        if (!dataLabel.added) {
+                            dataLabel.add(dataLabelsGroup);
                         }
 
                         // Now the data label is created and placed at 0,0, so

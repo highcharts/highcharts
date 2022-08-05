@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "module": "es-modules/masters/highcharts.src.js",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.10",
     "@babel/preset-env": "^7.17.10",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.31",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.33",
     "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.1",
     "@octokit/rest": "^18.12.0",
     "@types/jquery": "^3.5.14",
@@ -54,6 +54,7 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "colors": "^1.4.0",
+    "cloudflare": "^2.9.1",
     "cross-env": "^7.0.3",
     "cypress": "7.7.0",
     "dtslint": "^4.2.1",

@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type Controllable from './Controllables/Controllable';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
@@ -41,7 +42,7 @@ declare global {
             ): PositionObject;
             public constructor(
                 chart: AnnotationChart,
-                target: (AnnotationControllable|null),
+                target: (Controllable|null),
                 options: (MockPointOptions|Function)
             );
             public command?: string;
@@ -52,7 +53,7 @@ declare global {
             public plotX: number;
             public plotY: number;
             public series: AnnotationMockSeries;
-            public target: (AnnotationControllable|null);
+            public target: (Controllable|null);
             public ttBelow?: boolean;
             public visible?: boolean;
             public x: (number|null);
@@ -253,7 +254,7 @@ class MockPoint {
 
     public constructor(
         chart: Highcharts.AnnotationChart,
-        target: (Highcharts.AnnotationControllable|null),
+        target: (Controllable|null),
         options: (MockPointOptions|Function)
     ) {
         /**
@@ -336,7 +337,7 @@ class MockPoint {
     public plotX: number = void 0 as any;
     public plotY: number = void 0 as any;
     public series: Highcharts.AnnotationMockSeries;
-    public target: (Highcharts.AnnotationControllable|null);
+    public target: (Controllable|null);
     public ttBelow?: boolean = void 0 as any;
     public visible?: boolean;
     public x: (number|undefined) = void 0 as any;

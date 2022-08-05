@@ -7,6 +7,7 @@
 'use strict';
 
 import type ColorString from '../../../Core/Color/ColorString';
+import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -24,7 +25,7 @@ const createPathDGenerator = function (
     retracementIndex: number,
     isBackground?: boolean
 ): Function {
-    return function (this: Highcharts.AnnotationControllable): SVGPath {
+    return function (this: Controllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
         if (!annotation.startRetracements || !annotation.endRetracements) {
             return [];
@@ -149,7 +150,7 @@ class Fibonacci extends Tunnel {
         if (!point) {
             retracements[pointIndex] = new MockPoint(
                 this.chart,
-                this,
+                this as any,
                 {
                     x: x,
                     y: y,
