@@ -9,7 +9,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Bundestag election 20221. Source: ' +
+        text: 'Bundestag election 2021. Source: ' +
             '<a href="https://www.bundeswahlleiter.de/en/bundeswahlleiter.html"' +
             'target="_blank">Bundeswahlleiter</a> '
     },

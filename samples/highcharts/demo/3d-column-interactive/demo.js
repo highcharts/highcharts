@@ -41,7 +41,8 @@ const chart = new Highcharts.Chart({
         }
     },
     series: [{
-        data: [1318, 1073, 1060, 813, 775, 745, 537, 444, 416, 395]
+        data: [1318, 1073, 1060, 813, 775, 745, 537, 444, 416, 395],
+        colorByPoint: true
     }]
 });
 
