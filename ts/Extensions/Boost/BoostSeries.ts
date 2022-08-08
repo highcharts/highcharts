@@ -583,7 +583,7 @@ function destroyGraphics(
             [['graph', 'highcharts-graph']]
         ) as Array<[keyof LineSeries]>;
         props.forEach((prop): void => {
-            const zoneGraph: SVGElement = zonesSeries[prop[0]];
+            const zoneGraph = zonesSeries[prop[0]] as (SVGElement|undefined);
             if (zoneGraph) {
                 (zonesSeries as any)[prop[0]] = zoneGraph.destroy();
             }
