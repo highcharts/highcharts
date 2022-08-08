@@ -183,17 +183,12 @@ export default Boost;
  */
 
 /**
- * Set the series threshold for when the boost should kick in globally.
+ * The chart will be boosted, if one of the series crosses its threshold and all
+ * the series in the chart can be boosted.
  *
- * Setting to e.g. 20 will cause the whole chart to enter boost mode
- * if there are 20 or more series active. When the chart is in boost mode,
- * every series in it will be rendered to a common canvas. This offers
- * a significant speed improvment in charts with a very high
- * amount of series.
- *
- * @type      {number}
- * @default   50
- * @apioption boost.seriesThreshold
+ * @type      {boolean}
+ * @default   true
+ * @apioption boost.allowForce
  */
 
 /**
@@ -312,6 +307,20 @@ export default Boost;
  */
 
 /**
+ * Set the series threshold for when the boost should kick in globally.
+ *
+ * Setting to e.g. 20 will cause the whole chart to enter boost mode
+ * if there are 20 or more series active. When the chart is in boost mode,
+ * every series in it will be rendered to a common canvas. This offers
+ * a significant speed improvment in charts with a very high
+ * amount of series.
+ *
+ * @type      {number}
+ * @default   50
+ * @apioption boost.seriesThreshold
+ */
+
+/**
  * Enable or disable GPU translations. GPU translations are faster than doing
  * the translation in JavaScript.
  *
@@ -362,16 +371,6 @@ export default Boost;
  * @default   5000
  * @requires  modules/boost
  * @apioption plotOptions.series.boostThreshold
- */
-
-/**
- * If set to true, the whole chart will be boosted if one of the series
- * crosses its threshold, and all the series can be boosted. If the
- * `chart.zoomType` option is set, it will default to `false`.
- *
- * @type      {boolean}
- * @default   true
- * @apioption boost.allowForce
  */
 
 /**
