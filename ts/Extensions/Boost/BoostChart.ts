@@ -189,7 +189,7 @@ function onChartCallback(
 
         // Clear the canvas
         if (chart.boost.clear) {
-            chart.boost.clear(chart);
+            chart.boost.clear();
         }
 
         if (

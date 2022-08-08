@@ -33,7 +33,7 @@ const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { svg } = H;
 import Series from '../../Core/Series/Series.js';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';

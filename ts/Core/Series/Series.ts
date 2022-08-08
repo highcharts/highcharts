@@ -1103,7 +1103,7 @@ class Series {
 
     /**
      * Internal function called from setData. If the point count is the same
-     * as is was, or if there are overlapping X values, just run
+     * as it was, or if there are overlapping X values, just run
      * Point.update which is cheaper, allows animation, and keeps references
      * to points. This also allows adding or removing points if the X-es
      * don't match.
@@ -1306,7 +1306,7 @@ class Series {
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
@@ -1346,7 +1346,6 @@ class Series {
 
 
         const dataLength = data.length;
-        redraw = pick(redraw, true);
 
         if (dataSorting && dataSorting.enabled) {
             data = this.sortData(data);

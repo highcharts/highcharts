@@ -16,7 +16,7 @@ import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';
 import BubbleSeries from '../Series/Bubble/BubbleSeries.js';
-BubbleSeries.compose(G.Chart, G.Legend, G.Series);
+BubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 import '../Series/ColumnRange/ColumnRangeSeries.js';
 import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
 import '../Series/ErrorBar/ErrorBarSeries.js';

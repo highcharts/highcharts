@@ -27,7 +27,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import H from '../Globals.js';
 const { deg2rad } = H;
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../Math3D.js';
 const {
     perspective,
     perspective3D,

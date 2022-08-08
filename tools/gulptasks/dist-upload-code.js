@@ -43,6 +43,11 @@ const HTTP_EXPIRES = {
 };
 
 async function cloudflarePurgeCode(files) {
+    const argv = require('yargs').argv;
+
+    if (!argv.useGitIgnoreMe) {
+        return;
+    }
 
     const props = getGitIgnoreMeProperties();
     const cf = require('cloudflare')({

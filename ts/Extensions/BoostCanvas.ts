@@ -274,9 +274,7 @@ const initCanvasBoost = function (): void {
                     });
                 };
 
-                boost.clear = function (
-                    boostTarget: BoostTargetObject
-                ): void {
+                boost.clear = function (): void {
                     ctx.clearRect(
                         0,
                         0,
@@ -284,7 +282,7 @@ const initCanvasBoost = function (): void {
                         boost.canvas.height
                     );
 
-                    if (target === boostTarget) {
+                    if (target === boost.target) {
                         boost.target.attr({
                             href: b64BlankPixel
                         });
@@ -336,7 +334,7 @@ const initCanvasBoost = function (): void {
                     this.chart.boost.copy();
                 }
             } else if (this.boost && this.boost.clear) {
-                this.boost.clear(this);
+                this.boost.clear();
             }
         },
 
@@ -574,7 +572,7 @@ const initCanvasBoost = function (): void {
             series.buildKDTree = noop; // Do not start building while drawing
 
             if (boost.clear) {
-                boost.clear(this);
+                boost.clear();
             }
 
             // if (this.canvas) {
