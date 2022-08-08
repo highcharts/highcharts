@@ -29,6 +29,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
+import type RFLayout from './ReingoldFruchtermanLayout';
 import type {
     SeriesOptions,
     SeriesStatesOptions
@@ -75,7 +76,7 @@ declare module '../../Core/Series/PointOptions' {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        layout?: Highcharts.NetworkgraphLayout;
+        layout?: RFLayout;
     }
 }
 
@@ -94,8 +95,8 @@ declare module '../../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface NetworkgraphChart extends DragNodesChart {
-            graphLayoutsLookup: Array<NetworkgraphLayout>;
-            graphLayoutsStorage: Record<string, NetworkgraphLayout>;
+            graphLayoutsLookup: Array<RFLayout>;
+            graphLayoutsStorage: Record<string, RFLayout>;
         }
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
@@ -130,7 +131,6 @@ declare global {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
-            layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
             link?: SVGAttributes;
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
@@ -669,7 +669,7 @@ interface NetworkgraphSeries {
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
-    layout: Highcharts.NetworkgraphLayout;
+    layout: RFLayout;
     nodeLookup: NodesComposition.SeriesComposition['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
@@ -910,7 +910,7 @@ extend(NetworkgraphSeries.prototype, {
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
             graphLayoutsLookup = this.chart.graphLayoutsLookup,
             chartOptions = this.chart.options.chart,
-            layout;
+            layout: RFLayout;
 
         if (!this.visible) {
             return;

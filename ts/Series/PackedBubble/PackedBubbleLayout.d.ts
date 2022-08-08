@@ -17,6 +17,7 @@
 import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
+import type RFLayout from '../Networkgraph/ReingoldFruchtermanLayout';
 
 /* *
  *
@@ -24,26 +25,14 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface NetworkgraphLayout {
-            beforeStep?(): void;
-        }
-    }
-}
-
-export interface PackedBubbleLayout extends Highcharts.NetworkgraphLayout {
+export interface PackedBubbleLayout extends RFLayout {
     enableSimulation: boolean;
     nodes: Array<PackedBubblePoint>;
     options: PackedBubbleLayoutAlgorithmOptions;
     series: Array<NetworkgraphSeries>;
 }
 
-export interface PackedBubbleLayoutAlgorithmOptions extends Highcharts.NetworkgraphLayoutAlgorithmOptions {
+export interface PackedBubbleLayoutAlgorithmOptions extends RFLayout.Options {
     bubblePadding?: number;
     dragBetweenSeries?: boolean;
     enableSimulation?: boolean;

@@ -14,6 +14,7 @@
 
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type RFLayout from './ReingoldFruchtermanLayout';
 import H from '../../Core/Globals.js';
 
 /**
@@ -26,21 +27,21 @@ declare global {
             extends NetworkgraphIntegrationObject
         {
             attractive(
-                this: NetworkgraphLayout,
+                this: RFLayout,
                 link: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject,
                 distanceR: number
             ): void;
             attractiveForceFunction(d: number, k: number): number;
-            barycenter(this: NetworkgraphLayout): void;
-            getK(layout: NetworkgraphLayout): number;
+            barycenter(this: RFLayout): void;
+            getK(layout: RFLayout): number;
             integrate(
-                layout: NetworkgraphLayout,
+                layout: RFLayout,
                 node: NetworkgraphPoint
             ): void;
             repulsive(
-                this: NetworkgraphLayout,
+                this: RFLayout,
                 node: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject,
@@ -70,20 +71,20 @@ declare global {
             extends NetworkgraphIntegrationObject
         {
             attractive(
-                this: NetworkgraphLayout,
+                this: RFLayout,
                 link: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject
             ): void;
             attractiveForceFunction(d: number, k: number): number;
-            barycenter(this: NetworkgraphLayout): void;
-            getK(layout: NetworkgraphLayout): number;
+            barycenter(this: RFLayout): void;
+            getK(layout: RFLayout): number;
             integrate(
-                layout: NetworkgraphLayout,
+                layout: RFLayout,
                 node: NetworkgraphPoint
             ): void;
             repulsive(
-                this: NetworkgraphLayout,
+                this: RFLayout,
                 node: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject
@@ -133,7 +134,7 @@ H.networkgraphIntegrations = {
          *
          * @private
              */
-        barycenter: function (this: Highcharts.NetworkgraphLayout): void {
+        barycenter: function (this: RFLayout): void {
             let gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
@@ -168,7 +169,7 @@ H.networkgraphIntegrations = {
          *        Distance between two nodes e.g. `{x, y}`
              */
         repulsive: function (
-            this: Highcharts.NetworkgraphLayout,
+            this: RFLayout,
             node: Highcharts.NetworkgraphPoint,
             force: number,
             distanceXY: PositionObject
@@ -196,7 +197,7 @@ H.networkgraphIntegrations = {
          *        Distance between two nodes e.g. `{x, y}`
              */
         attractive: function (
-            this: Highcharts.NetworkgraphLayout,
+            this: RFLayout,
             link: Highcharts.NetworkgraphPoint,
             force: number,
             distanceXY: PositionObject
@@ -252,7 +253,7 @@ H.networkgraphIntegrations = {
          * @param {Highcharts.Point} node node that should be translated
              */
         integrate: function (
-            layout: Highcharts.NetworkgraphLayout,
+            layout: RFLayout,
             node: Highcharts.NetworkgraphPoint
         ): void {
             let friction = -(layout.options.friction as any),
@@ -294,7 +295,7 @@ H.networkgraphIntegrations = {
          * readable.
          * @private
          */
-        getK: function (layout: Highcharts.NetworkgraphLayout): number {
+        getK: function (layout: RFLayout): number {
             return Math.pow(
                 layout.box.width * layout.box.height / layout.nodes.length,
                 0.5
@@ -351,7 +352,7 @@ H.networkgraphIntegrations = {
          *
          * @private
              */
-        barycenter: function (this: Highcharts.NetworkgraphLayout): void {
+        barycenter: function (this: RFLayout): void {
             const gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
@@ -469,7 +470,7 @@ H.networkgraphIntegrations = {
          *        Node that should be translated
              */
         integrate: function (
-            layout: Highcharts.NetworkgraphLayout,
+            layout: RFLayout,
             node: Highcharts.NetworkgraphPoint
         ): void {
             let distanceR: number;
@@ -506,7 +507,7 @@ H.networkgraphIntegrations = {
          * readable.
          * @private
          */
-        getK: function (layout: Highcharts.NetworkgraphLayout): number {
+        getK: function (layout: RFLayout): number {
             return Math.pow(
                 layout.box.width * layout.box.height / layout.nodes.length,
                 0.3

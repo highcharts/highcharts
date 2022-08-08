@@ -20,10 +20,12 @@ import type PackedBubbleChart from './PackedBubbleChart';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+import type Point from '../../Core/Series/Point';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import '../../Series/Networkgraph/Layouts.js';
-const Reingold = H.layouts['reingold-fruchterman'];
+import '../Networkgraph/Layouts.js';
+import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -39,7 +41,7 @@ const {
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
-        getSelectedParentNodes(): Array<PackedBubblePoint>;
+        getSelectedParentNodes(): Array<Point>;
     }
 }
 
@@ -49,7 +51,7 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
+Chart.prototype.getSelectedParentNodes = function (): Array<Point> {
     const chart = this,
         series = chart.series as Array<PackedBubbleSeries>,
         selectedParentsNodes: Array<PackedBubblePoint> = [];
@@ -133,7 +135,7 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
 };
 
 H.layouts.packedbubble = extendClass(
-    Reingold,
+    RFLayout,
     {
         beforeStep: function (this: PackedBubbleLayout): void {
             if (this.options.marker) {
@@ -286,7 +288,7 @@ H.layouts.packedbubble = extendClass(
                 }
             }
 
-            Reingold.prototype.applyLimitBox.apply(this, arguments as any);
+            RFLayout.prototype.applyLimitBox.apply(this, arguments as any);
         }
     }
 );
