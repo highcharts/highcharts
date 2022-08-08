@@ -16,7 +16,7 @@
 
 import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
-import type { PackedBubbleLayoutAlgorithmOptions } from './PackedBubbleLayout';
+import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -34,7 +34,7 @@ export interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
     parentNode?: PackedBubbleParentNodeOptions;
     dataLabels?: PackedBubbleDataLabelOptions;
     draggable?: boolean;
-    layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
+    layoutAlgorithm?: PackedBubbleLayout.Options;
     minSize?: (number|string);
     states?: SeriesStatesOptions<PackedBubbleSeries>;
     useSimulation?: boolean;

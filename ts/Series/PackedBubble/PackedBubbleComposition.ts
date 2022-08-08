@@ -25,14 +25,9 @@ import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import '../Networkgraph/Layouts.js';
-import PBLayout from './PackedBubbleLay.js';
-import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
+import './PackedBubbleLayout.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extendClass,
-    pick
-} = U;
+const { addEvent } = U;
 
 /* *
  *
@@ -134,8 +129,6 @@ Chart.prototype.getSelectedParentNodes = function (): Array<Point> {
     integrate: H.networkgraphIntegrations.verlet.integrate,
     getK: H.noop
 };
-
-H.layouts.packedbubble = PBLayout;
 
 // Remove accumulated data points to redistribute all of them again
 // (i.e after hiding series by legend)

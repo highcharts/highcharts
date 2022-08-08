@@ -1,8 +1,6 @@
 /* *
  *
- *  Networkgraph series
- *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -22,6 +20,7 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
+import Layouts from '../Networkgraph/Layouts.js';
 import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -34,7 +33,7 @@ const {
  *
  * */
 
-class PackedBubbleLay extends RFLayout {
+class PackedBubbleLayout extends RFLayout {
 
     /* *
      *
@@ -44,7 +43,7 @@ class PackedBubbleLay extends RFLayout {
 
     public enableSimulation?: boolean;
     public nodes: Array<PackedBubblePoint> = [];
-    public options: PackedBubbleLay.Options = void 0 as any;
+    public options: PackedBubbleLayout.Options = void 0 as any;
     public series: Array<PackedBubbleSeries> = [];
 
     /* *
@@ -219,7 +218,7 @@ class PackedBubbleLay extends RFLayout {
  *
  * */
 
-namespace PackedBubbleLay {
+namespace PackedBubbleLayout {
 
     export interface Options extends RFLayout.Options {
         bubblePadding?: number;
@@ -240,8 +239,21 @@ namespace PackedBubbleLay {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module '../Networkgraph/LayoutType' {
+    interface LayoutTypeRegistry {
+        packedbubble: typeof PackedBubbleLayout;
+    }
+}
+Layouts.types.packedbubble = PackedBubbleLayout;
+
+/* *
+ *
  *  Default Export
  *
  * */
 
-export default PackedBubbleLay;
+export default PackedBubbleLayout;
