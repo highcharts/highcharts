@@ -184,7 +184,6 @@ function onChartCallback(
         // Reset force state
         chart.boost = chart.boost || {};
         chart.boost.forceChartBoost = void 0;
-        chart.boost.forceChartBoost = shouldForceChartSeriesBoosting(chart);
         chart.boosted = false;
 
         // Clear the canvas
@@ -292,22 +291,38 @@ function patientMax(...args: Array<Array<unknown>>): number {
  */
 function shouldForceChartSeriesBoosting(chart: Chart): boolean {
 
-    chart.boost = chart.boost || {};
+    const boost = chart.boost = chart.boost || {};
 
-    if (typeof chart.boost.forceChartBoost !== 'undefined') {
-        return chart.boost.forceChartBoost;
+    let allowBoostForce = (
+        chart.options.boost && chart.options.boost.allowForce
+    );
+
+    if (typeof allowBoostForce === 'undefined') {
+        allowBoostForce = true;
+        for (const axis of chart.xAxis) {
+            if (
+                pick(axis.min, -Infinity) > pick(axis.dataMin, -Infinity) ||
+                pick(axis.max, Infinity) < pick(axis.dataMax, Infinity)
+            ) {
+                allowBoostForce = false;
+                break;
+            }
+        }
     }
 
-    const allowBoostForce = pick(
-        chart.options.boost && chart.options.boost.allowForce,
-        !chart.options.chart.zoomType
-    );
+    if (typeof boost.forceChartBoost !== 'undefined') {
+        if (!allowBoostForce || chart.series.length <= 1) {
+            boost.forceChartBoost = void 0;
+        } else {
+            return boost.forceChartBoost;
+        }
+    }
 
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
-    let sboostCount = 0,
-        canBoostCount = 0,
-        series;
+    let canBoostCount = 0,
+        needBoostCount = 0,
+        series: Series;
 
     if (chart.series.length > 1) {
         for (let i = 0; i < chart.series.length; i++) {
@@ -342,7 +357,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
                 // series.xData,
                 series.points
             ) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
-                ++sboostCount;
+                ++needBoostCount;
             }
         }
     }
@@ -350,9 +365,9 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     chart.boost.forceChartBoost = allowBoostForce && (
         (
             canBoostCount === chart.series.length &&
-            sboostCount > 0
+            needBoostCount > 0
         ) ||
-        sboostCount > 5
+        needBoostCount > 5
     );
 
     return chart.boost.forceChartBoost;
