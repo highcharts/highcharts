@@ -14,7 +14,7 @@ The chart's position in the HTML page is defined by the position of the containe
 
 The _plot area_ is the square area within the axes, where the series are drawn. There are two sets of options that decide where the plot area is placed within the chart. The _margin_ options (marginLeft, marginTop etc) give the margin to the actual plot area and does not apply to other elements on the chart (labels, legend etc). The _spacing_ options (spacingLeft, spacingTop etc) decide the padding between the outer area and all elements inside a chart. In this mode, the chart is adjusted to make room for title and legend, axis labels etc. By default, the margins are null. Margins are only used in legacy charts as well as in situations where you want to make sure plot areas are aligned between multiple charts. Margins override their counterpart spacing options.
 
-![chartPosition.png](chartPosition.png)
+![Illustration of margins, spacings, the plot area, and the plot border of a bar chart](chartPosition.png)
 
     
     chart: {
@@ -146,7 +146,7 @@ Many layout elements including series types in Highcharts have shadow options. G
         offsetY: 0
     }
 
-See it [demonstrated at jsFiddle](https://jsfiddle.net/highcharts/jYLXN/).
+See [live demo of using shadow options](https://jsfiddle.net/highcharts/jYLXN/).
 
 Styling axes
 ------------
@@ -173,7 +173,7 @@ In Highcharts, animation is enabled or disabled in two separate places.
 *   The [chart.animation](https://api.highcharts.com/highcharts/chart.animation) option applies to animation when anything is changed dynamically in the chart. This change can be that a series is hidden and the plot area needs to animate to update to new axis scales, the chart is altered dynamically, or any other redraw operation. When the chart is altered dynamically, the animation can be overridden in each individual method. For example, the [Series.addPoint](https://api.highcharts.com/highcharts/Series.addPoint) method takes animation as an argument.
 *   The [plotOptions.series.animation](https://api.highcharts.com/highcharts/plotOptions.series.animation) option - and similar for any series type - applies only to the initial animation for this series or series type. Once the animation has run, it never runs again. 
 
-The animation can either be set as a boolean or a configuration object. If true, it will use the 'swing' jQuery easing and a duration of 500 ms. If used as a configuration object, the following properties are supported:
+The animation can either be set as a boolean or a configuration object. If true, it will use the "swing" jQuery easing and a duration of 500 ms. If used as a configuration object, the following properties are supported:
 
 *   duration - The duration of the animation in milliseconds.
 *   easing - When using jQuery as the general framework, the easing can be set to linear or swing. More easing functions are available with the use of jQuery plug-ins, most notably the jQuery UI suite. See the [jQuery docs](https://api.jquery.com/animate/). When using MooTools as the general framework, use the property name transition instead of easing.

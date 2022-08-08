@@ -173,6 +173,9 @@ const chart = Highcharts.chart('container', {
     },
     xAxis: {
         type: 'category',
+        accessibility: {
+            description: 'Countries'
+        },
         max: 4,
         labels: {
             useHTML: true,

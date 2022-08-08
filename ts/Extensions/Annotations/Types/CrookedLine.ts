@@ -6,19 +6,19 @@
 
 'use strict';
 
+import type {
+    AnnotationsOptions,
+    AnnotationsTypeOptions,
+    AnnotationsTypePointsOptions
+} from '../AnnotationsOptions';
+import type Controllable from '../Controllables/Controllable';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
-
-declare module '../MockPointOptions' {
-    interface MockPointOptions {
-        controlPoint?: Highcharts.AnnotationControlPointOptionsObject;
-    }
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -59,7 +59,7 @@ class CrookedLine extends Annotation {
         const typeOptions = this.options.typeOptions;
 
         return (typeOptions.points || []).map(function (
-            pointOptions: Highcharts.AnnotationsTypePointsOptions
+            pointOptions: AnnotationsTypePointsOptions
         ): MockPointOptions {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
@@ -80,7 +80,7 @@ class CrookedLine extends Annotation {
             ): void {
                 const controlPoint = new ControlPoint(
                     this.chart,
-                    this,
+                    this as any,
                     merge(
                         this.options.controlPointOptions,
                         pointOptions.controlPoint
@@ -106,7 +106,7 @@ class CrookedLine extends Annotation {
                         i: number
                     ): Function {
                         return function (
-                            target: Highcharts.AnnotationControllable
+                            target: Controllable
                         ): Highcharts.AnnotationPointType {
                             return target.annotation.points[i];
                         };
@@ -206,7 +206,7 @@ CrookedLine.prototype.defaultOptions = merge(
         controlPointOptions: {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
-                target: Highcharts.AnnotationControllable
+                target: Controllable
             ): PositionObject {
                 const graphic = this.graphic,
                     xy = MockPoint.pointToPixels(target.points[this.index]);
@@ -221,7 +221,7 @@ CrookedLine.prototype.defaultOptions = merge(
                 drag: function (
                     this: Annotation,
                     e: Highcharts.AnnotationEventObject,
-                    target: Highcharts.AnnotationControllable
+                    target: Controllable
                 ): void {
                     if (
                         target.chart.isInsidePlot(
@@ -255,11 +255,11 @@ CrookedLine.prototype.defaultOptions = merge(
 );
 
 namespace CrookedLine {
-    export interface Options extends Highcharts.AnnotationsOptions {
+    export interface Options extends AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
-        points?: Array<Highcharts.AnnotationsTypePointsOptions>;
+    export interface TypeOptions extends AnnotationsTypeOptions {
+        points?: Array<AnnotationsTypePointsOptions>;
     }
 }
 

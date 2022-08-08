@@ -81,6 +81,10 @@
             text: 'Source: <a href="https://en.wikipedia.org/wiki/Flags_of_the_U.S._states_and_territories">Wikipedia</a>'
         },
 
+        accessibility: {
+            description: 'Map of US states, where each state is filled with an illustration of its state flag.'
+        },
+
         // Add zoom/pan
         mapNavigation: {
             enabled: true,
@@ -111,6 +115,9 @@
         // Define the series
         series: [{
             name: 'State flags',
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
             keys: [
                 'name', 'color.pattern.image', 'borderWidth', 'color.pattern.x', 'color.pattern.y', 'borderColor'
             ],
@@ -137,7 +144,10 @@
         }, {
             /* Separator lines */
             type: 'mapline',
-            nullColor: '#aaa'
+            nullColor: '#aaa',
+            accessibility: {
+                enabled: false
+            }
         }]
     });
 

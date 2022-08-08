@@ -1,0 +1,6 @@
+---
+ name: "Canadian provinces and territories by area (treemap composition categorical data)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

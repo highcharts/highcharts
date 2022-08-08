@@ -11,8 +11,10 @@ const gulp = require('gulp');
  * */
 
 /**
+ * Improves transpiled JS files in the code folder.
+ *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 function task() {
 
@@ -42,7 +44,7 @@ function task() {
 
                     fs.writeFileSync(
                         filePath,
-                        codeTool.processSources(fs.readFileSync(filePath))
+                        codeTool.processSrcJSFile(fs.readFileSync(filePath))
                     );
                 });
 

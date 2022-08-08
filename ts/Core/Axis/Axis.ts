@@ -207,7 +207,7 @@ class Axis {
     public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: string = void 0 as any;
+    public coll: ('colorAxis'|'xAxis'|'yAxis'|'zAxis') = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
@@ -725,10 +725,6 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (
-                                number: number
-                            ): boolean => number > 0;
-
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
                                 xData;
@@ -820,15 +816,20 @@ class Axis {
      */
     public translate(
         val: number,
-        backwards?: (boolean|null),
-        cvsCoord?: (boolean|null),
-        old?: (boolean|null),
+        backwards?: boolean,
+        cvsCoord?: boolean,
+        old?: boolean,
         handleLog?: boolean,
         pointPlacement?: number
-    ): (number|undefined) {
+    ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = old && axis.old ? axis.old.min : axis.min,
-            minPixelPadding = axis.minPixelPadding,
+            localMin = (old && axis.old ? axis.old.min : axis.min);
+
+        if (!isNumber(localMin)) {
+            return NaN;
+        }
+
+        const minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
                 axis.brokenAxis && axis.brokenAxis.hasBreaks ||
@@ -863,7 +864,7 @@ class Axis {
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
             // from chart pixel to value:
-            returnValue = val / localA + (localMin as any);
+            returnValue = val / localA + localMin;
             if (doPostTranslate) { // log, ordinal and broken axis
                 returnValue = axis.lin2val(returnValue);
             }
@@ -871,21 +872,14 @@ class Axis {
         // From value to pixels
         } else {
             if (doPostTranslate) { // log, ordinal and broken axis
-                val = (axis.val2lin as any)(val);
+                val = axis.val2lin(val);
             }
-            const value = sign * (val - (localMin as any)) * localA;
+            const value = sign * (val - localMin) * localA;
 
-            returnValue = isNumber(localMin) ?
-                (
-                    (!axis.isRadial ? correctFloat(value) : value) +
-                    cvsOffset +
-                    (sign * minPixelPadding) +
-                    (isNumber(pointPlacement) ?
-                        localA * (pointPlacement as any) :
-                        0
-                    )
-                ) :
-                void 0 as any;
+            returnValue = (!axis.isRadial ? correctFloat(value) : value) +
+                cvsOffset +
+                (sign * minPixelPadding) +
+                (isNumber(pointPlacement) ? localA * pointPlacement : 0);
         }
 
         return returnValue;
@@ -910,7 +904,7 @@ class Axis {
         value: number,
         paneCoordinates?: boolean
     ): number {
-        return this.translate(value, false, !this.horiz, null, true) as any +
+        return this.translate(value, false, !this.horiz, void 0, true) +
             (paneCoordinates ? 0 : this.pos);
     }
 
@@ -938,9 +932,9 @@ class Axis {
             pixel - (paneCoordinates ? 0 : this.pos as any),
             true,
             !this.horiz,
-            null,
+            void 0,
             true
-        ) as any;
+        );
     }
 
     /**
@@ -1005,7 +999,7 @@ class Axis {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, null, null, old)
+                axis.translate(value as any, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
@@ -1414,6 +1408,8 @@ class Axis {
             this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
             (this.names as any).keys[point.name as any] = x;
+        } else if (point.x) {
+            x = point.x; // #17438
         }
 
         return x as any;
@@ -2801,11 +2797,11 @@ class Axis {
      * @param {number} threshold
      * The threshold in axis values.
      *
-     * @return {number|undefined}
+     * @return {number}
      * The translated threshold position in terms of pixels, and corrected to
      * stay within the axis bounds.
      */
-    public getThreshold(threshold: number): (number|undefined) {
+    public getThreshold(threshold: number): number {
         const axis = this,
             log = axis.logarithmic,
             realMin = log ? log.lin2log(axis.min as any) : axis.min as any,
@@ -3684,30 +3680,30 @@ class Axis {
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
             // old behaviour (v5.0.12), where only one line was allowed.
-            textHeightOvershoot = Math.max(
-                (axisTitle as any).getBBox(null, 0).height - fontMetrics.h - 1,
+            textHeightOvershoot = axisTitle ? Math.max(
+                axisTitle.getBBox(false, 0).height - fontMetrics.h - 1,
                 0
-            ),
+            ) : 0,
 
             // the position in the length direction of the axis
             alongAxis = ({
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
-            } as any)[axisTitleOptions.align as any],
+            })[axisTitleOptions.align],
 
             // the position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +
                 (horiz ? 1 : -1) * // horizontal axis reverses the margin
                 (opposite ? -1 : 1) * // so does opposite axes
-                (this.axisTitleMargin as any) +
+                (this.axisTitleMargin || 0) +
                 [
                     -textHeightOvershoot, // top
                     textHeightOvershoot, // right
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            titlePosition: PositionObject = {
+            titlePosition = {
                 x: horiz ?
                     alongAxis + xOption :
                     offAxis + (opposite ? this.width : 0) + offset + xOption,
@@ -3979,15 +3975,10 @@ class Axis {
 
         if (axisTitle && showAxis) {
             const titleXy = axis.getTitlePosition();
-
-            if (isNumber(titleXy.y)) {
-                axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
-                axisTitle.isNew = false;
-            } else {
-                axisTitle.attr('y', -9999 as any);
-                axisTitle.isNew = true;
-            }
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+            axisTitle.isNew = false;
         }
+
 
         // Stacked totals:
         if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {

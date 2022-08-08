@@ -111,7 +111,6 @@ const getEndPoint = function getEndPoint(
     };
 };
 
-// eslint-disable-next-line require-jsdoc
 function getAnimation(
     shape: SunburstSeries.NodeValuesObject,
     params: SunburstSeries.AnimationParams
@@ -658,7 +657,7 @@ class SunburstSeries extends TreemapSeries {
                 if (s.dataLabelsGroup) {
                     s.dataLabelsGroup.animate({
                         opacity: 1,
-                        visibility: 'visible'
+                        visibility: 'inherit'
                     });
                 }
             };
@@ -875,7 +874,7 @@ class SunburstSeries extends TreemapSeries {
     public translate(this: SunburstSeries): void {
         let series = this,
             options = series.options,
-            positions = series.center = getCenter.call(series),
+            positions = series.center = series.getCenter(),
             radians = series.startAndEndRadians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -975,6 +974,7 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
+    getCenter: typeof CU['getCenter'];
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
     getDlOptions: (
@@ -983,6 +983,9 @@ interface SunburstSeries {
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    getCenter: getCenter,
+    // Mark that the sunburst is supported by the series on point feature.
+    onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
     utils: SunburstUtilities

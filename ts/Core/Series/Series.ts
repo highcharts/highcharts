@@ -128,6 +128,7 @@ declare module './SeriesLike' {
         invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
+        toYData?(point: Point): Array<number>;
     }
 }
 
@@ -1102,7 +1103,7 @@ class Series {
 
     /**
      * Internal function called from setData. If the point count is the same
-     * as is was, or if there are overlapping X values, just run
+     * as it was, or if there are overlapping X values, just run
      * Point.update which is cheaper, allows animation, and keeps references
      * to points. This also allows adding or removing points if the X-es
      * don't match.
@@ -1217,7 +1218,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && oldData[i].update) {
+                if (point !== oldData[i].y && (oldData[i].update)) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -1305,7 +1306,7 @@ class Series {
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
@@ -1345,7 +1346,6 @@ class Series {
 
 
         const dataLength = data.length;
-        redraw = pick(redraw, true);
 
         if (dataSorting && dataSorting.enabled) {
             data = this.sortData(data);
@@ -1363,7 +1363,7 @@ class Series {
             series.visible &&
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
-            !series.isSeriesBoosting
+            !series.boosted
         ) {
             updatedData = this.updateData(data, animation);
         }
@@ -1468,7 +1468,7 @@ class Series {
             // destroy old points
             i = oldDataLength;
             while (i--) {
-                if (oldData[i] && oldData[i].destroy) {
+                if (oldData[i] && (oldData[i].destroy)) {
                     oldData[i].destroy();
                 }
             }
@@ -2287,7 +2287,7 @@ class Series {
             point.yBottom = defined(yBottom) ?
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any) :
+                )) :
                 null as any;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2326,7 +2326,7 @@ class Series {
                     0 as any,
                     1 as any,
                     pointPlacement
-                ) as any) :
+                )) :
                 plotX; // #1514, #5383, #5518
 
             // Negative points. For bubble charts, this means negative z
@@ -3039,7 +3039,7 @@ class Series {
             clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
-            chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
+            plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ],
@@ -3087,7 +3087,7 @@ class Series {
                 translatedFrom = clamp(
                     pick(translatedTo, translatedFrom),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
                 translatedTo = clamp(
                     Math.round(
@@ -3097,7 +3097,7 @@ class Series {
                         ) || 0
                     ),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
 
                 if (ignoreZones) {
@@ -3113,7 +3113,7 @@ class Series {
                         x: inverted ? pxPosMax : pxPosMin,
                         y: 0,
                         width: pxRange,
-                        height: chartSizeMax
+                        height: plotSizeMax
                     };
                     if (!horiz) {
                         clipAttr.x = chart.plotHeight - clipAttr.x;
@@ -3122,7 +3122,7 @@ class Series {
                     clipAttr = {
                         x: 0,
                         y: inverted ? pxPosMax : pxPosMin,
-                        width: chartSizeMax,
+                        width: plotSizeMax,
                         height: pxRange
                     };
                     if (horiz) {
@@ -3186,10 +3186,10 @@ class Series {
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
-                graph.show(true);
+                graph.show();
             }
             if (area) {
-                area.show(true);
+                area.show();
             }
         }
     }
@@ -3845,7 +3845,7 @@ class Series {
 
             series.tracker = renderer.path(trackerPath)
                 .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
+                    visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
                 })
                 .addClass(
@@ -4009,7 +4009,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && data[0].remove) {
+            if (data[0] && (data[0].remove)) {
                 data[0].remove(false);
             } else {
                 data.shift();
@@ -4257,6 +4257,9 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+
+                'processedData', // #17057
+
                 'processedXData',
                 'processedYData',
                 'xIncrement',

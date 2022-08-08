@@ -177,7 +177,12 @@
             dataLabels: {
                 enabled: false
             },
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{xDescription}, {point.value}°C.'
+                }
+            }
         }, {
             name: 'Capitals of Europe',
             type: 'mappoint',
@@ -191,6 +196,11 @@
                 formatter: function () {
                     var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
                     return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
+                }
+            },
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{xDescription}, {point.temp}°C.'
                 }
             }
         }]

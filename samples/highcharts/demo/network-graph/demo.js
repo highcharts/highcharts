@@ -65,6 +65,9 @@ Highcharts.chart('container', {
         }
     },
     series: [{
+        accessibility: {
+            enabled: false
+        },
         dataLabels: {
             enabled: true,
             linkFormat: ''

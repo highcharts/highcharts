@@ -30,6 +30,7 @@ import type {
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
 
+import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
@@ -459,7 +460,7 @@ class WordcloudSeries extends ColumnSeries {
                 }
             }
 
-            point.draw({
+            DPU.draw(point, {
                 animatableAttribs: animate as any,
                 attribs: attr,
                 css: css,
@@ -703,7 +704,7 @@ export default WordcloudSeries;
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.name
+ * @apioption series.wordcloud.data.name
  */
 
 /**
@@ -713,7 +714,7 @@ export default WordcloudSeries;
  * @type      {number}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.weight
+ * @apioption series.wordcloud.data.weight
  */
 
 ''; // detach doclets above

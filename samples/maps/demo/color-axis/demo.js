@@ -54,6 +54,11 @@
             },
 
             series: [{
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
+                    }
+                },
                 animation: {
                     duration: 1000
                 },

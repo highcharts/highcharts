@@ -8,6 +8,16 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ControllableLabelOptions
+} from './Controllables/ControllableOptions';
+import type AxisType from '../../Core/Axis/AxisType';
 
 /* *
  *
@@ -16,6 +26,11 @@
  * */
 
 export interface MockPointOptions {
+    label?: ControllableLabelOptions;
+    x: number;
+    xAxis?: (number|AxisType|null);
+    y: number;
+    yAxis?: (number|AxisType|null);
 }
 
 /* *

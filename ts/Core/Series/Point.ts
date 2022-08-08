@@ -119,9 +119,9 @@ class Point {
      * point. For other axes it holds the X value.
      *
      * @name Highcharts.Point#category
-     * @type {string}
+     * @type {number|string}
      */
-    public category: string = void 0 as any;
+    public category: (number|string) = void 0 as any;
 
     public color?: ColorType;
 
@@ -209,7 +209,15 @@ class Point {
      */
     public series: Series = void 0 as any;
 
-    public shapeArgs?: SVGAttributes;
+    /**
+     * The attributes of the rendered SVG shape like in `column` or `pie`
+     * series.
+     *
+     * @readonly
+     * @name Highcharts.Point#shapeArgs
+     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+    public shapeArgs?: SVGAttributes = void 0;
 
     public shapeType?: string;
 
@@ -565,7 +573,12 @@ class Point {
             props.push('graphic', 'upperGraphic', 'shadowGroup');
         }
         if (kinds.dataLabel) {
-            props.push('dataLabel', 'dataLabelUpper', 'connector');
+            props.push(
+                'dataLabel',
+                'dataLabelPath',
+                'dataLabelUpper',
+                'connector'
+            );
         }
 
         i = props.length;

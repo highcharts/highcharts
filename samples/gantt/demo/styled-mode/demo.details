@@ -8,4 +8,5 @@ tags:
 categories:
   - Highcharts Gantt:
       priority: 4
+use_png_thumbnail: true
 ...

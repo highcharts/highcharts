@@ -1,0 +1,6 @@
+---
+ name: Chart inside the tooltip
+ authors:
+   - Piotr Madej
+ js_wrap: b
+...

@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type {
+    AccessibilityKeyboardNavigationSeriesNavigationOptions
+} from '../../Options/A11yOptions';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';
@@ -444,11 +447,8 @@ class SeriesKeyboardNavigation {
                     }]
             ],
 
-            init: function (
-                this: KeyboardNavigationHandler
-            ): number {
-                highlightFirstValidPointInChart(chart);
-                return this.response.success;
+            init: function (this: KeyboardNavigationHandler): number {
+                return keyboardNavigation.onHandlerInit(this);
             },
 
             validate: function (): boolean {
@@ -481,6 +481,32 @@ class SeriesKeyboardNavigation {
 
 
     /**
+     * When keyboard navigation inits.
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} handler The handler object
+     * @return {number}
+     * response
+     */
+    public onHandlerInit(
+        handler: KeyboardNavigationHandler
+    ): number {
+        const chart = this.chart,
+            kbdNavOptions = chart.options.accessibility.keyboardNavigation;
+
+        if (
+            kbdNavOptions.seriesNavigation.rememberPointFocus &&
+            chart.highlightedPoint
+        ) {
+            chart.highlightedPoint.highlight();
+        } else {
+            highlightFirstValidPointInChart(chart);
+        }
+
+        return handler.response.success;
+    }
+
+
+    /**
      * @private
      * @param {Highcharts.KeyboardNavigationHandler} handler
      * @param {number} keyCode
@@ -495,8 +521,7 @@ class SeriesKeyboardNavigation {
             keys = this.keyCodes,
             isNext = keyCode === keys.down || keyCode === keys.right,
             navOptions: (
-                Highcharts
-                    .AccessibilityKeyboardNavigationSeriesNavigationOptions
+                AccessibilityKeyboardNavigationSeriesNavigationOptions
             ) = (chart.options.accessibility as any).keyboardNavigation
                 .seriesNavigation;
 
@@ -525,7 +550,8 @@ class SeriesKeyboardNavigation {
      * @private
      */
     public onHandlerTerminate(): void {
-        const chart = this.chart;
+        const chart = this.chart,
+            kbdNavOptions = chart.options.accessibility.keyboardNavigation;
 
         if (chart.tooltip) {
             chart.tooltip.hide(0);
@@ -542,7 +568,9 @@ class SeriesKeyboardNavigation {
             chart.highlightedPoint.onMouseOut();
         }
 
-        delete chart.highlightedPoint;
+        if (!kbdNavOptions.seriesNavigation.rememberPointFocus) {
+            delete chart.highlightedPoint;
+        }
     }
 
 

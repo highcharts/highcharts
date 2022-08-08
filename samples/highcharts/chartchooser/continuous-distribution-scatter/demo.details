@@ -1,0 +1,6 @@
+---
+ name: "Continuous data distribution (Olympics 2012 by height and weight for Basketball, triathlon, and volleyball)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

@@ -3,7 +3,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
     // create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 2
         },
@@ -16,7 +15,12 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             type: 'hlc',
             name: 'AAPL Stock Price',
             useOhlcData: true,
-            data: data
+            data: data,
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{xDescription}. High: {point.high}, low: {point.low}, close: {point.close}.'
+                }
+            }
         }]
     });
 });

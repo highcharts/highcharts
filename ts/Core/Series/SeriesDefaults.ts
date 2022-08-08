@@ -2430,6 +2430,8 @@ const seriesDefaults: SeriesOptions = {
      *
      * @sample highcharts/coloraxis/custom-color-key/
      *         Custom color key
+     * @sample highcharts/coloraxis/color-key-with-stops/
+     *         Custom colorKey with color axis stops
      * @sample highcharts/coloraxis/changed-default-color-key/
      *         Changed default color key
      *

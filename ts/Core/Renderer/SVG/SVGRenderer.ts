@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
+import type ButtonThemeObject from './ButtonThemeObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
 import type {
@@ -610,29 +611,33 @@ class SVGRenderer implements SVGRendererLike {
     }
 
     /**
-     * Returns white for dark colors and black for bright colors.
+     * Returns white for dark colors and black for bright colors, based on W3C's
+     * definition of [Relative luminance](
+     * https://www.w3.org/WAI/GL/wiki/Relative_luminance).
      *
      * @function Highcharts.SVGRenderer#getContrast
      *
-     * @param {Highcharts.ColorString} rgba
+     * @param {Highcharts.ColorString} color
      * The color to get the contrast for.
      *
      * @return {Highcharts.ColorString}
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
-    public getContrast(rgba: ColorString): ColorString {
-        rgba = Color.parse(rgba).rgba as any;
+    public getContrast(color: ColorString): ColorString {
+        // #6216, #17273
+        const rgba = Color.parse(color).rgba
+            .map((b8): number => {
+                const c = b8 / 255;
+                return c <= 0.03928 ?
+                    c / 12.92 :
+                    Math.pow((c + 0.055) / 1.055, 2.4);
+            });
 
-        // The threshold may be discussed. Here's a proposal for adding
-        // different weight to the color channels (#6216)
-        (rgba[0] as any) *= 1; // red
-        (rgba[1] as any) *= 1.2; // green
-        (rgba[2] as any) *= 0.5; // blue
+        // Relative luminance
+        const l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
 
-        return (rgba[0] as any) + (rgba[1] as any) + (rgba[2] as any) >
-            1.8 * 255 ?
-            '#000000' :
-            '#FFFFFF';
+        // Use white or black based on which provides more contrast
+        return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? '#FFFFFF' : '#000000';
     }
 
     /**
@@ -658,7 +663,7 @@ class SVGRenderer implements SVGRendererLike {
      * @param {Highcharts.SVGAttributes} [hoverState]
      * SVG attributes for the hover state.
      *
-     * @param {Highcharts.SVGAttributes} [pressedState]
+     * @param {Highcharts.SVGAttributes} [selectState]
      * SVG attributes for the pressed state.
      *
      * @param {Highcharts.SVGAttributes} [disabledState]
@@ -678,9 +683,9 @@ class SVGRenderer implements SVGRendererLike {
         x: number,
         y: number,
         callback: EventCallback<SVGElement>,
-        theme?: SVGAttributes,
+        theme: ButtonThemeObject = {},
         hoverState?: SVGAttributes,
-        pressedState?: SVGAttributes,
+        selectState?: SVGAttributes,
         disabledState?: SVGAttributes,
         shape?: SymbolKey,
         useHTML?: boolean
@@ -696,22 +701,24 @@ class SVGRenderer implements SVGRendererLike {
                 void 0,
                 'button'
             ),
-            styledMode = this.styledMode;
+            styledMode = this.styledMode,
+            states = theme.states || {};
 
-        let curState = 0,
-            // Make a copy of normalState (#13798)
-            // (reference to options.rangeSelector.buttonTheme)
-            normalState = theme ? merge(theme) : {};
+        let curState = 0;
+
+        theme = merge(theme);
+        delete theme.states;
 
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
             fontWeight: 'normal'
-        }, normalState.style);
-        delete normalState.style;
+        }, theme.style);
+        delete theme.style;
 
-        // Remove stylable attributes
-        normalState = AST.filterUserAttributes(normalState);
+        // Remove stylable attributes. Pass in the ButtonThemeObject and get the
+        // SVGAttributes subset back.
+        let normalState = AST.filterUserAttributes(theme);
 
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
@@ -719,7 +726,7 @@ class SVGRenderer implements SVGRendererLike {
         // Presentational. The string type is a mistake, it is just for
         // compliance with SVGAttribute and is not used in button theme.
         let hoverStyle: CSSObject|string|undefined,
-            pressedStyle: CSSObject|string|undefined,
+            selectStyle: CSSObject|string|undefined,
             disabledStyle: CSSObject|string|undefined;
 
         if (!styledMode) {
@@ -734,27 +741,29 @@ class SVGRenderer implements SVGRendererLike {
             // Hover state
             hoverState = merge(normalState, {
                 fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || {}));
+            }, AST.filterUserAttributes(hoverState || states.hover || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
-            pressedState = merge(normalState, {
+            selectState = merge(normalState, {
                 fill: Palette.highlightColor10,
                 style: {
                     color: Palette.neutralColor100,
                     fontWeight: 'bold'
                 }
-            }, AST.filterUserAttributes(pressedState || {}));
-            pressedStyle = pressedState.style;
-            delete pressedState.style;
+            }, AST.filterUserAttributes(selectState || states.select || {}));
+            selectStyle = selectState.style;
+            delete selectState.style;
 
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
                     color: Palette.neutralColor20
                 }
-            }, AST.filterUserAttributes(disabledState || {}));
+            }, AST.filterUserAttributes(
+                disabledState || states.disabled || {}
+            ));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -798,13 +807,13 @@ class SVGRenderer implements SVGRendererLike {
                     .attr([
                         normalState,
                         hoverState,
-                        pressedState,
+                        selectState,
                         disabledState
                     ][state || 0]);
                 const css = [
                     normalStyle,
                     hoverStyle,
-                    pressedStyle,
+                    selectStyle,
                     disabledStyle
                 ][state || 0];
                 if (isObject(css)) {
@@ -816,9 +825,9 @@ class SVGRenderer implements SVGRendererLike {
 
         // Presentational attributes
         if (!styledMode) {
-            (label
-                .attr(normalState) as any)
-                .css(extend({ cursor: 'default' }, normalStyle));
+            label
+                .attr(normalState)
+                .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
         }
 
         return label
@@ -1696,7 +1705,7 @@ class SVGRenderer implements SVGRendererLike {
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
-            win.getComputedStyle // old IE doesn't support it
+            (win.getComputedStyle) // old IE doesn't support it
         ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,

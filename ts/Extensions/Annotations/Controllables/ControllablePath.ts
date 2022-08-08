@@ -6,35 +6,161 @@
 
 'use strict';
 
-import type Annotation from '../Annotations';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Annotation from '../Annotation';
+import type AST from '../../../Core/Renderer/HTML/AST';
+import type Chart from '../../../Core/Chart/Chart';
+import type { ControllableShapeOptions } from './ControllableOptions';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import ControllableMixin from '../Mixins/ControllableMixin.js';
+import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
+
+import Controllable from './Controllable.js';
+import ControllableDefaults from './ControllableDefaults.js';
+const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
-import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
 const {
-    extend
+    addEvent,
+    defined,
+    extend,
+    merge,
+    uniqueKey
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface SVGAnnotationElement extends SVGElement {
-            markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
-            markerStartSetter?: AnnotationMarkerMixin['markerStartSetter'];
-            placed?: boolean;
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './ControllableLike' {
+    interface ControllableLike {
+        markerEnd?: SVGElement;
+        markerStart?: SVGElement;
     }
 }
+declare module '../../../Core/Options'{
+    interface Options {
+        defs?: Record<string, AST.Node>;
+    }
+}
+
+declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        addMarker(id: string, markerOptions: AST.Node): SVGElement;
+    }
+}
+
+interface MarkerSetterFunction {
+    (this: SVGElement, value: string): void;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+const markerEndSetter = createMarkerSetter('marker-end');
+
+const markerStartSetter = createMarkerSetter('marker-start');
 
 // See TRACKER_FILL in highcharts.src.js
 const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function createMarkerSetter(
+    markerType: string
+): MarkerSetterFunction {
+    return function (this: SVGElement, value: string): void {
+        this.attr(markerType, 'url(#' + value + ')');
+    };
+}
+
+/**
+ * @private
+ */
+function onChartAfterGetContainer(
+    this: Chart
+): void {
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
+
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
+}
+
+/**
+ * @private
+ */
+function svgRendererAddMarker(
+    this: SVGRenderer,
+    id: string,
+    markerOptions: AST.Node
+): SVGElement {
+    const options: AST.Node = { attributes: { id } };
+
+    const attrs: SVGAttributes = {
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
+    };
+
+    options.children = (
+        markerOptions.children &&
+        markerOptions.children.map(
+            function (child: AST.Node): AST.Node {
+                return merge(attrs, child);
+            }
+        )
+    );
+
+    const ast = merge(true, {
+        attributes: {
+            markerWidth: 20,
+            markerHeight: 20,
+            refX: 0,
+            refY: 0,
+            orient: 'auto'
+        }
+    }, markerOptions, options);
+
+    const marker = this.definition(ast);
+
+    marker.id = id;
+
+    return marker;
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A controllable path class.
@@ -54,7 +180,7 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  * @param {number} index
  * Index of the path.
  */
-class ControllablePath implements ControllableMixin.Type {
+class ControllablePath extends Controllable {
 
     /* *
      *
@@ -78,17 +204,42 @@ class ControllablePath implements ControllableMixin.Type {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
+        }
+
+        if (composedClasses.indexOf(SVGRendererClass) === -1) {
+            composedClasses.push(SVGRendererClass);
+
+            const svgRendererProto = SVGRendererClass.prototype;
+
+            svgRendererProto.addMarker = svgRendererAddMarker;
+        }
+    }
+
+    /* *
+     *
      *  Constructors
      *
      * */
 
     public constructor(
         annotation: Annotation,
-        options: Highcharts.AnnotationsShapeOptions,
+        options: ControllableShapeOptions,
         index: number
     ) {
-        this.init(annotation, options, index);
-        this.collection = 'shapes';
+        super(annotation, options, index, 'shape');
     }
 
     /* *
@@ -97,31 +248,6 @@ class ControllablePath implements ControllableMixin.Type {
      *
      * */
 
-    public addControlPoints = ControllableMixin.addControlPoints;
-    public anchor = ControllableMixin.anchor;
-    public attr = ControllableMixin.attr;
-    public attrsFromOptions = ControllableMixin.attrsFromOptions;
-    public destroy = ControllableMixin.destroy;
-    public getPointsOptions = ControllableMixin.getPointsOptions;
-    public init = ControllableMixin.init;
-    public linkPoints = ControllableMixin.linkPoints;
-    public point = ControllableMixin.point;
-    public rotate = ControllableMixin.rotate;
-    public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = (
-        ControllableMixin.setControlPointsVisibility
-    );
-    public setMarkers = MarkerMixin.setItemMarkers;
-    public transform = ControllableMixin.transform;
-    public transformPoint = ControllableMixin.transformPoint;
-    public translate = ControllableMixin.translate;
-    public translatePoint = ControllableMixin.translatePoint;
-    public translateShape = ControllableMixin.translateShape;
-    public update = ControllableMixin.update;
-
-    /**
-     * @type 'path'
-     */
     public type = 'path';
 
     /* *
@@ -145,14 +271,15 @@ class ControllablePath implements ControllableMixin.Type {
                 dOption;
         }
 
-        let points = this.points,
+        const points = this.points,
             len = points.length,
-            showPath: boolean = len as any,
+            d: SVGPath = [];
+
+        let showPath: boolean = len as any,
             point = points[0],
             position = showPath && this.anchor(point).absolutePosition,
             pointIndex = 0,
-            command,
-            d: SVGPath = [];
+            command;
 
         if (position) {
             d.push(['M', position.x, position.y]);
@@ -174,16 +301,15 @@ class ControllablePath implements ControllableMixin.Type {
             }
         }
 
-        return showPath ?
-            this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
-            null;
+        return (
+            showPath && this.graphic ?
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
+                null
+        );
     }
 
     public shouldBeDrawn(): boolean {
-        return (
-            ControllableMixin.shouldBeDrawn.call(this) ||
-            Boolean(this.options.d)
-        );
+        return super.shouldBeDrawn() || !!this.options.d;
     }
 
     public render(parent: SVGElement): void {
@@ -217,39 +343,123 @@ class ControllablePath implements ControllableMixin.Type {
             });
         }
 
-        ControllableMixin.render.call(this);
+        super.render();
 
-        extend(this.graphic, {
-            markerStartSetter: MarkerMixin.markerStartSetter,
-            markerEndSetter: MarkerMixin.markerEndSetter
-        });
+        extend(this.graphic, { markerStartSetter, markerEndSetter });
 
         this.setMarkers(this);
     }
 
     public redraw(animation?: boolean): void {
 
-        const d = this.toD(),
-            action = animation ? 'animate' : 'attr';
+        if (this.graphic) {
+            const d = this.toD(),
+                action = animation ? 'animate' : 'attr';
 
-        if (d) {
-            this.graphic[action]({ d: d });
-            this.tracker[action]({ d: d });
-        } else {
-            this.graphic.attr({ d: 'M 0 ' + -9e9 });
-            this.tracker.attr({ d: 'M 0 ' + -9e9 });
+            if (d) {
+                this.graphic[action]({ d: d });
+                this.tracker[action]({ d: d });
+            } else {
+                this.graphic.attr({ d: 'M 0 ' + -9e9 });
+                this.tracker.attr({ d: 'M 0 ' + -9e9 });
+            }
+
+            this.graphic.placed = this.tracker.placed = !!d;
         }
 
-        this.graphic.placed = this.tracker.placed = Boolean(d);
+        super.redraw(animation);
+    }
 
-        ControllableMixin.redraw.call(this, animation);
+    /**
+     * Set markers.
+     * @private
+     * @param {Highcharts.AnnotationControllablePath} item
+     */
+    public setMarkers(item: ControllablePath): void {
+        const itemOptions = item.options,
+            chart = item.chart,
+            defs = chart.options.defs,
+            fill = itemOptions.fill,
+            color = defined(fill) && fill !== 'none' ?
+                fill :
+                itemOptions.stroke;
+
+        const setMarker = function (
+            markerType: ('markerEnd'|'markerStart')
+        ): void {
+            let markerId = itemOptions[markerType],
+                def,
+                predefinedMarker,
+                key,
+                marker;
+
+            if (markerId) {
+                for (key in defs) { // eslint-disable-line guard-for-in
+                    def = defs[key];
+
+                    if (
+                        (
+                            markerId === (
+                                def.attributes && def.attributes.id
+                            ) ||
+                            // Legacy, for
+                            // unit-tests/annotations/annotations-shapes
+                            markerId === (def as any).id
+                        ) &&
+                        def.tagName === 'marker'
+                    ) {
+                        predefinedMarker = def;
+                        break;
+                    }
+                }
+
+                if (predefinedMarker) {
+                    marker = item[markerType] = chart.renderer
+                        .addMarker(
+                            (itemOptions.id || uniqueKey()) + '-' + markerId,
+                            merge(predefinedMarker, { color: color })
+                        );
+
+                    item.attr(markerType, marker.getAttribute('id'));
+                }
+            }
+        };
+
+        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>)
+            .forEach(setMarker);
+    }
+
+}
+
+/* *
+ *
+ *  Class Properties
+ *
+ * */
+
+interface ControllablePath {
+    collections: 'shapes';
+    itemType: 'shape';
+    options: ControllableShapeOptions;
+    tracker: SVGElement;
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ControllableType' {
+    interface ControllableShapeTypeRegistry {
+        path: typeof ControllablePath;
     }
 }
 
-interface ControllablePath extends ControllableMixin.Type {
-    // adds mixin property types, created during init
-    options: Highcharts.AnnotationsShapeOptions;
-    tracker: Highcharts.SVGAnnotationElement;
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ControllablePath;

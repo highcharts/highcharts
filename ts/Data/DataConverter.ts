@@ -113,7 +113,7 @@ class DataConverter {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    private dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
+    private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -624,12 +624,15 @@ class DataConverter {
  */
 namespace DataConverter {
 
-    /**
-     * Contains supported types to convert values from and to.
-     */
-    export type Type = (
-        boolean|null|number|string|DataTable|Date|undefined
-    );
+    export interface DateFormatObject {
+        alternative?: string;
+        parser: DateFormatCallbackFunction;
+        regex: RegExp;
+    }
+
+    export interface DateFormatCallbackFunction {
+        (match: ReturnType<string['match']>): number;
+    }
 
     /**
      * Internal options for DataConverter.
@@ -647,6 +650,14 @@ namespace DataConverter {
     export interface ParseDateFunction {
         (dateValue: string): number;
     }
+
+    /**
+     * Contains supported types to convert values from and to.
+     */
+    export type Type = (
+        boolean|null|number|string|DataTable|Date|undefined
+    );
+
 }
 
 /* *

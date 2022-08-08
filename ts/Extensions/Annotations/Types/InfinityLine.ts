@@ -15,7 +15,7 @@
 import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
-import Annotation from '../Annotations.js';
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';

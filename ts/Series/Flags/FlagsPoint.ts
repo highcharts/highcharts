@@ -61,6 +61,8 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
 
     public style?: CSSObject;
 
+    public ttBelow?: boolean = false;
+
     public unbindMouseOver?: Function;
 
     /* *

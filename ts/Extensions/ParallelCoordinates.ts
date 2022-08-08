@@ -127,7 +127,7 @@ const defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-const defaultParallelOptions: ChartOptions = {
+const defaultParallelOptions: DeepPartial<ChartOptions> = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -177,7 +177,7 @@ const defaultParallelOptions: ChartOptions = {
      *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops
+     *            minColor, scrollbar, stackLabels, stops,
      * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
@@ -397,7 +397,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                 point.clientX = point.plotX;
 
                 point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
+                    .translate(point.y, false, true, void 0, true);
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(

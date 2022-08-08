@@ -17,6 +17,12 @@
             floating: true
         },
 
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
+        },
+
         mapNavigation: {
             enabled: true
         },
@@ -43,7 +49,7 @@
         series: [{
             // Use the gb-all map with no data as a basemap
             mapData,
-            name: 'Basemap',
+            name: 'Great Britain',
             borderColor: '#707070',
             nullColor: 'rgba(200, 200, 200, 0.3)',
             showInLegend: false

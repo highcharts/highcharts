@@ -264,6 +264,13 @@ class SankeySeries extends ColumnSeries {
         linkOpacity: 0.5,
 
         /**
+         * Opacity for the nodes in the sankey diagram.
+         *
+         * @private
+         */
+        opacity: 1,
+
+        /**
          * The minimal width for a line of a sankey. By default,
          * 0 values are not shown.
          *
@@ -307,7 +314,12 @@ class SankeySeries extends ColumnSeries {
                  * Opacity for the links between nodes in the sankey diagram in
                  * hover mode.
                  */
-                linkOpacity: 1
+                linkOpacity: 1,
+
+                /**
+                 * Opacity for the nodes in the sankey diagram in hover mode.
+                 */
+                opacity: 1
             },
             /**
              * The opposite state of a hover for a single point node/link.
@@ -322,10 +334,7 @@ class SankeySeries extends ColumnSeries {
                 linkOpacity: 0.1,
 
                 /**
-                 * Opacity of inactive markers.
-                 *
-                 * @type      {number}
-                 * @apioption plotOptions.series.states.inactive.opacity
+                 * Opacity of the nodes in the sankey diagram in inactive mode.
                  */
                 opacity: 0.1,
 
@@ -572,7 +581,11 @@ class SankeySeries extends ColumnSeries {
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
             values: AnyRecord = [
-                'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
+                'colorByPoint',
+                'borderColor',
+                'borderWidth',
+                'linkOpacity',
+                'opacity'
             ].reduce(function (
                 obj: AnyRecord,
                 key: string
@@ -596,7 +609,8 @@ class SankeySeries extends ColumnSeries {
             return {
                 fill: color,
                 stroke: values.borderColor,
-                'stroke-width': values.borderWidth
+                'stroke-width': values.borderWidth,
+                opacity: values.opacity
             };
         }
 
@@ -878,8 +892,10 @@ class SankeySeries extends ColumnSeries {
             point.dlBox.y + linkHeight / 2
         ];
 
-        // Pass test in drawPoints
+        // Pass test in drawPoints. plotX/Y needs to be defined for dataLabels.
+        // #15863
         point.y = point.plotY = 1;
+        point.x = point.plotX = 1;
 
         if (!point.color) {
             point.color = fromNode.color;

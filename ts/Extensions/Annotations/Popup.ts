@@ -10,7 +10,8 @@
  *
  * */
 
-import type Annotation from './Annotations';
+import type Annotation from './Annotation';
+import type AnnotationsOptions from './AnnotationsOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Series from '../../Core/Series/Series';
@@ -252,7 +253,6 @@ const indexFilter = /\d/g,
     UL = 'ul',
     LI = 'li',
     H3 = 'h3';
-
 
 /**
  * Enum for properties which should have dropdown list.
@@ -662,7 +662,7 @@ H.Popup.prototype = {
     showForm: function (
         type: string,
         chart: Highcharts.AnnotationChart,
-        options: Highcharts.AnnotationsOptions,
+        options: AnnotationsOptions,
         callback: Function
     ): void {
 
@@ -720,7 +720,7 @@ H.Popup.prototype = {
         addToolbar: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            options: Highcharts.AnnotationsOptions,
+            options: AnnotationsOptions,
             callback: Function
         ): void {
             let _self = this,
@@ -746,7 +746,8 @@ H.Popup.prototype = {
                     // Advanced annotations:
                     lang[options.langKey as any] || options.langKey,
                     // Basic shapes:
-                    options.shapes && options.shapes[0].type
+                    options.shapes && options.shapes[0].type,
+                    ''
                 ))
             );
 
@@ -800,7 +801,7 @@ H.Popup.prototype = {
         addForm: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            options: Highcharts.AnnotationsOptions,
+            options: AnnotationsOptions,
             callback: Function,
             isInit?: boolean
         ): void {
@@ -885,7 +886,7 @@ H.Popup.prototype = {
             parentDiv: HTMLDOMElement,
             chart: Highcharts.AnnotationChart,
             parentNode: string,
-            options: Highcharts.AnnotationsOptions,
+            options: AnnotationsOptions,
             storage: Array<unknown>,
             isRoot?: boolean
         ): void {
@@ -985,7 +986,7 @@ H.Popup.prototype = {
         addForm: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            _options: Highcharts.AnnotationsOptions,
+            _options: AnnotationsOptions,
             callback: Function
         ): void {
 
@@ -1075,7 +1076,7 @@ H.Popup.prototype = {
          */
         filterSeries: function (
             this: Highcharts.Popup,
-            series: Series,
+            series: (Record<string, Series>|SeriesTypePlotOptions),
             filter?: string
         ): Array<Highcharts.FilteredSeries> {
             const popup = this,
@@ -1084,22 +1085,20 @@ H.Popup.prototype = {
                 indicatorAliases = lang &&
                     lang.navigation &&
                     lang.navigation.popup &&
-                    lang.navigation.popup.indicatorAliases;
-            let filteredSeriesArray: Array<Highcharts.FilteredSeries> = [],
-                filteredSeries: Highcharts.FilteredSeries;
+                    lang.navigation.popup.indicatorAliases,
+                filteredSeriesArray: Array<Highcharts.FilteredSeries> = [];
 
-            objectEach(series, function (
-                series: Series,
-                value: string
-            ): void {
-                const seriesOptions = series.options;
+            let filteredSeries: Highcharts.FilteredSeries;
+
+            objectEach(series, (series, value): void => {
+                const seriesOptions = series && (series as Series).options;
                 // Allow only indicators.
                 if (
                     (series as any).params || seriesOptions &&
                     (seriesOptions as any).params
                 ) {
                     const { indicatorFullName, indicatorType } =
-                        indicators.getNameType(series, value);
+                        indicators.getNameType(series as any, value);
 
                     if (filter) {
                         // Replace invalid characters.
@@ -1120,7 +1119,7 @@ H.Popup.prototype = {
                             filteredSeries = {
                                 indicatorFullName,
                                 indicatorType,
-                                series
+                                series: series as any
                             };
 
                             filteredSeriesArray.push(filteredSeries);
@@ -1129,7 +1128,7 @@ H.Popup.prototype = {
                         filteredSeries = {
                             indicatorFullName,
                             indicatorType,
-                            series
+                            series: series as any
                         };
 
                         filteredSeriesArray.push(filteredSeries);
@@ -1876,8 +1875,8 @@ H.Popup.prototype = {
                             parentDiv,
                             {
                                 value: value as any,
-                                type: 'text'
-                            } // all inputs are text type
+                                type: 'number'
+                            } // all inputs are number type
                         );
                     }
                 }

@@ -228,16 +228,16 @@ class StochasticIndicator extends SMAIndicator {
  *
  * */
 
-interface StochasticIndicator extends MultipleLinesComposition.Composition {
+interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof StochasticPoint>;
     pointClass: typeof StochasticPoint;
     pointValKey: string;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
+
 extend(StochasticIndicator.prototype, {
     areaLinesNames: [],
     nameComponents: ['periods'],
@@ -247,6 +247,7 @@ extend(StochasticIndicator.prototype, {
     pointValKey: 'y',
     linesApiNames: ['smoothedLine']
 });
+
 MultipleLinesComposition.compose(StochasticIndicator);
 
 /* *

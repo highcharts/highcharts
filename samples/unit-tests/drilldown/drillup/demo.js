@@ -416,3 +416,45 @@ QUnit.test(
             the main series should go back to its original state.`
         );
     });
+
+QUnit.test(
+    'Drillup after asynchronous drilldown on the chart, #8324.',
+    function (assert) {
+        let assertPassed = true;
+        try {
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column',
+                    events: {
+                        load: function () {
+                            const chart = this,
+                                point = chart.series[0].data[0];
+
+                            chart.addSingleSeriesAsDrilldown(point, {
+                                data: [{
+                                    y: 1,
+                                    drilldown: true
+                                }, {
+                                    y: 2,
+                                    drilldown: true
+                                }]
+                            });
+                            chart.applyDrilldown();
+                            chart.drillUp();
+                        }
+                    }
+                },
+                series: [{
+                    data: [{
+                        y: 3,
+                        drilldown: true
+                    }]
+                }]
+            });
+        } catch {
+            assertPassed = false;
+        }
+
+        assert.ok(assertPassed, 'It should not update the length of udefined ddDupes.');
+    }
+);

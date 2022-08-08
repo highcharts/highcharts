@@ -94,8 +94,8 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
 
         chart.series[0].points[0].dataLabels.forEach(function (dl) {
             if (
-                (action === 'hide' && dl.y !== -9999) ||
-                (action === 'show' && dl.y === -9999)
+                (action === 'hide' && dl.attr('visibility') !== 'hidden') ||
+                (action === 'show' && dl.attr('visibility') === 'hidden')
             ) {
                 res = false;
             }

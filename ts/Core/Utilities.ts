@@ -25,6 +25,7 @@ import type {
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Time from './Time';
 
 import H from './Globals.js';
 const {
@@ -1161,7 +1162,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<string, number> = {
+const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1325,7 +1326,7 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
@@ -1460,8 +1461,6 @@ function offset(el: Element): Utilities.OffsetObject {
  *
  * @param {T} [ctx]
  *        The context.
- *
- * @return {void}
  */
 function objectEach<TObject, TContext>(
     obj: TObject,

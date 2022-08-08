@@ -58,14 +58,14 @@ QUnit.test('Dependency wheel', function (assert) {
             },
             distance: 10,
             style: {
-                textOverflow: 'ellipsis'
+                textOverflow: 'ellipsis',
+                textOutline: 'none'
             }
         }
     });
     assert.strictEqual(
         chart.series[0].points[0].fromNode.dataLabel.text.element.textContent,
         'CanadaC…',
-        `When the data label is longer than the available space the 'ellipsis'
-        should be applied, #11115.`
+        'Overflowing text - ellipsis should be applied (#11115).'
     );
 });
