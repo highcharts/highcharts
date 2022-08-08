@@ -56,8 +56,8 @@ const {
 } = U;
 
 import '../../Core/DefaultOptions.js';
-import './Layouts.js';
 import './DraggableNodes.js';
+import './ReingoldFruchtermanLayout.js';
 
 const dragNodesMixin = H.dragNodesMixin;
 

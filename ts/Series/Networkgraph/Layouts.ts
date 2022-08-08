@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type { LayoutTypeRegistry } from './LayoutType';
 import type PackedBubbleChart from '../PackedBubble/PackedBubbleChart';
 import type Point from '../../Core/Series/Point';
 
@@ -58,16 +59,14 @@ declare global {
         interface NetworkgraphSeriesOptions {
             layoutAlgorithm?: RFLayout.Options;
         }
-        let layouts: Record<string, (typeof RFLayout)>;
+        let layouts: LayoutTypeRegistry;
     }
 }
 
 import './Integrations.js';
 import './QuadTree.js';
 
-H.layouts = {
-    'reingold-fruchterman': RFLayout
-};
+H.layouts = {} as LayoutTypeRegistry;
 
 // Clear previous layouts
 addEvent(Chart as any, 'predraw', function (
@@ -162,3 +161,15 @@ addEvent(Chart as any, 'afterPrint', function (
     }
     this.redraw();
 });
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const Layouts = {
+    types: H.layouts
+};
+
+export default Layouts;

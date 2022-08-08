@@ -24,6 +24,7 @@ import type Point from '../../Core/Series/Point';
 
 import H from '../../Core/Globals.js';
 const { win } = H;
+import Layouts from './Layouts.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -775,16 +776,6 @@ class ReingoldFruchtermanLayout {
 
 /* *
  *
- *  Class Prototype
- *
- * */
-
-interface ReingoldFruchtermanLayout {
-    // interface to merge in
-}
-
-/* *
- *
  *  Class Namespace
  *
  * */
@@ -815,6 +806,13 @@ namespace ReingoldFruchtermanLayout {
  *  Registry
  *
  * */
+
+declare module '../Networkgraph/LayoutType' {
+    interface LayoutTypeRegistry {
+        'reingold-fruchterman': typeof ReingoldFruchtermanLayout;
+    }
+}
+Layouts.types['reingold-fruchterman'] = ReingoldFruchtermanLayout;
 
 /* *
  *
