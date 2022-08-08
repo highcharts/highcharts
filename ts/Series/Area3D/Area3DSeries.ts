@@ -10,30 +10,57 @@
 
 'use strict';
 
-import type AreaSeries from '../Series/Area/AreaSeries';
-import type AreaPoint from './Area/AreaPoint';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type AreaSeries from '../Area/AreaSeries';
+import type AreaPoint from '../Area/AreaPoint';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import Math3D from '../Core/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
-
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        area: AreaSeriesClass,
-        line: LineSeriesClass
+        line: {
+            prototype: lineProto
+        }
     }
 } = SeriesRegistry;
-
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     pick,
     wrap
 } = U;
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Constants
+ *
+ * */
 
-wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function compose(
+    AreaSeriesClass: typeof AreaSeries
+): void {
+
+    if (composedClasses.indexOf(AreaSeriesClass) === -1) {
+        composedClasses.push(AreaSeriesClass);
+
+        wrap(
+            AreaSeriesClass.prototype,
+            'getGraphPath',
+            wrapAreaSeriesGetGraphPath
+        );
+    }
+
+}
+
+function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
     proceed: Function
 ): SVGPath {
@@ -46,23 +73,13 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         return svgPath;
     }
 
-    let getGraphPath = LineSeriesClass.prototype.getGraphPath,
-        graphPath: SVGPath = [],
+    const getGraphPath = lineProto.getGraphPath,
         options = series.options,
-        stacking = options.stacking,
-        bottomPath,
-        bottomPoints: Array<AreaPoint> = [],
-        graphPoints: Array<AreaPoint> = [],
-        i: number,
-        areaPath: SVGPath,
-        connectNulls = pick( // #10574
-            options.connectNulls,
-            stacking === 'percent'
-        ),
         translatedThreshold = Math.round( // #10909
             series.yAxis.getThreshold(options.threshold as any)
-        ),
-        options3d;
+        );
+
+    let bottomPoints: Array<AreaPoint> = [];
 
     if (series.rawPointsX) {
         for (let i = 0; i < series.points.length; i++) {
@@ -75,12 +92,12 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         }
     }
 
-    options3d = series.chart.options.chart.options3d;
+    const options3d = series.chart.options.chart.options3d;
     bottomPoints = perspective(
         bottomPoints as any, series.chart, true
-    ).map(function (point): AreaPoint {
-        return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
-    });
+    ).map((point): AreaPoint => (
+        { plotX: point.x, plotY: point.y, plotZ: point.z } as any
+    ));
     if (series.group && options3d && options3d.depth && options3d.beta) {
         // Markers should take the global zIndex of series group.
         if (series.markerGroup) {
@@ -101,7 +118,7 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
     }
 
     (bottomPoints as any).reversed = true;
-    bottomPath = getGraphPath.call(series, bottomPoints, true, true);
+    const bottomPath = getGraphPath.call(series, bottomPoints, true, true);
 
     if (bottomPath[0] && bottomPath[0][0] === 'M') {
         bottomPath[0] = ['L', bottomPath[0][1], bottomPath[0][2]];
@@ -109,15 +126,26 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
 
     if (series.areaPath) {
         // Remove previously used bottomPath and add the new one.
-        areaPath = series.areaPath.splice(
+        const areaPath: SVGPath = series.areaPath.splice(
             0,
             series.areaPath.length / 2
         ).concat(bottomPath);
         // Use old xMap in the new areaPath
         areaPath.xMap = series.areaPath.xMap;
         series.areaPath = areaPath;
-        graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }
 
     return svgPath;
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const Area3DSeries = {
+    compose
+};
+
+export default Area3DSeries;
