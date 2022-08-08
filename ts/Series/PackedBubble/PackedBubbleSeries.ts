@@ -16,8 +16,11 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type BubbleSeriesType from '../Bubble/BubbleSeries';
+import type Chart from '../../Core/Chart/Chart';
+import type Legend from '../../Core/Legend/Legend';
 import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
@@ -26,6 +29,7 @@ import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -34,14 +38,12 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
+import PBLayout from './PackedBubbleLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
     seriesTypes: {
-        bubble: BubbleSeries,
-        bubble: {
-            prototype: bubbleProto
-        }
+        bubble: BubbleSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -91,7 +93,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      *         Packed bubble chart
      * @sample highcharts/demo/packed-bubble-split/
      *         Split packed bubble chart
-
+     *
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
      *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
@@ -416,6 +418,22 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             friction: -0.981
         }
     } as PackedBubbleSeriesOptions);
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
+        SeriesClass: typeof SeriesType
+    ): void {
+        BubbleSeries.compose(AxisClass, ChartClass, LegendClass, SeriesClass);
+        PBLayout.compose(ChartClass);
+    }
 
     /* *
      *

@@ -24,8 +24,6 @@ import type Point from '../../Core/Series/Point';
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import '../Networkgraph/Layouts.js';
-import './PackedBubbleLayout.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 

@@ -48,6 +48,14 @@ class ReingoldFruchtermanLayout {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    public static compose = Layouts.compose;
+
+    /* *
+     *
      *  Properties
      *
      * */

@@ -12,17 +12,40 @@
 
 'use strict';
 
-import type { LayoutTypeRegistry } from './LayoutType';
-import type PackedBubbleChart from '../PackedBubble/PackedBubbleChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Chart from '../../Core/Chart/Chart';
+import type { LayoutType, LayoutTypeRegistry } from './LayoutType';
 import type Point from '../../Core/Series/Point';
+import type RFLayout from './ReingoldFruchtermanLayout';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
-import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import RFLayout from './ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        graphLayoutsLookup?: Array<LayoutType>;
+    }
+}
+
+declare module '../../Core/GlobalsLike' {
+    interface GlobalsLike {
+        layouts: LayoutTypeRegistry;
+    }
+}
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
@@ -44,52 +67,96 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface NetworkgraphPoint {
-            dispX?: number;
-            dispY?: number;
-            prevX?: number;
-            prevY?: number;
-        }
-        interface NetworkgraphSeriesOptions {
-            layoutAlgorithm?: RFLayout.Options;
-        }
-        let layouts: LayoutTypeRegistry;
-    }
-}
-
 import './Integrations.js';
 import './QuadTree.js';
 
-H.layouts = {} as LayoutTypeRegistry;
+/* *
+ *
+ *  Constants
+ *
+ * */
 
-// Clear previous layouts
-addEvent(Chart as any, 'predraw', function (
-    this: Highcharts.NetworkgraphChart
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart
+): void {
+
+    if (composedClasses.indexOf(ChartClass)) {
+        composedClasses.push(ChartClass);
+
+        addEvent(ChartClass, 'afterPrint', onChartAfterPrint);
+        addEvent(ChartClass, 'beforePrint', onChartBeforePrint);
+        addEvent(ChartClass, 'predraw', onChartPredraw);
+        addEvent(ChartClass, 'render', onChartRender);
+    }
+
+}
+
+/**
+ * Re-enable simulation after print.
+ * @private
+ */
+function onChartAfterPrint(
+    this: Chart
 ): void {
     if (this.graphLayoutsLookup) {
-        this.graphLayoutsLookup.forEach(
-            function (layout): void {
-                layout.stop();
-            }
-        );
+        this.graphLayoutsLookup.forEach((layout): void => {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+        this.redraw();
     }
-});
-addEvent(Chart as any, 'render', function (
-    this: Highcharts.NetworkgraphChart
+}
+
+/**
+ * Disable simulation before print if enabled.
+ * @private
+ */
+function onChartBeforePrint(
+    this: Chart
+): void {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach((layout): void => {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
+}
+
+/**
+ * Clear previous layouts.
+ * @private
+ */
+function onChartPredraw(
+    this: Chart
+): void {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach((layout): void => {
+            layout.stop();
+        });
+    }
+}
+
+/**
+ * @private
+ */
+function onChartRender(
+    this: Chart
 ): void {
     let systemsStable,
         afterRender = false;
 
-    /**
-     * @private
-     */
-    function layoutStep(layout: RFLayout): void {
+    const layoutStep = (layout: RFLayout): void => {
         if (
             (layout.maxIterations as any)-- &&
             isFinite(layout.temperature as any) &&
@@ -109,16 +176,12 @@ addEvent(Chart as any, 'render', function (
             systemsStable = false;
             afterRender = true;
         }
-    }
+    };
 
     if (this.graphLayoutsLookup) {
         setAnimation(false, this);
         // Start simulation
-        this.graphLayoutsLookup.forEach(
-            function (layout): void {
-                layout.start();
-            }
-        );
+        this.graphLayoutsLookup.forEach((layout): void => layout.start());
 
         // Just one sync step, to run different layouts similar to
         // async mode.
@@ -128,39 +191,22 @@ addEvent(Chart as any, 'render', function (
         }
 
         if (afterRender) {
-            this.series.forEach(function (s): void {
-                if (s && s.layout) {
-                    s.render();
+            this.series.forEach((series): void => {
+                if (series && series.layout) {
+                    series.render();
                 }
             });
         }
     }
-});
+}
 
-// disable simulation before print if enabled
-addEvent(Chart as any, 'beforePrint', function (
-    this: PackedBubbleChart
-): void {
-    if (this.graphLayoutsLookup) {
-        this.graphLayoutsLookup.forEach(function (layout): void {
-            layout.updateSimulation(false);
-        });
-        this.redraw();
-    }
-});
+/* *
+ *
+ *  Registry
+ *
+ * */
 
-// re-enable simulation after print
-addEvent(Chart as any, 'afterPrint', function (
-    this: PackedBubbleChart
-): void {
-    if (this.graphLayoutsLookup) {
-        this.graphLayoutsLookup.forEach(function (layout): void {
-            // return to default simulation
-            layout.updateSimulation();
-        });
-    }
-    this.redraw();
-});
+H.layouts = {} as LayoutTypeRegistry;
 
 /* *
  *
@@ -169,6 +215,7 @@ addEvent(Chart as any, 'afterPrint', function (
  * */
 
 const Layouts = {
+    compose,
     types: H.layouts
 };
 
