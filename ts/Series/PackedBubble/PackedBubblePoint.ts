@@ -18,14 +18,17 @@
 
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
-
 const {
     seriesTypes: {
-        bubble: BubbleSeries
+        bubble: {
+            prototype: {
+                pointClass: BubblePoint
+            }
+        }
     }
 } = SeriesRegistry;
 
@@ -47,7 +50,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
+class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint {
 
     /* *
      *

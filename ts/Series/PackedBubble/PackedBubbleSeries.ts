@@ -17,6 +17,7 @@
  * */
 
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
+import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -26,6 +27,7 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -34,7 +36,10 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
     seriesTypes: {
-        bubble: BubbleSeries
+        bubble: BubbleSeries,
+        bubble: {
+            prototype: bubbleProto
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -616,8 +621,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public calculateZExtremes(): Array<number> {
-        let chart = this.chart,
-            zMin = this.options.zMin,
+        const chart = this.chart,
+            allSeries = chart.series as Array<PackedBubbleSeries>;
+        let zMin = this.options.zMin,
             zMax = this.options.zMax,
             valMin = Infinity,
             valMax = -Infinity;
@@ -627,8 +633,8 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         }
         // it is needed to deal with null
         // and undefined values
-        chart.series.forEach(function (s): void {
-            ((s as PackedBubbleSeries).yData as any).forEach(
+        allSeries.forEach(function (s): void {
+            (s.yData as any).forEach(
                 function (p: number): void {
                     if (defined(p)) {
                         if (p > valMax) {
