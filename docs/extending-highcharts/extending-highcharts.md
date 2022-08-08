@@ -167,7 +167,7 @@ H.wrap(H.Tooltip.prototype, 'hide', function (proceed) {
     H.each(series, function (serie) {
         var trackball = serie.trackball;
         if (trackball) {
-            serie.trackball = trackball.destroy();
+            series.trackball = trackball.destroy();
         }
     });
 });
