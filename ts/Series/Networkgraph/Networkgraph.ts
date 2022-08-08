@@ -665,7 +665,7 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
-    drawGraph: void;
+    drawGraph?(): void;
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;

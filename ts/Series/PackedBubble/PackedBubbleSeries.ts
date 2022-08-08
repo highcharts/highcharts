@@ -17,6 +17,7 @@
  * */
 
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
+import type BubbleSeriesType from '../Bubble/BubbleSeries';
 import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
@@ -31,6 +32,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
+const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -1544,18 +1546,31 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
  *
  * */
 
-interface PackedBubbleSeries {
+interface PackedBubbleSeries extends NetworkgraphSeries {
+    bubblePadding: BubbleSeriesType['bubblePadding'];
     forces: Array<string>;
     hasDraggableNodes: boolean;
+    indexateNodes: NetworkgraphSeries['indexateNodes'];
+    isBubble: BubbleSeriesType['isBubble'];
     isCartesian: boolean;
+    markerAttribs: BubbleSeriesType['markerAttribs'];
+    maxPxSize: BubbleSeriesType['maxPxSize'];
+    minPxSize: BubbleSeriesType['minPxSize'];
+    nodes: NetworkgraphSeries['nodes'];
     noSharedTooltip: boolean;
     onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
     onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
     pointArrayMap: Array<string>;
     pointClass: typeof PackedBubblePoint;
     pointValKey: string;
+    radii: BubbleSeriesType['radii'];
     redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
+    setState: BubbleSeriesType['setState'];
+    specialGroup: BubbleSeriesType['specialGroup'];
     trackerGroups: Array<string>;
+    yData: BubbleSeriesType['yData'];
+    zData: BubbleSeriesType['zData'];
+    zoneAxis: BubbleSeriesType['zoneAxis'];
 }
 extend(PackedBubbleSeries.prototype, {
 
@@ -1577,6 +1592,8 @@ extend(PackedBubbleSeries.prototype, {
      * @private
      */
     hasDraggableNodes: true,
+
+    indexateNodes: noop as any,
 
     isCartesian: false,
 
@@ -1614,7 +1631,7 @@ extend(PackedBubbleSeries.prototype, {
     requireSorting: false,
 
     // solving #12287
-    searchPoint: H.noop as any,
+    searchPoint: noop as any,
 
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 

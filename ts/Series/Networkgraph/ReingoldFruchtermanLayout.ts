@@ -1,3 +1,15 @@
+/* *
+ *
+ *  Networkgraph series
+ *
+ *  (c) 2010-2021 Paweł Fus
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -14,10 +26,8 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
     defined,
-    extend,
     isFunction,
     pick
 } = U;
@@ -44,7 +54,6 @@ class ReingoldFruchtermanLayout {
     public approximation?: string;
     public attractiveForce: Function = void 0 as any;
     public barycenter?: Record<string, number>;
-    public beforeStep?: Function;
     public box: Record<string, number> = {};
     public currentStep?: number;
     public diffTemperature?: number;
@@ -75,6 +84,7 @@ class ReingoldFruchtermanLayout {
      *
      * */
 
+    public beforeStep?(): void;
 
     public init(
         options: ReingoldFruchtermanLayout.Options
