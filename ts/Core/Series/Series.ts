@@ -3040,7 +3040,7 @@ class Series {
             clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
-            chartSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
+            plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ],
@@ -3088,7 +3088,7 @@ class Series {
                 translatedFrom = clamp(
                     pick(translatedTo, translatedFrom),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
                 translatedTo = clamp(
                     Math.round(
@@ -3098,7 +3098,7 @@ class Series {
                         ) || 0
                     ),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
 
                 if (ignoreZones) {
@@ -3114,7 +3114,7 @@ class Series {
                         x: inverted ? pxPosMax : pxPosMin,
                         y: 0,
                         width: pxRange,
-                        height: chartSizeMax
+                        height: plotSizeMax
                     };
                     if (!horiz) {
                         clipAttr.x = chart.plotHeight - clipAttr.x;
@@ -3123,7 +3123,7 @@ class Series {
                     clipAttr = {
                         x: 0,
                         y: inverted ? pxPosMax : pxPosMin,
-                        width: chartSizeMax,
+                        width: plotSizeMax,
                         height: pxRange
                     };
                     if (horiz) {
