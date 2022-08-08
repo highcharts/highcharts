@@ -29,7 +29,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type RFLayout from './ReingoldFruchtermanLayout';
 import type {
     SeriesOptions,
     SeriesStatesOptions
@@ -42,6 +41,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
+import RFLayout from './ReingoldFruchtermanLayout.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -57,7 +57,6 @@ const {
 
 import '../../Core/DefaultOptions.js';
 import './DraggableNodes.js';
-import './ReingoldFruchtermanLayout.js';
 
 const dragNodesMixin = H.dragNodesMixin;
 
@@ -131,6 +130,7 @@ declare global {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
+            layoutAlgorithm?: RFLayout.Options;
             link?: SVGAttributes;
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
@@ -138,6 +138,8 @@ declare global {
         class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.PointComposition {
             public className: NodesComposition.PointComposition['className'];
             public degree: number;
+            public dispX?: number;
+            public dispY?: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
             public formatPrefix: NodesComposition.PointComposition[
                 'formatPrefix'
@@ -153,6 +155,8 @@ declare global {
             public mass: NodesComposition.PointComposition['mass'];
             public offset: NodesComposition.PointComposition['offset'];
             public options: NetworkgraphPointOptions;
+            public prevX?: number;
+            public prevY?: number;
             public radius: number;
             public series: NetworkgraphSeries;
             public setNodeState: NodesComposition.PointComposition['setState'];
@@ -235,6 +239,8 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
      *  Static Properties
      *
      * */
+
+    public static compose = RFLayout.compose;
 
     /**
      * A networkgraph is a type of relationship chart, where connnections
