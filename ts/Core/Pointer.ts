@@ -794,11 +794,8 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter(function (s): boolean {
-                return eventArgs.filter ?
-                    eventArgs.filter(s) && s.stickyTracking :
-                    filter(s) && s.stickyTracking;
-            });
+            series.filter((s): boolean => s.stickyTracking &&
+                (eventArgs.filter || filter)(s));
 
         // Use existing hovered point or find the one closest to coordinates.
         const hoverPoint = useExisting || !e ?
