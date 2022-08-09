@@ -143,6 +143,7 @@ declare global {
             outlineColor?: ColorType;
             outlineWidth?: number;
             series?: SeriesTypeOptions;
+            stickToMax?: boolean;
             top?: number;
             xAxis?: DeepPartial<AxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
@@ -658,6 +659,18 @@ extend(defaultOptions, {
         },
 
         /**
+         * Enable or disable navigator sticking to right, while adding new
+         * points. If `undefined`, the default value is `true`.
+         *
+         * @type      {boolean}
+         * @default   undefined
+         * @since     next
+         * @sample {highstock} stock/navigator/sticktomax/
+         * stickToMax set to false
+         * @apioption navigator.stickToMax
+         */
+
+        /**
          * Options for the navigator X axis. Default series options for the
          * navigator xAxis are:
          * ```js
@@ -871,6 +884,7 @@ class Navigator {
     public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
+    public stickToMax?: boolean;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
     public xAxis: NavigatorAxis = void 0 as any;
@@ -2588,13 +2602,15 @@ class Navigator {
     public updatedDataHandler(this: Series): void {
         const navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            shouldStickToMax = navigator.reversedExtremes ?
+                Math.round(navigator.zoomedMin) === 0 :
+                Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
-        // new data  comes in.
-        navigator.stickToMax = navigator.reversedExtremes ?
-            Math.round(navigator.zoomedMin) === 0 :
-            Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+        // new data comes in, unless user set navigator.stickToMax to false.
+        navigator.stickToMax = pick(this.chart.options.navigator &&
+            this.chart.options.navigator.stickToMax, shouldStickToMax);
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,
