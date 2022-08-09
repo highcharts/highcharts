@@ -41,7 +41,8 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypePlotOptions,
+    SeriesTypeRegistry
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -54,8 +55,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import D from '../DefaultOptions.js';
-const { defaultOptions } = D;
+import DO from '../DefaultOptions.js';
+const { defaultOptions } = DO;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -214,7 +215,35 @@ class Series {
      *
      * */
 
-    public static defaultOptions = SeriesDefaults;
+    public static readonly defaultOptions = SeriesDefaults;
+
+    /**
+     * Registry of all available series types.
+     *
+     * @name Highcharts.Series.types
+     * @type {Highcharts.Dictionary<typeof_Highcharts.Series>}
+     */
+    public static readonly types = SeriesRegistry.seriesTypes;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Registers a series class to be accessible via `Series.types`.
+     *
+     * @function Highcharts.Series.registerType
+     *
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     */
+    public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /* *
      *
