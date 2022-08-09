@@ -1951,9 +1951,8 @@ const seriesDefaults: SeriesOptions = {
         x: 0,
 
         /**
-         * The z index of the data labels.
-         * Use a zIndex of 6 to display it above the series,
-         * or use a zIndex of 2 to display it behind the series.
+         * The z index of the data labels. Use a `zIndex` of 6 to display it above
+         * the series, or use a `zIndex` of 2 to display it behind the series.
          *
          * @type      {number}
          * @default   6
