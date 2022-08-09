@@ -16,15 +16,19 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sankey: SankeySeries
+    }
+} = SeriesRegistry;
 
 import U from '../../Core/Utilities.js';
 import FlowMapPoint from './FlowMapPoint';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
 const {
+    extend,
     merge,
     addEvent
 } = U;
@@ -50,15 +54,13 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-class FlowMapSeries extends SankeySeries { // Sankey?
+class FlowMapSeries extends SankeySeries {
 
     /* *
      *
      * Static properties
      *
      * */
-
-    // public static compose = MapBubbleSeries.compose;
 
     public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
@@ -99,7 +101,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
     public points: Array<FlowMapPoint> = void 0 as any;
 
-
     /**
      *
      *  Functions
@@ -138,9 +139,40 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             weight = point.options.weight || 1,
             growTowards = point.options.growTowards;
 
+        // Connect to the linked parent point (in mappoint) to trigger
+        // series redraw for the linked point (in flow)
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
         }
+
+        // We have from and to & before the proceed
+        if (toPoint !== point.oldToPoint || !point.oldToPoint) {
+            if (point.removeEventForToPoint) {
+                point.removeEventForToPoint();
+            }
+
+            point.removeEventForToPoint = addEvent(
+                toPoint, 'update', function (): void {
+                    point.series.isDirty = true;
+                }
+            );
+        }
+
+        if (fromPoint !== point.oldFromPoint || !point.oldFromPoint) {
+            if (point.removeEventForFromPoint) {
+                point.removeEventForFromPoint();
+            }
+
+            point.removeEventForFromPoint = addEvent(
+                fromPoint, 'update', function (): void {
+                    point.series.isDirty = true;
+                }
+            );
+        }
+
+        // Save for later
+        point.oldFromPoint = fromPoint;
+        point.oldToPoint = toPoint;
 
         let fromY = fromPoint.plotY || 0,
             toY = toPoint.plotY || 0,
@@ -288,12 +320,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
     }
 }
 
-addEvent(Series, 'afterRender', function (): void {
-    if (this.linkedSeries.length) {
-        this.linkedSeries[0].redraw();
-    }
-});
-
 /* *
  *
  *  Prototype properties
@@ -303,6 +329,11 @@ addEvent(Series, 'afterRender', function (): void {
 interface FlowMapSeries {
 
 }
+
+extend(FlowMapSeries.prototype, {
+    // Make it work on zoom or pan
+    useMapGeometry: true
+});
 
 /* *
  *
