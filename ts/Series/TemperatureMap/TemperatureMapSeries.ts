@@ -27,6 +27,7 @@ import U from '../../Core/Utilities.js';
 
 const {
     correctFloat,
+    defined,
     extend,
     isArray,
     isNumber,
@@ -278,6 +279,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                     const pointMarkerOptions = point.marker || {},
                         hasPointMarker = !!point.marker,
                         verb = graphic ? 'animate' : 'attr',
+                        zMin = this.options.zMin,
                         shouldDrawMarker = (
                             (
                                 (options.marker || {}).enabled &&
@@ -288,7 +290,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
                         !point.isNull &&
                         point.visible !== false &&
                         // Above zThreshold
-                        (point.options as any).z >= (this.options.zMin || 0);
+                        (!defined(zMin) || (point.z && point.z >= zMin));
 
                     if (shouldDrawMarker) {
                         const symbol = pick(
