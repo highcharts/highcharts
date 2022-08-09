@@ -20,6 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type AnnotationPoint from '../../../Extensions/Annotations/AnnotationPoint';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
@@ -456,7 +457,7 @@ function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(
-        point as Highcharts.AnnotationPoint
+        point as AnnotationPoint
     );
     const context = { point, annotations };
 

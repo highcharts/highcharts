@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type AnnotationPoint from './AnnotationPoint';
 import type AnnotationsOptions from './AnnotationsOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AST from '../../Core/Renderer/HTML/AST';
@@ -114,9 +115,6 @@ declare global {
             defs: Record<string, AST.Node>;
             navigation: NavigationOptions;
         }
-        interface AnnotationPoint extends Point {
-            series: AnnotationSeries;
-        }
         interface AnnotationSeries extends Series {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
@@ -127,6 +125,7 @@ declare global {
             prototype: Partial<T['prototype']>,
             defaultOptions?: DeepPartial<T['prototype']['options']>
         ): void;
+        type AnnotationPointType = (MockPoint|AnnotationPoint);
     }
 }
 
@@ -1162,7 +1161,7 @@ merge<Annotation>(
                      * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
                      */
                     formatter: function (
-                        this: Highcharts.AnnotationPoint
+                        this: AnnotationPoint
                     ): (number|string) {
                         return defined(this.y) ? this.y : 'Annotation label';
                     },
