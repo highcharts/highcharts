@@ -315,6 +315,38 @@ class FlowMapSeries extends SankeySeries {
 
     }
 
+    public drawPoints(): void {
+        // Draw flow graphics
+        super.drawPoints.call(this);
+
+        // const markerGroup = (
+        //     (this as any)[this.specialGroup as any] ||
+        //     this.markerGroup
+        // );
+
+        // Draw markers
+        this.points.forEach((point): void => {
+            if ((point as any).options.markerEnd) { // if should draw marker
+
+                // Render graphic
+                const marker = this.chart.renderer.rect(100, 100, 1000, 100, 5)
+                    .add(this.group); // add to the series group
+
+                (marker.element as any).point = point; // mouse tracking
+
+                const pointAttribs = this.pointAttribs(
+                    point,
+                    point.selected ? 'select' : void 0
+                );
+
+                // Simple PoC (at this moment) without animation
+                marker.attr(pointAttribs);
+
+                marker.addClass(point.getClassName(), true);
+            }
+        });
+    }
+
     public translateNode(): void {
         return;
     }
