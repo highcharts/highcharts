@@ -63,10 +63,10 @@ const composedClasses: Array<Function> = [];
 function chartGetSelectedParentNodes(
     this: Chart
 ): Array<PackedBubblePoint> {
-    const series = this.series as Array<PackedBubbleSeries>,
+    const allSeries = this.series as Array<PackedBubbleSeries>,
         selectedParentsNodes: Array<PackedBubblePoint> = [];
 
-    series.forEach((series): void => {
+    allSeries.forEach((series): void => {
         if (series.parentNode && series.parentNode.selected) {
             selectedParentsNodes.push(series.parentNode);
         }
@@ -140,7 +140,7 @@ class PackedBubbleLayout extends RFLayout {
 
     public beforeStep(): void {
         if (this.options.marker) {
-            this.series.forEach(function (series): void {
+            this.series.forEach((series): void => {
                 if (series) {
                     (series as any).calculateParentRadius();
                 }
@@ -172,7 +172,7 @@ class PackedBubbleLayout extends RFLayout {
             centerX,
             centerY,
             radius = layout.options.initialPositionRadius;
-        nodes.forEach(function (node, index): void {
+        nodes.forEach((node, index): void => {
             if (
                 layout.options.splitSeries &&
                 !node.isParentNode
@@ -208,10 +208,10 @@ class PackedBubbleLayout extends RFLayout {
             distanceXY,
             bubblePadding = layout.options.bubblePadding;
 
-        layout.nodes.forEach(function (node): void {
+        layout.nodes.forEach((node): void => {
             node.degree = node.mass;
             node.neighbours = 0;
-            layout.nodes.forEach(function (repNode): void {
+            layout.nodes.forEach((repNode): void => {
                 force = 0;
                 if (
                     // Node can not repulse itself:

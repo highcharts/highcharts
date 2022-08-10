@@ -49,4 +49,10 @@ export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
     textPath?: DataLabelTextPathOptions;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PackedBubbleDataLabelOptions;
