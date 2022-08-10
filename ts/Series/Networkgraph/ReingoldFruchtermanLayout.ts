@@ -19,12 +19,14 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphSeries from './Networkgraph';
 import type Point from '../../Core/Series/Point';
 
 import H from '../../Core/Globals.js';
 const { win } = H;
-import Layouts from './Layouts.js';
+import Integrations from './Integrations.js';
+import GraphLayout from '../GraphLayoutComposition.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -48,11 +50,19 @@ class ReingoldFruchtermanLayout {
 
     /* *
      *
-     *  Static Properties
+     *  Static Functions
      *
      * */
 
-    public static compose = Layouts.compose;
+    public static compose(
+        ChartClass: typeof Chart
+    ): void {
+        GraphLayout.compose(ChartClass);
+        GraphLayout.integrations.euler = Integrations.euler;
+        GraphLayout.integrations.verlet = Integrations.verlet;
+        GraphLayout.layouts['reingold-fruchterman'] =
+            ReingoldFruchtermanLayout;
+    }
 
     /* *
      *
@@ -71,8 +81,7 @@ class ReingoldFruchtermanLayout {
     public forces?: Array<string>;
     public chart?: Chart;
     public initialRendering: boolean = true;
-    public integration: Highcharts.NetworkgraphIntegrationObject =
-        void 0 as any;
+    public integration: GraphIntegrationObject = void 0 as any;
     public k?: number;
     public links: Array<Point> = [];
     public maxIterations?: number;
@@ -113,7 +122,7 @@ class ReingoldFruchtermanLayout {
         this.setInitialRendering(true);
 
         this.integration =
-            H.networkgraphIntegrations[options.integration as any];
+            GraphLayout.integrations[options.integration as any];
 
         this.enableSimulation = options.enableSimulation;
 
@@ -808,19 +817,6 @@ namespace ReingoldFruchtermanLayout {
     }
 
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../Networkgraph/LayoutType' {
-    interface LayoutTypeRegistry {
-        'reingold-fruchterman': typeof ReingoldFruchtermanLayout;
-    }
-}
-Layouts.types['reingold-fruchterman'] = ReingoldFruchtermanLayout;
 
 /* *
  *

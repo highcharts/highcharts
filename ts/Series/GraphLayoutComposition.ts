@@ -18,16 +18,17 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { LayoutType, LayoutTypeRegistry } from './LayoutType';
-import type Point from '../../Core/Series/Point';
-import type RFLayout from './ReingoldFruchtermanLayout';
+import type Chart from '../Core/Chart/Chart';
+import type Point from '../Core/Series/Point';
+import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
+import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import U from '../Core/Utilities.js';
 const { addEvent } = U;
+
+import './Networkgraph/Integrations.js';
+import './Networkgraph/QuadTree.js';
 
 /* *
  *
@@ -35,19 +36,13 @@ const { addEvent } = U;
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
-        graphLayoutsLookup?: Array<LayoutType>;
+        graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
-declare module '../../Core/GlobalsLike' {
-    interface GlobalsLike {
-        layouts: LayoutTypeRegistry;
-    }
-}
-
-declare module '../../Core/Series/PointLike' {
+declare module '../Core/Series/PointLike' {
     interface PointLike {
         dispX?: number;
         dispY?: number;
@@ -61,14 +56,22 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
+declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         forces?: Array<string>;
     }
 }
 
-import './Integrations.js';
-import './QuadTree.js';
+export interface GraphIntegrationObject {
+    [name: string]: Function;
+    barycenter: Function;
+    getK: Function;
+    integrate: Function;
+    repulsive: Function;
+    repulsiveForceFunction: Function;
+}
+
+export type GraphLayoutType = RFLayout;
 
 /* *
  *
@@ -77,6 +80,10 @@ import './QuadTree.js';
  * */
 
 const composedClasses: Array<Function> = [];
+
+const integrations: Record<string, GraphIntegrationObject> = {};
+
+const layouts: Record<string, typeof RFLayout> = {};
 
 /* *
  *
@@ -202,21 +209,14 @@ function onChartRender(
 
 /* *
  *
- *  Registry
- *
- * */
-
-H.layouts = {} as LayoutTypeRegistry;
-
-/* *
- *
  *  Default Export
  *
  * */
 
-const Layouts = {
+const GraphLayoutComposition = {
     compose,
-    types: H.layouts
+    integrations,
+    layouts
 };
 
-export default Layouts;
+export default GraphLayoutComposition;
