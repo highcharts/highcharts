@@ -97,7 +97,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
              *         Temperature colors with steps
              *
              * @default ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff"]
-             * @type {Array<ColorType>}
+             * @type    {Array<ColorType>|Array<[number,ColorType]>}
              */
             temperatureColors: [
                 '#ff0000',
@@ -181,10 +181,9 @@ class TemperatureMapSeries extends MapBubbleSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        if (
-            !init &&
-            this.points.length < (this.options.animationLimit as any) // #8099
-        ) {
+        const animationLimit = pick(this.options.animationLimit, Infinity);
+
+        if (!init && this.points.length < animationLimit) { // #8099
             this.options.temperatureColors.forEach((_, i: number): void => {
                 this.points.forEach((point): void => {
                     const graphic = point.graphics[i];
