@@ -15,7 +15,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type LayoutType from '../Networkgraph/LayoutType';
+import type { GraphLayoutType } from '../GraphLayoutComposition';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 
@@ -43,7 +43,7 @@ declare class PackedBubbleChart extends Chart {
  * */
 
 interface PackedBubbleChart extends Highcharts.NetworkgraphChart {
-    graphLayoutsLookup: Array<LayoutType>;
+    graphLayoutsLookup: Array<GraphLayoutType>;
 }
 
 /* *

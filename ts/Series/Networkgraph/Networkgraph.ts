@@ -38,6 +38,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
@@ -936,7 +937,7 @@ extend(NetworkgraphSeries.prototype, {
                     !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
-                new H.layouts[(layoutOptions as any).type]();
+                new GraphLayout.layouts[(layoutOptions as any).type]();
 
             layout.init(layoutOptions as any);
             graphLayoutsLookup.splice(

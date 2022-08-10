@@ -12,10 +12,10 @@
 
 'use strict';
 
+import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type RFLayout from './ReingoldFruchtermanLayout';
-import H from '../../Core/Globals.js';
 
 /**
  * Internal types
@@ -24,7 +24,7 @@ import H from '../../Core/Globals.js';
 declare global {
     namespace Highcharts {
         interface NetworkgraphEulerIntegrationObject
-            extends NetworkgraphIntegrationObject
+            extends GraphIntegrationObject
         {
             attractive(
                 this: RFLayout,
@@ -50,25 +50,15 @@ declare global {
             repulsiveForceFunction(d: number, k: number): number;
         }
         interface NetworkgraphIntegrationDictionary {
-            [name: string]: NetworkgraphIntegrationObject;
+            [name: string]: GraphIntegrationObject;
             verlet: NetworkgraphVerletIntegrationObject;
             euler: NetworkgraphEulerIntegrationObject;
-        }
-        interface NetworkgraphIntegrationObject {
-            [name: string]: Function;
-            attractive: Function;
-            attractiveForceFunction: Function;
-            barycenter: Function;
-            getK: Function;
-            integrate: Function;
-            repulsive: Function;
-            repulsiveForceFunction: Function;
         }
         interface NetworkgraphPoint {
             temperature?: number;
         }
         interface NetworkgraphVerletIntegrationObject
-            extends NetworkgraphIntegrationObject
+            extends GraphIntegrationObject
         {
             attractive(
                 this: RFLayout,
@@ -91,13 +81,12 @@ declare global {
             ): void;
             repulsiveForceFunction(d: number, k: number): number;
         }
-        let networkgraphIntegrations: NetworkgraphIntegrationDictionary;
     }
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-H.networkgraphIntegrations = {
+const Integrations = {
     verlet: {
         /**
          * Attractive force funtion. Can be replaced by API's
@@ -515,3 +504,5 @@ H.networkgraphIntegrations = {
         }
     }
 };
+
+export default Integrations;

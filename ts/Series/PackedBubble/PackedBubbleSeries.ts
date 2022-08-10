@@ -35,6 +35,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
@@ -540,7 +541,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
+                new (GraphLayout.layouts[(layoutOptions as any).type] as any)();
 
             layout.init(layoutOptions);
             graphLayoutsLookup.splice(layout.index, 0, layout);
@@ -578,17 +579,18 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     enableSimulation: series.layout.options.enableSimulation
                 }
             ),
-            parentNodeLayout;
+            parentNodeLayout: PBLayout;
 
         parentNodeLayout = graphLayoutsStorage[
             (layoutOptions as any).type + '-series'
-        ];
+        ] as PBLayout;
 
         if (!parentNodeLayout) {
 
             graphLayoutsStorage[(layoutOptions as any).type + '-series'] =
             parentNodeLayout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
+                new GraphLayout.layouts[(layoutOptions as any).type]() as
+                    PBLayout;
 
             parentNodeLayout.init(parentNodeOptions);
 

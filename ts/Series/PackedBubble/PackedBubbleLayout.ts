@@ -16,11 +16,13 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
-import Layouts from '../Networkgraph/Layouts.js';
+import GraphLayout from '../GraphLayoutComposition.js';
+import PBC from './PackedBubbleComposition.js';
 import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -37,11 +39,26 @@ class PackedBubbleLayout extends RFLayout {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart
+    ): void {
+        RFLayout.compose(ChartClass);
+        GraphLayout.integrations.packedbubble = PBC.packedbubble;
+        GraphLayout.layouts.packedbubble = PackedBubbleLayout;
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
 
     public enableSimulation?: boolean;
+    public index: number = NaN;
     public nodes: Array<PackedBubblePoint> = [];
     public options: PackedBubbleLayout.Options = void 0 as any;
     public series: Array<PackedBubbleSeries> = [];
@@ -243,12 +260,7 @@ namespace PackedBubbleLayout {
  *
  * */
 
-declare module '../Networkgraph/LayoutType' {
-    interface LayoutTypeRegistry {
-        packedbubble: typeof PackedBubbleLayout;
-    }
-}
-Layouts.types.packedbubble = PackedBubbleLayout;
+GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
 /* *
  *
