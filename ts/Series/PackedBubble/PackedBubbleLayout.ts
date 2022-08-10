@@ -26,8 +26,67 @@ import PBC from './PackedBubbleComposition.js';
 import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        allDataPoints?: Array<PackedBubbleSeries.Data>;
+        getSelectedParentNodes(): Array<PackedBubblePoint>;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function chartGetSelectedParentNodes(
+    this: Chart
+): Array<PackedBubblePoint> {
+    const series = this.series as Array<PackedBubbleSeries>,
+        selectedParentsNodes: Array<PackedBubblePoint> = [];
+
+    series.forEach((series): void => {
+        if (series.parentNode && series.parentNode.selected) {
+            selectedParentsNodes.push(series.parentNode);
+        }
+    });
+
+    return selectedParentsNodes;
+}
+
+/**
+ * Remove accumulated data points to redistribute all of them again
+ * (i.e after hiding series by legend)
+ * @private
+ */
+function onChartBeforeRedraw(
+    this: Chart
+): void {
+    if (this.allDataPoints) {
+        delete (this as Partial<typeof this>).allDataPoints;
+    }
+}
 
 /* *
  *
@@ -49,6 +108,16 @@ class PackedBubbleLayout extends RFLayout {
         RFLayout.compose(ChartClass);
         GraphLayout.integrations.packedbubble = PBC.packedbubble;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+
+            const chartProto = ChartClass.prototype;
+
+            chartProto.getSelectedParentNodes = chartGetSelectedParentNodes;
+        }
     }
 
     /* *
