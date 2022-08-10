@@ -28,8 +28,8 @@ const chart = Highcharts.stockChart('container', {
     }]
 });
 
-// Two points added with a 1s delay,
-// notice how navigator stays with the initial points range.
+// Two points added with a 1s delay, notice how navigator stays with the initial
+// points range.
 setTimeout(() => {
     chart.series[0].addPoint([110000, 50], false);
     chart.series[0].addPoint([120000, 100]);
