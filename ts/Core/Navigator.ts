@@ -660,12 +660,13 @@ extend(defaultOptions, {
 
         /**
          * Enable or disable navigator sticking to right, while adding new
-         * points. If `undefined`, the default value is `true`.
+         * points. If `undefined`, the navigator sticks to the axis maximum only
+         * if it was already at the maximum prior to adding points.
          *
          * @type      {boolean}
          * @default   undefined
          * @since     next
-         * @sample {highstock} stock/navigator/sticktomax/
+         * @sample {highstock} stock/navigator/sticktomax-false/
          * stickToMax set to false
          * @apioption navigator.stickToMax
          */
