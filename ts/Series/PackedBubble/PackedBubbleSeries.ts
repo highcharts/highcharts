@@ -956,7 +956,8 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             smallestSize = Math.min(plotWidth, plotHeight),
             extremes = {} as Record<string, number>,
             radii = [] as Array<(number|null)>,
-            allDataPoints = chart.allDataPoints,
+            allDataPoints = chart.allDataPoints || [],
+            allDataPointsLength = allDataPoints.length,
             minSize: number,
             maxSize: number,
             value: (number|null),
@@ -968,19 +969,19 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
             extremes[prop] = isPercent ?
                 smallestSize * length / 100 :
-                length * Math.sqrt(allDataPoints.length);
+                length * Math.sqrt(allDataPointsLength);
         });
 
         chart.minRadius = minSize = extremes.minSize /
-            Math.sqrt(allDataPoints.length);
+            Math.sqrt(allDataPointsLength);
         chart.maxRadius = maxSize = extremes.maxSize /
-            Math.sqrt(allDataPoints.length);
+            Math.sqrt(allDataPointsLength);
 
         zExtremes = useSimulation ?
             series.calculateZExtremes() :
             [minSize, maxSize];
 
-        (allDataPoints || []).forEach(function (point, i): void {
+        allDataPoints.forEach(function (point, i): void {
 
             value = useSimulation ?
                 clamp(

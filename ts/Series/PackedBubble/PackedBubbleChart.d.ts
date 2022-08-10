@@ -26,7 +26,6 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
  * */
 
 declare class PackedBubbleChart extends Chart {
-    allDataPoints: Array<PackedBubbleSeries.Data>;
     diffX: number;
     diffY: number;
     hoverPoint: PackedBubblePoint;

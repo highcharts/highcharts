@@ -16,17 +16,11 @@
  *
  * */
 
-import type PackedBubbleChart from './PackedBubbleChart';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePoint from './PackedBubblePoint';
-import type PackedBubbleSeries from './PackedBubbleSeries';
-import type Point from '../../Core/Series/Point';
 
-import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import VerletIntegration from '../Networkgraph/VerletIntegration.js';
-import U from '../../Core/Utilities.js';
-const { addEvent } = U;
 
 /* *
  *
@@ -34,30 +28,12 @@ const { addEvent } = U;
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        getSelectedParentNodes(): Array<Point>;
-    }
-}
 
 /* *
  *
  *  Composition
  *
  * */
-
-Chart.prototype.getSelectedParentNodes = function (): Array<Point> {
-    const chart = this,
-        series = chart.series as Array<PackedBubbleSeries>,
-        selectedParentsNodes: Array<PackedBubblePoint> = [];
-
-    series.forEach((series): void => {
-        if (series.parentNode && series.parentNode.selected) {
-            selectedParentsNodes.push(series.parentNode);
-        }
-    });
-    return selectedParentsNodes;
-};
 
 
 const PBC = {
@@ -131,16 +107,5 @@ const PBC = {
         getK: H.noop
     }
 };
-
-// Remove accumulated data points to redistribute all of them again
-// (i.e after hiding series by legend)
-
-addEvent(Chart as any, 'beforeRedraw', function (
-    this: PackedBubbleChart
-): void {
-    if (this.allDataPoints) {
-        delete (this as Partial<typeof this>).allDataPoints;
-    }
-});
 
 export default PBC;
