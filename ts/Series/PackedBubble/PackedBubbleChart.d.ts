@@ -17,7 +17,6 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { GraphLayoutType } from '../GraphLayoutComposition';
 import type PackedBubblePoint from './PackedBubblePoint';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 
 /* *
  *

@@ -22,7 +22,7 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
 import GraphLayout from '../GraphLayoutComposition.js';
-import PBC from './PackedBubbleComposition.js';
+import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -106,7 +106,7 @@ class PackedBubbleLayout extends RFLayout {
         ChartClass: typeof Chart
     ): void {
         RFLayout.compose(ChartClass);
-        GraphLayout.integrations.packedbubble = PBC.packedbubble;
+        GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
         if (composedClasses.indexOf(ChartClass) === -1) {
