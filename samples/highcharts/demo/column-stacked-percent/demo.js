@@ -1,17 +1,18 @@
+// // Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
 Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Stacked column chart'
+        text: 'UEFA CL most assists by season'
     },
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['2021/22', '2020/21', '2019/20', '2018/19', '2017/18']
     },
     yAxis: {
         min: 0,
         title: {
-            text: 'Total fruit consumption'
+            text: 'Assists'
         }
     },
     tooltip: {
@@ -24,13 +25,13 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2]
+        name: 'Kevin De Bruyne',
+        data: [4, 4, 2, 4, 4]
     }, {
-        name: 'Jane',
-        data: [2, 2, 3, 2, 1]
+        name: 'Joshua Kimmich',
+        data: [0, 4, 3, 2, 3]
     }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5]
+        name: 'Sadio Mané',
+        data: [1, 2, 2, 1, 2]
     }]
 });

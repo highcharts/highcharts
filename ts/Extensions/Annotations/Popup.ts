@@ -254,7 +254,6 @@ const indexFilter = /\d/g,
     LI = 'li',
     H3 = 'h3';
 
-
 /**
  * Enum for properties which should have dropdown list.
  * @private
@@ -1876,8 +1875,8 @@ H.Popup.prototype = {
                             parentDiv,
                             {
                                 value: value as any,
-                                type: 'text'
-                            } // all inputs are text type
+                                type: 'number'
+                            } // all inputs are number type
                         );
                     }
                 }

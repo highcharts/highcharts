@@ -516,7 +516,7 @@ class OrganizationSeries extends SankeySeries {
             values: (
                 OrganizationPointOptions &
                 OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
+            ) = ['borderRadius', 'linkColor', 'linkLineWidth', 'linkOpacity']
                 .reduce(function (
                     obj: Record<string, unknown>,
                     key: string
@@ -533,6 +533,8 @@ class OrganizationSeries extends SankeySeries {
         if (!point.isNode) {
             attribs.stroke = values.linkColor;
             attribs['stroke-width'] = values.linkLineWidth;
+            attribs.opacity = values.linkOpacity;
+
             delete attribs.fill;
         } else {
             if (values.borderRadius) {

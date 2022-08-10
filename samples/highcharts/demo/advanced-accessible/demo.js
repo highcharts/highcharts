@@ -60,11 +60,9 @@ var chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
-
     title: {
         text: 'Daily company fruit consumption 2019'
     },
-
     accessibility: {
         point: {
             descriptionFormatter: function (point) {
@@ -77,14 +75,11 @@ var chart = Highcharts.chart('container', {
                     point.median + ', high ' + point.high;
             }
         },
-
         series: {
             descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
         },
-
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
-
     xAxis: [{
         accessibility: {
             description: 'Months of the year'
@@ -92,14 +87,12 @@ var chart = Highcharts.chart('container', {
         categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         crosshair: true
     }],
-
     yAxis: {
         title: {
             text: 'Fruits consumed'
         },
         min: 0
     },
-
     responsive: {
         rules: [{
             condition: {
@@ -112,18 +105,15 @@ var chart = Highcharts.chart('container', {
             }
         }]
     },
-
     tooltip: {
         shared: true
     },
-
     plotOptions: {
         series: {
             stickyTracking: true,
             whiskerWidth: 5
         }
     },
-
     series: [{
         name: 'Plums',
         data: [

@@ -19,7 +19,8 @@
 import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
@@ -326,7 +327,7 @@ class AreaSeries extends LineSeries {
         const getGraphPath = LineSeries.prototype.getGraphPath,
             options = this.options,
             stacking = options.stacking,
-            yAxis = this.yAxis as StackingAxis.Composition,
+            yAxis = this.yAxis as StackingAxis,
             bottomPoints: Array<AreaPoint> = [],
             graphPoints: Array<AreaPoint> = [],
             seriesIndex = this.index,
@@ -477,7 +478,7 @@ class AreaSeries extends LineSeries {
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,
-            yAxis: StackingAxis.Composition = this.yAxis as any,
+            yAxis: StackingAxis = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
             pointMap: Record<string, AreaPoint> = {},
             yAxisSeries = yAxis.series,
@@ -501,7 +502,7 @@ class AreaSeries extends LineSeries {
 
             // Sort the keys (#1651)
             objectEach(stack, function (
-                stackX: Highcharts.StackItem,
+                stackX: StackItem,
                 x: string
             ): void {
                 // nulled after switching between

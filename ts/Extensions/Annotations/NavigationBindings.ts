@@ -29,6 +29,7 @@ import ControllableEllipse from './Controllables/ControllableEllipse';
 const {
     addEvent,
     attr,
+    defined,
     fireEvent,
     isArray,
     isFunction,
@@ -125,6 +126,7 @@ declare global {
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(
+                key: (0|string),
                 value: ('boolean'|'number'|'string')
             ): ('checkbox'|'number'|'text');
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
@@ -216,14 +218,22 @@ const bindingsUtils = {
      * Field type (one of: text, number, checkbox)
      */
     getFieldType: function (
+        key: (0|string),
         value: ('boolean'|'number'|'string')
     ): ('checkbox'|'number'|'text') {
+        const predefinedType = NavigationBindings.annotationsFieldsTypes[key];
+        let fieldType: string = typeof value;
+
+        if (defined(predefinedType)) {
+            fieldType = predefinedType;
+        }
+
         return ({
             'string': 'text',
             'number': 'number',
             'boolean': 'checkbox'
         } as Record<string, ('checkbox'|'number'|'text')>)[
-            typeof value
+            fieldType
         ];
     },
 
@@ -354,6 +364,21 @@ class NavigationBindings {
         rectangle: ['crosshairX', 'crosshairY', 'labelOptions'],
         ellipse: ['labelOptions'],
         circle: ['labelOptions']
+    };
+
+    // Define types for editable fields per annotation
+    // There is no need to define numbers, because they won't change their type
+    // to string.
+    public static annotationsFieldsTypes: Record<string, string> = {
+        backgroundColor: 'string',
+        borderColor: 'string',
+        color: 'string',
+        fill: 'string',
+        fontSize: 'string',
+        labels: 'string',
+        name: 'string',
+        stroke: 'string',
+        title: 'string'
     };
 
     /* *
@@ -795,8 +820,8 @@ class NavigationBindings {
                 value = parsedValue as any;
             }
 
-            // Remove empty strings or values like 0
-            if (value !== '' && value !== 'undefined') {
+            // Remove values like 0
+            if (value !== 'undefined') {
                 path.forEach(function (name: string, index: number): void {
                     const nextName = pick(path[index + 1], '');
 
@@ -887,13 +912,14 @@ class NavigationBindings {
             option: any,
             key: (0|string),
             parentEditables: any,
-            parent: any
+            parent: any,
+            parentKey: (0|string)
         ): void {
             let nextParent: any;
 
             if (
                 parentEditables &&
-                option &&
+                defined(option) &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (
@@ -918,7 +944,8 @@ class NavigationBindings {
                                 arrayOption,
                                 0,
                                 nestedEditables[key],
-                                parent[key]
+                                parent[key],
+                                key
                             );
                         } else {
                             // Advanced arrays, e.g. [Object, Object]
@@ -933,7 +960,8 @@ class NavigationBindings {
                                         nestedOption,
                                         nestedKey,
                                         nestedEditables[key],
-                                        parent[key][i]
+                                        parent[key][i],
+                                        key
                                     );
                                 }
                             );
@@ -957,7 +985,8 @@ class NavigationBindings {
                                 key === 0 ?
                                     parentEditables :
                                     (nestedEditables as any)[key],
-                                nextParent
+                                nextParent,
+                                key
                             );
                         }
                     );
@@ -972,9 +1001,9 @@ class NavigationBindings {
                             'text'
                         ];
                     } else if (isArray(parent)) {
-                        parent.push([option, getFieldType(option)]);
+                        parent.push([option, getFieldType(parentKey, option)]);
                     } else {
-                        parent[key] = [option, getFieldType(option)];
+                        parent[key] = [option, getFieldType(key, option)];
                     }
                 }
             }
@@ -991,12 +1020,18 @@ class NavigationBindings {
                             typeKey,
                             nestedEditables,
                             visualOptions[key],
-                            true
+                            typeKey
                         );
                     }
                 );
             } else {
-                traverse(option, key, (editables as any)[type], visualOptions);
+                traverse(
+                    option,
+                    key,
+                    (editables as any)[type],
+                    visualOptions,
+                    key
+                );
             }
         });
 
@@ -1130,7 +1165,6 @@ interface NavigationBindings {
  * @type {bindingsUtils}
  */
 NavigationBindings.prototype.utils = bindingsUtils;
-
 
 Chart.prototype.initNavigationBindings = function (
     this: Highcharts.AnnotationChart

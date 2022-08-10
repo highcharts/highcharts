@@ -16,23 +16,28 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
+import type Chart from '../../Core/Chart/Chart';
+import type Legend from '../../Core/Legend/Legend';
+import type Point from '../../Core/Series/Point';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import Axis from '../../Core/Axis/Axis.js';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        column: ColumnSeries,
+        column: {
+            prototype: columnProto
+        },
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -48,15 +53,12 @@ const {
     pick
 } = U;
 
-import '../Column/ColumnSeries.js';
-import '../Scatter/ScatterSeries.js';
-import './BubbleLegendItem.js';
-
 /* *
  *
  *  Declarations
  *
  * */
+
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         bubbleZExtremes?: BubbleZExtremes;
@@ -79,7 +81,112 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
+
 type BubbleZExtremes = { zMin: number; zMax: number };
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Add logic to pad each axis with the amount of pixels necessary to avoid the
+ * bubbles to overflow.
+ */
+function axisBeforePadding(
+    this: Axis
+): void {
+    const axisLength = this.len,
+        chart = this.chart,
+        isXAxis = this.isXAxis,
+        dataKey = isXAxis ? 'xData' : 'yData',
+        min = this.min,
+        range = (this.max as any) - (min as any);
+
+    let pxMin = 0,
+        pxMax = axisLength,
+        transA = axisLength / range,
+        hasActiveSeries;
+
+    // Handle padding on the second pass, or on redraw
+    this.series.forEach((series): void => {
+
+        if (
+            series.bubblePadding &&
+            (series.visible || !chart.options.chart.ignoreHiddenSeries)
+        ) {
+            // Correction for #1673
+            this.allowZoomOutside = true;
+
+            hasActiveSeries = true;
+
+            const data = (series as any)[dataKey];
+
+            if (isXAxis) {
+                (series.onPoint || (series as any)).getRadii(0, 0, series);
+                if (series.onPoint) {
+                    series.radii = series.onPoint.radii;
+                }
+            }
+
+            if (range > 0) {
+                let i = data.length;
+                while (i--) {
+                    if (
+                        isNumber(data[i]) &&
+                        (this.dataMin as any) <= data[i] &&
+                        data[i] <= (this.max as any)
+                    ) {
+                        const radius = series.radii && series.radii[i] || 0;
+                        pxMin = Math.min(
+                            ((data[i] - (min as any)) * transA) - radius,
+                            pxMin
+                        );
+                        pxMax = Math.max(
+                            ((data[i] - (min as any)) * transA) + radius,
+                            pxMax
+                        );
+                    }
+                }
+            }
+        }
+    });
+
+    // Apply the padding to the min and max properties
+    if (hasActiveSeries && range > 0 && !this.logarithmic) {
+        pxMax -= axisLength;
+        transA *= (
+            axisLength +
+            Math.max(0, pxMin) - // #8901
+            Math.min(pxMax, axisLength)
+        ) / axisLength;
+        (
+            [
+                ['min', 'userMin', pxMin],
+                ['max', 'userMax', pxMax]
+            ] as Array<[string, string, number]>
+        ).forEach((keys: [string, string, number]): void => {
+            if (
+                typeof pick(
+                    (this.options as any)[keys[0]],
+                    (this as any)[keys[1]]
+                ) === 'undefined'
+            ) {
+                (this as any)[keys[0]] += keys[2] / transA;
+            }
+        });
+    }
+
+}
 
 /* *
  *
@@ -94,8 +201,6 @@ class BubbleSeries extends ScatterSeries {
      *  Static Properties
      *
      * */
-
-    public static compose = BubbleLegendComposition.compose;
 
     /**
      * A bubble series is a three dimensional series type where each point
@@ -364,6 +469,28 @@ class BubbleSeries extends ScatterSeries {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
+        SeriesClass: typeof SeriesType
+    ): void {
+        BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
+
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
+
+            AxisClass.prototype.beforePadding = axisBeforePadding;
+        }
+
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
@@ -395,9 +522,6 @@ class BubbleSeries extends ScatterSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Perform animation on the bubbles
@@ -440,11 +564,12 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
+        const zData = this.zData,
+            yData = this.yData,
+            radii = [] as Array<(number|null)>;
+
         let len: number,
             i: number,
-            zData = this.zData,
-            yData = this.yData,
-            radii = [] as Array<(number|null)>,
             value,
             zExtremes = this.chart.bubbleZExtremes;
 
@@ -511,10 +636,11 @@ class BubbleSeries extends ScatterSeries {
         value: (number|null|undefined),
         yValue?: (number|null|undefined)
     ): (number|null) {
-        let options = this.options,
+        const options = this.options,
             sizeByArea = options.sizeBy !== 'width',
-            zThreshold = options.zThreshold,
-            zRange = zMax - zMin,
+            zThreshold = options.zThreshold;
+
+        let zRange = zMax - zMin,
             pos = 0.5;
 
         // #8608 - bubble should be visible when z is undefined
@@ -689,8 +815,6 @@ class BubbleSeries extends ScatterSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -700,15 +824,16 @@ class BubbleSeries extends ScatterSeries {
  * */
 
 interface BubbleSeries {
-    alignDataLabel: typeof ColumnSeries.prototype['alignDataLabel'];
+    alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
     specialGroup: string;
     zoneAxis: string;
 }
+
 extend(BubbleSeries.prototype, {
-    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
+    alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
     buildKDTree: noop,
@@ -728,101 +853,10 @@ addEvent(BubbleSeries, 'updatedData', (e): void => {
     delete e.target.chart.bubbleZExtremes;
 });
 
-/* *
- *
- *  Axis ?
- *
- * */
-
-// Add logic to pad each axis with the amount of pixels necessary to avoid the
-// bubbles to overflow.
-Axis.prototype.beforePadding = function (): void {
-    let axis = this,
-        axisLength = this.len,
-        chart = this.chart,
-        pxMin = 0,
-        pxMax = axisLength,
-        isXAxis = this.isXAxis,
-        dataKey = isXAxis ? 'xData' : 'yData',
-        min = this.min,
-        range = (this.max as any) - (min as any),
-        transA = axisLength / range,
-        hasActiveSeries;
-
-    // Handle padding on the second pass, or on redraw
-    this.series.forEach(function (series): void {
-
-        if (
-            series.bubblePadding &&
-            (series.visible || !chart.options.chart.ignoreHiddenSeries)
-        ) {
-            // Correction for #1673
-            axis.allowZoomOutside = true;
-
-            hasActiveSeries = true;
-
-            const data = (series as any)[dataKey];
-
-            if (isXAxis) {
-                (series.onPoint || (series as any)).getRadii(0, 0, series);
-                if (series.onPoint) {
-                    series.radii = series.onPoint.radii;
-                }
-            }
-
-            if (range > 0) {
-                let i = data.length;
-                while (i--) {
-                    if (
-                        isNumber(data[i]) &&
-                        (axis.dataMin as any) <= data[i] &&
-                        data[i] <= (axis.max as any)
-                    ) {
-                        const radius = series.radii && series.radii[i] || 0;
-                        pxMin = Math.min(
-                            ((data[i] - (min as any)) * transA) - radius,
-                            pxMin
-                        );
-                        pxMax = Math.max(
-                            ((data[i] - (min as any)) * transA) + radius,
-                            pxMax
-                        );
-                    }
-                }
-            }
-        }
-    });
-
-    // Apply the padding to the min and max properties
-    if (hasActiveSeries && range > 0 && !this.logarithmic) {
-        pxMax -= axisLength;
-        transA *= (
-            axisLength +
-            Math.max(0, pxMin) - // #8901
-            Math.min(pxMax, axisLength)
-        ) / axisLength;
-        (
-            [
-                ['min', 'userMin', pxMin],
-                ['max', 'userMax', pxMax]
-            ] as Array<[string, string, number]>
-        ).forEach(
-            function (keys: [string, string, number]): void {
-                if (
-                    typeof pick(
-                        (axis.options as any)[keys[0]],
-                        (axis as any)[keys[1]]
-                    ) === 'undefined'
-                ) {
-                    (axis as any)[keys[0]] += keys[2] / transA;
-                }
-            }
-        );
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-};
+// After removing series, delete the chart-level Z extremes cache, #17502.
+addEvent(BubbleSeries, 'remove', (e): void => {
+    delete e.target.chart.bubbleZExtremes;
+});
 
 /* *
  *

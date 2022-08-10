@@ -1,30 +1,30 @@
+// Data retrieved from https://gs.statcounter.com/vendor-market-share/mobile/
 Highcharts.chart('container', {
-
     chart: {
         styledMode: true
     },
-
     title: {
-        text: 'Pie point CSS'
+        text: 'Mobile vendor market share, 2021'
     },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     series: [{
         type: 'pie',
         allowPointSelect: true,
         keys: ['name', 'y', 'selected', 'sliced'],
         data: [
-            ['Apples', 29.9, false],
-            ['Pears', 71.5, false],
-            ['Oranges', 106.4, false],
-            ['Plums', 129.2, false],
-            ['Bananas', 144.0, false],
-            ['Peaches', 176.0, false],
-            ['Prunes', 135.6, true, true],
-            ['Avocados', 148.5, false]
+            ['Samsung', 27.79, true, true],
+            ['Apple', 27.34, false],
+            ['Xiaomi', 10.87, false],
+            ['Huawei', 8.48, false],
+            ['Oppo', 5.38, false],
+            ['Vivo', 4.17, false],
+            ['Realme', 2.57, false],
+            ['Unknown', 2.45, false],
+            ['Motorola', 2.22, false],
+            ['LG', 1.53, false],
+            ['Other', 7.2, false]
         ],
         showInLegend: true
     }]

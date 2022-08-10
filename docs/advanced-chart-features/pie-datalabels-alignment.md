@@ -20,7 +20,7 @@ Specific description of new options
 Alignment method for data labels. Possible values are:
 
 *   `connectors`: each label touches the nearest vertical edge of the plot area.
-*   `toPlotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
+*   `plotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
 
 **Demo with connectors**
 
