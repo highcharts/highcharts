@@ -61,7 +61,6 @@ const {
 } = U;
 import '../../Series/Networkgraph/DraggableNodes.js';
 const dragNodesMixin = H.dragNodesMixin;
-import './PackedBubbleComposition.js';
 
 /* *
  *
