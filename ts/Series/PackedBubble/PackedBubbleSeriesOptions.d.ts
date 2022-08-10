@@ -40,4 +40,10 @@ export interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
     useSimulation?: boolean;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PackedBubbleSeriesOptions;

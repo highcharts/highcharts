@@ -164,15 +164,18 @@ class PackedBubbleLayout extends RFLayout {
     }
 
     public setCircularPositions(): void {
-        let layout = this,
+        const layout = this,
             box = layout.box,
             nodes = layout.nodes,
             nodesLength = nodes.length + 1,
             angle = 2 * Math.PI / nodesLength,
-            centerX,
-            centerY,
             radius = layout.options.initialPositionRadius;
-        nodes.forEach((node, index): void => {
+
+        let centerX: number,
+            centerY: number,
+            index = 0;
+
+        for (const node of nodes) {
             if (
                 layout.options.splitSeries &&
                 !node.isParentNode
@@ -198,15 +201,17 @@ class PackedBubbleLayout extends RFLayout {
 
             node.dispX = 0;
             node.dispY = 0;
-        });
+            index++;
+        }
     }
 
     public repulsiveForces(): void {
-        let layout = this,
-            force,
-            distanceR,
-            distanceXY,
+        const layout = this,
             bubblePadding = layout.options.bubblePadding;
+
+        let force: number,
+            distanceR: number,
+            distanceXY: Record<string, number>;
 
         layout.nodes.forEach((node): void => {
             node.degree = node.mass;
@@ -263,10 +268,11 @@ class PackedBubbleLayout extends RFLayout {
         node: PackedBubblePoint,
         box: Record<string, number>
     ): void {
-        let layout = this,
-            distanceXY,
-            distanceR,
+        const layout = this,
             factor = 0.01;
+
+        let distanceXY: Record<string, number>,
+            distanceR: number;
 
         // parentNodeLimit should be used together
         // with seriesInteraction: false
