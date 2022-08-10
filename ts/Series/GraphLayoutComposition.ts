@@ -27,9 +27,6 @@ const { setAnimation } = A;
 import U from '../Core/Utilities.js';
 const { addEvent } = U;
 
-import './Networkgraph/Integrations.js';
-import './Networkgraph/QuadTree.js';
-
 /* *
  *
  *  Declarations

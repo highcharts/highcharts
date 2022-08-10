@@ -24,7 +24,7 @@ import type Point from '../../Core/Series/Point';
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import Integrations from '../Networkgraph/Integrations.js';
+import VerletIntegration from '../Networkgraph/VerletIntegration.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
@@ -127,7 +127,7 @@ const PBC = {
                 (repNode.plotY as any) -= y;
             }
         },
-        integrate: Integrations.verlet.integrate,
+        integrate: VerletIntegration.integrate,
         getK: H.noop
     }
 };

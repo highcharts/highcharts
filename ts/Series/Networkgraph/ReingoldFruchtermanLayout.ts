@@ -23,9 +23,9 @@ import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphSeries from './Networkgraph';
 import type Point from '../../Core/Series/Point';
 
+import EulerIntegration from './EulerIntegration.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
-import Integrations from './Integrations.js';
 import GraphLayout from '../GraphLayoutComposition.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -34,6 +34,9 @@ const {
     isFunction,
     pick
 } = U;
+import VerletIntegration from './VerletIntegration.js';
+
+import './QuadTree.js';
 
 /* *
  *
@@ -58,8 +61,8 @@ class ReingoldFruchtermanLayout {
         ChartClass: typeof Chart
     ): void {
         GraphLayout.compose(ChartClass);
-        GraphLayout.integrations.euler = Integrations.euler;
-        GraphLayout.integrations.verlet = Integrations.verlet;
+        GraphLayout.integrations.euler = EulerIntegration;
+        GraphLayout.integrations.verlet = VerletIntegration;
         GraphLayout.layouts['reingold-fruchterman'] =
             ReingoldFruchtermanLayout;
     }
