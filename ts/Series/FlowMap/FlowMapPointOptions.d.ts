@@ -28,6 +28,7 @@ export interface FlowMapPointOptions extends SankeyPointOptions {
     curve?: number;
     weight?: number;
     growTowards?: boolean;
+    offset2?: number;
 }
 
 export default FlowMapPointOptions;
