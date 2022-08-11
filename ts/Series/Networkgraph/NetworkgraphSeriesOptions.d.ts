@@ -24,7 +24,7 @@ import type {
 } from '../../Core/Series/DataLabelOptions';
 import type NetworkgraphPoint from './NetworkgraphPoint';
 import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
-import type NetworkgraphSeries from './Networkgraph';
+import type NetworkgraphSeries from './NetworkgraphSeries';
 import type NodesComposition from '../NodesComposition';
 import type Point from '../../Core/Series/Point';
 import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';

@@ -439,3 +439,164 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
  * */
 
 export default NetworkgraphSeriesDefaults;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.networkgraph
+ * @excluding boostThreshold, animation, animationLimit, connectEnds,
+ *            connectNulls, cropThreshold, dragDrop, getExtremesFromAll, label,
+ *            linecap, negativeColor, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointStart, softThreshold, stack, stacking,
+ *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting,
+ *            boostBlending
+ * @product   highcharts
+ * @requires  modules/networkgraph
+ * @apioption series.networkgraph
+ */
+
+/**
+ * An array of data points for the series. For the `networkgraph` series type,
+ * points can be given in the following way:
+ *
+ * An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of
+ * data points exceeds the series'
+ * [turboThreshold](#series.area.turboThreshold), this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2'
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3'
+ *     }]
+ *  ```
+ *
+ * @type      {Array<Object|Array|number>}
+ * @extends   series.line.data
+ * @excluding drilldown,marker,x,y,draDrop
+ * @sample    {highcharts} highcharts/chart/reflow-true/
+ *            Numerical values
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays/
+ *            Arrays of numeric x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *            Arrays of datetime x and y
+ * @sample    {highcharts} highcharts/series/data-array-of-name-value/
+ *            Arrays of point.name and y
+ * @sample    {highcharts} highcharts/series/data-array-of-objects/
+ *            Config objects
+ * @product   highcharts
+ * @apioption series.networkgraph.data
+ */
+
+/**
+ * @type      {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.networkgraph.data.dataLabels
+ */
+
+/**
+ * The node that the link runs from.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.data.from
+ */
+
+/**
+ * The node that the link runs to.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.data.to
+ */
+
+/**
+ * A collection of options for the individual nodes. The nodes in a
+ * networkgraph diagram are auto-generated instances of `Highcharts.Point`,
+ * but options can be applied here and linked by the `id`.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {Array<*>}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes
+ */
+
+/**
+ * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * the link.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.id
+ */
+
+/**
+ * The color of the auto generated node.
+ *
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.color
+ */
+
+/**
+ * The color index of the auto generated node, especially for use in styled
+ * mode.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.colorIndex
+ */
+
+/**
+ * The name to display for the node in data labels and tooltips. Use this when
+ * the name is different from the `id`. Where the id must be unique for each
+ * node, this is not necessary for the name.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.name
+ */
+
+/**
+ * Mass of the node. By default, each node has mass equal to it's marker radius
+ * . Mass is used to determine how two connected nodes should affect
+ * each other:
+ *
+ * Attractive force is multiplied by the ratio of two connected
+ * nodes; if a big node has weights twice as the small one, then the small one
+ * will move towards the big one twice faster than the big one to the small one
+ * .
+ *
+ * @sample highcharts/series-networkgraph/ragdoll/
+ *         Mass determined by marker.radius
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.mass
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
+ *
+ * @type      {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
+ *
+ * @apioption series.networkgraph.nodes.dataLabels
+ */
+
+''; // adds doclets above to transpiled file
