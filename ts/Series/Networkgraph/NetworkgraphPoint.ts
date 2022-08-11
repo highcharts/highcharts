@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DragNodesPoint } from './DraggableNodes';
 import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
 import type NetworkgraphSeries from './NetworkgraphSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
@@ -42,8 +43,6 @@ const {
     extend,
     pick
 } = U;
-
-type DragNodesPoint = Highcharts.DragNodesPoint;
 
 /* *
  *

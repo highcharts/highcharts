@@ -19,12 +19,14 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { DragNodesSeries } from './DraggableNodes';
 import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import DragNodesMixin from './DraggableNodes.js';
 import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -53,10 +55,6 @@ const {
     pick
 } = U;
 
-import './DraggableNodes.js';
-
-const dragNodesMixin = H.dragNodesMixin;
-
 /* *
  *
  *  Declarations
@@ -82,7 +80,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries {
+class NetworkgraphSeries extends Series implements DragNodesSeries {
 
     /* *
      *
@@ -495,10 +493,10 @@ interface NetworkgraphSeries extends NodesComposition.SeriesComposition{
     trackerGroups: Array<string>;
     createNode: NodesComposition.SeriesComposition['createNode'];
     drawGraph?(): void;
-    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
-    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
-    onMouseUp: Highcharts.DragNodesMixin['onMouseUp'];
-    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
+    onMouseDown: typeof DragNodesMixin.onMouseDown;
+    onMouseMove: typeof DragNodesMixin.onMouseMove;
+    onMouseUp: typeof DragNodesMixin.onMouseUp;
+    redrawHalo: typeof DragNodesMixin.redrawHalo;
     drawDataLabels(): void;
     pointAttribs(
         point?: NetworkgraphPoint,
@@ -557,7 +555,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      * @param {Highcharts.Point} point The point that should show halo.
      */
-    redrawHalo: dragNodesMixin.redrawHalo,
+    redrawHalo: DragNodesMixin.redrawHalo,
 
     /**
      * Mouse down action, initializing drag&drop mode.
@@ -565,7 +563,7 @@ extend(NetworkgraphSeries.prototype, {
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseDown: dragNodesMixin.onMouseDown,
+    onMouseDown: DragNodesMixin.onMouseDown,
 
     /**
      * Mouse move action during drag&drop.
@@ -573,14 +571,14 @@ extend(NetworkgraphSeries.prototype, {
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseMove: dragNodesMixin.onMouseMove,
+    onMouseMove: DragNodesMixin.onMouseMove,
 
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseUp: dragNodesMixin.onMouseUp
+    onMouseUp: DragNodesMixin.onMouseUp
 
 });
 

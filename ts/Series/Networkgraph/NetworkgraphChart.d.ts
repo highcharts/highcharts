@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DragNodesChart } from './DraggableNodes';
 import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 
 /* *
@@ -24,7 +25,7 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
  *
  * */
 
-export interface NetworkgraphChart extends Highcharts.DragNodesChart {
+export interface NetworkgraphChart extends DragNodesChart {
     graphLayoutsLookup: Array<ReingoldFruchtermanLayout>;
     graphLayoutsStorage: Record<string, ReingoldFruchtermanLayout>;
 }
