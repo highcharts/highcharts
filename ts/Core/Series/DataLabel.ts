@@ -42,7 +42,8 @@ const {
     merge,
     objectEach,
     pick,
-    splat
+    splat,
+    isString
 } = U;
 
 /* *
@@ -465,7 +466,14 @@ namespace DataLabel {
             seriesOptions = series.options,
             points = series.points,
             hasRendered = series.hasRendered || 0,
-            renderer = chart.renderer;
+            renderer = chart.renderer,
+            plotBackgroundColor = chart.options.chart.plotBackgroundColor,
+            chartBackgroundColor = chart.options.chart.backgroundColor,
+            contrastColor = renderer.getContrast(pick(
+                isString(plotBackgroundColor) ? plotBackgroundColor : void 0,
+                isString(chartBackgroundColor) ? chartBackgroundColor : void 0,
+                Palette.neutralColor100
+            ));
 
         let seriesDlOptions = seriesOptions.dataLabels,
             pointOptions,
@@ -608,28 +616,6 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (point.color || series.color) as any
                                 );
-
-                                const background = chart.chartBackground,
-                                    plotBackground = chart.plotBackground;
-
-                                let contrastColor: string =
-                                    Palette.neutralColor100;
-
-                                if (
-                                    plotBackground &&
-                                    plotBackground.attr('fill') !== 'none'
-                                ) {
-                                    contrastColor = renderer.getContrast(
-                                        plotBackground.attr('fill') as any
-                                    );
-                                } else if (
-                                    background &&
-                                    background.attr('fill') !== 'none'
-                                ) {
-                                    contrastColor = renderer.getContrast(
-                                        background.attr('fill') as any
-                                    );
-                                }
 
                                 (style as any).color = (
                                     !defined(labelDistance) &&
