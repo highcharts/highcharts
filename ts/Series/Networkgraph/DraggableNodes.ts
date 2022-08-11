@@ -12,74 +12,75 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
-import type RFLayout from './ReingoldFruchtermanLayout';
+import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DragNodesMixin {
-            onMouseDown(
-                this: DragNodesSeries,
-                point: Point,
-                event: Event
-            ): void;
-            onMouseMove(
-                this: DragNodesSeries,
-                point: DragNodesPoint,
-                event: PointerEvent
-            ): void;
-            onMouseUp(
-                this: DragNodesSeries,
-                point: DragNodesPoint,
-                event?: PointerEvent
-            ): void;
-            redrawHalo(point: DragNodesPoint): void;
-        }
-        interface DragNodesChart extends Chart {
-            graphLayoutsLookup: Array<RFLayout>;
-            hoverPoint: DragNodesPoint;
-        }
-        interface DragNodesPoint extends Point {
-            fixedPosition?: Record<string, number>;
-            hasDragged?: boolean;
-            inDragMode?: boolean;
-            series: DragNodesSeries;
-        }
-        interface DragNodesSeries extends Series {
-            chart: DragNodesChart;
-            data: Array<DragNodesPoint>;
-            hasDraggableNodes?: boolean;
-            layout: RFLayout;
-            onMouseDown: DragNodesMixin['onMouseDown'];
-            onMouseMove: DragNodesMixin['onMouseMove'];
-            onMouseUp: DragNodesMixin['onMouseUp'];
-            options: DragNodesSeriesOptions;
-            points: Array<DragNodesPoint>;
-            redrawHalo: DragNodesMixin['redrawHalo'];
-        }
-        interface DragNodesSeriesOptions extends SeriesOptions {
-            draggable?: boolean;
-            fixedDraggable?: boolean;
-        }
-        let dragNodesMixin: DragNodesMixin;
-    }
+export interface DragNodesChart extends Chart {
+    graphLayoutsLookup: Array<ReingoldFruchtermanLayout>;
+    hoverPoint: DragNodesPoint;
+}
+
+export interface DragNodesPoint extends Point {
+    fixedPosition?: Record<string, number>;
+    hasDragged?: boolean;
+    inDragMode?: boolean;
+    series: DragNodesSeries;
+}
+
+export interface DragNodesSeries extends Series {
+    chart: DragNodesChart;
+    data: Array<DragNodesPoint>;
+    hasDraggableNodes?: boolean;
+    layout: ReingoldFruchtermanLayout;
+    options: DragNodesSeriesOptions;
+    points: Array<DragNodesPoint>;
+    onMouseDown(
+        this: DragNodesSeries,
+        point: Point,
+        event: Event
+    ): void;
+    onMouseMove(
+        this: DragNodesSeries,
+        point: DragNodesPoint,
+        event: PointerEvent
+    ): void;
+    onMouseUp(
+        this: DragNodesSeries,
+        point: DragNodesPoint,
+        event?: PointerEvent
+    ): void;
+    redrawHalo(
+        point: DragNodesPoint
+    ): void;
+}
+
+export interface DragNodesSeriesOptions extends SeriesOptions {
+    draggable?: boolean;
+    fixedDraggable?: boolean;
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-H.dragNodesMixin = {
+const dragNodesMixin = {
     /**
      * Mouse down action, initializing drag&drop mode.
      *
@@ -88,8 +89,8 @@ H.dragNodesMixin = {
      * @param {Highcharts.PointerEventObject} event Browser event, before normalization.
      */
     onMouseDown: function (
-        this: Highcharts.DragNodesSeries,
-        point: Highcharts.DragNodesPoint,
+        this: DragNodesSeries,
+        point: DragNodesPoint,
         event: PointerEvent
     ): void {
         const normalizedEvent = this.chart.pointer.normalize(event);
@@ -113,8 +114,8 @@ H.dragNodesMixin = {
      *
      */
     onMouseMove: function (
-        this: Highcharts.DragNodesSeries,
-        point: Highcharts.DragNodesPoint,
+        this: DragNodesSeries,
+        point: DragNodesPoint,
         event: PointerEvent
     ): void {
         if (point.fixedPosition && point.inDragMode) {
@@ -153,9 +154,9 @@ H.dragNodesMixin = {
      * @param {Highcharts.Point} point The point that event occured.
      */
     onMouseUp: function (
-        this: Highcharts.DragNodesSeries,
-        point: Highcharts.DragNodesPoint,
-        event?: PointerEvent
+        this: DragNodesSeries,
+        point: DragNodesPoint,
+        _event?: PointerEvent
     ): void {
         if (point.fixedPosition) {
             if (point.hasDragged) {
@@ -179,8 +180,8 @@ H.dragNodesMixin = {
      * @param {Highcharts.Point} point The point that should show halo.
      */
     redrawHalo: function (
-        this: Highcharts.DragNodesSeries,
-        point: Highcharts.DragNodesPoint
+        this: DragNodesSeries,
+        point: DragNodesPoint
     ): void {
         if (point && this.halo) {
             this.halo.attr({
@@ -196,11 +197,12 @@ H.dragNodesMixin = {
  * Draggable mode:
  */
 addEvent(
-    Chart as any,
+    Chart,
     'load',
-    function (this: Highcharts.DragNodesChart): void {
-        let chart = this,
-            mousedownUnbinder: Function,
+    function (): void {
+        const chart = this as DragNodesChart;
+
+        let mousedownUnbinder: Function,
             mousemoveUnbinder: Function,
             mouseupUnbinder: Function;
 
@@ -247,3 +249,11 @@ addEvent(
         });
     }
 );
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default dragNodesMixin;

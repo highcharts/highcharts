@@ -17,6 +17,7 @@
  * */
 
 import type BubblePointType from '../Bubble/BubblePoint';
+import type { DragNodesPoint } from '../Networkgraph/DraggableNodes';
 import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
@@ -52,7 +53,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint {
+class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     /* *
      *
@@ -70,7 +71,7 @@ class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint
 
     public dispY?: number;
 
-    public fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
+    public fixedPosition: DragNodesPoint['fixedPosition'];
 
     public isParentNode?: boolean;
 

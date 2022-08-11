@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DragNodesPoint } from './DraggableNodes';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphPoint from './NetworkgraphPoint';
 import type Point from '../../Core/Series/Point';
@@ -120,7 +121,7 @@ function barycenter(
         yFactor = (this.barycenter as any).yFactor;
 
     this.nodes.forEach(function (node: Point): void {
-        if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+        if (!(node as DragNodesPoint).fixedPosition) {
             const degree =
                     (node as NetworkgraphPoint).getDegree(),
                 phi = degree * (1 + degree / 2);

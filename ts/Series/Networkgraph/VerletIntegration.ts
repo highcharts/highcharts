@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DragNodesPoint } from './DraggableNodes';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphPoint from './NetworkgraphPoint';
 import type Point from '../../Core/Series/Point';
@@ -110,7 +111,7 @@ function barycenter(
         (gravitationalConstant as any);
 
     this.nodes.forEach(function (node: Point): void {
-        if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+        if (!(node as DragNodesPoint).fixedPosition) {
             (node.plotX as any) -=
                 xFactor / (node.mass as any) / (node.degree as any);
             (node.plotY as any) -=
