@@ -190,11 +190,10 @@ class QuadTreeNode {
     public getBoxPosition(
         point: Point
     ): number {
-        let left =
-                (point.plotX as any) < this.box.left + this.box.width / 2,
-            top =
-                (point.plotY as any) < this.box.top + this.box.height / 2,
-            index: number;
+        const left = (point.plotX as any) < this.box.left + this.box.width / 2,
+            top = (point.plotY as any) < this.box.top + this.box.height / 2;
+
+        let index: number;
 
         if (left) {
             if (top) {
@@ -294,17 +293,13 @@ class QuadTreeNode {
 
         if (this.isInternal) {
             // Calcualte weightened mass of the quad node:
-            this.nodes.forEach(function (
-                pointMass
-            ): void {
+            for (const pointMass of this.nodes) {
                 if (!pointMass.isEmpty) {
                     mass += (pointMass.mass as any);
-                    plotX +=
-                        (pointMass.plotX as any) * (pointMass.mass as any);
-                    plotY +=
-                        (pointMass.plotY as any) * (pointMass.mass as any);
+                    plotX += (pointMass.plotX as any) * (pointMass.mass as any);
+                    plotY += (pointMass.plotY as any) * (pointMass.mass as any);
                 }
-            });
+            }
             plotX /= mass;
             plotY /= mass;
         } else if (this.body) {
