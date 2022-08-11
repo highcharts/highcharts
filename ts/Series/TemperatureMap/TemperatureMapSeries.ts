@@ -97,7 +97,7 @@ class TemperatureMapSeries extends MapBubbleSeries {
              *         Temperature colors with steps
              *
              * @default ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff"]
-             * @type    {Array<ColorType>|Array<[number,ColorType]>}
+             * @type    {Array<ColorType>|Array<Array<number,ColorType>>}
              */
             temperatureColors: [
                 '#ff0000',
