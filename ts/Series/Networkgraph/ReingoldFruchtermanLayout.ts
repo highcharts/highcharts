@@ -28,6 +28,8 @@ import EulerIntegration from './EulerIntegration.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import GraphLayout from '../GraphLayoutComposition.js';
+import QuadTree from './QuadTree.js';
+import QuadTreeNode from './QuadTreeNode.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -92,7 +94,7 @@ class ReingoldFruchtermanLayout {
     public nodes: Array<Point> = [];
     public options: ReingoldFruchtermanLayout.Options = void 0 as any;
     public prevSystemTemperature?: number;
-    public quadTree: Highcharts.QuadTree = void 0 as any;
+    public quadTree: QuadTree = void 0 as any;
     public repulsiveForce: Function = void 0 as any;
     public series: Array<NetworkgraphSeries> = [];
     public simulation: (false|number) = false;
@@ -345,7 +347,7 @@ class ReingoldFruchtermanLayout {
     }
 
     public createQuadTree(): void {
-        this.quadTree = new H.QuadTree(
+        this.quadTree = new QuadTree(
             this.box.left,
             this.box.top,
             this.box.width,
@@ -518,7 +520,7 @@ class ReingoldFruchtermanLayout {
     }
     barnesHutApproximation(
         node: Point,
-        quadNode: Highcharts.QuadTreeNode
+        quadNode: QuadTreeNode
     ): (boolean|undefined) {
         let layout = this,
             distanceXY = layout.getDistXY(node, quadNode),
@@ -573,7 +575,7 @@ class ReingoldFruchtermanLayout {
                 layout.quadTree.visitNodeRecursive(
                     null,
                     function (
-                        quadNode: Highcharts.QuadTreeNode
+                        quadNode: QuadTreeNode
                     ): (boolean|undefined) {
                         return layout.barnesHutApproximation(
                             node,
@@ -772,7 +774,7 @@ class ReingoldFruchtermanLayout {
 
     public getDistR(
         nodeA: NetworkgraphPoint,
-        nodeB: (NetworkgraphPoint|Highcharts.QuadTreeNode)
+        nodeB: (NetworkgraphPoint|QuadTreeNode)
     ): number {
         const distance = this.getDistXY(nodeA, nodeB);
 
@@ -781,7 +783,7 @@ class ReingoldFruchtermanLayout {
 
     public getDistXY(
         nodeA: Point,
-        nodeB: (Point|Highcharts.QuadTreeNode)
+        nodeB: (Point|QuadTreeNode)
     ): Record<string, number> {
         const xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
             yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
