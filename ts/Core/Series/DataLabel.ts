@@ -39,11 +39,11 @@ const {
     extend,
     fireEvent,
     isArray,
+    isString,
     merge,
     objectEach,
     pick,
-    splat,
-    isString
+    splat
 } = U;
 
 /* *
