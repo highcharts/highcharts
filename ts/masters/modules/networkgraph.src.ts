@@ -11,6 +11,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import NetworkgraphSeries from '../../Series/Networkgraph/Networkgraph.js';
+import NetworkgraphSeries from '../../Series/Networkgraph/NetworkgraphSeries.js';
 const G: AnyRecord = Highcharts;
 NetworkgraphSeries.compose(G.Chart);

@@ -21,7 +21,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphPoint from './NetworkgraphPoint';
-import type NetworkgraphSeries from './Networkgraph';
+import type NetworkgraphSeries from './NetworkgraphSeries';
 import type Point from '../../Core/Series/Point';
 
 import EulerIntegration from './EulerIntegration.js';

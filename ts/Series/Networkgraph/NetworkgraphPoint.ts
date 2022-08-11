@@ -19,7 +19,7 @@
  * */
 
 import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
-import type NetworkgraphSeries from './Networkgraph';
+import type NetworkgraphSeries from './NetworkgraphSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';

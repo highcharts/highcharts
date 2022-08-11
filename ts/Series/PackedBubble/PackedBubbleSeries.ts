@@ -21,7 +21,7 @@ import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type BubbleSeriesType from '../Bubble/BubbleSeries';
 import type Chart from '../../Core/Chart/Chart';
 import type Legend from '../../Core/Legend/Legend';
-import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
+import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
@@ -1217,34 +1217,35 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
  * */
 
 interface PackedBubbleSeries extends NetworkgraphSeries {
+    pointClass: typeof PackedBubblePoint;
     bubblePadding: BubbleSeriesType['bubblePadding'];
     forces: Array<string>;
     hasDraggableNodes: boolean;
-    indexateNodes: NetworkgraphSeries['indexateNodes'];
     isBubble: BubbleSeriesType['isBubble'];
     isCartesian: boolean;
-    markerAttribs: BubbleSeriesType['markerAttribs'];
     maxPxSize: BubbleSeriesType['maxPxSize'];
     minPxSize: BubbleSeriesType['minPxSize'];
     nodes: NetworkgraphSeries['nodes'];
     noSharedTooltip: boolean;
-    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
-    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
     pointArrayMap: Array<string>;
-    pointClass: typeof PackedBubblePoint;
     pointValKey: string;
     radii: BubbleSeriesType['radii'];
-    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
-    setState: BubbleSeriesType['setState'];
     specialGroup: BubbleSeriesType['specialGroup'];
     trackerGroups: Array<string>;
     yData: BubbleSeriesType['yData'];
     zData: BubbleSeriesType['zData'];
     zoneAxis: BubbleSeriesType['zoneAxis'];
+    indexateNodes: NetworkgraphSeries['indexateNodes'];
+    markerAttribs: BubbleSeriesType['markerAttribs'];
+    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
+    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
+    getPointsCollection(): Array<PackedBubblePoint>;
+    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
+    setState: BubbleSeriesType['setState'];
 }
 extend(PackedBubbleSeries.prototype, {
 
-    alignDataLabel: Series.prototype.alignDataLabel,
+    pointClass: PackedBubblePoint,
 
     axisTypes: [],
 
@@ -1263,11 +1264,22 @@ extend(PackedBubbleSeries.prototype, {
      */
     hasDraggableNodes: true,
 
-    indexateNodes: noop as any,
-
     isCartesian: false,
 
     noSharedTooltip: true,
+
+    pointArrayMap: ['value'],
+
+    pointValKey: 'value',
+
+
+    requireSorting: false,
+
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
+
+    alignDataLabel: Series.prototype.alignDataLabel,
+
+    indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
 
     /**
      * Mouse down action, initializing drag&drop mode.
@@ -1285,12 +1297,6 @@ extend(PackedBubbleSeries.prototype, {
      */
     onMouseMove: dragNodesMixin.onMouseMove,
 
-    pointArrayMap: ['value'],
-
-    pointClass: PackedBubblePoint,
-
-    pointValKey: 'value',
-
     /**
      * Redraw halo on mousemove during the drag&drop action.
      * @private
@@ -1298,12 +1304,8 @@ extend(PackedBubbleSeries.prototype, {
      */
     redrawHalo: dragNodesMixin.redrawHalo,
 
-    requireSorting: false,
-
     // solving #12287
-    searchPoint: noop as any,
-
-    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
+    searchPoint: noop as NetworkgraphSeries['searchPoint']
 
 });
 
