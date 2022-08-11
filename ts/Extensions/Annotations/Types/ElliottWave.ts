@@ -16,7 +16,6 @@ import type {
     ControllableLabelOptions
 } from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
-import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
