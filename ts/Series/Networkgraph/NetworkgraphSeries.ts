@@ -19,14 +19,14 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type { DragNodesSeries } from './DraggableNodes';
+import type { DragNodesSeries } from '../DragNodesComposition';
 import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import DragNodesMixin from './DraggableNodes.js';
+import DragNodesComposition from '../DragNodesComposition.js';
 import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -80,7 +80,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements DragNodesSeries {
+class NetworkgraphSeries extends Series {
 
     /* *
      *
@@ -99,7 +99,12 @@ class NetworkgraphSeries extends Series implements DragNodesSeries {
      *
      * */
 
-    public static compose = ReingoldFruchtermanLayout.compose;
+    public static compose(
+        ChartClass: typeof Chart
+    ): void {
+        DragNodesComposition.compose(ChartClass);
+        ReingoldFruchtermanLayout.compose(ChartClass);
+    }
 
     /* *
      *
@@ -476,11 +481,17 @@ class NetworkgraphSeries extends Series implements DragNodesSeries {
  *
  * */
 
-interface NetworkgraphSeries extends NodesComposition.SeriesComposition{
+interface NetworkgraphSeries
+    extends DragNodesSeries, NodesComposition.SeriesComposition{
     pointClass: typeof NetworkgraphPoint;
     chart: NetworkgraphChart;
     data: Array<NetworkgraphPoint>;
     directTouch: boolean;
+    /**
+     * Array of internal forces. Each force should be later defined in
+     * integrations.js.
+     * @private
+     */
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -493,10 +504,6 @@ interface NetworkgraphSeries extends NodesComposition.SeriesComposition{
     trackerGroups: Array<string>;
     createNode: NodesComposition.SeriesComposition['createNode'];
     drawGraph?(): void;
-    onMouseDown: typeof DragNodesMixin.onMouseDown;
-    onMouseMove: typeof DragNodesMixin.onMouseMove;
-    onMouseUp: typeof DragNodesMixin.onMouseUp;
-    redrawHalo: typeof DragNodesMixin.redrawHalo;
     drawDataLabels(): void;
     pointAttribs(
         point?: NetworkgraphPoint,
@@ -510,76 +517,24 @@ interface NetworkgraphSeries extends NodesComposition.SeriesComposition{
     translate(): void;
 }
 extend(NetworkgraphSeries.prototype, {
-
     pointClass: NetworkgraphPoint,
-
-    // Animation is run in `series.simulation`.
-    animate: void 0,
-
-    /**
-     * Array of internal forces. Each force should be later defined in
-     * integrations.js.
-     * @private
-     */
-    forces: ['barycenter', 'repulsive', 'attractive'],
-
-    hasDraggableNodes: true,
-
-    drawGraph: void 0,
-
-    isCartesian: false,
-
-    requireSorting: false,
-
+    animate: void 0, // Animation is run in `series.simulation`
     directTouch: true,
-
+    drawGraph: void 0,
+    forces: ['barycenter', 'repulsive', 'attractive'],
+    hasDraggableNodes: true,
+    isCartesian: false,
     noSharedTooltip: true,
-
     pointArrayMap: ['from', 'to'],
-
+    requireSorting: false,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-
-    drawTracker: columnProto.drawTracker,
-
     buildKDTree: noop,
-
-    /**
-     * Create a single node that holds information on incoming and outgoing
-     * links.
-     * @private
-     */
     createNode: NodesComposition.createNode,
-
-    /**
-     * Redraw halo on mousemove during the drag&drop action.
-     * @private
-     * @param {Highcharts.Point} point The point that should show halo.
-     */
-    redrawHalo: DragNodesMixin.redrawHalo,
-
-    /**
-     * Mouse down action, initializing drag&drop mode.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseDown: DragNodesMixin.onMouseDown,
-
-    /**
-     * Mouse move action during drag&drop.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseMove: DragNodesMixin.onMouseMove,
-
-    /**
-     * Mouse up action, finalizing drag&drop.
-     * @private
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseUp: DragNodesMixin.onMouseUp
-
+    drawTracker: columnProto.drawTracker,
+    onMouseDown: DragNodesComposition.onMouseDown,
+    onMouseMove: DragNodesComposition.onMouseMove,
+    onMouseUp: DragNodesComposition.onMouseUp,
+    redrawHalo: DragNodesComposition.redrawHalo
 });
 
 /* *

@@ -18,7 +18,7 @@
  *
  * */
 
-import type { DragNodesPoint } from './DraggableNodes';
+import type { DragNodesPoint } from '../DragNodesComposition';
 import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
 import type NetworkgraphSeries from './NetworkgraphSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
