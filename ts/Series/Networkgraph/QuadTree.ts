@@ -20,12 +20,7 @@
 
 import type Point from '../../Core/Series/Point';
 
-import H from '../../Core/Globals.js';
 import QuadTreeNode from './QuadTreeNode.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
 
 /* *
  *
@@ -116,13 +111,14 @@ class QuadTree {
      * Insert nodes into the QuadTree
      *
      * @param {Array<Highcharts.Point>} points
+     *        Points as nodes
      */
     public insertNodes(
         points: Array<Point>
     ): void {
-        points.forEach(function (point: Point): void {
+        for (const point of points) {
             this.root.insert(point, this.maxDepth);
-        }, this);
+        }
     }
 
     /**
@@ -142,10 +138,11 @@ class QuadTree {
      * DFS (postorder): `d -> e -> b -> c -> a`
      *
      * @param {Highcharts.QuadTreeNode|null} node
-     * @param {Function} [beforeCallback] function to be called before
-     *                      visiting children nodes
-     * @param {Function} [afterCallback] function to be called after
-     *                      visiting children nodes
+     *        QuadTree node
+     * @param {Function} [beforeCallback]
+     *        Function to be called before visiting children nodes.
+     * @param {Function} [afterCallback]
+     *        Function to be called after visiting children nodes.
      */
     public visitNodeRecursive(
         node: (QuadTreeNode|null),

@@ -39,8 +39,6 @@ const {
 } = U;
 import VerletIntegration from './VerletIntegration.js';
 
-import './QuadTree.js';
-
 /* *
  *
  *  Class
@@ -80,7 +78,7 @@ class ReingoldFruchtermanLayout {
     public attractiveForce: Function = void 0 as any;
     public barycenter?: Record<string, number>;
     public box: Record<string, number> = {};
-    public currentStep?: number;
+    public currentStep: number = 0;
     public diffTemperature?: number;
     public enableSimulation?: boolean;
     public forcedStop?: boolean;
@@ -180,67 +178,66 @@ class ReingoldFruchtermanLayout {
     }
 
     public step(): void {
-        const layout = this,
-            series = this.series,
-            options = this.options;
+        const anyLayout: AnyRecord = this,
+            allSeries = this.series;
 
         // Algorithm:
-        (layout.currentStep as any)++;
+        this.currentStep++;
 
-        if (layout.approximation === 'barnes-hut') {
-            layout.createQuadTree();
-            layout.quadTree.calculateMassAndCenter();
+        if (this.approximation === 'barnes-hut') {
+            this.createQuadTree();
+            this.quadTree.calculateMassAndCenter();
         }
 
-        (layout.forces as any).forEach(function (forceName: string): void {
-            (layout as any)[forceName + 'Forces'](layout.temperature);
-        });
+        for (const forceName of this.forces || []) {
+            anyLayout[forceName + 'Forces'](this.temperature);
+        }
 
         // Limit to the plotting area and cool down:
-        (layout.applyLimits as any)(layout.temperature);
+        this.applyLimits();
 
         // Cool down the system:
-        layout.temperature = layout.coolDown(
-            layout.startTemperature as any,
-            layout.diffTemperature as any,
-            layout.currentStep as any
+        this.temperature = this.coolDown(
+            this.startTemperature as any,
+            this.diffTemperature as any,
+            this.currentStep as any
         );
 
-        layout.prevSystemTemperature = layout.systemTemperature;
-        layout.systemTemperature = layout.getSystemTemperature();
+        this.prevSystemTemperature = this.systemTemperature;
+        this.systemTemperature = this.getSystemTemperature();
 
-        if (layout.enableSimulation) {
-            series.forEach(function (s): void {
+        if (this.enableSimulation) {
+            for (const series of allSeries) {
                 // Chart could be destroyed during the simulation
-                if (s.chart) {
-                    s.render();
+                if (series.chart) {
+                    series.render();
                 }
-            });
+            }
             if (
-                (layout.maxIterations as any)-- &&
-                isFinite(layout.temperature) &&
-                !layout.isStable()
+                (this.maxIterations as any)-- &&
+                isFinite(this.temperature) &&
+                !this.isStable()
             ) {
-                if (layout.simulation) {
-                    win.cancelAnimationFrame(layout.simulation as any);
+                if (this.simulation) {
+                    win.cancelAnimationFrame(this.simulation);
                 }
 
-                layout.simulation = win.requestAnimationFrame(
-                    function (): void {
-                        layout.step();
-                    }
+                this.simulation = win.requestAnimationFrame(
+                    (): void => this.step()
                 );
             } else {
-                layout.simulation = false;
+                this.simulation = false;
             }
         }
     }
+
     public stop(): void {
         if (this.simulation) {
             win.cancelAnimationFrame(this.simulation as any);
         }
     }
-    setArea(
+
+    public setArea(
         x: number,
         y: number,
         w: number,
@@ -264,11 +261,11 @@ class ReingoldFruchtermanLayout {
         elements: Array<C>,
         collection: Array<T>
     ): void {
-        elements.forEach(function (elem): void {
-            if (collection.indexOf(elem) === -1) {
-                collection.push(elem);
+        for (const element of elements) {
+            if (collection.indexOf(element) === -1) {
+                collection.push(element);
             }
-        });
+        }
     }
 
     public removeElementFromCollection<T>(
@@ -362,7 +359,7 @@ class ReingoldFruchtermanLayout {
 
         if (isFunction(initialPositions)) {
             initialPositions.call(this);
-            this.nodes.forEach(function (node: Point): void {
+            for (const node of this.nodes) {
                 if (!defined(node.prevX)) {
                     node.prevX = node.plotX;
                 }
@@ -372,7 +369,7 @@ class ReingoldFruchtermanLayout {
 
                 node.dispX = 0;
                 node.dispY = 0;
-            });
+            }
 
         } else if (initialPositions === 'circle') {
             this.setCircularPositions();
@@ -382,37 +379,34 @@ class ReingoldFruchtermanLayout {
     }
 
     public setCircularPositions(): void {
-        let box = this.box,
+        const box = this.box,
             nodes = this.nodes,
             nodesLength = nodes.length + 1,
             angle = 2 * Math.PI / nodesLength,
             rootNodes = nodes.filter(function (node: Point): boolean {
                 return (node.linksTo as any).length === 0;
             }),
-            sortedNodes = [] as Array<Point>,
             visitedNodes = {} as Record<string, boolean>,
-            radius = this.options.initialPositionRadius;
-
-        /**
-         * @private
-         */
-        function addToNodes(node: Point): void {
-            (node.linksFrom as any).forEach(function (link: Point): void {
-                if (!visitedNodes[(link.toNode as any).id]) {
-                    visitedNodes[(link.toNode as any).id] = true;
-                    sortedNodes.push(link.toNode as any);
-                    addToNodes(link.toNode as any);
+            radius = this.options.initialPositionRadius,
+            addToNodes = (node: Point): void => {
+                for (const link of node.linksFrom || []) {
+                    if (!visitedNodes[(link.toNode as any).id]) {
+                        visitedNodes[(link.toNode as any).id] = true;
+                        sortedNodes.push(link.toNode as any);
+                        addToNodes(link.toNode as any);
+                    }
                 }
-            });
-        }
+            };
+
+        let sortedNodes = [] as Array<Point>;
 
         // Start with identified root nodes an sort the nodes by their
         // hierarchy. In trees, this ensures that branches don't cross
         // eachother.
-        rootNodes.forEach(function (rootNode: Point): void {
+        for (const rootNode of rootNodes) {
             sortedNodes.push(rootNode);
             addToNodes(rootNode);
-        });
+        }
 
         // Cyclic tree, no root node found
         if (!sortedNodes.length) {
@@ -420,69 +414,66 @@ class ReingoldFruchtermanLayout {
 
         // Dangling, cyclic trees
         } else {
-            nodes.forEach(function (node: Point): void {
+            for (const node of nodes) {
                 if (sortedNodes.indexOf(node) === -1) {
                     sortedNodes.push(node);
                 }
-            });
+            }
         }
+
+        let node: Point;
 
         // Initial positions are laid out along a small circle, appearing
         // as a cluster in the middle
-        sortedNodes.forEach(function (
-            node: Point,
-            index: number
-        ): void {
+        for (let i = 0, iEnd = sortedNodes.length; i < iEnd; ++i) {
+            node = sortedNodes[i];
             node.plotX = node.prevX = pick(
                 node.plotX,
-                box.width / 2 + (radius as any) * Math.cos(index * angle)
+                box.width / 2 + (radius as any) * Math.cos(i * angle)
             );
             node.plotY = node.prevY = pick(
                 node.plotY,
-                box.height / 2 + (radius as any) * Math.sin(index * angle)
+                box.height / 2 + (radius as any) * Math.sin(i * angle)
             );
 
             node.dispX = 0;
             node.dispY = 0;
-        });
+        }
     }
 
     public setRandomPositions(): void {
         const box = this.box,
             nodes = this.nodes,
-            nodesLength = nodes.length + 1;
+            nodesLength = nodes.length + 1,
+            /**
+             * Return a repeatable, quasi-random number based on an integer
+             * input. For the initial positions
+             * @private
+             */
+            unrandom = (n: number): number => {
+                let rand = n * n / Math.PI;
 
-        /**
-         * Return a repeatable, quasi-random number based on an integer
-         * input. For the initial positions
-         * @private
-         */
-        function unrandom(n: number): number {
-            let rand = n * n / Math.PI;
+                rand = rand - Math.floor(rand);
+                return rand;
+            };
 
-            rand = rand - Math.floor(rand);
-            return rand;
-        }
+        let node: Point;
 
         // Initial positions:
-        nodes.forEach(
-            function (
-                node: Point,
-                index: number
-            ): void {
-                node.plotX = node.prevX = pick(
-                    node.plotX,
-                    box.width * unrandom(index)
-                );
-                node.plotY = node.prevY = pick(
-                    node.plotY,
-                    box.height * unrandom(nodesLength + index)
-                );
+        for (let i = 0, iEnd = nodes.length; i < iEnd; ++i) {
+            node = nodes[i];
+            node.plotX = node.prevX = pick(
+                node.plotX,
+                box.width * unrandom(i)
+            );
+            node.plotY = node.prevY = pick(
+                node.plotY,
+                box.height * unrandom(nodesLength + i)
+            );
 
-                node.dispX = 0;
-                node.dispY = 0;
-            }
-        );
+            node.dispX = 0;
+            node.dispY = 0;
+        }
     }
 
     public force(
@@ -502,12 +493,12 @@ class ReingoldFruchtermanLayout {
             cx = 0,
             cy = 0;
 
-        this.nodes.forEach(function (node: Point): void {
+        for (const node of this.nodes) {
             cx += (node.plotX as any) * (node.mass as any);
             cy += (node.plotY as any) * (node.mass as any);
 
             systemMass += (node.mass as any);
-        });
+        }
 
         this.barycenter = {
             x: cx,
@@ -522,10 +513,10 @@ class ReingoldFruchtermanLayout {
         node: Point,
         quadNode: QuadTreeNode
     ): (boolean|undefined) {
-        let layout = this,
-            distanceXY = layout.getDistXY(node, quadNode),
-            distanceR = layout.vectorLength(distanceXY),
-            goDeeper,
+        const distanceXY = this.getDistXY(node, quadNode),
+            distanceR = this.vectorLength(distanceXY);
+
+        let goDeeper,
             force;
 
         if ((node as any) !== quadNode && distanceR !== 0) {
@@ -533,13 +524,13 @@ class ReingoldFruchtermanLayout {
                 // Internal node:
                 if (
                     quadNode.boxSize / distanceR <
-                    (layout.options.theta as any) &&
+                    (this.options.theta as any) &&
                     distanceR !== 0
                 ) {
                     // Treat as an external node:
-                    force = layout.repulsiveForce(distanceR, layout.k);
+                    force = this.repulsiveForce(distanceR, this.k);
 
-                    layout.force(
+                    this.force(
                         'repulsive',
                         node,
                         force * (quadNode.mass as any),
@@ -553,9 +544,9 @@ class ReingoldFruchtermanLayout {
                 }
             } else {
                 // External node, direct force:
-                force = layout.repulsiveForce(distanceR, layout.k);
+                force = this.repulsiveForce(distanceR, this.k);
 
-                layout.force(
+                this.force(
                     'repulsive',
                     node,
                     force * (quadNode.mass as any),
@@ -568,29 +559,25 @@ class ReingoldFruchtermanLayout {
         return goDeeper;
     }
     repulsiveForces(): void {
-        const layout = this;
-
-        if (layout.approximation === 'barnes-hut') {
-            layout.nodes.forEach(function (node: Point): void {
-                layout.quadTree.visitNodeRecursive(
+        if (this.approximation === 'barnes-hut') {
+            for (const node of this.nodes) {
+                this.quadTree.visitNodeRecursive(
                     null,
-                    function (
-                        quadNode: QuadTreeNode
-                    ): (boolean|undefined) {
-                        return layout.barnesHutApproximation(
+                    (quadNode: QuadTreeNode): (boolean|undefined) => (
+                        this.barnesHutApproximation(
                             node,
                             quadNode
-                        );
-                    }
+                        )
+                    )
                 );
-            });
+            }
         } else {
-            layout.nodes.forEach(function (node: Point): void {
-                layout.nodes.forEach(function (repNode: Point): void {
-                    let force,
-                        distanceR,
-                        distanceXY;
+            let force,
+                distanceR,
+                distanceXY;
 
+            for (const node of this.nodes) {
+                for (const repNode of this.nodes) {
                     if (
                         // Node can not repulse itself:
                         node !== repNode &&
@@ -599,15 +586,15 @@ class ReingoldFruchtermanLayout {
                         // Not dragged:
                         !(node as any).fixedPosition
                     ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = layout.vectorLength(distanceXY);
+                        distanceXY = this.getDistXY(node, repNode);
+                        distanceR = this.vectorLength(distanceXY);
                         if (distanceR !== 0) {
-                            force = layout.repulsiveForce(
+                            force = this.repulsiveForce(
                                 distanceR,
-                                layout.k
+                                this.k
                             );
 
-                            layout.force(
+                            this.force(
                                 'repulsive',
                                 node,
                                 force * (repNode.mass as any),
@@ -616,29 +603,28 @@ class ReingoldFruchtermanLayout {
                             );
                         }
                     }
-                });
-            });
+                }
+            }
         }
     }
 
     public attractiveForces(): void {
-        let layout = this,
-            distanceXY,
+        let distanceXY,
             distanceR,
             force;
 
-        layout.links.forEach(function (link: Point): void {
+        for (const link of this.links) {
             if (link.fromNode && link.toNode) {
-                distanceXY = layout.getDistXY(
+                distanceXY = this.getDistXY(
                     link.fromNode,
                     link.toNode
                 );
-                distanceR = layout.vectorLength(distanceXY);
+                distanceR = this.vectorLength(distanceXY);
 
                 if (distanceR !== 0) {
-                    force = layout.attractiveForce(distanceR, layout.k);
+                    force = this.attractiveForce(distanceR, this.k);
 
-                    layout.force(
+                    this.force(
                         'attractive',
                         link,
                         force,
@@ -647,26 +633,25 @@ class ReingoldFruchtermanLayout {
                     );
                 }
             }
-        });
+        }
     }
 
     public applyLimits(): void {
-        const layout = this,
-            nodes: Array<NetworkgraphPoint> = layout.nodes as any;
+        const nodes = this.nodes as Array<NetworkgraphPoint>;
 
-        nodes.forEach(function (node): void {
-            if ((node as any).fixedPosition) {
+        for (const node of nodes) {
+            if (node.fixedPosition) {
                 return;
             }
 
-            layout.integration.integrate(layout, node);
+            this.integration.integrate(this, node);
 
-            layout.applyLimitBox(node, layout.box);
+            this.applyLimitBox(node, this.box);
 
             // Reset displacement:
             node.dispX = 0;
             node.dispY = 0;
-        });
+        }
     }
 
     /**
@@ -758,12 +743,13 @@ class ReingoldFruchtermanLayout {
     }
 
     public getSystemTemperature(): number {
-        return this.nodes.reduce(function (
-            value: number,
-            node: Point
-        ): number {
-            return value + (node as any).temperature;
-        }, 0);
+        let value = 0;
+
+        for (const node of this.nodes) {
+            value += (node as any).temperature;
+        }
+
+        return value;
     }
 
     public vectorLength(
