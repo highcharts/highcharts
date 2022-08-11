@@ -366,7 +366,8 @@ function getPointXDescription(
         xAxis = point.series.xAxis || {},
         pointCategory = xAxis.categories && defined(point.category) &&
             ('' + point.category).replace('<br/>', ' '),
-        canUseId = point.id && point.id.indexOf('highcharts-') < 0,
+        canUseId = defined(point.id) &&
+            ('' + point.id).indexOf('highcharts-') < 0,
         fallback = 'x, ' + point.x;
 
     return point.name || timeDesc || pointCategory ||

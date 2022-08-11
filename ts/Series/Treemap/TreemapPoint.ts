@@ -18,6 +18,7 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMapComposition';
 import type { DrawPointParams } from '../DrawPointUtilities';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
@@ -152,7 +153,7 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
-interface TreemapPoint {
+interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {

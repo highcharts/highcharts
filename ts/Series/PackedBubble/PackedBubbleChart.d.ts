@@ -15,8 +15,8 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { GraphLayoutType } from '../GraphLayoutComposition';
 import type PackedBubblePoint from './PackedBubblePoint';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 
 /* *
  *
@@ -25,7 +25,6 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
  * */
 
 declare class PackedBubbleChart extends Chart {
-    allDataPoints: Array<PackedBubbleSeries.Data>;
     diffX: number;
     diffY: number;
     hoverPoint: PackedBubblePoint;
@@ -42,7 +41,7 @@ declare class PackedBubbleChart extends Chart {
  * */
 
 interface PackedBubbleChart extends Highcharts.NetworkgraphChart {
-    // nothing here yet
+    graphLayoutsLookup: Array<GraphLayoutType>;
 }
 
 /* *

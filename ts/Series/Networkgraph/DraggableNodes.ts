@@ -14,6 +14,7 @@
 
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
+import type RFLayout from './ReingoldFruchtermanLayout';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
@@ -47,7 +48,7 @@ declare global {
             redrawHalo(point: DragNodesPoint): void;
         }
         interface DragNodesChart extends Chart {
-            graphLayoutsLookup: Array<NetworkgraphLayout>;
+            graphLayoutsLookup: Array<RFLayout>;
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
@@ -60,7 +61,7 @@ declare global {
             chart: DragNodesChart;
             data: Array<DragNodesPoint>;
             hasDraggableNodes?: boolean;
-            layout: NetworkgraphLayout;
+            layout: RFLayout;
             onMouseDown: DragNodesMixin['onMouseDown'];
             onMouseMove: DragNodesMixin['onMouseMove'];
             onMouseUp: DragNodesMixin['onMouseUp'];

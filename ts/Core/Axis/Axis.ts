@@ -207,7 +207,7 @@ class Axis {
     public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: string = void 0 as any;
+    public coll: ('colorAxis'|'xAxis'|'yAxis'|'zAxis') = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
@@ -1408,6 +1408,8 @@ class Axis {
             this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
             (this.names as any).keys[point.name as any] = x;
+        } else if (point.x) {
+            x = point.x; // #17438
         }
 
         return x as any;

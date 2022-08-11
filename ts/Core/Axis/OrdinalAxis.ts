@@ -970,8 +970,8 @@ namespace OrdinalAxis {
                     distanceBetweenPoint =
                         series.processedXData[1] - series.processedXData[0];
 
-                    if (series.isSeriesBoosting) {
-                        isBoosted = series.isSeriesBoosting;
+                    if (series.boosted) {
+                        isBoosted = series.boosted;
                     }
 
                     if (

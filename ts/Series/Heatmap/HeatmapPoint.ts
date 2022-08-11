@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorMapMixin from '../ColorMapMixin';
+import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -240,9 +240,8 @@ class HeatmapPoint extends ScatterPoint {
  *
  * */
 
-interface HeatmapPoint {
-    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
-    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
+interface HeatmapPoint extends ColorMapComposition.PointComposition {
+    // nothing to add
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,

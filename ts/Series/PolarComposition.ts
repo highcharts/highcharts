@@ -150,7 +150,7 @@ export declare class PolarSeriesComposition extends Series {
     animate(init?: boolean): void;
     searchPoint: (
         PolarSeriesComposition['kdByAngle'] extends true ?
-            PolarAdditions['searchPointByAngle'] :
+            typeof searchPointByAngle :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
@@ -422,7 +422,7 @@ function onSeriesAfterTranslate(
         // of non-shared.
         series.kdByAngle = chart.tooltip && chart.tooltip.shared;
         if (series.kdByAngle) {
-            series.searchPoint = series.polar.searchPointByAngle;
+            series.searchPoint = searchPointByAngle;
         } else {
             series.options.findNearestPointBy = 'xy';
         }
@@ -493,7 +493,29 @@ function onSeriesAfterTranslate(
 
 
 /**
- * Define the animate method for regular series
+ * Search a k-d tree by the point angle, used for shared tooltips in polar
+ * charts
+ * @private
+ */
+function searchPointByAngle(
+    this: Series,
+    e: PointerEvent
+): (Point|undefined) {
+    const series = this,
+        chart = series.chart,
+        xAxis = series.xAxis,
+        center = xAxis.pane && xAxis.pane.center,
+        plotX = e.chartX - (center && center[0] || 0) - chart.plotLeft,
+        plotY = e.chartY - (center && center[1] || 0) - chart.plotTop;
+
+    return series.searchKDTree({
+        clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
+    });
+}
+
+/**
+ * Extend chart.get to also search in panes. Used internally in
+ * responsiveness and chart.update.
  * @private
  */
 function onSeriesAnimate(
@@ -1238,26 +1260,6 @@ class PolarAdditions {
             start: start,
             end: end
         };
-    }
-
-    /**
-     * Search a k-d tree by the point angle, used for shared tooltips in polar
-     * charts
-     * @private
-     */
-    public searchPointByAngle(
-        e: PointerEvent
-    ): (Point|undefined) {
-        const series = this.series,
-            chart = series.chart,
-            xAxis = series.xAxis,
-            center = xAxis.pane.center,
-            plotX = e.chartX - center[0] - chart.plotLeft,
-            plotY = e.chartY - center[1] - chart.plotTop;
-
-        return series.searchKDTree({
-            clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-        });
     }
 
     /**

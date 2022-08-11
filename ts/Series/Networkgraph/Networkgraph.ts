@@ -38,9 +38,11 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
+import RFLayout from './ReingoldFruchtermanLayout.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -55,7 +57,6 @@ const {
 } = U;
 
 import '../../Core/DefaultOptions.js';
-import './Layouts.js';
 import './DraggableNodes.js';
 
 const dragNodesMixin = H.dragNodesMixin;
@@ -75,7 +76,7 @@ declare module '../../Core/Series/PointOptions' {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        layout?: Highcharts.NetworkgraphLayout;
+        layout?: RFLayout;
     }
 }
 
@@ -94,8 +95,8 @@ declare module '../../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface NetworkgraphChart extends DragNodesChart {
-            graphLayoutsLookup: Array<NetworkgraphLayout>;
-            graphLayoutsStorage: Record<string, NetworkgraphLayout>;
+            graphLayoutsLookup: Array<RFLayout>;
+            graphLayoutsStorage: Record<string, RFLayout>;
         }
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
@@ -130,7 +131,7 @@ declare global {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
-            layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
+            layoutAlgorithm?: RFLayout.Options;
             link?: SVGAttributes;
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
@@ -138,6 +139,8 @@ declare global {
         class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.PointComposition {
             public className: NodesComposition.PointComposition['className'];
             public degree: number;
+            public dispX?: number;
+            public dispY?: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
             public formatPrefix: NodesComposition.PointComposition[
                 'formatPrefix'
@@ -153,6 +156,8 @@ declare global {
             public mass: NodesComposition.PointComposition['mass'];
             public offset: NodesComposition.PointComposition['offset'];
             public options: NetworkgraphPointOptions;
+            public prevX?: number;
+            public prevY?: number;
             public radius: number;
             public series: NetworkgraphSeries;
             public setNodeState: NodesComposition.PointComposition['setState'];
@@ -235,6 +240,8 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
      *  Static Properties
      *
      * */
+
+    public static compose = RFLayout.compose;
 
     /**
      * A networkgraph is a type of relationship chart, where connnections
@@ -665,11 +672,11 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
-    drawGraph: void;
+    drawGraph?(): void;
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
-    layout: Highcharts.NetworkgraphLayout;
+    layout: RFLayout;
     nodeLookup: NodesComposition.SeriesComposition['nodeLookup'];
     nodes: Array<NetworkgraphPoint>;
     noSharedTooltip: boolean;
@@ -910,7 +917,7 @@ extend(NetworkgraphSeries.prototype, {
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
             graphLayoutsLookup = this.chart.graphLayoutsLookup,
             chartOptions = this.chart.options.chart,
-            layout;
+            layout: RFLayout;
 
         if (!this.visible) {
             return;
@@ -930,7 +937,7 @@ extend(NetworkgraphSeries.prototype, {
                     !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
-                new H.layouts[(layoutOptions as any).type]();
+                new GraphLayout.layouts[(layoutOptions as any).type]();
 
             layout.init(layoutOptions as any);
             graphLayoutsLookup.splice(

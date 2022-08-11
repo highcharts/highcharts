@@ -19,6 +19,7 @@
  * */
 
 import type BubbleLegendItem from './BubbleLegendItem';
+
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *

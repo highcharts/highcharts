@@ -35,6 +35,7 @@ import U from '../../Utilities.js';
 const {
     attr,
     extend,
+    fireEvent,
     isString,
     objectEach,
     pick
@@ -124,6 +125,7 @@ class TextBuilder {
             !hasMarkup &&
             !this.ellipsis &&
             !this.width &&
+            !wrapper.textPath &&
             (
                 textStr.indexOf(' ') === -1 ||
                 (this.noWrap && !regexMatchBreaks.test(textStr))
@@ -149,7 +151,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(ast.nodes);
 
-            ast.addToDOM(wrapper.element);
+            ast.addToDOM(textNode);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
@@ -478,6 +480,8 @@ class TextBuilder {
         };
 
         nodes.forEach(modifyChild);
+
+        fireEvent(this.svgElement, 'afterModifyTree', { nodes });
     }
 
     /*

@@ -1394,6 +1394,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * @type       {string}
  * @since      6.2.0
  * @validvalue ["alt", "ctrl", "meta", "shift"]
+ * @deprecated
  * @requires  modules/draggable-points
  * @apioption  chart.zoomKey
  */
@@ -1754,7 +1755,7 @@ function getGroupedPoints(point: Point): Array<Point> {
         points: Array<Point> = [],
         groupKey = (series.options.dragDrop as any).groupBy;
 
-    if (series.isSeriesBoosting) { // #11156
+    if (series.boosted) { // #11156
         (series.options.data as any).forEach(function (
             pointOptions: (PointOptions|PointShortOptions),
             i: number
@@ -2907,9 +2908,9 @@ addEvent(Point, 'remove', function (): void {
  */
 Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
-    const chartOptions = this.userOptions.chart || {},
+    const chartOptions = this.options.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
-        zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
+        zoomKey = chartOptions.zooming.key && chartOptions.zooming.key + 'Key';
 
     return ((e as any)[zoomKey as any] || (e as any)[panKey as any]);
 };
