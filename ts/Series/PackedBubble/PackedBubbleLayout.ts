@@ -23,7 +23,7 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
-import RFLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
+import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -94,7 +94,7 @@ function onChartBeforeRedraw(
  *
  * */
 
-class PackedBubbleLayout extends RFLayout {
+class PackedBubbleLayout extends ReingoldFruchtermanLayout {
 
     /* *
      *
@@ -105,7 +105,7 @@ class PackedBubbleLayout extends RFLayout {
     public static compose(
         ChartClass: typeof Chart
     ): void {
-        RFLayout.compose(ChartClass);
+        ReingoldFruchtermanLayout.compose(ChartClass);
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
@@ -312,7 +312,7 @@ class PackedBubbleLayout extends RFLayout {
 
 namespace PackedBubbleLayout {
 
-    export interface Options extends RFLayout.Options {
+    export interface Options extends ReingoldFruchtermanLayout.Options {
         bubblePadding?: number;
         dragBetweenSeries?: boolean;
         enableSimulation?: boolean;

@@ -17,6 +17,7 @@
  * */
 
 import type BubblePointType from '../Bubble/BubblePoint';
+import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 
@@ -155,14 +156,14 @@ class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint
  *
  * */
 
-interface PackedBubblePoint extends Highcharts.NetworkgraphPoint {
+interface PackedBubblePoint extends NetworkgraphPoint {
     className: BubblePointType['className'];
-    fromNode: Highcharts.NetworkgraphPoint;
-    linksFrom: Array<Highcharts.NetworkgraphPoint>;
-    linksTo: Array<Highcharts.NetworkgraphPoint>;
-    toNode: Highcharts.NetworkgraphPoint;
-    init: Highcharts.NetworkgraphPoint['init'];
-    isValid: Highcharts.NetworkgraphPoint['isValid'];
+    fromNode: NetworkgraphPoint;
+    linksFrom: Array<NetworkgraphPoint>;
+    linksTo: Array<NetworkgraphPoint>;
+    toNode: NetworkgraphPoint;
+    init: NetworkgraphPoint['init'];
+    isValid: NetworkgraphPoint['isValid'];
     remove: BubblePointType['remove'];
 }
 
