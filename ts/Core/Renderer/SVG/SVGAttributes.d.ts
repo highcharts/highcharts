@@ -45,6 +45,7 @@ export interface SVGAttributes {
     class?: string;
     'clip-path'?: string;
     clockwise?: number;
+    color?: ColorType;
     cursor?: CursorValue;
     cx?: number;
     cy?: number;

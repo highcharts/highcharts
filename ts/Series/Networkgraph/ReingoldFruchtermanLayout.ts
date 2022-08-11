@@ -20,6 +20,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
+import type NetworkgraphPoint from './NetworkgraphPoint';
 import type NetworkgraphSeries from './Networkgraph';
 import type Point from '../../Core/Series/Point';
 
@@ -649,7 +650,7 @@ class ReingoldFruchtermanLayout {
 
     public applyLimits(): void {
         const layout = this,
-            nodes: Array<Highcharts.NetworkgraphPoint> = layout.nodes as any;
+            nodes: Array<NetworkgraphPoint> = layout.nodes as any;
 
         nodes.forEach(function (node): void {
             if ((node as any).fixedPosition) {
@@ -672,7 +673,7 @@ class ReingoldFruchtermanLayout {
      * @private
      */
     public applyLimitBox(
-        node: Highcharts.NetworkgraphPoint,
+        node: NetworkgraphPoint,
         box: Record<string, number>
     ): void {
         const radius = node.radius;
@@ -770,8 +771,8 @@ class ReingoldFruchtermanLayout {
     }
 
     public getDistR(
-        nodeA: Highcharts.NetworkgraphPoint,
-        nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
+        nodeA: NetworkgraphPoint,
+        nodeB: (NetworkgraphPoint|Highcharts.QuadTreeNode)
     ): number {
         const distance = this.getDistXY(nodeA, nodeB);
 
