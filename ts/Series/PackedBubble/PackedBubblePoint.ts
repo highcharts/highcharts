@@ -17,7 +17,7 @@
  * */
 
 import type BubblePointType from '../Bubble/BubblePoint';
-import type { DragNodesPoint } from '../Networkgraph/DraggableNodes';
+import type { DragNodesPoint } from '../DragNodesComposition';
 import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
