@@ -41,6 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.23",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.33",
     "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.1",
     "@highcharts/map-collection": "^2.0.1",
@@ -74,7 +75,6 @@
     "gulp-zip": "^5.1.0",
     "gzip-size": "6.0.0",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.1",
-    "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "^8.0.1",
     "js-yaml": "3.14.1",
