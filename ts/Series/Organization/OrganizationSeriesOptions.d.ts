@@ -37,6 +37,7 @@ export type OrganizationChartLinkTypes = 'curved' | 'straight' | 'default';
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
 export interface LinkOptions {
+    linkOpacity?: number;
     curveFactor?: number;
     color: ColorString;
     lineWidth: number;

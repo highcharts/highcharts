@@ -29,6 +29,7 @@ import type { LinkOptions } from './OrganizationSeriesOptions';
 
 export interface OrganizationPointOptions extends SankeyPointOptions {
     linkColor?: ColorString;
+    linkOpacity?: number;
     linkLineWidth?: number;
     link?: LinkOptions;
     borderRadius?: number;

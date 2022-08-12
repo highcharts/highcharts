@@ -16,16 +16,20 @@
  *
  * */
 
+import type BubblePointType from '../Bubble/BubblePoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
-
 const {
     seriesTypes: {
-        bubble: BubbleSeries
+        bubble: {
+            prototype: {
+                pointClass: BubblePoint
+            }
+        }
     }
 } = SeriesRegistry;
 
@@ -47,7 +51,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
+class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint {
 
     /* *
      *
@@ -143,6 +147,23 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface PackedBubblePoint extends Highcharts.NetworkgraphPoint {
+    className: BubblePointType['className'];
+    fromNode: Highcharts.NetworkgraphPoint;
+    linksFrom: Array<Highcharts.NetworkgraphPoint>;
+    linksTo: Array<Highcharts.NetworkgraphPoint>;
+    toNode: Highcharts.NetworkgraphPoint;
+    init: Highcharts.NetworkgraphPoint['init'];
+    isValid: Highcharts.NetworkgraphPoint['isValid'];
+    remove: BubblePointType['remove'];
 }
 
 /* *

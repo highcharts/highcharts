@@ -305,7 +305,9 @@ class OrganizationSeries extends SankeySeries {
                 /** @internal */
                 fontSize: '13px'
             },
+
             useHTML: true
+
         },
         /**
          * The indentation in pixels of hanging nodes, nodes which parent has
@@ -396,6 +398,7 @@ class OrganizationSeries extends SankeySeries {
      *  Static Functions
      *
      * */
+
 
     /* *
      *
@@ -531,12 +534,25 @@ class OrganizationSeries extends SankeySeries {
                 options.link && options.link.lineWidth,
                 levelOptions.link && levelOptions.link.lineWidth,
                 series.options.link && series.options.link.lineWidth
+            ),
+
+            linkOpacity = pick(
+                stateOptions.linkOpacity,
+                options.linkOpacity,
+                levelOptions.linkOpacity,
+                series.options.linkOpacity,
+                stateOptions.link && stateOptions.link.linkOpacity,
+                options.link && options.link.linkOpacity,
+                levelOptions.link && levelOptions.link.linkOpacity,
+                series.options.link && series.options.link.linkOpacity
             );
 
 
         if (!point.isNode) {
             attribs.stroke = linkColor;
             attribs['stroke-width'] = linkLineWidth;
+            attribs.opacity = linkOpacity;
+
             delete attribs.fill;
         } else {
             if (borderRadius) {

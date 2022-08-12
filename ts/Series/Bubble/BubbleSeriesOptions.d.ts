@@ -37,4 +37,10 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
 
 export type BubbleSizeByValue = ('area'|'width');
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default BubbleSeriesOptions;
