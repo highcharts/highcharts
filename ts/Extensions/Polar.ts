@@ -1552,3 +1552,16 @@ wrap(Chart.prototype, 'get', function (
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });
+
+/**
+ * Prevent zooming on mobile devices
+ * @private
+ */
+wrap(Pointer.prototype, 'pinch', function (this: Pointer, proceed) {
+    const chart = this.chart;
+    if (this.chart.polar) {
+        return;
+    } else {
+        proceed.apply(this, arguments);
+    }
+});
