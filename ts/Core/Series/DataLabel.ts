@@ -467,13 +467,12 @@ namespace DataLabel {
             points = series.points,
             hasRendered = series.hasRendered || 0,
             renderer = chart.renderer,
-            plotBackgroundColor = chart.options.chart.plotBackgroundColor,
-            chartBackgroundColor = chart.options.chart.backgroundColor,
-            contrastColor = renderer.getContrast(pick(
-                isString(plotBackgroundColor) ? plotBackgroundColor : void 0,
-                isString(chartBackgroundColor) ? chartBackgroundColor : void 0,
+            { backgroundColor, plotBackgroundColor } = chart.options.chart,
+            contrastColor = renderer.getContrast(
+                (isString(plotBackgroundColor) && plotBackgroundColor) ||
+                (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
-            ));
+            );
 
         let seriesDlOptions = seriesOptions.dataLabels,
             pointOptions,
