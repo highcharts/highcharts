@@ -270,13 +270,15 @@ class AreaRangeSeries extends AreaSeries {
      */
     public translate(): void {
         const series = this,
-            yAxis = series.yAxis;
+            yAxis = series.yAxis,
+            chart = series.chart;
 
         areaProto.translate.apply(series);
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
-            point: AreaRangePoint
+            point: AreaRangePoint,
+            i: number
         ): void {
 
             const high = point.high,
@@ -286,14 +288,28 @@ class AreaRangeSeries extends AreaSeries {
                 point.plotY = null as any;
             } else {
                 point.plotLow = plotY as any;
-                point.plotHigh = yAxis.translate(
-                    series.dataModify ?
-                        series.dataModify.modifyValue(high) : high,
-                    0 as any,
-                    1 as any,
-                    0 as any,
-                    1 as any
-                );
+
+                // Calculate plotHigh value based on each yAxis scale (#15752)
+                if (chart.hasParallelCoordinates) {
+                    point.plotHigh = chart.yAxis[i].translate(
+                        series.dataModify ?
+                            series.dataModify.modifyValue(high) : high,
+                        0 as any,
+                        1 as any,
+                        0 as any,
+                        1 as any
+                    );
+                } else {
+                    point.plotHigh = yAxis.translate(
+                        series.dataModify ?
+                            series.dataModify.modifyValue(high) : high,
+                        0 as any,
+                        1 as any,
+                        0 as any,
+                        1 as any
+                    );
+                }
+
                 if (series.dataModify) {
                     point.yBottom = point.plotHigh;
                 }

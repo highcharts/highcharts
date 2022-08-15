@@ -395,7 +395,6 @@ addEvent(Series, 'afterTranslate', function (): void {
                     point.plotX = chart.yAxis[i].left - chart.plotLeft;
                 }
                 point.clientX = point.plotX;
-
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, void 0, true);
 
@@ -691,8 +690,33 @@ namespace ParallelAxis {
                 }
             });
 
-            axis.dataMin = arrayMin(currentPoints);
-            axis.dataMax = arrayMax(currentPoints);
+            // Take into account range series points as well (#15752)
+            let min: number = NaN,
+                max: number = NaN;
+
+            currentPoints.forEach(function (point): void {
+                if (Array.isArray(point)) {
+                    max = arrayMax(point);
+                    min = arrayMin(point);
+                } else {
+                    return;
+                }
+            });
+
+            if (
+                !Array.isArray(arrayMin(currentPoints)) ||
+                !Array.isArray(arrayMax(currentPoints))
+            ) {
+                axis.dataMin = arrayMin(currentPoints) > min ?
+                    min :
+                    arrayMin(currentPoints);
+                axis.dataMax = arrayMax(currentPoints) < max ?
+                    max :
+                    arrayMax(currentPoints);
+            } else {
+                axis.dataMin = min;
+                axis.dataMax = max;
+            }
 
             e.preventDefault();
         }
@@ -704,7 +728,6 @@ namespace ParallelAxis {
      */
     function onInit(this: Axis): void {
         const axis = this;
-
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(
                 axis as ParallelAxis
