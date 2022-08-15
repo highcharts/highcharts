@@ -69,7 +69,7 @@ class XRangePoint extends ColumnPoint {
 
     /* *
      *
-     *  Static Properties
+     *  Static Functions
      *
      * */
 
@@ -124,11 +124,10 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public resolveColor(): void {
-        let series = this.series,
-            colorByPoint;
+        const series = this.series;
 
         if (series.options.colorByPoint && !this.options.color) {
-            colorByPoint = XRangePoint.getColorByCategory(series, this);
+            const colorByPoint = XRangePoint.getColorByCategory(series, this);
 
             if (!series.chart.styledMode) {
                 this.color = colorByPoint.color;
@@ -172,13 +171,12 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        const point = this,
-            cfg = pointProto.getLabelConfig.call(point) as
+        const cfg = pointProto.getLabelConfig.call(this) as
                 XRangePoint.XRangePointLabelObject,
-            yCats = point.series.yAxis.categories || [];
+            yCats = this.series.yAxis.categories;
 
-        cfg.x2 = point.x2;
-        cfg.yCategory = point.yCategory = yCats[point.y || NaN];
+        cfg.x2 = this.x2;
+        cfg.yCategory = this.yCategory = yCats && yCats[this.y as any];
 
         return cfg;
     }
