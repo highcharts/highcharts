@@ -88,7 +88,7 @@ unit tests task. The chart and its container are shared between multiple tests
 and test-specific options get reverted after each test.
 
 The limitations of the underlying `Chart.update` function applies, so that
-callback functions are not supported as they can not be reverted. Additionally
+callback functions are not supported as they cannot be reverted. Additionally
 the `Chart.update` function is not wrapped in a template and therefor has to be
 avoided as well. If you need to test with callback functions or multiple
 updates, test templates are not for you.

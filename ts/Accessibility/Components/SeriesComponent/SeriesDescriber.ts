@@ -701,7 +701,7 @@ function describeSeries(
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
         // in order for AT to read them out in an understandable order.
-        // Due to z-index issues we can not do this for 3D charts.
+        // Due to z-index issues we cannot do this for 3D charts.
         if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
