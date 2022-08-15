@@ -17,17 +17,18 @@
  *  Imports
  *
  * */
+
+import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SeriesClass from '../../Core/Series/Series';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
-import type SizeObject from '../../Core/Renderer/SizeObject';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -41,8 +42,8 @@ const {
 const { prototype: columnProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     clamp,
-    correctFloat,
     defined,
     extend,
     find,
@@ -51,17 +52,57 @@ const {
     merge,
     pick
 } = U;
+import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import './XRangeComposition.js';
 
 /* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * The ending X value of the range point.
- * @name Highcharts.PointOptionsObject#x2
- * @type {number|undefined}
- * @requires modules/xrange
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Max x2 should be considered in xAxis extremes
+ * @private
  */
+function onAxisAfterGetSeriesExtremes(
+    this: Axis
+): void {
+    let dataMax: (number|undefined),
+        modMax: (boolean|undefined);
+
+    if (this.isXAxis) {
+        dataMax = pick(this.dataMax, -Number.MAX_VALUE);
+        this.series.forEach(function (series): void {
+            if ((series as XRangeSeries).x2Data) {
+                (series as XRangeSeries).x2Data
+                    .forEach(function (val: (number|undefined)): void {
+                        if ((val as any) > (dataMax as any)) {
+                            dataMax = val;
+                            modMax = true;
+                        }
+                    });
+            }
+        });
+        if (modMax) {
+            this.dataMax = dataMax;
+        }
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -75,118 +116,55 @@ class XRangeSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
-    /**
-     * The X-range series displays ranges on the X axis, typically time
-     * intervals with a start and end date.
-     *
-     * @sample {highcharts} highcharts/demo/x-range/
-     *         X-range
-     * @sample {highcharts} highcharts/css/x-range/
-     *         Styled mode X-range
-     * @sample {highcharts} highcharts/chart/inverted-xrange/
-     *         Inverted X-range
-     *
-     * @extends      plotOptions.column
-     * @since        6.0.0
-     * @product      highcharts highstock gantt
-     * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
-     *               edgeWidth, findNearestPointBy, getExtremesFromAll,
-     *               negativeColor, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointRange, pointStart, softThreshold,
-     *               stacking, threshold, data, dataSorting, boostBlending
-     * @requires     modules/xrange
-     * @optionparent plotOptions.xrange
-     */
-    public static defaultOptions: XRangeSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * A partial fill for each point, typically used to visualize how much
-         * of a task is performed. The partial fill object can be set either on
-         * series or point level.
-         *
-         * @sample {highcharts} highcharts/demo/x-range
-         *         X-range with partial fill
-         *
-         * @product   highcharts highstock gantt
-         * @apioption plotOptions.xrange.partialFill
-         */
 
-        /**
-         * The fill color to be used for partial fills. Defaults to a darker
-         * shade of the point color.
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @product   highcharts highstock gantt
-         * @apioption plotOptions.xrange.partialFill.fill
-         */
-
-        /**
-         * A partial fill for each point, typically used to visualize how much
-         * of a task is performed. See [completed](series.gantt.data.completed).
-         *
-         * @sample gantt/demo/progress-indicator
-         *         Gantt with progress indicator
-         *
-         * @product   gantt
-         * @apioption plotOptions.gantt.partialFill
-         */
-
-        /**
-         * In an X-range series, this option makes all points of the same Y-axis
-         * category the same color.
-         */
-        colorByPoint: true,
-
-        dataLabels: {
-            formatter: function (): (string|undefined) {
-                let point = this.point,
-                    amount = (point as XRangePoint).partialFill;
-
-                if (isObject(amount)) {
-                    amount = (amount as any).amount;
-                }
-                if (isNumber(amount) && amount > 0) {
-                    return correctFloat(amount * 100) + '%';
-                }
-            },
-            inside: true,
-            verticalAlign: 'middle'
-        },
-
-        tooltip: {
-
-            headerFormat: '<span style="font-size: 10px">{point.x} - {point.x2}</span><br/>',
-
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
-        },
-
-        borderRadius: 3,
-
-        pointRange: 0
-
-    } as XRangeSeriesOptions);
+    public static defaultOptions: XRangeSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        XRangeSeriesDefaults
+    );
 
     /* *
      *
-     * Properties
+     *  Static Functions
      *
      * */
+
+    public static compose(
+        AxisClass: typeof Axis
+    ): void {
+
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
+
+            addEvent(
+                AxisClass,
+                'afterGetSeriesExtremes',
+                onAxisAfterGetSeriesExtremes
+            );
+        }
+
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<XRangePoint> = void 0 as any;
     public options: XRangeSeriesOptions = void 0 as any;
     public points: Array<XRangePoint> = void 0 as any;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
-     * @function Highcarts.seriesTypes.xrange#init
      */
     public init(): void {
         ColumnSeries.prototype.init.apply(this, arguments as any);
@@ -196,9 +174,7 @@ class XRangeSeries extends ColumnSeries {
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
-     *
      * @private
-     * @function Highcharts.Series#getColumnMetrics
      */
     public getColumnMetrics(): ColumnMetricsObject {
         let metrics,
@@ -226,11 +202,9 @@ class XRangeSeries extends ColumnSeries {
     }
 
     /**
-     * Override cropData to show a point where x or x2 is outside visible
-     * range, but one of them is inside.
-     *
+     * Override cropData to show a point where x or x2 is outside visible range,
+     * but one of them is inside.
      * @private
-     * @function Highcharts.Series#cropData
      */
     public cropData(
         xData: Array<number>,
@@ -254,11 +228,13 @@ class XRangeSeries extends ColumnSeries {
      * options.
      *
      * @private
-     * @function Highcharts.Series#findPointIndex
-     * @param {Object} options
-     * The options of the point.
+     *
+     * @param {Highcharts.XRangePointOptions} options
+     *        The options of the point.
+     *
      * @return {number|undefined}
-     * Returns index of a matching point, or undefined if no match is found.
+     *         Returns index of a matching point, or undefined if no match is
+     *         found.
      */
     public findPointIndex(options: XRangePointOptions): (number|undefined) {
         const { cropped, cropStart, points } = this;
@@ -299,11 +275,9 @@ class XRangeSeries extends ColumnSeries {
 
         return pointIndex;
     }
+
     /**
      * @private
-     * @function Highcharts.Series#translatePoint
-     *
-     * @param {Highcharts.Point} point
      */
     public translatePoint(point: XRangePoint): void {
         let series = this,
@@ -474,7 +448,6 @@ class XRangeSeries extends ColumnSeries {
 
     /**
      * @private
-     * @function Highcharts.Series#translate
      */
     public translate(): void {
         columnProto.translate.apply(this, arguments as any);
@@ -490,7 +463,6 @@ class XRangeSeries extends ColumnSeries {
      * original graphic and an overlay displaying the partial fill.
      *
      * @private
-     * @function Highcharts.Series#drawPoint
      *
      * @param {Highcharts.Point} point
      *        An instance of Point in the series.
@@ -614,7 +586,6 @@ class XRangeSeries extends ColumnSeries {
 
     /**
      * @private
-     * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
         const series = this,
@@ -633,7 +604,6 @@ class XRangeSeries extends ColumnSeries {
      * animation limit.
      *
      * @private
-     * @function Highcharts.Series#getAnimationVerb
      */
     public getAnimationVerb(): string {
         return (
@@ -645,7 +615,6 @@ class XRangeSeries extends ColumnSeries {
 
     /**
      * @private
-     * @function Highcharts.XRangeSeries#isPointInside
      */
     public isPointInside(point: (Record<string, number>|XRangePoint)): boolean {
         const shapeArgs = point.shapeArgs as SVGAttributes,
@@ -685,9 +654,10 @@ class XRangeSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype properties
+ * Class Properties
  *
  * */
+
 interface XRangeSeries {
     animate: typeof Series.prototype.animate;
     cropShoulder: number;
@@ -713,20 +683,10 @@ extend(XRangeSeries.prototype, {
 
 /* *
  *
- * Class namespace
- *
- * */
-namespace XRangeSeries {
-    interface XRangePartialFillObject extends PositionObject, SizeObject {
-        r?: number;
-    }
-}
-
-/* *
- *
  * Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         xrange: typeof XRangeSeries;
@@ -742,122 +702,3 @@ SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
  * */
 
 export default XRangeSeries;
-
-/* *
- *
- * API Options
- *
- * */
-
-/**
- * An `xrange` series. If the [type](#series.xrange.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.xrange
- * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, negativeColor,
- *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *            pointStart, softThreshold, stacking, threshold, dataSorting,
- *            boostBlending
- * @product   highcharts highstock gantt
- * @requires  modules/xrange
- * @apioption series.xrange
- */
-
-/**
- * An array of data points for the series. For the `xrange` series type,
- * points can be given in the following ways:
- *
- * 1. An array of objects with named values. The objects are point configuration
- *    objects as seen below.
- *    ```js
- *    data: [{
- *        x: Date.UTC(2017, 0, 1),
- *        x2: Date.UTC(2017, 0, 3),
- *        name: "Test",
- *        y: 0,
- *        color: "#00FF00"
- *    }, {
- *        x: Date.UTC(2017, 0, 4),
- *        x2: Date.UTC(2017, 0, 5),
- *        name: "Deploy",
- *        y: 1,
- *        color: "#FF0000"
- *    }]
- *    ```
- *
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- *
- * @declare   Highcharts.XrangePointOptionsObject
- * @type      {Array<*>}
- * @extends   series.line.data
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data
- */
-
-/**
- * The starting X value of the range point.
- *
- * @sample {highcharts} highcharts/demo/x-range
- *         X-range
- *
- * @type      {number}
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.x
- */
-
-/**
- * The ending X value of the range point.
- *
- * @sample {highcharts} highcharts/demo/x-range
- *         X-range
- *
- * @type      {number}
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.x2
- */
-
-/**
- * The Y value of the range point.
- *
- * @sample {highcharts} highcharts/demo/x-range
- *         X-range
- *
- * @type      {number}
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.y
- */
-
-/**
- * A partial fill for each point, typically used to visualize how much of
- * a task is performed. The partial fill object can be set either on series
- * or point level.
- *
- * @sample {highcharts} highcharts/demo/x-range
- *         X-range with partial fill
- *
- * @declare   Highcharts.XrangePointPartialFillOptionsObject
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.partialFill
- */
-
-/**
- * The amount of the X-range point to be filled. Values can be 0-1 and are
- * converted to percentages in the default data label formatter.
- *
- * @type      {number}
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.partialFill.amount
- */
-
-/**
- * The fill color to be used for partial fills. Defaults to a darker shade
- * of the point color.
- *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- * @product   highcharts highstock gantt
- * @apioption series.xrange.data.partialFill.fill
- */
-
-''; // adds doclets above to transpiled file
