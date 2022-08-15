@@ -30,16 +30,18 @@ import type XRangeSeriesOptions from './XRangeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
+const { noop } = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
+    series: {
+        prototype: seriesProto
+    },
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-const { prototype: columnProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -81,17 +83,16 @@ function onAxisAfterGetSeriesExtremes(
 
     if (this.isXAxis) {
         dataMax = pick(this.dataMax, -Number.MAX_VALUE);
-        this.series.forEach(function (series): void {
-            if ((series as XRangeSeries).x2Data) {
-                (series as XRangeSeries).x2Data
-                    .forEach(function (val: (number|undefined)): void {
-                        if ((val as any) > (dataMax as any)) {
-                            dataMax = val;
-                            modMax = true;
-                        }
-                    });
+        for (const series of this.series as Array<XRangeSeries>) {
+            if (series.x2Data) {
+                for (const val of series.x2Data) {
+                    if (val && val > dataMax) {
+                        dataMax = val;
+                        modMax = true;
+                    }
+                }
             }
-        });
+        }
         if (modMax) {
             this.dataMax = dataMax;
         }
@@ -167,7 +168,7 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public init(): void {
-        ColumnSeries.prototype.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
         this.options.stacking = void 0; // #13161
     }
 
@@ -177,24 +178,17 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        let metrics,
-            chart = this.chart;
-
-        /**
-         * @private
-         */
-        function swapAxes(): void {
-            chart.series.forEach(function (s): void {
-                const xAxis = s.xAxis;
-
-                s.xAxis = s.yAxis;
-                s.yAxis = xAxis;
-            });
-        }
+        const swapAxes = (): void => {
+            for (const series of this.chart.series) {
+                const xAxis = series.xAxis;
+                series.xAxis = series.yAxis;
+                series.yAxis = xAxis;
+            }
+        };
 
         swapAxes();
 
-        metrics = columnProto.getColumnMetrics.call(this);
+        const metrics = super.getColumnMetrics();
 
         swapAxes();
 
@@ -214,8 +208,13 @@ class XRangeSeries extends ColumnSeries {
     ): SeriesClass.CropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        const cropData = Series.prototype.cropData,
-            crop = cropData.call(this, this.x2Data as any, yData, min, max);
+        const crop = seriesProto.cropData.call(
+            this,
+            this.x2Data as any,
+            yData,
+            min,
+            max
+        );
 
         // Re-insert the cropped xData
         crop.xData = xData.slice(crop.start, crop.end);
@@ -237,35 +236,27 @@ class XRangeSeries extends ColumnSeries {
      *         found.
      */
     public findPointIndex(options: XRangePointOptions): (number|undefined) {
-        const { cropped, cropStart, points } = this;
+        const { cropStart, points } = this;
         const { id } = options;
         let pointIndex: (number|undefined);
 
         if (id) {
-            const point = find(points, function (
-                point: XRangePoint
-            ): boolean {
-                return point.id === id;
-            });
+            const point = find(points, (point): boolean => point.id === id);
             pointIndex = point ? point.index : void 0;
         }
 
         if (typeof pointIndex === 'undefined') {
-            const point = find(points, function (
-                point: XRangePoint
-            ): boolean {
-                return (
-                    point.x === options.x &&
-                    point.x2 === options.x2 &&
-                    !point.touched
-                );
-            });
+            const point = find(points, (point): boolean => (
+                point.x === options.x &&
+                point.x2 === options.x2 &&
+                !point.touched
+            ));
             pointIndex = point ? point.index : void 0;
         }
 
         // Reduce pointIndex if data is cropped
         if (
-            cropped &&
+            this.cropped &&
             isNumber(pointIndex) &&
             isNumber(cropStart) &&
             pointIndex >= cropStart
@@ -280,40 +271,40 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public translatePoint(point: XRangePoint): void {
-        let series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            metrics: ColumnMetricsObject =
-                series.columnMetrics as any,
-            options = series.options,
+        const xAxis = this.xAxis,
+            yAxis = this.yAxis,
+            metrics = this.columnMetrics,
+            options = this.options,
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
-            seriesXOffset = series.pointXOffset = metrics.offset,
-            plotX = point.plotX,
-            posX = pick(point.x2, (point.x as any) + (point.len || 0)),
+            seriesXOffset = this.pointXOffset = metrics.offset,
+            posX = pick(point.x2, (point.x as any) + (point.len || 0));
+
+        let plotX = point.plotX,
             plotX2 = xAxis.translate(
                 posX,
                 0 as any,
                 0 as any,
                 0 as any,
                 1 as any
-            ),
-            length = Math.abs((plotX2 as any) - (plotX as any)),
-            widthDifference,
+            );
+
+        const length = Math.abs((plotX2 as any) - (plotX as any)),
+            inverted = this.chart.inverted,
+            borderWidth = pick(options.borderWidth, 1),
+            crisper = borderWidth % 2 / 2;
+
+        let widthDifference,
             partialFill: (
                 XRangePointPartialFillOptions|
                 undefined
             ),
-            inverted = this.chart.inverted,
-            borderWidth = pick(options.borderWidth, 1),
-            crisper = borderWidth % 2 / 2,
             yOffset = metrics.offset,
             pointHeight = Math.round(metrics.width),
             dlLeft,
             dlRight,
             dlWidth,
-            clipRectWidth,
-            tooltipYOffset;
+            clipRectWidth;
 
         if (minPointLength) {
             widthDifference = minPointLength - length;
@@ -359,7 +350,7 @@ class XRangeSeries extends ColumnSeries {
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
             width: x2 - x,
             height: pointHeight,
-            r: series.options.borderRadius
+            r: this.options.borderRadius
         };
         point.shapeArgs = shapeArgs;
 
@@ -396,8 +387,11 @@ class XRangeSeries extends ColumnSeries {
         const xIndex = !inverted ? 0 : 1;
         const yIndex = !inverted ? 1 : 0;
 
-        tooltipYOffset = series.columnMetrics ?
-            series.columnMetrics.offset : -metrics.width / 2;
+        const tooltipYOffset = (
+            this.columnMetrics ?
+                this.columnMetrics.offset :
+                -metrics.width / 2
+        );
 
         // Centering tooltip position (#14147)
         if (!inverted) {
@@ -425,7 +419,7 @@ class XRangeSeries extends ColumnSeries {
                 partialFill = 0 as any;
             }
             point.partShapeArgs = merge(shapeArgs, {
-                r: series.options.borderRadius
+                r: this.options.borderRadius
             });
 
             clipRectWidth = Math.max(
@@ -450,10 +444,11 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-        columnProto.translate.apply(this, arguments as any);
-        this.points.forEach(function (point: XRangePoint): void {
+        super.translate.apply(this, arguments);
+
+        for (const point of this.points) {
             this.translatePoint(point);
-        }, this);
+        }
     }
 
     /**
@@ -474,15 +469,12 @@ class XRangeSeries extends ColumnSeries {
         point: XRangePoint,
         verb: string
     ): void {
-        let series = this,
-            seriesOpts = series.options,
-            renderer = series.chart.renderer,
-            graphic = point.graphic,
+        const seriesOpts = this.options,
+            renderer = this.chart.renderer,
             type = point.shapeType,
             shapeArgs = point.shapeArgs,
             partShapeArgs = point.partShapeArgs,
             clipRectArgs = point.clipRectArgs,
-            pfOptions = point.partialFill,
             cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
             pointState = point.state,
             stateOpts: SeriesStateHoverOptions = (
@@ -491,12 +483,14 @@ class XRangeSeries extends ColumnSeries {
             ),
             pointStateVerb = typeof pointState === 'undefined' ?
                 'attr' : verb,
-            pointAttr = series.pointAttribs(point, pointState),
+            pointAttr = this.pointAttribs(point, pointState),
             animation = pick(
-                series.chart.options.chart.animation,
+                this.chart.options.chart.animation,
                 stateOpts.animation
-            ),
-            fill;
+            );
+
+        let graphic = point.graphic,
+            pfOptions = point.partialFill;
 
         if (!point.isNull && point.visible !== false) {
 
@@ -506,7 +500,7 @@ class XRangeSeries extends ColumnSeries {
             } else {
                 point.graphic = graphic = renderer.g('point')
                     .addClass(point.getClassName())
-                    .add(point.group || series.group);
+                    .add(point.group || this.group);
 
                 graphic.rect = (renderer as any)[type](merge(shapeArgs))
                     .addClass(point.getClassName())
@@ -543,7 +537,7 @@ class XRangeSeries extends ColumnSeries {
 
 
             // Presentational
-            if (!series.chart.styledMode) {
+            if (!this.chart.styledMode) {
                 graphic
                     .rect[verb](
                         pointAttr,
@@ -562,10 +556,10 @@ class XRangeSeries extends ColumnSeries {
                         );
                     }
 
-                    fill = (
-                        (pfOptions as any).fill ||
+                    const fill = (
+                        pfOptions.fill ||
                         color(pointAttr.fill).brighten(-0.3).get() ||
-                        color(point.color || series.color)
+                        color(point.color || this.color)
                             .brighten(-0.3).get()
                     );
 
@@ -588,15 +582,12 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        const series = this,
-            verb = series.getAnimationVerb();
+        const verb = this.getAnimationVerb();
 
         // Draw the columns
-        series.points.forEach(function (
-            point: XRangePoint
-        ): void {
-            series.drawPoint(point, verb);
-        });
+        for (const point of this.points) {
+            this.drawPoint(point, verb);
+        }
     }
 
     /**
@@ -616,7 +607,9 @@ class XRangeSeries extends ColumnSeries {
     /**
      * @private
      */
-    public isPointInside(point: (Record<string, number>|XRangePoint)): boolean {
+    public isPointInside(
+        point: (XRangePoint|Record<string, number>)
+    ): boolean {
         const shapeArgs = point.shapeArgs as SVGAttributes,
             plotX = point.plotX,
             plotY = point.plotY;
@@ -659,26 +652,27 @@ class XRangeSeries extends ColumnSeries {
  * */
 
 interface XRangeSeries {
-    animate: typeof Series.prototype.animate;
+    pointClass: typeof XRangePoint;
+    columnMetrics: ColumnMetricsObject;
     cropShoulder: number;
     getExtremesFromAll: boolean;
     parallelArrays: Array<string>;
-    pointClass: typeof XRangePoint;
     requireSorting: boolean;
     type: string;
     x2Data: Array<(number|undefined)>;
+    animate: typeof seriesProto.animate;
 }
 
 extend(XRangeSeries.prototype, {
-    type: 'xrange',
-    parallelArrays: ['x', 'x2', 'y'],
-    requireSorting: false,
-    animate: Series.prototype.animate,
+    pointClass: XRangePoint,
     cropShoulder: 1,
     getExtremesFromAll: true,
-    autoIncrement: H.noop as any,
-    buildKDTree: H.noop,
-    pointClass: XRangePoint
+    parallelArrays: ['x', 'x2', 'y'],
+    requireSorting: false,
+    type: 'xrange',
+    animate: seriesProto.animate,
+    autoIncrement: noop,
+    buildKDTree: noop
 });
 
 /* *
