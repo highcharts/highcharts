@@ -30,10 +30,7 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
