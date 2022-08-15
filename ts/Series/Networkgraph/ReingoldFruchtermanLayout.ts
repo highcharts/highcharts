@@ -579,7 +579,7 @@ class ReingoldFruchtermanLayout {
             for (const node of this.nodes) {
                 for (const repNode of this.nodes) {
                     if (
-                        // Node can not repulse itself:
+                        // Node cannot repulse itself:
                         node !== repNode &&
                         // Only close nodes affect each other:
                         // layout.getDistR(node, repNode) < 2 * k &&

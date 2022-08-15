@@ -1590,7 +1590,7 @@ namespace Exporting {
             }
         };
 
-        // Register update() method for navigation. Can not be set the same way
+        // Register update() method for navigation. Cannot be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
         ChartNavigationComposition
