@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type {
     DataLabelOptions,
     DataLabelTextPathOptions
@@ -73,6 +74,13 @@ export interface NetworkgraphDataLabelsOptionsObject
     linkTextPath?: DataLabelTextPathOptions;
 }
 
+export interface NetworkgraphLinkOptions {
+    color?: ColorType;
+    dashStyle?: DashStyleValue;
+    opacity?: number;
+    width?: number;
+}
+
 export interface NetworkgraphSeriesOptions
     extends SeriesOptions, NodesComposition.SeriesCompositionOptions {
 
@@ -80,7 +88,7 @@ export interface NetworkgraphSeriesOptions
     draggable?: boolean;
     inactiveOtherPoints?: boolean;
     layoutAlgorithm?: ReingoldFruchtermanLayout.Options;
-    link?: SVGAttributes;
+    link?: NetworkgraphLinkOptions;
     nodes?: Array<NetworkgraphPointOptions>;
     states?: SeriesStatesOptions<NetworkgraphSeries>;
 }

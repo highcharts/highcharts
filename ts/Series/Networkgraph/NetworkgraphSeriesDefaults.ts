@@ -230,9 +230,18 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          */
 
         /**
+         * Opacity of the link between two nodes.
+         *
+         * @type      {number}
+         * @default   1
+         * @apioption plotOptions.networkgraph.link.opacity
+         */
+
+        /**
          * Color of the link between two nodes.
          */
         color: 'rgba(100, 100, 100, 0.5)',
+
         /**
          * Width (px) of the link between two nodes.
          */
