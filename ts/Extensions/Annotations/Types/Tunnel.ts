@@ -6,7 +6,12 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AnnotationEventObject } from '../EventEmitter';
 import type Controllable from '../Controllables/Controllable';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
@@ -20,7 +25,11 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -33,20 +42,13 @@ function getSecondCoordinate(
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class Tunnel extends CrookedLine {
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        options: Tunnel.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -181,9 +183,12 @@ class Tunnel extends CrookedLine {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Tunnel {
     defaultOptions: CrookedLine['defaultOptions'];
 }
@@ -305,6 +310,12 @@ Tunnel.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Tunnel {
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
@@ -320,16 +331,19 @@ namespace Tunnel {
  *  Registry
  *
  * */
-Annotation.types.tunnel = Tunnel;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;
     }
 }
 
+Annotation.types.tunnel = Tunnel;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Tunnel;

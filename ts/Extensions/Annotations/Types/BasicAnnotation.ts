@@ -6,9 +6,13 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { AnnotationEventObject } from '../EventEmitter';
-import type AnnotationOptions from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableEllipse from '../Controllables/ControllableEllipse';
@@ -28,7 +32,11 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class BasicAnnotation extends Annotation {
 
@@ -305,19 +313,6 @@ class BasicAnnotation extends Annotation {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        options: AnnotationOptions
-    ) {
-        super(chart, options);
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -364,20 +359,15 @@ class BasicAnnotation extends Annotation {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface BasicAnnotation {
-    defaultOptions: Annotation['defaultOptions'];
     basicType: string;
-}
-namespace BasicAnnotation {
-    export interface ControlPoints {
-        label: DeepPartial<ControlPointOptionsObject>[];
-        rectangle: DeepPartial<ControlPointOptionsObject>[];
-        ellipse: DeepPartial<ControlPointOptionsObject>[];
-        circle: DeepPartial<ControlPointOptionsObject>[];
-    }
+    defaultOptions: Annotation['defaultOptions'];
 }
 
 BasicAnnotation.prototype.defaultOptions = merge(
@@ -387,16 +377,32 @@ BasicAnnotation.prototype.defaultOptions = merge(
 
 /* *
  *
+ *  Class Namespace
+ *
+ * */
+
+namespace BasicAnnotation {
+    export interface ControlPoints {
+        label: DeepPartial<ControlPointOptionsObject>[];
+        rectangle: DeepPartial<ControlPointOptionsObject>[];
+        ellipse: DeepPartial<ControlPointOptionsObject>[];
+        circle: DeepPartial<ControlPointOptionsObject>[];
+    }
+}
+
+/* *
+ *
  *  Registry
  *
  * */
 
-Annotation.types.basicAnnotation = BasicAnnotation;
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         basicAnnotation: typeof BasicAnnotation;
     }
 }
+
+Annotation.types.basicAnnotation = BasicAnnotation;
 
 /* *
  *

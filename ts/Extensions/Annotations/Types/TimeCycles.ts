@@ -30,10 +30,22 @@ const {
     defined
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;
 }
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Function to create start of the path.
@@ -60,20 +72,20 @@ function getCirclePath(
     numberOfCircles: number,
     startX: number,
     y: number
-): SVGPath.Arc[] {
-    const strToRepeat = (i: number): SVGPath.Arc => [
-        'A',
-        pixelInterval / 2,
-        pixelInterval / 2,
-        0,
-        1,
-        1,
-        startX + i * pixelInterval,
-        y
-    ];
-    let path = [];
+): Array<SVGPath.Arc> {
+    const path: Array<SVGPath.Arc> = [];
+
     for (let i = 1; i <= numberOfCircles; i++) {
-        path.push(strToRepeat(i));
+        path.push([
+            'A',
+            pixelInterval / 2,
+            pixelInterval / 2,
+            0,
+            1,
+            1,
+            startX + i * pixelInterval,
+            y
+        ]);
     }
 
     return path;
@@ -85,9 +97,13 @@ function getCirclePath(
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 class TimeCycles extends CrookedLine {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(
         annotation: Annotation,
@@ -214,6 +230,7 @@ class TimeCycles extends CrookedLine {
         this.setPath();
         super.redraw(animation);
     }
+
 }
 
 /* *
@@ -313,12 +330,13 @@ namespace TimeCycles {
  *
  * */
 
-Annotation.types.timeCycles = TimeCycles;
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;
     }
 }
+
+Annotation.types.timeCycles = TimeCycles;
 
 /* *
  *
