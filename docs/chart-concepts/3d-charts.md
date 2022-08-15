@@ -64,7 +64,7 @@ General
 
 For all 3D charts the following options are the most important (part of _chart.options3d_):
 
-*   enabled                   This indicates wether the chart has to have 3D or not, set this to true.
+*   enabled                   This indicates whether the chart has to have 3D or not, set this to true.
 *   depth                        The total depth of the chart, defaults to 100.
 *   viewDistance          This defines how far a viewer is from the chart.
 *   alpha & beta           The angles to rotate the view of the chart.
