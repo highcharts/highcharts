@@ -81,6 +81,7 @@ class TreegraphSeries extends TreemapSeries {
      * The best examples of the dataStructures, which best reflect this chart
      * are e.g. genealogy tree or directory structure.
      *
+     * TODO change back the demo path
      * @sample highcharts/demo/treegraph-chart
      *          Treegraph Chart
      *

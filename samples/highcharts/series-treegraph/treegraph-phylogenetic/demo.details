@@ -1,7 +1,7 @@
 ---
-name: Treegraph chart
+name: EXPERIMENTAL - Treegraph Phylogenetic Tree
 authors:
-  - Pawel Lysy
+  - Torstein Hønsi
 js_wrap: b
 new_until: 2022-06-31
 tags:
