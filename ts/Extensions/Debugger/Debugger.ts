@@ -106,6 +106,7 @@ function compose(
 
         setOptions(defaultOptions);
     }
+
 }
 
 /**
@@ -117,9 +118,9 @@ function onChartBeforeRedraw(
     const errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
-        errorElements.forEach(function (el: SVGElement): void {
+        for (const el of errorElements) {
             el.destroy();
-        });
+        }
     }
 
     delete this.errorElements;
@@ -133,25 +134,29 @@ function onHighchartsDisplayError(
     e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
-    const chart = e.chart ||
-            find(this.charts.slice().reverse(), (c?: Chart): boolean => !!c);
+    const chart = (
+        e.chart ||
+        find(this.charts.slice().reverse(), (c?: Chart): boolean => !!c)
+    );
+
     if (!chart) {
         return;
     }
 
-    let code = e.code,
-        msg,
+    const code = e.code,
         options = chart.options.chart,
-        renderer = chart.renderer,
+        renderer = chart.renderer;
+
+    let msg,
         chartWidth,
         chartHeight;
 
     if (chart.errorElements) {
-        chart.errorElements.forEach(function (el: SVGElement): void {
+        for (const el of chart.errorElements) {
             if (el) {
                 el.destroy();
             }
-        });
+        }
     }
 
     if (options && options.displayErrors && renderer) {
