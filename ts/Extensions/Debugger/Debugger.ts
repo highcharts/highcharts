@@ -16,14 +16,12 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
+import type GlobalsLike from '../../Core/GlobalsLike';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import Chart from '../../Core/Chart/Chart.js';
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-const {
-    charts
-} = H;
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
@@ -51,23 +49,15 @@ declare module '../../Core/Chart/ChartOptions'{
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        let errorMessages: typeof ErrorMessages;
-    }
-}
-
 /* *
  *
- *  Compositions
+ *  Constants
  *
  * */
 
-setOptions({
+const composedClasses: Array<(Function|GlobalsLike)> = [];
+
+const defaultOptions = {
     /**
      * @optionparent chart
      */
@@ -84,16 +74,67 @@ setOptions({
          */
         displayErrors: true
     }
-});
+};
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-addEvent(H, 'displayError', function (
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart
+): void {
+
+    if (composedClasses.indexOf(ChartClass) === -1) {
+        composedClasses.push(ChartClass);
+
+        addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+    }
+
+    if (composedClasses.indexOf(H) === -1) {
+        composedClasses.push(H);
+
+        addEvent(H, 'displayError', onHighchartsDisplayError);
+    }
+
+    if (composedClasses.indexOf(setOptions) === -1) {
+        composedClasses.push(setOptions);
+
+        setOptions(defaultOptions);
+    }
+}
+
+/**
+ * @private
+ */
+function onChartBeforeRedraw(
+    this: Chart
+): void {
+    const errorElements = this.errorElements;
+
+    if (errorElements && errorElements.length) {
+        errorElements.forEach(function (el: SVGElement): void {
+            el.destroy();
+        });
+    }
+
+    delete this.errorElements;
+}
+
+/**
+ * @private
+ */
+function onHighchartsDisplayError(
+    this: GlobalsLike,
     e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = e.chart ||
-            find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
+            find(this.charts.slice().reverse(), (c?: Chart): boolean => !!c);
     if (!chart) {
         return;
     }
@@ -171,17 +212,16 @@ addEvent(H, 'displayError', function (
             y: chartHeight - chart.errorElements[1].getBBox().height
         });
     }
-});
+}
 
-addEvent(Chart, 'beforeRedraw', function (): void {
-    const errorElements = this.errorElements;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-    if (errorElements && errorElements.length) {
-        errorElements.forEach(function (el: SVGElement): void {
-            el.destroy();
-        });
-    }
-    delete this.errorElements;
-});
+const Debugger = {
+    compose
+};
 
-/* eslint-enable no-invalid-this */
+export default Debugger;
