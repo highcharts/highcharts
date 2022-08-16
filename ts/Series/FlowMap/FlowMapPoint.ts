@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson
+ *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -16,7 +16,17 @@
 
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
-import SankeyPoint from '../Sankey/SankeyPoint';
+import Point from '../../Core/Series/Point';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sankey: {
+            prototype: {
+                pointClass: SankeyPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 
 /* *
  *
@@ -27,7 +37,10 @@ import SankeyPoint from '../Sankey/SankeyPoint';
 declare class FlowMapPoint extends SankeyPoint {
     public options: FlowMapPointOptions;
     public series: FlowMapSeries;
-    // Borrow some MapPoint logic here?
+    public oldFromPoint?: Point;
+    public oldToPoint?: Point;
+    public removeEventForToPoint: Function;
+    public removeEventForFromPoint: Function;
 }
 
 /* *

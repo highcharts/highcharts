@@ -28,7 +28,14 @@ export interface FlowMapPointOptions extends SankeyPointOptions {
     curve?: number;
     weight?: number;
     growTowards?: boolean;
-    offset2?: number;
+    markerEnd?: MarkerEndOptions
+}
+
+interface MarkerEndOptions {
+    markerType?: string,
+    enabled?: boolean,
+    width?: number,
+    height?: number
 }
 
 export default FlowMapPointOptions;

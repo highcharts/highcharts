@@ -16,17 +16,21 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sankey: SankeySeries
+    }
+} = SeriesRegistry;
 
 import U from '../../Core/Utilities.js';
 import FlowMapPoint from './FlowMapPoint';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
 import SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import seriesDefaults from '../../Core/Series/SeriesDefaults';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 const {
+    extend,
     merge,
     addEvent
 } = U;
@@ -52,15 +56,13 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-class FlowMapSeries extends SankeySeries { // Sankey?
+class FlowMapSeries extends SankeySeries {
 
     /* *
      *
      * Static properties
      *
      * */
-
-    // public static compose = MapBubbleSeries.compose;
 
     public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
@@ -81,7 +83,7 @@ class FlowMapSeries extends SankeySeries { // Sankey?
          *
          * @private
          */
-        keys: ['from', 'to', 'curve', 'weight', 'growTowards', 'offset2']
+        keys: ['from', 'to', 'curve', 'weight', 'growTowards', 'markerEnd']
 
     } as FlowMapSeriesOptions); // Sankey?
 
@@ -100,7 +102,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
     public nodes: Array<FlowMapPoint> = void 0 as any;
 
     public points: Array<FlowMapPoint> = void 0 as any;
-
 
     /**
      *
@@ -135,15 +136,48 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             fromPoint = chart.get(point.options.from || ''),
             toPoint = chart.get(point.options.to || ''),
             linkHeight = 0, // 10,
-            nodeW = 0; // this.nodeWidth;
-        const curve = point.options.curve || 0,
-            weight = point.options.weight || 1,
-            growTowards = point.options.growTowards,
-            offset = point.options.offset2;
+            nodeW = 0, // this.nodeWidth;
+            pointOptions = point.options;
+        const curve = pointOptions.curve || 0,
+            weight = pointOptions.weight || 1,
+            growTowards = pointOptions.growTowards,
+            offset = pointOptions.markerEnd &&
+                pointOptions.markerEnd.height || 0;
 
+        // Connect to the linked parent point (in mappoint) to trigger
+        // series redraw for the linked point (in flow)
         if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
             return;
         }
+
+        // We have from and to & before the proceed
+        if (toPoint !== point.oldToPoint || !point.oldToPoint) {
+            if (point.removeEventForToPoint) {
+                point.removeEventForToPoint();
+            }
+
+            point.removeEventForToPoint = addEvent(
+                toPoint, 'update', function (): void {
+                    point.series.isDirty = true;
+                }
+            );
+        }
+
+        if (fromPoint !== point.oldFromPoint || !point.oldFromPoint) {
+            if (point.removeEventForFromPoint) {
+                point.removeEventForFromPoint();
+            }
+
+            point.removeEventForFromPoint = addEvent(
+                fromPoint, 'update', function (): void {
+                    point.series.isDirty = true;
+                }
+            );
+        }
+
+        // Save original point location for later in case there is an offset.
+        point.oldFromPoint = fromPoint;
+        point.oldToPoint = toPoint;
 
         let fromY = fromPoint.plotY || 0,
             toY = toPoint.plotY || 0,
@@ -167,28 +201,26 @@ class FlowMapSeries extends SankeySeries { // Sankey?
 
         // Links going from `fromPoint` to `toPoint`.
         if (typeof toY === 'number') {
-
-            if(offset) { // Offset will fake the point being offset.
+            if (offset) { // Calculate ending point for the curve with offset.
                 let dX = toX - fromX,
-                dY = toY - fromY;
+                    dY = toY - fromY;
 
                 dX *= 0.5;
                 dY *= 0.5;
 
                 let mX = fromX + dX,
-                mY = fromY + dY;
+                    mY = fromY + dY;
 
                 let tmp = dX;
                 dX = dY;
                 dY = -tmp;
 
-                // Ccalculate the arc strength.
+                // Calculate the arc strength.
                 let arcPointX = (mX + dX * curve),
-                arcPointY = (mY + dY * curve);
+                    arcPointY = (mY + dY * curve);
 
-                let [offsetX,offsetY] =
+                let [offsetX, offsetY] =
                     FlowMapSeries.normalize(arcPointX - toX, arcPointY - toY);
-                    //this.normalize(mX - toX, mY - toY);
 
                 offsetX *= offset;
                 offsetY *= offset;
@@ -256,6 +288,7 @@ class FlowMapSeries extends SankeySeries { // Sankey?
                 wY /= 4;
             }
 
+            const arrowFactor = 1.5;
             point.shapeArgs = {
                 d: [
                     [
@@ -270,7 +303,9 @@ class FlowMapSeries extends SankeySeries { // Sankey?
                         toX - toXToArc,
                         toY - toYToArc
                     ],
-                    // This is where pointMarkers should go
+                    // This is where pointMarkers should go.
+                    // They would be spliced here later.
+                    // continue curve path
                     [
                         'L',
                         toX + toXToArc,
@@ -287,34 +322,23 @@ class FlowMapSeries extends SankeySeries { // Sankey?
                 ]
             };
 
-            if (true /* markerEnd */) {
-                let renderer: any = chart.renderer;
-               // const markerEndPath = this.getMarkerEndPath();
-               const arrowFactor = 1.5;
-               const markerPath = [
-                    ['M', toX - toXToArc * arrowFactor + chart.plotLeft, toY - toYToArc * arrowFactor + chart.plotTop],
-                    ['L', toX + toXToArc * arrowFactor + chart.plotLeft , toY + toYToArc * arrowFactor + chart.plotTop],
-                    ['L', (toPoint.plotX || 0) + chart.plotLeft, (toPoint.plotY || 0) + chart.plotTop]
+            if (pointOptions.markerEnd && pointOptions.markerEnd.enabled &&
+                point.shapeArgs.d) {
+                // TODO:
+                // Create a function that returns marker path.
+                const markerWidth = pointOptions.markerEnd.width || 1;
+                const marker: SVGPath = [
+                    ['L', toX - toXToArc * markerWidth,
+                        toY - toYToArc * markerWidth],
+                    ['L', toPoint.plotX || 0, toPoint.plotY || 0],
+                    ['L', toX + toXToArc * markerWidth,
+                        toY + toYToArc * markerWidth]
                 ];
 
-                renderer.path(markerPath)
-                    .attr({
-                        fill: 'cyan',
-                       // opacity: this.options.linkOpacity
-                    }).add().toFront();
-
-               /* renderer[(this as any).options.markerEnd.symbol]()
-                    .attr({
-                        r: (this as any).options.markerEnd.r,
-                        x: mX,
-                        y: mY,
-                        stroke: 'pink',
-                        'stroke-width': 2,
-                        'fill': 'orange'
-                    })
-                    .add().toFront();*/
+                (point.shapeArgs.d as SVGPath).splice(2, 0,
+                    ...marker
+                );
             }
-
         }
 
         // Place data labels in the middle
@@ -324,8 +348,6 @@ class FlowMapSeries extends SankeySeries { // Sankey?
             height: linkHeight,
             width: 0
         };
-
-      //  console.log(this);
 
         // And set the tooltip anchor in the middle
         point.tooltipPos = chart.inverted ? [
@@ -344,21 +366,44 @@ class FlowMapSeries extends SankeySeries { // Sankey?
         if (!point.color) {
             point.color = fromPoint.color;
         }
+    }
 
+    public drawPoints(): void {
+        // Draw flow graphics
+        super.drawPoints.call(this);
 
+        // const markerGroup = (
+        //     (this as any)[this.specialGroup as any] ||
+        //     this.markerGroup
+        // );
 
+        // Draw markers
+        this.points.forEach((point): void => {
+            if ((point as any).options.markerEnd2) { // if should draw marker
+
+                // Render graphic
+                const marker = this.chart.renderer.rect(100, 100, 1000, 100, 5)
+                    .add(this.group); // add to the series group
+
+                (marker.element as any).point = point; // mouse tracking
+
+                const pointAttribs = this.pointAttribs(
+                    point,
+                    point.selected ? 'select' : void 0
+                );
+
+                // Simple PoC (at this moment) without animation
+                marker.attr(pointAttribs);
+
+                marker.addClass(point.getClassName(), true);
+            }
+        });
     }
 
     public translateNode(): void {
         return;
     }
 }
-
-addEvent(Series, 'afterRender', function (): void {
-    if (this.linkedSeries.length) {
-        this.linkedSeries[0].redraw();
-    }
-});
 
 /* *
  *
@@ -369,6 +414,11 @@ addEvent(Series, 'afterRender', function (): void {
 interface FlowMapSeries {
 
 }
+
+extend(FlowMapSeries.prototype, {
+    // Make it work on zoom or pan
+    useMapGeometry: true
+});
 
 /* *
  *
