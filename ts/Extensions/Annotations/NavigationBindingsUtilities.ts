@@ -20,9 +20,34 @@ import type Pointer from '../../Core/Pointer';
 
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     isNumber,
     pick
 } = U;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Define types for editable fields per annotation. There is no need to define
+ * numbers, because they won't change their type to string.
+ * @private
+ */
+const annotationsFieldsTypes: Record<string, string> = {
+    backgroundColor: 'string',
+    borderColor: 'string',
+    borderRadius: 'string',
+    color: 'string',
+    fill: 'string',
+    fontSize: 'string',
+    labels: 'string',
+    name: 'string',
+    stroke: 'string',
+    title: 'string'
+};
 
 /* *
  *
@@ -73,14 +98,22 @@ function getAssignedAxis(
  * Field type (one of: text, number, checkbox)
  */
 function getFieldType(
+    key: (0|string),
     value: ('boolean'|'number'|'string')
 ): ('checkbox'|'number'|'text') {
+    const predefinedType = annotationsFieldsTypes[key];
+    let fieldType: string = typeof value;
+
+    if (defined(predefinedType)) {
+        fieldType = predefinedType;
+    }
+
     return ({
         'string': 'text',
         'number': 'number',
         'boolean': 'checkbox'
     } as Record<string, ('checkbox'|'number'|'text')>)[
-        typeof value
+        fieldType
     ];
 }
 
@@ -91,6 +124,7 @@ function getFieldType(
  * */
 
 const NavigationBindingUtilities = {
+    annotationsFieldsTypes,
     getAssignedAxis,
     getFieldType
 };

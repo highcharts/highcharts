@@ -20,7 +20,7 @@
                 "properties": "always"
             }
         ],
-        "class-methods-use-this": 1, // @todo
+        "class-methods-use-this": 0,
         "comma-dangle": [
             2,
             "never"

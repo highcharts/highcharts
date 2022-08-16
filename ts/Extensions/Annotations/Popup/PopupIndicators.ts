@@ -32,6 +32,8 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
+import NU from '../NavigationBindingsUtilities.js';
+const { annotationsFieldsTypes } = NU;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -501,6 +503,13 @@ function addParamInputs(
     const addInput = this.addInput;
 
     objectEach(fields, (value, fieldName): void => {
+        const predefinedType = annotationsFieldsTypes[fieldName];
+        let fieldType = type;
+
+        if (predefinedType) {
+            fieldType = predefinedType;
+        }
+
         // create name like params.styles.fontSize
         const parentFullName = parentNode + '.' + fieldName;
 
@@ -561,7 +570,7 @@ function addParamInputs(
                     parentDiv,
                     {
                         value: value as any,
-                        type: 'text'
+                        type: 'number'
                     } // all inputs are text type
                 );
             }

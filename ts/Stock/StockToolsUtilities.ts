@@ -191,12 +191,14 @@ function addFlagFromForm(
                                     title: [
                                         options.title,
                                         getFieldType(
+                                            'title',
                                             options.title as any
                                         )
                                     ],
                                     name: [
                                         options.name,
                                         getFieldType(
+                                            'name',
                                             options.name as any
                                         )
                                     ]
@@ -235,8 +237,8 @@ function addFlagFromForm(
                 options: {
                     langKey: 'flags',
                     type: 'flags',
-                    title: ['A', getFieldType('A' as any)],
-                    name: ['Flag A', getFieldType('Flag A' as any)]
+                    title: ['A', getFieldType('label', 'A' as any)],
+                    name: ['Flag A', getFieldType('label', 'Flag A' as any)]
                 },
                 // Callback on submit:
                 onSubmit: function (

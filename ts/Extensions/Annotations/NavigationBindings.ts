@@ -47,6 +47,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,
+    defined,
     fireEvent,
     isArray,
     isFunction,
@@ -867,8 +868,8 @@ class NavigationBindings {
                 value = parsedValue as any;
             }
 
-            // Remove empty strings or values like 0
-            if (value !== '' && value !== 'undefined') {
+            // Remove values like 0
+            if (value !== 'undefined') {
                 let parent = config;
 
                 path.forEach((name, index): void => {
@@ -961,7 +962,8 @@ class NavigationBindings {
             option: any,
             key: (0|string),
             parentEditables: any,
-            parent: any
+            parent: any,
+            parentKey: (0|string)
         ): void {
             let nextParent: any;
 
@@ -989,7 +991,8 @@ class NavigationBindings {
                                 arrayOption,
                                 0,
                                 nestedEditables[key],
-                                parent[key]
+                                parent[key],
+                                key
                             );
                         } else {
                             // Advanced arrays, e.g. [Object, Object]
@@ -1001,7 +1004,8 @@ class NavigationBindings {
                                         nestedOption,
                                         nestedKey,
                                         nestedEditables[key],
-                                        parent[key][i]
+                                        parent[key][i],
+                                        key
                                     );
                                 }
                             );
@@ -1025,7 +1029,8 @@ class NavigationBindings {
                                 key === 0 ?
                                     parentEditables :
                                     nestedEditables[key],
-                                nextParent
+                                nextParent,
+                                key
                             );
                         }
                     );
@@ -1040,9 +1045,9 @@ class NavigationBindings {
                             'text'
                         ];
                     } else if (isArray(parent)) {
-                        parent.push([option, getFieldType(option)]);
+                        parent.push([option, getFieldType(parentKey, option)]);
                     } else {
-                        parent[key] = [option, getFieldType(option)];
+                        parent[key] = [option, getFieldType(key, option)];
                     }
                 }
             }
@@ -1059,12 +1064,18 @@ class NavigationBindings {
                             typeKey,
                             nestedEditables,
                             visualOptions[key],
-                            true
+                            typeKey
                         );
                     }
                 );
             } else {
-                traverse(option, key, (editables as any)[type], visualOptions);
+                traverse(
+                    option,
+                    key,
+                    (editables as any)[type],
+                    visualOptions,
+                    key
+                );
             }
         });
 
