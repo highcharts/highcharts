@@ -676,7 +676,7 @@ class Legend {
                 (item as any).series :
                 item,
             seriesOptions = series.options,
-            showCheckbox = legend.createCheckboxForItem &&
+            showCheckbox = (legend.createCheckboxForItem) &&
                 seriesOptions &&
                 seriesOptions.showCheckbox,
             useHTML = options.useHTML,
@@ -1052,7 +1052,7 @@ class Legend {
             }
         }, this);
         distribute(boxes, chart.plotHeight).forEach((box): void => {
-            if (box.item._legendItemPos) {
+            if (box.item._legendItemPos && box.pos) {
                 box.item._legendItemPos[1] =
                     chart.plotTop - chart.spacing[0] + box.pos;
             }
@@ -1200,7 +1200,7 @@ class Legend {
         }
 
         // hide the border if no items
-        box[display ? 'show' : 'hide']();
+        legendGroup[display ? 'show' : 'hide']();
 
         // Open for responsiveness
         if (chart.styledMode && legendGroup.getStyle('display') === 'none') {

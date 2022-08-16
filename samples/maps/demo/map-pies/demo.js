@@ -1,83 +1,7 @@
 (async () => {
-
     const mapData = await fetch(
         'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
     ).then(response => response.json());
-
-    // New map-pie series type that also allows lat/lon as center option.
-    // Also adds a sizeFormatter option to the series, to allow dynamic sizing
-    // of the pies.
-    Highcharts.seriesType('mappie', 'pie', {
-        center: null, // Can't be array by default anymore
-        states: {
-            hover: {
-                halo: {
-                    size: 5
-                }
-            },
-            inactive: {
-                enabled: false
-            }
-        },
-        linkedMap: null, // id of linked map
-        dataLabels: {
-            enabled: false
-        }
-    }, {
-        init: function () {
-            Highcharts.Series.prototype.init.apply(this, arguments);
-            // Respond to zooming and dragging the base map
-            Highcharts.addEvent(this.chart.mapView, 'afterSetView', () => {
-                this.isDirty = true;
-            });
-        },
-        render: function () {
-            const series = this,
-                chart = series.chart,
-                linkedSeries = chart.get(series.options.linkedMap);
-            Highcharts.seriesTypes.pie.prototype.render.apply(
-                series,
-                arguments
-            );
-            if (series.group && linkedSeries && linkedSeries.is('map')) {
-                series.group.add(linkedSeries.group);
-            }
-        },
-        getCenter: function () {
-            const options = this.options,
-                chart = this.chart,
-                slicingRoom = 2 * (options.slicedOffset || 0);
-            if (!options.center) {
-                options.center = [null, null]; // Do the default here instead
-            }
-            // Handle lat/lon support
-            if (options.center.lat !== undefined) {
-                const projectedPos = chart.fromLatLonToPoint(options.center),
-                    pixelPos = chart.mapView.projectedUnitsToPixels(
-                        projectedPos
-                    );
-
-                options.center = [pixelPos.x, pixelPos.y];
-            }
-            // Handle dynamic size
-            if (options.sizeFormatter) {
-                options.size = options.sizeFormatter.call(this);
-            }
-            // Call parent function
-            const result = Highcharts.seriesTypes.pie.prototype.getCenter
-                .call(this);
-            // Must correct for slicing room to get exact pixel pos
-            result[0] -= slicingRoom;
-            result[1] -= slicingRoom;
-            return result;
-        },
-        translate: function (p) {
-            this.options.center = this.userOptions.center;
-            this.center = this.getCenter();
-            return Highcharts.seriesTypes.pie.prototype.translate.call(this, p);
-        }
-    });
-
 
     const data = [
             // state, demVotes, repVotes, libVotes, grnVotes, sumVotes, winner, offset config for pies
@@ -144,9 +68,6 @@
 
     // Build the chart
     const chart = Highcharts.mapChart('container', {
-        title: {
-            text: 'USA 2016 Presidential Election Results'
-        },
 
         chart: {
             animation: false // Disable animation, especially for zooming
@@ -183,20 +104,26 @@
         mapNavigation: {
             enabled: true
         },
-        // Limit zoom range
-        yAxis: {
-            minRange: 2300
-        },
 
-        tooltip: {
-            useHTML: true
+        title: {
+            text: 'USA 2016 Presidential Election Results'
         },
 
         // Default options for the pies
         plotOptions: {
-            mappie: {
+            pie: {
                 borderColor: 'rgba(255,255,255,0.4)',
                 borderWidth: 1,
+                dataLabels: {
+                    enabled: false
+                },
+                states: {
+                    hover: {
+                        halo: {
+                            size: 5
+                        }
+                    }
+                },
                 tooltip: {
                     headerFormat: ''
                 }
@@ -209,8 +136,8 @@
             name: 'States',
             accessibility: {
                 point: {
-                    descriptionFormatter: function (point) {
-                        var party = point.value > 0 ? 'democrat' : 'republican';
+                    descriptionFormatter(point) {
+                        const party = point.value > 0 ? 'democrat' : 'republican';
                         return point.name + ', ' + party + '. Total votes: ' + point.sumVotes +
                             '. Democrat votes: ' + point.demVotes + '. Republican votes: ' + point.repVotes +
                             '. Libertarian votes: ' + point.libVotes + '. Green votes: ' + point.grnVotes + '.';
@@ -218,13 +145,12 @@
                 }
             },
             borderColor: '#FFF',
-            showInLegend: false,
             joinBy: ['name', 'id'],
             keys: ['id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
                 'sumVotes', 'value', 'pieOffset'],
             tooltip: {
                 headerFormat: '',
-                pointFormatter: function () {
+                pointFormatter() {
                     const hoverVotes = this.hoverVotes; // Used by pie only
                     return '<b>' + this.id + ' votes</b><br/>' +
                         [
@@ -233,21 +159,16 @@
                             ['Libertarians', this.libVotes, libColor],
                             ['Green', this.grnVotes, grnColor]
                         ]
-                            .sort(function (a, b) {
-                                // Sort tooltip by most votes
-                                return b[1] - a[1];
-                            })
-                            .map(function (line) {
-                                return '<span style="color:' + line[2] +
-                                    // Colorized bullet
-                                    '">\u25CF</span> ' +
-                                    // Party and votes
-                                    (line[0] === hoverVotes ? '<b>' : '') +
-                                    line[0] + ': ' +
-                                    Highcharts.numberFormat(line[1], 0) +
-                                    (line[0] === hoverVotes ? '</b>' : '') +
-                                    '<br/>';
-                            })
+                            .sort((a, b) => b[1] - a[1]) // Sort tooltip by most votes
+                            .map(line => '<span style="color:' + line[2] +
+                                // Colorized bullet
+                                '">\u25CF</span> ' +
+                                // Party and votes
+                                (line[0] === hoverVotes ? '<b>' : '') +
+                                line[0] + ': ' +
+                                Highcharts.numberFormat(line[1], 0) +
+                                (line[0] === hoverVotes ? '</b>' : '') +
+                                '<br/>')
                             .join('') +
                         '<hr/>Total: ' + Highcharts.numberFormat(this.sumVotes, 0);
                 }
@@ -266,12 +187,15 @@
     });
 
     // When clicking legend items, also toggle connectors and pies
-    chart.legend.allItems.forEach(function (item) {
+    chart.legend.allItems.forEach(item => {
         const setVisible = item.setVisible;
+
         item.setVisible = function () {
             const legendItem = this;
+
             setVisible.call(legendItem);
-            chart.series[0].points.forEach(function (point) {
+
+            chart.series[0].points.forEach(point => {
                 if (
                     chart.colorAxis[0].dataClasses[point.dataClass].name ===
                     legendItem.name
@@ -280,11 +204,13 @@
                     Highcharts.find(chart.series, function (item) {
                         return item.name === point.id;
                     }).setVisible(legendItem.visible, false);
+
                     // Do the same for the connector point if it exists
                     const connector = Highcharts.find(
                         chart.series[2].points,
                         item => item.name === point.id
                     );
+
                     if (connector) {
                         connector.setVisible(legendItem.visible, false);
                     }
@@ -295,36 +221,38 @@
     });
 
     // Add the pies after chart load, optionally with offset and connectors
-    chart.series[0].points.forEach(function (state) {
-        if (!state.id) {
-            return; // Skip points with no data, if any
-        }
-
-        const pieOffset = state.pieOffset || {},
-            centerLat = parseFloat(state.properties.latitude),
-            centerLon = parseFloat(state.properties.longitude);
-
+    chart.series[0].points.forEach(state => {
         // Add the pie for this state
         chart.addSeries({
-            type: 'mappie',
+            type: 'pie',
+            name: state.id,
+            zIndex: 6, // Keep pies above connector lines
+            minSize: 15,
+            maxSize: 55,
+            onPoint: {
+                id: state.id,
+                z: (() => {
+                    const mapView = chart.mapView,
+                        zoomFactor = mapView.zoom / mapView.minZoom;
+
+                    return Math.max(
+                        chart.chartWidth / 45 * zoomFactor, // Min size
+                        chart.chartWidth /
+                        11 * zoomFactor * state.sumVotes / maxVotes
+                    );
+                })()
+            },
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            },
             accessibility: {
                 enabled: false
             },
-            name: state.id,
-            linkedMap: 'us-all',
-            zIndex: 6, // Keep pies above connector lines
-            sizeFormatter: function () {
-                const zoomFactor = chart.mapView.zoom / chart.mapView.minZoom;
-
-                return Math.max(
-                    this.chart.chartWidth / 45 * zoomFactor, // Min size
-                    this.chart.chartWidth /
-                        11 * zoomFactor * state.sumVotes / maxVotes
-                );
-            },
             tooltip: {
                 // Use the state tooltip for the pies as well
-                pointFormatter: function () {
+                pointFormatter() {
                     return state.series.tooltipOptions.pointFormatter.call({
                         id: state.id,
                         hoverVotes: this.name,
@@ -352,33 +280,10 @@
                 name: 'Green',
                 y: state.grnVotes,
                 color: grnColor
-            }],
-            center: {
-                lat: centerLat + (pieOffset.lat || 0),
-                lon: centerLon + (pieOffset.lon || 0)
-            }
+            }]
         }, false);
-
-        // Draw connector to state center if the pie has been offset
-        if (pieOffset.drawConnector !== false) {
-            const centerPoint = chart.fromLatLonToPoint({
-                    lat: centerLat,
-                    lon: centerLon
-                }),
-                offsetPoint = chart.fromLatLonToPoint({
-                    lat: centerLat + (pieOffset.lat || 0),
-                    lon: centerLon + (pieOffset.lon || 0)
-                });
-            chart.series[2].addPoint({
-                name: state.id,
-                path: [
-                    ['M', offsetPoint.x, offsetPoint.y],
-                    ['L', centerPoint.x, centerPoint.y]
-                ]
-            }, false);
-        }
     });
+
     // Only redraw once all pies and connectors have been added
     chart.redraw();
-
 })();

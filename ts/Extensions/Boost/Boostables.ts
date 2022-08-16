@@ -10,9 +10,16 @@
  *
  * */
 
-// These are the series we allow boosting for.
+'use strict';
 
-const boostables = [
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+// These are the series we allow boosting for.
+const Boostables = [
     'area',
     'areaspline',
     'arearange',
@@ -26,4 +33,10 @@ const boostables = [
     'treemap'
 ];
 
-export default boostables;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Boostables;

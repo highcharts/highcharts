@@ -477,6 +477,29 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
+            const zooming = optionsChart.zooming = optionsChart.zooming || {};
+
+            // Other options have no default so just pick
+            if (userOptions.chart && !userOptions.chart.zooming) {
+                zooming.resetButton = optionsChart.resetZoomButton;
+            }
+            zooming.key = pick(
+                zooming.key,
+                optionsChart.zoomKey
+            );
+            zooming.pinchType = pick(
+                zooming.pinchType,
+                optionsChart.pinchType
+            );
+            zooming.singleTouch = pick(
+                zooming.singleTouch,
+                optionsChart.zoomBySingleTouch
+            );
+            zooming.type = pick(
+                zooming.type,
+                optionsChart.zoomType
+            );
+
             /**
              * The options structure for the chart after merging
              * {@link #defaultOptions} and {@link #userOptions}. It contains
@@ -2775,15 +2798,17 @@ class Chart {
      * Emit console warning if the a11y module is not loaded.
      */
     public warnIfA11yModuleNotLoaded():void {
-        const opts = this.options;
-        if (opts && !this.accessibility) {
+        const { options, title } = this;
+        if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
-                'aria-label': opts.title && opts.title.text || ''
+                'aria-label': (title && title.element.textContent) || ''
             });
 
-            if (!(opts.accessibility && opts.accessibility.enabled === false)) {
+            if (!(
+                options.accessibility && options.accessibility.enabled === false
+            )) {
                 error(
                     'Highcharts warning: Consider including the ' +
                     '"accessibility.js" module to make your chart more ' +
@@ -3496,9 +3521,10 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
+
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.resetZoomButton as any,
+            btnOptions = chart.options.chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
@@ -3651,9 +3677,7 @@ class Chart {
                         type: 'x'
                     }
             ),
-            chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled;
+            chartOptions = chart.options.chart;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
@@ -3821,7 +3845,6 @@ class Chart {
 
                         if (
                             !chart.resetZoomButton &&
-                            !hasMapNavigation &&
                             // Show reset zoom button only when both newMin and
                             // newMax values are between padded axis range.
                             newMin !== paddedMin &&

@@ -222,13 +222,12 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
-interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition {
+interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
+    pointArrayMap: Array<keyof KeltnerChannelsPoint>;
     pointClass: typeof KeltnerChannelsPoint;
-    pointValKey: MultipleLinesComposition.Composition['pointValKey'];
-    toYData: MultipleLinesComposition.Composition['toYData'];
+    pointValKey: string;
 }
 extend(KeltnerChannelsIndicator.prototype, {
     nameBase: 'Keltner Channels',

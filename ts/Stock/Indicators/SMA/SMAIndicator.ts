@@ -479,7 +479,7 @@ class SMAIndicator extends LineSeries {
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
         if (indicator.calculateOn.xAxis && indicator.processedXData) {
-            delete indicator.processedXData;
+            delete (indicator as Partial<typeof indicator>).processedXData;
 
             indicator.isDirty = true;
             indicator.redraw();

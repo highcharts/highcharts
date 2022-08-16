@@ -358,7 +358,7 @@ jobs:
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
       - run:
           name: File size comparison
           command: |
@@ -677,10 +677,10 @@ workflows:
           requires: ["test-Win.Chrome"]
           browsers: "Mac.Firefox"
           notify_on_failure: true
-      - test_browsers:
+      - test_oldies:
           name: "test-Win.IE8"
           requires: ["test-Mac.Firefox"]
-          browsers: "Win.IE8 --oldie"
+          browsers: "Win.IE8"
           notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]

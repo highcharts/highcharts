@@ -1,3 +1,4 @@
+// Data retrieved https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature
 Highcharts.chart('container', {
     chart: {
         type: 'spline'
@@ -6,7 +7,9 @@ Highcharts.chart('container', {
         text: 'Monthly Average Temperature'
     },
     subtitle: {
-        text: 'Source: WorldClimate.com'
+        text: 'Source: ' +
+            '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
+            'target="_blank">Wikipedia.com</a>'
     },
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -43,29 +46,29 @@ Highcharts.chart('container', {
         marker: {
             symbol: 'square'
         },
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, {
-            y: 26.5,
+        data: [5.2, 5.7, 8.7, 13.9, 18.2, 21.4, 25.0, {
+            y: 26.4,
             marker: {
                 symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
             },
             accessibility: {
                 description: 'Sunny symbol, this is the warmest point in the chart.'
             }
-        }, 23.3, 18.3, 13.9, 9.6]
+        }, 22.8, 17.5, 12.1, 7.6]
 
     }, {
-        name: 'London',
+        name: 'Bergen',
         marker: {
             symbol: 'diamond'
         },
         data: [{
-            y: 3.9,
+            y: 1.5,
             marker: {
                 symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
             },
             accessibility: {
                 description: 'Snowy symbol, this is the coldest point in the chart.'
             }
-        }, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }, 1.6, 3.3, 5.9, 10.5, 13.5, 14.5, 14.4, 11.5, 8.7, 4.7, 2.6]
     }]
 });

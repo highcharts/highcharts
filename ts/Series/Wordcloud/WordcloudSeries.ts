@@ -30,6 +30,7 @@ import type {
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
 
+import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
@@ -459,7 +460,7 @@ class WordcloudSeries extends ColumnSeries {
                 }
             }
 
-            point.draw({
+            DPU.draw(point, {
                 animatableAttribs: animate as any,
                 attribs: attr,
                 css: css,

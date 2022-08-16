@@ -40,6 +40,10 @@ const {
     fireEvent,
     merge
 } = U;
+import HU from './Utils/HTMLUtilities.js';
+const {
+    removeElement
+} = HU;
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
@@ -56,8 +60,8 @@ import ZoomComponent from './Components/ZoomComponent.js';
 
 import whcm from './HighContrastMode.js';
 import highContrastTheme from './HighContrastTheme.js';
-import defaultOptionsA11Y from './Options/Options.js';
-import defaultLangOptions from './Options/LangOptions.js';
+import defaultOptionsA11Y from './Options/A11yDefaults.js';
+import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 
 /* *
@@ -282,6 +286,11 @@ class Accessibility {
             this.proxyProvider.destroy();
         }
 
+        // Remove announcer container
+        if (chart.announcerContainer) {
+            removeElement(chart.announcerContainer);
+        }
+
         // Kill keyboard nav
         if (this.keyboardNavigation) {
             this.keyboardNavigation.destroy();
@@ -491,7 +500,6 @@ namespace Accessibility {
         LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
-        ZoomComponent.compose(AxisClass);
         // RangeSelector
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);

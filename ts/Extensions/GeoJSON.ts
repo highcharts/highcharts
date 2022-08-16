@@ -25,10 +25,6 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
-import MU from '../Maps/MapUtilities.js';
-const {
-    pointInPolygon
-} = MU;
 import U from '../Core/Utilities.js';
 const {
     error,

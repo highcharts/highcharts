@@ -33,7 +33,7 @@ declare class AreaSplinePoint extends SplinePoint {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

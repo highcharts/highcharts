@@ -1,6 +1,6 @@
 var colorLessThan10 = "#1E8449",
     colorMoreThan10 = "#F9E79F",
-    colorMoreThan50 = "#FF0000";
+    colorMoreThan50 = "#ec0000";
 (async () => {
 
     const topology = await fetch(

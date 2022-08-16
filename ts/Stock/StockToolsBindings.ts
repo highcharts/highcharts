@@ -12,7 +12,10 @@
 
 'use strict';
 
-import type Annotation from '../Extensions/Annotations/Annotations';
+import type Annotation from '../Extensions/Annotations/Annotation';
+import type {
+    AnnotationsOptions
+} from '../Extensions/Annotations/AnnotationsOptions';
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type Chart from '../Core/Chart/Chart';
@@ -211,12 +214,14 @@ bindingsUtils.addFlagFromForm = function (
                                     title: [
                                         options.title,
                                         getFieldType(
+                                            'title',
                                             options.title as any
                                         )
                                     ],
                                     name: [
                                         options.name,
                                         getFieldType(
+                                            'name',
                                             options.name as any
                                         )
                                     ]
@@ -255,8 +260,8 @@ bindingsUtils.addFlagFromForm = function (
                 options: {
                     langKey: 'flags',
                     type: 'flags',
-                    title: ['A', getFieldType('A' as any)],
-                    name: ['Flag A', getFieldType('Flag A' as any)]
+                    title: ['A', getFieldType('title', 'A' as any)],
+                    name: ['Flag A', getFieldType('name', 'Flag A' as any)]
                 },
                 // Callback on submit:
                 onSubmit: function (
@@ -2348,7 +2353,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 }
             });
 
@@ -2378,7 +2385,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'y'
+                    zooming: {
+                        type: 'y'
+                    }
                 }
             });
             fireEvent(
@@ -2407,7 +2416,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.update({
                 chart: {
-                    zoomType: 'xy'
+                    zooming: {
+                        type: 'xy'
+                    }
                 }
             });
 
@@ -2754,7 +2765,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             const navigation = this,
                 chart = navigation.chart,
-                annotations: Array<Highcharts.AnnotationsOptions> = [],
+                annotations: Array<AnnotationsOptions> = [],
                 indicators: Array<DeepPartial<SeriesTypeOptions>> = [],
                 flags: Array<DeepPartial<SeriesTypeOptions>> = [],
                 yAxes: Array<YAxisOptions> = [];

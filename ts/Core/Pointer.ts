@@ -794,10 +794,8 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter(function (s): boolean {
-                return eventArgs.filter ? eventArgs.filter(s) : filter(s) &&
-                    s.stickyTracking;
-            });
+            series.filter((s): boolean => s.stickyTracking &&
+                (eventArgs.filter || filter)(s));
 
         // Use existing hovered point or find the one closest to coordinates.
         const hoverPoint = useExisting || !e ?
@@ -827,10 +825,10 @@ class Pointer {
                         * Boost returns a minimal point. Convert it to a usable
                         * point for tooltip and states.
                         */
-                        if (s.chart.isBoosting) {
-                            point = s.getPoint(point);
+                        if (s.boosted && s.boost) {
+                            point = s.boost.getPoint(point);
                         }
-                        hoverPoints.push(point as Point);
+                        hoverPoints.push(point);
                     }
                 });
             } else {
@@ -2049,7 +2047,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            this.chart.options.chart.zoomBySingleTouch &&
+            this.chart.options.chart.zooming.singleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2066,13 +2064,13 @@ class Pointer {
             options = chart.options.chart,
             inverted = chart.inverted;
 
-        let zoomType = options.zoomType || '',
+        let zoomType = options.zooming.type || '',
             zoomX,
             zoomY;
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(options.pinchType, zoomType);
+            zoomType = pick(options.zooming.pinchType, zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);

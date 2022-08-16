@@ -1,3 +1,4 @@
+// Data retrieved from https://worldpopulationreview.com/countries
 Highcharts.chart('container', {
 
     chart: {
@@ -15,7 +16,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: '2018'
+        text: '2021'
     },
 
     title: {
@@ -40,34 +41,34 @@ Highcharts.chart('container', {
         name: 'Population',
         data: [{
             name: 'China',
-            low: 1427647786
+            low: 1444216107
         }, {
             name: 'India',
-            low: 1352642280
+            low: 1393409038
         }, {
             name: 'United States',
-            low: 327096265
+            low: 332915073
         }, {
             name: 'Indonesia',
-            low: 267670543
+            low: 276361783
         }, {
             name: 'Pakistan',
-            low: 212228286
+            low: 225199937
         }, {
             name: 'Brazil',
-            low: 209469323
+            low: 213993437
         }, {
             name: 'Nigeria',
-            low: 195874683
+            low: 211400708
         }, {
             name: 'Bangladesh',
-            low: 161376708
+            low: 166303498
         }, {
             name: 'Russia',
-            low: 145734038
+            low: 145912025
         }, {
             name: 'Mexico',
-            low: 126190788
+            low: 130262216
         }]
     }]
 

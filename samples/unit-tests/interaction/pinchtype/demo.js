@@ -176,7 +176,9 @@
     QUnit.test('pinchType on, followTouchMove is true', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                pinchType: 'x',
+                zooming: {
+                    pinchType: 'x'
+                },
                 animation: false,
                 width: 600
             },
@@ -224,7 +226,9 @@
     QUnit.test('pinchType on, followTouchMove is false', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                pinchType: 'x',
+                zooming: {
+                    pinchType: 'x'
+                },
                 animation: false,
                 width: 600
             },
@@ -260,8 +264,10 @@
     QUnit.test('pinchType is on, zoomType is off (#5840)', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                pinchType: 'x',
-                zoomType: '',
+                zooming: {
+                    pinchType: 'x',
+                    type: ''
+                },
                 animation: false,
                 width: 600
             },
@@ -292,8 +298,10 @@
     QUnit.test('pinchType is off, zoomType is on', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                pinchType: '',
-                zoomType: 'x',
+                zooming: {
+                    pinchType: '',
+                    type: 'x'
+                },
                 animation: false,
                 width: 600
             },
@@ -324,7 +332,9 @@
     QUnit.test('zoomType is on, pinchType inherited', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 animation: false,
                 width: 600
             },
@@ -351,7 +361,9 @@
     QUnit.test('zoomBySingleTouch is true', assert => {
         const chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 animation: false,
                 width: 600
             },
@@ -381,7 +393,9 @@
 
         chart.update({
             chart: {
-                zoomBySingleTouch: true
+                zooming: {
+                    singleTouch: true
+                }
             }
         });
         singleTouchDrag(chart);

@@ -17,15 +17,20 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
+import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
-import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        mappoint: MapPointSeries
+        map: {
+            prototype: mapProto
+        },
+        mappoint: {
+            prototype: mapPointProto
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -33,11 +38,6 @@ const {
     extend,
     merge
 } = U;
-
-import '../../Core/DefaultOptions.js';
-import '../Bubble/BubbleSeries.js';
-import '../Map/MapSeries.js';
-import Point from '../../Core/Series/Point';
 
 /* *
  *
@@ -51,6 +51,9 @@ import Point from '../../Core/Series/Point';
  * @name Highcharts.seriesTypes.mapbubble
  *
  * @augments Highcharts.Series
+ *
+ * @requires BubbleSeries
+ * @requires MapPointSeries
  */
 class MapBubbleSeries extends BubbleSeries {
 
@@ -59,7 +62,6 @@ class MapBubbleSeries extends BubbleSeries {
      *  Static Properties
      *
      * */
-    public static compose = BubbleSeries.compose;
 
     /**
      * A map bubble series is a bubble series laid out on top of a map
@@ -142,7 +144,6 @@ class MapBubbleSeries extends BubbleSeries {
          *
          * @product   highmaps
          * @apioption plotOptions.mapbubble.maxSize
-
          */
 
         /**
@@ -271,7 +272,7 @@ class MapBubbleSeries extends BubbleSeries {
     }
 
     translate(): void {
-        MapPointSeries.prototype.translate.call(this);
+        mapPointProto.translate.call(this);
         this.getRadii();
         this.translateBubble();
     }
@@ -285,14 +286,14 @@ class MapBubbleSeries extends BubbleSeries {
 
 interface MapBubbleSeries {
     type: string;
-    getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
+    getProjectedBounds: typeof mapProto.getProjectedBounds;
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
-    setData: typeof MapSeries.prototype['setData'];
-    processData: typeof MapSeries.prototype['processData'];
-    projectPoint: typeof MapPointSeries.prototype['projectPoint'];
-    setOptions: typeof MapSeries.prototype['setOptions'];
-    updateData: typeof MapSeries.prototype['updateData'];
+    setData: typeof mapProto.setData;
+    processData: typeof mapProto.processData;
+    projectPoint: typeof mapPointProto.projectPoint;
+    setOptions: typeof mapProto.setOptions;
+    updateData: typeof mapProto.updateData;
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -300,7 +301,7 @@ extend(MapBubbleSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
+    getProjectedBounds: mapProto.getProjectedBounds,
 
     isCartesian: false,
 
@@ -309,15 +310,15 @@ extend(MapBubbleSeries.prototype, {
 
     pointClass: MapBubblePoint,
 
-    processData: MapSeries.prototype.processData,
+    processData: mapProto.processData,
 
-    projectPoint: MapPointSeries.prototype.projectPoint,
+    projectPoint: mapPointProto.projectPoint,
 
-    setData: MapSeries.prototype.setData,
+    setData: mapProto.setData,
 
-    setOptions: MapSeries.prototype.setOptions,
+    setOptions: mapProto.setOptions,
 
-    updateData: MapSeries.prototype.updateData,
+    updateData: mapProto.updateData,
 
     useMapGeometry: true,
 

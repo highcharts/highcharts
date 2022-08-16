@@ -163,7 +163,9 @@ class StockChart extends Chart {
                         enabled: true,
                         type: 'x'
                     },
-                    pinchType: 'x'
+                    zooming: {
+                        pinchType: 'x'
+                    }
                 },
                 navigator: {
                     enabled: navigatorEnabled
@@ -579,7 +581,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old) as any
+            axis.translate(value as any, void 0, void 0, (e as any).old)
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
@@ -744,7 +746,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
             )
             .addClass(
                 'highcharts-crosshair-label highcharts-color-' + (
-                    point ?
+                    point && point.series ?
                         point.series.colorIndex :
                         this.series[0] && this.series[0].colorIndex
                 )
@@ -799,7 +801,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // Crosshair should be rendered within Axis range (#7219). Also, the point
     // of currentPriceIndicator should be inside the plot area, #14879.
-    const isInside = point ?
+    const isInside = point && point.series ?
         point.series.isPointInside(point) :
         (isNumber(value) && value > min && value < max);
 
