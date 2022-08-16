@@ -1363,11 +1363,21 @@ export default SankeySeries;
  *     }]
  *  ```
  *
+ *  When you provide the data as tuples, the keys option has to be set as well.
+ *
+ *  ```js
+ *     keys: ['from', 'to', 'weight'],
+ *     data: [
+ *         ['Category1', 'Category2', 2],
+ *         ['Category1', 'Category3', 5]
+ *     ]
+ *  ```
+ *
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
  * @declare   Highcharts.SeriesSankeyPointOptionsObject
- * @type      {Array<*>}
+ * @type      {Array<*>|Array<Array<(string|number)>>}
  * @extends   series.line.data
  * @excluding dragDrop, drilldown, marker, x, y
  * @product   highcharts
