@@ -53,7 +53,7 @@ QUnit.test(
                 data: [-50]
             }]
         }, true, true);
-        const point = chart.series[0].points[0],
+        let point = chart.series[0].points[0],
             label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label;
 
         assert.close(
@@ -62,6 +62,19 @@ QUnit.test(
             0.5,
             `Negative stack labels in the inverted chart should be properly
             calculated, #17116.`
+        );
+
+        chart.yAxis[0].update({
+            reversed: true
+        });
+        point = chart.series[0].points[0];
+        label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label;
+        assert.close(
+            chart.plotWidth + chart.plotLeft - point.plotY, // point pos
+            chart.plotLeft + label.x - label.padding,
+            0.5,
+            `Negative stack labels in the inverted chart and reversed axis
+            should be properly calculated, #17116.`
         );
     }
 );

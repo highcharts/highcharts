@@ -71,7 +71,8 @@ class StackItem {
         stackOption?: StackOverflowValue
     ) {
 
-        const inverted = axis.chart.inverted;
+        const inverted = axis.chart.inverted,
+            reversed = axis.reversed;
 
         this.axis = axis;
 
@@ -110,8 +111,20 @@ class StackItem {
             y: options.y,
             x: options.x
         };
-        this.textAlign = options.textAlign ||
-        (inverted ? (isNegative ? 'right' : 'left') : 'center');
+
+        if (options.textAlign) {
+            this.textAlign = options.textAlign;
+        } else {
+            if (inverted) {
+                if (reversed) {
+                    this.textAlign = (isNegative ? 'left' : 'right');
+                } else {
+                    this.textAlign = (isNegative ? 'right' : 'left');
+                }
+            } else {
+                this.textAlign = 'center';
+            }
+        }
     }
 
     public alignOptions: AlignObject;
