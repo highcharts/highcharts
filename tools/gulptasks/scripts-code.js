@@ -11,14 +11,19 @@ const gulp = require('gulp');
  * */
 
 /**
- * Adds possibility to `npm i file:../highcharts/code` to test local.
+ * Adds possibility to `npm i ../highcharts/code` to test local.
+ *
+ * **Note:** At first you have to generate the code folder in the
+ * Highcharts repository. Use `npx gulp scripts` for JS-files and
+ * `npx gulp jsdoc-dts` for DTS-files.
  */
 const developerPackageJson = `{
     "private": true,
     "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
     "bugs": "https://github.com/highcharts/highcharts/issues",
+    "description": "Use \`npm i ../highcharts/code\` to test local. Remember to run \`npx gulp scripts\` and \`npx gulp jsdoc-dts\` to generate the code folder.",
     "homepage": "http://www.highcharts.com",
-    "license": "SEE LICENSE IN <../license.txt>",
+    "license": "https://www.highcharts.com/license",
     "main": "highcharts.src.js",
     "module": "es-modules/masters/highcharts.src.js",
     "name": "highcharts",
