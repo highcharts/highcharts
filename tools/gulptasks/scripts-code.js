@@ -6,6 +6,29 @@ const gulp = require('gulp');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+/**
+ * Adds possibility to `npm i file:../highcharts/code` to test local.
+ */
+const developerPackageJson = `{
+    "private": true,
+    "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
+    "bugs": "https://github.com/highcharts/highcharts/issues",
+    "homepage": "http://www.highcharts.com",
+    "license": "SEE LICENSE IN <../license.txt>",
+    "main": "highcharts.src.js",
+    "module": "es-modules/masters/highcharts.src.js",
+    "name": "highcharts",
+    "repository": "https://github.com/highcharts/highcharts.git",
+    "types": "highcharts.src.d.ts",
+    "version": "10.0.0+local"
+}\n`;
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -47,6 +70,8 @@ function task() {
                         codeTool.processSrcJSFile(fs.readFileSync(filePath))
                     );
                 });
+
+            fs.writeFileSync('code/package.json', developerPackageJson);
 
             logLib.success('Processed code sources');
 
