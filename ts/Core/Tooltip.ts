@@ -615,11 +615,22 @@ class Tooltip {
     }
 
     /**
-     * Place the tooltip in a chart without spilling over
-     * and not covering the point it self.
+     * Place the tooltip in a chart without spilling over and not covering the
+     * point it self.
      *
-     * @private
      * @function Highcharts.Tooltip#getPosition
+     *
+     * @param {number} boxWidth
+     *        Width of the tooltip box.
+     *
+     * @param {number} boxHeight
+     *        Height of the tooltip box.
+     *
+     * @param {Highcharts.Point} point
+     *        Tooltip-related point.
+     *
+     * @return {Highcharts.PositionObject}
+     *         Recommend position of the tooltip.
      */
     public getPosition(
         boxWidth: number,
