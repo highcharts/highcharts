@@ -175,13 +175,17 @@ export interface ChartSelectionContextObject {
 
 export interface ChartZoomingOptions {
     key?: string;
-    markings?: boolean;
+    markings?: MarkingsOptions;
     pinchType?: string;
     resetButton?: ChartResetZoomButtonOptions;
     singleTouch: boolean;
     type?: ('x'|'xy'|'y');
 }
 
+export interface MarkingsOptions extends SVGAttributes {
+    enabled?: boolean;
+    markingsLength: number;
+}
 /* *
  *
  *  Default Export

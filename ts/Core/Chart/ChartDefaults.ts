@@ -1040,13 +1040,46 @@ const ChartDefaults: ChartOptions = {
          * Corners that appear during zoom. Move the sides in horizontally,
          * the zoom area increases vertically in full height, move vertically
          * the zoom area expands horizontally to its full width.
-         *
-         * @type       {boolean}
-         * @default    {highcharts} undefined
-         * @product    highcharts highstock gantt
          * @since      next
          * @apioption  chart.zooming.markings
          */
+        markings: {
+            /**
+             * Name of dash style that can be used.
+             * @type       {Highcharts.DashStyleValue}
+             * @since      next
+             * @default    Solid
+             * @apioption chart.zooming.markings.dashstyle
+             */
+
+            /**
+             * Enabled or disabled the markings.
+             * @type       {boolean}
+             * @default    false
+             * @apioption chart.zooming.markings.enabled
+             */
+
+            /**
+             * The color of markers.
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption chart.zooming.markings.stroke
+             */
+            stroke: Palette.highlightColor80,
+
+            /**
+             * Width of markings.
+             * @type       {number}
+             * @default    1
+             * @apioption chart.zooming.markings.strokeWidth
+             */
+
+            /**
+             * Length of markings.
+             * @type       {number}
+             * @apioption chart.zooming.markings.markingsLength
+             */
+            markingsLength: 10
+        },
 
         /**
          * Decides in what dimensions the user can zoom by dragging the mouse.

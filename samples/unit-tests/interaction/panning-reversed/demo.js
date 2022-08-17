@@ -1,7 +1,9 @@
 QUnit.test('Panning reversed axis', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 panning: true,
                 panKey: 'shift',
                 animation: false

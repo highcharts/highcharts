@@ -25,6 +25,7 @@ import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
+import type { MarkingsOptions } from './Chart/ChartOptions';
 
 import Color from './Color/Color.js';
 const { parse: color } = Color;
@@ -36,6 +37,11 @@ const {
 import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
+import ChartLike from './Chart/ChartLike';
+import BBoxObject from './Renderer/BBoxObject';
+import { PointMarkerOptions } from './Series/PointOptions';
+import SVGAttributes from './Renderer/SVG/SVGAttributes';
+
 const {
     addEvent,
     attr,
@@ -147,7 +153,7 @@ class Pointer {
 
     public lastValidTouch: object = {};
 
-    public markings?: any;
+    public markings?: SVGElement;
 
     public mouseDownX?: number;
 
@@ -286,7 +292,11 @@ class Pointer {
                 chartOptions.panning,
             panKey = (
                 chartOptions.panKey && (e as any)[chartOptions.panKey + 'Key']
-            );
+            ),
+            markingsEnable = isObject(chartOptions.zooming.markings) ?
+                chartOptions.zooming.markings &&
+                chartOptions.zooming.markings.enabled :
+                chartOptions.zooming.markings;
 
         let chartX = e.chartX,
             chartY = e.chartY,
@@ -371,7 +381,7 @@ class Pointer {
             if (selectionMarker && zoomHor) {
                 size = chartX - mouseDownX;
                 width = Math.abs(size);
-                if (width < sizeLimit) {
+                if (width < sizeLimit && markingsEnable) {
                     selectionMarker.attr({
                         width: plotWidth,
                         x: plotLeft
@@ -389,7 +399,7 @@ class Pointer {
             if (selectionMarker && zoomVert) {
                 size = chartY - mouseDownY;
                 height = Math.abs(size);
-                if (height < sizeLimit) {
+                if (height < sizeLimit && markingsEnable) {
                     selectionMarker.attr({
                         height: plotHeight,
                         y: plotTop
@@ -402,14 +412,13 @@ class Pointer {
                 }
             }
             // selection marker is done
-            if (chartOptions.zooming.markings) {
-                this.createMarkings(
-                    selectionMarker === undefined || selectionMarker.getBBox(),
-                    {
-                        stroke: 'tomato',
-                        strokeWidth: 2,
-                        enabled: true
-                    });
+            if (
+                selectionMarker &&
+                chartOptions.zooming.markings &&
+                chartOptions.zooming.markings.enabled
+            ) {
+                this.createMarkings(selectionMarker.getBBox(),
+                    chartOptions.zooming.markings);
             }
             // panning
             if (clickedInside &&
@@ -532,8 +541,9 @@ class Pointer {
             }
 
             // Remove markings
-            if (this.selectionMarker) {
+            if (this.selectionMarker && this.markings) {
                 this.markings.destroy();
+                delete this.markings;
             }
 
             if (isNumber(chart.index)) {
@@ -561,39 +571,38 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#createMarkings
      */
-    public createMarkings(box: any, options: any): any {
+    public createMarkings(box: BBoxObject, options: MarkingsOptions): void {
         let x1 = box.x,
             y1 = box.y,
             x2 = x1 + box.width,
             y2 = y1 + box.height,
-            len = pick(options.switchLength, 10);
+            len = options.markingsLength;
 
         if (!this.markings) {
             this.markings = this.chart.renderer.path().add();
         }
         this.markings.attr({
             d: [
-                'M', x1, y1,
-                'L', x1 + len, y1,
-                'M', x2 - len, y1,
-                'L', x2, y1,
-                'M', x1, y1,
-                'L', x1, y1 + len,
-                'M', x2, y1,
-                'L', x2, y1 + len,
-                'M', x1, y2,
-                'L', x1 + len, y2,
-                'M', x1, y2,
-                'L', x1, y2 - len,
-                'M', x2, y2,
-                'L', x2 - len, y2,
-                'M', x2, y2,
-                'L', x2, y2 - len,
+                ['M', x1, y1],
+                ['L', x1 + len, y1],
+                ['M', x2 - len, y1],
+                ['L', x2, y1],
+                ['M', x1, y1],
+                ['L', x1, y1 + len],
+                ['M', x2, y1],
+                ['L', x2, y1 + len],
+                ['M', x1, y2],
+                ['L', x1 + len, y2],
+                ['M', x1, y2],
+                ['L', x1, y2 - len],
+                ['M', x2, y2],
+                ['L', x2 - len, y2],
+                ['M', x2, y2],
+                ['L', x2, y2 - len]
             ],
             'stroke-width': options.strokeWidth,
-            stroke: options.stroke || 'silver',
-            dashstyle: 'solid',
-            zIndex: 8
+            stroke: options.stroke,
+            dashstyle: options.dashstyle
         });
     }
 
