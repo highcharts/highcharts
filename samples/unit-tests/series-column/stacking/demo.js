@@ -59,7 +59,7 @@ QUnit.test(
         assert.close(
             chart.plotWidth + chart.plotLeft - point.plotY, // point pos
             chart.plotLeft + label.x  + label.width,
-            0.5,
+            1,
             `Negative stack labels in the inverted chart should be properly
             calculated, #17116.`
         );
@@ -72,7 +72,7 @@ QUnit.test(
         assert.close(
             chart.plotWidth + chart.plotLeft - point.plotY, // point pos
             chart.plotLeft + label.x - label.padding,
-            0.5,
+            1,
             `Negative stack labels in the inverted chart and reversed axis
             should be properly calculated, #17116.`
         );
