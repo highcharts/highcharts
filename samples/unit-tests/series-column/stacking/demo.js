@@ -76,6 +76,26 @@ QUnit.test(
             `Negative stack labels in the inverted chart and reversed axis
             should be properly calculated, #17116.`
         );
+
+        chart.update({
+            yAxis: {
+                max: 500,
+                reversed: false,
+                min: undefined
+            },
+            series: [{
+                data: [-50]
+            }]
+        }, true, true);
+        point = chart.series[0].points[0];
+        label = chart.yAxis[0].stacking.stacks['-column,,,'][0].label;
+        assert.close(
+            chart.plotWidth + chart.plotLeft - point.plotY, // point pos
+            chart.plotLeft + label.x + label.width,
+            1,
+            `Negative stack labels in the inverted chart and reversed axis
+            should be properly calculated, #17116.`
+        );
     }
 );
 

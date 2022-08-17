@@ -305,8 +305,12 @@ class StackItem {
 
             // Check if label is inside the plotArea #12294
             if (chart.isInsidePlot(
-                label.alignAttr.x + boxOffsetX - this.alignOptions.x,
-                label.alignAttr.y + boxOffsetY - this.alignOptions.y
+                label.alignAttr.x +
+                    (isNegative ? 0 : boxOffsetX) -
+                    this.alignOptions.x,
+                label.alignAttr.y +
+                    (isNegative ? 0 : boxOffsetY) -
+                    this.alignOptions.y
             )) {
                 label.show();
             } else {
