@@ -8,16 +8,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -25,7 +29,11 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 function populateAverage(
     xVal: Array<number>,
@@ -40,7 +48,11 @@ function populateAverage(
     return [mmX, mmY];
 }
 
-/* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Momentum series type.
@@ -52,6 +64,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class MomentumIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
@@ -71,9 +90,21 @@ class MomentumIndicator extends SMAIndicator {
         }
     } as MomentumOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<MomentumPoint> = void 0 as any;
     public options: MomentumOptions = void 0 as any;
     public points: Array<MomentumPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -142,6 +173,7 @@ extend(MomentumIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
@@ -158,6 +190,11 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
 
 export default MomentumIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not

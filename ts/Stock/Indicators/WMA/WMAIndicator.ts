@@ -10,8 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     WMAOptions,
     WMAParamsOptions
@@ -19,18 +26,19 @@ import type {
 import type WMAPoint from './WMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 /**
  * @private
@@ -88,7 +96,12 @@ function populateAverage(
 
     return [wmaX, wmaY];
 }
-/* eslint-enable valid-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The SMA series type.
@@ -100,6 +113,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class WMAIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
@@ -121,10 +141,21 @@ class WMAIndicator extends SMAIndicator {
         }
     } as WMAOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<WMAPoint> = void 0 as any;
     public options: WMAOptions = void 0 as any;
     public points: Array<WMAPoint> = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -186,9 +217,21 @@ class WMAIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -205,6 +248,13 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  * */
 
 export default WMAIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `WMA` series. If the [type](#series.wma.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
