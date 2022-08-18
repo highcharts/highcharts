@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Temperature and Rainfall in Karasjok, 2021'
+        text: 'Average Monthly Precipitation and Rainfall in Karasjok, 2021'
     },
     subtitle: {
         text: 'Source: ' +
@@ -30,7 +30,7 @@ Highcharts.chart('container', {
         }
     }, { // Secondary yAxis
         title: {
-            text: 'Rainfall',
+            text: 'Precipitation',
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
@@ -58,7 +58,7 @@ Highcharts.chart('container', {
             'rgba(255,255,255,0.25)'
     },
     series: [{
-        name: 'Rainfall',
+        name: 'Precipitation',
         type: 'column',
         yAxis: 1,
         data: [27.6, 28.8, 21.7, 34.1, 29.0, 28.4, 45.6, 51.7, 39.0,
