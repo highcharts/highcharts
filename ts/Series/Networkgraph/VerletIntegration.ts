@@ -18,10 +18,12 @@
  *
  * */
 
+import type { DragNodesPoint } from '../DragNodesComposition';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
+import type NetworkgraphPoint from './NetworkgraphPoint';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RFLayout from './ReingoldFruchtermanLayout';
+import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
 
 /* *
  *
@@ -44,8 +46,8 @@ import type RFLayout from './ReingoldFruchtermanLayout';
  *        Distance between two nodes e.g. `{x, y}`
  */
 function attractive(
-    this: RFLayout,
-    link: Highcharts.NetworkgraphPoint,
+    this: ReingoldFruchtermanLayout,
+    link: NetworkgraphPoint,
     force: number,
     distanceXY: PositionObject
 ): void {
@@ -78,7 +80,10 @@ function attractive(
  * @param {number} k expected distance between two nodes
  * @return {number} force
  */
-function attractiveForceFunction(d: number, k: number): number {
+function attractiveForceFunction(
+    d: number,
+    k: number
+): number {
     // Used in API:
     return (k - d) / d;
 }
@@ -92,7 +97,9 @@ function attractiveForceFunction(d: number, k: number): number {
  *
  * @private
  */
-function barycenter(this: RFLayout): void {
+function barycenter(
+    this: ReingoldFruchtermanLayout
+): void {
     let gravitationalConstant = this.options.gravitationalConstant,
         xFactor = (this.barycenter as any).xFactor,
         yFactor = (this.barycenter as any).yFactor;
@@ -104,7 +111,7 @@ function barycenter(this: RFLayout): void {
         (gravitationalConstant as any);
 
     this.nodes.forEach(function (node: Point): void {
-        if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+        if (!(node as DragNodesPoint).fixedPosition) {
             (node.plotX as any) -=
                 xFactor / (node.mass as any) / (node.degree as any);
             (node.plotY as any) -=
@@ -118,7 +125,9 @@ function barycenter(this: RFLayout): void {
  * readable.
  * @private
  */
-function getK(layout: RFLayout): number {
+function getK(
+    layout: ReingoldFruchtermanLayout
+): number {
     return Math.pow(
         layout.box.width * layout.box.height / layout.nodes.length,
         0.5
@@ -157,8 +166,8 @@ function getK(layout: RFLayout): number {
  * @param {Highcharts.Point} node node that should be translated
  */
 function integrate(
-    layout: RFLayout,
-    node: Highcharts.NetworkgraphPoint
+    layout: ReingoldFruchtermanLayout,
+    node: NetworkgraphPoint
 ): void {
     let friction = -(layout.options.friction as any),
         maxSpeed = layout.options.maxSpeed,
@@ -210,8 +219,8 @@ function integrate(
  *        Distance between two nodes e.g. `{x, y}`
  */
 function repulsive(
-    this: RFLayout,
-    node: Highcharts.NetworkgraphPoint,
+    this: ReingoldFruchtermanLayout,
+    node: NetworkgraphPoint,
     force: number,
     distanceXY: PositionObject
 ): void {
@@ -233,7 +242,10 @@ function repulsive(
  * @param {number} k expected distance between two nodes
  * @return {number} force
  */
-function repulsiveForceFunction(d: number, k: number): number {
+function repulsiveForceFunction(
+    d: number,
+    k: number
+): number {
     // Used in API:
     return (k - d) / d * (k > d ? 1 : 0); // Force only for close nodes
 }

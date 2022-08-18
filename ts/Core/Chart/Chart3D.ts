@@ -730,7 +730,7 @@ namespace Chart3D {
             options3d: {
 
                 /**
-                 * Wether to render the chart using the 3D functionality.
+                 * Whether to render the chart using the 3D functionality.
                  *
                  * @since   4.0
                  * @product highcharts

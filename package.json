@@ -31,6 +31,7 @@
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
+    "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",

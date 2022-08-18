@@ -150,6 +150,6 @@ similarities.
 
 ### Test with Internet Explorer in mind
 
-Be aware that TypeScript can not convert all modern syntax to a pattern, that is
+Be aware that TypeScript cannot convert all modern syntax to a pattern, that is
 compatible with Internet Explorer. Debugging tests can become challenging, if
 they firstly fail because of syntax errors.

@@ -178,7 +178,7 @@ class LegendComponent extends AccessibilityComponent {
         const component = this;
         this.recreateProxies();
 
-        // Note: Chart could create legend dynamically, so events can not be
+        // Note: Chart could create legend dynamically, so events cannot be
         // tied to the component's chart's current legend.
         // @todo 1. attach component to created legends
         // @todo 2. move listeners to composition and access `this.component`

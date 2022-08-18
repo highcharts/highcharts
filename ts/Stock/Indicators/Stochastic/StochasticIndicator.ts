@@ -224,7 +224,7 @@ class StochasticIndicator extends SMAIndicator {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 

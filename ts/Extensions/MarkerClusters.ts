@@ -626,6 +626,8 @@ const clusterDefaultOptions = {
              * @sample maps/marker-clusters/europe/
              *         Format tooltip for clusters using tooltip.formatter
              *
+             * @type      {string}
+             * @default   Clustered points: {point.clusterPointsAmount}
              * @apioption tooltip.clusterFormat
              */
             clusterFormat: '<span>Clustered points: ' +

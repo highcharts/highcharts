@@ -503,7 +503,7 @@ class TextBuilder {
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 
-        // Word wrap can not be truncated to shorter than one word, ellipsis
+        // Word wrap cannot be truncated to shorter than one word, ellipsis
         // text can be completely blank.
         let minIndex = words ? 1 : 0;
         let maxIndex = (text || words || '').length;

@@ -20,8 +20,9 @@ import type Axis from '../../Core/Axis/Axis';
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type BubbleSeriesType from '../Bubble/BubbleSeries';
 import type Chart from '../../Core/Chart/Chart';
+import type { DragNodesPoint, DragNodesSeries } from '../DragNodesComposition';
 import type Legend from '../../Core/Legend/Legend';
-import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
+import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
@@ -32,6 +33,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import DragNodesComposition from '../DragNodesComposition.js';
 import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -40,7 +42,9 @@ import PackedBubbleSeriesDefaults from './PackedBubbleSeriesDefaults.js';
 import PackedBubbleLayout from './PackedBubbleLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
+    series: {
+        prototype: seriesProto
+    },
     seriesTypes: {
         bubble: BubbleSeries
     }
@@ -57,8 +61,6 @@ const {
     merge,
     pick
 } = U;
-import '../../Series/Networkgraph/DraggableNodes.js';
-const dragNodesMixin = H.dragNodesMixin;
 
 /* *
  *
@@ -73,7 +75,7 @@ const dragNodesMixin = H.dragNodesMixin;
  *
  * @extends Highcharts.Series
  */
-class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSeries {
+class PackedBubbleSeries extends BubbleSeries {
 
     /* *
      *
@@ -473,7 +475,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     this.parentNode.dataLabel.destroy();
             }
         }
-        Series.prototype.destroy.apply(this, arguments as any);
+        seriesProto.destroy.apply(this, arguments as any);
     }
 
     /**
@@ -486,7 +488,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             points = this.points;
 
         // Render node labels:
-        Series.prototype.drawDataLabels.apply(this, arguments as any);
+        seriesProto.drawDataLabels.apply(this, arguments as any);
 
         // Render parentNode labels:
         if (this.parentNode) {
@@ -494,7 +496,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             this.points = [this.parentNode];
             (this.options.dataLabels as any).textPath =
                 (this.options.dataLabels as any).parentNodeTextPath;
-            Series.prototype.drawDataLabels.apply(this, arguments as any);
+            seriesProto.drawDataLabels.apply(this, arguments as any);
 
             // Restore nodes
             this.points = points;
@@ -667,7 +669,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     public init(): PackedBubbleSeries {
-        Series.prototype.init.apply(this, arguments);
+        seriesProto.init.apply(this, arguments);
 
         /* eslint-disable no-invalid-this */
 
@@ -692,7 +694,11 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    public onMouseUp(point: PackedBubblePoint): void {
+    public onMouseUp(
+        dnPoint: DragNodesPoint
+    ): void {
+        const point = dnPoint as PackedBubblePoint;
+
         if (point.fixedPosition && !point.removed) {
             const layout = this.layout,
                 parentNodeLayout = this.parentNodeLayout;
@@ -725,7 +731,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     }
                 });
             }
-            dragNodesMixin.onMouseUp.apply(this, arguments as any);
+            DragNodesComposition.onMouseUp.apply(this, arguments as any);
         }
     }
 
@@ -897,7 +903,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
         const fillOpacity =
                 (markerOptions as BubblePointMarkerOptions).fillOpacity,
-            attr = Series.prototype.pointAttribs.call(this, point, state);
+            attr = seriesProto.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr['fill-opacity'] = fillOpacity;
@@ -972,7 +978,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
     public render(): void {
         const dataLabels = [] as Array<SVGElement>;
-        Series.prototype.render.apply(this, arguments);
+        seriesProto.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
         if (!(this.options.dataLabels as any).allowOverlap) {
@@ -1101,7 +1107,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public setVisible(): void {
         const series = this;
 
-        Series.prototype.setVisible.apply(series, arguments);
+        seriesProto.setVisible.apply(series, arguments);
 
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
@@ -1216,95 +1222,60 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
  *
  * */
 
-interface PackedBubbleSeries extends NetworkgraphSeries {
-    bubblePadding: BubbleSeriesType['bubblePadding'];
-    forces: Array<string>;
-    hasDraggableNodes: boolean;
-    indexateNodes: NetworkgraphSeries['indexateNodes'];
-    isBubble: BubbleSeriesType['isBubble'];
-    isCartesian: boolean;
-    markerAttribs: BubbleSeriesType['markerAttribs'];
-    maxPxSize: BubbleSeriesType['maxPxSize'];
-    minPxSize: BubbleSeriesType['minPxSize'];
-    nodes: NetworkgraphSeries['nodes'];
-    noSharedTooltip: boolean;
-    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
-    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
-    pointArrayMap: Array<string>;
+interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     pointClass: typeof PackedBubblePoint;
-    pointValKey: string;
-    radii: BubbleSeriesType['radii'];
-    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
-    setState: BubbleSeriesType['setState'];
-    specialGroup: BubbleSeriesType['specialGroup'];
-    trackerGroups: Array<string>;
-    yData: BubbleSeriesType['yData'];
-    zData: BubbleSeriesType['zData'];
-    zoneAxis: BubbleSeriesType['zoneAxis'];
-}
-extend(PackedBubbleSeries.prototype, {
-
-    alignDataLabel: Series.prototype.alignDataLabel,
-
-    axisTypes: [],
-
-    directTouch: true,
-
+    bubblePadding: BubbleSeriesType['bubblePadding'];
     /**
      * Array of internal forces. Each force should be later defined in
      * integrations.js.
      * @private
      */
-    forces: ['barycenter', 'repulsive'],
-
+    forces: Array<string>;
     /**
      * An internal option used for allowing nodes dragging.
      * @private
      */
-    hasDraggableNodes: true,
-
-    indexateNodes: noop as any,
-
-    isCartesian: false,
-
-    noSharedTooltip: true,
-
-    /**
-     * Mouse down action, initializing drag&drop mode.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseDown: dragNodesMixin.onMouseDown,
-
-    /**
-     * Mouse move action during drag&drop.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseMove: dragNodesMixin.onMouseMove,
-
-    pointArrayMap: ['value'],
-
+    hasDraggableNodes: boolean;
+    isBubble: BubbleSeriesType['isBubble'];
+    isCartesian: boolean;
+    maxPxSize: BubbleSeriesType['maxPxSize'];
+    minPxSize: BubbleSeriesType['minPxSize'];
+    nodes: NetworkgraphSeries['nodes'];
+    noSharedTooltip: boolean;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    radii: BubbleSeriesType['radii'];
+    specialGroup: BubbleSeriesType['specialGroup'];
+    trackerGroups: Array<string>;
+    yData: BubbleSeriesType['yData'];
+    zData: BubbleSeriesType['zData'];
+    zoneAxis: BubbleSeriesType['zoneAxis'];
+    getPointsCollection(): Array<PackedBubblePoint>;
+    indexateNodes: NetworkgraphSeries['indexateNodes'];
+    markerAttribs: BubbleSeriesType['markerAttribs'];
+    onMouseDown: typeof DragNodesComposition.onMouseDown;
+    onMouseMove: typeof DragNodesComposition.onMouseMove;
+    redrawHalo: typeof DragNodesComposition.redrawHalo;
+    setState: BubbleSeriesType['setState'];
+}
+extend(PackedBubbleSeries.prototype, {
     pointClass: PackedBubblePoint,
-
+    axisTypes: [],
+    directTouch: true,
+    forces: ['barycenter', 'repulsive'],
+    hasDraggableNodes: true,
+    isCartesian: false,
+    noSharedTooltip: true,
+    pointArrayMap: ['value'],
     pointValKey: 'value',
-
-    /**
-     * Redraw halo on mousemove during the drag&drop action.
-     * @private
-     * @param {Highcharts.Point} point The point that should show halo.
-     */
-    redrawHalo: dragNodesMixin.redrawHalo,
-
     requireSorting: false,
-
-    // solving #12287
-    searchPoint: noop as any,
-
-    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
-
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
+    alignDataLabel: seriesProto.alignDataLabel,
+    indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
+    onMouseDown: DragNodesComposition.onMouseDown,
+    onMouseMove: DragNodesComposition.onMouseMove,
+    redrawHalo: DragNodesComposition.redrawHalo,
+    searchPoint: noop as NetworkgraphSeries['searchPoint'] // solving #12287
 });
 
 /* *

@@ -34,6 +34,7 @@ import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelO
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -94,21 +95,26 @@ class OrganizationSeries extends SankeySeries {
      * @product      highcharts
      * @requires     modules/organization
      * @optionparent plotOptions.organization
+     *
+     * @private
      */
-    public static defaultOptions: OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
+    public static defaultOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The border color of the node cards.
          *
          * @type {Highcharts.ColorString}
+         *
          * @private
          */
         borderColor: Palette.neutralColor60,
+
         /**
          * The border radius of the node cards.
          *
          * @private
          */
         borderRadius: 3,
+
         /**
          * Radius for the rounded corners of the links between nodes. This
          * option is now deprecated, and moved to
@@ -180,6 +186,7 @@ class OrganizationSeries extends SankeySeries {
              */
         },
         borderWidth: 1,
+
         /**
          * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
          *
@@ -339,6 +346,8 @@ class OrganizationSeries extends SankeySeries {
          * @type {Highcharts.OrganizationHangingIndentTranslationValue}
          * @since 10.0.0
          * @default inherit
+         *
+         * @private
          */
         hangingIndentTranslation: 'inherit',
         /**
@@ -375,6 +384,7 @@ class OrganizationSeries extends SankeySeries {
          * is set to `shrink`.
          *
          * @see [nodeWidth](#plotOptions.organization.nodeWidth)
+         *
          * @private
          */
         minNodeLength: 10,
@@ -398,7 +408,6 @@ class OrganizationSeries extends SankeySeries {
      *  Static Functions
      *
      * */
-
 
     /* *
      *
@@ -546,7 +555,6 @@ class OrganizationSeries extends SankeySeries {
                 levelOptions.link && levelOptions.link.linkOpacity,
                 series.options.link && series.options.link.linkOpacity
             );
-
 
         if (!point.isNode) {
             attribs.stroke = linkColor;
