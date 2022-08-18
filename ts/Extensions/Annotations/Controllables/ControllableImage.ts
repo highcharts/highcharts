@@ -133,7 +133,7 @@ class ControllableImage extends Controllable {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 

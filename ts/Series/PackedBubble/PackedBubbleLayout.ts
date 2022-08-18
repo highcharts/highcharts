@@ -219,7 +219,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
             layout.nodes.forEach((repNode): void => {
                 force = 0;
                 if (
-                    // Node can not repulse itself:
+                    // Node cannot repulse itself:
                     node !== repNode &&
                     // Only close nodes affect each other:
 

@@ -183,7 +183,7 @@ function isPolygonsOverlappingOnAxis(
 }
 
 /**
- * Checks wether two convex polygons are colliding by using the Separating
+ * Checks whether two convex polygons are colliding by using the Separating
  * Axis Theorem.
  *
  * @private

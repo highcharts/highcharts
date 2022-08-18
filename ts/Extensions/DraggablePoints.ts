@@ -634,7 +634,7 @@ if (seriesTypes.boxplot) {
             }
         },
         median: {
-            // Median can not be dragged individually, just move the whole
+            // Median cannot be dragged individually, just move the whole
             // point for this.
             axis: 'y',
             move: true

@@ -434,6 +434,7 @@ class SunburstSeries extends TreemapSeries {
      * @product      highcharts
      * @requires     modules/sunburst.js
      * @optionparent plotOptions.sunburst
+     *
      * @private
      */
     public static defaultOptions: SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
@@ -569,6 +570,8 @@ class SunburstSeries extends TreemapSeries {
          * @type    {Array<number|string>}
          * @default ["50%", "50%"]
          * @product highcharts
+         *
+         * @private
          */
         center: ['50%', '50%'],
         colorByPoint: false,
@@ -576,10 +579,14 @@ class SunburstSeries extends TreemapSeries {
          * Disable inherited opacity from Treemap series.
          *
          * @ignore-option
+         *
+         * @private
          */
         opacity: 1,
         /**
          * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
+         *
+         * @private
          */
         dataLabels: {
 
@@ -616,6 +623,8 @@ class SunburstSeries extends TreemapSeries {
          * Which point to use as a root in the visualization.
          *
          * @type {string}
+         *
+         * @private
          */
         rootId: void 0,
 
@@ -624,6 +633,8 @@ class SunburstSeries extends TreemapSeries {
          * set to false the first level visible when drilling is considered
          * to be level one. Otherwise the level will be the same as the tree
          * structure.
+         *
+         * @private
          */
         levelIsConstant: true,
 
@@ -634,6 +645,8 @@ class SunburstSeries extends TreemapSeries {
          *         Sunburst with various sizes per level
          *
          * @since 6.0.5
+         *
+         * @private
          */
         levelSize: {
             /**
@@ -683,6 +696,8 @@ class SunburstSeries extends TreemapSeries {
          *         Sliced sunburst
          *
          * @since 6.0.4
+         *
+         * @private
          */
         slicedOffset: 10
     } as SunburstSeriesOptions);
