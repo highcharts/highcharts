@@ -127,6 +127,39 @@ class FlowMapSeries extends SankeySeries {
     }
 
     /**
+     * Return an SVGPath for markerEnd.
+     * @private
+     */
+    public static markerEndPath(
+        lCorner: [number, number],
+        rCorner: [number, number],
+        topCorner:[number, number],
+        edgeNormalVector: [number, number],
+        options: any): SVGPath {
+
+        const width = options.width || 0,
+            height = options.height || 0,
+            type = options.type || 'arrow',
+            [edgeX, edgeY] = edgeNormalVector;
+        let path: SVGPath = [];
+
+        // For arrow head calculation
+        let [x, y] = lCorner;
+        x -= edgeX * width;
+        y -= edgeY * width;
+        path.push(['L', x, y]); // Left side of arrow head
+
+        path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
+
+        [x, y] = rCorner;
+        x += edgeX * width;
+        y += edgeY * width;
+        path.push(['L', x, y]); // Right side of arrow head
+
+        return path;
+    }
+
+    /**
      * Run translation operations for one link.
      * @private
      */
@@ -262,22 +295,28 @@ class FlowMapSeries extends SankeySeries {
             // Calculate edge vectors in the from-point.
             let [fromXToArc, fromYToArc] =
                 FlowMapSeries.normalize(arcPointX - fromX, arcPointY - fromY);
-            fromXToArc *= weight;
-            fromYToArc *= weight;
 
             tmp = fromXToArc;
             fromXToArc = fromYToArc;
             fromYToArc = -tmp;
 
+            fromXToArc *= weight;
+            fromYToArc *= weight;
+
+
             // Calculate edge vectors in the to-point.
             let [toXToArc, toYToArc] =
                 FlowMapSeries.normalize(arcPointX - toX, arcPointY - toY);
-            toXToArc *= weight;
-            toYToArc *= weight;
 
             tmp = toXToArc;
-            toXToArc = toYToArc;
-            toYToArc = -tmp;
+            toXToArc = -toYToArc;
+            toYToArc = tmp;
+
+            // Unit vector for end edge is used to calculate the markerEnd.
+            const [endEdgeXNorm, endingEdgeYNorm] = [toXToArc, toYToArc];
+
+            toXToArc *= weight;
+            toYToArc *= weight;
 
             // Shrink the starting edge and middle thickness to make it grow
             // towards the end.
@@ -288,24 +327,21 @@ class FlowMapSeries extends SankeySeries {
                 wY /= 4;
             }
 
-            const arrowFactor = 1.5;
             point.shapeArgs = {
                 d: [
                     [
                         'M',
-                        fromX + fromXToArc,
-                        fromY + fromYToArc
+                        fromX - fromXToArc,
+                        fromY - fromYToArc
                     ],
                     [
                         'Q',
-                        arcPointX + wX,
-                        arcPointY + wY,
+                        arcPointX - wX,
+                        arcPointY - wY,
                         toX - toXToArc,
                         toY - toYToArc
                     ],
-                    // This is where pointMarkers should go.
-                    // They would be spliced here later.
-                    // continue curve path
+                    // This is where markerEnd will be spliced to.
                     [
                         'L',
                         toX + toXToArc,
@@ -313,10 +349,10 @@ class FlowMapSeries extends SankeySeries {
                     ],
                     [
                         'Q',
-                        arcPointX - wX,
-                        arcPointY - wY,
-                        fromX - fromXToArc,
-                        fromY - fromYToArc
+                        arcPointX + wX,
+                        arcPointY + wY,
+                        fromX + fromXToArc,
+                        fromY + fromYToArc
                     ],
                     ['Z']
                 ]
@@ -324,16 +360,14 @@ class FlowMapSeries extends SankeySeries {
 
             if (pointOptions.markerEnd && pointOptions.markerEnd.enabled &&
                 point.shapeArgs.d) {
-                // TODO:
-                // Create a function that returns marker path.
-                const markerWidth = pointOptions.markerEnd.width || 1;
-                const marker: SVGPath = [
-                    ['L', toX - toXToArc * markerWidth,
-                        toY - toYToArc * markerWidth],
-                    ['L', toPoint.plotX || 0, toPoint.plotY || 0],
-                    ['L', toX + toXToArc * markerWidth,
-                        toY + toYToArc * markerWidth]
-                ];
+
+                const marker: SVGPath = FlowMapSeries.markerEndPath(
+                    [toX - toXToArc, toY - toYToArc],
+                    [toX + toXToArc, toY + toYToArc],
+                    [toPoint.plotX as number, toPoint.plotY as number],
+                    [endEdgeXNorm, endingEdgeYNorm],
+                    pointOptions.markerEnd
+                );
 
                 (point.shapeArgs.d as SVGPath).splice(2, 0,
                     ...marker
