@@ -38,7 +38,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '&bull; {series.name}: <b>{point.y} MNOK</b>'
+        valueSuffix: ' MNOK'
     },
     series: [{
         name: 'Total imports',
