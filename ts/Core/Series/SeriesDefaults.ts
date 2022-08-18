@@ -451,6 +451,9 @@ const seriesDefaults: SeriesOptions = {
     /**
      * The line cap used for line ends and line joins on the graph.
      *
+     * @sample {highcharts|highstock} highcharts/series/linecap/
+     *         Line cap comparison
+     *
      * @type       {Highcharts.SeriesLinecapValue}
      * @default    round
      * @product    highcharts highstock
