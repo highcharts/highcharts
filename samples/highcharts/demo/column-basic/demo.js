@@ -11,10 +11,21 @@ Highcharts.chart('container', {
             'target="_blank">SSB</a>'
     },
     xAxis: {
-        crosshair: {
-            width: 3,
-            dashStyle: 'shortdot'
-        }
+        categories: [
+            '2010',
+            '2011',
+            '2012',
+            '2013',
+            '2014',
+            '2015',
+            '2016',
+            '2017',
+            '2018',
+            '2019',
+            '2010',
+            '2021'
+        ],
+        crosshair: true
     },
     yAxis: {
         title: {
@@ -31,9 +42,6 @@ Highcharts.chart('container', {
         useHTML: true
     },
     plotOptions: {
-        series: {
-            pointStart: 2010
-        },
         column: {
             pointPadding: 0.2,
             borderWidth: 0
