@@ -775,7 +775,8 @@ class Tooltip {
                     ret[dim] = outerSize - scaledInnerSize - 2;
                 // Align center
                 } else {
-                    ret[dim] = point - innerSize / 2;
+                    ret[dim] = point - innerSize / 2 +
+                    (outside ? distance / 2 : 0);
                 }
                 return retVal;
             },
@@ -1838,13 +1839,11 @@ class Tooltip {
                 anchorX *= chartPosition.scaleX;
                 anchorY *= chartPosition.scaleY;
             }
-
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
-
             // Corrects positions, occurs with tooltip positioner. #16944
             pos.x -= this.distance / 2;
             pos.y -= this.distance / 2;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move
