@@ -965,7 +965,7 @@ export default ChartSonify;
  * receives the point as argument, and should return a numeric value. The points
  * with the lowest numeric values are then played first, and the time between
  * points will be proportional to the distance between the numeric values. This
- * option can not be overridden per series.
+ * option cannot be overridden per series.
  * @name Highcharts.SonificationOptions#pointPlayTime
  * @type {string|Function}
  *//**

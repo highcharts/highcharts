@@ -41,7 +41,8 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypePlotOptions,
+    SeriesTypeRegistry
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -54,8 +55,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import D from '../DefaultOptions.js';
-const { defaultOptions } = D;
+import DO from '../DefaultOptions.js';
+const { defaultOptions } = DO;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -214,7 +215,35 @@ class Series {
      *
      * */
 
-    public static defaultOptions = SeriesDefaults;
+    public static readonly defaultOptions = SeriesDefaults;
+
+    /**
+     * Registry of all available series types.
+     *
+     * @name Highcharts.Series.types
+     * @type {Highcharts.Dictionary<typeof_Highcharts.Series>}
+     */
+    public static readonly types = SeriesRegistry.seriesTypes;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Registers a series class to be accessible via `Series.types`.
+     *
+     * @function Highcharts.Series.registerType
+     *
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     */
+    public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /* *
      *
@@ -1860,26 +1889,6 @@ class Series {
                     )
                 );
 
-                /**
-                 * Highcharts Stock only. If a point object is created by data
-                 * grouping, it doesn't reflect actual points in the raw
-                 * data. In this case, the `dataGroup` property holds
-                 * information that points back to the raw data.
-                 *
-                 * - `dataGroup.start` is the index of the first raw data
-                 *   point in the group.
-                 *
-                 * - `dataGroup.length` is the amount of points in the
-                 *   group.
-                 *
-                 * @product highstock
-                 *
-                 * @name Highcharts.Point#dataGroup
-                 * @type {Highcharts.DataGroupingInfoObject|undefined}
-                 *
-                 * @sample stock/members/point-datagroup
-                 *         Click to inspect raw data points
-                 */
                 point.dataGroup = (series.groupMap as any)[
                     groupCropStartIndex + i
                 ];
@@ -3039,7 +3048,7 @@ class Series {
             clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
-            chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
+            plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ],
@@ -3087,7 +3096,7 @@ class Series {
                 translatedFrom = clamp(
                     pick(translatedTo, translatedFrom),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
                 translatedTo = clamp(
                     Math.round(
@@ -3097,7 +3106,7 @@ class Series {
                         ) || 0
                     ),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
 
                 if (ignoreZones) {
@@ -3113,7 +3122,7 @@ class Series {
                         x: inverted ? pxPosMax : pxPosMin,
                         y: 0,
                         width: pxRange,
-                        height: chartSizeMax
+                        height: plotSizeMax
                     };
                     if (!horiz) {
                         clipAttr.x = chart.plotHeight - clipAttr.x;
@@ -3122,7 +3131,7 @@ class Series {
                     clipAttr = {
                         x: 0,
                         y: inverted ? pxPosMax : pxPosMin,
-                        width: chartSizeMax,
+                        width: plotSizeMax,
                         height: pxRange
                     };
                     if (horiz) {
@@ -3724,7 +3733,7 @@ class Series {
             }
             if (tree[sideB]) {
                 // compare distance to current best to splitting point to
-                // decide wether to check side B or not
+                // decide whether to check side B or not
                 if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
                     nPoint2 = _search(
                         search,

@@ -36,7 +36,7 @@ import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import StackItem from '../../Extensions/Stacking.js';
+import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -581,10 +581,10 @@ wrap(Series.prototype, 'alignDataLabel', function (
 
 // Added stackLabels position calculation for 3D charts.
 wrap(StackItem.prototype, 'getStackBox', function (
-    this: Highcharts.StackItem,
+    this: StackItem,
     proceed: Function,
     chart: Chart,
-    stackItem: Highcharts.StackItem,
+    stackItem: StackItem,
     x: number,
     y: number,
     xWidth: number,

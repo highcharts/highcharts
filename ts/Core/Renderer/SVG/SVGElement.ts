@@ -1508,9 +1508,12 @@ class SVGElement implements SVGElementLike {
                         // width and height in case of rotation (below)
                         extend({} as any, (element as any).getBBox()) : {
 
-                            // Legacy IE in export mode
+                            // HTML elements with `exporting.allowHTML` and
+                            // legacy IE in export mode
                             width: (element as any).offsetWidth,
-                            height: (element as any).offsetHeight
+                            height: (element as any).offsetHeight,
+                            x: 0,
+                            y: 0
                         };
 
                     // #3842
@@ -2798,6 +2801,12 @@ export default SVGElement;
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dx
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dy
+ * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#fill
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}

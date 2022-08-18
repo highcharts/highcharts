@@ -23,7 +23,8 @@ function inverted() {
 
         chart: {
             inverted: true,
-            spacing: [0, 0, 0, 0]
+            spacing: [0, 0, 0, 10],
+            margin: 10
         },
         title: {
             text: ''
@@ -133,7 +134,6 @@ function inverted() {
             {
                 start: Date.UTC(2018, 11, 9),
                 end: Date.UTC(2018, 11, 16),
-                //completed: 0.65,
                 name: 'Done',
                 id: 'Design'
             },
@@ -172,10 +172,10 @@ function inverted() {
         }],
         responsive: {
             rules: [
-                ///up to 203
+                // up to 203
                 {
                     condition: {
-                        ///up tp this
+                        // up tp this
                         maxWidth: 203
                     },
                     chartOptions: {
@@ -203,7 +203,7 @@ function inverted() {
                     chartOptions: {
                         chart: {
                             height: 255,
-                            margin: [0, 10, 10, 0]
+                            margin: [10, 10, 10, 10]
                         },
                         plotOptions: {
                             series: {
@@ -506,10 +506,10 @@ function subtasks() {
         }],
         responsive: {
             rules: [
-                ///up to 203
+                // up to 203
                 {
                     condition: {
-                        ///up tp this
+                        // up tp this
                         maxWidth: 203
                     },
                     chartOptions: {
@@ -996,10 +996,10 @@ function drag() {
         }],
         responsive: {
             rules: [
-                ///up to 203
+                // up to 203
                 {
                     condition: {
-                        ///up tp this
+                        // up tp this
                         maxWidth: 203
                     },
                     chartOptions: {
@@ -1026,7 +1026,7 @@ function drag() {
                     },
                     chartOptions: {
                         chart: {
-                            margin: [50, 20, 10, 10],
+                            margin: [50, 10, 10, 20],
                             height: 260
                         },
                         title: {

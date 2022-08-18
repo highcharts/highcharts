@@ -14,11 +14,6 @@ const {
     getVersionPaths
 } = require('./lib/uploadS3');
 
-const props = getGitIgnoreMeProperties();
-const cf = require('cloudflare')({
-    token: props['cloudflare.token']
-});
-
 
 /**
  * Adds number of days to the given date.
@@ -55,6 +50,11 @@ async function cloudflarePurgeCode(files) {
     if (!argv.useGitIgnoreMe) {
         return;
     }
+
+    const props = getGitIgnoreMeProperties();
+    const cf = require('cloudflare')({
+        token: props['cloudflare.token']
+    });
 
     purgeCacheRequests++;
 

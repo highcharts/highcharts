@@ -499,7 +499,7 @@ addEvent(Series, 'show', function (): void {
  *         Scrollable plot area
  * @sample highcharts/chart/scrollable-plotarea-vertical
  *         Vertically scrollable plot area
- * @sample {gantt} highcharts/chart/scrollable-plotarea-vertical
+ * @sample {gantt} gantt/chart/scrollable-plotarea-vertical
  *         Gantt chart with vertically scrollable plot area
  *
  * @since     6.1.0
