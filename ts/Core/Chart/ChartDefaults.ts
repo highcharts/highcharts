@@ -1015,7 +1015,7 @@ const ChartDefaults: ChartOptions = {
 
     /**
      * Chart zooming options.
-     * @since       next
+     * @since      next
      */
     zooming: {
         /**
@@ -1049,36 +1049,45 @@ const ChartDefaults: ChartOptions = {
              * @type       {Highcharts.DashStyleValue}
              * @since      next
              * @default    Solid
-             * @apioption chart.zooming.markings.dashstyle
+             * @apioption  chart.zooming.markings.dashstyle
              */
+            dashstyle: 'Solid',
 
             /**
              * Enabled or disabled the markings.
              * @type       {boolean}
+             * @since      next
              * @default    false
-             * @apioption chart.zooming.markings.enabled
+             * @apioption  chart.zooming.markings.enabled
              */
+            enabled: false,
 
             /**
              * The color of markers.
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @apioption chart.zooming.markings.stroke
+             * @type       {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since      next
+             * @default    Palette.highlightColor80
+             * @apioption  chart.zooming.markings.stroke
              */
             stroke: Palette.highlightColor80,
 
             /**
              * Width of markings.
              * @type       {number}
+             * @since      next
              * @default    1
-             * @apioption chart.zooming.markings.strokeWidth
+             * @apioption  chart.zooming.markings.strokeWidth
              */
+            strokeWidth: 1,
 
             /**
              * Length of markings.
              * @type       {number}
-             * @apioption chart.zooming.markings.markingsLength
+             * @since      next
+             * @default    10
+             * @apioption  chart.zooming.markings.length
              */
-            markingsLength: 10
+            length: 10
         },
 
         /**

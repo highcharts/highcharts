@@ -576,7 +576,7 @@ class Pointer {
             y1 = box.y,
             x2 = x1 + box.width,
             y2 = y1 + box.height,
-            len = options.markingsLength;
+            len = options.length;
 
         if (!this.markings) {
             this.markings = this.chart.renderer.path().add();

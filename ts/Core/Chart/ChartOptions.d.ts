@@ -184,7 +184,7 @@ export interface ChartZoomingOptions {
 
 export interface MarkingsOptions extends SVGAttributes {
     enabled?: boolean;
-    markingsLength: number;
+    length: number;
 }
 /* *
  *
