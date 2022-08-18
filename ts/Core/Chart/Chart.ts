@@ -3901,6 +3901,8 @@ extend(Chart.prototype, {
      *
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
+     *
+     * @private
      */
     collectionsWithInit: {
         // collectionName: [ initializingMethod, [extraArguments] ]
@@ -3912,6 +3914,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
+     * @private
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -3922,6 +3925,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -3939,7 +3943,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @type {Array}
+     * @private
      */
     propsRequireReflow: [
         'margin',
@@ -3957,6 +3961,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireUpdateSeries: [
         'chart.inverted',
