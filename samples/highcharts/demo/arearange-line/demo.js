@@ -101,7 +101,7 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             pointStart: Date.UTC(2022, 6, 1),
-            pointInterval: 24 * 3600 * 1000
+            pointIntervalUnit: 'day'
         }
     },
 
