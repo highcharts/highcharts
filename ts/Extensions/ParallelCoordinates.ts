@@ -42,6 +42,7 @@ const {
     defined,
     erase,
     extend,
+    isArray,
     merge,
     pick,
     splat,
@@ -695,17 +696,15 @@ namespace ParallelAxis {
                 max: number = NaN;
 
             currentPoints.forEach(function (point): void {
-                if (Array.isArray(point)) {
+                if (isArray(point)) {
                     max = arrayMax(point);
                     min = arrayMin(point);
-                } else {
-                    return;
                 }
             });
 
             if (
-                !Array.isArray(arrayMin(currentPoints)) ||
-                !Array.isArray(arrayMax(currentPoints))
+                !isArray(arrayMin(currentPoints)) ||
+                !isArray(arrayMax(currentPoints))
             ) {
                 axis.dataMin = arrayMin(currentPoints) > min ?
                     min :

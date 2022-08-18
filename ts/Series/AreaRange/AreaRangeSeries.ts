@@ -267,9 +267,7 @@ class AreaRangeSeries extends AreaSeries {
      * @private
      */
     public translate(): void {
-        const series = this,
-            yAxis = series.yAxis,
-            chart = series.chart;
+        const series = this;
 
         areaProto.translate.apply(series);
 
@@ -278,35 +276,27 @@ class AreaRangeSeries extends AreaSeries {
             point: AreaRangePoint,
             i: number
         ): void {
-
             const high = point.high,
                 plotY = point.plotY;
 
             if (point.isNull) {
                 point.plotY = null as any;
             } else {
+                const yAxis = series.chart.hasParallelCoordinates ?
+                    series.chart.yAxis[i] :
+                    series.yAxis;
+
                 point.plotLow = plotY as any;
 
                 // Calculate plotHigh value based on each yAxis scale (#15752)
-                if (chart.hasParallelCoordinates) {
-                    point.plotHigh = chart.yAxis[i].translate(
-                        series.dataModify ?
-                            series.dataModify.modifyValue(high) : high,
-                        0 as any,
-                        1 as any,
-                        0 as any,
-                        1 as any
-                    );
-                } else {
-                    point.plotHigh = yAxis.translate(
-                        series.dataModify ?
-                            series.dataModify.modifyValue(high) : high,
-                        0 as any,
-                        1 as any,
-                        0 as any,
-                        1 as any
-                    );
-                }
+                point.plotHigh = yAxis.translate(
+                    series.dataModify ?
+                        series.dataModify.modifyValue(high) : high,
+                    0 as any,
+                    1 as any,
+                    0 as any,
+                    1 as any
+                );
 
                 if (series.dataModify) {
                     point.yBottom = point.plotHigh;

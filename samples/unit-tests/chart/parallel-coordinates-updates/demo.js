@@ -144,11 +144,9 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         3,
         'After chart update parallelInfo.counter has correct value (#10081).'
     );
-});
 
-// Calculate yAxis extremes based on the range series points as well (#15752)
-QUnit.test('Take range series points into account while calculating yAxis extremes (#15752)', function (assert) {
-    const chart = Highcharts.chart('container', {
+    // Calculate yAxis extremes based on the range series points (#15752)
+    chart.update({
         chart: {
             parallelCoordinates: true
         },
@@ -167,49 +165,46 @@ QUnit.test('Take range series points into account while calculating yAxis extrem
     const firstAxisMin = chart.yAxis[0].dataMin,
         firstAxisMax = chart.yAxis[0].dataMax,
         thirdAxisMin = chart.yAxis[2].dataMin,
-        thirdAxisMax = chart.yAxis[2].dataMax;
+        thirdAxisMax = chart.yAxis[2].dataMax,
+        series = chart.series[0];
 
-    assert.deepEqual(23, firstAxisMin, '1st yAxis min should be 23.');
-    assert.deepEqual(25, firstAxisMax, '1st yAxis max should be 25.');
+    assert.strictEqual(
+        series.points[0].low,
+        firstAxisMin,
+        '1st yAxis min should be 23.'
+    );
+    assert.strictEqual(
+        series.points[0].high,
+        firstAxisMax,
+        '1st yAxis max should be 25.'
+    );
 
-    assert.deepEqual(1.5, thirdAxisMin, '3rd yAxis min should be 1.5.');
-    assert.deepEqual(4, thirdAxisMax, '3rd yAxis max should be 4.');
-});
+    assert.strictEqual(
+        series.points[2].low,
+        thirdAxisMin,
+        '3rd yAxis min should be 1.5.'
+    );
+    assert.strictEqual(
+        series.points[2].high,
+        thirdAxisMax,
+        '3rd yAxis max should be 4.'
+    );
 
-// Calculate plotHigh value based on each yAxis scale (#15752)
-QUnit.test('Calculate plotHigh value based on each yAxis scale (#15752)', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            parallelCoordinates: true
-        },
-        series: [{
-            type: 'arearange',
-            data: [
-                [23, 25],
-                [-1, -0.5],
-                [1.5, 4],
-                [1.5, 5],
-                [4, 5]
-            ]
-        }]
-    });
-
-    const series = chart.series[0];
+    // Calculate plotHigh value based on each yAxis scale (#15752)
     series.points.forEach(function (
         point,
         i
     ) {
-        assert.deepEqual(
+        assert.strictEqual(
             chart.yAxis[i].translate(
-                series.dataModify ?
-                    series.dataModify.modifyValue(point.high) : point.high,
+                point.high,
                 0,
                 1,
                 0,
                 1
             ),
             point.plotHigh,
-            "PlotHigh value should be calculated based on the point's yAxis."
+            `PlotHigh value should be calculated based on the point's yAxis.`
         );
     });
 });
