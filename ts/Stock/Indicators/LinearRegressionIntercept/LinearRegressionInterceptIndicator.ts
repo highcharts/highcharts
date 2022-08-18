@@ -10,18 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     LinearRegressionOptions,
     LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
-import type LinearRegressionInterceptPoint from './LinearRegressionInterceptPoint';
+import type LinearRegressionInterceptPoint from
+    './LinearRegressionInterceptPoint';
+import type LinearRegressionIndicatorType from
+    '../LinearRegression/LinearRegressionIndicator';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        linearRegression: LinearRegressionIndicator
-    }
-} = SeriesRegistry;
+const LinearRegressionIndicator: typeof LinearRegressionIndicatorType =
+    SeriesRegistry.seriesTypes.linearRegression;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -30,7 +37,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -44,6 +51,12 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Linear regression intercept indicator. This series requires `linkedTo`
@@ -91,6 +104,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
  *  Class Prototype
  *
  * */
+
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
     nameBase: string;
@@ -100,11 +114,11 @@ extend(LinearRegressionInterceptIndicator.prototype, {
     nameBase: 'Linear Regression Intercept Indicator'
 });
 
-/**
+/* *
  *
- * Register
+ *  Registry
  *
- */
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -124,6 +138,12 @@ SeriesRegistry.registerSeriesType(
  * */
 
 export default LinearRegressionInterceptIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A linear regression intercept series. If the

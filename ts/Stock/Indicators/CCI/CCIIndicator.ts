@@ -20,20 +20,22 @@ import type {
 import type CCIPoint from './CCIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 /**
  * @private
@@ -59,11 +61,9 @@ function meanDeviation(arr: Array<number>, sma: number): number {
     return sum;
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -77,6 +77,13 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  * @augments Highcharts.Series
  */
 class CCIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
@@ -210,6 +217,12 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  * */
 
 export default CCIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not

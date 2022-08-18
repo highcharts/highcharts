@@ -21,14 +21,11 @@ import type {
 import type BBPoint from './BBPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -41,8 +38,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 // Utils:
 /**
@@ -324,6 +319,12 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  * */
 
 export default BBIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not

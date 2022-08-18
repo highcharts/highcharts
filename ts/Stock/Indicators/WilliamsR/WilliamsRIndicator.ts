@@ -8,8 +8,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     WilliamsROptions,
     WilliamsRParamsOptions
@@ -18,17 +25,19 @@ import type WilliamsRPoint from './WilliamsRPoint';
 
 import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Williams %R series type.
@@ -135,6 +144,12 @@ class WilliamsRIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface WilliamsRIndicator {
     nameBase: string;
     pointClass: typeof WilliamsRPoint;
@@ -142,6 +157,12 @@ interface WilliamsRIndicator {
 extend(WilliamsRIndicator.prototype, {
     nameBase: 'Williams %R'
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -158,6 +179,12 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  * */
 
 export default WilliamsRIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Williams %R Oscillator` series. If the [type](#series.williamsr.type)

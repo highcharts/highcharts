@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     LinearRegressionOptions,
@@ -18,12 +24,10 @@ import type {
 } from './LinearRegressionOptions';
 import type LinearRegressionPoint from './LinearRegressionPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -33,7 +37,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -47,6 +51,13 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Linear regression indicator. This series requires `linkedTo` option to be
      * set.
@@ -379,6 +390,12 @@ SeriesRegistry.registerSeriesType(
  * */
 
 export default LinearRegressionIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A linear regression series. If the

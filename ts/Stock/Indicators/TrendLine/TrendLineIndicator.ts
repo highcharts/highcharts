@@ -8,8 +8,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     TrendLineOptions,
     TrendLineParamsOptions
@@ -17,11 +24,7 @@ import type {
 import type TrendLinePoint from './TrendLinePoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -45,6 +48,13 @@ const {
  * @augments Highcharts.Series
  */
 class TrendLineIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Trendline (linear regression) fits a straight line to the selected data
      * using a method called the Sum Of Least Squares. This series requires the
@@ -78,10 +88,10 @@ class TrendLineIndicator extends SMAIndicator {
     } as TrendLineOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<TrendLinePoint> = void 0 as any;
     public options: TrendLineOptions = void 0 as any;
@@ -153,6 +163,12 @@ class TrendLineIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface TrendLineIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -185,6 +201,12 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  * */
 
 export default TrendLineIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `TrendLine` series. If the [type](#series.trendline.type) option is not

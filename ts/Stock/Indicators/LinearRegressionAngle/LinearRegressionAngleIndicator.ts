@@ -10,18 +10,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     LinearRegressionOptions,
     LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
+import type LinearRegressionIndicatorType from
+    '../LinearRegression/LinearRegressionIndicator';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        linearRegression: LinearRegressionIndicator
-    }
-} = SeriesRegistry;
+const LinearRegressionIndicator: typeof LinearRegressionIndicatorType =
+    SeriesRegistry.seriesTypes.linearRegression;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -30,7 +36,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -44,6 +50,12 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
@@ -84,12 +96,12 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * */
 
     /**
-    * Convert a slope of a line to angle (in degrees) between
-    * the line and x axis
-    * @private
-    * @param {number} slope of the straight line function
-    * @return {number} angle in degrees
-    */
+     * Convert a slope of a line to angle (in degrees) between
+     * the line and x axis
+     * @private
+     * @param {number} slope of the straight line function
+     * @return {number} angle in degrees
+     */
     public slopeToAngle(
         slope: number
     ): number {
@@ -119,11 +131,11 @@ extend(LinearRegressionAngleIndicator.prototype, {
     nameBase: 'Linear Regression Angle Indicator'
 });
 
-/**
+/* *
  *
- * Registry
+ *  Registry
  *
- */
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
