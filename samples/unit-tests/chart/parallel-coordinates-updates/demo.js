@@ -147,9 +147,6 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
 
     // Calculate yAxis extremes based on the range series points (#15752)
     chart.update({
-        chart: {
-            parallelCoordinates: true
-        },
         series: [{
             type: 'arearange',
             data: [
@@ -166,43 +163,34 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         firstAxisMax = chart.yAxis[0].dataMax,
         thirdAxisMin = chart.yAxis[2].dataMin,
         thirdAxisMax = chart.yAxis[2].dataMax,
-        series = chart.series[0];
+        points = chart.series[0].points;
 
     assert.strictEqual(
-        series.points[0].low,
+        points[0].low,
         firstAxisMin,
-        '1st yAxis min should be 23.'
+        `The first yAxis' min should be equal to the first point's low value.`
     );
     assert.strictEqual(
-        series.points[0].high,
+        points[0].high,
         firstAxisMax,
-        '1st yAxis max should be 25.'
+        `The first yAxis' max should be equal to the first point's high value.`
     );
 
     assert.strictEqual(
-        series.points[2].low,
+        points[2].low,
         thirdAxisMin,
-        '3rd yAxis min should be 1.5.'
+        `The third yAxis' min should be equal to the third point's low value.`
     );
     assert.strictEqual(
-        series.points[2].high,
+        points[2].high,
         thirdAxisMax,
-        '3rd yAxis max should be 4.'
+        `The third yAxis' max should be equal to the third point's high value.`
     );
 
     // Calculate plotHigh value based on each yAxis scale (#15752)
-    series.points.forEach(function (
-        point,
-        i
-    ) {
+    points.forEach(function (point, i) {
         assert.strictEqual(
-            chart.yAxis[i].translate(
-                point.high,
-                0,
-                1,
-                0,
-                1
-            ),
+            chart.yAxis[i].translate(point.high, 0, 1, 0, 1),
             point.plotHigh,
             `PlotHigh value should be calculated based on the point's yAxis.`
         );
