@@ -616,7 +616,7 @@ class Tooltip {
 
     /**
      * Place the tooltip in a chart without spilling over and not covering the
-     * point it self.
+     * point itself.
      *
      * @function Highcharts.Tooltip#getPosition
      *
@@ -627,10 +627,10 @@ class Tooltip {
      *        Height of the tooltip box.
      *
      * @param {Highcharts.Point} point
-     *        Tooltip-related point.
+     *        Tooltip related point.
      *
      * @return {Highcharts.PositionObject}
-     *         Recommend position of the tooltip.
+     *         Recommended position of the tooltip.
      */
     public getPosition(
         boxWidth: number,
