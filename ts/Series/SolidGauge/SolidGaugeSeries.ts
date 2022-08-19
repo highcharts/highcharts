@@ -27,8 +27,9 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const GaugeSeries: typeof GaugeSeriesType = SeriesRegistry.seriesTypes.gauge;
-const pieProto: PieSeriesType = SeriesRegistry.seriesTypes.pie.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    GaugeSeries: typeof GaugeSeriesType = SeriesTypes.gauge,
+    pieProto: PieSeriesType = SeriesTypes.pie.prototype;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import U from '../../Core/Utilities.js';
 const {

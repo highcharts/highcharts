@@ -10,30 +10,39 @@
  *
  * */
 
+'use strict';
+
 /* *
-  *
-  * Import
-  *
-  * */
+ *
+ *  Import
+ *
+ * */
+
+import type ColumnPointType from '../Column/ColumnPoint';
 import type WindbarbPointOptions from './WindbarbPointOptions';
+import type WindbarbSeries from './WindbarbSeries';
+
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
-import WindbarbSeries from './WindbarbSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
-class WindbarbPoint extends ColumnSeries.prototype.pointClass {
+class WindbarbPoint extends ColumnPoint {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public beaufort: string = void 0 as any;
     public beaufortLevel: number = void 0 as any;
     public direction: number = void 0 as any;
@@ -42,13 +51,20 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     public isValid(): boolean {
         return isNumber(this.value) && this.value >= 0;
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface WindbarbPoint {
     value: number;
@@ -56,7 +72,8 @@ interface WindbarbPoint {
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
+
 export default WindbarbPoint;

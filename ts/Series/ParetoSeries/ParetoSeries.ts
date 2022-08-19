@@ -50,7 +50,7 @@ class ParetoSeries extends LineSeries {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -214,7 +214,7 @@ SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
@@ -223,7 +223,7 @@ export default ParetoSeries;
 
 /* *
  *
- *  API options
+ *  API Options
  *
  * */
 

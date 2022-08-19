@@ -31,8 +31,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {

@@ -29,9 +29,9 @@ import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const AreaSeries: typeof AreaSeriesType = SeriesRegistry.seriesTypes.area;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    AreaSeries: typeof AreaSeriesType = SeriesTypes.area,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     defined,

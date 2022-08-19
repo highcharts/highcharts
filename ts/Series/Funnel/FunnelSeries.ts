@@ -33,8 +33,8 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

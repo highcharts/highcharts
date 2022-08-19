@@ -26,8 +26,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const HLCSeries: typeof HLCSeriesType = SeriesRegistry.seriesTypes.hlc;
-const Series: typeof SeriesType = SeriesRegistry.series;
+const HLCSeries: typeof HLCSeriesType = SeriesRegistry.seriesTypes.hlc,
+    Series: typeof SeriesType = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
 import LineSeriesOptions from '../Line/LineSeriesOptions';
 

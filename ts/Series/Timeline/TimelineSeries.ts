@@ -43,8 +43,9 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    LineSeries: typeof LineSeriesType = SeriesTypes.line,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';
@@ -642,7 +643,7 @@ extend(TimelineSeries.prototype, {
     // Use a simple symbol from LegendSymbolMixin
     drawLegendSymbol: LegendSymbol.drawRectangle,
     // Use a group of trackers from TrackerMixin
-    drawTracker: ColumnSeries.prototype.drawTracker,
+    drawTracker: columnProto.drawTracker,
     pointClass: TimelinePoint,
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });

@@ -34,8 +34,9 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const ATRIndicator: typeof ATRIndicatorType = SeriesRegistry.seriesTypes.atr;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    ATRIndicator: typeof ATRIndicatorType = SeriesTypes.atr,
+    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {

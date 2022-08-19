@@ -28,11 +28,10 @@ import type TilemapSeriesOptions from './TilemapSeriesOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const HeatmapSeries: typeof HeatmapSeriesType =
-    SeriesRegistry.seriesTypes.heatmap;
-const ScatterSeries: typeof ScatterSeriesType =
-    SeriesRegistry.seriesTypes.scatter;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    HeatmapSeries: typeof HeatmapSeriesType = SeriesTypes.heatmap,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
+    scatterProto: ScatterSeriesType = SeriesTypes.scatter.prototype;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';
@@ -223,7 +222,7 @@ class TilemapSeries extends HeatmapSeries {
     public drawPoints(): void {
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        ColumnSeries.prototype.drawPoints.call(this);
+        columnProto.drawPoints.call(this);
         this.points.forEach(
             (point: TilemapPoint): void => {
                 point.graphic &&
@@ -332,8 +331,8 @@ extend(TilemapSeries.prototype, { // Prototype functions
     // heatmap implementation.
     // TODO: Consider standarizing heatmap and tilemap into more
     // consistent form.
-    markerAttribs: ScatterSeries.prototype.markerAttribs,
-    pointAttribs: ColumnSeries.prototype.pointAttribs as any,
+    markerAttribs: scatterProto.markerAttribs,
+    pointAttribs: columnProto.pointAttribs as any,
     pointClass: TilemapPoint
 });
 

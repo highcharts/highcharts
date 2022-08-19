@@ -25,12 +25,10 @@ import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const AreaRangeSeries: typeof AreaRangeSeriesType =
-    SeriesRegistry.seriesTypes.arearange;
-const BoxPlotSeries: typeof BoxPlotSeriesType =
-    SeriesRegistry.seriesTypes.boxplot;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    AreaRangeSeries: typeof AreaRangeSeriesType = SeriesTypes.arearange,
+    BoxPlotSeries: typeof BoxPlotSeriesType = SeriesTypes.boxplot,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     merge,

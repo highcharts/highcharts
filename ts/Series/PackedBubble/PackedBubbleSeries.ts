@@ -41,8 +41,8 @@ import PackedBubblePoint from './PackedBubblePoint.js';
 import PackedBubbleSeriesDefaults from './PackedBubbleSeriesDefaults.js';
 import PackedBubbleLayout from './PackedBubbleLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const BubbleSeries: typeof BubbleSeriesType = SeriesRegistry.seriesTypes.bubble;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const BubbleSeries: typeof BubbleSeriesType = SeriesRegistry.seriesTypes.bubble,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

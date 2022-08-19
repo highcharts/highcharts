@@ -28,9 +28,9 @@ import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const Series: typeof SeriesType = SeriesRegistry.series;
-const XRangeSeries: typeof XRangeSeriesType = SeriesRegistry.seriesTypes.xrange;
-const seriesProto: SeriesType = Series.prototype;
+const Series: typeof SeriesType = SeriesRegistry.series,
+    XRangeSeries: typeof XRangeSeriesType = SeriesRegistry.seriesTypes.xrange,
+    seriesProto: SeriesType = Series.prototype;
 import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 const {

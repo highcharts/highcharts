@@ -23,11 +23,10 @@ import type LollipopSeriesOptions from './LollipopSeriesOptions';
 
 import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const DumbbellSeries: typeof DumbbellSeriesType =
-    SeriesRegistry.seriesTypes.dumbbell;
-const areaProto: AreaSeriesType = SeriesRegistry.seriesTypes.area.prototype;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    DumbbellSeries: typeof DumbbellSeriesType = SeriesTypes.dumbbell,
+    areaProto: AreaSeriesType = SeriesTypes.area.prototype,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     pick,

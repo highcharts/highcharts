@@ -24,8 +24,8 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const MapSeries: typeof MapSeriesType = SeriesRegistry.seriesTypes.map;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const MapSeries: typeof MapSeriesType = SeriesRegistry.seriesTypes.map,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,

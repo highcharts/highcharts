@@ -35,9 +35,8 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const Series: typeof SeriesType = SeriesRegistry.series;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const Series: typeof SeriesType = SeriesRegistry.series,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -660,6 +659,7 @@ extend(GaugeSeries.prototype, {
     pointClass: GaugePoint,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
+
 /* *
  *
  *  Registry

@@ -34,8 +34,8 @@ const { noop } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,

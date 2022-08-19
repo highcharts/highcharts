@@ -32,13 +32,11 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const AreaRangeSeries: typeof AreaRangeSeriesType =
-    SeriesRegistry.seriesTypes.arearange;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
-const columnRangeProto: ColumnRangeSeriesType =
-    SeriesRegistry.seriesTypes.columnrange.prototype;
-const { prototype: areaRangeProto } = AreaRangeSeries;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    AreaRangeSeries: typeof AreaRangeSeriesType = SeriesTypes.arearange,
+    areaRangeProto: AreaRangeSeriesType = AreaRangeSeries.prototype,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
+    columnRangeProto: ColumnRangeSeriesType = SeriesTypes.columnrange.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {

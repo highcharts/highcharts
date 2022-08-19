@@ -29,8 +29,9 @@ import Chart from '../../Core/Chart/Chart.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const lineProto: LineSeriesType = SeriesRegistry.seriesTypes.line.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    ColumnSeries: typeof ColumnSeriesType = SeriesTypes.column,
+    lineProto: LineSeriesType = SeriesTypes.line.prototype;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,

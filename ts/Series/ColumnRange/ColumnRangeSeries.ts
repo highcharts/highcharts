@@ -25,10 +25,10 @@ import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const AreaRangeSeries: typeof AreaRangeSeriesType =
-    SeriesRegistry.seriesTypes.arearange;
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const columnProto: ColumnSeriesType = ColumnSeries.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    AreaRangeSeries: typeof AreaRangeSeriesType = SeriesTypes.arearange,
+    ColumnSeries: typeof ColumnSeriesType = SeriesTypes.column,
+    columnProto: ColumnSeriesType = ColumnSeries.prototype;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

@@ -30,8 +30,8 @@ const { animObject } = A;
 import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const ScatterSeries: typeof ScatterSeriesType =
-    SeriesRegistry.seriesTypes.scatter;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+    SeriesRegistry.seriesTypes.scatter,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,

@@ -28,10 +28,10 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const AreaSeries: typeof AreaSeriesType = SeriesRegistry.seriesTypes.area;
-const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
-const ScatterSeries: typeof ScatterSeriesType =
-    SeriesRegistry.seriesTypes.scatter;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    ScatterSeries: typeof ScatterSeriesType = SeriesTypes.scatter,
+    areaProto: AreaSeriesType = SeriesTypes.area.prototype,
+    lineProto: LineSeriesType = SeriesTypes.line.prototype;
 const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
@@ -106,7 +106,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public getGraphPath(): SVGPath {
-        let graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
+        let graphPath: SVGPath = lineProto.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
@@ -121,7 +121,7 @@ class PolygonSeries extends ScatterSeries {
     public drawGraph(): void {
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
-        AreaSeries.prototype.drawGraph.call(this);
+        areaProto.drawGraph.call(this);
     }
 }
 

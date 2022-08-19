@@ -33,8 +33,8 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,

@@ -36,8 +36,8 @@ const { noop } = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

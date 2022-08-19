@@ -34,11 +34,10 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const ScatterSeries: typeof ScatterSeriesType =
-    SeriesRegistry.seriesTypes.scatter;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    ScatterSeries: typeof ScatterSeriesType = SeriesTypes.scatter,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

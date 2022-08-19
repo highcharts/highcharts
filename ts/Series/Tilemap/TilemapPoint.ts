@@ -28,9 +28,9 @@ import type TilemapSeries from './TilemapSeries';
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const HeatmapPoint: typeof HeatmapPointType =
-    SeriesRegistry.seriesTypes.heatmap.prototype.pointClass;
-const pointProto: PointType =
-    SeriesRegistry.series.prototype.pointClass.prototype;
+        SeriesRegistry.seriesTypes.heatmap.prototype.pointClass,
+    pointProto: PointType =
+        SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

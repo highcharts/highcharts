@@ -33,8 +33,9 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    ColumnSeries: typeof ColumnSeriesType = SeriesTypes.column,
+    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 import ColorString from '../../../Core/Color/ColorString';
 const {

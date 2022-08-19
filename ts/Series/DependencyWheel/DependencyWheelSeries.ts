@@ -29,8 +29,9 @@ import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SankeySeries: typeof SankeySeriesType = SeriesRegistry.seriesTypes.sankey;
-const pieProto: PieSeriesType = SeriesRegistry.seriesTypes.pie.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    SankeySeries: typeof SankeySeriesType = SeriesTypes.sankey,
+    pieProto: PieSeriesType = SeriesTypes.pie.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,

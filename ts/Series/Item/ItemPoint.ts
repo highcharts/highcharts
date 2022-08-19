@@ -26,9 +26,9 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const PiePoint: typeof PiePointType =
-    SeriesRegistry.seriesTypes.pie.prototype.pointClass;
-const pointProto: PointType =
-    SeriesRegistry.series.prototype.pointClass.prototype;
+        SeriesRegistry.seriesTypes.pie.prototype.pointClass,
+    pointProto: PointType =
+        SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

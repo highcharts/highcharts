@@ -26,8 +26,9 @@ import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    EMAIndicator: typeof EMAIndicatorType = SeriesTypes.ema,
+    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

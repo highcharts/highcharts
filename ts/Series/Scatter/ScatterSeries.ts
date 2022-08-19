@@ -22,9 +22,9 @@ import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const SeriesTypes = SeriesRegistry.seriesTypes,
+    LineSeries: typeof LineSeriesType = SeriesTypes.line,
+    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
