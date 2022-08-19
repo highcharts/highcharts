@@ -678,37 +678,26 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            const index = parallelCoordinates.position,
-                currentPoints: Array<Point> = [];
+            const index = parallelCoordinates.position;
+            let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
-                if (
-                    series.visible &&
-                    defined((series.yData as any)[index as any])
-                ) {
-                    // We need to use push() beacause of null points
-                    currentPoints.push((series.yData as any)[index as any]);
+                if (series.yData && series.visible) {
+                    const y = (series.yData)[index as any];
+
+                    // Take into account range series points as well (#15752)
+                    if (isArray(y)) {
+                        currentPoints = currentPoints.concat(y);
+                    } else {
+                        currentPoints.push(y);
+                    }
                 }
             });
-            // Take into account range series points as well (#15752)
-            const allAxisPoints = Array.prototype.concat.apply(
-                [],
-                currentPoints
-            );
-            let min: number = arrayMin(allAxisPoints),
-                max: number = arrayMax(allAxisPoints);
 
-            if (!isArray(arrayMin(currentPoints))) {
-                axis.dataMin = arrayMin(currentPoints) > min ?
-                    min :
-                    arrayMin(currentPoints);
-                axis.dataMax = arrayMax(currentPoints) < max ?
-                    max :
-                    arrayMax(currentPoints);
-            } else {
-                axis.dataMin = min;
-                axis.dataMax = max;
-            }
+            currentPoints = currentPoints.filter((y): boolean => defined(y));
+
+            axis.dataMin = arrayMin(currentPoints);
+            axis.dataMax = arrayMax(currentPoints);
 
             e.preventDefault();
         }
