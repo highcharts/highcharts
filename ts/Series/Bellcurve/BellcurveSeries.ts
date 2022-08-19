@@ -18,6 +18,7 @@
  *
  * */
 
+import type AreaSplineSeriesType from '../AreaSpline/AreaSplineSeries';
 import type BellcurvePoint from './BellcurvePoint';
 import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
 import type {
@@ -27,27 +28,76 @@ import type {
 
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        areaspline: AreaSplineSeries
-    }
-} = SeriesRegistry;
+const AreaSplineSeries: typeof AreaSplineSeriesType =
+    SeriesRegistry.seriesTypes.areaspline;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    extend,
     isNumber,
     merge
 } = U;
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
- * Internal types
  * @private
  */
-declare global {
-    namespace Highcharts {
-    }
+function mean(data: Array<number>): (number|false) {
+    const length = data.length,
+        sum = data.reduce(function (sum: number, value: number): number {
+            return (sum += value);
+        }, 0);
+
+    return length > 0 && sum / length;
 }
+
+/**
+ * @private
+ */
+function standardDeviation(
+    data: Array<number>,
+    average?: number
+): (number|false) {
+    let len = data.length,
+        sum;
+
+    average = isNumber(average) ?
+        average : (mean(data) as any);
+
+    sum = data.reduce(function (sum: number, value: number): number {
+        const diff = value - (average as any);
+
+        return (sum += diff * diff);
+    }, 0);
+
+    return len > 1 && Math.sqrt(sum / (len - 1));
+}
+
+/**
+ * @private
+ */
+function normalDensity(
+    x: number,
+    mean: number,
+    standardDeviation: number
+): number {
+    const translation = x - mean;
+
+    return Math.exp(
+        -(translation * translation) /
+        (2 * standardDeviation * standardDeviation)
+    ) / (standardDeviation * Math.sqrt(2 * Math.PI));
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Bell curve class
@@ -133,66 +183,6 @@ class BellcurveSeries extends AreaSplineSeries {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    private static mean(data: Array<number>): (number|false) {
-        const length = data.length,
-            sum = data.reduce(function (sum: number, value: number): number {
-                return (sum += value);
-            }, 0);
-
-        return length > 0 && sum / length;
-    }
-
-    /**
-     * @private
-     */
-    private static standardDeviation(
-        data: Array<number>,
-        average?: number
-    ): (number|false) {
-        let len = data.length,
-            sum;
-
-        average = isNumber(average) ?
-            average : (BellcurveSeries.mean(data) as any);
-
-        sum = data.reduce(function (sum: number, value: number): number {
-            const diff = value - (average as any);
-
-            return (sum += diff * diff);
-        }, 0);
-
-        return len > 1 && Math.sqrt(sum / (len - 1));
-    }
-
-    /**
-     * @private
-     */
-    private static normalDensity(
-        x: number,
-        mean: number,
-        standardDeviation: number
-    ): number {
-        const translation = x - mean;
-
-        return Math.exp(
-            -(translation * translation) /
-            (2 * standardDeviation * standardDeviation)
-        ) / (standardDeviation * Math.sqrt(2 * Math.PI));
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -213,8 +203,6 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public derivedData(
         mean: number,
         standardDeviation: number
@@ -229,7 +217,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
         for (i = 0; i < stop; i++) {
             data.push(
-                [x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]
+                [x, normalDensity(x, mean, standardDeviation)]
             );
             x += increment;
         }
@@ -254,7 +242,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
     public setMean(): void {
         this.mean = correctFloat(
-            BellcurveSeries.mean(
+            mean(
                 (this.baseSeries as any).yData
             ) as any
         );
@@ -262,7 +250,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
     public setStandardDeviation(): void {
         this.standardDeviation = correctFloat(
-            BellcurveSeries.standardDeviation(
+            standardDeviation(
                 (this.baseSeries as any).yData,
                 this.mean as any
             ) as any

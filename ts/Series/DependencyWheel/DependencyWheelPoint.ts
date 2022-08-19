@@ -20,21 +20,14 @@
 
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
+import type SankeyPointType from '../Sankey/SankeyPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sankey: {
-            prototype: {
-                pointClass: SankeyPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const SankeyPoint: typeof SankeyPointType =
+    SeriesRegistry.seriesTypes.sankey.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { wrap } = U;
 
@@ -75,8 +68,6 @@ class DependencyWheelPoint extends SankeyPoint {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Return a text path that the data label uses.
@@ -133,8 +124,6 @@ class DependencyWheelPoint extends SankeyPoint {
         // No null points here
         return true;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

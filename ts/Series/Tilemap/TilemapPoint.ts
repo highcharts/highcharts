@@ -19,26 +19,18 @@
  *
  * */
 
+import type HeatmapPointType from '../Heatmap/HeatmapPoint';
+import type PointType from '../../Core/Series/Point';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
 
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        heatmap: {
-            prototype: {
-                pointClass: HeatmapPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const HeatmapPoint: typeof HeatmapPointType =
+    SeriesRegistry.seriesTypes.heatmap.prototype.pointClass;
+const pointProto: PointType =
+    SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -96,7 +88,7 @@ interface TilemapPoint {
     setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
 extend(TilemapPoint.prototype, {
-    setState: Point.prototype.setState,
+    setState: pointProto.setState,
     setVisible: ColorAxisComposition.pointSetVisible
 });
 

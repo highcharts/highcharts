@@ -19,8 +19,10 @@
 import type Axis from '../../Core/Axis/Axis';
 import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type Chart from '../../Core/Chart/Chart';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
 import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -32,15 +34,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -696,7 +694,7 @@ class BubbleSeries extends ScatterSeries {
     ): SVGAttributes {
         const markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
-            attr = Series.prototype.pointAttribs.call(this, point, state);
+            attr = seriesProto.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)

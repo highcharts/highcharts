@@ -20,14 +20,12 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type CylinderSeriesOptions from './CylinderSeriesOptions';
+
 import CylinderPoint from './CylinderPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,

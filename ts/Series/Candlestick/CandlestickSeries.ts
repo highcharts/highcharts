@@ -18,20 +18,19 @@
 
 import type CandlestickPoint from './CandlestickPoint';
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries';
+import type OHLCSeriesType from '../OHLC/OHLCSeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        ohlc: OHLCSeries
-    }
-} = SeriesRegistry;
+const OHLCSeries: typeof OHLCSeriesType = SeriesRegistry.seriesTypes.ohlc;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -39,7 +38,7 @@ const {
 
 /* *
  *
- *  Code
+ *  Class
  *
  * */
 
@@ -56,7 +55,7 @@ class CandlestickSeries extends OHLCSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
@@ -158,11 +157,13 @@ class CandlestickSeries extends OHLCSeries {
             stickyTracking: true
         } as CandlestickSeriesOptions
     );
+
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<CandlestickPoint> = void 0 as any;
 
     public options: CandlestickSeriesOptions = void 0 as any;
@@ -171,10 +172,9 @@ class CandlestickSeries extends OHLCSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Postprocess mapping between options and SVG attributes
@@ -186,7 +186,7 @@ class CandlestickSeries extends OHLCSeries {
         point: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs = ColumnSeries.prototype.pointAttribs.call(
+        let attribs = columnProto.pointAttribs.call(
                 this,
                 point,
                 state
@@ -326,7 +326,6 @@ class CandlestickSeries extends OHLCSeries {
             }
         });
 
-        /* eslint-enable valid-jsdoc */
     }
 
 }
@@ -337,7 +336,7 @@ interface CandlestickSeries{
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -351,16 +350,18 @@ SeriesRegistry.registerSeriesType('candlestick', CandlestickSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
+
 export default CandlestickSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
+
 /**
  * A `candlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](

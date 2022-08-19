@@ -10,18 +10,27 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AreaRangeSeriesType from '../AreaRange/AreaRangeSeries';
+import type BoxPlotSeriesType from '../BoxPlot/BoxPlotSeries';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
+
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        arearange: AreaRangeSeries
-    }
-} = SeriesRegistry;
+const AreaRangeSeries: typeof AreaRangeSeriesType =
+    SeriesRegistry.seriesTypes.arearange;
+const BoxPlotSeries: typeof BoxPlotSeriesType =
+    SeriesRegistry.seriesTypes.boxplot;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -131,7 +140,7 @@ class ErrorBarSeries extends BoxPlotSeries {
     public getColumnMetrics(): ColumnMetricsObject {
         return (
             (this.linkedParent && this.linkedParent.columnMetrics) ||
-            ColumnSeries.prototype.getColumnMetrics.call(this)
+            columnProto.getColumnMetrics.call(this)
         );
     }
 
@@ -161,7 +170,7 @@ class ErrorBarSeries extends BoxPlotSeries {
  *
  * */
 
-interface ErrorBarSeries extends BoxPlotSeries {
+interface ErrorBarSeries extends BoxPlotSeriesType {
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
     pointArrayMap: Array<string>;

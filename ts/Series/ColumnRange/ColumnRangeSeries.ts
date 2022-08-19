@@ -16,24 +16,19 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type AreaRangeSeriesType from '../AreaRange/AreaRangeSeries';
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        column: ColumnSeries,
-        column: {
-            prototype: columnProto
-        }
-    }
-} = SeriesRegistry;
+const AreaRangeSeries: typeof AreaRangeSeriesType =
+    SeriesRegistry.seriesTypes.arearange;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const columnProto: ColumnSeriesType = ColumnSeries.prototype;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -133,7 +128,6 @@ class ColumnRangeSeries extends AreaRangeSeries {
         return AreaRangeSeries.prototype.setOptions.apply(this, arguments);
     }
 
-    // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
@@ -299,9 +293,6 @@ extend(ColumnRangeSeries.prototype, {
  *
  * */
 
-/**
- * @private
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof ColumnRangeSeries;

@@ -18,18 +18,13 @@
  *
  * */
 
+import type PiePointType from '../Pie/PiePoint';
 import type Pie3DSeries from './Pie3DSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const PiePoint: typeof PiePointType =
+    SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 
 /* *
  *

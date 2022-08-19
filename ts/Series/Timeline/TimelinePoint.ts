@@ -20,6 +20,7 @@
  *
  * */
 
+import type PiePointType from '../Pie/PiePoint';
 import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -29,16 +30,8 @@ import type TimelineSeries from './TimelineSeries';
 
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const PiePoint: typeof PiePointType =
+    SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -55,7 +48,7 @@ const {
  *
  * */
 
-class TimelinePoint extends Series.prototype.pointClass {
+class TimelinePoint extends Point {
 
     /* *
      *
@@ -76,8 +69,6 @@ class TimelinePoint extends Series.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     public alignConnector(): void {
         let point = this,
@@ -246,8 +237,6 @@ class TimelinePoint extends Series.prototype.pointClass {
         this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
         return super.applyOptions(options, x);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

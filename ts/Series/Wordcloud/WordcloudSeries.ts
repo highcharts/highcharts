@@ -8,6 +8,7 @@
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -19,6 +20,7 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
@@ -35,11 +37,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -49,7 +47,7 @@ const {
     merge
 } = U;
 import WordcloudPoint from './WordcloudPoint.js';
-import WordcloudUtils from './WordcloudUtils.js';
+import WU from './WordcloudUtils.js';
 const {
     archimedeanSpiral,
     extendPlayingField,
@@ -67,7 +65,7 @@ const {
     rotate2DToPoint,
     squareSpiral,
     updateFieldBoundaries
-} = WordcloudUtils;
+} = WU;
 
 /* *
  *
@@ -86,7 +84,7 @@ class WordcloudSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -210,18 +208,20 @@ class WordcloudSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<WordcloudPoint> = void 0 as any;
     public options: WordcloudSeriesOptions = void 0 as any;
     public points: Array<WordcloudPoint> = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
+
     public bindAxes(): void {
         const wordcloudAxis = {
             endOnTick: false,
@@ -515,15 +515,16 @@ class WordcloudSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype properties
+ * Class Prototype
  *
  * */
+
 interface WordcloudSeries {
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
     pointArrayMap: Array<string>;
     pointClass: typeof WordcloudPoint;
     spirals: Record<string, WordcloudSeries.WordcloudSpiralFunction>;
-    utils: typeof WordcloudUtils;
+    utils: typeof WU;
 }
 
 extend(WordcloudSeries.prototype, {
@@ -583,9 +584,10 @@ extend(WordcloudSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
@@ -632,7 +634,7 @@ namespace WordcloudSeries {
     export interface WordcloudTestOptionsObject {
         field: WordcloudFieldObject;
         placed: Array<WordcloudPoint>;
-        polygon: WordcloudUtils.PolygonObject;
+        polygon: WU.PolygonObject;
         rectangle: PolygonBoxObject;
         rotation: (boolean|number);
         spiral: WordcloudSpiralFunction;
@@ -641,16 +643,17 @@ namespace WordcloudSeries {
 
 /* *
  *
- * Export Default
+ *  Default Export
  *
  * */
 export default WordcloudSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
+
 /**
  * A `wordcloud` series. If the [type](#series.wordcloud.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

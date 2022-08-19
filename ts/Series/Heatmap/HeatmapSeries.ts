@@ -18,10 +18,13 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -31,13 +34,11 @@ import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
@@ -430,7 +431,7 @@ class HeatmapSeries extends ScatterSeries {
         const seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            Series.prototype.drawPoints.call(this);
+            seriesProto.drawPoints.call(this);
             this.points.forEach((point): void => {
                 if (point.graphic) {
                     (point.graphic as any)[
@@ -450,7 +451,7 @@ class HeatmapSeries extends ScatterSeries {
      */
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
-        const { dataMin, dataMax } = Series.prototype.getExtremes
+        const { dataMin, dataMax } = seriesProto.getExtremes
             .call(this, this.valueData);
 
         if (isNumber(dataMin)) {
@@ -461,7 +462,7 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         // Get the extremes from the y data
-        return Series.prototype.getExtremes.call(this);
+        return seriesProto.getExtremes.call(this);
     }
 
     /**
@@ -473,7 +474,7 @@ class HeatmapSeries extends ScatterSeries {
         points?: Array<HeatmapPoint>,
         insideOnly?: boolean
     ): Array<Point> {
-        return Series.prototype.getValidPoints.call(
+        return seriesProto.getValidPoints.call(
             this,
             points,
             insideOnly,
@@ -497,7 +498,7 @@ class HeatmapSeries extends ScatterSeries {
     public init(): void {
         let options;
 
-        Series.prototype.init.apply(this, arguments as any);
+        seriesProto.init.apply(this, arguments as any);
 
         options = this.options;
         // #3758, prevent resetting in setData
@@ -585,7 +586,7 @@ class HeatmapSeries extends ScatterSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         let series = this,
-            attr = Series.prototype.pointAttribs.call(series, point, state),
+            attr = seriesProto.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},
@@ -644,7 +645,7 @@ class HeatmapSeries extends ScatterSeries {
         const series = this,
             chart = series.chart;
 
-        Series.prototype.setClip.apply(series, arguments);
+        seriesProto.setClip.apply(series, arguments);
         if (series.options.clip !== false || animation) {
             (series.markerGroup as any)
                 .clip(
@@ -738,7 +739,7 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointClass: typeof HeatmapPoint;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
-    getSymbol: typeof Series.prototype.getSymbol;
+    getSymbol: typeof seriesProto.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
 
@@ -761,7 +762,7 @@ extend(HeatmapSeries.prototype, {
     /**
      * @private
      */
-    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
+    alignDataLabel: columnProto.alignDataLabel,
 
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
@@ -770,7 +771,7 @@ extend(HeatmapSeries.prototype, {
      */
     drawLegendSymbol: LegendSymbol.drawRectangle,
 
-    getSymbol: Series.prototype.getSymbol
+    getSymbol: seriesProto.getSymbol
 
 });
 ColorMapComposition.compose(HeatmapSeries);

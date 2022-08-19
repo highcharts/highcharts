@@ -16,14 +16,15 @@
  *
  * */
 
+import type AreaRangeSeriesType from '../AreaRange/AreaRangeSeries';
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnRangeSeriesType from '../ColumnRange/ColumnRangeSeries';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: colProto } = ColumnSeries;
 import DumbbellPoint from './DumbbellPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -31,14 +32,12 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        columnrange: {
-            prototype: columnRangeProto
-        }
-    }
-} = SeriesRegistry;
+const AreaRangeSeries: typeof AreaRangeSeriesType =
+    SeriesRegistry.seriesTypes.arearange;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
+const columnRangeProto: ColumnRangeSeriesType =
+    SeriesRegistry.seriesTypes.columnrange.prototype;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -60,6 +59,12 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The dumbbell series type
  *
@@ -73,7 +78,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -155,7 +160,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -166,11 +171,11 @@ class DumbbellSeries extends AreaRangeSeries {
     public lowColor?: ColorType;
 
 
-    /**
+    /* *
      *
      *  Functions
      *
-     */
+     * */
 
     /**
      * Get connector line path and styles that connects dumbbell point's low and
@@ -325,7 +330,8 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        const metrics = colProto.getColumnMetrics.apply(this, arguments as any);
+        const metrics = columnProto.getColumnMetrics
+            .apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;
 
@@ -470,22 +476,22 @@ class DumbbellSeries extends AreaRangeSeries {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
-    crispCol: typeof colProto.crispCol;
+    crispCol: typeof columnProto.crispCol;
     trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
     setShapeArgs: typeof columnRangeProto['translate'];
     seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
 }
 extend(DumbbellSeries.prototype, {
-    crispCol: colProto.crispCol,
+    crispCol: columnProto.crispCol,
     drawGraph: noop,
-    drawTracker: ColumnSeries.prototype.drawTracker,
+    drawTracker: columnProto.drawTracker,
     pointClass: DumbbellPoint,
     setShapeArgs: columnRangeProto.translate,
     seriesDrawPoints: areaRangeProto.drawPoints,
@@ -498,6 +504,7 @@ extend(DumbbellSeries.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
@@ -508,7 +515,7 @@ SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
@@ -516,7 +523,7 @@ export default DumbbellSeries;
 
 /* *
  *
- *  API options
+ *  API Options
  *
  * */
 

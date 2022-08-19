@@ -18,6 +18,7 @@
  *
  * */
 
+import type ColumnPointType from '../Column/ColumnPoint';
 import type Point from '../../Core/Series/Point';
 import type RectangleObject from '../../Core/Renderer/RectangleObject';
 import type Series from '../../Core/Series/Series';
@@ -27,22 +28,8 @@ import type {
 } from './XRangePointOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
-        }
-    },
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import XRangeSeries from './XRangeSeries.js';
@@ -141,13 +128,14 @@ class XRangePoint extends ColumnPoint {
         }
 
     }
+
     /**
      * Extend init to have y default to 0.
      *
      * @private
      */
     public init(): XRangePoint {
-        pointProto.init.apply(this, arguments as any);
+        super.init.apply(this, arguments as any);
 
         if (!this.y) {
             this.y = 0;
@@ -160,7 +148,7 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public setState(): void {
-        pointProto.setState.apply(this, arguments as any);
+        super.setState.apply(this, arguments as any);
 
         this.series.drawPoint(this, this.series.getAnimationVerb());
     }
@@ -171,7 +159,7 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        const cfg = pointProto.getLabelConfig.call(this) as
+        const cfg = super.getLabelConfig.call(this) as
                 XRangePoint.XRangePointLabelObject,
             yCats = this.series.yAxis.categories;
 

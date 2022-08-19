@@ -8,9 +8,21 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BulletPointOptions from './BulletPointOptions';
 import type BulletSeries from './BulletSeries';
-import ColumnSeries from '../Column/ColumnSeries.js';
+import type ColumnPointType from '../Column/ColumnPoint';
+
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 /* *
@@ -19,13 +31,14 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
  *
  * */
 
-class BulletPoint extends ColumnSeries.prototype.pointClass {
+class BulletPoint extends ColumnPoint {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public borderColor: BulletPointOptions['borderColor'];
     public options: BulletPointOptions = void 0 as any;
     public series: BulletSeries = void 0 as any;
@@ -37,8 +50,6 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroys target graphic.
@@ -52,13 +63,12 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
         return;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
+
 export default BulletPoint;

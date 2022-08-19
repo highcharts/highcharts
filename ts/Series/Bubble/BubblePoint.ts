@@ -18,18 +18,13 @@
 
 import type BubblePointOptions from './BubblePointOptions';
 import type BubbleSeries from './BubbleSeries';
+import type ScatterPointType from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -57,8 +52,6 @@ class BubblePoint extends ScatterPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -69,8 +62,6 @@ class BubblePoint extends ScatterPoint {
             size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size
         );
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

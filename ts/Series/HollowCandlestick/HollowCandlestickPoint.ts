@@ -16,14 +16,12 @@
  *
  * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import HollowCandlestickSeries from './HollowCandlestickSeries.js';
+import type CandlestickPointType from '../Candlestick/CandlestickPoint';
+import type HollowCandlestickSeries from './HollowCandlestickSeries';
 
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const CandlestickPoint: typeof CandlestickPointType =
+    SeriesRegistry.seriesTypes.candlestick.prototype.pointClass;
 
 /* *
  *
@@ -31,7 +29,7 @@ const {
  *
  * */
 
-class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
+class HollowCandlestickPoint extends CandlestickPoint {
 
     /* *
      *
@@ -46,8 +44,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Update class name if needed.
@@ -66,14 +62,8 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
         return className;
     }
-    /* eslint-enable valid-jsdoc */
-}
 
-/* *
- *
- *  Class Namespace
- *
- * */
+}
 
 /* *
  *

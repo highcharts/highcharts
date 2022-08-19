@@ -23,6 +23,8 @@ import type ColorType from '../../Core/Color/ColorType';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
+import type PieSeriesType from '../Pie/PieSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
@@ -31,12 +33,8 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -59,6 +57,12 @@ declare module '../../Core/Series/SeriesOptions' {
         color?: ColorType;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -292,7 +296,7 @@ class FunnelSeries extends PieSeries {
 
         // Call the parent method
         if (!inside || point.visible) {
-            Series.prototype.alignDataLabel.call(
+            seriesProto.alignDataLabel.call(
                 this,
                 point,
                 dataLabel,
@@ -632,7 +636,7 @@ extend(FunnelSeries.prototype, {
  *
  * */
 
-/* eslint-disable no-invalid-this */
+// @todo composition
 addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
     this.series.forEach(function (series): void {
         let dataLabelsOptions = series.options && series.options.dataLabels;
@@ -649,18 +653,6 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
         }
     });
 });
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-type BBoxObjectImport = BBoxObject;
-namespace FunnelSeries {
-
-
-}
 
 /* *
  *

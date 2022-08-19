@@ -16,11 +16,14 @@
  *
  * */
 
+import type AreaRangePointType from '../AreaRange/AreaRangePoint';
 import type DumbbellSeries from './DumbbellSeries.js';
 import type DumbbellPointOptions from './DumbbellPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const AreaRangePoint: typeof AreaRangePointType =
+    SeriesRegistry.seriesTypes.arearange.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -126,9 +129,10 @@ class DumbbellPoint extends AreaRangePoint {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface DumbbellPoint{
     pointSetState: typeof AreaRangePoint.prototype.setState;
 }
@@ -139,7 +143,7 @@ extend(DumbbellPoint.prototype, {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

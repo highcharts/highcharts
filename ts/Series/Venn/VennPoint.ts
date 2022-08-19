@@ -23,24 +23,15 @@
  *
  * */
 
+import type ScatterPointType from '../Scatter/ScatterPoint';
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber
-} = U;
+const { isNumber } = U;
 
 /* *
  *
@@ -70,8 +61,6 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public isValid(): boolean {
         return isNumber(this.value);
     }
@@ -80,8 +69,6 @@ class VennPoint extends ScatterPoint {
         // Only draw points with single sets.
         return !!this.shapeArgs;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

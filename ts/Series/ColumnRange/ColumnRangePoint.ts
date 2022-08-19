@@ -16,26 +16,16 @@
  *
  * */
 
+import type AreaRangePointType from '../AreaRange/AreaRangePoint';
+import type ColumnPointType from '../Column/ColumnPoint';
 import type ColumnRangePointOptions from './ColumnRangePointOptions.js';
 import type ColumnRangeSeries from './ColumnRangeSeries.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: {
-                    prototype: columnProto
-                }
-            }
-        },
-        arearange: {
-            prototype: {
-                pointClass: AreaRangePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const AreaRangePoint: typeof AreaRangePointType =
+    SeriesRegistry.seriesTypes.arearange.prototype.pointClass;
+const columnProto: ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,

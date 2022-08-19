@@ -16,16 +16,13 @@
  *
  * */
 
+import type LineSeriesType from '../Line/LineSeries';
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
 
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,

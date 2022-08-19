@@ -19,6 +19,8 @@
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
+import type AreaSeriesType from '../Area/AreaSeries';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -27,15 +29,9 @@ import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    area: AreaSeries,
-    area: {
-        prototype: areaProto
-    },
-    column: {
-        prototype: columnProto
-    }
-} = SeriesRegistry.seriesTypes;
+const AreaSeries: typeof AreaSeriesType = SeriesRegistry.seriesTypes.area;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -272,7 +268,7 @@ class AreaRangeSeries extends AreaSeries {
         const series = this,
             yAxis = series.yAxis;
 
-        areaProto.translate.apply(series);
+        super.translate.apply(series);
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
@@ -323,7 +319,7 @@ class AreaRangeSeries extends AreaSeries {
 
         const highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
-            getGraphPath = areaProto.getGraphPath,
+            getGraphPath = super.getGraphPath,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
@@ -518,9 +514,9 @@ class AreaRangeSeries extends AreaSeries {
 
                 this.options.dataLabels = upperDataLabelOptions;
 
-                if (areaProto.drawDataLabels) {
+                if ((super.drawDataLabels)) {
                     // #1209:
-                    areaProto.drawDataLabels.apply(this, arguments);
+                    super.drawDataLabels.apply(this, arguments);
                 }
 
                 // Reset state after the upper labels were created. Move
@@ -568,8 +564,8 @@ class AreaRangeSeries extends AreaSeries {
 
                 this.options.dataLabels = lowerDataLabelOptions;
 
-                if (areaProto.drawDataLabels) {
-                    areaProto.drawDataLabels.apply(this, arguments);
+                if ((super.drawDataLabels)) {
+                    super.drawDataLabels.apply(this, arguments);
                 }
             }
 
@@ -608,7 +604,7 @@ class AreaRangeSeries extends AreaSeries {
             point: AreaRangePoint;
 
         // Draw bottom points
-        areaProto.drawPoints.apply(series, arguments);
+        super.drawPoints.apply(series, arguments);
 
         // Prepare drawing top points
         i = 0;
@@ -651,7 +647,7 @@ class AreaRangeSeries extends AreaSeries {
         }
 
         // Draw top points
-        areaProto.drawPoints.apply(series, arguments);
+        super.drawPoints.apply(series, arguments);
 
         // Reset top points preliminary modifications
         i = 0;

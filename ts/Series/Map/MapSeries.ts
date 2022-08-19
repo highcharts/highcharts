@@ -21,20 +21,21 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
-import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
@@ -43,21 +44,16 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
-const {
-    splitPath
-} = MapChart;
+const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapView from '../../Maps/MapView.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    // indirect dependency to keep product size low
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -556,7 +552,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrillupTo(init?: boolean): void {
-        ColumnSeries.prototype.animateDrillupTo.call(this, init);
+        columnProto.animateDrillupTo.call(this, init);
     }
 
     public clearBounds(): void {
@@ -589,7 +585,7 @@ class MapSeries extends ScatterSeries {
      */
     public drawMapDataLabels(): void {
 
-        Series.prototype.drawDataLabels.call(this);
+        seriesProto.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
@@ -652,7 +648,7 @@ class MapSeries extends ScatterSeries {
             });
 
             // Draw the points
-            ColumnSeries.prototype.drawPoints.apply(this);
+            columnProto.drawPoints.apply(this);
 
             // Add class names
             this.points.forEach((point): void => {
@@ -937,7 +933,7 @@ class MapSeries extends ScatterSeries {
         const { mapView, styledMode } = point.series.chart;
         const attr = styledMode ?
             this.colorAttribs(point) :
-            ColumnSeries.prototype.pointAttribs.call(
+            columnProto.pointAttribs.call(
                 this, point as any, state
             );
 
@@ -1206,7 +1202,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
-        let options = Series.prototype.setOptions.call(this, itemOptions),
+        let options = seriesProto.setOptions.call(this, itemOptions),
             joinBy = options.joinBy,
             joinByNull = joinBy === null;
 

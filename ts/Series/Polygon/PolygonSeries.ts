@@ -10,22 +10,29 @@
 
 'use strict';
 
+/* *
+ *
+ *  Import
+ *
+ * */
+
+import type AreaSeriesType from '../Area/AreaSeries';
+import type LineSeriesType from '../Line/LineSeries';
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        area: AreaSeries,
-        line: LineSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const AreaSeries: typeof AreaSeriesType = SeriesRegistry.seriesTypes.area;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -36,7 +43,7 @@ import '../../Core/Legend/Legend.js';
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -44,7 +51,7 @@ class PolygonSeries extends ScatterSeries {
 
     /* *
      *
-     * Static properties
+     *  Static properties
      *
      * */
 
@@ -127,7 +134,7 @@ interface PolygonSeries {
 extend(PolygonSeries.prototype, {
     type: 'polygon',
     drawLegendSymbol: LegendSymbol.drawRectangle,
-    drawTracker: Series.prototype.drawTracker,
+    drawTracker: seriesProto.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 

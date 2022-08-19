@@ -16,17 +16,15 @@
  *
  * */
 
+import type HLCPointType from '../HLC/HLCPoint';
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
+import type Point from './../../Core/Series/Point.js';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
-import Point from './../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
-const {
-    seriesTypes: {
-        hlc: HLCSeries
-    }
-} = SeriesRegistry;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const HLCPoint: typeof HLCPointType =
+    SeriesRegistry.seriesTypes.hlc.prototype.pointClass;
 
 /* *
  *
@@ -34,7 +32,7 @@ const {
  *
  * */
 
-class OHLCPoint extends HLCSeries.prototype.pointClass {
+class OHLCPoint extends HLCPoint {
 
     /* *
      *

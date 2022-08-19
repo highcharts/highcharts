@@ -17,15 +17,14 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPointType from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -35,7 +34,7 @@ const { isNumber } = U;
  *
  * */
 
-class FlagsPoint extends ColumnSeries.prototype.pointClass {
+class FlagsPoint extends ColumnPoint {
 
     /* *
      *

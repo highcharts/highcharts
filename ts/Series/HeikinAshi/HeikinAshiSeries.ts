@@ -16,18 +16,15 @@
  *
  * */
 
+import type CandlestickSeriesType from '../Candlestick/CandlestickSeries';
 import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
+
+import Axis from '../../Core/Axis/Axis.js';
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const CandlestickSeries: typeof CandlestickSeriesType =
+    SeriesRegistry.seriesTypes.candlestick;
 import U from '../../Core/Utilities.js';
-import Axis from '../../Core/Axis/Axis.js';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
-
 const {
     addEvent,
     merge
@@ -238,6 +235,7 @@ addEvent(HeikinAshiSeries, 'updatedData', function (): void {
 
 // After processing and grouping the data,
 // calculate how the heikeinashi data set should look like.
+// @todo composition or move to processData
 addEvent(Axis, 'postProcessData', function (): void {
     const series = this.series;
 

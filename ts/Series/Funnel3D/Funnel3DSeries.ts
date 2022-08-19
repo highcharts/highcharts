@@ -21,8 +21,10 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Funnel3DComposition from './Funnel3DComposition.js';
@@ -32,12 +34,8 @@ const { noop } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -190,8 +188,6 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -250,7 +246,7 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         point.dlBox = dlBox;
-        ColumnSeries.prototype.alignDataLabel.apply(
+        super.alignDataLabel.apply(
             series,
             arguments
         );
@@ -261,7 +257,7 @@ class Funnel3DSeries extends ColumnSeries {
      * @private
      */
     public bindAxes(): void {
-        Series.prototype.bindAxes.apply(this, arguments);
+        seriesProto.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
             gridLineWidth: 0,
@@ -282,7 +278,7 @@ class Funnel3DSeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-        Series.prototype.translate.apply(this, arguments);
+        seriesProto.translate.apply(this, arguments);
 
         let sum = 0,
             series = this,
@@ -454,8 +450,6 @@ class Funnel3DSeries extends ColumnSeries {
             }
         });
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

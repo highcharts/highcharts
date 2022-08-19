@@ -19,6 +19,8 @@
  * */
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
+import type PieSeriesType from '../Pie/PieSeries';
+import type SankeySeriesType from '../Sankey/SankeySeries';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -27,12 +29,8 @@ import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        pie: PieSeries,
-        sankey: SankeySeries
-    }
-} = SeriesRegistry;
+const SankeySeries: typeof SankeySeriesType = SeriesRegistry.seriesTypes.sankey;
+const pieProto: PieSeriesType = SeriesRegistry.seriesTypes.pie.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -167,10 +165,7 @@ class DependencyWheelSeries extends SankeySeries {
     }
 
     public createNode(id: string): DependencyWheelPoint {
-        const node = SankeySeries.prototype.createNode.call(
-            this,
-            id
-        ) as DependencyWheelPoint;
+        const node = super.createNode(id) as DependencyWheelPoint;
 
         /**
          * Return the sum of incoming and outgoing links.
@@ -279,7 +274,7 @@ class DependencyWheelSeries extends SankeySeries {
             center = this.getCenter(),
             startAngle = ((options.startAngle as any) - 90) * deg2rad;
 
-        SankeySeries.prototype.translate.call(this);
+        super.translate.call(this);
 
         this.nodeColumns[0].forEach(function (node): void {
             // Don't render the nodes if sum is 0 #12453
@@ -398,13 +393,13 @@ class DependencyWheelSeries extends SankeySeries {
  * */
 
 interface DependencyWheelSeries {
-    getCenter: typeof PieSeries.prototype.getCenter;
+    getCenter: typeof pieProto.getCenter;
     orderNodes: boolean;
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
-    getCenter: PieSeries.prototype.getCenter
+    getCenter: pieProto.getCenter
 });
 
 /* *

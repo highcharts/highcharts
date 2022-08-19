@@ -20,18 +20,13 @@
  *
  * */
 
+import type ColumnPointType from '../Column/ColumnPoint';
 import type CylinderPointOptions from './CylinderPointOptions';
 import type CylinderSeries from './CylinderSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

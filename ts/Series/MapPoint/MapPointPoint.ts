@@ -19,13 +19,11 @@
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
-import type ScatterPoint from './../Scatter/ScatterPoint';
+import type ScatterPointType from './../Scatter/ScatterPoint';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -35,7 +33,7 @@ const { isNumber } = U;
  *
  * */
 
-class MapPointPoint extends ScatterSeries.prototype.pointClass {
+class MapPointPoint extends ScatterPoint {
 
     /* *
      *
@@ -73,7 +71,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface MapPointPoint extends ScatterPoint {
+interface MapPointPoint {
     bounds?: MapBounds;
 }
 

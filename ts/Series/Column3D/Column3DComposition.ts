@@ -8,6 +8,8 @@
  *
  * */
 
+// @todo put in compose function
+
 'use strict';
 
 /* *
@@ -94,8 +96,6 @@ declare module '../../Core/Series/SeriesOptions' {
  *  Functions
  *
  * */
-
-/* eslint-disable no-invalid-this */
 
 /**
  * @private

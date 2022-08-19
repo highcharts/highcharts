@@ -18,6 +18,7 @@
 
 import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -29,8 +30,8 @@ const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const Series: typeof SeriesType = SeriesRegistry.series;
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 const {

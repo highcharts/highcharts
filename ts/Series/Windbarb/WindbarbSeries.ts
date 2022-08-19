@@ -12,24 +12,29 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../Core/Chart/Chart';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -38,6 +43,12 @@ const {
 } = U;
 import WindbarbPoint from './WindbarbPoint.js';
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
@@ -45,12 +56,11 @@ import WindbarbPoint from './WindbarbPoint.js';
  *
  * @augments Highcharts.Series
  */
-
 class WindbarbSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -71,7 +81,6 @@ class WindbarbSeries extends ColumnSeries {
      * @requires     modules/windbarb
      * @optionparent plotOptions.windbarb
      */
-
     public static defaultOptions: WindbarbSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * Data grouping options for the wind barbs. In Highcharts, this
@@ -164,10 +173,10 @@ class WindbarbSeries extends ColumnSeries {
 
     /* *
      *
-     * Static functions
+     *  Static Functions
      *
      * */
-    // eslint-disable-next-line valid-jsdoc
+
     /**
      * Once off, register the windbarb approximation for data grouping. This can
      * be called anywhere (not necessarily in the translate function), but must
@@ -212,7 +221,7 @@ class WindbarbSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -222,15 +231,16 @@ class WindbarbSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     public init(
         chart: Chart,
         options: WindbarbSeriesOptions
     ): void {
         WindbarbSeries.registerApproximation();
-        Series.prototype.init.call(this, chart, options);
+        seriesProto.init.call(this, chart, options);
     }
 
     // Get presentational attributes.
@@ -428,6 +438,12 @@ class WindbarbSeries extends ColumnSeries {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     beaufortFloor: Array<number>;
     beaufortName: Array<string>;
@@ -479,9 +495,10 @@ extend(WindbarbSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
+
 WindbarbSeries.registerApproximation();
 
 declare module '../../Core/Series/SeriesType' {
@@ -494,14 +511,14 @@ SeriesRegistry.registerSeriesType('windbarb', WindbarbSeries);
 
 /* *
  *
- * Export default
+ *  Default Export
  *
  * */
 export default WindbarbSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

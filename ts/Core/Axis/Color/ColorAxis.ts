@@ -27,6 +27,7 @@ import type GradientColor from '../../Color/GradientColor';
 import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
 import type PointerEvent from '../../PointerEvent';
+import type SeriesType from '../../Series/Series';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
@@ -41,7 +42,7 @@ const { noop } = H;
 import Legend from '../../Legend/Legend.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Utilities.js';
 const {
     extend,
@@ -154,7 +155,7 @@ class ColorAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart,
         FxClass: typeof Fx,
         LegendClass: typeof Legend,
-        SeriesClass: typeof Series
+        SeriesClass: typeof SeriesType
     ): void {
         ColorAxisComposition.compose(
             ColorAxis,
@@ -683,7 +684,7 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                const cExtremes = Series.prototype.getExtremes.call(
+                const cExtremes = seriesProto.getExtremes.call(
                     cSeries,
                     colorValArray
                 );
@@ -700,7 +701,7 @@ class ColorAxis extends Axis implements AxisLike {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.applyExtremes.call(cSeries);
+                seriesProto.applyExtremes.call(cSeries);
             }
         }
     }

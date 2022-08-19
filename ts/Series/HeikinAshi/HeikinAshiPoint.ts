@@ -16,15 +16,12 @@
  *
  * */
 
+import type CandelstickPointType from '../Candlestick/CandlestickPoint';
+import type HeikinAshiSeries from './HeikinAshiSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import HeikinAshiSeries from './HeikinAshiSeries';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
+const CandlestickPoint: typeof CandelstickPointType =
+    SeriesRegistry.seriesTypes.candlestick.prototype.pointClass;
 
 /* *
  *
@@ -32,7 +29,7 @@ const {
  *
  * */
 
-class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
+class HeikinAshiPoint extends CandlestickPoint {
 
     /* *
      *
@@ -41,12 +38,6 @@ class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
      * */
 
     public series: HeikinAshiSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
 }
 

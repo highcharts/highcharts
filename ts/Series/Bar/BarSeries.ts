@@ -18,9 +18,10 @@
 
 import type BarPoint from './BarPoint';
 import type BarSeriesOptions from './BarSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 
-import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -61,9 +62,12 @@ class BarSeries extends ColumnSeries {
      * @product      highcharts
      * @optionparent plotOptions.bar
      */
-    public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // nothing here yet
-    });
+    public static defaultOptions: BarSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            // nothing here yet
+        }
+    );
 
     /* *
      *

@@ -16,26 +16,31 @@
  *
  * */
 
-import HollowCandlestickPoint from './HollowCandlestickPoint.js';
-import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import type CandlestickSeriesType from '../Candlestick/CandlestickSeries';
+import type HollowCandlestickSeriesOptions from
+    './HollowCandlestickSeriesOptions';
+
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
-
-const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
-} = SeriesRegistry;
-
+import HollowCandlestickPoint from './HollowCandlestickPoint.js';
+import { Palette } from '../../Core/Color/Palettes.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const CandlestickSeries: typeof CandlestickSeriesType =
+    SeriesRegistry.seriesTypes.candlestick;
+import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';
@@ -43,7 +48,7 @@ interface HollowcandleInfo {
 
 /* *
  *
- *  Code
+ *  Class
  *
  * */
 
@@ -60,7 +65,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -142,9 +147,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<HollowCandlestickPoint> = void 0 as any;
 
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
@@ -155,7 +161,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -327,6 +333,7 @@ addEvent(HollowCandlestickSeries, 'updatedData', function (): void {
 // After processing and grouping the data,
 // check if the candle is bearish or bullish.
 // Required for further calculation.
+// @todo composition or move to processData
 addEvent(Axis, 'postProcessData', function (): void {
     const axis = this,
         series = axis.series;
@@ -350,7 +357,7 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -364,16 +371,18 @@ SeriesRegistry.registerSeriesType('hollowcandlestick', HollowCandlestickSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
+
 export default HollowCandlestickSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
+
 /**
  * A `hollowcandlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](

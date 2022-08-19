@@ -17,8 +17,10 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import FlagsPoint from './FlagsPoint.js';
@@ -29,12 +31,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -75,7 +73,7 @@ interface DistributedBoxObject extends R.BoxObject {
 
 /* *
  *
- *  Classes
+ *  Class
  *
  * */
 
@@ -337,7 +335,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data: Array<FlagsPoint> = void 0 as any;
 
-    public onSeries?: typeof Series.prototype;
+    public onSeries?: typeof seriesProto;
 
     public options: FlagsSeriesOptions = void 0 as any;
 
@@ -654,7 +652,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public setClip(): void {
-        Series.prototype.setClip.apply(this, arguments as any);
+        seriesProto.setClip.apply(this, arguments as any);
         if (
             this.options.clip !== false &&
             this.sharedClipKey &&
@@ -679,7 +677,7 @@ interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     group: typeof ColumnSeries.prototype.group;
     pointClass: typeof FlagsPoint;
     takeOrdinalPosition: boolean;
-    init: typeof Series.prototype['init'];
+    init: typeof seriesProto.init;
     remove: typeof ColumnSeries.prototype.remove;
 }
 
@@ -698,7 +696,7 @@ extend(FlagsSeries.prototype, {
      * Inherit the initialization from base Series.
      * @private
      */
-    init: Series.prototype.init,
+    init: seriesProto.init,
     /**
      * Don't invert the flag marker group (#4960).
      * @private

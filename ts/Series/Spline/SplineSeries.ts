@@ -16,14 +16,13 @@
  *
  * */
 
+import type LineSeriesType from '../Line/LineSeries';
 import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -82,8 +81,6 @@ class SplineSeries extends LineSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the spline segment from a given point's previous neighbour to the
@@ -242,8 +239,6 @@ class SplineSeries extends LineSeries {
 
         return ret;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

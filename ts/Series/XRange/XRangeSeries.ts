@@ -20,6 +20,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type SeriesClass from '../../Core/Series/Series';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
@@ -27,6 +28,7 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
+import type SeriesType from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
@@ -34,14 +36,8 @@ const { noop } = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -647,7 +643,7 @@ class XRangeSeries extends ColumnSeries {
 
 /* *
  *
- * Class Properties
+ *  Class Properties
  *
  * */
 
@@ -677,7 +673,7 @@ extend(XRangeSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -691,7 +687,7 @@ SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 

@@ -23,21 +23,16 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type ScatterPointType from '../Scatter/ScatterPoint';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import ColorMapComposition from '../ColorMapComposition.js';
-import MapUtilities from '../../Maps/MapUtilities.js';
-const {
-    boundsFromPath
-} = MapUtilities;
+import MU from '../../Maps/MapUtilities.js';
+const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    // indirect dependency to keep product size low
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -51,7 +46,7 @@ const {
  *
  * */
 
-class MapPoint extends ScatterSeries.prototype.pointClass {
+class MapPoint extends ScatterPoint {
 
     /* *
      *
@@ -83,10 +78,11 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-    // Get the projected path based on the geometry. May also be called on
-    // mapData options (not point instances), hence static.
+    /**
+     * Get the projected path based on the geometry. May also be called on
+     * mapData options (not point instances), hence static.
+     * @private
+     */
     public static getProjectedPath(
         point: MapPoint,
         projection?: Projection
@@ -215,8 +211,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -233,6 +227,7 @@ interface MapPoint extends ColorMapComposition.PointComposition {
     value: ColorMapComposition.PointComposition['value'];
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
+
 extend(MapPoint.prototype, {
     dataLabelOnNull: ColorMapComposition.pointMembers.dataLabelOnNull,
     moveToTopOnHover: ColorMapComposition.pointMembers.moveToTopOnHover,

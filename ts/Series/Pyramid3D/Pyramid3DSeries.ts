@@ -19,14 +19,13 @@
  *
  * */
 
+import type Funnel3DSeriesType from '../Funnel3D/Funnel3DSeries';
 import type Pyramid3DPoint from './Pyramid3DPoint';
 import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        funnel3d: Funnel3DSeries
-    }
-} = SeriesRegistry;
+const Funnel3DSeries: typeof Funnel3DSeriesType =
+    SeriesRegistry.seriesTypes.funnel3d;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 

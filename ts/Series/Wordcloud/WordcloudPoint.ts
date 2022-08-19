@@ -18,30 +18,30 @@
  *
  * */
 
+import type ColumnPointType from '../Column/ColumnPoint';
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import WordcloudSeries from './WordcloudSeries';
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class WordcloudPoint extends ColumnPoint {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -55,7 +55,7 @@ class WordcloudPoint extends ColumnPoint {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 

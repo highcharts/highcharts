@@ -18,6 +18,7 @@
 
 import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
+import type LineSeriesType from '../Line/LineSeries';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
@@ -28,11 +29,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -237,8 +234,6 @@ class AreaSeries extends LineSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Draw the graph and the underlying area. This method calls the Series
@@ -617,8 +612,6 @@ class AreaSeries extends LineSeries {
 
         return segment;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

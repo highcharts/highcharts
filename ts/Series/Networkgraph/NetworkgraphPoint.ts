@@ -22,19 +22,15 @@ import type { DragNodesPoint } from '../DragNodesComposition';
 import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
 import type NetworkgraphSeries from './NetworkgraphSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type PointType from '../../Core/Series/Point';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto,
-        prototype: {
-            pointClass: Point
-        }
-    }
-} = SeriesRegistry;
+const Point: typeof PointType = SeriesRegistry.series.prototype.pointClass;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

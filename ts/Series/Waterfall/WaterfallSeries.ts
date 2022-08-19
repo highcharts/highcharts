@@ -10,7 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type LineSeriesType from '../Line/LineSeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -21,12 +29,8 @@ import Chart from '../../Core/Chart/Chart.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const lineProto: LineSeriesType = SeriesRegistry.seriesTypes.line.prototype;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -53,7 +57,11 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-import '../../Core/DefaultOptions.js';
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Returns true if the key is a direct property of the object.
@@ -69,10 +77,6 @@ function ownProp(obj: unknown, key: string): boolean {
     return Object.hasOwnProperty.call(obj, key);
 }
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-// eslint-disable-next-line valid-jsdoc
-
 /**
  * Waterfall series type.
  *
@@ -82,7 +86,7 @@ class WaterfallSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -184,7 +188,7 @@ class WaterfallSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -210,9 +214,10 @@ class WaterfallSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     // After generating points, set y-values for all sums.
     public generatePoints(): void {
         let point,
@@ -729,7 +734,7 @@ class WaterfallSeries extends ColumnSeries {
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
     public drawGraph(): void {
-        LineSeries.prototype.drawGraph.call(this);
+        lineProto.drawGraph.call(this);
         (this.graph as any).attr({
             d: this.getCrispPath()
         });
@@ -943,15 +948,21 @@ class WaterfallSeries extends ColumnSeries {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface WaterfallSeries {
-    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
+    getZonesGraphs: typeof lineProto.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;
 }
 
 extend(WaterfallSeries.prototype, {
-    getZonesGraphs: LineSeries.prototype.getZonesGraphs,
+    getZonesGraphs: lineProto.getZonesGraphs,
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
@@ -959,10 +970,9 @@ extend(WaterfallSeries.prototype, {
     pointClass: WaterfallPoint
 });
 
-
 /* *
  *
- * Class namespace
+ *  Class Namespace
  *
  * */
 
@@ -974,7 +984,7 @@ namespace WaterfallSeries {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -988,16 +998,17 @@ WaterfallAxis.compose(Axis, Chart);
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default WaterfallSeries;
 
-/**
+/* *
  *
- * API Options
+ *  API Options
  *
- */
+ * */
 
 /**
  * A `waterfall` series. If the [type](#series.waterfall.type) option

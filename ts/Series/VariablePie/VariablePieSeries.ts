@@ -18,14 +18,11 @@
  *
  * */
 
+import type PieSeriesType from '../Pie/PieSeries';
 import type VariablePiePoint from './VariablePiePoint';
 import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -37,12 +34,19 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         maxPxSize?: number;
         minPxSize?: number;
     }
 }
+
 /* *
  *
  *  Class
@@ -171,8 +175,6 @@ class VariablePieSeries extends PieSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Before standard translate method for pie chart it is needed to calculate
@@ -477,8 +479,6 @@ class VariablePieSeries extends PieSeries {
         }
         return null;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

@@ -18,14 +18,15 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const Series: typeof SeriesType = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
 const {
     defined,

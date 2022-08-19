@@ -18,14 +18,12 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -35,7 +33,6 @@ const {
 } = U;
 
 import './VariwideComposition.js';
-
 
 /* *
  *
@@ -320,7 +317,7 @@ class VariwideSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype properties
+ *  Class Prototype
  *
  * */
 interface VariwideSeries {
@@ -338,7 +335,7 @@ extend(VariwideSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 declare module '../../Core/Series/SeriesType' {
@@ -351,14 +348,15 @@ SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
+
 export default VariwideSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

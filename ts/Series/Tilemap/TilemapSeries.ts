@@ -20,17 +20,19 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type ColumnSeriesType from '../Column/ColumnSeries';
+import type HeatmapSeriesType from '../Heatmap/HeatmapSeries';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
 import type TilemapSeriesOptions from './TilemapSeriesOptions';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        heatmap: HeatmapSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const HeatmapSeries: typeof HeatmapSeriesType =
+    SeriesRegistry.seriesTypes.heatmap;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';
@@ -207,8 +209,6 @@ class TilemapSeries extends HeatmapSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Use the shape's defined data label alignment function.
      * @private
@@ -313,8 +313,6 @@ class TilemapSeries extends HeatmapSeries {
             Array.prototype.slice.call(arguments) as any
         );
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

@@ -20,18 +20,17 @@ import type MapChart from '../../Core/Chart/MapChart';
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
+import type Point from '../../Core/Series/Point';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
 import U from '../../Core/Utilities.js';
 const {
     extend,

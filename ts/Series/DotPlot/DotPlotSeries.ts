@@ -26,12 +26,14 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DotPlotPoint from './DotPlotPoint';
 import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import ColumnSeries from '../Column/ColumnSeries.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -39,8 +41,6 @@ const {
     objectEach,
     pick
 } = U;
-
-import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -55,12 +55,11 @@ import '../Column/ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-
 class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
@@ -77,7 +76,7 @@ class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -89,7 +88,7 @@ class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -199,9 +198,15 @@ class DotPlotSeries extends ColumnSeries {
     }
 }
 
-interface DotPlotSeries extends ColumnSeries {
-    pointAttr?: SVGAttributes;
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DotPlotSeries {
     pointClass: typeof DotPlotPoint;
+    pointAttr?: SVGAttributes;
 }
 
 extend(DotPlotSeries.prototype, {
@@ -224,7 +229,7 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 

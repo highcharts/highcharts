@@ -17,6 +17,7 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
@@ -24,11 +25,7 @@ import type Series from '../../Core/Series/Series';
 
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -40,14 +37,17 @@ const {
     objectEach
 } = U;
 
-/* ************************************************************************** *
- *  HISTOGRAM
- * ************************************************************************** */
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 /**
  * A dictionary with formulas for calculating number of bins based on the
- * base series
- **/
+ * base series.
+ * @private
+ */
 const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (baseSeries: Series): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
@@ -65,6 +65,12 @@ const binsNumberFormulas: Record<string, Function> = {
         );
     }
 };
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Returns a function for mapping number to the closed (right opened) bins

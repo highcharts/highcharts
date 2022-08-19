@@ -19,9 +19,12 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type { DragNodesSeries } from '../DragNodesComposition';
+import type LineSeriesType from '../Line/LineSeries';
 import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -35,17 +38,10 @@ import NetworkgraphSeriesDefaults from './NetworkgraphSeriesDefaults.js';
 import NodesComposition from '../NodesComposition.js';
 import ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
-        line: {
-            prototype: lineProto
-        }
-    }
-} = SeriesRegistry;
+const Series: typeof SeriesType = SeriesRegistry.series;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
+const lineProto: LineSeriesType = SeriesRegistry.seriesTypes.line.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

@@ -18,10 +18,12 @@
  *
  * */
 
+import type FunnelSeriesType from '../Funnel/FunnelSeries';
 import type PyramidPoint from './PyramidPoint';
 import type PyramidSeriesOptions from './PyramidSeriesOptions';
-import FunnelSeries from '../Funnel/FunnelSeries.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const FunnelSeries: typeof FunnelSeriesType = SeriesRegistry.seriesTypes.funnel;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 

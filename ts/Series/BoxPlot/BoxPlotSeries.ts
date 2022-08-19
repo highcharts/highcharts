@@ -18,19 +18,27 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColumnSeries from '../Column/ColumnSeries.js';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The boxplot series type.
@@ -41,18 +49,11 @@ const {
  *
  * @augments Highcharts.Series
  */
-
-/* *
- *
- *  Class
- *
- * */
-
 class BoxPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
@@ -331,7 +332,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
     public data: Array<BoxPlotPoint> = void 0 as any;
@@ -343,7 +344,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -603,10 +604,11 @@ class BoxPlotSeries extends ColumnSeries {
 
 /* *
  *
- * Class Prototype
+ *  Class Prototype
  *
  * */
-interface BoxPlotSeries extends ColumnSeries {
+
+interface BoxPlotSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof BoxPlotPoint;
@@ -625,7 +627,7 @@ extend(BoxPlotSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -642,14 +644,14 @@ declare module '../../Core/Series/SeriesType' {
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 export default BoxPlotSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

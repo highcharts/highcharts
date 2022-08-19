@@ -16,6 +16,7 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type {
     GaugeSeriesDialOptions,
     GaugeSeriesOptions
@@ -25,6 +26,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
@@ -33,12 +35,9 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const Series: typeof SeriesType = SeriesRegistry.series;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -654,7 +653,7 @@ extend(GaugeSeries.prototype, {
     angular: true,
     directTouch: true, // #5063
     drawGraph: noop,
-    drawTracker: ColumnSeries.prototype.drawTracker,
+    drawTracker: columnProto.drawTracker,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,

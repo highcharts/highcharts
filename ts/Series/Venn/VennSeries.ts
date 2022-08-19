@@ -28,6 +28,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -52,11 +53,8 @@ import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
@@ -66,7 +64,6 @@ const {
     isArray,
     isNumber,
     isObject,
-    isString,
     merge
 } = U;
 

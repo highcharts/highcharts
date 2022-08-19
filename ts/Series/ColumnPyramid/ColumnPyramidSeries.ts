@@ -18,13 +18,13 @@
 
 import type ColumnPyramidPoint from './ColumnPyramidPoint';
 import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
-import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: colProto } = ColumnSeries;
+import type ColumnSeriesType from '../Column/ColumnSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    extend,
     merge,
     pick
 } = U;
@@ -131,7 +131,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
-        colProto.translate.apply(series);
+        super.translate.apply(series);
 
         // Record the new values
         series.points.forEach(function (
@@ -280,7 +280,7 @@ class ColumnPyramidSeries extends ColumnSeries {
  * Prototype properties
  *
  * */
-interface ColumnPyramidSeries extends ColumnSeries {
+interface ColumnPyramidSeries {
     pointClass: typeof ColumnPyramidPoint;
 }
 

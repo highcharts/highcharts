@@ -20,11 +20,13 @@
 
 import type Scatter3DPointOptions from './Scatter3DPointOptions';
 import type Scatter3DSeries from './Scatter3DSeries';
-import ScatterSeries from '../Scatter/ScatterSeries.js';
+import type ScatterPointType from '../Scatter/ScatterPoint';
+
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
+const { defined } = U;
 
 /* *
  *
@@ -32,7 +34,7 @@ const {
  *
  * */
 
-class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
+class Scatter3DPoint extends ScatterPoint {
 
     /* *
      *

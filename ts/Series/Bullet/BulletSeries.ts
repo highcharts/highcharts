@@ -15,17 +15,14 @@
  *  Imports
  *
  * */
-import '../Column/ColumnSeries.js';
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+
 import BulletPoint from './BulletPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -151,7 +148,7 @@ class BulletSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -165,11 +162,9 @@ class BulletSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Draws the targets. For inverted chart, the `series.group` is rotated,
@@ -335,8 +330,6 @@ class BulletSeries extends ColumnSeries {
         return dataExtremes;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -351,11 +344,10 @@ interface BulletSeries {
     pointClass: typeof BulletPoint;
 }
 extend(BulletSeries.prototype, {
+    pointClass: BulletPoint,
     parallelArrays: ['x', 'y', 'target'],
     pointArrayMap: ['y', 'target']
 });
-
-BulletSeries.prototype.pointClass = BulletPoint;
 
 /* *
  *
@@ -380,7 +372,7 @@ export default BulletSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

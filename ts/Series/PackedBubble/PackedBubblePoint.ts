@@ -25,15 +25,8 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        bubble: {
-            prototype: {
-                pointClass: BubblePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const BubblePoint: typeof BubblePointType =
+    SeriesRegistry.seriesTypes.bubble.prototype.pointClass;
 
 /* *
  *
@@ -101,8 +94,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Destroy point.
      * Then remove point from the layout.
@@ -146,8 +137,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             Point.prototype.select.apply(this, arguments);
         }
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

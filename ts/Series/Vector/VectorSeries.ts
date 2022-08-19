@@ -18,20 +18,20 @@
  *
  * */
 
-import type VectorPoint from './VectorPoint';
-import type VectorSeriesOptions from './VectorSeriesOptions';
+import type ScatterSeriesType from '../Scatter/ScatterSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type VectorPoint from './VectorPoint';
+import type VectorSeriesOptions from './VectorSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterSeries: typeof ScatterSeriesType =
+    SeriesRegistry.seriesTypes.scatter;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -151,8 +151,6 @@ class VectorSeries extends ScatterSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Fade in the arrows on initializing series.
@@ -306,12 +304,10 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        Series.prototype.translate.call(this);
+        seriesProto.translate.call(this);
 
         this.lengthMax = arrayMax(this.lengthData as any);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -322,11 +318,21 @@ class VectorSeries extends ScatterSeries {
  * */
 
 interface VectorSeries {
+    pointClass: typeof VectorPoint;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointClass: typeof VectorPoint;
 }
 extend(VectorSeries.prototype, {
+
+    /**
+     * @ignore
+     * @deprecated
+     */
+    markerAttribs: H.noop as any,
+
+    parallelArrays: ['x', 'y', 'length', 'direction'],
+
+    pointArrayMap: ['y', 'length', 'direction'],
 
     /**
      * @ignore
@@ -338,17 +344,7 @@ extend(VectorSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    getSymbol: H.noop,
-
-    /**
-     * @ignore
-     * @deprecated
-     */
-    markerAttribs: H.noop as any,
-
-    parallelArrays: ['x', 'y', 'length', 'direction'],
-
-    pointArrayMap: ['y', 'length', 'direction']
+    getSymbol: H.noop
 
 });
 

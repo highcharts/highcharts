@@ -12,15 +12,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AreaSplineSeriesType from '../AreaSpline/AreaSplineSeries';
 import type StreamgraphPoint from './StreamgraphPoint';
 import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        areaspline: AreaSplineSeries
-    }
-} = SeriesRegistry;
+const AreaSplineSeries: typeof AreaSplineSeriesType =
+    SeriesRegistry.seriesTypes.areaspline;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -112,6 +116,12 @@ class StreamgraphSeries extends AreaSplineSeries {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface StreamgraphSeries {
     negStacks: boolean;
     pointClass: typeof StreamgraphPoint;
@@ -140,7 +150,7 @@ SeriesRegistry.registerSeriesType('streamgraph', StreamgraphSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
@@ -148,7 +158,7 @@ export default StreamgraphSeries;
 
 /* *
  *
- *  API options
+ *  API Options
  *
  * */
 
@@ -246,4 +256,4 @@ export default StreamgraphSeries;
  * @apioption series.streamgraph.fillOpacity
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

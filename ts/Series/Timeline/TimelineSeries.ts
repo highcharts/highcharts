@@ -21,6 +21,9 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
+import type LineSeriesType from '../Line/LineSeries';
+import type Point from '../../Core/Series/Point';
 import type RangeSelector from '../../Extensions/RangeSelector';
 import type {
     TimelineDataLabelContextObject,
@@ -28,7 +31,6 @@ import type {
 } from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
-import type Point from '../../Core/Series/Point';
 import type {
     PointMarkerOptions,
     PointStatesOptions
@@ -41,12 +43,8 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';

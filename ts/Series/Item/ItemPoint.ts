@@ -20,14 +20,15 @@
 
 import type ItemPointOptions from './ItemPointOptions';
 import type ItemSeries from './ItemSeries';
+import type PiePointType from '../Pie/PiePoint';
+import type PointType from '../../Core/Series/Point';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+const PiePoint: typeof PiePointType =
+    SeriesRegistry.seriesTypes.pie.prototype.pointClass;
+const pointProto: PointType =
+    SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -37,7 +38,7 @@ const { extend } = U;
  *
  * */
 
-class ItemPoint extends PieSeries.prototype.pointClass {
+class ItemPoint extends PiePoint {
 
     /* *
      *
@@ -60,10 +61,10 @@ class ItemPoint extends PieSeries.prototype.pointClass {
  * */
 
 interface ItemPoint {
-    haloPath: typeof Series.prototype.pointClass.prototype.haloPath;
+    haloPath: typeof pointProto.haloPath;
 }
 extend(ItemPoint.prototype, {
-    haloPath: Series.prototype.pointClass.prototype.haloPath
+    haloPath: pointProto.haloPath
 });
 
 /* *

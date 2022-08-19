@@ -18,6 +18,8 @@
  *
  * */
 
+import type GaugeSeriesType from '../Gauge/GaugeSeries';
+import type PieSeriesType from '../Pie/PieSeries';
 import type SolidGaugePoint from './SolidGaugePoint';
 import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -25,14 +27,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        gauge: GaugeSeries,
-        pie: {
-            prototype: pieProto
-        }
-    }
-} = SeriesRegistry;
+const GaugeSeries: typeof GaugeSeriesType = SeriesRegistry.seriesTypes.gauge;
+const pieProto: PieSeriesType = SeriesRegistry.seriesTypes.pie.prototype;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -175,8 +171,10 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-    public static defaultOptions: SolidGaugeSeriesOptions = merge(GaugeSeries.defaultOptions,
-        solidGaugeOptions as SolidGaugeSeriesOptions);
+    public static defaultOptions: SolidGaugeSeriesOptions = merge(
+        GaugeSeries.defaultOptions,
+        solidGaugeOptions as SolidGaugeSeriesOptions
+    );
 
     /* *
      *

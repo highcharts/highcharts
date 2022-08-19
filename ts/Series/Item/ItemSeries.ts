@@ -21,6 +21,7 @@
 import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
+import type PieSeriesType from '../Pie/PieSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
@@ -30,11 +31,7 @@ import ItemPoint from './ItemPoint.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 const {
     defined,

@@ -16,14 +16,15 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
+import type LineSeriesType from '../Line/LineSeries';
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
+const columnProto: ColumnSeriesType =
+    SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -173,8 +174,6 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Optionally add the jitter effect.
      * @private
@@ -244,8 +243,6 @@ class ScatterSeries extends LineSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -259,7 +256,7 @@ interface ScatterSeries {
     takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
-    drawTracker: ColumnSeries.prototype.drawTracker,
+    drawTracker: columnProto.drawTracker,
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
@@ -274,13 +271,9 @@ extend(ScatterSeries.prototype, {
  *
  * */
 
-/* eslint-disable no-invalid-this */
-
 addEvent(ScatterSeries, 'afterTranslate', function (): void {
     this.applyJitter();
 });
-
-/* eslint-enable no-invalid-this */
 
 /* *
  *

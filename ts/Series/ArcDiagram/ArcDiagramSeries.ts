@@ -20,21 +20,19 @@
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SankeySeriesType from '../Sankey/SankeySeries';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ArcDiagramPoint from './ArcDiagramPoint.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const SankeySeries: typeof SankeySeriesType = SeriesRegistry.seriesTypes.sankey;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 
 const { prototype: { symbols } } = SVGRenderer;
-const {
-    seriesTypes: {
-        sankey: SankeySeries
-    }
-} = SeriesRegistry;
 const {
     extend,
     merge,
@@ -633,7 +631,7 @@ class ArcDiagramSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
+            const { opacity, ...attrs } = seriesProto.pointAttribs.apply(
                 this,
                 arguments
             );

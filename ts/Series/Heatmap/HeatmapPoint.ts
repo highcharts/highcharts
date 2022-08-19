@@ -19,18 +19,12 @@
 import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
+import type ScatterPointType from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const ScatterPoint: typeof ScatterPointType =
+    SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

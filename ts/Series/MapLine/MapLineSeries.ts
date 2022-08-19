@@ -18,11 +18,14 @@
 
 import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
+import type MapSeriesType from '../Map/MapSeries';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import MapSeries from '../Map/MapSeries.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+const MapSeries: typeof MapSeriesType = SeriesRegistry.seriesTypes.map;
+const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -139,7 +142,7 @@ extend(MapLineSeries.prototype, {
 
     colorProp: 'stroke',
 
-    drawLegendSymbol: Series.prototype.drawLegendSymbol,
+    drawLegendSymbol: seriesProto.drawLegendSymbol,
 
     pointAttrToOptions: {
         'stroke': 'color',

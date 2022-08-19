@@ -24,6 +24,7 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -40,8 +41,8 @@ const {
 } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const Series: typeof SeriesType = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

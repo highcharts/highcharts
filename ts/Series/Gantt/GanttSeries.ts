@@ -19,19 +19,18 @@
  * */
 
 import type GanttSeriesOptions from './GanttSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type XRangeSeriesType from '../XRange/XRangeSeries';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        xrange: XRangeSeries
-    }
-} = SeriesRegistry;
+const Series: typeof SeriesType = SeriesRegistry.series;
+const XRangeSeries: typeof XRangeSeriesType = SeriesRegistry.seriesTypes.xrange;
+const seriesProto: SeriesType = Series.prototype;
 import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -283,7 +282,7 @@ extend(GanttSeries.prototype, { // props - series member overrides
 
     pointClass: GanttPoint,
 
-    setData: Series.prototype.setData
+    setData: seriesProto.setData
 
 });
 

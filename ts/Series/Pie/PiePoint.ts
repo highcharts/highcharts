@@ -22,13 +22,15 @@ import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePointOptions from './PiePointOptions';
 import type PieSeries from './PieSeries';
+import type PointType from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
-import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const Point: typeof PointType = SeriesRegistry.series.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

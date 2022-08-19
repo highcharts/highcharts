@@ -16,19 +16,18 @@
  *
  * */
 
+import type HLCSeriesType from '../HLC/HLCSeries';
 import type OHLCSeriesOptions from './OHLCSeriesOptions';
+import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        hlc: HLCSeries
-    }
-} = SeriesRegistry;
+const HLCSeries: typeof HLCSeriesType = SeriesRegistry.seriesTypes.hlc;
+const Series: typeof SeriesType = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
 import LineSeriesOptions from '../Line/LineSeriesOptions';
 

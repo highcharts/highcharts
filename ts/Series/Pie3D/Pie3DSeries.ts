@@ -19,8 +19,10 @@
  * */
 
 import type ColorString from '../../Core/Color/ColorString';
+import type PieSeriesType from '../Pie/PieSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import H from '../../Core/Globals.js';
 const {
     deg2rad,
@@ -28,11 +30,7 @@ const {
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+const PieSeries: typeof PieSeriesType = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 const {
     extend,

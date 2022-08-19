@@ -16,18 +16,16 @@
  *
  * */
 
+import type ColumnSeriesType from '../Column/ColumnSeries';
 import type HLCSeriesOptions from './HLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import HLCPoint from './HLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -395,6 +393,7 @@ interface HLCSeries {
     toYData(point: HLCPoint): Array<number>;
 }
 extend(HLCSeries.prototype, {
+    pointClass: HLCPoint,
     animate: null as any, // Disable animation
     directTouch: false,
     pointArrayMap: ['high', 'low', 'close'],
@@ -404,8 +403,6 @@ extend(HLCSeries.prototype, {
     },
     pointValKey: 'close'
 });
-
-HLCSeries.prototype.pointClass = HLCPoint;
 
 /* *
  *

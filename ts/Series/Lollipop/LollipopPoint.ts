@@ -16,29 +16,19 @@
  *
  * */
 
+import type AreaPointType from '../Area/AreaPoint';
+import type DumbbellPointType from '../Dumbbell/DumbbellPoint';
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
+import type PointType from '../../Core/Series/Point';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
-        }
-    },
-    seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
-        dumbbell: {
-            prototype: {
-                pointClass: DumbbellPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+const DumbbellPoint: typeof DumbbellPointType =
+    SeriesRegistry.seriesTypes.dumbbell.prototype.pointClass;
+const areaProto: AreaPointType =
+    SeriesRegistry.seriesTypes.area.prototype.pointClass.prototype;
+const pointProto: PointType =
+    SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';
 const {
     isObject,
@@ -90,11 +80,11 @@ class LollipopPoint extends DumbbellPoint {
  * */
 
 interface LollipopPoint {
-    pointSetState: typeof areaProto.pointClass.prototype.setState;
+    pointSetState: typeof areaProto.setState;
 }
 
 extend(LollipopPoint.prototype, {
-    pointSetState: areaProto.pointClass.prototype.setState,
+    pointSetState: areaProto.setState,
     // Does not work with the inherited `isvalid`
     isValid: pointProto.isValid
 });
