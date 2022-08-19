@@ -219,7 +219,6 @@ class OrganizationSeries extends SankeySeries {
                     SankeyDataLabelFormatterContext
                 )
             ): string {
-
                 const outerStyle: CSSObject = {
                         width: '100%',
                         height: '100%',
@@ -262,24 +261,33 @@ class OrganizationSeries extends SankeySeries {
                     }, 'style="') + '"';
                 }
 
-                if ((this.point as any).image) {
+                const {
+                    description,
+                    image,
+                    title
+                } = this.point as OrganizationPoint;
+
+                if (image) {
                     imageStyle['max-width'] = '30%';
                     innerStyle.width = '70%';
                 }
 
                 // PhantomJS doesn't support flex, roll back to absolute
                 // positioning
-                if ((this as any).series.chart.renderer.forExport) {
+                if (
+                    (this as OrganizationDataLabelFormatterContext)
+                        .series.chart.renderer.forExport
+                ) {
                     outerStyle.display = 'block';
                     innerStyle.position = 'absolute';
-                    innerStyle.left = (this.point as any).image ? '30%' : 0;
+                    innerStyle.left = image ? '30%' : 0;
                     innerStyle.top = 0;
                 }
 
                 let html = '<div ' + styleAttr(outerStyle) + '>';
 
-                if ((this.point as any).image) {
-                    html += '<img src="' + (this.point as any).image + '" ' +
+                if (image) {
+                    html += '<img src="' + image + '" ' +
                         styleAttr(imageStyle) + '>';
                 }
 
@@ -290,14 +298,14 @@ class OrganizationSeries extends SankeySeries {
                         this.point.name + '</h4>';
                 }
 
-                if ((this.point as any).title) {
+                if (title) {
                     html += '<p ' + styleAttr(titleStyle) + '>' +
-                        ((this.point as any).title || '') + '</p>';
+                        (title || '') + '</p>';
                 }
 
-                if ((this.point as any).description) {
+                if (description) {
                     html += '<p ' + styleAttr(descriptionStyle) + '>' +
-                        (this.point as any).description + '</p>';
+                        description + '</p>';
                 }
 
                 html += '</div>' +
@@ -435,9 +443,10 @@ class OrganizationSeries extends SankeySeries {
         options: OrganizationDataLabelOptions
     ): void {
         // Align the data label to the point graphic
-        if (options.useHTML) {
-            let width = (point.shapeArgs as any).width,
-                height = (point.shapeArgs as any).height,
+        const shapeArgs = point.shapeArgs;
+        if (options.useHTML && shapeArgs) {
+            let width = shapeArgs.width || 0,
+                height = shapeArgs.height || 0,
                 padjust = (
                     (this.options.borderWidth as any) +
                     2 * (this.options.dataLabels as any).padding
@@ -445,7 +454,7 @@ class OrganizationSeries extends SankeySeries {
 
             if (this.chart.inverted) {
                 width = height;
-                height = (point.shapeArgs as any).width;
+                height = shapeArgs.width || 0;
             }
 
             height -= padjust;
@@ -471,12 +480,9 @@ class OrganizationSeries extends SankeySeries {
 
             // The getBBox function is used in `alignDataLabel` to align
             // inside the box
-            dataLabel.getBBox = function (): BBoxObject {
-                return {
-                    width: width,
-                    height: height
-                } as any;
-            };
+            dataLabel.getBBox = (): BBoxObject => (
+                { width, height, x: 0, y: 0 }
+            );
 
             // Overwrite dataLabel dimensions (#13100).
             dataLabel.width = width;
@@ -490,9 +496,7 @@ class OrganizationSeries extends SankeySeries {
         const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
         // All nodes in an org chart are equal width
-        node.getSum = function (): number {
-            return 1;
-        };
+        node.getSum = (): number => 1;
 
         return node;
 

@@ -114,7 +114,7 @@ class TreegraphLayout {
             node.mod = 0;
             node.ancestor = node;
             node.shift = 0;
-            node.thread = void 0 as any;
+            node.thread = void 0;
             node.change = 0;
             node.preX = 0;
         });
