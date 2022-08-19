@@ -24,6 +24,7 @@ Content
   * [Code with strict rules in mind](#code-with-strict-rules-in-mind)
   * [Document with JSDoc in mind](#document-with-jsdoc-in-mind)
   * [Test with Internet Explorer in mind](#test-with-internet-explorer-in-mind)
+* [Testing](#testing)
 
 
 
@@ -153,3 +154,16 @@ similarities.
 Be aware that TypeScript cannot convert all modern syntax to a pattern, that is
 compatible with Internet Explorer. Debugging tests can become challenging, if
 they firstly fail because of syntax errors.
+
+
+
+Testing
+-------
+
+You can run `npm test` to test code changes with automated unit tests.
+
+For tests in a browser, run `npx gulp` and use then the `highcharts-utils`
+repository for a local test server.
+
+For tests in a local npm-based project, run `npx gulp --dts` and then install in
+your project the local Highcharts repository with `npm i ../highcharts/code`.

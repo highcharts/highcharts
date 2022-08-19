@@ -2,7 +2,6 @@
   "name": "highcharts",
   "version": "10.2.0",
   "description": "JavaScript charting framework",
-  "main": "lib/highcharts",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
   "repository": {
@@ -18,12 +17,6 @@
     "data",
     "browserify",
     "webpack"
-  ],
-  "files": [
-    "errors",
-    "gfx",
-    "js",
-    "lib"
   ],
   "scripts": {
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
