@@ -690,22 +690,15 @@ namespace ParallelAxis {
                     currentPoints.push((series.yData as any)[index as any]);
                 }
             });
-
             // Take into account range series points as well (#15752)
-            let min: number = NaN,
-                max: number = NaN;
+            const allAxisPoints = Array.prototype.concat.apply(
+                [],
+                currentPoints
+            );
+            let min: number = arrayMin(allAxisPoints),
+                max: number = arrayMax(allAxisPoints);
 
-            currentPoints.forEach(function (point): void {
-                if (isArray(point)) {
-                    max = arrayMax(point);
-                    min = arrayMin(point);
-                }
-            });
-
-            if (
-                !isArray(arrayMin(currentPoints)) ||
-                !isArray(arrayMax(currentPoints))
-            ) {
+            if (!isArray(arrayMin(currentPoints))) {
                 axis.dataMin = arrayMin(currentPoints) > min ?
                     min :
                     arrayMin(currentPoints);
