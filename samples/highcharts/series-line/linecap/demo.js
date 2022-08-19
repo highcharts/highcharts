@@ -1,5 +1,9 @@
 Highcharts.chart('container', {
 
+    title: {
+        text: 'Highcharts linecap settings'
+    },
+
     plotOptions: {
         series: {
             marker: {
@@ -10,15 +14,18 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        min: -1,
-        max: 5
+        minPadding: 0.25,
+        maxPadding: 0.25,
+        minTickInterval: 1
     },
 
     series: [{
+        name: 'linecap: round',
         data: [2, 5, 2, 3, 6],
         linecap: 'round' // default
     }, {
-        data: [3, 6, 3, 4, 7],
+        name: 'linecap: square',
+        data: [4, 7, 4, 5, 8],
         linecap: 'square'
     }]
 
