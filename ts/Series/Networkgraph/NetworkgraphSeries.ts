@@ -38,10 +38,9 @@ import NetworkgraphSeriesDefaults from './NetworkgraphSeriesDefaults.js';
 import NodesComposition from '../NodesComposition.js';
 import ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    Series: typeof SeriesType = SeriesRegistry.series,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
-    lineProto: LineSeriesType = SeriesTypes.line.prototype;
+const Series: typeof SeriesType = SeriesRegistry.series,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype,
+    lineProto: LineSeriesType = SeriesRegistry.seriesTypes.line.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

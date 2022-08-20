@@ -28,10 +28,11 @@ import type TilemapSeriesOptions from './TilemapSeriesOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    HeatmapSeries: typeof HeatmapSeriesType = SeriesTypes.heatmap,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
-    scatterProto: ScatterSeriesType = SeriesTypes.scatter.prototype;
+const HeatmapSeries: typeof HeatmapSeriesType =
+        SeriesRegistry.seriesTypes.heatmap,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype,
+    scatterProto: ScatterSeriesType =
+        SeriesRegistry.seriesTypes.scatter.prototype;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';

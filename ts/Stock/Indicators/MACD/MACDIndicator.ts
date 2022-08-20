@@ -33,9 +33,8 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    ColumnSeries: typeof ColumnSeriesType = SeriesTypes.column,
-    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../../Core/Utilities.js';
 import ColorString from '../../../Core/Color/ColorString';
 const {
@@ -530,8 +529,8 @@ class MACDIndicator extends SMAIndicator {
  * */
 
 interface MACDIndicator {
-    crispCol: typeof ColumnSeries.prototype.crispCol;
-    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
+    crispCol: typeof columnProto.crispCol;
+    getColumnMetrics: typeof columnProto.getColumnMetrics;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -547,9 +546,9 @@ extend(MACDIndicator.prototype, {
     pointValKey: 'y',
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints
+    getColumnMetrics: columnProto.getColumnMetrics,
+    crispCol: columnProto.crispCol,
+    drawPoints: columnProto.drawPoints
 });
 
 /* *

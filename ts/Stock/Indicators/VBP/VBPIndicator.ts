@@ -41,9 +41,8 @@ const {
     noop
 } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma,
-    columnPrototype = SeriesTypes.column.prototype;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma,
+    columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {

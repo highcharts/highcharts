@@ -25,9 +25,9 @@ import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    AreaRangeSeries: typeof AreaRangeSeriesType = SeriesTypes.arearange,
-    ColumnSeries: typeof ColumnSeriesType = SeriesTypes.column,
+const AreaRangeSeries: typeof AreaRangeSeriesType =
+        SeriesRegistry.seriesTypes.arearange,
+    ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column,
     columnProto: ColumnSeriesType = ColumnSeries.prototype;
 import U from '../../Core/Utilities.js';
 const {
@@ -125,7 +125,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public setOptions(): ColumnRangeSeriesOptions {
         // #14359 Prevent side-effect from stacking.
         merge(true, arguments[0], { stacking: void 0 });
-        return AreaRangeSeries.prototype.setOptions.apply(this, arguments);
+        return super.setOptions.apply(this, arguments);
     }
 
     /**

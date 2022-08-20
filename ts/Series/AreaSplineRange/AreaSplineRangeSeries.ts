@@ -22,9 +22,10 @@ import type AreaSplineRangeSeriesOptions from './AreaSplineRangeSeriesOptions';
 import type SplineSeriesType from '../Spline/SplineSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes;
-const AreaRangeSeries: typeof AreaRangeSeriesType = SeriesTypes.arearange;
-const splineProto: SplineSeriesType = SeriesTypes.spline.prototype;
+const AreaRangeSeries: typeof AreaRangeSeriesType =
+        SeriesRegistry.seriesTypes.arearange,
+    splineProto: SplineSeriesType =
+        SeriesRegistry.seriesTypes.spline.prototype;
 import U from '../../Core/Utilities.js';
 const {
     merge,

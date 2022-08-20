@@ -23,9 +23,8 @@ import type SplineSeriesType from '../Spline/SplineSeries';
 
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    AreaSeries: typeof AreaSeriesType = SeriesTypes.area,
-    SplineSeries: typeof SplineSeriesType = SeriesTypes.spline,
+const AreaSeries: typeof AreaSeriesType = SeriesRegistry.seriesTypes.area,
+    SplineSeries: typeof SplineSeriesType = SeriesRegistry.seriesTypes.spline,
     areaProto: AreaSeriesType = AreaSeries.prototype;
 import U from '../../Core/Utilities.js';
 const {

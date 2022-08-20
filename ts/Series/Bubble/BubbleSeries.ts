@@ -34,9 +34,9 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    ScatterSeries: typeof ScatterSeriesType = SeriesTypes.scatter,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype,
+const ScatterSeries: typeof ScatterSeriesType =
+        SeriesRegistry.seriesTypes.scatter,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype,
     seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {

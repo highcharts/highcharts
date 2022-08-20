@@ -28,10 +28,10 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    ScatterSeries: typeof ScatterSeriesType = SeriesTypes.scatter,
-    areaProto: AreaSeriesType = SeriesTypes.area.prototype,
-    lineProto: LineSeriesType = SeriesTypes.line.prototype;
+const ScatterSeries: typeof ScatterSeriesType =
+        SeriesRegistry.seriesTypes.scatter,
+    areaProto: AreaSeriesType = SeriesRegistry.seriesTypes.area.prototype,
+    lineProto: LineSeriesType = SeriesRegistry.seriesTypes.line.prototype;
 const seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {

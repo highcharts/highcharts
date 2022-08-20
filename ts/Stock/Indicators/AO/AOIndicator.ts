@@ -25,9 +25,8 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

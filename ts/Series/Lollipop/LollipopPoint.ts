@@ -23,10 +23,10 @@ import type LollipopSeries from './LollipopSeries';
 import type PointType from '../../Core/Series/Point';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    DumbbellPoint: typeof DumbbellPointType =
-        SeriesTypes.dumbbell.prototype.pointClass,
-    areaProto: AreaPointType = SeriesTypes.area.prototype.pointClass.prototype,
+const DumbbellPoint: typeof DumbbellPointType =
+        SeriesRegistry.seriesTypes.dumbbell.prototype.pointClass,
+    areaProto: AreaPointType =
+        SeriesRegistry.seriesTypes.area.prototype.pointClass.prototype,
     pointProto: PointType =
         SeriesRegistry.series.prototype.pointClass.prototype;
 import U from '../../Core/Utilities.js';

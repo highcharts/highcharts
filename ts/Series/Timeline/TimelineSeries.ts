@@ -43,9 +43,8 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    LineSeries: typeof LineSeriesType = SeriesTypes.line,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
+const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';

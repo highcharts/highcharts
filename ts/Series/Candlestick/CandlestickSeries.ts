@@ -28,9 +28,8 @@ import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    OHLCSeries: typeof OHLCSeriesType = SeriesTypes.ohlc,
-    columnProto: ColumnSeriesType = SeriesTypes.column.prototype;
+const OHLCSeries: typeof OHLCSeriesType = SeriesRegistry.seriesTypes.ohlc,
+    columnProto: ColumnSeriesType = SeriesRegistry.seriesTypes.column.prototype;
 import U from '../../Core/Utilities.js';
 const {
     merge

@@ -34,9 +34,8 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    ATRIndicator: typeof ATRIndicatorType = SeriesTypes.atr,
-    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma,
+    atrProto: ATRIndicatorType = SeriesRegistry.seriesTypes.atr.prototype;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
@@ -584,7 +583,7 @@ class SupertrendIndicator extends SMAIndicator {
             return;
         }
 
-        ATRData = (ATRIndicator.prototype.getValues.call(this, series, {
+        ATRData = (atrProto.getValues.call(this, series, {
             period: period
         }) as any).yData;
 

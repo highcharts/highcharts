@@ -29,8 +29,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const Point: typeof PointType = SeriesRegistry.series.prototype.pointClass;
-const seriesProto: SeriesType = SeriesRegistry.series.prototype;
+const Point: typeof PointType = SeriesRegistry.series.prototype.pointClass,
+    seriesProto: SeriesType = SeriesRegistry.series.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

@@ -26,9 +26,8 @@ import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SeriesTypes = SeriesRegistry.seriesTypes,
-    EMAIndicator: typeof EMAIndicatorType = SeriesTypes.ema,
-    SMAIndicator: typeof SMAIndicatorType = SeriesTypes.sma;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma,
+    emaProto: EMAIndicatorType = SeriesRegistry.seriesTypes.ema.prototype;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -261,7 +260,7 @@ class KlingerIndicator extends SMAIndicator {
         xVal?: Array<number>
     ): [number, number] {
 
-        return EMAIndicator.prototype.calculateEma(
+        return emaProto.calculateEma(
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
@@ -278,8 +277,7 @@ class KlingerIndicator extends SMAIndicator {
         values: Array<Array<number>>
     ): number {
 
-        return EMAIndicator.prototype
-            .accumulatePeriodPoints(period, index, values) / period;
+        return emaProto.accumulatePeriodPoints(period, index, values) / period;
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
