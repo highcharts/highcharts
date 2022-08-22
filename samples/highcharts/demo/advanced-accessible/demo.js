@@ -88,7 +88,8 @@ var chart = Highcharts.chart('container', {
         accessibility: {
             description: 'Year'
         },
-        crosshair: true
+        crosshair: true,
+        categories: [2015, 2016, 2017, 2018, 2019, 2020, 2021]
     }],
     yAxis: {
         title: {
@@ -101,7 +102,6 @@ var chart = Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            pointStart: 2015,
             stickyTracking: true,
             whiskerWidth: 5
         }

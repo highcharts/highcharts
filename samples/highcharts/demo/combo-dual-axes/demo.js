@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Precipitation and Rainfall in Karasjok, 2021'
+        text: 'Average Monthly Precipitation and Temperature in Karasjok, 2021'
     },
     subtitle: {
         text: 'Source: ' +
