@@ -18,15 +18,16 @@
 
 import type PointOptions from '../../Core/Series/PointOptions.js';
 import type TreegraphSeries from './TreegraphSeries';
-import type { LinkOptions } from '../Organization/OrganizationSeriesOptions.js';
+import type { OrganizationLinkOptions } from '../Organization/OrganizationSeriesOptions.js';
 import Point from '../../Core/Series/Point.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
 import U from '../../Core/Utilities.js';
 const { pick, extend } = U;
 
+export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
 export interface LinkPointOptions extends TreegraphPointOptions {
-    link?: LinkOptions
+    link?: TreegraphLinkOptions
 }
 interface LinkPoint {
     options: LinkPointOptions;

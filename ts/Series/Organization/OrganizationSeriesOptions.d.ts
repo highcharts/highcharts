@@ -36,7 +36,7 @@ export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
-export interface LinkOptions {
+export interface OrganizationLinkOptions {
     linkOpacity?: number;
     curveFactor?: number;
     color: ColorString;
@@ -54,7 +54,7 @@ export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions
     borderRadius?: number;
     linkColor?: ColorString;
     linkLineWidth?: number;
-    link?: LinkOptions;
+    link?: OrganizationLinkOptions;
     states: SeriesStatesOptions<OrganizationSeries>;
 }
 
@@ -70,7 +70,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     hangingIndent?: number;
     hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
     levels?: Array<OrganizationSeriesLevelOptions>;
-    link: LinkOptions;
+    link: OrganizationLinkOptions;
     linkColor?: ColorString;
     linkLineWidth?: number;
     linkRadius?: number;

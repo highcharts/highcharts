@@ -20,9 +20,9 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
-import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import { TreegraphLinkOptions } from './TreegraphLink';
 
 /* *
  *
@@ -65,7 +65,7 @@ export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
     collapseButton: CollapseButtonOptions;
-    link: LinkOptions;
+    link: TreegraphLinkOptions;
     reversed?: boolean;
     marker: PointMarkerOptions;
 }

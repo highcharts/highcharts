@@ -42,7 +42,15 @@ const {
  *  Class
  *
  * */
+/**
+ * @private
+ */
 class TreegraphPoint extends TreemapPoint {
+    /* *
+    *
+    * Properties
+    *
+    * */
     public options: TreegraphPointOptions = void 0 as any;
     public isLink = false;
     public collapseButton?: SVGElement;
@@ -52,12 +60,17 @@ class TreegraphPoint extends TreemapPoint {
     public level?: number;
     public linkToParent?: TreegraphLink;
 
-    draw(): void {
+    /* *
+    *
+    * Methods
+    *
+    * */
+    public draw(): void {
         super.draw.apply(this, arguments);
         this.renderCollapseButton();
     }
 
-    renderCollapseButton(): void {
+    public renderCollapseButton(): void {
         const point = this,
             series = point.series,
             parentGroup = point.graphic && point.graphic.parentGroup,
@@ -138,17 +151,17 @@ class TreegraphPoint extends TreemapPoint {
         }
     }
 
-    toggleCollapse(state?: boolean): void {
+    public toggleCollapse(state?: boolean): void {
         this.collapsed = pick(state, !this.collapsed);
         fireEvent(this.series, 'toggleCollapse');
         this.series.redraw();
     }
 
-    shouldDraw(): boolean {
+    public shouldDraw(): boolean {
         return super.shouldDraw() && this.visible;
     }
 
-    getCollapseBtnPosition(btnOptions: CollapseButtonOptions): {
+    public getCollapseBtnPosition(btnOptions: CollapseButtonOptions): {
         x: number;
         y: number;
     } {
@@ -166,6 +179,7 @@ class TreegraphPoint extends TreemapPoint {
             y: y + height / 2 - btnHeight / 2 + btnOptions.y
         };
     }
+
     public setState(): void {
         Point.prototype.setState.apply(this, arguments);
     }

@@ -15,8 +15,8 @@
  * */
 
 import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
-import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
+import type { TreegraphLinkOptions } from './TreegraphLink';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 export interface TreegraphPointOptions extends TreemapPointOptions {
     collapseButton?: CollapseButtonOptions;
     borderRadius?: number;
-    link?: LinkOptions;
+    link?: TreegraphLinkOptions;
 }
 
 export default TreegraphPointOptions;
