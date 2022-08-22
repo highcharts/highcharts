@@ -128,6 +128,8 @@ function draw(
  */
 function shouldDraw(point: Point): boolean {
     switch (point.series && point.series.type) {
+        case 'treegraph':
+            return isNumber(point.plotY) && point.y !== null && point.visible;
         case 'treemap':
             return isNumber(point.plotY) && point.y !== null;
         default:

@@ -8,29 +8,52 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ * Imports
+ *
+ * */
+
 import type TreegraphSeries from './TreegraphSeries';
 import TreegraphNode from './TreegraphNode.js';
 
+/* *
+ *
+ * Class
+ *
+ * */
+
+/**
+ * @private
+ */
 class TreegraphLayout {
+    /* *
+    *
+    * Functions
+    *
+    * */
+
     /**
      * Create dummy node, which allows to manually set the level of the node.
      *
-     * @param {TreegraphNode.Node} parent Parent node, to which the dummyNode should be connected.
-     * @param {TreegraphNode.Node} child Child node, which should be connected to dummyNode.
+     * @param {TreegraphNode} parent Parent node, to which the dummyNode should be connected.
+     * @param {TreegraphNode} child Child node, which should be connected to dummyNode.
      * @param {number} gapSize Remainig gap size
      * @param {number} index the index of the link
      *
-     * @return {TreegraphNode.Node} DummyNode as a parent of nodes, which column
+     * @return {TreegraphNode} DummyNode as a parent of nodes, which column
      * changes
      */
     public static createDummyNode(
-        parent: TreegraphNode.Node,
-        child: TreegraphNode.Node,
+        parent: TreegraphNode,
+        child: TreegraphNode,
         gapSize: number,
         index: number
-    ): TreegraphNode.Node {
+    ): TreegraphNode {
         // Initialise dummy node.
-        let dummyNode = new TreegraphNode.Node();
+        let dummyNode = new TreegraphNode();
         dummyNode.id = parent.id + '-' + gapSize;
         dummyNode.ancestor = parent;
         // Add connection from new node to the previous points.
@@ -66,7 +89,7 @@ class TreegraphLayout {
      */
     public calculatePositions(series: TreegraphSeries): void {
         const treeLayout = this;
-        const nodes = series.nodeList as TreegraphNode.Node[];
+        const nodes = series.nodeList as TreegraphNode[];
         this.resetValues(nodes);
         const root = series.tree;
         if (root) {
@@ -82,7 +105,7 @@ class TreegraphLayout {
      *
      * @param nodes all of the nodes.
      */
-    public beforeLayout(nodes: TreegraphNode.Node[]): void {
+    public beforeLayout(nodes: TreegraphNode[]): void {
         nodes.forEach((node): void => {
             node.children.forEach((child, index): void => {
                 // Support for children placed in distant columns.
@@ -107,10 +130,10 @@ class TreegraphLayout {
     }
     /**
      * Reset the caluclated values from the previous run.
-     * @param {TreegraphNode.Node[]} nodes all of the nodes.
+     * @param {TreegraphNode[]} nodes all of the nodes.
      */
-    public resetValues(nodes: TreegraphNode.Node[]): void {
-        nodes.forEach((node: TreegraphNode.Node): void => {
+    public resetValues(nodes: TreegraphNode[]): void {
+        nodes.forEach((node: TreegraphNode): void => {
             node.mod = 0;
             node.ancestor = node;
             node.shift = 0;
@@ -126,7 +149,7 @@ class TreegraphLayout {
      * @param node root node
      * @param index index to which the nodes position should be set
      */
-    public calculateRelativeX(node: TreegraphNode.Node, index: number): void {
+    public calculateRelativeX(node: TreegraphNode, index: number): void {
         const treeLayout = this;
         node.children.forEach((child, index): void => {
             treeLayout.calculateRelativeX(child, index);
@@ -137,10 +160,10 @@ class TreegraphLayout {
      * Recursive post order traversal of the tree, where the initial position
      * of the nodes is calculated.
      *
-     * @param {TreegraphNode.Node} node the node for which the position should be
+     * @param {TreegraphNode} node the node for which the position should be
      * calculated
      */
-    public firstWalk(node: TreegraphNode.Node): void {
+    public firstWalk(node: TreegraphNode): void {
         const treeLayout = this;
         let leftSibling;
         // Arbitrary value used to position nodes in respect to each other.
@@ -158,7 +181,7 @@ class TreegraphLayout {
             // If the node has children, perform the recursive first walk for
             // its children, and then calculate its shift in the apportion
             // function (most crucial part part of the algorythm).
-            let defaultAncestor = node.getLeftMostChild() as TreegraphNode.Node;
+            let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
 
             node.children.forEach(function (child): void {
                 treeLayout.firstWalk(child);
@@ -166,8 +189,8 @@ class TreegraphLayout {
             });
             treeLayout.executeShifts(node);
 
-            let leftChild = node.getLeftMostChild() as TreegraphNode.Node;
-            let rightChild = node.getRightMostChild() as TreegraphNode.Node;
+            let leftChild = node.getLeftMostChild() as TreegraphNode;
+            let rightChild = node.getRightMostChild() as TreegraphNode;
             // Set the position of the parent as a middle point of its children
             // and move it by the value of the leftSibling (if it exists).
             let midPoint = (leftChild.preX + rightChild.preX) / 2;
@@ -185,11 +208,11 @@ class TreegraphLayout {
      * Pre order traversal of the tree, which sets the final xPosition of the
      * node as its preX value and sum of all if it's parents' modifiers.
      *
-     * @param {TreegraphNode.Node} node the node, for which the final position
+     * @param {TreegraphNode} node the node, for which the final position
      * should be calculated.
      * @param {number} modSum The sum of modifiers of all of the parents.
      */
-    public secondWalk(node: TreegraphNode.Node, modSum: number): void {
+    public secondWalk(node: TreegraphNode, modSum: number): void {
         const treeLayout = this;
         // When the chart is not inverted we want the tree to be positioned from
         // left to right with root node close to the chart border, this is why
@@ -203,9 +226,9 @@ class TreegraphLayout {
     /**
      *  Shift all children of the current node from right to left.
      *
-     * @param {TreegraphNode.Node} node the parent node.
+     * @param {TreegraphNode} node the parent node.
      */
-    public executeShifts(node: TreegraphNode.Node): void {
+    public executeShifts(node: TreegraphNode): void {
         let shift = 0,
             change = 0;
         for (let i = node.children.length - 1; i >= 0; i--) {
@@ -229,13 +252,13 @@ class TreegraphLayout {
      * Finally we add a new thread (if necessary) and we adjust ancestor of
      * right outernal node or defaultAncestor.
      *
-     * @param {TreegraphNode.Node} node
+     * @param {TreegraphNode} node
      * @param defaultAncestor the default ancestor of the passed node.
      */
     public apportion(
-        node: TreegraphNode.Node,
-        defaultAncestor: TreegraphNode.Node
-    ): TreegraphNode.Node {
+        node: TreegraphNode,
+        defaultAncestor: TreegraphNode
+    ): TreegraphNode {
         const treeLayout = this;
         let leftSibling = node.getLeftSibling();
         if (leftSibling) {
@@ -243,7 +266,7 @@ class TreegraphLayout {
                 rightOutNode = node,
                 leftIntNode = leftSibling,
                 leftOutNode =
-                    rightIntNode.getLeftMostSibling() as TreegraphNode.Node,
+                    rightIntNode.getLeftMostSibling() as TreegraphNode,
                 rightIntMod = rightIntNode.mod,
                 rightOutMod = rightOutNode.mod,
                 leftIntMod = leftIntNode.mod,
@@ -255,10 +278,10 @@ class TreegraphLayout {
                 rightIntNode &&
                 rightIntNode.nextLeft()
             ) {
-                leftIntNode = leftIntNode.nextRight() as TreegraphNode.Node;
-                leftOutNode = leftOutNode.nextLeft() as TreegraphNode.Node;
-                rightIntNode = rightIntNode.nextLeft() as TreegraphNode.Node;
-                rightOutNode = rightOutNode.nextRight() as TreegraphNode.Node;
+                leftIntNode = leftIntNode.nextRight() as TreegraphNode;
+                leftOutNode = leftOutNode.nextLeft() as TreegraphNode;
+                rightIntNode = rightIntNode.nextLeft() as TreegraphNode;
+                rightOutNode = rightOutNode.nextRight() as TreegraphNode;
 
                 rightOutNode.ancestor = node;
                 let siblingDistance = 1;
@@ -308,13 +331,13 @@ class TreegraphLayout {
     /**
      * Shifts the subtree from leftNode to rightNode.
      *
-     * @param {TreegraphNode.Node} leftNode
-     * @param {TreegraphNode.Node} rightNode
+     * @param {TreegraphNode} leftNode
+     * @param {TreegraphNode} rightNode
      * @param {number} shift The value, by which the subtree should be moved.
      */
     public moveSubtree(
-        leftNode: TreegraphNode.Node,
-        rightNode: TreegraphNode.Node,
+        leftNode: TreegraphNode,
+        rightNode: TreegraphNode,
         shift: number
     ): void {
         let subtrees = rightNode.relativeXPosition - leftNode.relativeXPosition;
@@ -326,9 +349,9 @@ class TreegraphLayout {
     }
     /**
      * Clear values created in a beforeLayout.
-     * @param {TreegraphNode.Node[]} nodes all of the nodes of the Treegraph Series.
+     * @param {TreegraphNode[]} nodes all of the nodes of the Treegraph Series.
      */
-    public afterLayout(nodes: TreegraphNode.Node[]): void {
+    public afterLayout(nodes: TreegraphNode[]): void {
         nodes.forEach((node): void => {
             if (node.oldParentNode) {
                 // Restore default connections

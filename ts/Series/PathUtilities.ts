@@ -1,14 +1,33 @@
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  (c) 2010-2022 Pawel Lysy
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * General function to apply corner radius to a path
  * @private
  */
-
-/* eslint-enable valid-jsdoc */
-
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-
 function curvedPath(path: SVGPath, r?: number): SVGPath {
     const d: SVGPath = [];
 

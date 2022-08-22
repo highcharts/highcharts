@@ -71,7 +71,7 @@ class TreemapPoint extends ScatterPoint {
 
     public name: string = void 0 as any;
 
-    public node: TreemapNode.Node = void 0 as any;
+    public node: TreemapNode = void 0 as any;
 
     public options: TreemapPointOptions = void 0 as any;
 

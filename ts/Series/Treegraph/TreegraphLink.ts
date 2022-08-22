@@ -1,3 +1,21 @@
+/* *
+ *
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ * Imports
+ *
+ * */
+
 import type PointOptions from '../../Core/Series/PointOptions.js';
 import type TreegraphSeries from './TreegraphSeries';
 import type { LinkOptions } from '../Organization/OrganizationSeriesOptions.js';
@@ -10,10 +28,12 @@ const { pick, extend } = U;
 export interface LinkPointOptions extends TreegraphPointOptions {
     link?: LinkOptions
 }
+interface LinkPoint {
+    options: LinkPointOptions;
+    fromNode: TreegraphPoint;
+    toNode: TreegraphPoint;
+}
 class LinkPoint extends Point {
-    options: LinkPointOptions = void 0 as any;
-    fromNode: TreegraphPoint = void 0 as any;
-    toNode: TreegraphPoint = void 0 as any;
     isLink = true;
     node = {};
     formatPrefix = 'link';

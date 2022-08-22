@@ -8,9 +8,11 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
- *  Imports
+ * Imports
  *
  * */
 
@@ -35,27 +37,18 @@ const {
     }
 } = SeriesRegistry;
 
-
 /* *
  *
  *  Class
  *
  * */
-
-interface ShapeArgs {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-}
-
 class TreegraphPoint extends TreemapPoint {
     public options: TreegraphPointOptions = void 0 as any;
     public isLink = false;
     public collapseButton?: SVGElement;
     public series: TreegraphSeries = void 0 as any;
     public collapsed?: boolean;
-    public node: TreegraphNode.Node = void 0 as any;
+    public node: TreegraphNode = void 0 as any;
     public level?: number;
     public linkToParent?: TreegraphLink;
 

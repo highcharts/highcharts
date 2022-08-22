@@ -24,7 +24,6 @@ import type {
     OrganizationDataLabelFormatterContext,
     OrganizationDataLabelOptions
 } from './OrganizationDataLabelOptions';
-import type OrganizationPointOptions from './OrganizationPointOptions';
 import type {
     OrganizationSeriesLevelOptions,
     OrganizationSeriesOptions
@@ -50,8 +49,7 @@ const {
     css,
     extend,
     merge,
-    pick,
-    wrap
+    pick
 } = U;
 
 /* *
@@ -166,6 +164,7 @@ class OrganizationSeries extends SankeySeries {
              * @sample   highcharts/series-organization/different-link-types
              *           Different link types
              *
+             * @declare Highcharts.OrganizationLinkTypeValue
              * @type {'default' | 'curved' | 'straight'}
              * @default 'default'
              * @product highcharts
@@ -365,8 +364,8 @@ class OrganizationSeries extends SankeySeries {
          *
          * @type {Highcharts.ColorString}
          * @deprecated
-         * @private
          * @apioption series.organization.linkColor
+         * @private
          */
 
         /**

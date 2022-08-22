@@ -350,7 +350,7 @@ function getAnimation(
 function getDrillId(
     point: SunburstPoint,
     idRoot: string,
-    mapIdToNode: Record<string, SunburstNode.Node>
+    mapIdToNode: Record<string, SunburstNode>
 ): (string|undefined) {
     let drillId,
         node = point.node,
@@ -370,10 +370,10 @@ function getDrillId(
 
 // eslint-disable-next-line require-jsdoc
 function cbSetTreeValuesBefore(
-    node: SunburstNode.Node,
+    node: SunburstNode,
     options: SunburstNode.NodeValuesObject
-): SunburstNode.Node {
-    const mapIdToNode: Record<string, SunburstNode.Node> =
+): SunburstNode {
+    const mapIdToNode: Record<string, SunburstNode> =
             options.mapIdToNode as any,
         parent = node.parent,
         nodeParent = parent ? mapIdToNode[parent] : void 0,
@@ -714,7 +714,7 @@ class SunburstSeries extends TreemapSeries {
 
     public mapOptionsToLevel: Record<string, SunburstSeriesOptions> = void 0 as any;
 
-    public nodeMap: Record<string, SunburstNode.Node> = void 0 as any;
+    public nodeMap: Record<string, SunburstNode> = void 0 as any;
 
     public options: SunburstSeriesOptions = void 0 as any;
 
@@ -724,7 +724,7 @@ class SunburstSeries extends TreemapSeries {
 
     public startAndEndRadians: CU.RadianAngles = void 0 as any;
 
-    public tree: SunburstNode.Node = void 0 as any;
+    public tree: SunburstNode = void 0 as any;
 
     /* *
      *
@@ -933,7 +933,7 @@ class SunburstSeries extends TreemapSeries {
      */
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
-        children: Array<SunburstNode.Node>,
+        children: Array<SunburstNode>,
         options: SunburstSeriesOptions
     ): Array<SunburstNode.NodeValuesObject> {
         let startAngle = parent.start,
@@ -989,7 +989,7 @@ class SunburstSeries extends TreemapSeries {
      * @private
      */
     public setShapeArgs(
-        parent: SunburstNode.Node,
+        parent: SunburstNode,
         parentValues: SunburstNode.NodeValuesObject,
         mapOptionsToLevel: (
             Record<string, SunburstSeriesOptions>
@@ -1068,7 +1068,7 @@ class SunburstSeries extends TreemapSeries {
             idTop,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeTop,
-            tree: SunburstNode.Node,
+            tree: SunburstNode,
             values: SunburstNode.NodeValuesObject,
             nodeIds: Record<string, boolean> = {};
 
@@ -1156,7 +1156,7 @@ interface SunburstSeries {
     getCenter: typeof CU['getCenter'];
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
-    NodeClass: typeof SunburstNode.Node;
+    NodeClass: typeof SunburstNode;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
@@ -1165,7 +1165,7 @@ extend(SunburstSeries.prototype, {
     onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
-    NodeClass: SunburstNode.Node,
+    NodeClass: SunburstNode,
     utils: SunburstUtilities
 });
 

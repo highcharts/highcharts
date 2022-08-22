@@ -310,11 +310,11 @@ class TreegraphSeries extends TreemapSeries {
 
     public layoutModifier: LayoutModifiers = void 0 as any;
 
-    public nodeMap: Record<string, TreegraphNode.Node> = void 0 as any;
+    public nodeMap: Record<string, TreegraphNode> = void 0 as any;
 
-    public tree: TreegraphNode.Node = void 0 as any;
+    public tree: TreegraphNode = void 0 as any;
 
-    public nodeList: Array<TreegraphNode.Node> = [];
+    public nodeList: Array<TreegraphNode> = [];
 
     public layoutAlgorythm: TreegraphLayout = void 0 as any;
 
@@ -454,7 +454,7 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     public setCollapsedStatus(
-        node: TreegraphNode.Node,
+        node: TreegraphNode,
         visibility: boolean
     ): void {
         const point = node.point;
@@ -481,7 +481,7 @@ class TreegraphSeries extends TreemapSeries {
             // NOTE: updateRootId modifies series.
             rootId = TU.updateRootId(series),
             rootNode,
-            tree: TreegraphNode.Node;
+            tree: TreegraphNode;
         // Call prototype function
         Series.prototype.translate.call(series);
         tree = series.tree = series.getTree();
@@ -687,7 +687,7 @@ class TreegraphSeries extends TreemapSeries {
     }
     public destroy(): void {
         // Links must also be destroyed.
-        this.data = this.points || [];
+        this.data = (this.points || []).concat(this.links as any || []);
 
         return Series.prototype.destroy.apply(this, arguments);
     }
@@ -810,7 +810,7 @@ class TreegraphSeries extends TreemapSeries {
 interface TreegraphSeries {
     inverted?: boolean;
     pointClass: typeof TreegraphPoint;
-    NodeClass: typeof TreegraphNode.Node;
+    NodeClass: typeof TreegraphNode;
     LinkClass: typeof TreegraphLink;
 
 }
@@ -825,7 +825,7 @@ namespace TreegraphSeries {
  * */
 
 TreegraphSeries.prototype.pointClass = TreegraphPoint;
-TreegraphSeries.prototype.NodeClass = TreegraphNode.Node;
+TreegraphSeries.prototype.NodeClass = TreegraphNode;
 TreegraphSeries.prototype.LinkClass = TreegraphLink;
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

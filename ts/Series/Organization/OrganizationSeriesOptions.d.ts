@@ -31,7 +31,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
-export type OrganizationChartLinkTypes = 'curved' | 'straight' | 'default';
+export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
@@ -41,7 +41,7 @@ export interface LinkOptions {
     curveFactor?: number;
     color: ColorString;
     lineWidth: number;
-    type: OrganizationChartLinkTypes;
+    type: OrganizationLinkTypeValues;
     radius: number;
 }
 

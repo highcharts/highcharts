@@ -1,3 +1,21 @@
+/* *
+ *
+ *  (c) 2010-2022 Pawel Lysy
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ * Imports
+ *
+ * */
+
 import type SunburstSeriesOptions from './SunburstSeriesOptions.js';
 import type ColorType from '../../Core/Color/ColorType.js';
 import type SunburstSeries from './SunburstSeries.js';
@@ -5,6 +23,30 @@ import type CU from '../CenteredUtilities.js';
 import type TU from '../TreeUtilities.js';
 
 import TreemapNode from '../Treemap/TreemapNode.js';
+
+/* *
+ *
+ * Class
+ *
+ * */
+interface SunburstNode {
+
+    series: SunburstSeries;
+    children: Array<SunburstNode>;
+}
+class SunburstNode extends TreemapNode {
+    /* *
+    *
+    * Class properties
+    *
+    * */
+    color?: ColorType;
+    colorIndex?: number;
+    shapeArgs?: SunburstNode.NodeValuesObject;
+    sliced?: boolean;
+    values?: SunburstNode.NodeValuesObject;
+}
+
 namespace SunburstNode {
     export interface NodeValuesObject
         extends CU.RadianAngles,
@@ -17,15 +59,6 @@ namespace SunburstNode {
         r: number;
         radius: number;
         siblings: number;
-    }
-    export class Node extends TreemapNode.Node {
-        children: Array<Node> = void 0 as any;
-        color?: ColorType;
-        colorIndex?: number;
-        shapeArgs?: NodeValuesObject;
-        series: SunburstSeries = void 0 as any;
-        sliced?: boolean;
-        values?: NodeValuesObject;
     }
 }
 export default SunburstNode;

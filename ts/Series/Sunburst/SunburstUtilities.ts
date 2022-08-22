@@ -154,7 +154,7 @@ namespace SunburstUtilities {
      * @private
      */
     export function getLevelFromAndTo(
-        { level, height }: SunburstNode.Node
+        { level, height }: SunburstNode
     ): { from: number; to: number } {
         //  Never displays level below 1
         const from = level > 0 ? level : 1;
