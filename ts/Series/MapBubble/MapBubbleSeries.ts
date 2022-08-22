@@ -17,6 +17,8 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
+import type MapPointSeries from '../MapPoint/MapPointSeries';
+import type MapSeries from '../Map/MapSeries';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 
@@ -286,14 +288,14 @@ class MapBubbleSeries extends BubbleSeries {
 
 interface MapBubbleSeries {
     type: string;
-    getProjectedBounds: typeof mapProto.getProjectedBounds;
+    getProjectedBounds: MapSeries['getProjectedBounds'];
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
-    setData: typeof mapProto.setData;
-    processData: typeof mapProto.processData;
-    projectPoint: typeof mapPointProto.projectPoint;
-    setOptions: typeof mapProto.setOptions;
-    updateData: typeof mapProto.updateData;
+    setData: MapSeries['setData'];
+    processData: MapSeries['processData'];
+    projectPoint: MapPointSeries['projectPoint'];
+    setOptions: MapSeries['setOptions'];
+    updateData: MapSeries['updateData'];
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {

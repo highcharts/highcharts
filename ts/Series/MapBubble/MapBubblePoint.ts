@@ -16,6 +16,8 @@
  *
  * */
 
+import type MapPoint from '../Map/MapPoint';
+
 import BubblePoint from '../Bubble/BubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -59,7 +61,7 @@ class MapBubblePoint extends BubblePoint {
  * */
 
 interface MapBubblePoint {
-    getProjectedBounds: typeof mapPointProto.getProjectedBounds;
+    getProjectedBounds: MapPoint['getProjectedBounds'];
 }
 
 extend(MapBubblePoint.prototype, {
