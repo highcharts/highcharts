@@ -12,6 +12,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Fullscreen from '../../Extensions/Fullscreen.js';
+import Fullscreen from '../../Extensions/Exporting/Fullscreen.js';
 const G: AnyRecord = Highcharts;
 G.Fullscreen = Fullscreen;
+Fullscreen.compose(G.Chart);

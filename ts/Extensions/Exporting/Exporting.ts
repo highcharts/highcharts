@@ -41,6 +41,7 @@ import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
+import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
     doc,
@@ -640,6 +641,7 @@ namespace Exporting {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         ExportingSymbols.compose(SVGRendererClass);
+        Fullscreen.compose(ChartClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
