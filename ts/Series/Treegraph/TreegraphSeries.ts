@@ -20,6 +20,7 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
+
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
@@ -40,6 +41,7 @@ import U from '../../Core/Utilities.js';
 const { extend, merge, pick, relativeLength, isArray } = U;
 
 import TreegraphLink from './TreegraphLink.js';
+
 import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
@@ -588,6 +590,7 @@ interface TreegraphSeries {
     pointClass: typeof TreegraphPoint;
     NodeClass: typeof TreegraphNode;
     LinkClass: typeof TreegraphLink;
+
 }
 
 
@@ -611,6 +614,7 @@ namespace TreegraphSeries {
  *  Registry
  *
  * */
+
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
