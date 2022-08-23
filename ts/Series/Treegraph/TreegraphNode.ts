@@ -32,6 +32,12 @@ const {
     }
 } = SeriesRegistry;
 
+/* *
+*
+* Declarations
+*
+* */
+
 interface TreegraphNode {
     point: TreegraphPoint;
     ancestor: TreegraphNode;
@@ -44,7 +50,21 @@ interface TreegraphNode {
     nodeSizeY: number;
     series: TreegraphSeries;
 }
+
+/* *
+*
+* Class
+*
+* */
+
 class TreegraphNode extends TreemapNode {
+
+    /* *
+    *
+    * Properties
+    *
+    * */
+
     public mod: number = 0;
     public thread?: TreegraphNode;
     public shift: number = 0;
@@ -58,6 +78,13 @@ class TreegraphNode extends TreemapNode {
     public nodeHeight?: number;
     public wasVisited = false;
     public collapsed: boolean = false;
+
+    /* *
+    *
+    * Functions
+    *
+    * */
+
     /**
      * Get the next left node which is either first child or thread.
      *
