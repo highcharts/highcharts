@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -23,7 +23,7 @@ import { Palette } from '../../Core/Color/Palettes';
 
 /* *
 *
-* Constants
+*  Constants
 *
 * */
 

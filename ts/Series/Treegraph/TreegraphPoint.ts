@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -48,7 +48,7 @@ const {
 class TreegraphPoint extends TreemapPoint {
     /* *
     *
-    * Properties
+    *  Properties
     *
     * */
     public options: TreegraphPointOptions = void 0 as any;
@@ -62,7 +62,7 @@ class TreegraphPoint extends TreemapPoint {
 
     /* *
     *
-    * Methods
+    *  Methods
     *
     * */
     public draw(): void {

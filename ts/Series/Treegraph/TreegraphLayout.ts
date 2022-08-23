@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -21,7 +21,7 @@ import TreegraphNode from './TreegraphNode.js';
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -31,7 +31,7 @@ import TreegraphNode from './TreegraphNode.js';
 class TreegraphLayout {
     /* *
     *
-    * Functions
+    *  Functions
     *
     * */
 

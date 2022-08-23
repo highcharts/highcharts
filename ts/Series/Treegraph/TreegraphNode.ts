@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -34,7 +34,7 @@ const {
 
 /* *
 *
-* Declarations
+*  Declarations
 *
 * */
 
@@ -53,7 +53,7 @@ interface TreegraphNode {
 
 /* *
 *
-* Class
+*  Class
 *
 * */
 
@@ -61,7 +61,7 @@ class TreegraphNode extends TreemapNode {
 
     /* *
     *
-    * Properties
+    *  Properties
     *
     * */
 
@@ -81,7 +81,7 @@ class TreegraphNode extends TreemapNode {
 
     /* *
     *
-    * Functions
+    *  Functions
     *
     * */
 
@@ -227,7 +227,17 @@ class TreegraphNode extends TreemapNode {
         }
     }
 }
+/* *
+*
+*  Namespace
+*
+* */
 namespace TreegraphNode {
     export interface NodeValuesObject extends TreemapNodeNS.NodeValuesObject {}
 }
+/* *
+*
+*  Export default
+*
+* */
 export default TreegraphNode;

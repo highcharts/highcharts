@@ -12,7 +12,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -26,18 +26,17 @@ import TreemapNode from '../Treemap/TreemapNode.js';
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 interface SunburstNode {
-
     series: SunburstSeries;
     children: Array<SunburstNode>;
 }
 class SunburstNode extends TreemapNode {
     /* *
     *
-    * Class properties
+    *  Class properties
     *
     * */
     color?: ColorType;

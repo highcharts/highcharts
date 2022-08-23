@@ -47,7 +47,7 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 
 /* *
 *
-* Declatarions
+*  Declatarions
 *
 * */
 interface LayoutModifiers {
@@ -106,7 +106,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public layoutAlgorythm: TreegraphLayout = void 0 as any;
 
-    public links: Array<TreegraphLink> = [];
+    public links: Array<TreegraphLink> = void 0 as any;
 
     public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
     /* *

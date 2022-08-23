@@ -25,6 +25,12 @@ import TreegraphPointOptions from './TreegraphPointOptions.js';
 import U from '../../Core/Utilities.js';
 const { pick, extend } = U;
 
+/* *
+*
+*  Declarations
+*
+* */
+
 export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
 export interface LinkPointOptions extends TreegraphPointOptions {
     link?: TreegraphLinkOptions
@@ -34,11 +40,27 @@ interface LinkPoint {
     fromNode: TreegraphPoint;
     toNode: TreegraphPoint;
 }
+/* *
+*
+*  Class
+*
+* */
 class LinkPoint extends Point {
+    /* *
+    *
+    *  Class properties
+    *
+    * */
     isLink = true;
     node = {};
     formatPrefix = 'link';
     dataLabelOnNull = true;
+
+    /* *
+    *
+    *  Functions
+    *
+    * */
 
     public init(
         series: TreegraphSeries,
