@@ -1,9 +1,19 @@
 /* *
- * (c) 2009-2021 Rafal Sebestjanski
  *
- * Full screen for Highcharts
+ *  (c) 2009-2021 Rafal Sebestjanski
  *
- * License: www.highcharts.com/license
+ *  Full screen for Highcharts
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/**
+ * The module allows user to enable display chart in full screen mode.
+ * Used in StockTools too.
+ * Based on default solutions in browsers.
  */
 
 'use strict';
@@ -22,62 +32,24 @@ const {
     fireEvent
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
-        fullscreen: Highcharts.Fullscreen;
+        /** @requires Extensions/Fullscreen */
+        fullscreen?: Fullscreen;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Fullscreen {
-            public constructor(chart: Chart);
-            public browserProps?: {
-                fullscreenChange: (
-                    'fullscreenchange'|
-                    'mozfullscreenchange'|
-                    'webkitfullscreenchange'|
-                    'MSFullscreenChange'
-                );
-                requestFullscreen: (
-                    'msRequestFullscreen'|
-                    'mozRequestFullScreen'|
-                    'requestFullscreen'|
-                    'webkitRequestFullScreen'
-                );
-                exitFullscreen: (
-                    'exitFullscreen'|
-                    'mozCancelFullScreen'|
-                    'webkitExitFullscreen'|
-                    'msExitFullscreen'
-                );
-            };
-            public chart: Chart;
-            public close(): void;
-            public isOpen: boolean;
-            public open(): void;
-            public origHeight?: number;
-            public origHeightOption?: (number|string|null);
-            public origWidth?: number;
-            public origWidthOption?: (number|string|null);
-            public toggle(): void;
-            public unbindFullscreenEvent?: Function;
-        }
-    }
-}
-
-/**
- * The module allows user to enable display chart in full screen mode.
- * Used in StockTools too.
- * Based on default solutions in browsers.
+/* *
  *
- */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+ *  Class
+ *
+ * */
 
 /**
  * Handles displaying chart's container in the fullscreen mode.
@@ -98,6 +70,7 @@ class Fullscreen {
      * */
 
     public constructor(chart: Chart) {
+
         /**
          * Chart managed by the fullscreen controller.
          * @name Highcharts.Fullscreen#chart
@@ -154,7 +127,7 @@ class Fullscreen {
      * */
 
     /** @private */
-    public browserProps: Highcharts.Fullscreen['browserProps'];
+    public browserProps?: Fullscreen.BrowserProperties;
 
     public chart: Chart;
 
@@ -162,10 +135,13 @@ class Fullscreen {
 
     /** @private */
     public origHeight?: number;
+
     /** @private */
     public origHeightOption?: (number|string|null);
+
     /** @private */
     public origWidth?: number;
+
     /** @private */
     public origWidthOption?: (number|null);
 
@@ -230,6 +206,7 @@ class Fullscreen {
 
         });
     }
+
     /**
      * Displays the chart in fullscreen mode.
      * When fired customly by user before exporting context button is created,
@@ -298,6 +275,7 @@ class Fullscreen {
 
         });
     }
+
     /**
      * Replaces the exporting context button's text when toogling the
      * fullscreen mode.
@@ -344,6 +322,7 @@ class Fullscreen {
             }
         }
     }
+
     /**
      * Toggles displaying the chart in fullscreen mode.
      * By default, when the exporting module is enabled, a context button with
@@ -367,7 +346,51 @@ class Fullscreen {
             fullscreen.close();
         }
     }
+
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Fullscreen {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface BrowserProperties {
+        fullscreenChange: (
+            'fullscreenchange'|
+            'mozfullscreenchange'|
+            'webkitfullscreenchange'|
+            'MSFullscreenChange'
+        );
+        requestFullscreen: (
+            'msRequestFullscreen'|
+            'mozRequestFullScreen'|
+            'requestFullscreen'|
+            'webkitRequestFullScreen'
+        );
+        exitFullscreen: (
+            'exitFullscreen'|
+            'mozCancelFullScreen'|
+            'webkitExitFullscreen'|
+            'msExitFullscreen'
+        );
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Fullscreen;
 
@@ -411,6 +434,7 @@ addEvent(Chart, 'beforeRender', function (): void {
  *        The event that occured.
  */
 
+(''); // keeps doclets above separated from following code
 
 /* *
  *
@@ -427,7 +451,7 @@ addEvent(Chart, 'beforeRender', function (): void {
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenfullscreenCloseCallbackFunction}
- * @since 10.1.0
+ * @since     10.1.0
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
  * @apioption chart.events.fullscreenClose
@@ -441,7 +465,7 @@ addEvent(Chart, 'beforeRender', function (): void {
  *         Title size change on fullscreen open
  *
  * @type      {Highcharts.FullScreenfullscreenOpenCallbackFunction}
- * @since 10.1.0
+ * @since     10.1.0
  * @context   Highcharts.Chart
  * @requires  modules/full-screen
  * @apioption chart.events.fullscreenOpen
