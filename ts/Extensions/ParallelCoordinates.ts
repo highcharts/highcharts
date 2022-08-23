@@ -43,6 +43,7 @@ const {
     erase,
     extend,
     isArray,
+    isNumber,
     merge,
     pick,
     splat,
@@ -685,7 +686,7 @@ namespace ParallelAxis {
                 if (
                     series.yData &&
                     series.visible &&
-                    typeof index === 'number'
+                    isNumber(index)
                 ) {
                     const y = (series.yData)[index];
 

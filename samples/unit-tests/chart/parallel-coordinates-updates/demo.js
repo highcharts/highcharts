@@ -147,11 +147,13 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
 
     // Calculate yAxis extremes based on the range series points (#15752)
     chart.series[0].setData([]);
-    chart.series[1].setData([]);
+    chart.series[1].remove();
 
     chart.update({
+        chart: {
+            type: 'arearange'
+        },
         series: [{
-            type: 'arearange',
             data: [
                 [23, 25],
                 [-1, -0.5],
@@ -200,26 +202,7 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     });
 
     // Multiple series case (#15752)
-    chart.update({
-        series: [{
-            type: 'arearange',
-            data: [
-                [-20, -15],
-                [-10, -5],
-                [-10, -5]
-            ]
-        }, {
-            type: 'arearange',
-            data: [
-                [0, 1],
-                [0, 5],
-                [0, 8]
-            ]
-        }]
-    });
-
     chart.addSeries({
-        type: 'arearange',
         data: [
             [10, 15],
             [10, 15],
@@ -228,8 +211,7 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     });
 
     const firstSeries = chart.series[0],
-        secondSeries = chart.series[1],
-        thirdSeries = chart.series[2];
+        secondSeries = chart.series[1];
 
     firstAxisMin = chart.yAxis[0].dataMin;
     firstAxisMax = chart.yAxis[0].dataMax;
@@ -237,23 +219,23 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     thirdAxisMax = chart.yAxis[2].dataMax;
 
     assert.strictEqual(
-        firstSeries.points[0].low,
+        secondSeries.points[0].low,
         firstAxisMin,
         `The first yAxis' min should be equal to the first point's low value.`
     );
     assert.strictEqual(
-        thirdSeries.points[0].high,
+        firstSeries.points[0].high,
         firstAxisMax,
         `The first yAxis' max should be equal to the first point's high value.`
     );
 
     assert.strictEqual(
-        firstSeries.points[2].low,
+        secondSeries.points[2].low,
         thirdAxisMin,
         `The third yAxis' min should be equal to the third point's low value.`
     );
     assert.strictEqual(
-        secondSeries.points[2].high,
+        firstSeries.points[2].high,
         thirdAxisMax,
         `The third yAxis' max should be equal to the third point's high value.`
     );
