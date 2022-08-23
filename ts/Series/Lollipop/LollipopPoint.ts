@@ -42,7 +42,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     isObject,
-    extend
+    extend,
+    pick
 } = U;
 
 /* *
@@ -81,6 +82,43 @@ class LollipopPoint extends DumbbellPoint {
         return pointProto.init.apply(this, arguments);
     }
 
+    /**
+     * Extend the series' setState method by setting fill color of markers.
+     * @private
+     *
+     * @function Highcharts.Series#drawPoints
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     */
+    public setState(): void {
+        const point = this,
+            series = point.series,
+            chart = series.chart,
+            seriesLowColor = series.options.lowColor,
+            seriesMarker = series.options.marker,
+            pointOptions = point.options,
+            pointLowColor = pointOptions.lowColor,
+            zoneColor = point.zone && point.zone.color,
+            lowerGraphicColor = pick(
+                pointLowColor,
+                seriesLowColor,
+                pointOptions.marker ? pointOptions.marker.fillColor : void 0,
+                seriesMarker ? seriesMarker.fillColor : void 0,
+                pointOptions.color,
+                zoneColor,
+                point.color,
+                series.color
+            );
+
+        DumbbellPoint.prototype.setState.apply(point, arguments as any);
+
+        if (!point.state && point.lowerGraphic && !chart.styledMode) {
+            point.lowerGraphic.attr({
+                fill: lowerGraphicColor
+            });
+        }
+    }
 }
 
 /* *

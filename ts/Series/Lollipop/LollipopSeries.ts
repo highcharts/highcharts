@@ -129,6 +129,45 @@ class LollipopSeries extends DumbbellSeries {
         return [pick(point.y, point.low)];
     }
 
+    /**
+     * Extend the series' drawPoints method by setting fill color of markers.
+     * @private
+     *
+     * @function Highcharts.Series#drawPoints
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     */
+    public drawPoints(): void {
+        const series = this,
+            chart = series.chart,
+            seriesLowColor = series.lowColor = series.options.lowColor,
+            seriesMarkerOptions = series.options.marker;
+
+        DumbbellSeries.prototype.drawPoints.apply(series, arguments as any);
+
+        series.points.forEach((point: LollipopPoint): void => {
+            if (point.lowerGraphic && !chart.styledMode) {
+                const pointMarkerOptions = point.options.marker,
+                    zoneColor = point.zone && point.zone.color,
+                    lowerGraphicColor = pick(
+                        pointMarkerOptions ? pointMarkerOptions.fillColor :
+                            void 0,
+                        seriesMarkerOptions ? seriesMarkerOptions.fillColor :
+                            void 0,
+                        point.options.lowColor,
+                        seriesLowColor,
+                        point.options.color,
+                        zoneColor,
+                        point.color,
+                        series.color
+                    );
+                point.lowerGraphic.attr({
+                    fill: lowerGraphicColor
+                });
+            }
+        });
+    }
 }
 
 /* *
@@ -148,13 +187,13 @@ interface LollipopSeries {
 }
 
 extend(LollipopSeries.prototype, {
+    pointClass: LollipopPoint,
     pointArrayMap: ['y'],
     pointValKey: 'y',
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
-    setShapeArgs: colProto.translate,
-    pointClass: LollipopPoint
+    setShapeArgs: colProto.translate
 });
 
 /* *
