@@ -12,6 +12,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Fullscreen from '../../Extensions/Full-Screen.js';
+import Fullscreen from '../../Extensions/Fullscreen.js';
 const G: AnyRecord = Highcharts;
 G.Fullscreen = Fullscreen;

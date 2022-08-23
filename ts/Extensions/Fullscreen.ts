@@ -8,8 +8,14 @@
 
 'use strict';
 
-import Chart from '../Core/Chart/Chart.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import AST from '../Core/Renderer/HTML/AST.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
