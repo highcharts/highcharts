@@ -34,25 +34,6 @@ const {
 
 /* *
 *
-*  Declarations
-*
-* */
-
-interface TreegraphNode {
-    point: TreegraphPoint;
-    ancestor: TreegraphNode;
-    column: number;
-    parentNode: TreegraphNode;
-    relativeXPosition: number;
-    xPosition: number;
-    yPosition: number;
-    nodeSizeX: number;
-    nodeSizeY: number;
-    series: TreegraphSeries;
-}
-
-/* *
-*
 *  Class
 *
 * */
@@ -227,17 +208,38 @@ class TreegraphNode extends TreemapNode {
         }
     }
 }
+
 /* *
 *
-*  Namespace
+*  Class Interface
 *
 * */
-namespace TreegraphNode {
-    export interface NodeValuesObject extends TreemapNodeNS.NodeValuesObject {}
+interface TreegraphNode {
+    point: TreegraphPoint;
+    ancestor: TreegraphNode;
+    column: number;
+    parentNode: TreegraphNode;
+    relativeXPosition: number;
+    xPosition: number;
+    yPosition: number;
+    nodeSizeX: number;
+    nodeSizeY: number;
+    series: TreegraphSeries;
 }
 /* *
 *
-*  Export default
+*  Class Namespace
 *
 * */
+
+namespace TreegraphNode {
+    export interface NodeValuesObject extends TreemapNodeNS.NodeValuesObject {}
+}
+
+/* *
+*
+*  Default Export
+*
+* */
+
 export default TreegraphNode;

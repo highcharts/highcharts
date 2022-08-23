@@ -35,11 +35,6 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
 export interface LinkPointOptions extends TreegraphPointOptions {
     link?: TreegraphLinkOptions
 }
-interface LinkPoint {
-    options: LinkPointOptions;
-    fromNode: TreegraphPoint;
-    toNode: TreegraphPoint;
-}
 /* *
 *
 *  Class
@@ -107,5 +102,23 @@ class LinkPoint extends Point {
         }
     }
 }
+
+/* *
+*
+*  Class Interface
+*
+* */
+
+interface LinkPoint {
+    options: LinkPointOptions;
+    fromNode: TreegraphPoint;
+    toNode: TreegraphPoint;
+}
+
+/* *
+*
+*  Export Default
+*
+* */
 
 export default LinkPoint;

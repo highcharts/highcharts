@@ -367,4 +367,11 @@ class TreegraphLayout {
         });
     }
 }
+
+/* *
+*
+*  Default Export
+*
+* */
+
 export default TreegraphLayout;

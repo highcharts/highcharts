@@ -70,5 +70,10 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     marker: PointMarkerOptions;
 }
 
+/* *
+*
+*  Default Export
+*
+* */
 
 export default TreegraphSeriesOptions;

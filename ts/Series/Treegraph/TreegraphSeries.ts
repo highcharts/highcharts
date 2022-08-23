@@ -50,12 +50,14 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 *  Declatarions
 *
 * */
+
 interface LayoutModifiers {
     ax: number;
     bx: number;
     ay: number;
     by: number;
 }
+
 /* *
  *
  *  Class
@@ -608,6 +610,13 @@ extend(TreegraphSeries.prototype, {
     NodeClass: TreegraphNode,
     LinkClass: TreegraphLink
 });
+
+/* *
+*
+*  Class Namespace
+*
+* */
+
 namespace TreegraphSeries {
 
 }

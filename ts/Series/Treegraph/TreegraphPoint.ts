@@ -62,9 +62,10 @@ class TreegraphPoint extends TreemapPoint {
 
     /* *
     *
-    *  Methods
+    *  Functions
     *
     * */
+
     public draw(): void {
         super.draw.apply(this, arguments);
         this.renderCollapseButton();
