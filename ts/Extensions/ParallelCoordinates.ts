@@ -688,18 +688,14 @@ namespace ParallelAxis {
                     series.visible &&
                     isNumber(index)
                 ) {
-                    const y = (series.yData)[index];
+                    const y = series.yData[index];
 
                     // Take into account range series points as well (#15752)
-                    if (isArray(y)) {
-                        currentPoints = currentPoints.concat(y);
-                    } else {
-                        currentPoints.push(y);
-                    }
+                    currentPoints.push.apply(currentPoints, splat(y));
                 }
             });
 
-            currentPoints = currentPoints.filter((y): boolean => defined(y));
+            currentPoints = currentPoints.filter(isNumber);
 
             axis.dataMin = arrayMin(currentPoints);
             axis.dataMax = arrayMax(currentPoints);
