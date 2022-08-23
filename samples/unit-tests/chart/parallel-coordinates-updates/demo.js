@@ -146,23 +146,21 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     );
 
     // Calculate yAxis extremes based on the range series points (#15752)
-    chart.series[0].setData([]);
-    chart.series[1].remove();
-
     chart.update({
         chart: {
             type: 'arearange'
-        },
-        series: [{
-            data: [
-                [23, 25],
-                [-1, -0.5],
-                [1.5, 4],
-                [1.5, 5],
-                [4, 5]
-            ]
-        }]
-    });
+        }
+    }, false);
+
+    chart.series[0].setData([
+        [23, 25],
+        [-1, -0.5],
+        [1.5, 4],
+        [1.5, 5],
+        [4, 5]
+    ], false);
+
+    chart.series[1].remove();
 
     const points = chart.series[0].points;
     let firstAxisMin = chart.yAxis[0].dataMin,
