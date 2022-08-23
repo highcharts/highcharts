@@ -11,11 +11,9 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Fullscreen from '../../Extensions/Fullscreen.js';
 import Exporting from '../../Extensions/Exporting/Exporting.js';
 import HttpUtilities from '../../Core/HttpUtilities.js';
 const G: AnyRecord = Highcharts;
-G.Fullscreen = Fullscreen;
 G.HttpUtilities = HttpUtilities;
 G.ajax = HttpUtilities.ajax;
 G.getJSON = HttpUtilities.getJSON;

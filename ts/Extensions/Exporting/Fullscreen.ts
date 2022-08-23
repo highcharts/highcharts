@@ -24,9 +24,9 @@
  *
  * */
 
-import AST from '../Core/Renderer/HTML/AST.js';
-import Chart from '../Core/Chart/Chart.js';
-import U from '../Core/Utilities.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
+import Chart from '../../Core/Chart/Chart.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent
@@ -38,11 +38,39 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         /** @requires Extensions/Fullscreen */
         fullscreen?: Fullscreen;
     }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function onChartBeforeRender(
+    this: Chart
+): void {
+    /**
+     * @name Highcharts.Chart#fullscreen
+     * @type {Highcharts.Fullscreen}
+     * @requires modules/full-screen
+     */
+    this.fullscreen = new Fullscreen(this);
 }
 
 /* *
@@ -58,10 +86,35 @@ declare module '../Core/Chart/ChartLike' {
  *
  * @class
  * @name Highcharts.Fullscreen
- * @hideconstructor
- * @requires modules/full-screen
+ *
+ * @requires modules/exporting
  */
 class Fullscreen {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Prepares the chart class to support fullscreen.
+     *
+     * @param {typeof_Highcharts.Chart} ChartClass
+     * The chart class to decorate with fullscreen support.
+     */
+    public static compose(
+        ChartClass: typeof Chart
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            // Initialize fullscreen
+            addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
+        }
+
+    }
 
     /* *
      *
@@ -393,16 +446,6 @@ namespace Fullscreen {
  * */
 
 export default Fullscreen;
-
-// Initialize fullscreen
-addEvent(Chart, 'beforeRender', function (): void {
-    /**
-     * @name Highcharts.Chart#fullscreen
-     * @type {Highcharts.Fullscreen}
-     * @requires modules/full-screen
-     */
-    this.fullscreen = new Fullscreen(this);
-});
 
 /* *
  *
