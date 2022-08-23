@@ -9,10 +9,6 @@
 'use strict';
 
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
 import AST from '../Core/Renderer/HTML/AST.js';
 import U from '../Core/Utilities.js';
 const {
@@ -367,9 +363,7 @@ class Fullscreen {
     }
 }
 
-H.Fullscreen = Fullscreen;
-
-export default H.Fullscreen;
+export default Fullscreen;
 
 // Initialize fullscreen
 addEvent(Chart, 'beforeRender', function (): void {
@@ -378,7 +372,7 @@ addEvent(Chart, 'beforeRender', function (): void {
      * @type {Highcharts.Fullscreen}
      * @requires modules/full-screen
      */
-    this.fullscreen = new H.Fullscreen(this);
+    this.fullscreen = new Fullscreen(this);
 });
 
 /* *
