@@ -37,7 +37,7 @@ const {
 } = SeriesRegistry;
 
 import U from '../../Core/Utilities.js';
-const { merge, pick, relativeLength, isArray } = U;
+const { extend, merge, pick, relativeLength, isArray } = U;
 
 import TreegraphLink from './TreegraphLink.js';
 import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
@@ -591,7 +591,7 @@ class TreegraphSeries extends TreemapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class prototype
  *
  * */
 
@@ -600,9 +600,14 @@ interface TreegraphSeries {
     pointClass: typeof TreegraphPoint;
     NodeClass: typeof TreegraphNode;
     LinkClass: typeof TreegraphLink;
-
 }
 
+
+extend(TreegraphSeries.prototype, {
+    pointClass: TreegraphPoint,
+    NodeClass: TreegraphNode,
+    LinkClass: TreegraphLink
+});
 namespace TreegraphSeries {
 
 }
@@ -612,9 +617,6 @@ namespace TreegraphSeries {
  *
  * */
 
-TreegraphSeries.prototype.pointClass = TreegraphPoint;
-TreegraphSeries.prototype.NodeClass = TreegraphNode;
-TreegraphSeries.prototype.LinkClass = TreegraphLink;
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treegraph: typeof TreegraphSeries;
