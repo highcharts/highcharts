@@ -220,6 +220,10 @@ class DumbbellSeries extends AreaRangeSeries {
             attribs: SVGAttributes,
             origProps;
 
+        if (typeof pointTop !== 'number') {
+            return {};
+        }
+
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }

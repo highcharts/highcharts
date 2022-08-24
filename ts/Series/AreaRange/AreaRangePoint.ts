@@ -96,13 +96,13 @@ class AreaRangePoint extends AreaPoint {
 
     public origProps?: Partial<AreaRangePoint>;
 
-    public plotHigh: number = void 0 as any;
+    public plotHigh?: number = void 0;
 
-    public plotLow: number = void 0 as any;
+    public plotLow?: number = void 0;
 
-    public plotHighX: number = void 0 as any;
+    public plotHighX?: number = void 0;
 
-    public plotLowX: number = void 0 as any;
+    public plotLowX?: number = void 0;
 
     public plotX: number = void 0 as any;
 
@@ -144,7 +144,7 @@ class AreaRangePoint extends AreaPoint {
         this.graphic = this.upperGraphic;
         this.plotY = this.plotHigh;
 
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotHighX)) {
             this.plotX = this.plotHighX;
         }
 
@@ -157,7 +157,7 @@ class AreaRangePoint extends AreaPoint {
         this.plotY = this.plotLow;
         this.graphic = this.lowerGraphic;
 
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotLowX)) {
             this.plotX = this.plotLowX;
         }
 
@@ -179,22 +179,22 @@ class AreaRangePoint extends AreaPoint {
 
         // Bottom halo
         this.plotY = this.plotLow;
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotLowX)) {
             this.plotX = this.plotLowX;
         }
 
         if (this.isInside) {
-            path = areaProto.haloPath.apply(this, arguments as any);
+            path = areaProto.haloPath.apply(this, arguments);
         }
 
         // Top halo
         this.plotY = this.plotHigh;
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotHighX)) {
             this.plotX = this.plotHighX;
         }
         if (this.isTopInside) {
             path = path.concat(
-                areaProto.haloPath.apply(this, arguments as any)
+                areaProto.haloPath.apply(this, arguments)
             );
         }
 
