@@ -898,6 +898,10 @@ class Point {
         return object;
     }
 
+    public shouldDraw(): boolean {
+
+        return !this.isNull;
+    }
     /**
      * Extendable method for formatting each point's tooltip line.
      *

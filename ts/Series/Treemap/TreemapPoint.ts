@@ -143,7 +143,7 @@ class TreemapPoint extends ScatterPoint {
     }
 
     public shouldDraw(): boolean {
-        return DPU.shouldDraw(this);
+        return isNumber(this.plotY) && this.y !== null;
     }
 
     /* eslint-enable valid-jsdoc */
