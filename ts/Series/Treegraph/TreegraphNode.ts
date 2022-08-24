@@ -33,18 +33,22 @@ const {
 } = SeriesRegistry;
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
+/**
+ * @private
+ * @class
+ */
 class TreegraphNode extends TreemapNode {
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public mod: number = 0;
     public thread?: TreegraphNode;
@@ -210,10 +214,10 @@ class TreegraphNode extends TreemapNode {
 }
 
 /* *
-*
-*  Class Interface
-*
-* */
+ *
+ *  Class Interface
+ *
+ * */
 interface TreegraphNode {
     point: TreegraphPoint;
     ancestor: TreegraphNode;
@@ -226,20 +230,21 @@ interface TreegraphNode {
     nodeSizeY: number;
     series: TreegraphSeries;
 }
+
 /* *
-*
-*  Class Namespace
-*
-* */
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace TreegraphNode {
     export interface NodeValuesObject extends TreemapNodeNS.NodeValuesObject {}
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreegraphNode;

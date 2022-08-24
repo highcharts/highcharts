@@ -108,7 +108,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public layoutAlgorythm: TreegraphLayout = void 0 as any;
 
-    public links: Array<TreegraphLink> = void 0 as any;
+    public links: Array<TreegraphLink> = [];
 
     public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
     /* *
@@ -409,10 +409,9 @@ class TreegraphSeries extends TreemapSeries {
      * Private method responsible for adjusting the dataLabel options for each
      * node-point individually.
      */
-    public drawNodeLabels(): void {
+    public drawNodeLabels(points: Array<TreegraphPoint>): void {
         let series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
-            points = series.points,
             options,
             level;
 
@@ -440,7 +439,7 @@ class TreegraphSeries extends TreemapSeries {
             // Merge custom options with point options
             (point as any).dlOptions = merge(options, point.options.dataLabels);
         });
-        Series.prototype.drawDataLabels.apply(this, arguments);
+        Series.prototype.drawDataLabels.call(this, points);
     }
     /**
      * Treegraph has two separate collecions of nodes and lines,
@@ -453,31 +452,18 @@ class TreegraphSeries extends TreemapSeries {
                 this.options.dataLabels = [this.options.dataLabels];
             }
 
-            const dataLabelOptions = this.options.dataLabels.map(
-                (option): DataLabelTextPathOptions | undefined =>
-                    option.textPath
-            );
             // Render node labels.
-            this.drawNodeLabels.apply(this, arguments);
+            this.drawNodeLabels(this.points);
 
             // Render link labels.
-            const points = this.points;
-            this.points = this.links as any;
-            this.options.dataLabels.forEach((label): void => {
-                label.textPath = label.linkTextPath;
-            });
-            Series.prototype.drawDataLabels.apply(this, arguments);
-
-            // Restore nodes.
-            this.points = points;
-            this.options.dataLabels.forEach((option, index): void => {
-                option.textPath = dataLabelOptions[index];
-            });
+            Series.prototype.drawDataLabels.call(this, this.links);
         }
     }
     public destroy(): void {
         // Links must also be destroyed.
-        this.data = (this.points || []).concat(this.links as any || []);
+        for (const link of this.links) {
+            link.destroy();
+        }
 
         return Series.prototype.destroy.apply(this, arguments);
     }
