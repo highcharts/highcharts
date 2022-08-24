@@ -5,9 +5,7 @@
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;
-    max-width: 800px;
     overflow: auto;
-    margin: 1em auto;
 }
 
 .highcharts-data-table table {
