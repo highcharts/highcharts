@@ -636,14 +636,14 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
             point.plotLow = plotY;
 
             // Calculate plotHigh value based on each yAxis scale (#15752)
-            point.plotHigh = this.yAxis.translate(
+            point.plotHigh = isNumber(high) ? this.yAxis.translate(
                 this.dataModify ?
                     this.dataModify.modifyValue(high) : high,
                 false,
                 true,
                 void 0,
                 true
-            ) as any;
+            ) : void 0;
 
             if (this.dataModify) {
                 point.yBottom = point.plotHigh;
