@@ -164,22 +164,22 @@ class TreegraphSeries extends TreemapSeries {
             node.nodeSizeY = nodeSizeY;
 
             let lineWidth;
-            if (node.xPosition && node.xPosition <= minX) {
+            if (node.xPosition <= minX) {
                 minX = node.xPosition;
                 lineWidth = markerOptions.lineWidth || 0;
                 minXSize = Math.max(nodeSizeX + lineWidth, minXSize);
             }
-            if (node.xPosition && node.xPosition >= maxX) {
+            if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
                 lineWidth = markerOptions.lineWidth || 0;
                 maxXSize = Math.max(nodeSizeX + lineWidth, maxXSize);
             }
-            if (node.yPosition && node.yPosition <= minY) {
+            if (node.yPosition <= minY) {
                 minY = node.yPosition;
                 lineWidth = markerOptions.lineWidth || 0;
                 minYSize = Math.max(nodeSizeY + lineWidth, minYSize);
             }
-            if (node.yPosition && node.yPosition >= maxY) {
+            if (node.yPosition >= maxY) {
                 maxY = node.yPosition;
                 lineWidth = markerOptions.lineWidth || 0;
                 maxYSize = Math.max(nodeSizeY + lineWidth, maxYSize);
@@ -343,8 +343,7 @@ class TreegraphSeries extends TreemapSeries {
                 x1 -= fromNodeWidth;
                 x2 += (toNode.shapeArgs.width || 0);
             }
-            const diff =
-                (toNode.node.xPosition || 0) - (fromNode.node.xPosition || 0);
+            const diff = toNode.node.xPosition - fromNode.node.xPosition;
             link.shapeType = 'path';
             const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
                 width = (fullWidth / diff) - fromNodeWidth,
@@ -540,8 +539,8 @@ class TreegraphSeries extends TreemapSeries {
             plotSizeX = chart.plotSizeX as number,
             // Get the layout modifiers which are common for all nodes.
             { ax, bx, ay, by } = this.layoutModifier,
-            x = ax * (node.xPosition || 0) + bx,
-            y = ay * (node.yPosition || 0) + by,
+            x = ax * node.xPosition + bx,
+            y = ay * node.yPosition + by,
             level = this.mapOptionsToLevel[node.level] || {},
             markerOptions = merge(
                 this.options.marker,
@@ -549,8 +548,8 @@ class TreegraphSeries extends TreemapSeries {
                 point.options.marker
             ),
             symbol = markerOptions.symbol,
-            height = node.nodeSizeY || 0,
-            width = node.nodeSizeX || 0,
+            height = node.nodeSizeY,
+            width = node.nodeSizeX,
             reversed = this.options.reversed,
             nodeX = node.x = (chart.inverted ?
                 plotSizeX - width / 2 - x :
