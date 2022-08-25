@@ -63,6 +63,10 @@ class TreegraphNode extends TreemapNode {
     public nodeHeight?: number;
     public wasVisited = false;
     public collapsed: boolean = false;
+    public xPosition?: number;
+    public yPosition?: number;
+    public nodeSizeX?: number;
+    public nodeSizeY?: number;
 
     /* *
     *
@@ -224,10 +228,6 @@ interface TreegraphNode {
     column: number;
     parentNode: TreegraphNode;
     relativeXPosition: number;
-    xPosition: number;
-    yPosition: number;
-    nodeSizeX: number;
-    nodeSizeY: number;
     series: TreegraphSeries;
 }
 
