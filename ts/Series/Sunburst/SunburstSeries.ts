@@ -490,6 +490,14 @@ class SunburstSeries extends TreemapSeries {
          */
 
         /**
+         * Determines whether the chart should receive one color per point based
+         * on this level.
+         *
+         * @type      {boolean}
+         * @apioption plotOptions.sunburst.levels.colorByPoint
+         */
+
+        /**
          * Can set a `colorVariation` on all points which lies on the same
          * level.
          *
