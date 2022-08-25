@@ -16,6 +16,7 @@
 
 import type { BubblePointMarkerOptions } from './BubblePointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import ColorType from '../../Core/Color/ColorType';
 
 /* *
  *
@@ -30,6 +31,7 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     maxSize?: (number|string);
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
+    temperatureColors?: Array<ColorType>;
     zMax?: number;
     zMin?: number;
     zThreshold?: number;

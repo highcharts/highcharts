@@ -28,10 +28,12 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
+import ColorType from '../../Core/Color/ColorType';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 const {
     series: Series,
     seriesTypes: {
@@ -47,7 +49,10 @@ const {
     arrayMax,
     arrayMin,
     clamp,
+    correctFloat,
+    defined,
     extend,
+    isArray,
     isNumber,
     merge,
     pick
@@ -528,32 +533,45 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        if (
-            !init &&
-            this.points.length < (this.options.animationLimit as any) // #8099
-        ) {
-            this.points.forEach(function (point): void {
-                const { graphic } = point;
+        const animationLimit = pick(this.options.animationLimit, Infinity);
 
-                if (graphic && graphic.width) { // URL symbols don't have width
+        if (!init && this.points.length < animationLimit) { // #8099
+            const temperatureColors = this.options.temperatureColors;
 
-                    // Start values
-                    if (!this.hasRendered) {
-                        graphic.attr({
-                            x: point.plotX,
-                            y: point.plotY,
-                            width: 1,
-                            height: 1
-                        });
+            // Why ['']? If standard single bubble, perform animation only for
+            // one point (one graphic). String element matches in TS
+            (temperatureColors || ['']).forEach((_, i: number): void => {
+                this.points.forEach((point): void => {
+                    const graphic =
+                        (point.graphics && point.graphics[i]) || point.graphic;
+
+                    if (
+                        graphic &&
+                        graphic.width // URL symbols don't have width
+                    ) {
+                        // Save the real bubble size
+                        const size = {
+                            width: graphic.width,
+                            height: graphic.height,
+                            x: (point.plotX || 0) - graphic.width / 2,
+                            y: (point.plotY || 0) - graphic.height / 2
+                        };
+
+                        // Make the bubble small, prepare for size animation
+                        if (!this.hasRendered) {
+                            graphic.attr({
+                                x: point.plotX,
+                                y: point.plotY,
+                                width: 1,
+                                height: 1
+                            });
+                        }
+
+                        // Run animation from 1x1 to a real size
+                        graphic.animate(size, this.options.animation);
                     }
-
-                    // Run animation
-                    graphic.animate(
-                        this.markerAttribs(point),
-                        this.options.animation
-                    );
-                }
-            }, this);
+                });
+            });
         }
     }
 
@@ -675,7 +693,24 @@ class BubbleSeries extends ScatterSeries {
             pos = Math.sqrt(pos);
         }
 
-        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+        let radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+
+        // Calculate radius of bubbles based on index of the color in the
+        // series.temperatureColors array.
+        if (this.options.temperatureColors) {
+            const colorIndex = this.temperatureColorIndex || 0,
+                sizeFactor = this.sizeFactor ?
+                    // If stops defined
+                    this.sizeFactor :
+                    // If stops not defined, then bubbles sizes decrease evenly
+                    // e.g. radii of 4 bubbles: 100%, 75%, 50%, 25%
+                    1 - colorIndex / this.options.temperatureColors.length;
+
+            // Ceiling solves decimal issues and rounds to 1px
+            radius = Math.ceil(correctFloat(radius * sizeFactor) * 2) / 2;
+        }
+
+        return radius;
     }
 
     /**
@@ -714,15 +749,162 @@ class BubbleSeries extends ScatterSeries {
     public translate(): void {
 
         // Run the parent method
-        super.translate.call(this);
+        super.translate();
 
         this.getRadii();
         this.translateBubble();
     }
 
+    public drawPoints(): void {
+        if (!this.options.temperatureColors) {
+            // Run the parent method
+            super.drawPoints();
+        } else {
+            const series = this,
+                options = series.options,
+                temperatureColors = this.options.temperatureColors
+                    .slice() // remove reference (for safe reverse)
+                    .reverse(); // loop form backward (easier calculations)
+
+            temperatureColors.forEach((
+                color: ColorType|[number, ColorType],
+                colorIndex: number
+            ): void => {
+                // Save size factor for further calculations
+                if (isArray(color)) { // if stops defined
+                    series.sizeFactor = color[0];
+
+                    color = color[1];
+                } else { // If size decreases evenly
+                    series.temperatureColorIndex = colorIndex;
+                }
+
+                const colorsLength = temperatureColors.length,
+                    fillColor = {
+                        radialGradient: {
+                            cx: 0.5,
+                            cy: 0.5,
+                            r: 0.5
+                        },
+                        stops: [
+                            [colorIndex === colorsLength - 1 ? 0 : 0.5, color],
+                            [1, (new Color(color)).setOpacity(0).get('rgba')]
+                        ]
+                    };
+
+                options.marker = merge(options.marker, { fillColor });
+
+                series.getRadii(); // recalculate radii
+
+                series.translateBubble(); // use radii
+
+                if (
+                    options.marker.enabled !== false ||
+                    series._hasPointMarkers
+                ) {
+                    const points = series.points,
+                        chart = series.chart,
+                        markerGroup = (
+                            (series as any)[series.specialGroup as any] ||
+                            series.markerGroup
+                        );
+
+                    points.forEach((point): void => {
+                        point.graphics = point.graphics || [];
+
+                        let graphic = point.graphics[colorIndex];
+
+                        const pointMarkerOptions = point.marker || {},
+                            hasPointMarker = !!point.marker,
+                            verb = graphic ? 'animate' : 'attr',
+                            zMin = this.options.zMin,
+                            shouldDrawMarker = (
+                                (
+                                    (options.marker || {}).enabled &&
+                                    typeof pointMarkerOptions.enabled ===
+                                        'undefined'
+                                ) || pointMarkerOptions.enabled
+                            ) &&
+                            !point.isNull &&
+                            point.visible !== false &&
+                            // Above zThreshold
+                            (!defined(zMin) || (point.z && point.z >= zMin));
+
+                        if (shouldDrawMarker) {
+                            const symbol = pick(
+                                    pointMarkerOptions.symbol,
+                                    series.symbol,
+                                    'rect' as SymbolKey
+                                ),
+                                markerAttribs = series.markerAttribs(
+                                    point,
+                                    point.selected ? 'select' : void 0
+                                );
+
+                            if (graphic) { // if exists
+                                // Update
+                                graphic.animate(markerAttribs);
+                            } else if ( // if doesn't exist yet
+                                (markerAttribs.width || 0) > 0 ||
+                                point.hasImage
+                            ) {
+                                // Create
+                                graphic = chart.renderer
+                                    .symbol(
+                                        symbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height,
+                                        hasPointMarker ?
+                                            pointMarkerOptions :
+                                            options.marker
+                                    )
+                                    .add(markerGroup);
+
+                                (graphic.element as any).point = point;
+
+                                point.graphics.push(graphic);
+                            }
+
+                            if (graphic) {
+                                if (!chart.styledMode) {
+                                    const pointAttribs = series.pointAttribs(
+                                            point,
+                                            point.selected ? 'select' : void 0
+                                        ),
+                                        attribs = merge(
+                                            pointAttribs,
+                                            verb === 'animate' ?
+                                                markerAttribs :
+                                                {},
+                                            { zIndex: colorIndex }
+                                        );
+
+                                    graphic[verb](attribs);
+                                } else {
+                                    if (verb === 'animate') {
+                                        graphic.animate(markerAttribs);
+                                    }
+                                }
+
+                                graphic.addClass(point.getClassName(), true);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Set color for legend item marker
+            if (options.marker) {
+                options.marker.fillColor = series.color;
+            }
+        }
+    }
+
     public translateBubble(): void {
         const { data, radii } = this;
-        const { minPxSize } = this.getPxExtremes();
+        const { minPxSize } = this.getPxExtremes(true);
 
         // Set the shape type and arguments to be picked up in drawPoints
         let i = data.length;
@@ -781,8 +963,8 @@ class BubbleSeries extends ScatterSeries {
         return isPercent ? smallestSize * length / 100 : length;
     }
 
-    public getPxExtremes(): BubblePxExtremes {
-        const minPxSize = this.getPxSize(this.options.minSize, true);
+    public getPxExtremes(allowSmaller?: boolean): BubblePxExtremes {
+        let minPxSize = this.getPxSize(this.options.minSize, true);
 
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
@@ -790,6 +972,15 @@ class BubbleSeries extends ScatterSeries {
             this.getPxSize(this.options.maxSize),
             minPxSize
         );
+
+        if (allowSmaller && this.options.temperatureColors) {
+            const sizeFactor = this.sizeFactor ||
+                (1 / this.options.temperatureColors.length);
+
+            // Recalculate minPxSize to draw smaller bubbles for
+            // temperatureColors
+            minPxSize = minPxSize * sizeFactor;
+        }
 
         return { minPxSize, maxPxSize };
     }
@@ -828,7 +1019,10 @@ interface BubbleSeries {
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
+    sizeFactor?: number;
     specialGroup: string;
+    temperatureColorIndex?: number;
+    temperatureColors: [ColorType|[number, ColorType]];
     zoneAxis: string;
 }
 

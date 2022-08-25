@@ -1,32 +1,37 @@
 QUnit.test('Temperaturemap API options.', assert => {
-    const chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.chart('container', {
 
         accessibility: {
             enabled: false
         },
 
+        plotOptions: {
+            bubble: {
+                temperatureColors: ['#00ff00', '#ff0000', '#0000ff']
+            }
+        },
+
         series: [{
-            type: 'temperaturemap',
+            type: 'bubble',
             data: [{
-                lat: 0,
-                lon: 0,
+                x: 0,
+                y: 0,
                 z: 9
             }, {
-                lat: 50,
-                lon: 50,
+                x: 50,
+                y: 50,
                 z: 6
             }, {
-                lat: 100,
-                lon: 100,
+                x: 100,
+                y: 100,
                 z: 6
             }, {
-                lat: 150,
-                lon: 50,
+                x: 150,
+                y: 50,
                 z: 3
             }],
             minSize: 50,
-            maxSize: 150,
-            temperatureColors: ['#00ff00', '#ff0000', '#0000ff']
+            maxSize: 150
         }]
     });
 
@@ -95,8 +100,8 @@ QUnit.test('Temperaturemap API options.', assert => {
     });
 
     series.addPoint({
-        lat: -150,
-        lon: -150,
+        x: -150,
+        y: -150,
         z: 15
     });
 
@@ -116,43 +121,22 @@ QUnit.test('Temperaturemap API options.', assert => {
         );
     });
 
-    addedPoint.setVisible(false);
-
-    addedPoint.graphics.forEach(graphic => {
-        assert.strictEqual(
-            graphic.attr('visibility'),
-            'hidden',
-            'After point.setVisible(false), all graphics should be hidden.'
-        );
-    });
-
-    addedPoint.setVisible(true);
-
-    addedPoint.graphics.forEach(graphic => {
-        assert.notStrictEqual(
-            graphic.attr('visibility'),
-            'hidden',
-            'After point.setVisible(true), all graphics should be visible.'
-        );
-    });
-
     addedPoint.remove();
 
     assert.notOk(
         addedPoint.graphics,
-        true,
         `After point.remove(), the point's graphics should be destroyed.`
     );
 
     series = chart.addSeries({
-        type: 'temperaturemap',
+        type: 'bubble',
         data: [{
-            lat: 0,
-            lon: 0,
+            x: 0,
+            y: 0,
             z: 10
         }, {
-            lat: -50,
-            lon: -50,
+            x: -50,
+            y: -50,
             z: 5
         }]
     });

@@ -276,9 +276,7 @@ class MapBubbleSeries extends BubbleSeries {
     translate(): void {
         mapPointProto.translate.call(this);
         this.getRadii();
-        (this as any).adjustMinSize = true;
         this.translateBubble();
-        (this as any).adjustMinSize = false;
     }
 }
 
