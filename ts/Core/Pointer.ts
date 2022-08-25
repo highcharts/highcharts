@@ -2146,6 +2146,24 @@ export default Pointer;
  * */
 
 /**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
+
+/**
  * One position in relation to an axis.
  *
  * @interface Highcharts.PointerAxisCoordinateObject
@@ -2210,50 +2228,43 @@ export default Pointer;
  *
  * @interface Highcharts.SelectDataObject
  *//**
+ * The selected Axis.
  * @name Highcharts.SelectDataObject#axis
  * @type {Highcharts.Axis}
  *//**
+ * The maximum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#max
  * @type {number}
  *//**
+ * The minimum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#min
  * @type {number}
  */
 
 /**
  * Object for select events.
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
  *
  * @interface Highcharts.SelectEventObject
  *//**
+ * The related browser event.
  * @name Highcharts.SelectEventObject#originalEvent
- * @type {global.Event|undefined}
+ * @type {global.Event}
  *//**
+ * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection
  * @type {boolean|undefined}
  *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#xAxis
- * @type {Array<Highcharts.SelectDataObject>|undefined}
+ * @type {Array<Highcharts.SelectDataObject>}
  *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#yAxis
- * @type {Array<Highcharts.SelectDataObject>|undefined}
- */
-
-/**
- * Chart position and scale.
- *
- * @interface Highcharts.ChartPositionObject
- *//**
- * @name Highcharts.ChartPositionObject#left
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleX
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleY
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#top
- * @type {number}
+ * @type {Array<Highcharts.SelectDataObject>}
  */
 
 ''; // keeps doclets above in JS file
