@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -15,19 +21,23 @@ import type {
     SlowStochasticParamsOptions
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
+import type StochasticIndicatorType from '../Stochastic/StochasticIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        stochastic: StochasticIndicator
-    }
-} = SeriesRegistry;
+const StochasticIndicator: typeof StochasticIndicatorType =
+    SeriesRegistry.seriesTypes.stochastic;
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Slow Stochastic series type.
@@ -39,6 +49,13 @@ const {
  * @augments Highcharts.Series
  */
 class SlowStochasticIndicator extends StochasticIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Slow Stochastic oscillator. This series requires the `linkedTo` option
      * to be set and should be loaded after `stock/indicators/indicators.js`
@@ -67,9 +84,21 @@ class SlowStochasticIndicator extends StochasticIndicator {
         }
     } as SlowStochasticOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;
     public points: Array<SlowStochasticPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -137,6 +166,12 @@ class SlowStochasticIndicator extends StochasticIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface SlowStochasticIndicator {
     pointClass: typeof SlowStochasticPoint;
     nameBase: string;
@@ -144,6 +179,12 @@ interface SlowStochasticIndicator {
 extend(SlowStochasticIndicator.prototype, {
     nameBase: 'Slow Stochastic'
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -159,8 +200,14 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
-
 export default SlowStochasticIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A Slow Stochastic indicator. If the [type](#series.slowstochastic.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).

@@ -42,6 +42,8 @@ const {
     defined,
     erase,
     extend,
+    isArray,
+    isNumber,
     merge,
     pick,
     splat,
@@ -395,7 +397,6 @@ addEvent(Series, 'afterTranslate', function (): void {
                     point.plotX = chart.yAxis[i].left - chart.plotLeft;
                 }
                 point.clientX = point.plotX;
-
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, void 0, true);
 
@@ -678,18 +679,23 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            const index = parallelCoordinates.position,
-                currentPoints: Array<Point> = [];
+            const index = parallelCoordinates.position;
+            let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
                 if (
+                    series.yData &&
                     series.visible &&
-                    defined((series.yData as any)[index as any])
+                    isNumber(index)
                 ) {
-                    // We need to use push() beacause of null points
-                    currentPoints.push((series.yData as any)[index as any]);
+                    const y = series.yData[index];
+
+                    // Take into account range series points as well (#15752)
+                    currentPoints.push.apply(currentPoints, splat(y));
                 }
             });
+
+            currentPoints = currentPoints.filter(isNumber);
 
             axis.dataMin = arrayMin(currentPoints);
             axis.dataMax = arrayMax(currentPoints);
@@ -704,7 +710,6 @@ namespace ParallelAxis {
      */
     function onInit(this: Axis): void {
         const axis = this;
-
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(
                 axis as ParallelAxis

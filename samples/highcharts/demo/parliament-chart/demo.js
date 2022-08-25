@@ -5,11 +5,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts item chart'
+        text: 'Distribution of seats'
     },
 
     subtitle: {
-        text: 'Parliament visualization'
+        text: 'Bundestag election 2021. Source: ' +
+            '<a href="https://www.bundeswahlleiter.de/en/bundeswahlleiter.html"' +
+            'target="_blank">Bundeswahlleiter</a> '
     },
 
     legend: {
@@ -20,16 +22,14 @@ Highcharts.chart('container', {
         name: 'Representatives',
         keys: ['name', 'y', 'color', 'label'],
         data: [
-            ['The Left', 39, '#CC0099', 'Linke'],
+            ['The Left', 39, '#CC0099', 'DIE LINKE'],
             ['Social Democratic Party', 206, '#EE0011', 'SPD'],
-            ['Alliance 90/The Greens', 118, '#448833', 'Grüne'],
+            ['Alliance 90/The Greens', 118, '#448833', 'GRÜNE'],
             ['Free Democratic Party', 92, '#FFCC00', 'FDP'],
             ['Christian Democratic Union', 152, '#000000', 'CDU'],
             ['Christian Social Union in Bavaria', 45, '#3366CC', 'CSU'],
-            ['Alternative for Germany', 81, '#3399FF', 'AfD'],
-            ['South Schleswig Voters\' Association', 1, '#000099', 'SSW'],
-            ['Centre Party', 1, '#6600CC', 'Zentrum'],
-            ['Independent', 1, '#999999', 'Parteilos']
+            ['Alternative for Germany', 83, '#3399FF', 'AfD'],
+            ['South Schleswig Voters\' Association', 1, '#000099', 'SSW']
         ],
         dataLabels: {
             enabled: true,

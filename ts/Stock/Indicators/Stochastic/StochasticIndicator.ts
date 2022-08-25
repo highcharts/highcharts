@@ -16,6 +16,7 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     StochasticOptions,
     StochasticParamsOptions
@@ -25,11 +26,7 @@ import type StochasticPoint from './StochasticPoint';
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -126,9 +123,21 @@ class StochasticIndicator extends SMAIndicator {
         }
     } as StochasticOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
     public points: Array<StochasticPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -224,7 +233,7 @@ class StochasticIndicator extends SMAIndicator {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 
@@ -270,6 +279,12 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  * */
 
 export default StochasticIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not

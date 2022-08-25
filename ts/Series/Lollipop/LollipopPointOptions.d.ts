@@ -27,7 +27,7 @@ export interface LollipopPointOptions extends DumbbellPointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

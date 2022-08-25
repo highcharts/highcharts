@@ -142,7 +142,7 @@ class ControllableCircle extends Controllable {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 

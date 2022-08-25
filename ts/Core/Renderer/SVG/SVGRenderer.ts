@@ -673,7 +673,7 @@ class SVGRenderer implements SVGRendererLike {
      * The shape type.
      *
      * @param {boolean} [useHTML=false]
-     * Wether to use HTML to render the label.
+     * Whether to use HTML to render the label.
      *
      * @return {Highcharts.SVGElement}
      * The button element.
@@ -2048,7 +2048,7 @@ class SVGRenderer implements SVGRendererLike {
      *        coordinates it should be pinned to.
      *
      * @param {boolean} [useHTML=false]
-     *        Wether to use HTML to render the label.
+     *        Whether to use HTML to render the label.
      *
      * @param {boolean} [baseline=false]
      *        Whether to position the label relative to the text baseline,

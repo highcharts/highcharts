@@ -22,6 +22,8 @@
 
 import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotation';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
+import type { AnnotationPoint } from '../../Extensions/Annotations/AnnotationSeries';
 import type {
     ControllableLabelType
 } from '../../Extensions/Annotations/Controllables/ControllableType';
@@ -49,7 +51,7 @@ const {
  * @return {Array<object>} The labels, or empty array if none.
  */
 function getChartAnnotationLabels(
-    chart: Highcharts.AnnotationChart
+    chart: AnnotationChart
 ): Array<ControllableLabelType> {
     const annotations = chart.annotations || [];
 
@@ -166,7 +168,7 @@ function getAnnotationLabelDescription(
  * @param {Highcharts.Chart} chart The chart to get annotation info on.
  * @return {Array<string>} Array of strings with HTML content for each annotation label.
  */
-function getAnnotationListItems(chart: Highcharts.AnnotationChart): string[] {
+function getAnnotationListItems(chart: AnnotationChart): string[] {
     const labels = getChartAnnotationLabels(chart);
 
     return labels.map((label): string => {
@@ -187,7 +189,7 @@ function getAnnotationListItems(chart: Highcharts.AnnotationChart): string[] {
  * @param {Highcharts.Chart} chart The chart to get annotation info on.
  * @return {string} String with HTML content or empty string if no annotations.
  */
-function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
+function getAnnotationsInfoHTML(chart: AnnotationChart): string {
     const annotations = chart.annotations;
 
     if (!(annotations && annotations.length)) {
@@ -207,7 +209,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
  * @param {Highcharts.Point} point The data point to get the annotation info from.
  * @return {Array<string>} Annotation texts
  */
-function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<string> {
+function getPointAnnotationTexts(point: AnnotationPoint): Array<string> {
     const labels = getChartAnnotationLabels(point.series.chart);
     const pointLabels = labels
         .filter((label): boolean => label.points.indexOf(point) > -1);

@@ -433,7 +433,7 @@ class ControllablePath extends Controllable {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 

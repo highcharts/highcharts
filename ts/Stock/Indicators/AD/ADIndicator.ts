@@ -20,19 +20,22 @@ import type {
 import type ADPoint from './ADPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     error,
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The AD series type.
@@ -187,6 +190,12 @@ class ADIndicator extends SMAIndicator {
     }
 
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface ADIndicator {
     pointClass: typeof ADPoint;
