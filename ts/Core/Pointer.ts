@@ -2125,6 +2125,7 @@ namespace Pointer {
     }
     export interface SelectEventObject {
         originalEvent: Event;
+        resetSelection?: boolean;
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
@@ -2225,13 +2226,16 @@ export default Pointer;
  * @interface Highcharts.SelectEventObject
  *//**
  * @name Highcharts.SelectEventObject#originalEvent
- * @type {global.Event}
+ * @type {global.Event|undefined}
+ *//**
+ * @name Highcharts.SelectEventObject#resetSelection
+ * @type {boolean|undefined}
  *//**
  * @name Highcharts.SelectEventObject#xAxis
- * @type {Array<Highcharts.SelectDataObject>}
+ * @type {Array<Highcharts.SelectDataObject>|undefined}
  *//**
  * @name Highcharts.SelectEventObject#yAxis
- * @type {Array<Highcharts.SelectDataObject>}
+ * @type {Array<Highcharts.SelectDataObject>|undefined}
  */
 
 /**
