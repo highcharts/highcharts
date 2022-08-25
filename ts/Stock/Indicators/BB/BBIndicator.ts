@@ -111,12 +111,14 @@ class BBIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      Background fill between lines.
          *
-         * @type      {Highcharts.Color}
-         * @since 9.3.2
+         * @type      {Highcharts.ColorType}
+         * @since     9.3.2
          * @apioption plotOptions.bb.fillColor
-         *
          */
 
+        /**
+         * Paramters used in calculation of regression series' points.
+         */
         params: {
             period: 20,
             /**
@@ -152,9 +154,18 @@ class BBIndicator extends SMAIndicator {
          * @extends plotOptions.bb.bottomLine
          */
         topLine: {
+            /**
+             * Styles for a top line.
+             */
             styles: {
+                /**
+                 * Pixel width of the line.
+                 */
                 lineWidth: 1,
                 /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.bb.color](#plotOptions.bb.color).
+                 *
                  * @type {Highcharts.ColorString}
                  */
                 lineColor: void 0
