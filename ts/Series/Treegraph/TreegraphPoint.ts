@@ -26,6 +26,7 @@ import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
 import Point from '../../Core/Series/Point.js';
 import { Palette } from '../../Core/Color/Palettes';
+import { support } from 'jquery';
 const { merge, addEvent, pick, fireEvent } = U;
 const {
     seriesTypes: {
@@ -47,10 +48,10 @@ const {
  */
 class TreegraphPoint extends TreemapPoint {
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
     public options: TreegraphPointOptions = void 0 as any;
     public isLink = false;
     public collapseButton?: SVGElement;
@@ -59,12 +60,13 @@ class TreegraphPoint extends TreemapPoint {
     public node: TreegraphNode = void 0 as any;
     public level?: number;
     public linkToParent?: TreegraphLink;
+    public collapseButtonOptions?: CollapseButtonOptions;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public draw(): void {
         super.draw.apply(this, arguments);
@@ -89,19 +91,14 @@ class TreegraphPoint extends TreemapPoint {
             return;
         }
 
-        this.options.collapseButton = btnOptions;
+        this.collapseButtonOptions = btnOptions;
         if (!point.collapseButton) {
             if (!point.node.children.length || !btnOptions.enabled) {
                 return;
             }
             let { x, y } = this.getCollapseBtnPosition(btnOptions);
             point.collapseButton = chart.renderer
-                .label(
-                    point.collapsed ? '+' : '-',
-                    x,
-                    y,
-                    shape
-                )
+                .label(point.collapsed ? '+' : '-', x, y, shape)
                 .attr({
                     height: height - 2 * padding,
                     width: width - 2 * padding,
@@ -162,6 +159,17 @@ class TreegraphPoint extends TreemapPoint {
         return super.shouldDraw() && this.visible;
     }
 
+    public destroy(): void {
+
+        if (this.collapseButton) {
+            this.collapseButton.destroy();
+            delete this.collapseButton;
+            this.collapseButton = void 0;
+        }
+
+        super.destroy.apply(this, arguments);
+    }
+
     public getCollapseBtnPosition(btnOptions: CollapseButtonOptions): {
         x: number;
         y: number;
@@ -188,7 +196,7 @@ class TreegraphPoint extends TreemapPoint {
 
 addEvent(TreegraphPoint, 'mouseOut', function (): void {
     const btn = this.collapseButton,
-        btnOptions = this.options.collapseButton;
+        btnOptions = this.collapseButtonOptions;
     if (btn && btnOptions && btnOptions.onlyOnHover && !this.collapsed) {
         btn.hide();
     }
