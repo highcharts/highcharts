@@ -411,7 +411,12 @@ class Point {
          */
         function destroyPoint(): void {
             // Remove all events and elements
-            if (point.graphic || point.dataLabel || point.dataLabels) {
+            if (
+                point.graphic ||
+                point.graphics ||
+                point.dataLabel ||
+                point.dataLabels
+            ) {
                 removeEvent(point);
                 point.destroyElements();
             }
@@ -465,6 +470,10 @@ class Point {
         });
 
         props.plural.forEach(function (plural: any): void {
+            if (!isArray((point as any)[plural])) {
+                return;
+            }
+
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
                     item.destroy();
@@ -567,7 +576,7 @@ class Point {
         let prop,
             i;
 
-        kinds = kinds || { graphic: 1, dataLabel: 1 };
+        kinds = kinds || { graphic: 1, graphics: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
             props.push('graphic', 'upperGraphic', 'shadowGroup');
@@ -589,7 +598,11 @@ class Point {
             }
         }
 
-        ['dataLabel', 'connector'].forEach(function (prop: string): void {
+        [
+            'dataLabel',
+            'connector',
+            'graphic'
+        ].forEach(function (prop: string): void {
             const plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
                 graphicalProps.plural.push(plural);

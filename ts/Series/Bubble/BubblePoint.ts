@@ -21,7 +21,6 @@ import type BubbleSeries from './BubbleSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import SVGElementLike from '../../Core/Renderer/SVG/SVGElementLike.js';
 const {
     seriesTypes: {
         scatter: {
@@ -52,8 +51,6 @@ class BubblePoint extends ScatterPoint {
      *
      * */
 
-    public graphics?: Array<SVGElementLike> = void 0 as any;
-
     public options: BubblePointOptions = void 0 as any;
 
     public series: BubbleSeries = void 0 as any;
@@ -66,34 +63,34 @@ class BubblePoint extends ScatterPoint {
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * Destroy a point.
-     *
-     * @private
-     */
-    public destroy(): void {
-        if (!this.series.options.temperatureColors) {
-            super.destroy();
-        } else { // if multiple graphics (temperatureColors)
-            const point = this;
-            let prop;
+    // /**
+    //  * Destroy a point.
+    //  *
+    //  * @private
+    //  */
+    // public destroy(): void {
+    //     if (!this.series.options.temperatureColors) {
+    //         super.destroy();
+    //     } else { // if multiple graphics (temperatureColors)
+    //         const point = this;
+    //         let prop;
 
-            // Remove all events and elements
-            if (
-                point.graphic ||
-                point.graphics ||
-                point.dataLabel ||
-                point.dataLabels
-            ) {
-                removeEvent(point);
-                point.destroyElements();
-            }
+    //         // Remove all events and elements
+    //         if (
+    //             point.graphic ||
+    //             point.graphics ||
+    //             point.dataLabel ||
+    //             point.dataLabels
+    //         ) {
+    //             removeEvent(point);
+    //             point.destroyElements();
+    //         }
 
-            for (prop in point) { // eslint-disable-line guard-for-in
-                (point as any)[prop] = null;
-            }
-        }
-    }
+    //         for (prop in point) { // eslint-disable-line guard-for-in
+    //             (point as any)[prop] = null;
+    //         }
+    //     }
+    // }
 
 
     // public destroy(): void {
@@ -155,23 +152,23 @@ class BubblePoint extends ScatterPoint {
     //     chart.pointCount--;
     // }
 
-    /**
-     *
-     * @private
-     */
-    public getGraphicalProps(
-        kinds?: Record<string, number>
-    ): Point.GraphicalProps {
-        const graphicalProps = super.getGraphicalProps(kinds);
+    // /**
+    //  *
+    //  * @private
+    //  */
+    // public getGraphicalProps(
+    //     kinds?: Record<string, number>
+    // ): Point.GraphicalProps {
+    //     const graphicalProps = super.getGraphicalProps(kinds);
 
-        if (this.series.options.temperatureColors) {
-            // Add graphics prop containing all graphical marker elements to
-            // graphicalProps.
-            graphicalProps.plural.push('graphics');
-        }
+    //     if (this.series.options.temperatureColors) {
+    //         // Add graphics prop containing all graphical marker elements to
+    //         // graphicalProps.
+    //         graphicalProps.plural.push('graphics');
+    //     }
 
-        return graphicalProps;
-    }
+    //     return graphicalProps;
+    // }
 
     /**
      * @private
