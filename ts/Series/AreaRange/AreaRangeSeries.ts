@@ -626,40 +626,45 @@ class AreaRangeSeries extends AreaSeries {
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
 
     // Set plotLow and plotHigh
-    this.points.forEach((point, i): void => {
-        const high = point.high,
-            plotY = point.plotY;
 
-        if (point.isNull) {
-            point.plotY = void 0;
-        } else {
-            point.plotLow = plotY;
-
-            // Calculate plotHigh value based on each yAxis scale (#15752)
-            point.plotHigh = isNumber(high) ? this.yAxis.translate(
-                this.dataModify ?
-                    this.dataModify.modifyValue(high) : high,
-                false,
-                true,
-                void 0,
-                true
-            ) : void 0;
-
-            if (this.dataModify) {
-                point.yBottom = point.plotHigh;
-            }
-        }
-    });
-
-    // Postprocess plotHigh
-    if (this.chart.polar) {
+    // Rules out lollipop, but lollipop should not inherit range series in the
+    // first place
+    if (this.pointArrayMap.join(',') === 'low,high') {
         this.points.forEach((point): void => {
-            this.highToXY(point);
-            point.tooltipPos = [
-                ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
-                ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
-            ];
+            const high = point.high,
+                plotY = point.plotY;
+
+            if (point.isNull) {
+                point.plotY = void 0;
+            } else {
+                point.plotLow = plotY;
+
+                // Calculate plotHigh value based on each yAxis scale (#15752)
+                point.plotHigh = isNumber(high) ? this.yAxis.translate(
+                    this.dataModify ?
+                        this.dataModify.modifyValue(high) : high,
+                    false,
+                    true,
+                    void 0,
+                    true
+                ) : void 0;
+
+                if (this.dataModify) {
+                    point.yBottom = point.plotHigh;
+                }
+            }
         });
+
+        // Postprocess plotHigh
+        if (this.chart.polar) {
+            this.points.forEach((point): void => {
+                this.highToXY(point);
+                point.tooltipPos = [
+                    ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
+                    ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
+                ];
+            });
+        }
     }
 }, { order: 0 });
 
