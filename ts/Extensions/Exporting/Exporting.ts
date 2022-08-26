@@ -1814,7 +1814,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event
@@ -1827,7 +1827,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event
