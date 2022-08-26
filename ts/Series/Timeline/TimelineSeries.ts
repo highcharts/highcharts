@@ -98,11 +98,10 @@ class TimelineSeries extends LineSeries {
      * @product      highcharts
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
      *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, lineWidth, negativeColor,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointStart, softThreshold, stacking, step, threshold,
-     *               turboThreshold, zoneAxis, zones, dataSorting,
-     *               boostBlending
+     *               getExtremesFromAll, negativeColor, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointStart,
+     *               softThreshold, stacking, step, threshold, turboThreshold,
+     *               zoneAxis, zones, dataSorting, boostBlending
      * @requires     modules/timeline
      * @optionparent plotOptions.timeline
      *
@@ -719,10 +718,10 @@ export default TimelineSeries;
  * @extends   series,plotOptions.timeline
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
  *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
- *            getExtremesFromAll, lineWidth, negativeColor,
- *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
- *            softThreshold, stacking, stack, step, threshold, turboThreshold,
- *            zoneAxis, zones, dataSorting, boostBlending
+ *            getExtremesFromAll, negativeColor, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointStart, softThreshold,
+ *            stacking, stack, step, threshold, turboThreshold, zoneAxis, zones,
+ *            dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/timeline
  * @apioption series.timeline
