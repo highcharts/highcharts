@@ -1,0 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  ### CYPRESS ###
+  test_cypress:
+    runs-on: ubuntu-latest
+    steps:
+      # setup
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+      - uses: nanasess/setup-chromedriver@v1
+      - uses: browser-actions/setup-firefox@latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - run: npm i cypress @highcharts/highcharts-utils
+      - run: npx cypress install && npx cypress info
+      # tasks
+      - name: Run Highcharts-Utils
+        run: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
+      - name: Check Chrome
+        run: |
+            google-chrome --version
+            whereis google-chrome
+      - name: Run Cypress Tests (Chrome)
+        run: TZ=UTC npx cypress run --browser chrome --headless
+      - name: Store Cypress Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-chrome
+          path: |
+            /home/circleci/repo/highcharts/cypress/videos
+            /home/circleci/repo/highcharts/cypress/screenshots
+          retention-days: 12
+      - name: Clear Cypress Storage (Chrome)
+        run: |
+          rm -rf /home/circleci/repo/highcharts/cypress/videos
+          rm -rf /home/circleci/repo/highcharts/cypress/screenshots
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+      - name: Run Cypress Tests (Firefox)
+        run: TZ=UTC npx cypress run --browser firefox --headless
+      - name: Store Cypress Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-firefox
+          path: |
+            /home/circleci/repo/highcharts/cypress/videos
+            /home/circleci/repo/highcharts/cypress/screenshots
+          retention-days: 12
