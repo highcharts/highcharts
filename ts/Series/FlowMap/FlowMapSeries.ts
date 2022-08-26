@@ -83,7 +83,14 @@ class FlowMapSeries extends SankeySeries {
          *
          * @private
          */
-        keys: ['from', 'to', 'curve', 'weight', 'growTowards', 'markerEnd']
+        keys: [
+            'from',
+            'to',
+            'curveFactor',
+            'weight',
+            'growTowards',
+            'markerEnd'
+        ]
 
     } as FlowMapSeriesOptions); // Sankey?
 
@@ -171,7 +178,7 @@ class FlowMapSeries extends SankeySeries {
             linkHeight = 0, // 10,
             nodeW = 0, // this.nodeWidth;
             pointOptions = point.options;
-        const curve = pointOptions.curve || 0,
+        const curveFactor = pointOptions.curveFactor || 0,
             weight = pointOptions.weight || 1,
             // TO DO: correct in data array
             growTowards = pointOptions.growTowards,
@@ -191,9 +198,7 @@ class FlowMapSeries extends SankeySeries {
             }
 
             point.removeEventForToPoint = addEvent(
-                toPoint, 'update', function (): void {
-                    point.series.isDirty = true;
-                }
+                toPoint, 'update', dirtySeries
             );
         }
 
@@ -203,10 +208,12 @@ class FlowMapSeries extends SankeySeries {
             }
 
             point.removeEventForFromPoint = addEvent(
-                fromPoint, 'update', function (): void {
-                    point.series.isDirty = true;
-                }
+                fromPoint, 'update', dirtySeries
             );
+        }
+
+        function dirtySeries(): void {
+            point.series.isDirty = true;
         }
 
         // Save original point location for later in case there is an offset.
@@ -250,8 +257,8 @@ class FlowMapSeries extends SankeySeries {
                 dY = -tmp;
 
                 // Calculate the arc strength.
-                let arcPointX = (mX + dX * curve),
-                    arcPointY = (mY + dY * curve);
+                let arcPointX = (mX + dX * curveFactor),
+                    arcPointY = (mY + dY * curveFactor);
 
                 let [offsetX, offsetY] =
                     FlowMapSeries.normalize(arcPointX - toX, arcPointY - toY);
@@ -285,13 +292,13 @@ class FlowMapSeries extends SankeySeries {
             let [wX, wY] = FlowMapSeries.normalize(dX, dY);
 
             // The `fineTune` prevents an obvious mismatch along the curve.
-            const fineTune = 1 + Math.sqrt(curve * curve) * 0.25;
+            const fineTune = 1 + Math.sqrt(curveFactor * curveFactor) * 0.25;
             wX *= weight * fineTune;
             wY *= weight * fineTune;
 
             // Ccalculate the arc strength.
-            let arcPointX = (mX + dX * curve),
-                arcPointY = (mY + dY * curve);
+            let arcPointX = (mX + dX * curveFactor),
+                arcPointY = (mY + dY * curveFactor);
 
             // Calculate edge vectors in the from-point.
             let [fromXToArc, fromYToArc] =
