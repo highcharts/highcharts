@@ -34,7 +34,7 @@ const { extend } = U;
  * @product      highmaps
  * @optionparent mapNavigation
  */
-const defaultOptions: MapNavigationOptions = {
+const MapNavigationDefaults: MapNavigationOptions = {
 
     /**
      * General options for the map navigation buttons. Individual options
@@ -296,7 +296,7 @@ extend(D.defaultOptions.lang, {
     zoomOut: 'Zoom out'
 });
 // Set the default map navigation options
-D.defaultOptions.mapNavigation = defaultOptions;
+D.defaultOptions.mapNavigation = MapNavigationDefaults;
 
 /* *
  *
@@ -304,4 +304,4 @@ D.defaultOptions.mapNavigation = defaultOptions;
  *
  * */
 
-export default defaultOptions;
+export default MapNavigationDefaults;
