@@ -39,6 +39,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isString,
     merge,
     objectEach,
     pick,
@@ -465,7 +466,13 @@ namespace DataLabel {
             seriesOptions = series.options,
             points = series.points,
             hasRendered = series.hasRendered || 0,
-            renderer = chart.renderer;
+            renderer = chart.renderer,
+            { backgroundColor, plotBackgroundColor } = chart.options.chart,
+            contrastColor = renderer.getContrast(
+                (isString(plotBackgroundColor) && plotBackgroundColor) ||
+                (isString(backgroundColor) && backgroundColor) ||
+                Palette.neutralColor100
+            );
 
         let seriesDlOptions = seriesOptions.dataLabels,
             pointOptions,
@@ -608,6 +615,7 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (point.color || series.color) as any
                                 );
+
                                 (style as any).color = (
                                     !defined(labelDistance) &&
                                         labelOptions.inside
@@ -615,7 +623,7 @@ namespace DataLabel {
                                     labelDistance < 0 ||
                                     !!seriesOptions.stacking ?
                                     point.contrastColor :
-                                    Palette.neutralColor100;
+                                    contrastColor;
                             } else {
                                 delete point.contrastColor;
                             }

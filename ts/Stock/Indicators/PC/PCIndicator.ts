@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -15,14 +21,13 @@ import type {
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -125,20 +130,20 @@ class PCIndicator extends SMAIndicator {
     } as PCOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -231,6 +236,12 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  * */
 
 export default PCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not

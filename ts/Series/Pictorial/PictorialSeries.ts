@@ -27,11 +27,11 @@ import PictorialPoint from './PictorialPoint.js';
 import U from '../../Core/Utilities.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import StackItem from '../../Extensions/Stacking.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
+import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 
 const {
     seriesTypes: {
@@ -480,9 +480,9 @@ function forEachStack(chart: Chart, callback: Function): void {
             const stacks = axis.stacking.stacks;
             // Render each stack total
             objectEach(stacks, function (
-                type: Record<string, Highcharts.StackItem>
+                type: Record<string, StackItem>
             ): void {
-                objectEach(type, function (stack: Highcharts.StackItem): void {
+                objectEach(type, function (stack: StackItem): void {
                     callback(stack);
                 });
             });
@@ -506,7 +506,7 @@ addEvent(StackItem, 'afterSetOffset', function (e): void {
 });
 
 function destroyAllStackShadows(chart: Chart): void {
-    forEachStack(chart, function (stack: Highcharts.StackItem): void {
+    forEachStack(chart, function (stack: StackItem): void {
         if (stack.shadow && stack.shadowGroup) {
             stack.shadow.destroy();
             stack.shadowGroup.destroy();

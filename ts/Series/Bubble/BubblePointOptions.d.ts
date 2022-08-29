@@ -31,4 +31,10 @@ export interface BubblePointOptions extends ScatterPointOptions {
     z?: (number|null);
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default BubblePointOptions;

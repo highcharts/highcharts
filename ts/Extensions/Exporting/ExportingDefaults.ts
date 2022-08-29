@@ -477,7 +477,9 @@ const exporting: ExportingOptions = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.fullscreen.toggle();
+                if (this.fullscreen) {
+                    this.fullscreen.toggle();
+                }
             }
         },
 

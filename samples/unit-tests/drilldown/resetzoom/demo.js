@@ -457,3 +457,54 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
         'Reset zoom button should be visible again.'
     );
 });
+
+
+QUnit.test(
+    `Reset zoom button with dynamically added multiple drilldowns, #17247.`,
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x',
+                events: {
+                    drilldown: function (e) {
+                        if (!e.seriesOptions) {
+                            const chart = this;
+
+                            chart.addSingleSeriesAsDrilldown(e.point, {
+                                data: [8, 9, 8]
+                            });
+                            chart.addSingleSeriesAsDrilldown(e.point, {
+                                data: [1, 3, 4]
+                            });
+                            chart.addSingleSeriesAsDrilldown(e.point, {
+                                data: [5, 6, 7]
+                            });
+                            chart.applyDrilldown();
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [{
+                    y: 5,
+                    drilldown: 'drill'
+                }, {
+                    y: 2,
+                    drilldown: 'drill'
+                }, 3, 4, 5, 6, 7, 8, 9, 10]
+            }]
+        });
+
+        const controller = new TestController(chart);
+
+        controller.pan([100, 200], [300, 200]);
+        chart.series[0].points[0].doDrilldown();
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
+
+        assert.ok(
+            true,
+            'There should be no errors in the console.'
+        );
+    }
+);

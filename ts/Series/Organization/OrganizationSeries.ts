@@ -94,21 +94,26 @@ class OrganizationSeries extends SankeySeries {
      * @product      highcharts
      * @requires     modules/organization
      * @optionparent plotOptions.organization
+     *
+     * @private
      */
-    public static defaultOptions: OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
+    public static defaultOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The border color of the node cards.
          *
          * @type {Highcharts.ColorString}
+         *
          * @private
          */
         borderColor: Palette.neutralColor60,
+
         /**
          * The border radius of the node cards.
          *
          * @private
          */
         borderRadius: 3,
+
         /**
          * Radius for the rounded corners of the links between nodes.
          *
@@ -118,7 +123,9 @@ class OrganizationSeries extends SankeySeries {
          * @private
          */
         linkRadius: 10,
+
         borderWidth: 1,
+
         /**
          * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
          *
@@ -278,12 +285,15 @@ class OrganizationSeries extends SankeySeries {
          * @type {Highcharts.OrganizationHangingIndentTranslationValue}
          * @since 10.0.0
          * @default inherit
+         *
+         * @private
          */
         hangingIndentTranslation: 'inherit',
         /**
          * The color of the links between nodes.
          *
          * @type {Highcharts.ColorString}
+         *
          * @private
          */
         linkColor: Palette.neutralColor60,
@@ -306,6 +316,7 @@ class OrganizationSeries extends SankeySeries {
          * is set to `shrink`.
          *
          * @see [nodeWidth](#plotOptions.organization.nodeWidth)
+         *
          * @private
          */
         minNodeLength: 10,
@@ -516,7 +527,7 @@ class OrganizationSeries extends SankeySeries {
             values: (
                 OrganizationPointOptions &
                 OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
+            ) = ['borderRadius', 'linkColor', 'linkLineWidth', 'linkOpacity']
                 .reduce(function (
                     obj: Record<string, unknown>,
                     key: string
@@ -533,6 +544,8 @@ class OrganizationSeries extends SankeySeries {
         if (!point.isNode) {
             attribs.stroke = values.linkColor;
             attribs['stroke-width'] = values.linkLineWidth;
+            attribs.opacity = values.linkOpacity;
+
             delete attribs.fill;
         } else {
             if (values.borderRadius) {

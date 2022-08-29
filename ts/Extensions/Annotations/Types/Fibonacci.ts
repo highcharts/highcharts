@@ -6,31 +6,45 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../MockPointOptions';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-const createPathDGenerator = function (
+/**
+ * @private
+ */
+function createPathDGenerator(
     retracementIndex: number,
     isBackground?: boolean
 ): Function {
     return function (this: Controllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
+
         if (!annotation.startRetracements || !annotation.endRetracements) {
             return [];
         }
-        let leftTop = this.anchor(
+        const leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
@@ -39,16 +53,14 @@ const createPathDGenerator = function (
             d: SVGPath = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
-            ],
-            rightBottom: PositionObject,
-            leftBottom: PositionObject;
+            ];
 
         if (isBackground) {
-            rightBottom = this.anchor(
+            const rightBottom = this.anchor(
                 annotation.endRetracements[retracementIndex - 1]
             ).absolutePosition;
 
-            leftBottom = this.anchor(
+            const leftBottom = this.anchor(
                 annotation.startRetracements[retracementIndex - 1]
             ).absolutePosition;
 
@@ -60,30 +72,23 @@ const createPathDGenerator = function (
 
         return d;
     };
-};
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
     public static levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(
-        chart: Highcharts.AnnotationChart,
-        options: Fibonacci.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -96,7 +101,7 @@ class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -115,7 +120,7 @@ class Fibonacci extends Tunnel {
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
-        Fibonacci.levels.forEach(function (level: number, i: number): void {
+        Fibonacci.levels.forEach((level, i): void => {
             const startRetracement = (points[0].y as any) - startDiff * level,
                 endRetracement = (points[1].y as any) - endDiff * level;
 
@@ -135,7 +140,7 @@ class Fibonacci extends Tunnel {
                 endRetracement,
                 this.endRetracements
             );
-        }, this);
+        });
     }
 
     public linkRetracementPoint(
@@ -218,8 +223,15 @@ class Fibonacci extends Tunnel {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Fibonacci {
     defaultOptions: Tunnel['defaultOptions'];
+    options: Fibonacci.Options;
 }
 
 Fibonacci.prototype.defaultOptions = merge(
@@ -301,11 +313,25 @@ Fibonacci.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        fibonacci: typeof Fibonacci;
+    }
+}
+
 Annotation.types.fibonacci = Fibonacci;
 
-interface Fibonacci {
-    options: Fibonacci.Options;
-}
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace Fibonacci {
     export interface Options extends Tunnel.Options {
@@ -324,4 +350,5 @@ namespace Fibonacci {
  *  Default Export
  *
  * */
+
 export default Fibonacci;

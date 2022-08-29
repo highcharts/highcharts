@@ -192,7 +192,7 @@ function getBreakFromNode(
  * All the data points to display in the axis.
  *
  * @param {boolean} uniqueNames
- * Wether or not the data node with the same name should share grid cell. If
+ * Whether or not the data node with the same name should share grid cell. If
  * true they do share cell. False by default.
  *
  * @param {number} numberOfSeries

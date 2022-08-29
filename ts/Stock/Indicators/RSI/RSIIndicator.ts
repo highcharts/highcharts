@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -15,26 +21,32 @@ import type {
     RSIParamsOptions
 } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
-/* eslint-enable require-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The RSI series type.
@@ -46,6 +58,13 @@ function toFixed(a: number, n: number): number {
  * @augments Highcharts.Series
  */
 class RSIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Relative strength index (RSI) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
@@ -207,6 +226,7 @@ interface RSIIndicator {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -222,6 +242,12 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  * */
 
 export default RSIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `RSI` series. If the [type](#series.rsi.type) option is not

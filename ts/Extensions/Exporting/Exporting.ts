@@ -41,6 +41,7 @@ import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
+import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
     doc,
@@ -640,6 +641,7 @@ namespace Exporting {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         ExportingSymbols.compose(SVGRendererClass);
+        Fullscreen.compose(ChartClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -1590,7 +1592,7 @@ namespace Exporting {
             }
         };
 
-        // Register update() method for navigation. Can not be set the same way
+        // Register update() method for navigation. Cannot be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
         ChartNavigationComposition
@@ -1784,6 +1786,8 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
  *
  * @requires     modules/exporting
  * @optionparent navigation
+ *
+ * @private
  */
 defaultOptions.navigation = merge(
     ExportingDefaults.navigation,

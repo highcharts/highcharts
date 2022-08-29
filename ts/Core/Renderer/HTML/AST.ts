@@ -563,7 +563,8 @@ class AST {
             .trim()
             // The style attribute throws a warning when parsing when CSP is
             // enabled (#6884), so use an alias and pick it up below
-            .replace(/ style="/g, ' data-style="');
+            // Make all quotation marks parse correctly to DOM (#17627)
+            .replace(/ style=(["'])/g, ' data-style=$1');
 
         let doc;
         if (hasValidDOMParser) {
