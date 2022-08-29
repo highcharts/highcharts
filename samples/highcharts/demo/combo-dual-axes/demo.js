@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Precipitation and Temperature in Karasjok, 2021'
+        text: 'Average Monthly Precipitation and Temperature in Karasjok, 2021',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
@@ -47,11 +48,10 @@ Highcharts.chart('container', {
         shared: true
     },
     legend: {
-        layout: 'vertical',
         align: 'left',
-        x: 120,
+        x: 80,
         verticalAlign: 'top',
-        y: 100,
+        y: 80,
         floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme
