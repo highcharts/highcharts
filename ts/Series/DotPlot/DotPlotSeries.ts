@@ -35,7 +35,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    isArray,
     merge,
     objectEach,
     pick
@@ -124,9 +123,7 @@ class DotPlotSeries extends ColumnSeries {
                 x: number,
                 y: number;
 
-            point.graphics = graphics =
-                !isArray(point.graphics) && point.graphics || {};
-
+            point.graphics = graphics = point.graphics || {};
             pointAttr = point.pointAttr ?
                 (
                     (point.pointAttr as any)[

@@ -543,8 +543,7 @@ class BubbleSeries extends ScatterSeries {
             (temperatureColors || ['']).forEach((_, i: number): void => {
                 this.points.forEach((point): void => {
                     const graphic =
-                        (isArray(point.graphics) && point.graphics[i]) ||
-                        point.graphic;
+                        (point.graphics && point.graphics[i]) || point.graphic;
 
                     if (
                         graphic &&
@@ -812,10 +811,6 @@ class BubbleSeries extends ScatterSeries {
 
                     points.forEach((point): void => {
                         point.graphics = point.graphics || [];
-
-                        if (!isArray(point.graphics)) {
-                            return;
-                        }
 
                         let graphic = point.graphics[colorIndex];
 
