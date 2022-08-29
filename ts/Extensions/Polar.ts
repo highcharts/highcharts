@@ -1386,12 +1386,12 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 
 
                 if (pathStart < radialAxis.getExtremes().min) {
-                    const {min, max} = radialAxis.getExtremes();
+                    const { min, max } = radialAxis.getExtremes();
                     pathStart = max - (min - pathStart);
                 }
 
                 if (pathEnd < radialAxis.getExtremes().min) {
-                    const {min, max} = radialAxis.getExtremes();
+                    const { min, max } = radialAxis.getExtremes();
                     pathEnd = max - (min - pathEnd);
                 }
 
@@ -1557,11 +1557,10 @@ wrap(Chart.prototype, 'get', function (
  * Prevent zooming on mobile devices
  * @private
  */
-wrap(Pointer.prototype, 'pinch', function (this: Pointer, proceed) {
-    const chart = this.chart;
+wrap(Pointer.prototype, 'pinch', function (this: Pointer, proceed, e): void {
     if (this.chart.polar) {
         return;
-    } else {
-        proceed.apply(this, arguments);
     }
+
+    proceed.apply(this, [].slice.call(arguments, 1));
 });
