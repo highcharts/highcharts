@@ -23,7 +23,7 @@
             name: 'Basemap'
         }, {
             type: 'mappoint',
-            name: 'Export',
+            name: 'Cities',
             dataLabels: {
                 format: '{point.id}'
             },
