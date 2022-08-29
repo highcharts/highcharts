@@ -21,12 +21,14 @@ import type {
     SlowStochasticParamsOptions
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
-import type StochasticIndicatorType from '../Stochastic/StochasticIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const StochasticIndicator: typeof StochasticIndicatorType =
-    SeriesRegistry.seriesTypes.stochastic;
-const { seriesTypes } = SeriesRegistry;
+const {
+    sma: {
+        prototype: smaProto
+    },
+    stochastic: StochasticIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -105,7 +107,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         params: SlowStochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const periods: Array<number> = (params.periods as any),
-            fastValues = seriesTypes.stochastic.prototype.getValues.call(
+            fastValues = super.getValues.call(
                 this,
                 series,
                 params
@@ -128,7 +130,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         // Get SMA(%D)
         const smoothedValues: (
             undefined|IndicatorValuesObject<LineSeries>
-        ) = seriesTypes.sma.prototype.getValues.call(
+        ) = smaProto.getValues.call(
             this,
             ({
                 xData: slowValues.xData,

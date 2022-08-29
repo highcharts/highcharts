@@ -18,7 +18,6 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     ZigzagOptions,
     ZigzagParamsOptions
@@ -26,7 +25,9 @@ import type {
 import type ZigzagPoint from './ZigzagPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,

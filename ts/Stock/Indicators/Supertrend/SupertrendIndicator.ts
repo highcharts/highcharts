@@ -19,7 +19,6 @@ import type ColorType from '../../../Core/Color/ColorType';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type { SeriesOptions } from '../../../Core/Series/SeriesOptions';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     SupertrendOptions,
     SupertrendParamsOptions,
@@ -34,8 +33,10 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const ATRIndicator: typeof ATRIndicatorType = SeriesRegistry.seriesTypes.atr;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    atr: ATRIndicator,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
