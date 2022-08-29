@@ -22,6 +22,7 @@ import '../../Extensions/PatternFill.js';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType.js';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type ColumnSeriesType from '../Column/ColumnSeries';
 
 import PictorialPoint from './PictorialPoint.js';
 import U from '../../Core/Utilities.js';
@@ -33,11 +34,7 @@ import { PictorialPathOptions } from './PictorialSeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
 const {
     animObject
