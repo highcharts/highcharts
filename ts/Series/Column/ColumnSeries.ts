@@ -105,6 +105,8 @@ class ColumnSeries extends Series {
      *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
+     *
+     * @private
      */
     public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 

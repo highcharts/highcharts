@@ -14,22 +14,38 @@
  *
  * */
 
-import type {
-    AnnotationControlPointOptionsObject
-} from '../ControlPointOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
+import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-import MockPointOptions from '../MockPointOptions';
-import SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-const { merge, isNumber, defined } = U;
+const {
+    merge,
+    isNumber,
+    defined
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;
 }
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Function to create start of the path.
@@ -56,20 +72,20 @@ function getCirclePath(
     numberOfCircles: number,
     startX: number,
     y: number
-): SVGPath.Arc[] {
-    const strToRepeat = (i: number): SVGPath.Arc => [
-        'A',
-        pixelInterval / 2,
-        pixelInterval / 2,
-        0,
-        1,
-        1,
-        startX + i * pixelInterval,
-        y
-    ];
-    let path = [];
+): Array<SVGPath.Arc> {
+    const path: Array<SVGPath.Arc> = [];
+
     for (let i = 1; i <= numberOfCircles; i++) {
-        path.push(strToRepeat(i));
+        path.push([
+            'A',
+            pixelInterval / 2,
+            pixelInterval / 2,
+            0,
+            1,
+            1,
+            startX + i * pixelInterval,
+            y
+        ]);
     }
 
     return path;
@@ -81,9 +97,13 @@ function getCirclePath(
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 class TimeCycles extends CrookedLine {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(
         annotation: Annotation,
@@ -147,7 +167,7 @@ class TimeCycles extends CrookedLine {
             'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
-            (option: AnnotationControlPointOptionsObject): void => {
+            (option: ControlPointOptionsObject): void => {
                 const controlPointsOptions = merge(
                     options.controlPointOptions,
                     option
@@ -210,6 +230,7 @@ class TimeCycles extends CrookedLine {
         this.setPath();
         super.redraw(animation);
     }
+
 }
 
 /* *
@@ -232,7 +253,7 @@ TimeCycles.prototype.defaultOptions = merge(
         typeOptions: {
             controlPointOptions: [{
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
+                    this: ControlPoint,
                     target: TimeCycles
                 ): PositionObject {
                     const point = target.points[0],
@@ -246,7 +267,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: TimeCycles
                     ): void {
                         const position = target.anchor(
@@ -258,7 +279,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 }
             }, {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
+                    this: ControlPoint,
                     target: TimeCycles
                 ): PositionObject {
                     const point = target.points[1],
@@ -272,7 +293,7 @@ TimeCycles.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: TimeCycles
                     ): void {
                         const position = target.anchor(
@@ -299,7 +320,7 @@ namespace TimeCycles {
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         type: string;
-        controlPointOptions: AnnotationControlPointOptionsObject[];
+        controlPointOptions: ControlPointOptionsObject[];
     }
 }
 
@@ -309,12 +330,13 @@ namespace TimeCycles {
  *
  * */
 
-Annotation.types.timeCycles = TimeCycles;
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;
     }
 }
+
+Annotation.types.timeCycles = TimeCycles;
 
 /* *
  *

@@ -2,5 +2,6 @@
  name: Highcharts Demo
  authors:
    - Sophie Bremer
+ skipTest: true
  js_wrap: b
 ...

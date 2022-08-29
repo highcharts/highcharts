@@ -65,6 +65,8 @@ const {
  * @excluding    stack, stacking
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
+ *
+ * @private
  */
 const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
@@ -267,23 +269,28 @@ class AreaRangeSeries extends AreaSeries {
      * @private
      */
     public translate(): void {
-        const series = this,
-            yAxis = series.yAxis;
+        const series = this;
 
         areaProto.translate.apply(series);
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
-            point: AreaRangePoint
+            point: AreaRangePoint,
+            i: number
         ): void {
-
             const high = point.high,
                 plotY = point.plotY;
 
             if (point.isNull) {
                 point.plotY = null as any;
             } else {
+                const yAxis = series.chart.hasParallelCoordinates ?
+                    series.chart.yAxis[i] :
+                    series.yAxis;
+
                 point.plotLow = plotY as any;
+
+                // Calculate plotHigh value based on each yAxis scale (#15752)
                 point.plotHigh = yAxis.translate(
                     series.dataModify ?
                         series.dataModify.modifyValue(high) : high,
@@ -292,6 +299,7 @@ class AreaRangeSeries extends AreaSeries {
                     0 as any,
                     1 as any
                 );
+
                 if (series.dataModify) {
                     point.yBottom = point.plotHigh;
                 }
@@ -694,6 +702,7 @@ extend(AreaRangeSeries.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;

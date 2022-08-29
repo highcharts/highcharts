@@ -2802,6 +2802,12 @@ export default SVGElement;
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
+ * @name Highcharts.SVGAttributes#dx
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dy
+ * @type {number|undefined}
+ *//**
  * @name Highcharts.SVGAttributes#fill
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**

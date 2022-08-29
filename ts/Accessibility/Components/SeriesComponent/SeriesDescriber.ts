@@ -20,6 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
@@ -456,7 +457,7 @@ function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(
-        point as Highcharts.AnnotationPoint
+        point as AnnotationPoint
     );
     const context = { point, annotations };
 
@@ -701,7 +702,7 @@ function describeSeries(
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
         // in order for AT to read them out in an understandable order.
-        // Due to z-index issues we can not do this for 3D charts.
+        // Due to z-index issues we cannot do this for 3D charts.
         if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }

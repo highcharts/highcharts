@@ -1023,6 +1023,33 @@ QUnit.test('stickToMin and stickToMax', function (assert) {
         'stickToMax, multiple series with different ranges: ' +
             'Correct extremes after rangeSelector use and adding points(#9075)'
     );
+
+    chart.series[0].addPoint(100);
+
+    const { max: initialMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.max + 1,
+        initialMax,
+        'By default, navigator should stick to max after adding point(#17539).'
+    );
+
+    chart.update({
+        navigator: {
+            stickToMax: false
+        }
+    });
+
+    chart.series[0].addPoint(0);
+
+    const { max: updatedMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        initialMax,
+        updatedMax,
+        `Max value of the navigator xAxis extremes did not change after
+        adding points.`
+    );
 });
 
 QUnit.test(

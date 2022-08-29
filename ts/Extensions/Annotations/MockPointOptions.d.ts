@@ -14,10 +14,10 @@
  *
  * */
 
+import type AxisType from '../../Core/Axis/AxisType';
 import type {
     ControllableLabelOptions
 } from './Controllables/ControllableOptions';
-import type AxisType from '../../Core/Axis/AxisType';
 
 /* *
  *

@@ -2,7 +2,6 @@
   "name": "highcharts",
   "version": "10.2.0",
   "description": "JavaScript charting framework",
-  "main": "lib/highcharts",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
   "repository": {
@@ -19,18 +18,13 @@
     "browserify",
     "webpack"
   ],
-  "files": [
-    "errors",
-    "gfx",
-    "js",
-    "lib"
-  ],
   "scripts": {
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
+    "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
@@ -41,7 +35,8 @@
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.33",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.25",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.35",
     "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.1",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.3",
@@ -74,7 +69,6 @@
     "gulp-zip": "^5.1.0",
     "gzip-size": "6.0.0",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.1",
-    "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "^8.0.1",
     "js-yaml": "3.14.1",

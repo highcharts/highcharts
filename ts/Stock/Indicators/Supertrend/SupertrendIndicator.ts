@@ -8,10 +8,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ATRIndicatorType from '../ATR/ATRIndicator';
 import type ColorType from '../../../Core/Color/ColorType';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type { SeriesOptions } from '../../../Core/Series/SeriesOptions';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     SupertrendOptions,
     SupertrendParamsOptions,
@@ -26,12 +34,8 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        atr: ATRIndicator,
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const ATRIndicator: typeof ATRIndicatorType = SeriesRegistry.seriesTypes.atr;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
@@ -43,7 +47,12 @@ const {
     objectEach
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
@@ -56,8 +65,6 @@ function createPointObj(
         x: mainSeries.xData[index]
     } as any;
 }
-
-/* eslint-enable require-jsdoc */
 
 /* *
  *
@@ -75,6 +82,13 @@ function createPointObj(
  * @augments Highcharts.Series
  */
 class SupertrendIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Supertrend indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` and
@@ -174,6 +188,7 @@ class SupertrendIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<SupertrendPoint> = void 0 as any;
 
     public linkedParent: SupertrendLinkedParentObject = void 0 as any;
@@ -187,6 +202,7 @@ class SupertrendIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
     public init(): void {
         let options: SupertrendOptions,
             parentOptions: SeriesOptions;
@@ -636,6 +652,7 @@ class SupertrendIndicator extends SMAIndicator {
  *  Class Prototype
  *
  * */
+
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -652,6 +669,7 @@ extend(SupertrendIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
@@ -667,6 +685,12 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  * */
 
 export default SupertrendIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Supertrend indicator` series. If the [type](#series.supertrend.type)
