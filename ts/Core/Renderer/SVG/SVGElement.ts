@@ -664,12 +664,10 @@ class SVGElement implements SVGElementLike {
             let totalHeight = 0;
             [].forEach.call(
                 parentElem.querySelectorAll('text tspan'),
-                (childNode: ChildNode): void => {
-                    if ((childNode as DOMElementType).getAttribute) {
-                        totalHeight += Number(
-                            (childNode as DOMElementType).getAttribute('dy')
-                        );
-                    }
+                (element): void => {
+                    totalHeight += Number(
+                        (element as DOMElementType).getAttribute('dy')
+                    );
                 }
             );
 
