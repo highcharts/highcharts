@@ -23,8 +23,7 @@
         },
         series: [{
             data: datasets[0].data.map(value => value * 20),
-            name: datasets[0].name,
-            type: 'line'
+            name: datasets[0].name
         }]
     });
 
