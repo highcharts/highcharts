@@ -5,6 +5,14 @@ Highcharts.chart('container', {
     title: {
         text: 'Main train connections in Europe'
     },
+
+    accessibility: {
+        description: 'Arc diagram chart with circles of different sizes along the X axis, and connections drawn as arcs between them. From the chart we can see that Paris is the city with the most connections to other cities.',
+        point: {
+            valueDescriptionFormat: 'Connection from {point.from} to {point.to}.'
+        }
+    },
+
     series: [{
         keys: ['from', 'to', 'weight'],
         type: 'arcdiagram',

@@ -974,6 +974,7 @@ const afterAnimate = e => {
     if (!chart.get('flight-route')) {
         chart.addSeries({
             type: 'mapline',
+            name: 'Flight route, Amsterdam - Los Angeles',
             animation: false,
             id: 'flight-route',
             data: [{
@@ -986,7 +987,10 @@ const afterAnimate = e => {
                 },
                 color: '#313f77'
             }],
-            lineWidth: 2
+            lineWidth: 2,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }, false);
         chart.addSeries({
             type: 'mappoint',
@@ -1004,7 +1008,10 @@ const afterAnimate = e => {
                     coordinates: [-118.24, 34.05]
                 }
             }],
-            color: '#313f77'
+            color: '#313f77',
+            accessibility: {
+                enabled: false
+            }
         }, false);
         chart.redraw(false);
     }
@@ -1082,7 +1089,10 @@ Highcharts.getJSON(
                 id: 'graticule',
                 type: 'mapline',
                 data: getGraticule(),
-                nullColor: 'rgba(0, 0, 0, 0.05)'
+                nullColor: 'rgba(0, 0, 0, 0.05)',
+                accessibility: {
+                    enabled: false
+                }
             }, {
                 data,
                 joinBy: 'name',
@@ -1099,6 +1109,9 @@ Highcharts.getJSON(
                 },
                 events: {
                     afterAnimate
+                },
+                accessibility: {
+                    exposeAsGroupOnly: true
                 }
             }]
         });

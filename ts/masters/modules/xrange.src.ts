@@ -10,4 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/XRange/XRangeSeries.js';
+import Highcharts from '../../Core/Globals.js';
+import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
+const G: AnyRecord = Highcharts;
+XRangeSeries.compose(G.Axis);

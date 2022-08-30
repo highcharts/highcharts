@@ -83,6 +83,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                     }
                 }
             }],
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
             data: points
         }],
         subtitle: {

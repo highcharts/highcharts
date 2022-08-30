@@ -42,6 +42,8 @@ const {
     defined,
     erase,
     extend,
+    isArray,
+    isNumber,
     merge,
     pick,
     splat,
@@ -127,7 +129,7 @@ const defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-const defaultParallelOptions: ChartOptions = {
+const defaultParallelOptions: DeepPartial<ChartOptions> = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -177,7 +179,7 @@ const defaultParallelOptions: ChartOptions = {
      *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops
+     *            minColor, scrollbar, stackLabels, stops,
      * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
@@ -395,9 +397,8 @@ addEvent(Series, 'afterTranslate', function (): void {
                     point.plotX = chart.yAxis[i].left - chart.plotLeft;
                 }
                 point.clientX = point.plotX;
-
                 point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
+                    .translate(point.y, false, true, void 0, true);
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
@@ -678,18 +679,23 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            const index = parallelCoordinates.position,
-                currentPoints: Array<Point> = [];
+            const index = parallelCoordinates.position;
+            let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
                 if (
+                    series.yData &&
                     series.visible &&
-                    defined((series.yData as any)[index as any])
+                    isNumber(index)
                 ) {
-                    // We need to use push() beacause of null points
-                    currentPoints.push((series.yData as any)[index as any]);
+                    const y = series.yData[index];
+
+                    // Take into account range series points as well (#15752)
+                    currentPoints.push.apply(currentPoints, splat(y));
                 }
             });
+
+            currentPoints = currentPoints.filter(isNumber);
 
             axis.dataMin = arrayMin(currentPoints);
             axis.dataMax = arrayMax(currentPoints);
@@ -704,7 +710,6 @@ namespace ParallelAxis {
      */
     function onInit(this: Axis): void {
         const axis = this;
-
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(
                 axis as ParallelAxis

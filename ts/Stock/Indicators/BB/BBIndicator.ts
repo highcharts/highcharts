@@ -21,14 +21,11 @@ import type {
 import type BBPoint from './BBPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -41,8 +38,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 // Utils:
 /**
@@ -288,20 +283,19 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
-interface BBIndicator extends MultipleLinesComposition.Composition {
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    nameComponents: Array<string>;
+interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<keyof BBPoint>;
     pointClass: typeof BBPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
+    pointValKey: string;
 }
 extend(BBIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+    linesApiNames: ['topLine', 'bottomLine'],
     nameComponents: ['period', 'standardDeviation'],
-    linesApiNames: ['topLine', 'bottomLine']
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
 MultipleLinesComposition.compose(BBIndicator);
 
@@ -325,6 +319,12 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  * */
 
 export default BBIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not

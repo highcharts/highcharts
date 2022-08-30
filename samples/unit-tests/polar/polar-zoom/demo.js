@@ -3,7 +3,9 @@ QUnit.test('Arc shape', function (assert) {
 
     const chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'xy',
+                zooming: {
+                    type: 'xy'
+                },
                 polar: true,
                 events: {
                     selection: function () {
@@ -39,7 +41,9 @@ QUnit.test('Axes zoom', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
             polar: true,
-            zoomType: 'y'
+            zooming: {
+                type: 'y'
+            }
         },
         pane: {
             size: 200
@@ -114,7 +118,9 @@ QUnit.test('Axes zoom', function (assert) {
 
     chart.update({
         chart: {
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         }
     });
 
@@ -123,6 +129,8 @@ QUnit.test('Axes zoom', function (assert) {
 
     const yPos = centerY + chart.plotTop;
 
+
+    controller.mouseMove(xPos, yPos + diameter / 4);
     controller.mouseDown(xPos, yPos + diameter / 4);
     controller.mouseMove(xPos - diameter / 4, yPos);
     controller.mouseUp();
@@ -166,7 +174,9 @@ QUnit.test('Axes zoom', function (assert) {
 
     chart.update({
         chart: {
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         }
     });
 

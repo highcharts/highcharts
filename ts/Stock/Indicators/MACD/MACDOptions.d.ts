@@ -21,7 +21,7 @@ import type {
     SeriesStatesOptions,
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
+import ColorString from '../../../Core/Color/ColorString';
 
 /* *
 *
@@ -56,8 +56,11 @@ export interface MACDOptions extends SMAOptions {
 }
 
 export interface MACDLineOptions {
-    styles?: CSSObject;
+    styles?: MACDLineStyleOptions;
     zones?: Array<SeriesZonesOptions>;
+}
+export interface MACDLineStyleOptions extends CSSObject {
+    lineColor?: ColorString
 }
 
 export interface MACDZonesOptions {

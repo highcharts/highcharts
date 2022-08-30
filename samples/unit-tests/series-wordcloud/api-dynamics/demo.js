@@ -62,7 +62,7 @@ QUnit.test('Chart.setSize.', function (assert) {
         });
     chart.setSize(200, 200);
     // TODO find something to tests against.
-    // This only tests wether setSize is executed without errors
+    // This only tests whether setSize is executed without errors
     assert.strictEqual('todo', 'todo', 'todo');
 });
 

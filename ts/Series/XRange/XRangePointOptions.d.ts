@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 
@@ -43,4 +44,5 @@ export interface XRangePointPartialFillOptions {
  *  Default Export
  *
  * */
+
 export default XRangePointOptions;

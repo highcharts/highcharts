@@ -143,6 +143,7 @@ declare global {
             outlineColor?: ColorType;
             outlineWidth?: number;
             series?: SeriesTypeOptions;
+            stickToMax?: boolean;
             top?: number;
             xAxis?: DeepPartial<AxisOptions>;
             yAxis?: DeepPartial<YAxisOptions>;
@@ -658,6 +659,19 @@ extend(defaultOptions, {
         },
 
         /**
+         * Enable or disable navigator sticking to right, while adding new
+         * points. If `undefined`, the navigator sticks to the axis maximum only
+         * if it was already at the maximum prior to adding points.
+         *
+         * @type      {boolean}
+         * @default   undefined
+         * @since     next
+         * @sample {highstock} stock/navigator/sticktomax-false/
+         * stickToMax set to false
+         * @apioption navigator.stickToMax
+         */
+
+        /**
          * Options for the navigator X axis. Default series options for the
          * navigator xAxis are:
          * ```js
@@ -871,6 +885,7 @@ class Navigator {
     public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
+    public stickToMax?: boolean;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
     public xAxis: NavigatorAxis = void 0 as any;
@@ -1367,7 +1382,7 @@ class Navigator {
 
         if (navigatorEnabled) {
             navigator.navigatorGroup.attr({
-                visibility: 'visible'
+                visibility: 'inherit'
             });
             // Place elements
             verb = rendered && !navigator.hasDragged ? 'animate' : 'attr';
@@ -1719,7 +1734,9 @@ class Navigator {
 
                     // By default, don't run live redraw on VML, on touch
                     // devices or if the chart is in boost.
-                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                    H.svg &&
+                    !isTouchDevice &&
+                    !this.chart.boosted
                 )
             ) {
                 (e as any).DOMType = e.type; // DOMType is for IE8
@@ -2050,13 +2067,13 @@ class Navigator {
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value) as any;
+                    return this.translate(value);
                 },
                 toValue: function (
                     this: NavigatorAxis,
                     value: number
                 ): number {
-                    return this.translate(value, true) as any;
+                    return this.translate(value, true);
                 }
             } as unknown as NavigatorAxis;
 
@@ -2586,13 +2603,15 @@ class Navigator {
     public updatedDataHandler(this: Series): void {
         const navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            shouldStickToMax = navigator.reversedExtremes ?
+                Math.round(navigator.zoomedMin) === 0 :
+                Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
-        // new data  comes in.
-        navigator.stickToMax = navigator.reversedExtremes ?
-            Math.round(navigator.zoomedMin) === 0 :
-            Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+        // new data comes in, unless user set navigator.stickToMax to false.
+        navigator.stickToMax = pick(this.chart.options.navigator &&
+            this.chart.options.navigator.stickToMax, shouldStickToMax);
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,
@@ -2768,8 +2787,10 @@ if (!H.Navigator) {
 
         if (((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled)) &&
-            ((!isTouchDevice && (chartOptions.chart as any).zoomType === 'x') ||
-            (isTouchDevice && (chartOptions.chart as any).pinchType === 'x'))
+            ((!isTouchDevice &&
+            (chartOptions.chart as any).zooming.type === 'x') ||
+            (isTouchDevice &&
+            (chartOptions.chart as any).zooming.pinchType === 'x'))
         ) {
             return false;
         }

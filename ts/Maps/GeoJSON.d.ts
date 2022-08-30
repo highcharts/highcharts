@@ -96,6 +96,7 @@ export interface TopoJSON {
     copyrightShort?: string;
     copyrightUrl?: string;
     objects: TopoJSONObjects;
+    title?: string;
     transform: TopoJSONTransform;
     type: 'Topology';
 }

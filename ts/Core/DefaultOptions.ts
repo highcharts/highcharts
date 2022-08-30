@@ -83,6 +83,7 @@ declare module './LangOptions'{
  * @type {Highcharts.Options}
  *//**
  * @optionparent
+ * @private
  */
 const defaultOptions: Options = {
 
@@ -116,7 +117,7 @@ const defaultOptions: Options = {
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      *
-     * @type    {Array<Highcharts.ColorString>}
+     * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */

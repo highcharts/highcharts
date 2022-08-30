@@ -19,6 +19,7 @@
         "tsglobal.d.ts",
         "test-controller.ts",
         "test-template.ts",
+        "test-touch.ts",
         "test-utilities.ts"
     ]
 }

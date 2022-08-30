@@ -24,11 +24,10 @@ import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-import type VMLAxis3D from '../../Extensions/Oldie/VMLAxis3D';
 
 import H from '../Globals.js';
 const { deg2rad } = H;
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../Math3D.js';
 const {
     perspective,
     perspective3D,

@@ -83,7 +83,10 @@
             // The connector lines
             type: 'mapline',
             data: Highcharts.geojson(topology, 'mapline'),
-            color: 'silver'
+            color: 'silver',
+            accessibility: {
+                enabled: false
+            }
         }]
     });
 

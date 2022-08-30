@@ -71,7 +71,8 @@ type SVGTransformType = {
 
 /**
  * The world size in terms of 10k meters in the Web Mercator projection, to
- * match a 256 square tile to zoom level 0
+ * match a 256 square tile to zoom level 0.
+ * @private
  */
 const worldSize = 400.979322;
 const tileSize = 256;
@@ -693,7 +694,11 @@ class MapView {
             if (typeof this.options.maxZoom === 'number') {
                 zoom = Math.min(zoom, this.options.maxZoom);
             }
-            this.zoom = zoom;
+
+            // Use isNumber to prevent Infinity (#17205)
+            if (isNumber(zoom)) {
+                this.zoom = zoom;
+            }
         }
 
         const bounds = this.getProjectedBounds();

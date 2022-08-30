@@ -12,6 +12,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Funnel3D Chart'
     },
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+        }
+    },
     plotOptions: {
         series: {
             dataLabels: {

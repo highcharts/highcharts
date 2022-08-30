@@ -388,14 +388,11 @@ extend(
          * to the parent series. The parent series' name is inserted for
          * `{series.name}`.
          *
+         * @deprecated
          * @since    3.0.8
          * @product  highcharts highmaps
          * @requires modules/drilldown
          * @apioption lang.drillUpText
-         *
-         * @deprecated
-         *
-         * @private
          */
     }
 );
@@ -409,11 +406,12 @@ extend(
  * [code.highcharts.com/modules/drilldown.js
  * ](https://code.highcharts.com/modules/drilldown.js).
  *
+ * @sample {highcharts} highcharts/series-organization/drilldown
+ *         Organization chart drilldown
+ *
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
- * @sample {highcharts} highcharts/series-organization/drilldown
- *         Organization chart drilldown
  */
 defaultOptions.drilldown = {
 
@@ -831,7 +829,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
             yMin: yAxis && yAxis.userMin,
             yMax: yAxis && yAxis.userMax
         },
-        resetZoomButton: this.resetZoomButton as any
+        resetZoomButton: last && last.levelNumber === levelNumber ?
+            void 0 : this.resetZoomButton as any
     } as any, colorProp);
 
     // Push it to the lookup array
@@ -922,9 +921,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             });
         }
 
-        const lastBreadcrumb = list[list.length - 1];
+        drilldownLevels.forEach(function (level, i): void {
+            const lastBreadcrumb = list[list.length - 1];
 
-        drilldownLevels.forEach(function (level): void {
             // If level is already added to breadcrumbs list,
             // don't add it again- drilling categories
             // + 1 because of the wrong levels numeration
@@ -1073,7 +1072,9 @@ Chart.prototype.drillUp = function (): void {
 
     this.redraw();
 
-    (this.ddDupes as any).length = []; // #3315
+    if (this.ddDupes) {
+        this.ddDupes.length = 0; // #3315
+    } // #8324
 
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
@@ -1084,9 +1085,9 @@ Chart.prototype.drillUp = function (): void {
  * then, using `opactiy`, is faded in. Used for example by `dataLabelsGroup`
  * where simple SVGElement.fadeIn() is not enough, because of other features
  * (e.g. InactiveState) using `opacity` to fadeIn/fadeOut.
- *
  * @requires module:modules/drilldown
  *
+ * @private
  * @param {undefined|SVGElement} [group]
  * The SVG element to be faded in.
  */
@@ -1293,7 +1294,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1352,7 +1353,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as Partial<ColumnSeries>).animate;
     }
 
 };
@@ -1386,7 +1387,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     });
 
     if (removeGroup) {
-        delete this.group;
+        delete (this as any).group;
     }
 
     this.points.forEach(function (point: Point): void {
@@ -1473,7 +1474,7 @@ if (PieSeries) {
                     }
 
                     // Reset to prototype
-                    delete this.animate;
+                    delete (this as Partial<typeof this>).animate;
                 }
             }
         }

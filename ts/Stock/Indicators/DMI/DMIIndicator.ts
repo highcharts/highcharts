@@ -24,15 +24,12 @@ import type {
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -348,14 +345,19 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator extends MultipleLinesComposition.Composition {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof DMIPoint>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
     areaLinesNames: [],
@@ -387,6 +389,12 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  * */
 
 export default DMIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Directional Movement Index (DMI) indicator series.

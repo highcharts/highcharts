@@ -5,7 +5,6 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     // Create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 4
         },
@@ -17,6 +16,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         yAxis: {
             title: {
                 text: 'Exchange rate'
+            }
+        },
+
+        plotOptions: {
+            flags: {
+                accessibility: {
+                    exposeAsGroupOnly: true,
+                    description: 'Flagged events.'
+                }
             }
         },
 

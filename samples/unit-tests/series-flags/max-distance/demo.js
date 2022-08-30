@@ -37,7 +37,7 @@ QUnit.test(
         var flagSVG = chart.series[1].points[10].graphic;
 
         assert.strictEqual(
-            flagSVG.x === -9999,
+            flagSVG.attr('visibility') === 'hidden',
             true,
             'Flags are hidden when distances between them and their anchors are exceeded.'
         );

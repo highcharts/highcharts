@@ -382,6 +382,11 @@ declare global {
         ): void;
     }
 
+    interface CSSStyleDeclaration {
+        /** @deprecated */
+        zoom: string;
+    }
+
     interface CSSStyleSheet {
         /** @deprecated */
         cssText: string;
@@ -435,9 +440,10 @@ declare global {
         webkitRequestFullScreen: Function;
     }
 
-    interface MSPointerEvent {
+    class MSPointerEvent implements Partial<PointerEvent> {
         /** @deprecated */
         readonly MSPOINTER_TYPE_TOUCH: string;
+        readonly pointerType: undefined;
     }
 
     interface PointerEvent {
@@ -450,6 +456,18 @@ declare global {
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
+    }
+
+    class MSBlobBuilder extends Blob {
+        /** @deprecated */
+        append: Function;
+        /** @deprecated */
+        getBlob: Function;
+    }
+
+    interface Navigator {
+        /** @deprecated */
+        msSaveOrOpenBlob: Function;
     }
 
     /** @deprecated */
@@ -473,6 +491,10 @@ declare global {
     }
 
     interface Window {
+        /** @deprecated */
+        MSBlobBuilder?: typeof MSBlobBuilder;
+        /** @deprecated */
+        MSPointerEvent?: typeof MSPointerEvent;
         /** @deprecated */
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */

@@ -8,26 +8,35 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DEMAOptions,
     DEMAParamsOptions
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
+import type EMAIndicatorType from '../EMA/EMAIndicator';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The DEMA series Type
@@ -39,6 +48,13 @@ const {
  * @augments Highcharts.Series
  */
 class DEMAIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -60,10 +76,22 @@ class DEMAIndicator extends EMAIndicator {
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public EMApercent: number = void 0 as any;
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
@@ -213,6 +241,12 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  * */
 
 export default DEMAIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `DEMA` series. If the [type](#series.dema.type) option is not

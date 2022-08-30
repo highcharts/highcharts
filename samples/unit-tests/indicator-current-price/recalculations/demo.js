@@ -118,8 +118,8 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
         });
 
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-crosshair-label').attributes.visibility.value,
-            'visible',
+            chart.series[0].crossLabel.visibility,
+            'inherit',
             'Crosshair label should be visible.'
         );
     }

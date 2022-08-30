@@ -869,7 +869,7 @@ namespace RadialAxis {
         value: number,
         length?: number
     ): PositionObject {
-        const translatedVal = this.translate(value) as any;
+        const translatedVal = this.translate(value);
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -1160,7 +1160,7 @@ namespace RadialAxis {
             labelOptions = axis.options.labels as any,
             angle = (
                 (
-                    (axis.translate(this.pos) as any) + axis.startAngleRad +
+                    axis.translate(this.pos) + axis.startAngleRad +
                     Math.PI / 2
                 ) / Math.PI * 180
             ) % 360,

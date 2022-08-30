@@ -10,7 +10,7 @@
         ['Athens', 'Greece', '2004', 38, 23.72, 6, 5, 0, 1],
         ['Beijing', 'China', '2008', 39.92, 116.38, 9, 3, 5, 1],
         ['London', 'Great Britain', '2012', 51.5, -0.12, 4, 2, 1, 1],
-        ['Rio de Janeiro', 'Brasil', '2016', -22.91, -43.20, 4, 0, 0, 4],
+        ['Rio de Janeiro', 'Brazil', '2016', -22.91, -43.20, 4, 0, 0, 4],
         ['Tokyo', 'Japan', '2020', 35.69, 139.69, 8, 4, 2, 2]
     ];
 
@@ -32,7 +32,7 @@
         },
 
         title: {
-            text: 'Norwegian medals on the Summer Olympics (1996 - 2020)'
+            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)'
         },
 
         subtitle: {
@@ -49,16 +49,22 @@
         },
 
         series: [{
-            name: 'Basemap',
+            name: 'World map',
             nullColor: '#fad3cf'
         }, {
+            name: 'Olympic games',
             type: 'mapbubble',
             color: '#fe5f55',
             lineWidth: 1,
             keys: ['city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
             data: data,
             minSize: '5%',
-            maxSize: '12.5%'
+            maxSize: '12.5%',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{point.city}, {point.country}, {point.year}. Total medals: {point.z}. Gold: {point.gold}, silver: {point.silver}, bronze: {point.bronze}.'
+                }
+            }
         }]
 
     });

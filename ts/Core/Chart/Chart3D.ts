@@ -29,7 +29,7 @@ import Chart from './Chart.js';
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
 import Fx from '../Animation/Fx.js';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../Math3D.js';
 const {
     perspective,
     shapeArea3D
@@ -730,7 +730,7 @@ namespace Chart3D {
             options3d: {
 
                 /**
-                 * Wether to render the chart using the 3D functionality.
+                 * Whether to render the chart using the 3D functionality.
                  *
                  * @since   4.0
                  * @product highcharts

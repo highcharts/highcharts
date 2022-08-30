@@ -99,8 +99,10 @@ class PieSeries extends Series {
      *               pointPlacement, pointStart, softThreshold, stacking, step,
      *               threshold, turboThreshold, zoneAxis, zones, dataSorting,
      *               boostBlending
-     * @product      highcharts
+     * @product      highcharts highmaps
      * @optionparent plotOptions.pie
+     *
+     * @private
      */
     public static defaultOptions: PieSeriesOptions = merge(Series.defaultOptions, {
         /**
@@ -120,7 +122,7 @@ class PieSeries extends Series {
          *
          * @type      {Function}
          * @since     1.2.0
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @context   Highcharts.Point
          * @apioption plotOptions.pie.events.checkboxClick
          */
@@ -137,7 +139,7 @@ class PieSeries extends Series {
          *
          * @type      {Highcharts.PointLegendItemClickCallbackFunction}
          * @since     1.2.0
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.point.events.legendItemClick
          */
 
@@ -154,7 +156,7 @@ class PieSeries extends Series {
          *
          * @type    {Array<(number|string|null),(number|string|null)>}
          * @default [null, null]
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -203,7 +205,7 @@ class PieSeries extends Series {
          *
          * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
          * @since     3.0
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.colors
          */
 
@@ -218,7 +220,7 @@ class PieSeries extends Series {
             /**
              * Alignment method for data labels. Possible values are:
              *
-             * - `toPlotEdges`: Each label touches the nearest vertical edge of
+             * - `plotEdges`: Each label touches the nearest vertical edge of
              *   the plot area.
              *
              * - `connectors`: Connectors have the same x position and the
@@ -232,7 +234,7 @@ class PieSeries extends Series {
              *
              * @type      {string}
              * @since     7.0.0
-             * @product   highcharts
+             * @product   highcharts highmaps
              * @apioption plotOptions.pie.dataLabels.alignTo
              */
 
@@ -252,7 +254,7 @@ class PieSeries extends Series {
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     2.1
-             * @product   highcharts
+             * @product   highcharts highmaps
              * @apioption plotOptions.pie.dataLabels.connectorColor
              */
 
@@ -265,7 +267,7 @@ class PieSeries extends Series {
              *         No padding
              *
              * @since   2.1
-             * @product highcharts
+             * @product highcharts highmaps
              */
             connectorPadding: 5,
 
@@ -303,7 +305,7 @@ class PieSeries extends Series {
              *
              * @type    {string|Function}
              * @since   7.0.0
-             * @product highcharts
+             * @product highcharts highmaps
              */
             connectorShape: 'fixedOffset',
 
@@ -321,7 +323,7 @@ class PieSeries extends Series {
              * @type      {number}
              * @default   1
              * @since     2.1
-             * @product   highcharts
+             * @product   highcharts highmaps
              * @apioption plotOptions.pie.dataLabels.connectorWidth
              */
 
@@ -334,7 +336,7 @@ class PieSeries extends Series {
              *         crookDistance set to 90%
              *
              * @since   7.0.0
-             * @product highcharts
+             * @product highcharts highmaps
              */
             crookDistance: '70%',
 
@@ -349,7 +351,7 @@ class PieSeries extends Series {
              *
              * @type    {number|string}
              * @since   2.1
-             * @product highcharts
+             * @product highcharts highmaps
              */
             distance: 30,
 
@@ -396,7 +398,7 @@ class PieSeries extends Series {
              *         Non soft
              *
              * @since   2.1.7
-             * @product highcharts
+             * @product highcharts highmaps
              */
             softConnector: true,
 
@@ -437,7 +439,7 @@ class PieSeries extends Series {
          *
          * @type      {number}
          * @since     1.3.6
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.endAngle
          */
 
@@ -448,7 +450,7 @@ class PieSeries extends Series {
          * @type      {number}
          * @default   undefined
          * @product   highcharts
-         * @since     next
+         * @since 10.1.0
          * @apioption plotOptions.pie.thickness
          * @private
          */
@@ -465,7 +467,7 @@ class PieSeries extends Series {
          *         True, the hiddden point is ignored
          *
          * @since   2.3.0
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -498,7 +500,7 @@ class PieSeries extends Series {
          * @type      {number|string}
          * @default   0
          * @since     2.0
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.innerSize
          */
 
@@ -524,7 +526,7 @@ class PieSeries extends Series {
          * @type      {number|string}
          * @default   80
          * @since     3.0
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.minSize
          */
 
@@ -542,7 +544,7 @@ class PieSeries extends Series {
          *         Smaller pie
          *
          * @type    {number|string|null}
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -555,7 +557,7 @@ class PieSeries extends Series {
          * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
          *         One series in the legend, one hidden
          *
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -568,7 +570,7 @@ class PieSeries extends Series {
          * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
          *         20px offset
          *
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -584,7 +586,7 @@ class PieSeries extends Series {
          * @type      {number}
          * @default   0
          * @since     2.3.4
-         * @product   highcharts
+         * @product   highcharts highmaps
          * @apioption plotOptions.pie.startAngle
          */
 
@@ -597,7 +599,7 @@ class PieSeries extends Series {
          * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
          * will be hidden when moving the mouse between series.
          *
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -621,7 +623,7 @@ class PieSeries extends Series {
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ffffff
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -641,7 +643,7 @@ class PieSeries extends Series {
          * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/
          *         3px border
          *
-         * @product highcharts
+         * @product highcharts highmaps
          *
          * @private
          */
@@ -658,7 +660,7 @@ class PieSeries extends Series {
             /**
              * @extends   plotOptions.series.states.hover
              * @excluding marker, lineWidth, lineWidthPlus
-             * @product   highcharts
+             * @product   highcharts highmaps
              */
             hover: {
 
@@ -673,7 +675,7 @@ class PieSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/
                  *         Brightened by 0.5
                  *
-                 * @product highcharts
+                 * @product highcharts highmaps
                  */
                 brightness: 0.1
             }
@@ -992,6 +994,8 @@ class PieSeries extends Series {
      * @private
      */
     public translate(positions?: Array<number>): void {
+        fireEvent(this, 'translate');
+
         this.generatePoints();
 
         const series = this,
@@ -1271,7 +1275,7 @@ export default PieSeries;
  * @extends   series,plotOptions.pie
  * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
  *            dataSorting, step, boostThreshold, boostBlending
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie
  */
 
@@ -1316,13 +1320,13 @@ export default PieSeries;
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker, x
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.data
  */
 
 /**
  * @type      {Highcharts.SeriesPieDataLabelsOptionsObject}
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.data.dataLabels
  */
 
@@ -1330,7 +1334,7 @@ export default PieSeries;
  * The sequential index of the data point in the legend.
  *
  * @type      {number}
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.data.legendIndex
  */
 
@@ -1341,20 +1345,20 @@ export default PieSeries;
  *         One sliced point
  *
  * @type      {boolean}
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.data.sliced
  */
 
 /**
  * @extends plotOptions.pie.dataLabels
  * @excluding align, allowOverlap, inside, staggerLines, step
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.dataLabels
  */
 
 /**
  * @excluding legendItemClick
- * @product   highcharts
+ * @product   highcharts highmaps
  * @apioption series.pie.events
  */
 

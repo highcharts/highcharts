@@ -8,9 +8,9 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['au-nt', 10], ['au-wa', 11], ['au-ct', 12], ['au-sa', 13],
-        ['au-ql', 14], ['au-2557', 15], ['au-ts', 16], ['au-jb', 17],
-        ['au-ns', 18], ['au-vi', 19]
+        ['au-nt', 10], ['au-wa', 11], ['au-act', 12], ['au-sa', 13],
+        ['au-qld', 14], ['au-nf', 15], ['au-tas', 16], ['au-jb', 17],
+        ['au-nsw', 18], ['au-vic', 19]
     ];
 
     // Create the chart

@@ -74,13 +74,26 @@
                 }
             },
             series: [{
-                name: 'Basemap',
+                name: 'Europe',
+                accessibility: {
+                    exposeAsGroupOnly: true
+                },
                 borderColor: '#A0A0A0',
                 nullColor: 'rgba(177, 244, 177, 0.5)',
                 showInLegend: false
             }, {
                 type: 'mappoint',
                 enableMouseTracking: true,
+                accessibility: {
+                    point: {
+                        descriptionFormatter: function (point) {
+                            if (point.isCluster) {
+                                return 'Grouping of ' + point.clusterPointsAmount + ' points.';
+                            }
+                            return point.name + ', country code: ' + point.country + '.';
+                        }
+                    }
+                },
                 colorKey: 'clusterPointsAmount',
                 name: 'Cities',
                 data: data

@@ -26,4 +26,10 @@ export interface AreaPointOptions extends LinePointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default AreaPointOptions;

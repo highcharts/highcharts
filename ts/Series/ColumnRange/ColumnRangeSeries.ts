@@ -16,10 +16,11 @@
  *
  * */
 
-import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import ColumnRangePoint from './ColumnRangePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -27,18 +28,25 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
-        column: ColumnSeries
+        column: ColumnSeries,
+        column: {
+            prototype: columnProto
+        }
     }
 } = SeriesRegistry;
-const { prototype: columnProto } = ColumnSeries;
-const { prototype: arearangeProto } = AreaRangeSeries;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    extend,
     merge,
-    pick,
-    extend
+    pick
 } = U;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -103,25 +111,15 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
     public static defaultOptions: ColumnRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
-        columnRangeOptions as ColumnRangeSeriesOptions
+        columnRangeOptions
     );
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public data = void 0 as any;
-    public points = void 0 as any;
-    public options = void 0 as any;
 
     /* *
      *
@@ -132,7 +130,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public setOptions(): ColumnRangeSeriesOptions {
         // #14359 Prevent side-effect from stacking.
         merge(true, arguments[0], { stacking: void 0 });
-        return arearangeProto.setOptions.apply(this, arguments);
+        return AreaRangeSeries.prototype.setOptions.apply(this, arguments);
     }
 
     // eslint-disable-next-line valid-jsdoc
@@ -141,15 +139,18 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * @private
      */
     public translate(): void {
-        let series = this,
-            yAxis = series.yAxis,
-            xAxis = series.xAxis,
+        const yAxis = this.yAxis,
+            xAxis = this.xAxis,
             startAngleRad = xAxis.startAngleRad,
-            start,
-            chart = series.chart,
-            isRadial = series.xAxis.isRadial,
-            safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999,
-            plotHigh;
+            chart = this.chart,
+            isRadial = this.xAxis.isRadial,
+            safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999;
+
+        let height: number,
+            heightDifference: number,
+            start: number,
+            plotHigh: number,
+            y: number;
 
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -161,22 +162,17 @@ class ColumnRangeSeries extends AreaRangeSeries {
         }
 
 
-        columnProto.translate.apply(series);
+        columnProto.translate.apply(this);
 
         // Set plotLow and plotHigh
-        series.points.forEach(function (
-            point: ColumnRangePoint
-        ): void {
-            let shapeArgs = point.shapeArgs || {},
-                minPointLength = series.options.minPointLength,
-                heightDifference,
-                height,
-                y;
+        this.points.forEach((point): void => {
+            const shapeArgs = point.shapeArgs || {},
+                minPointLength = this.options.minPointLength;
 
             point.plotHigh = plotHigh = safeBounds(
                 yAxis.translate(
                     point.high, 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any
+                )
             );
             point.plotLow = safeBounds(point.plotY as any);
 
@@ -196,11 +192,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
                 y -= height;
             }
 
-            if (isRadial) {
+            if (isRadial && this.polar) {
 
-                start = (point.barX as any) + startAngleRad;
+                start = point.barX + startAngleRad;
                 point.shapeType = 'arc';
-                point.shapeArgs = series.polarArc(
+                point.shapeArgs = this.polar.arc(
                     y + height,
                     y,
                     start,
@@ -214,15 +210,12 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - y -
-                        height / 2,
-                        xAxis.len + (xAxis.pos as any) - chart.plotTop -
-                        x - width / 2,
+                        yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2,
+                        xAxis.len + xAxis.pos - chart.plotTop - x - width / 2,
                         height
                     ] : [
-                        xAxis.left - chart.plotLeft + x +
-                        width / 2,
-                        (yAxis.pos as any) - chart.plotTop + y + height / 2,
+                        xAxis.left - chart.plotLeft + x + width / 2,
+                        yAxis.pos - chart.plotTop + y + height / 2,
                         height
                     ]; // don't inherit from column tooltip position - #3372
             }
@@ -230,54 +223,74 @@ class ColumnRangeSeries extends AreaRangeSeries {
     }
 
     // Overrides from modules that may be loaded after this module
-    public crispCol(): BBoxObject {
-        return columnProto.crispCol.apply(this, arguments as any);
-    }
-    public drawPoints(): void {
-        return columnProto.drawPoints.apply(this, arguments as any);
-    }
-    public drawTracker(): void {
-        return columnProto.drawTracker.apply(this, arguments as any);
-    }
-    public getColumnMetrics(): ColumnMetricsObject {
-        return columnProto.getColumnMetrics.apply(this, arguments as any);
-    }
+    // @todo move to compositions
+
+    // public crispCol(): BBoxObject {
+    //     return columnProto.crispCol.apply(this, arguments as any);
+    // }
+    // public drawPoints(): void {
+    //     return columnProto.drawPoints.apply(this, arguments as any);
+    // }
+    // public drawTracker(): void {
+    //     return columnProto.drawTracker.apply(this, arguments as any);
+    // }
+    // public getColumnMetrics(): ColumnMetricsObject {
+    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
+    // }
     public pointAttribs(): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
     }
-    public adjustForMissingColumns(): number {
-        return columnProto.adjustForMissingColumns.apply(this, arguments);
-    }
-    public animate(): void {
-        return columnProto.animate.apply(this, arguments as any);
-    }
+    // public adjustForMissingColumns(): number {
+    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
+    // }
+    // public animate(): void {
+    //     return columnProto.animate.apply(this, arguments as any);
+    // }
     public translate3dPoints(): void {
         return columnProto.translate3dPoints.apply(this, arguments as any);
     }
     public translate3dShapes(): void {
         return columnProto.translate3dShapes.apply(this, arguments as any);
     }
+
 }
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 
 interface ColumnRangeSeries {
+    options: ColumnRangeSeriesOptions;
     pointClass: typeof ColumnRangePoint;
-    polarArc: typeof AreaRangeSeries.prototype['polarArc'];
+    points: Array<ColumnRangePoint>;
+    adjustForMissingColumns: typeof columnProto.adjustForMissingColumns;
+    animate: typeof columnProto.animate,
+    crispCol: typeof columnProto.crispCol;
+    drawPoints: typeof columnProto.drawPoints,
+    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    // pointAttribs: typeof columnProto.pointAttribs,
+    // polarArc: typeof columnProto.polarArc
+    // translate3dPoints: typeof columnProto.translate3dPoints,
+    // translate3dShapes: typeof columnProto.translate3dShapes
 }
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
+    pointClass: ColumnRangePoint,
     trackerGroups: ['group', 'dataLabelsGroup'],
+    adjustForMissingColumns: columnProto.adjustForMissingColumns,
+    animate: columnProto.animate,
+    crispCol: columnProto.crispCol,
     drawGraph: noop,
+    drawPoints: columnProto.drawPoints,
     getSymbol: noop,
-    polarArc: function (this: ColumnRangeSeries): SVGAttributes {
-        return columnProto.polarArc.apply(this, arguments);
-    },
-    pointClass: ColumnRangePoint
+    drawTracker: columnProto.drawTracker,
+    getColumnMetrics: columnProto.getColumnMetrics
+    // pointAttribs: columnProto.pointAttribs,
+    // polarArc: columnProto.polarArc
+    // translate3dPoints: columnProto.translate3dPoints,
+    // translate3dShapes: columnProto.translate3dShapes
 });
 
 /* *
@@ -299,7 +312,7 @@ SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
@@ -307,7 +320,7 @@ export default ColumnRangeSeries;
 
 /* *
  *
- *  API options
+ *  API Options
  *
  * */
 

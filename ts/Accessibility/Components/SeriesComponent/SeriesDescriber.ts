@@ -20,6 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
@@ -103,15 +104,22 @@ function findFirstPointWithGraphic(
 
 
 /**
+ * Whether or not we should add a dummy point element in
+ * order to describe a point that has no graphic.
  * @private
  */
 function shouldAddDummyPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.is('sunburst'),
-        isNull = point.isNull;
+    const series = point.series,
+        chart = series && series.chart,
+        isSunburst = series && series.is('sunburst'),
+        isNull = point.isNull,
+        shouldDescribeNull = chart &&
+            (chart as Accessibility.ChartComposition)
+                .options.accessibility.point.describeNull;
 
-    return isNull && !isSunburst;
+    return isNull && !isSunburst && shouldDescribeNull;
 }
 
 
@@ -359,7 +367,8 @@ function getPointXDescription(
         xAxis = point.series.xAxis || {},
         pointCategory = xAxis.categories && defined(point.category) &&
             ('' + point.category).replace('<br/>', ' '),
-        canUseId = point.id && point.id.indexOf('highcharts-') < 0,
+        canUseId = defined(point.id) &&
+            ('' + point.id).indexOf('highcharts-') < 0,
         fallback = 'x, ' + point.x;
 
     return point.name || timeDesc || pointCategory ||
@@ -448,7 +457,7 @@ function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(
-        point as Highcharts.AnnotationPoint
+        point as AnnotationPoint
     );
     const context = { point, annotations };
 
@@ -550,19 +559,26 @@ function describePointsInSeries(
     series: Accessibility.SeriesComposition
 ): void {
     const setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series),
-        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
+        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series),
+        shouldDescribeNullPoints = series.chart.options.accessibility
+            .point.describeNull;
 
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach((point): void => {
             const pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint(point) && addDummyPointElement(point);
-            const pointA11yDisabled = (
-                point.options &&
-                point.options.accessibility &&
-                point.options.accessibility.enabled === false
-            );
+                    shouldAddDummyPoint(point) && addDummyPointElement(point),
+                pointA11yDisabled = (
+                    point.options &&
+                    point.options.accessibility &&
+                    point.options.accessibility.enabled === false
+                );
 
             if (pointEl) {
+                if (point.isNull && !shouldDescribeNullPoints) {
+                    pointEl.setAttribute('aria-hidden', true);
+                    return;
+                }
+
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
@@ -597,14 +613,13 @@ function defaultSeriesDescriptionFormatter(
         ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
+        seriesNumber = series.index + 1,
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),
         yAxisInfo = getSeriesAxisDescriptionText(series, 'yAxis'),
         summaryContext = {
-            name: series.name || '',
-            ix: (series.index as any) + 1,
-            numSeries: chart.series && chart.series.length,
-            numPoints: series.points && series.points.length,
-            series: series
+            seriesNumber,
+            series,
+            chart
         },
         combinationSuffix = chartTypes.length > 1 ? 'Combination' : '',
         summary = chart.langFormat(
@@ -613,13 +628,22 @@ function defaultSeriesDescriptionFormatter(
         ) || chart.langFormat(
             'accessibility.series.summary.default' + combinationSuffix,
             summaryContext
-        );
+        ),
+        axisDescription = (
+            shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo + '.' : ''
+        ) + (
+            shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
+        ),
+        formatStr = chart.options.accessibility.series.descriptionFormat || '';
 
-    return summary + (description ? ' ' + description : '') + (
-        shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo : ''
-    ) + (
-        shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo : ''
-    );
+    return format(formatStr, {
+        seriesDescription: summary,
+        authorDescription: (description ? ' ' + description : ''),
+        axisDescription,
+        series,
+        chart,
+        seriesNumber
+    }, void 0);
 }
 
 
@@ -642,7 +666,9 @@ function describeSeriesElement(
         seriesElement.setAttribute('role', 'img');
     } else if (landmarkVerbosity === 'all') {
         seriesElement.setAttribute('role', 'region');
-    } /* else do not add role */
+    } else {
+        seriesElement.setAttribute('role', 'group');
+    }
 
     seriesElement.setAttribute('tabindex', '-1');
     if (!series.chart.styledMode) {
@@ -676,7 +702,7 @@ function describeSeries(
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
         // in order for AT to read them out in an understandable order.
-        // Due to z-index issues we can not do this for 3D charts.
+        // Due to z-index issues we cannot do this for 3D charts.
         if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
@@ -688,7 +714,7 @@ function describeSeries(
         if (shouldDescribeSeriesElement(series)) {
             describeSeriesElement(series, seriesEl);
         } else {
-            seriesEl.setAttribute('aria-label', '');
+            seriesEl.removeAttribute('aria-label');
         }
     }
 }

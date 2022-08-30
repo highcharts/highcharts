@@ -32,6 +32,10 @@
                         text: 'US Counties unemployment rates, January 2018'
                     },
 
+                    accessibility: {
+                        description: 'Demo showing a large dataset.'
+                    },
+
                     legend: {
                         layout: 'vertical',
                         align: 'right',
@@ -77,13 +81,19 @@
                                 color: '#a4edba'
                             }
                         },
-                        shadow: false
+                        shadow: false,
+                        accessibility: {
+                            enabled: false
+                        }
                     }, {
                         type: 'mapline',
                         name: 'State borders',
                         color: 'white',
                         shadow: false,
-                        borderWidth: 2
+                        borderWidth: 2,
+                        accessibility: {
+                            enabled: false
+                        }
                     }]
                 });
             }, 0);

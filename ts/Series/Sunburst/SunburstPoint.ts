@@ -24,7 +24,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -41,7 +40,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { correctFloat, extend } = U;
+const { correctFloat, extend, wrap } = U;
 
 /* *
  *
@@ -113,23 +112,22 @@ class SunburstPoint extends TreemapPoint {
             this.dataLabelPath = this.dataLabelPath.destroy();
         }
 
+        // All times
         this.dataLabelPath = renderer
             .arc({
                 open: true,
                 longArc: moreThanHalf ? 1 : 0
             })
-            // Add it inside the data label group so it gets destroyed
-            // with the label
-            .add(label);
+            .attr({
+                start: (upperHalf ? start : end),
+                end: (upperHalf ? end : start),
+                clockwise: +upperHalf,
+                x: shapeArgs.x,
+                y: shapeArgs.y,
+                r: (r + shapeArgs.innerR) / 2
+            })
+            .add(renderer.defs);
 
-        this.dataLabelPath.attr({
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf,
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (r + shapeArgs.innerR) / 2
-        });
         return this.dataLabelPath;
     }
 
@@ -147,7 +145,7 @@ class SunburstPoint extends TreemapPoint {
  *
  * */
 
-interface SunburstPoint extends DrawPointComposition.Composition {
+interface SunburstPoint {
     setState: typeof Point.prototype.setState;
     setVisible: typeof TreemapPoint.prototype.setVisible;
 }
@@ -157,8 +155,6 @@ extend(SunburstPoint.prototype, {
     haloPath: Point.prototype.haloPath,
     setState: Point.prototype.setState
 });
-
-DrawPointComposition.compose(SunburstPoint);
 
 /* *
  *

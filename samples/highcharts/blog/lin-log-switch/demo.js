@@ -67,7 +67,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         button.firstChild.style['background-image'] = `url(${iconURL})`;
 
                         // Deselect button after click.
-                        button.classList.remove('highcharts-active');
+                        Highcharts.fireEvent(
+                            this,
+                            'deselectButton',
+                            { button: button }
+                        );
                     }
                 }
             }

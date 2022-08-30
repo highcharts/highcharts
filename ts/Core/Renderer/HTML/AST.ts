@@ -168,6 +168,7 @@ class AST {
         'target',
         'tabindex',
         'text-align',
+        'text-anchor',
         'textAnchor',
         'textLength',
         'title',
@@ -270,6 +271,7 @@ class AST {
         'svg',
         'table',
         'text',
+        'textPath',
         'thead',
         'tbody',
         'tspan',
@@ -361,13 +363,13 @@ class AST {
             .split(';')
             .reduce((styles, line): CSSObject => {
                 const pair = line.split(':').map((s): string => s.trim()),
-                    key = pair[0].replace(
+                    key = pair.shift();
+
+                if (key && pair.length) {
+                    (styles as any)[key.replace(
                         /-([a-z])/g,
                         (g): string => g[1].toUpperCase()
-                    );
-
-                if (pair[1]) {
-                    (styles as any)[key] = pair[1];
+                    )] = pair.join(':'); // #17146
                 }
                 return styles;
             }, {} as CSSObject);
@@ -561,7 +563,8 @@ class AST {
             .trim()
             // The style attribute throws a warning when parsing when CSP is
             // enabled (#6884), so use an alias and pick it up below
-            .replace(/ style="/g, ' data-style="');
+            // Make all quotation marks parse correctly to DOM (#17627)
+            .replace(/ style=(["'])/g, ' data-style=$1');
 
         let doc;
         if (hasValidDOMParser) {
