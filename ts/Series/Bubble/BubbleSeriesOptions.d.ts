@@ -31,7 +31,7 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     maxSize?: (number|string);
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
-    temperatureColors?: Array<ColorType>;
+    blendColors?: Array<ColorType>;
     zMax?: number;
     zMin?: number;
     zThreshold?: number;

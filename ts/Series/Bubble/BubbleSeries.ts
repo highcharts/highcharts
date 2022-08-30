@@ -536,11 +536,11 @@ class BubbleSeries extends ScatterSeries {
         const animationLimit = pick(this.options.animationLimit, Infinity);
 
         if (!init && this.points.length < animationLimit) { // #8099
-            const temperatureColors = this.options.temperatureColors;
+            const blendColors = this.options.blendColors;
 
             // Why ['']? If standard single bubble, perform animation only for
             // one point (one graphic). String element matches in TS
-            (temperatureColors || ['']).forEach((_, i: number): void => {
+            (blendColors || ['']).forEach((_, i: number): void => {
                 this.points.forEach((point): void => {
                     const graphic =
                         (point.graphics && point.graphics[i]) || point.graphic;
@@ -696,15 +696,15 @@ class BubbleSeries extends ScatterSeries {
         let radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
 
         // Calculate radius of bubbles based on index of the color in the
-        // series.temperatureColors array.
-        if (this.options.temperatureColors) {
-            const colorIndex = this.temperatureColorIndex || 0,
+        // series.blendColors array.
+        if (this.options.blendColors) {
+            const colorIndex = this.blendColorIndex || 0,
                 sizeFactor = this.sizeFactor ?
                     // If stops defined
                     this.sizeFactor :
                     // If stops not defined, then bubbles sizes decrease evenly
                     // e.g. radii of 4 bubbles: 100%, 75%, 50%, 25%
-                    1 - colorIndex / this.options.temperatureColors.length;
+                    1 - colorIndex / this.options.blendColors.length;
 
             // Ceiling solves decimal issues and rounds to 1px
             radius = Math.ceil(correctFloat(radius * sizeFactor) * 2) / 2;
@@ -756,17 +756,17 @@ class BubbleSeries extends ScatterSeries {
     }
 
     public drawPoints(): void {
-        if (!this.options.temperatureColors) {
+        if (!this.options.blendColors) {
             // Run the parent method
             super.drawPoints();
         } else {
             const series = this,
                 options = series.options,
-                temperatureColors = this.options.temperatureColors
+                blendColors = this.options.blendColors
                     .slice() // remove reference (for safe reverse)
                     .reverse(); // loop form backward (easier calculations)
 
-            temperatureColors.forEach((
+            blendColors.forEach((
                 color: ColorType|[number, ColorType],
                 colorIndex: number
             ): void => {
@@ -776,10 +776,10 @@ class BubbleSeries extends ScatterSeries {
 
                     color = color[1];
                 } else { // If size decreases evenly
-                    series.temperatureColorIndex = colorIndex;
+                    series.blendColorIndex = colorIndex;
                 }
 
-                const colorsLength = temperatureColors.length,
+                const colorsLength = blendColors.length,
                     fillColor = {
                         radialGradient: {
                             cx: 0.5,
@@ -973,12 +973,11 @@ class BubbleSeries extends ScatterSeries {
             minPxSize
         );
 
-        if (allowSmaller && this.options.temperatureColors) {
+        if (allowSmaller && this.options.blendColors) {
             const sizeFactor = this.sizeFactor ||
-                (1 / this.options.temperatureColors.length);
+                (1 / this.options.blendColors.length);
 
-            // Recalculate minPxSize to draw smaller bubbles for
-            // temperatureColors
+            // Recalculate minPxSize to draw smaller bubbles for blendColors
             minPxSize = minPxSize * sizeFactor;
         }
 
@@ -1021,8 +1020,8 @@ interface BubbleSeries {
     pointClass: typeof BubblePoint;
     sizeFactor?: number;
     specialGroup: string;
-    temperatureColorIndex?: number;
-    temperatureColors: [ColorType|[number, ColorType]];
+    blendColorIndex?: number;
+    blendColors: [ColorType|[number, ColorType]];
     zoneAxis: string;
 }
 

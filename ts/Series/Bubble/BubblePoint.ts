@@ -72,9 +72,9 @@ class BubblePoint extends ScatterPoint {
      * @private
      */
     public destroy(): void {
-        if (!this.series.options.temperatureColors) {
+        if (!this.series.options.blendColors) {
             super.destroy();
-        } else { // if multiple graphics (temperatureColors)
+        } else { // if multiple graphics (blendColors)
             const point = this;
             let prop;
 
@@ -164,7 +164,7 @@ class BubblePoint extends ScatterPoint {
     ): Point.GraphicalProps {
         const graphicalProps = super.getGraphicalProps(kinds);
 
-        if (this.series.options.temperatureColors) {
+        if (this.series.options.blendColors) {
             // Add graphics prop containing all graphical marker elements to
             // graphicalProps.
             graphicalProps.plural.push('graphics');

@@ -1,4 +1,4 @@
-QUnit.test('Temperaturemap API options.', assert => {
+QUnit.test('Bubble blendColors API option.', assert => {
     const chart = Highcharts.chart('container', {
 
         accessibility: {
@@ -7,7 +7,7 @@ QUnit.test('Temperaturemap API options.', assert => {
 
         plotOptions: {
             bubble: {
-                temperatureColors: ['#00ff00', '#ff0000', '#0000ff']
+                blendColors: ['#00ff00', '#ff0000', '#0000ff']
             }
         },
 
@@ -37,8 +37,8 @@ QUnit.test('Temperaturemap API options.', assert => {
 
     let series = chart.series[0],
         points = series.points,
-        temperatureColors = series.options.temperatureColors,
-        colorsLength = temperatureColors.length;
+        blendColors = series.options.blendColors,
+        colorsLength = blendColors.length;
 
     points.forEach(point => {
         assert.strictEqual(
@@ -67,11 +67,11 @@ QUnit.test('Temperaturemap API options.', assert => {
     });
 
     series.update({
-        temperatureColors: [[0.7, '#0000ff'], [1, '#00ffff']]
+        blendColors: [[0.7, '#0000ff'], [1, '#00ffff']]
     });
 
-    temperatureColors = series.options.temperatureColors;
-    colorsLength = temperatureColors.length;
+    blendColors = series.options.blendColors;
+    colorsLength = blendColors.length;
 
     points.forEach(point => {
         assert.strictEqual(
@@ -83,7 +83,7 @@ QUnit.test('Temperaturemap API options.', assert => {
         const firstGraphicWidth = point.graphics[0].attr('width');
 
         point.graphics.forEach((graphic, i) => {
-            const colorStop = (temperatureColors.slice().reverse())[i][0];
+            const colorStop = (blendColors.slice().reverse())[i][0];
 
             assert.strictEqual(
                 graphic.attr('width'),
@@ -142,8 +142,8 @@ QUnit.test('Temperaturemap API options.', assert => {
     });
 
     points = series.points;
-    temperatureColors = series.options.temperatureColors;
-    colorsLength = temperatureColors.length;
+    blendColors = series.options.blendColors;
+    colorsLength = blendColors.length;
 
     points.forEach(point => {
         assert.strictEqual(
