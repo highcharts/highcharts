@@ -94,6 +94,7 @@
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
+        "@typescript-eslint/prefer-as-const": 1, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo

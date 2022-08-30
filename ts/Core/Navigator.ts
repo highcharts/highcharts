@@ -665,7 +665,7 @@ extend(defaultOptions, {
          *
          * @type      {boolean}
          * @default   undefined
-         * @since     next
+         * @since 10.2.1
          * @sample {highstock} stock/navigator/sticktomax-false/
          * stickToMax set to false
          * @apioption navigator.stickToMax
