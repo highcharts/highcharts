@@ -12,31 +12,30 @@
 
 <!-- Highcharts plugin that makes all chart's x and y axes to follow the main chart's axes. -->
 <script>
-  (function syncCharts() {
+  (() => {
     function syncAxis(e) {
-      const mainChart = Highcharts.charts[0],
-        tickPositions = this.tickPositions;
+      Highcharts.charts.forEach(chart => {
+        const mainChart = Highcharts.charts[0];
 
-      Highcharts.charts.forEach(function (chart) {
         if (chart !== mainChart) {
           if (chart[e.target.coll][0].setExtremes) {
             chart[e.target.coll][0].update({
               min: e.min,
               max: e.max,
-              tickPositions: tickPositions,
+              tickPositions: this.tickPositions
             });
           }
         }
       });
     }
 
-    Highcharts.addEvent(Highcharts.Axis, "afterSetExtremes", function (e) {
-      if (this.chart.options.chart.otherChartsFollowAxes) {
-        syncAxis.call(this, e);
+    Highcharts.addEvent(Highcharts.Axis, 'afterSetExtremes', e => {
+      if (e.target.chart.options.chart.otherChartsFollowAxes) {
+        syncAxis.call(e.target, e);
       }
     });
 
-    Highcharts.addEvent(Highcharts.Chart, "load", function (e) {
+    Highcharts.addEvent(Highcharts.Chart, 'load', e => {
       const mainChart = Highcharts.charts[0];
 
       if (
