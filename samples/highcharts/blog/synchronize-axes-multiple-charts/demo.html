@@ -1,0 +1,57 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div class="chart" id="container1"></div>
+<div class="flex-container">
+  <div class="chart" id="container2"></div>
+  <div class="chart" id="container3"></div>
+</div>
+<div class="chart" id="container4"></div>
+
+<!-- Highcharts plugin that makes all chart's x and y axes to follow the main chart's axes. -->
+<script>
+  (function syncCharts() {
+    function syncAxis(e) {
+      const mainChart = Highcharts.charts[0],
+        tickPositions = this.tickPositions;
+
+      Highcharts.charts.forEach(function (chart) {
+        if (chart !== mainChart) {
+          if (chart[e.target.coll][0].setExtremes) {
+            chart[e.target.coll][0].update({
+              min: e.min,
+              max: e.max,
+              tickPositions: tickPositions,
+            });
+          }
+        }
+      });
+    }
+
+    Highcharts.addEvent(Highcharts.Axis, "afterSetExtremes", function (e) {
+      if (this.chart.options.chart.otherChartsFollowAxes) {
+        syncAxis.call(this, e);
+      }
+    });
+
+    Highcharts.addEvent(Highcharts.Chart, "load", function (e) {
+      const mainChart = Highcharts.charts[0];
+
+      if (
+        mainChart.options.chart.otherChartsFollowAxes &&
+        Highcharts.lastChartRender
+      ) {
+        mainChart.xAxis[0].setExtremes(
+          mainChart.xAxis[0].min,
+          mainChart.xAxis[0].max
+        );
+        mainChart.yAxis[0].setExtremes(
+          mainChart.yAxis[0].min,
+          mainChart.yAxis[0].max
+        );
+      }
+    });
+  })();
+</script>
