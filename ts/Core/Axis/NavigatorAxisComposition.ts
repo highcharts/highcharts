@@ -60,6 +60,9 @@ const composedClasses: Array<Function> = [];
  *
  * */
 
+/**
+ * @private
+ */
 function onAxisInit(
     this: Axis
 ): void {
@@ -80,16 +83,14 @@ function onAxisZoom(
     this: Axis,
     e: AnyRecord
 ): void {
-    const axis = this as NavigatorAxisComposition;
-    const chart = axis.chart;
-    const chartOptions = chart.options;
-    const navigator = chartOptions.navigator;
-    const navigatorAxis = axis.navigatorAxis;
-    const pinchType = (chartOptions.chart as any).zooming.pinchType;
-    const rangeSelector = chartOptions.rangeSelector;
-    const zoomType = (chartOptions.chart as any).zooming.type;
-
-    let previousZoom;
+    const axis = this as NavigatorAxisComposition,
+        chart = axis.chart,
+        chartOptions = chart.options,
+        navigator = chartOptions.navigator,
+        navigatorAxis = axis.navigatorAxis,
+        pinchType = chartOptions.chart.zooming.pinchType,
+        rangeSelector = chartOptions.rangeSelector,
+        zoomType = chartOptions.chart.zooming.type;
 
     if (axis.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
@@ -111,7 +112,8 @@ function onAxisZoom(
             axis.options.range
         ) {
 
-            previousZoom = navigatorAxis.previousZoom;
+            const previousZoom = navigatorAxis.previousZoom;
+
             if (defined(e.newMin)) {
                 navigatorAxis.previousZoom = [axis.min, axis.max];
             } else if (previousZoom) {
@@ -211,18 +213,18 @@ class NavigatorAxisAdditions {
         fixedMin?: number,
         fixedMax?: number
     ): RangeSelector.RangeObject {
-        const navigator = this;
-        const axis = navigator.axis;
-        const chart = axis.chart;
+        const axis = this.axis,
+            chart = axis.chart;
 
-        let fixedRange = chart && chart.fixedRange,
-            halfPointRange = (axis.pointRange || 0) / 2,
-            newMin = pick<number|undefined, number>(
+        let newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
             ),
             newMax = pick<number|undefined, number>(
                 fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
-            ),
+            );
+
+        const fixedRange = chart && chart.fixedRange,
+            halfPointRange = (axis.pointRange || 0) / 2,
             changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
         // Add/remove half point range to/from the extremes (#1172)
