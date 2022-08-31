@@ -966,6 +966,14 @@ class MapSeries extends ScatterSeries {
             pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
+        // Invisible map points means that the data value is removed from the
+        // map, but not the map area shape itself. Instead it is rendered like a
+        // null point. To fully remove a map area, it should be removed from the
+        // mapData.
+        if (!point.visible) {
+            attr.fill = this.options.nullColor;
+        }
+
         (attr as any)['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
