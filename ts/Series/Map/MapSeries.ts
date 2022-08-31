@@ -398,10 +398,6 @@ class MapSeries extends ScatterSeries {
                  * @apioption plotOptions.series.states.select.color
                  */
                 color: Palette.neutralColor20
-            },
-
-            inactive: {
-                opacity: 1
             }
         }
     } as MapSeriesOptions);
