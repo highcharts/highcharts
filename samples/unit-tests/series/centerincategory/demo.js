@@ -160,15 +160,16 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
     chart.update({
+        chart: {
+            type: 'column'
+        },
         series: [{
-            type: 'column',
             data: [
                 [0, 2],
                 [0, 1],
                 [1, 2]
             ]
         }, {
-            type: 'column',
             data: [
                 [0, null],
                 [1, 2]
@@ -181,8 +182,39 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.ok(
         chart.plotLeft + point.shapeArgs.x < tickX &&
             chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
-        '#17610: Point should be centered on the tick'
+        '#17610: Point should be centered on the tick.'
     );
+
+    chart.update({
+        series: [{
+            data: [
+                [0, 10],
+                [0, 5],
+                [1, 5]
+            ]
+        }, {
+            data: [
+                [0, 10],
+                [0, 5],
+                [0, 5],
+                [0, 5],
+                [0, 5],
+                [1, 5]
+            ]
+        }]
+    }, true, true);
+
+    const series = chart.series[0];
+
+    assert.close(
+        chart.xAxis[0].ticks[0].mark.element.getBBox().x -
+            series.points[0].shapeArgs.x,
+        chart.xAxis[0].ticks[1].mark.element.getBBox().x -
+            series.points[2].shapeArgs.x,
+        2,
+        '#17610: Point should have correct offset.'
+    );
+
 
     /*
     chart.series[1].setData([

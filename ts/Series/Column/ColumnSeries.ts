@@ -812,14 +812,7 @@ class ColumnSeries extends Series {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            // In case of multiple points with the same X,
-                            // get the first point
-                            const key = [
-                                    this.index as any,
-                                    point.x,
-                                    0
-                                ].join(','),
-                                pointValues = stackItem.points[key];
+                            const pointValues = stackItem.points[this.index];
 
                             // If true `stacking` is enabled, count the total
                             // number of non-null stacks in the category, and
@@ -835,10 +828,11 @@ class ColumnSeries extends Series {
                                 }
 
                             // If `stacking` is not enabled, look for the index
-                            // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
-                                indexInCategory = pointValues[1];
-                                totalInCategory = Object
+                                // If there are multiple points with the same X
+                                // then gather all series in category, and
+                                // assign index
+                                let seriesIndexes = Object
                                     .keys(stackItem.points)
                                     .filter((pointKey): boolean =>
                                         // Filter out duplicate X's
@@ -847,7 +841,13 @@ class ColumnSeries extends Series {
                                         stackItem.points[pointKey] &&
                                         stackItem.points[pointKey].length > 1
                                     )
-                                    .length;
+                                    .map(parseFloat)
+                                    .sort((a, b): number => b - a);
+
+                                indexInCategory = seriesIndexes.indexOf(
+                                    this.index
+                                );
+                                totalInCategory = seriesIndexes.length;
                             }
                         }
                     }
