@@ -1,5 +1,4 @@
 (async () => {
-
     const topology = await fetch(
         'https://code.highcharts.com/mapdata/custom/europe.topo.json'
     ).then(response => response.json());
@@ -8,6 +7,7 @@
         chart: {
             map: topology
         },
+
         title: {
             text: 'Highmaps basic lat/lon demo'
         },
@@ -19,6 +19,7 @@
         mapNavigation: {
             enabled: true
         },
+
         series: [{
             name: 'Basemap'
         }, {
@@ -55,8 +56,7 @@
                 id: 'Helsinki',
                 lat: 60.317887,
                 lon: 24.96695
-            },
-            {
+            }, {
                 id: "Budapest",
                 lat: 47.4329065837921,
                 lon: 19.2617931962013
@@ -64,8 +64,7 @@
                 id: 'Sofia',
                 lat: 42.6885203,
                 lon: 23.39719025
-            }
-            ]
+            }]
         }, {
             type: 'flowmap',
             data: [
@@ -112,5 +111,4 @@
             ]
         }]
     });
-
 })();

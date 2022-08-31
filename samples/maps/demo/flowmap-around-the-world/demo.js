@@ -30,8 +30,7 @@
                 id: 'London',
                 lat: 51.3,
                 lon: 0
-            },
-            {
+            }, {
                 id: 'Suez',
                 lat: 29.96,
                 lon: 32.54
@@ -59,8 +58,7 @@
                 id: 'New York',
                 lat: 40.71,
                 lon: -74
-            }
-            ]
+            }]
         }, {
             type: 'flowmap',
             markerEnd: {
