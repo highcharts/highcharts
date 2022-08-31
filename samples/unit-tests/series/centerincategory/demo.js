@@ -152,11 +152,36 @@ QUnit.test('series.centerInCategory', function (assert) {
     });
 
     point = chart.series[3].points[3];
-    const tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
+    let tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
     assert.ok(
         chart.plotLeft + point.shapeArgs.x < tickX &&
             chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
         '#15045: Point should be centered on the tick'
+    );
+
+    chart.update({
+        series: [{
+            type: 'column',
+            data: [
+                [0, 2],
+                [0, 1],
+                [1, 2]
+            ]
+        }, {
+            type: 'column',
+            data: [
+                [0, null],
+                [1, 2]
+            ]
+        }]
+    }, true, true);
+
+    point = chart.series[0].points[0];
+    tickX = chart.xAxis[0].ticks[0].mark.element.getBBox().x;
+    assert.ok(
+        chart.plotLeft + point.shapeArgs.x < tickX &&
+            chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
+        '#17610: Point should be centered on the tick'
     );
 
     /*

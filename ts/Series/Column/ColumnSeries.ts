@@ -812,10 +812,14 @@ class ColumnSeries extends Series {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[
-                                    this.index as any
-                                ],
-                                total = stackItem.total;
+                            // In case of multiple points with the same X,
+                            // get the first point
+                            const key = [
+                                    this.index as any,
+                                    point.x,
+                                    0
+                                ].join(','),
+                                pointValues = stackItem.points[key];
 
                             // If true `stacking` is enabled, count the total
                             // number of non-null stacks in the category, and
@@ -834,7 +838,16 @@ class ColumnSeries extends Series {
                             // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
                                 indexInCategory = pointValues[1];
-                                totalInCategory = total || 0;
+                                totalInCategory = Object
+                                    .keys(stackItem.points)
+                                    .filter((pointKey): boolean =>
+                                        // Filter out duplicate X's
+                                        !pointKey.match(',') &&
+                                        // Filter out null points
+                                        stackItem.points[pointKey] &&
+                                        stackItem.points[pointKey].length > 1
+                                    )
+                                    .length;
                             }
                         }
                     }
