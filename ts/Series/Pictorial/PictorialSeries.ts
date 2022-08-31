@@ -19,20 +19,20 @@
 import '../Column/ColumnSeries.js';
 import '../../Extensions/PatternFill.js';
 
-import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType.js';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type ColumnSeriesType from '../Column/ColumnSeries';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
-import PictorialPoint from './PictorialPoint.js';
-import U from '../../Core/Utilities.js';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
-import PictorialUtilities from './PictorialUtilities.js';
-import { PictorialPathOptions } from './PictorialSeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
+import PictorialPoint from './PictorialPoint.js';
+import PictorialUtilities from './PictorialUtilities.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import U from '../../Core/Utilities.js';
+import { PictorialPathOptions } from './PictorialSeriesOptions';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
@@ -41,26 +41,24 @@ const {
 } = A;
 
 const {
+    getStackMetrics,
+    invertShadowGroup,
+    rescalePatternFill
+} = PictorialUtilities;
+
+const {
     addEvent,
     defined,
     merge,
-    pick,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
-const {
-    rescalePatternFill,
-    invertShadowGroup,
-    getStackMetrics
-} = PictorialUtilities;
-
-const fillUrlMatcher = /url\(([^)]+)\)/;
-
 export interface StackShadowOptions {
+    borderColor?: ColorType;
     borderWidth?: number;
-    enabled?: boolean;
     color?: ColorType;
-    borderColor?: ColorType
+    enabled?: boolean;
 }
 
 declare module '../../Core/Axis/AxisOptions' {
@@ -109,9 +107,10 @@ class PictorialSeries extends ColumnSeries {
      * @optionparent plotOptions.pictorial
      */
 
-    public static defaultOptions: PictorialSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        borderWidth: 0
-    } as PictorialSeriesOptions);
+    public static defaultOptions: PictorialSeriesOptions =
+        merge(ColumnSeries.defaultOptions, {
+            borderWidth: 0
+        } as PictorialSeriesOptions);
 
     /* *
      *
@@ -148,14 +147,13 @@ class PictorialSeries extends ColumnSeries {
      */
     public animate(init?: boolean): void {
         const { chart, group } = this,
-            inverted = chart.inverted,
             animation = animObject(this.options.animation),
             // The key for temporary animation clips
             animationClipKey = [
                 this.getSharedClipKey(),
+                animation.defer,
                 animation.duration,
-                animation.easing,
-                animation.defer
+                animation.easing
             ].join(',');
 
         let animationClipRect = chart.sharedClips[animationClipKey];
@@ -200,10 +198,9 @@ class PictorialSeries extends ColumnSeries {
             paths = seriesOptions.paths;
 
         if (point && point.shapeArgs && paths) {
-            const shape = paths[point.index % paths.length];
-            const { y, height } = getStackMetrics(series.yAxis, shape);
-
-            const pathDef = shape.definition;
+            const shape = paths[point.index % paths.length],
+                { y, height } = getStackMetrics(series.yAxis, shape),
+                pathDef = shape.definition;
 
             // New pattern, replace
             if (pathDef !== point.pathDef) {
@@ -272,14 +269,15 @@ class PictorialSeries extends ColumnSeries {
 
 addEvent(PictorialSeries, 'afterRender', function (): void {
     const series = this,
-        paths = series.options.paths;
+        paths = series.options.paths,
+        fillUrlMatcher = /url\(([^)]+)\)/;
 
     series.points.forEach(function (point: PictorialPoint): void {
         if (point.graphic && point.shapeArgs && paths) {
-            const shape = paths[point.index % paths.length];
-            const fill = point.graphic.attr('fill') as string;
-            const match = fill && fill.match(fillUrlMatcher);
-            const { y, height } = getStackMetrics(series.yAxis, shape);
+            const shape = paths[point.index % paths.length],
+                fill = point.graphic.attr('fill') as string,
+                match = fill && fill.match(fillUrlMatcher),
+                { y, height } = getStackMetrics(series.yAxis, shape);
 
             if (match && series.chart.renderer.patternElements) {
                 const currentPattern =
@@ -314,10 +312,10 @@ function renderStackShadow(
     const stackKeys = Object
         .keys(stack.points)
         .filter((p): boolean => p.split(',').length > 1);
-    let allSeries = stack.axis.chart.series;
-    let seriesIndexes = stackKeys.map((key): number =>
-        parseFloat(key.split(',')[0]));
-    let seriesIndex = -1;
+    let allSeries = stack.axis.chart.series,
+        seriesIndexes = stackKeys.map((key): number =>
+            parseFloat(key.split(',')[0])),
+        seriesIndex = -1;
 
     seriesIndexes.forEach((index): void => {
         if (allSeries[index] && allSeries[index].visible) {
@@ -333,24 +331,24 @@ function renderStackShadow(
         stack.axis.hasData() &&
         series.xAxis.hasData()
     ) {
-        const xAxis = series.xAxis;
-        const options = stack.axis.options;
-        const chart = stack.axis.chart;
-        const stackShadow = stack.shadow;
-        const xCenter = xAxis.toPixels(stack.x, true);
-        const x = chart.inverted ? xAxis.len - xCenter : xCenter;
-        const paths = series.options.paths || [];
-        const index = stack.x % paths.length;
-        const shape = paths[index];
-        const width = series.getColumnMetrics &&
-            series.getColumnMetrics().width;
-        const { height, y } = getStackMetrics(series.yAxis, shape);
-        const shadowOptions = options.stackShadow;
-        const strokeWidth = pick(
-            shadowOptions && shadowOptions.borderWidth,
-            series.options.borderWidth,
-            1
-        );
+        const xAxis = series.xAxis,
+            options = stack.axis.options,
+            chart = stack.axis.chart,
+            stackShadow = stack.shadow,
+            xCenter = xAxis.toPixels(stack.x, true),
+            x = chart.inverted ? xAxis.len - xCenter : xCenter,
+            paths = series.options.paths || [],
+            index = stack.x % paths.length,
+            shape = paths[index],
+            width = series.getColumnMetrics &&
+            series.getColumnMetrics().width,
+            { height, y } = getStackMetrics(series.yAxis, shape),
+            shadowOptions = options.stackShadow,
+            strokeWidth = pick(
+                shadowOptions && shadowOptions.borderWidth,
+                series.options.borderWidth,
+                1
+            );
 
         if (
             !stackShadow &&
@@ -418,9 +416,9 @@ function renderStackShadow(
                 width,
                 height
             });
-
-            const fill = stackShadow.attr('fill') as string;
-            const match = fill && fill.match(fillUrlMatcher);
+            const fillUrlMatcher = /url\(([^)]+)\)/,
+                fill = stackShadow.attr('fill') as string,
+                match = fill && fill.match(fillUrlMatcher);
 
             if (match && chart.renderer.patternElements) {
                 chart.renderer.patternElements[match[1].slice(1)]
@@ -515,7 +513,6 @@ function destroyAllStackShadows(chart: Chart): void {
 }
 
 // This is a workaround due to no implementation of the animation drilldown.
-
 addEvent(Chart, 'afterDrilldown', function (e): void {
     destroyAllStackShadows(this);
 });
@@ -585,7 +582,7 @@ export default PictorialSeries;
  * 1. An array of arrays with 2 values. In this case, the values correspond
  *    to `x,y`. If the first value is a string, it is applied as the name
  *    of the point, and the `x` value is inferred. The `x` value can also be
- *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    omitted, in which case the inner arrays should be of length 2. Then the
  *    `x` value is automatically calculated, either starting at 0 and
  *    incremented by 1, or from `pointStart` and `pointInterval` given in the
  *    series options.
