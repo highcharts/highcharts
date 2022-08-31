@@ -193,6 +193,24 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
     }
 
+    public setVisible(vis?: boolean): void {
+        const method = vis ? 'show' : 'hide';
+
+        this.visible = this.options.visible = Boolean(vis);
+
+        // Show and hide associated elements
+        if (this.dataLabel) {
+            this.dataLabel[method]();
+        }
+
+        // For invisible map points, render them as null points rather than
+        // fully removing them. Makes more sense for color axes with data
+        // classes.
+        if (this.graphic) {
+            this.graphic.attr(this.series.pointAttribs(this));
+        }
+    }
+
     /**
      * Highmaps only. Zoom in on the point using the global animation.
      *
