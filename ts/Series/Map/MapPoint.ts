@@ -185,7 +185,12 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      */
     public onMouseOver(e?: PointerEvent): void {
         U.clearTimeout(this.colorInterval as any);
-        if (!this.isNull || this.series.options.nullInteraction) {
+        if (
+            // Valid...
+            (!this.isNull && this.visible) ||
+            // ... or interact anyway
+            this.series.options.nullInteraction
+        ) {
             super.onMouseOver.call(this, e);
         } else {
             // #3401 Tooltip doesn't hide when hovering over null points
