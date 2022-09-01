@@ -1038,7 +1038,6 @@ extend(BubbleSeries.prototype, {
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group', // To allow clipping (#6296)
     zoneAxis: 'z'
-
 });
 
 // On updated data in any series, delete the chart-level Z extremes cache

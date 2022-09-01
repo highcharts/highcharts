@@ -36,7 +36,7 @@
             },
 
             plotOptions: {
-                temperaturemap: {
+                mapbubble: {
                     minSize: 20,
                     maxSize: 200,
                     opacity: 0.3
@@ -48,13 +48,20 @@
                 color: '#E0E0E0',
                 enableMouseTracking: false
             }, {
-                type: 'temperaturemap',
+                type: 'mapbubble',
                 name: 'Population 2016',
                 joinBy: ['iso-a2', 'code'],
                 data: data,
                 tooltip: {
                     pointFormat: '{point.properties.hc-a2}: {point.z} thousands'
-                }
+                },
+                blendColors: [
+                    '#ff0000',
+                    '#ffff00',
+                    '#00ff00',
+                    '#00ffff',
+                    '#0000ff'
+                ]
             }]
         });
     });
