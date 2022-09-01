@@ -13,13 +13,7 @@
         series: [{
             name: 'Basemap'
         }, {
-            type: 'temperaturemap',
-            temperatureColors: [
-                [0.05, '#ff0000'],
-                [0.2, '#ffff00'],
-                [0.4, '#00ff00'],
-                [1, '#0000ff']
-            ],
+            type: 'mapbubble',
             data: [
                 ['pl', 1],
                 ['de', 1],
@@ -30,30 +24,27 @@
         }]
     });
 
-    document.getElementById('btn-color-size-1').addEventListener(
+    document.getElementById('btn-color-theme-1').addEventListener(
         'click',
         function () {
             chart.series[1].update({
-                temperatureColors: [
-                    [0.05, '#ff0000'],
-                    [0.2, '#ffff00'],
-                    [0.4, '#00ff00'],
-                    [1, '#0000ff']
+                // Temperature shades
+                blendColors: [
+                    '#ff0000',
+                    '#ffff00',
+                    '#00ff00',
+                    '#00ffff',
+                    '#0000ff'
                 ]
             });
         }
     );
 
-    document.getElementById('btn-color-size-2').addEventListener(
+    document.getElementById('btn-color-theme-2').addEventListener(
         'click',
         function () {
             chart.series[1].update({
-                temperatureColors: [
-                    [0.15, '#ff0000'],
-                    [0.3, '#ffff00'],
-                    [0.55, '#00ff00'],
-                    [1, '#0000ff']
-                ]
+                blendColors: ['#ffff00', '#ff0001'] // fire shades
             });
         }
     );
