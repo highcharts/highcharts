@@ -17,7 +17,10 @@
  * */
 
 import type AxisOptions from './Axis/AxisOptions';
-import type NavigatorOptions from './Navigator/NavigatorOptions';
+import type {
+    NavigatorHandlesOptions,
+    NavigatorOptions
+} from './Navigator/NavigatorOptions';
 import type CSSObject from './Renderer/CSSObject';
 import type { NavigatorAxisComposition } from './Axis/NavigatorAxisComposition';
 import type PointerEvent from './PointerEvent';
@@ -97,6 +100,13 @@ function numExt(
  *        Chart object
  */
 class Navigator {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -110,9 +120,21 @@ class Navigator {
         );
     }
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(chart: Chart) {
         this.init(chart);
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public baseSeries: Array<Series> = void 0 as any;
     public chart: Chart = void 0 as any;
@@ -158,8 +180,14 @@ class Navigator {
     public zoomedMax: number = void 0 as any;
     public zoomedMin: number = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
-     * Draw one of the handles on the side of the zoomed range in the navigator
+     * Draw one of the handles on the side of the zoomed range in the navigator.
      *
      * @private
      * @function Highcharts.Navigator#drawHandle
@@ -171,10 +199,10 @@ class Navigator {
      *        0 for left and 1 for right
      *
      * @param {boolean|undefined} inverted
-     *        flag for chart.inverted
+     *        Flag for chart.inverted
      *
      * @param {string} verb
-     *        use 'animate' or 'attr'
+     *        Use 'animate' or 'attr'
      */
     public drawHandle(
         x: number,
@@ -186,7 +214,7 @@ class Navigator {
             height = (navigator.navigatorOptions.handles as any).height;
 
         // Place it
-        (navigator.handles as any)[index][verb](inverted ? {
+        navigator.handles[index][verb](inverted ? {
             translateX: Math.round(navigator.left + navigator.height / 2),
             translateY: Math.round(
                 navigator.top + parseInt(x as any, 10) + 0.5 - height
@@ -223,15 +251,16 @@ class Navigator {
         inverted: (boolean|undefined),
         verb: string
     ): void {
-        let navigator = this,
+        const navigator = this,
             maskInside = navigator.navigatorOptions.maskInside,
             outlineWidth = navigator.outline.strokeWidth(),
             halfOutline = outlineWidth / 2,
             outlineCorrection = (outlineWidth % 2) / 2, // #5800
             outlineHeight = navigator.outlineHeight,
             scrollbarHeight = navigator.scrollbarHeight || 0,
-            navigatorSize = navigator.size,
-            left = navigator.left - scrollbarHeight,
+            navigatorSize = navigator.size;
+
+        let left = navigator.left - scrollbarHeight,
             navigatorTop = navigator.top,
             verticalMin,
             path: SVGPath;
@@ -327,11 +356,12 @@ class Navigator {
         inverted: (boolean|undefined),
         verb: string
     ): void {
-        let navigator = this,
+        const navigator = this,
             left = navigator.left,
             top = navigator.top,
-            navigatorHeight = navigator.height,
-            height: [number, number, number],
+            navigatorHeight = navigator.height;
+
+        let height: [number, number, number],
             width: [number, number, number],
             x: [number, number, number],
             y: [number, number, number];
@@ -357,10 +387,10 @@ class Navigator {
             ];
             height = [navigatorHeight, navigatorHeight, navigatorHeight];
         }
-        navigator.shades.forEach(function (
+        navigator.shades.forEach((
             shade: SVGElement,
             i: number
-        ): void {
+        ): void => {
             shade[verb]({
                 x: x[i],
                 y: y[i],
@@ -385,31 +415,30 @@ class Navigator {
      * @function Highcharts.Navigator#renderElements
      */
     public renderElements(): void {
-        let navigator = this,
+        const navigator = this,
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
             chart = navigator.chart,
             inverted = chart.inverted,
             renderer = chart.renderer,
-            navigatorGroup: SVGElement,
             mouseCursor: CSSObject = {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
-            };
-
-        // Create the main navigator group
-        navigator.navigatorGroup = navigatorGroup = renderer.g('navigator')
-            .attr({
-                zIndex: 8,
-                visibility: 'hidden'
-            })
-            .add();
+            },
+            // Create the main navigator group
+            navigatorGroup: SVGElement = navigator.navigatorGroup = renderer
+                .g('navigator')
+                .attr({
+                    zIndex: 8,
+                    visibility: 'hidden'
+                })
+                .add();
 
         // Create masks, each mask will get events and fill:
         [
             !maskInside,
             maskInside,
             !maskInside
-        ].forEach(function (hasMask: (boolean|undefined), index: number): void {
+        ].forEach((hasMask: (boolean|undefined), index: number): void => {
             const shade = renderer.rect()
                 .addClass('highcharts-navigator-mask' +
                     (index === 1 ? '-inside' : '-outside'))
@@ -442,15 +471,18 @@ class Navigator {
         }
 
         // Create the handlers:
-        if ((navigatorOptions.handles as any).enabled) {
-            [0, 1].forEach(function (index: number): void {
-                (navigatorOptions.handles as any).inverted = chart.inverted;
+        if (navigatorOptions.handles && navigatorOptions.handles.enabled) {
+            const handlesOptions =
+                navigatorOptions.handles as Required<NavigatorHandlesOptions>;
+
+            [0, 1].forEach((index: number): void => {
+                handlesOptions.inverted = !!chart.inverted;
                 navigator.handles[index] = renderer.symbol(
-                    (navigatorOptions.handles as any).symbols[index],
-                    -(navigatorOptions.handles as any).width / 2 - 1,
+                    handlesOptions.symbols[index],
+                    -handlesOptions.width / 2 - 1,
                     0,
-                    (navigatorOptions.handles as any).width,
-                    (navigatorOptions.handles as any).height,
+                    handlesOptions.width,
+                    handlesOptions.height,
                     navigatorOptions.handles
                 );
                 // zIndex = 6 for right handle, 7 for left.
@@ -463,8 +495,6 @@ class Navigator {
                     ).add(navigatorGroup);
 
                 if (!chart.styledMode) {
-                    const handlesOptions = navigatorOptions.handles as any;
-
                     navigator.handles[index]
                         .attr({
                             fill: handlesOptions.backgroundColor,
@@ -488,7 +518,7 @@ class Navigator {
      */
     public update(options: NavigatorOptions): void {
         // Remove references to old navigator series in base series
-        (this.series || []).forEach(function (series): void {
+        (this.series || []).forEach((series): void => {
             if (series.baseSeries) {
                 delete series.baseSeries.navigatorSeries;
             }
@@ -497,7 +527,7 @@ class Navigator {
         this.destroy();
         const chartOptions = this.chart.options;
 
-        merge(true, chartOptions.navigator, (this as any).options, options);
+        merge(true, chartOptions.navigator, options);
         this.init(this.chart);
     }
 
@@ -521,28 +551,23 @@ class Navigator {
         pxMin?: number,
         pxMax?: number
     ): void {
-
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
-            navigatorWidth,
-            scrollbarLeft,
-            scrollbarTop,
-            scrollbarHeight = navigator.scrollbarHeight,
-            navigatorSize,
             xAxis = navigator.xAxis,
             pointRange = xAxis.pointRange || 0,
             scrollbarXAxis = xAxis.navigatorAxis.fake ? chart.xAxis[0] : xAxis,
             navigatorEnabled = navigator.navigatorEnabled,
-            zoomedMin,
-            zoomedMax,
             rendered = navigator.rendered,
             inverted = chart.inverted,
-            verb,
-            newMin,
-            newMax,
-            currentRange,
             minRange = chart.xAxis[0].minRange,
             maxRange = chart.xAxis[0].options.maxRange;
+
+        let navigatorWidth,
+            scrollbarLeft,
+            scrollbarTop,
+            scrollbarHeight = navigator.scrollbarHeight,
+            navigatorSize,
+            verb;
 
         // Don't redraw while moving the handles (#4703).
         if (this.hasDragged && !defined(pxMin)) {
@@ -571,7 +596,7 @@ class Navigator {
             (inverted ? chart.plotWidth : 0)
         );
 
-        navigator.size = zoomedMax = navigatorSize = pick(
+        let zoomedMax = navigator.size = navigatorSize = pick(
             xAxis.len,
             (inverted ? chart.plotHeight : chart.plotWidth) -
             2 * (scrollbarHeight as any)
@@ -594,9 +619,10 @@ class Navigator {
         }
 
         // Are we below the minRange? (#2618, #6191)
-        newMin = xAxis.toValue(pxMin as any, true);
-        newMax = xAxis.toValue(pxMax as any, true);
-        currentRange = Math.abs(correctFloat(newMax - newMin));
+        const newMin = xAxis.toValue(pxMin as any, true),
+            newMax = xAxis.toValue(pxMax as any, true),
+            currentRange = Math.abs(correctFloat(newMax - newMin));
+
         if (currentRange < (minRange as any)) {
             if (this.grabbedLeft) {
                 pxMin = xAxis.toPixels(
@@ -643,7 +669,7 @@ class Navigator {
         navigator.range = navigator.zoomedMax - navigator.zoomedMin;
 
         zoomedMax = Math.round(navigator.zoomedMax);
-        zoomedMin = Math.round(navigator.zoomedMin);
+        const zoomedMin = Math.round(navigator.zoomedMin);
 
         if (navigatorEnabled) {
             navigator.navigatorGroup.attr({
@@ -703,10 +729,11 @@ class Navigator {
      * @function Highcharts.Navigator#addMouseEvents
      */
     public addMouseEvents(): void {
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
-            container = chart.container,
-            eventsToUnbind = [],
+            container = chart.container;
+
+        let eventsToUnbind = [],
             mouseMoveHandler,
             mouseUpHandler;
 
@@ -820,13 +847,14 @@ class Navigator {
     ): void {
         e = this.chart.pointer.normalize(e);
 
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
             zoomedMin = navigator.zoomedMin,
-            navigatorPosition = navigator.left,
             navigatorSize = navigator.size,
-            range = navigator.range,
+            range = navigator.range;
+
+        let navigatorPosition = navigator.left,
             chartX = e.chartX,
             fixedMax,
             fixedMin,
@@ -930,13 +958,14 @@ class Navigator {
      *        Mouse event
      */
     public onMouseMove(e: PointerEvent): void {
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
-            left = navigator.left,
             navigatorSize = navigator.navigatorSize,
             range = navigator.range,
             dragOffset = navigator.dragOffset,
-            inverted = chart.inverted,
+            inverted = chart.inverted;
+
+        let left = navigator.left,
             chartX;
 
 
@@ -1021,15 +1050,15 @@ class Navigator {
      *        Mouse event
      */
     public onMouseUp(e: PointerEvent): void {
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
             scrollbar = navigator.scrollbar,
             DOMEvent = (e as any).DOMEvent || e,
             inverted = chart.inverted,
             verb = navigator.rendered && !navigator.hasDragged ?
-                'animate' : 'attr',
-            zoomedMax,
+                'animate' : 'attr';
+        let zoomedMax,
             zoomedMin,
             unionExtremes,
             fixedMin,
@@ -1174,10 +1203,10 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#init
-     *
-     * @param {Highcharts.Chart} chart
      */
-    public init(chart: Chart): void {
+    public init(
+        chart: Chart
+    ): void {
         const chartOptions = chart.options,
             navigatorOptions = chartOptions.navigator || {},
             navigatorEnabled = navigatorOptions.enabled,
@@ -1392,11 +1421,12 @@ class Navigator {
     public getUnionExtremes(
         returnFalseOnNoBaseSeries?: boolean
     ): (Record<string, (number|undefined)>|undefined) {
-        let baseAxis = this.chart.xAxis[0],
+        const baseAxis = this.chart.xAxis[0],
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
-            baseAxisOptions = baseAxis.options,
-            ret;
+            baseAxisOptions = baseAxis.options;
+
+        let ret: (Record<string, (number|undefined)>|undefined);
 
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
             ret = {
@@ -1422,6 +1452,7 @@ class Navigator {
                 )
             };
         }
+
         return ret;
     }
 
@@ -1449,16 +1480,16 @@ class Navigator {
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (find(chart.series, function (s: Series): boolean {
-                    return !s.options.isInternal;
-                }) as any).index :
+                (find(chart.series, (s: Series): boolean => (
+                    !s.options.isInternal
+                )) as any).index :
                 0
             )
         );
 
         // Iterate through series and add the ones that should be shown in
         // navigator.
-        (chart.series || []).forEach(function (series, i): void {
+        (chart.series || []).forEach((series, i): void => {
             if (
                 // Don't include existing nav series
                 !series.options.isInternal &&
@@ -1487,20 +1518,14 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator.updateNavigatorSeries
-     * @param {boolean} addEvents
-     * @param {boolean} [redraw]
      */
     public updateNavigatorSeries(
         addEvents: boolean,
         redraw?: boolean
     ): void {
-        let navigator = this,
+        const navigator = this,
             chart = navigator.chart,
             baseSeries = navigator.baseSeries,
-            baseOptions,
-            mergedNavSeriesOptions: SeriesTypeOptions,
-            chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
-            baseNavigatorOptions,
             navSeriesMixin = {
                 enableMouseTracking: false,
                 index: null, // #6162
@@ -1520,7 +1545,7 @@ class Navigator {
             } as AnyRecord,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
-                (navigator.series || []).filter(function (navSeries): boolean {
+                (navigator.series || []).filter((navSeries): boolean => {
                     const base = navSeries.baseSeries;
 
                     if (baseSeries.indexOf(base as any) < 0) { // Not in array
@@ -1544,10 +1569,15 @@ class Navigator {
                     return true;
                 });
 
+        let baseOptions,
+            mergedNavSeriesOptions: SeriesTypeOptions,
+            chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
+            baseNavigatorOptions;
+
         // Go through each base series and merge the options to create new
         // series
         if (baseSeries && baseSeries.length) {
-            baseSeries.forEach(function eachBaseSeries(base): void {
+            baseSeries.forEach((base): void => {
                 const linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
                         // Grab color and visibility from base as default
@@ -1630,10 +1660,10 @@ class Navigator {
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
                 (splat(chartNavigatorSeriesOptions) as any);
-            (chartNavigatorSeriesOptions as any).forEach(function (
+            (chartNavigatorSeriesOptions as any).forEach((
                 userSeriesOptions: SeriesTypeOptions,
                 i: number
-            ): void {
+            ): void => {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
                 mergedNavSeriesOptions = merge(
@@ -1692,7 +1722,7 @@ class Navigator {
             ));
         }
 
-        baseSeries.forEach(function (base): void {
+        baseSeries.forEach((base): void => {
             // Link base series show/hide to navigator series visibility
             base.eventsToUnbind.push(addEvent(base, 'show', function (): void {
                 if (this.navigatorSeries) {
@@ -1729,15 +1759,16 @@ class Navigator {
                     }
                 }
             ));
-        }, this);
+        });
     }
 
     /**
      * Get minimum from all base series connected to the navigator
      * @private
-     * @param  {number} currentSeriesMin
-     *         Minium from the current series
-     * @return {number} Minimum from all series
+     * @param {number} currentSeriesMin
+     *        Minium from the current series
+     * @return {number}
+     *         Minimum from all series
      */
     public getBaseSeriesMin(
         currentSeriesMin: number
@@ -1764,11 +1795,10 @@ class Navigator {
      * @function Highcharts.Navigator#modifyNavigatorAxisExtremes
      */
     public modifyNavigatorAxisExtremes(): void {
-        let xAxis = this.xAxis,
-            unionExtremes;
+        const xAxis = this.xAxis;
 
         if (typeof xAxis.getExtremes !== 'undefined') {
-            unionExtremes = this.getUnionExtremes(true);
+            const unionExtremes = this.getUnionExtremes(true);
             if (
                 unionExtremes &&
                 (
@@ -1789,7 +1819,7 @@ class Navigator {
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
     public modifyBaseAxisExtremes(this: Axis): void {
-        let baseXAxis = this,
+        const baseXAxis = this,
             navigator = baseXAxis.chart.navigator,
             baseExtremes = baseXAxis.getExtremes(),
             baseMin = baseExtremes.min,
@@ -1800,8 +1830,6 @@ class Navigator {
             stickToMin = (navigator as any).stickToMin,
             stickToMax = (navigator as any).stickToMax,
             overscroll = pick(baseXAxis.options.overscroll, 0),
-            newMax,
-            newMin,
             navigatorSeries =
                 (navigator as any).series && (navigator as any).series[0],
             hasSetExtremes = !!baseXAxis.setExtremes,
@@ -1811,6 +1839,9 @@ class Navigator {
             // extremes. (#5489)
             unmutable = baseXAxis.eventArgs &&
                 baseXAxis.eventArgs.trigger === 'rangeSelectorButton';
+
+        let newMax,
+            newMin;
 
         if (!unmutable) {
 
@@ -2006,7 +2037,7 @@ class Navigator {
             erase(this.chart.axes, this.yAxis);
         }
         // Destroy series
-        (this.series || []).forEach(function (s): void {
+        (this.series || []).forEach((s): void => {
             if (s.destroy) {
                 s.destroy();
             }
@@ -2017,29 +2048,28 @@ class Navigator {
             'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
             'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
             'rendered'
-        ].forEach(function (prop: string): void {
+        ].forEach((prop: string): void => {
             if ((this as any)[prop] && (this as any)[prop].destroy) {
                 (this as any)[prop].destroy();
             }
             (this as any)[prop] = null;
-        }, this);
+        });
 
         // Destroy elements in collection
-        [this.handles].forEach(function (
+        [this.handles].forEach((
             coll: Array<SVGElement>
-        ): void {
+        ): void => {
             destroyObjectProperties(coll);
-        }, this);
+        });
     }
 }
-// End of prototype
-
-Navigator.compose(Axis, Chart, Series);
 
 /* *
  *
  *  Default Export
  *
  * */
+
+Navigator.compose(Axis, Chart, Series);
 
 export default Navigator;

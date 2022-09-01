@@ -20,6 +20,7 @@ import type {
 } from '../Axis/AxisOptions';
 import type ColorType from '../Color/ColorType';
 import type RangeSelector from '../../Extensions/RangeSelector';
+import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 
 /* *
@@ -59,8 +60,9 @@ export interface NavigatorHandlesOptions {
     borderColor?: ColorType;
     enabled?: boolean;
     height?: number;
+    inverted?: boolean;
     lineWidth?: number;
-    symbols?: Array<string>;
+    symbols?: Array<keyof SymbolTypeRegistry>;
     width?: number;
 }
 
