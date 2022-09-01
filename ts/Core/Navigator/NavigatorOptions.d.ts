@@ -28,7 +28,7 @@ import type { SeriesTypeOptions } from '../Series/SeriesType';
  *
  * */
 
-declare module './Axis/AxisOptions' {
+declare module '../Axis/AxisOptions' {
     interface AxisOptions {
         maxRange?: number;
         toFixedRange?: (
@@ -37,6 +37,20 @@ declare module './Axis/AxisOptions' {
             fixedMin: number,
             fixedMax: number
         ) => RangeSelector.RangeObject;
+    }
+}
+
+declare module '../Options'{
+    interface Options {
+        navigator?: NavigatorOptions;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        fillOpacity?: number;
+        navigatorOptions?: SeriesOptions;
+        showInNavigator?: boolean;
     }
 }
 

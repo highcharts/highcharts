@@ -37,8 +37,6 @@ import D from './DefaultOptions.js';
 const { defaultOptions } = D;
 import NavigatorAxisAdditions from './Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './Navigator/NavigatorComposition.js';
-import NavigatorDefaults from './Navigator/NavigatorDefaults.js';
-import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
 import Series from './Series/Series.js';
 import U from './Utilities.js';
@@ -61,149 +59,9 @@ const {
 
 /* *
  *
- *  Declarations
+ *  Functions
  *
  * */
-
-declare module './Chart/ChartLike'{
-    interface ChartLike {
-        navigator?: Navigator;
-        scrollbar?: Scrollbar;
-        scroller?: Navigator;
-    }
-}
-
-declare module './Options'{
-    interface Options {
-        navigator?: NavigatorOptions;
-    }
-}
-
-declare module './Series/SeriesLike' {
-    interface SeriesLike {
-        baseSeries?: Series;
-        navigatorSeries?: Series;
-    }
-}
-
-declare module './Series/SeriesOptions' {
-    interface SeriesOptions {
-        fillOpacity?: number;
-        navigatorOptions?: SeriesOptions;
-        showInNavigator?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Navigator {
-            public constructor(chart: Chart);
-            public baseSeries: Array<Series>;
-            public chart: Chart;
-            public dragOffset?: number;
-            public eventsToUnbind?: Array<Function>;
-            public fixedExtreme?: (null|number);
-            public fixedWidth?: number;
-            public grabbedCenter?: number;
-            public grabbedLeft?: boolean;
-            public grabbedRight?: boolean;
-            public handles: Array<SVGElement>;
-            public hasDragged?: boolean;
-            public hasNavigatorData?: boolean;
-            public height: number;
-            public left: number;
-            public mouseMoveHandler?: Function;
-            public mouseUpHandler?: Function;
-            public navigatorEnabled: boolean;
-            public navigatorGroup: SVGElement;
-            public navigatorOptions: NavigatorOptions;
-            public navigatorSeries: Series;
-            public navigatorSize: number;
-            public opposite: boolean;
-            public otherHandlePos?: number;
-            public outline: SVGElement;
-            public outlineHeight: number;
-            public range: number;
-            public rendered: boolean;
-            public reversedExtremes?: boolean;
-            public scrollbar?: Scrollbar;
-            public scrollbarEnabled?: boolean;
-            public scrollbarHeight?: number;
-            public scrollbarOptions?: ScrollbarOptions;
-            public series?: Array<Series>;
-            public shades: Array<SVGElement>;
-            public size: number;
-            public stickToMax?: boolean;
-            public stickToMin?: boolean;
-            public top: number;
-            public unbindRedraw?: Function;
-            public xAxis: NavigatorAxisComposition;
-            public yAxis: NavigatorAxisComposition;
-            public zoomedMax: number;
-            public zoomedMin: number;
-            public addBaseSeriesEvents(): void;
-            public addChartEvents(): void;
-            public addMouseEvents(): void;
-            public destroy(): void;
-            public drawHandle(
-                x: number,
-                index: number,
-                inverted: (boolean|undefined),
-                verb: string
-            ): void;
-            public drawMasks(
-                zoomedMin: number,
-                zoomedMax: number,
-                inverted: (boolean|undefined),
-                verb: string
-            ): void;
-            public drawOutline(
-                zoomedMin: number,
-                zoomedMax: number,
-                inverted: (boolean|undefined),
-                verb: string
-            ): void;
-            public getBaseSeriesMin(currentSeriesMin: number): number;
-            public getPartsEvents(eventName: string): Array<Function>;
-            public getUnionExtremes(
-                returnFalseOnNoBaseSeries?: boolean
-            ): (Record<string, (number|undefined)>|undefined);
-            public handlesMousedown(e: PointerEvent, index: number): void;
-            public init(chart: Chart): void;
-            public modifyBaseAxisExtremes(): void;
-            public modifyNavigatorAxisExtremes(): void;
-            public onMouseMove(e: PointerEvent): void;
-            public onMouseUp(e: PointerEvent): void;
-            public removeBaseSeriesEvents(): void;
-            public removeEvents(): void;
-            public render(
-                min: number,
-                max: number,
-                pxMin?: number,
-                pxMax?: number
-            ): void;
-            public renderElements(): void;
-            public setBaseSeries(
-                baseSeriesOptions?: SeriesTypeOptions,
-                redraw?: boolean
-            ): void;
-            public update(options: NavigatorOptions): void;
-            public updatedDataHandler(): void;
-            public updateNavigatorSeries(
-                addEvent: boolean,
-                redraw?: boolean
-            ): void;
-            public shouldStickToMin(
-                baseSeries: Series,
-                navigator: Navigator
-            ): boolean|undefined;
-        }
-    }
-}
 
 /**
  * Finding the min or max of a set of variables where we don't know if they are
@@ -222,44 +80,11 @@ function numExt(
     }
 }
 
-extend(defaultOptions, { navigator: NavigatorDefaults });
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * Draw one of the handles on the side of the zoomed range in the navigator
+/* *
  *
- * @private
- * @function Highcharts.Renderer#symbols.navigator-handle
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
- * @param {Highcharts.NavigatorHandlesOptions} options
- * @return {Highcharts.SVGPathArray}
- *         Path to be used in a handle
- */
-RendererRegistry.getRendererType().prototype.symbols[
-    'navigator-handle'
-] = function (
-    _x, _y, _w, _h, options
-): SVGPath {
-    const halfWidth = (options && options.width || 0) / 2,
-        markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options && options.height || 0;
-
-    return [
-        ['M', -halfWidth - 1, 0.5],
-        ['L', halfWidth, 0.5],
-        ['L', halfWidth, height + 0.5],
-        ['L', -halfWidth - 1, height + 0.5],
-        ['L', -halfWidth - 1, 0.5],
-        ['M', -markerPosition, 4],
-        ['L', -markerPosition, height - 3],
-        ['M', markerPosition - 1, 4],
-        ['L', markerPosition - 1, height - 3]
-    ];
-};
+ *  Class
+ *
+ * */
 
 /**
  * The Navigator class
@@ -325,6 +150,7 @@ class Navigator {
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
     public stickToMax?: boolean;
+    public stickToMin?: boolean;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
     public xAxis: NavigatorAxisComposition = void 0 as any;
@@ -2037,7 +1863,7 @@ class Navigator {
      * @function Highcharts.Navigator#updateDataHandler
      */
     public updatedDataHandler(this: Series): void {
-        const navigator = this.chart.navigator as Highcharts.Navigator,
+        const navigator = this.chart.navigator as Navigator,
             baseSeries = this,
             navigatorSeries = this.navigatorSeries,
             shouldStickToMax = navigator.reversedExtremes ?
@@ -2121,7 +1947,7 @@ class Navigator {
                 this.chart,
                 'redraw',
                 function (): void {
-                    const navigator = this.navigator as Highcharts.Navigator,
+                    const navigator = this.navigator as Navigator,
                         xAxis = navigator && (
                             navigator.baseSeries &&
                             navigator.baseSeries[0] &&
@@ -2140,7 +1966,7 @@ class Navigator {
                 'getMargins',
                 function (): void {
                     let chart = this,
-                        navigator = chart.navigator as Highcharts.Navigator,
+                        navigator = chart.navigator as Navigator,
                         marginName = navigator.opposite ?
                             'plotTop' : 'marginBottom';
 
@@ -2209,13 +2035,6 @@ class Navigator {
 // End of prototype
 
 Navigator.compose(Axis, Chart, Series);
-H.Navigator = Navigator;
-
-declare module './Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        'navigator-handle': SymbolFunction;
-    }
-}
 
 /* *
  *

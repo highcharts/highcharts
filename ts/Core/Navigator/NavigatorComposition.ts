@@ -19,17 +19,55 @@
 import type Axis from '../Axis/Axis';
 import type Chart from '../Chart/Chart';
 import type Navigator from '../Navigator';
+import type Scrollbar from '../Scrollbar';
 import type Series from '../Series/Series';
 
+import DO from '../DefaultOptions.js';
+const {
+    defaultOptions,
+    setOptions
+} = DO;
 import H from '../Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../Axis/NavigatorAxisComposition.js';
+import NavigatorDefaults from './NavigatorDefaults.js';
+import NavigatorSymbols from './NavigatorSymbols.js';
+import RendererRegistry from '../Renderer/RendererRegistry.js';
+const { getRendererType } = RendererRegistry;
 import U from '../Utilities.js';
 const {
     addEvent,
+    extend,
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        navigator?: Navigator;
+        scrollbar?: Scrollbar;
+        scroller?: Navigator;
+    }
+}
+
+declare module '../Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        'navigator-handle': SymbolFunction;
+    }
+}
+
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        baseSeries?: Series;
+        navigatorSeries?: Series;
+    }
+}
 
 /* *
  *
@@ -87,6 +125,18 @@ function compose(
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
+    if (composedClasses.indexOf(getRendererType) === -1) {
+        composedClasses.push(getRendererType);
+
+        extend(getRendererType().prototype.symbols, NavigatorSymbols);
+    }
+
+    if (composedClasses.indexOf(setOptions) === -1) {
+        composedClasses.push(setOptions);
+
+        extend(defaultOptions, { navigator: NavigatorDefaults });
+    }
+
 }
 
 /**
@@ -112,9 +162,10 @@ function onChartAfterAddSeries(
 function onChartAfterSetChartSize(
     this: Chart
 ): void {
-    let legend = this.legend,
-        navigator = this.navigator,
-        scrollbarHeight,
+    const legend = this.legend,
+        navigator = this.navigator;
+
+    let scrollbarHeight,
         legendOptions,
         xAxis,
         yAxis;
@@ -246,12 +297,11 @@ function onChartBeforeShowResetZoom(
 function onChartCallback(
     chart: Chart
 ): void {
-    let extremes,
-        navigator = chart.navigator;
+    const navigator = chart.navigator;
 
     // Initialize the navigator
     if (navigator && chart.xAxis[0]) {
-        extremes = chart.xAxis[0].getExtremes();
+        const extremes = chart.xAxis[0].getExtremes();
         navigator.render(extremes.min, extremes.max);
     }
 }
