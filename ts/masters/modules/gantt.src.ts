@@ -14,9 +14,9 @@ import Highcharts from '../../Core/Globals.js';
 import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
-import Scrollbar from '../../Core/Scrollbar.js';
+import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 import '../../Extensions/RangeSelector.js';
-import Navigator from '../../Core/Navigator/Navigator.js';
+import Navigator from '../../Stock/Navigator/Navigator.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Scrollbar = Scrollbar;

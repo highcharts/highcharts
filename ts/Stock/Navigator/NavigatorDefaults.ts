@@ -18,10 +18,10 @@
 
 import type NavigatorOptions from './NavigatorOptions';
 
-import Color from '../Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import { Palette } from '../Color/Palettes.js';
-import SeriesRegistry from '../Series/SeriesRegistry.js';
+import { Palette } from '../../Core/Color/Palettes.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 
 /* *

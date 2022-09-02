@@ -35,9 +35,10 @@ import F from '../../Core/FormatUtilities.js';
 const { format } = F;
 import DO from '../DefaultOptions.js';
 const { getOptions } = DO;
-import NavigatorDefaults from '../Navigator/NavigatorDefaults.js';
+import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
+import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import Series from '../Series/Series.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -55,9 +56,6 @@ const {
 } = U;
 
 import '../Pointer.js';
-// Has a dependency on Scrollbar due to the use of
-// defaultOptions.scrollbar
-import '../Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import '../../Extensions/RangeSelector.js';
@@ -167,10 +165,7 @@ class StockChart extends Chart {
                 scrollbar: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (
-                            defaultOptions.scrollbar &&
-                            defaultOptions.scrollbar.enabled
-                        ),
+                        ScrollbarDefaults.enabled,
                         true
                     )
                 },

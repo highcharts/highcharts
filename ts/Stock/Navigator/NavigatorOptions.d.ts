@@ -17,11 +17,11 @@
 import type {
     AxisOptions,
     YAxisOptions
-} from '../Axis/AxisOptions';
-import type ColorType from '../Color/ColorType';
+} from '../../Core/Axis/AxisOptions';
+import type ColorType from '../../Core/Color/ColorType';
 import type RangeSelector from '../../Extensions/RangeSelector';
-import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
-import type { SeriesTypeOptions } from '../Series/SeriesType';
+import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 
 /* *
  *
@@ -29,7 +29,7 @@ import type { SeriesTypeOptions } from '../Series/SeriesType';
  *
  * */
 
-declare module '../Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         maxRange?: number;
         toFixedRange?: (
@@ -41,13 +41,13 @@ declare module '../Axis/AxisOptions' {
     }
 }
 
-declare module '../Options'{
+declare module '../../Core/Options'{
     interface Options {
         navigator?: NavigatorOptions;
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         fillOpacity?: number;
         navigatorOptions?: SeriesOptions;

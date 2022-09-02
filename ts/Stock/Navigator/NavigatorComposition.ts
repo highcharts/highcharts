@@ -16,25 +16,25 @@
  *
  * */
 
-import type Axis from '../Axis/Axis';
-import type Chart from '../Chart/Chart';
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type Navigator from './Navigator';
-import type Scrollbar from '../Scrollbar';
-import type Series from '../Series/Series';
+import type Scrollbar from '../Scrollbar/Scrollbar';
+import type Series from '../../Core/Series/Series';
 
-import DO from '../DefaultOptions.js';
+import DO from '../../Core/DefaultOptions.js';
 const {
     defaultOptions,
     setOptions
 } = DO;
-import H from '../Globals.js';
+import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import NavigatorAxisAdditions from '../Axis/NavigatorAxisComposition.js';
+import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
-import RendererRegistry from '../Renderer/RendererRegistry.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
-import U from '../Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -48,7 +48,7 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         navigator?: Navigator;
         scrollbar?: Scrollbar;
@@ -56,13 +56,13 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-declare module '../Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
-declare module '../Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         baseSeries?: Series;
         navigatorSeries?: Series;
