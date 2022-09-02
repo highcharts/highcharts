@@ -29,6 +29,20 @@ import type Time from '../Core/Time';
  *
  * */
 
+declare module '../Core/LangOptions'{
+    interface LangOptions {
+        rangeSelectorFrom?: string;
+        rangeSelectorTo?: string;
+        rangeSelectorZoom?: string;
+    }
+}
+
+declare module '../Core/Options'{
+    interface Options {
+        rangeSelector?: DeepPartial<RangeSelectorOptions>;
+    }
+}
+
 type DataGroupingOptionsObject = Highcharts.DataGroupingOptionsObject; // @todo
 
 export interface RangeSelectorButtonsEventsOptions {

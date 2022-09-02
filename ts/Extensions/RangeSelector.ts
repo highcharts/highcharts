@@ -74,21 +74,7 @@ declare module '../Core/Chart/ChartLike'{
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
         fixedRange?: number;
-        rangeSelector?: Highcharts.RangeSelector;
-    }
-}
-
-declare module '../Core/LangOptions'{
-    interface LangOptions {
-        rangeSelectorFrom?: string;
-        rangeSelectorTo?: string;
-        rangeSelectorZoom?: string;
-    }
-}
-
-declare module '../Core/Options'{
-    interface Options {
-        rangeSelector?: DeepPartial<RangeSelectorOptions>;
+        rangeSelector?: RangeSelector;
     }
 }
 
@@ -100,116 +86,47 @@ declare module './RangeSelectorOptions' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface RangeSelectorInputElements {
-            dateBox: SVGElement;
-            input: HTMLInputElement;
-            label: SVGElement;
-        }
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-        class RangeSelector {
-            public constructor(chart: Chart);
-            public buttons: Array<SVGElement>;
-            public buttonGroup?: SVGElement;
-            public buttonOptions: Array<RangeSelectorButtonOptions>;
-            public chart: Chart;
-            public defaultButtons: Array<RangeSelectorButtonOptions>;
-            public deferredYTDClick?: number;
-            public div?: HTMLDOMElement;
-            public dropdown?: HTMLSelectElement;
-            public eventsToUnbind?: Array<Function>;
-            public forcedDataGrouping?: boolean;
-            public frozenStates?: boolean;
-            public group?: SVGElement;
-            public hasVisibleDropdown?: boolean;
-            public inputGroup?: SVGElement;
-            public isActive?: boolean;
-            public maxDateBox?: SVGElement;
-            public maxInput?: HTMLInputElement;
-            public minDateBox?: SVGElement;
-            public minInput?: HTMLInputElement;
-            public options: RangeSelectorOptions;
-            public rendered?: boolean;
-            public selected?: number;
-            public zoomText?: SVGElement;
-            public clickButton(i: number, redraw?: boolean): void;
-            public computeButtonRange(
-                rangeOptions: RangeSelectorButtonOptions
-            ): void;
-            public destroy(): void;
-            public drawInput(name: ('min'|'max')): RangeSelectorInputElements;
-            public getHeight(): number;
-            public getInputValue(name: string): number;
-            public getPosition(): Record<string, number>;
-            public getYTDExtremes(
-                dataMax: number,
-                dataMin: number,
-                useUTC?: boolean
-            ): RangeSelector.RangeObject;
-            public hideInput(name: string): void;
-            public init(chart: Chart): void;
-            public render(min?: number, max?: number): void;
-            public setInputExtremes(
-                name: string,
-                min: number,
-                max: number
-            ): void;
-            public setInputValue(name: string, inputTime?: number): void;
-            public setSelected(selected: number): void;
-            public showInput(name: string): void;
-            public titleCollision(chart: Chart): boolean;
-            public update(options: RangeSelectorOptions): void;
-            public updateButtonStates(): void;
-        }
+/**
+ * Get the preferred input type based on a date format string.
+ *
+ * @private
+ * @function preferredInputType
+ */
+function preferredInputType(format: string): string {
+    const ms = format.indexOf('%L') !== -1;
+
+    if (ms) {
+        return 'text';
     }
+
+    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
+    const time = ['H', 'k', 'I', 'l', 'M', 'S']
+        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
+
+    if (date && time) {
+        return 'datetime-local';
+    }
+    if (date) {
+        return 'date';
+    }
+    if (time) {
+        return 'time';
+    }
+    return 'text';
 }
 
-/**
- * Define the time span for the button
+/* *
  *
- * @typedef {"all"|"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
- */
-
-/**
- * Callback function to react on button clicks.
+ *  Class
  *
- * @callback Highcharts.RangeSelectorClickCallbackFunction
- *
- * @param {global.Event} e
- *        Event arguments.
- *
- * @param {boolean|undefined}
- *        Return false to cancel the default button event.
- */
-
-/**
- * Callback function to parse values entered in the input boxes and return a
- * valid JavaScript time as milliseconds since 1970.
- *
- * @callback Highcharts.RangeSelectorParseCallbackFunction
- *
- * @param {string} value
- *        Input value to parse.
- *
- * @return {number}
- *         Parsed JavaScript time value.
- */
-
-/* ************************************************************************** *
- * Start Range Selector code                                                  *
- * ************************************************************************** */
-extend(defaultOptions, {
-    rangeSelector: RangeSelectorDefaults.rangeSelector
-});
-
-extend(defaultOptions.lang, RangeSelectorDefaults.lang);
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+ * */
 
 /**
  * The range selector.
@@ -220,19 +137,24 @@ extend(defaultOptions.lang, RangeSelectorDefaults.lang);
  * @param {Highcharts.Chart} chart
  */
 class RangeSelector {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(chart: Chart) {
-
         this.chart = chart;
-        // Run RangeSelector
         this.init(chart);
-
     }
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public buttons: Array<SVGElement> = void 0 as any;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
@@ -259,6 +181,12 @@ class RangeSelector {
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * The method to run when one of the buttons in the range selectors is
@@ -932,7 +860,7 @@ class RangeSelector {
      */
     public drawInput(
         name: ('min'|'max')
-    ): Highcharts.RangeSelectorInputElements {
+    ): RangeSelector.InputElements {
         const {
             chart,
             div,
@@ -2109,7 +2037,6 @@ class RangeSelector {
      * @param {Highcharts.RangeSelectorOptions} options
      */
     public update(
-        this: Highcharts.RangeSelector,
         options: RangeSelectorOptions
     ): void {
         const chart = this.chart;
@@ -2170,6 +2097,12 @@ class RangeSelector {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 /**
  * @private
  */
@@ -2178,78 +2111,48 @@ interface RangeSelector {
     inputTypeFormats: Record<string, string>;
 }
 
-/**
- * The default buttons for pre-selecting time frames
- */
-RangeSelector.prototype.defaultButtons = [{
-    type: 'month',
-    count: 1,
-    text: '1m',
-    title: 'View 1 month'
-}, {
-    type: 'month',
-    count: 3,
-    text: '3m',
-    title: 'View 3 months'
-}, {
-    type: 'month',
-    count: 6,
-    text: '6m',
-    title: 'View 6 months'
-}, {
-    type: 'ytd',
-    text: 'YTD',
-    title: 'View year to date'
-}, {
-    type: 'year',
-    count: 1,
-    text: '1y',
-    title: 'View 1 year'
-}, {
-    type: 'all',
-    text: 'All',
-    title: 'View all'
-}];
-
-/**
- * The date formats to use when setting min, max and value on date inputs
- */
-RangeSelector.prototype.inputTypeFormats = {
-    'datetime-local': '%Y-%m-%dT%H:%M:%S',
-    'date': '%Y-%m-%d',
-    'time': '%H:%M:%S'
-};
-
-/**
- * Get the preferred input type based on a date format string.
- *
- * @private
- * @function preferredInputType
- */
-function preferredInputType(format: string): string {
-    const ms = format.indexOf('%L') !== -1;
-
-    if (ms) {
-        return 'text';
+extend(RangeSelector.prototype, {
+    /**
+     * The default buttons for pre-selecting time frames
+     */
+    defaultButtons: [{
+        type: 'month',
+        count: 1,
+        text: '1m',
+        title: 'View 1 month'
+    }, {
+        type: 'month',
+        count: 3,
+        text: '3m',
+        title: 'View 3 months'
+    }, {
+        type: 'month',
+        count: 6,
+        text: '6m',
+        title: 'View 6 months'
+    }, {
+        type: 'ytd',
+        text: 'YTD',
+        title: 'View year to date'
+    }, {
+        type: 'year',
+        count: 1,
+        text: '1y',
+        title: 'View 1 year'
+    }, {
+        type: 'all',
+        text: 'All',
+        title: 'View all'
+    }],
+    /**
+     * The date formats to use when setting min, max and value on date inputs
+     */
+    inputTypeFormats: {
+        'datetime-local': '%Y-%m-%dT%H:%M:%S',
+        'date': '%Y-%m-%d',
+        'time': '%H:%M:%S'
     }
-
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
-    const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
-        format.indexOf('%' + char) !== -1
-    );
-
-    if (date && time) {
-        return 'datetime-local';
-    }
-    if (date) {
-        return 'date';
-    }
-    if (time) {
-        return 'time';
-    }
-    return 'text';
-}
+});
 
 /**
  * Get the axis min value based on the range option and the current max. For
@@ -2325,7 +2228,8 @@ Axis.prototype.minFromRange = function (): (number|undefined) {
 
 };
 
-if (!H.RangeSelector) {
+// @todo composition
+if (!(H as any).RangeSelector) {
     const chartDestroyEvents: [Chart, Function[]][] = [];
 
     const initRangeSelector = (chart: Chart): void => {
@@ -2542,14 +2446,80 @@ if (!H.RangeSelector) {
             }
         }
     });
-    H.RangeSelector = RangeSelector;
+    (H as any).RangeSelector = RangeSelector;
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace RangeSelector {
+    export interface InputElements {
+        dateBox: SVGElement;
+        input: HTMLInputElement;
+        label: SVGElement;
+    }
     export interface RangeObject {
         max: number;
         min: number;
     }
 }
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+// @todo composition
+extend(defaultOptions, { rangeSelector: RangeSelectorDefaults.rangeSelector });
+extend(defaultOptions.lang, RangeSelectorDefaults.lang);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default RangeSelector;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Define the time span for the button
+ *
+ * @typedef {"all"|"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
+ */
+
+/**
+ * Callback function to react on button clicks.
+ *
+ * @callback Highcharts.RangeSelectorClickCallbackFunction
+ *
+ * @param {global.Event} e
+ *        Event arguments.
+ *
+ * @param {boolean|undefined}
+ *        Return false to cancel the default button event.
+ */
+
+/**
+ * Callback function to parse values entered in the input boxes and return a
+ * valid JavaScript time as milliseconds since 1970.
+ *
+ * @callback Highcharts.RangeSelectorParseCallbackFunction
+ *
+ * @param {string} value
+ *        Input value to parse.
+ *
+ * @return {number}
+ *         Parsed JavaScript time value.
+ */
+
+(''); // keeps doclets above in JS file

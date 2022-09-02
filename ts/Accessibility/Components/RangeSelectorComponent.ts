@@ -407,7 +407,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
      * @private
      */
     public onInputNavTerminate(): void {
-        const rangeSel: Highcharts.RangeSelector = (
+        const rangeSel: RangeSelector = (
             (this.chart as any).rangeSelector || {}
         );
 
