@@ -18,7 +18,7 @@
 
 import type {
     LangNavigationOptions
-} from '../Extensions/Annotations/NavigationBindingsOptions';
+} from '../../Extensions/Annotations/NavigationBindingsOptions';
 
 /* *
  *

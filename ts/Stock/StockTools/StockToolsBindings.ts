@@ -18,23 +18,23 @@
  *
  * */
 
-import type Annotation from '../Extensions/Annotations/Annotation';
+import type Annotation from '../../Extensions/Annotations/Annotation';
 import type {
     AnnotationOptions
-} from '../Extensions/Annotations/AnnotationOptions';
-import type { YAxisOptions } from '../Core/Axis/AxisOptions';
-import type AxisType from '../Core/Axis/AxisType';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
-import type NavigationBindingsOptions from '../Extensions/Annotations/NavigationBindingsOptions';
-import type PointerEvent from '../Core/PointerEvent';
-import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
+} from '../../Extensions/Annotations/AnnotationOptions';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+import type AxisType from '../../Core/Axis/AxisType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
+import type PointerEvent from '../../Core/PointerEvent';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Toolbar from './StockToolbar';
 
-import H from '../Core/Globals.js';
-import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../Extensions/Annotations/NavigationBindingsUtilities.js';
+import H from '../../Core/Globals.js';
+import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
+import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
-import { Palette } from '../Core/Color/Palettes.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -46,8 +46,8 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import U from '../Core/Utilities.js';
-import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
+import U from '../../Core/Utilities.js';
+import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
 const {
     fireEvent,
     merge
@@ -59,7 +59,7 @@ const {
  *
  * */
 
-declare module '../Extensions/Annotations/NavigationBindingsLike' {
+declare module '../../Extensions/Annotations/NavigationBindingsLike' {
     interface NavigationBindingsLike {
         toggledAnnotations?: boolean;
         verticalCounter?: number;

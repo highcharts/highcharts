@@ -18,27 +18,23 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type ChartOptions from '../Core/Chart/ChartOptions';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
-import type NavigationBindings from '../Extensions/Annotations/NavigationBindings';
-import type Options from '../Core/Options';
+import type Chart from '../../Core/Chart/Chart';
+import type ChartOptions from '../../Core/Chart/ChartOptions';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type NavigationBindings from '../../Extensions/Annotations/NavigationBindings';
+import type Options from '../../Core/Options';
 import type {
     LangStockToolsOptions,
-    StockToolsGuiDefinitionsButtonsOptions,
-    StockToolsGuiDefinitionsOptions,
-    StockToolsGuiOptions,
     StockToolsOptions
 } from './StockToolsOptions';
 
-import O from '../Core/DefaultOptions.js';
+import O from '../../Core/DefaultOptions.js';
 const { setOptions } = O;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend,
     getStyle,
     merge,
     pick
@@ -50,7 +46,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
@@ -58,13 +54,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../../Core/LangOptions'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
     }
 }
 
-declare module '../Core/Options'{
+declare module '../../Core/Options'{
     interface Options {
         stockTools?: StockToolsOptions;
     }
