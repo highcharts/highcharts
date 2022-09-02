@@ -56,7 +56,7 @@ const {
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
 
@@ -2114,9 +2114,6 @@ class RangeSelector {
  *
  * */
 
-/**
- * @private
- */
 interface RangeSelector {
     defaultButtons: Array<RangeSelectorButtonOptions>;
     inputTypeFormats: Record<string, string>;
@@ -2124,7 +2121,8 @@ interface RangeSelector {
 
 extend(RangeSelector.prototype, {
     /**
-     * The default buttons for pre-selecting time frames
+     * The default buttons for pre-selecting time frames.
+     * @private
      */
     defaultButtons: [{
         type: 'month',
@@ -2156,7 +2154,8 @@ extend(RangeSelector.prototype, {
         title: 'View all'
     }],
     /**
-     * The date formats to use when setting min, max and value on date inputs
+     * The date formats to use when setting min, max and value on date inputs.
+     * @private
      */
     inputTypeFormats: {
         'datetime-local': '%Y-%m-%dT%H:%M:%S',
