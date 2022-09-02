@@ -216,14 +216,17 @@ class RangeSelector {
         i: number,
         redraw?: boolean
     ): void {
-        let rangeSelector = this,
+        const rangeSelector = this,
             chart = rangeSelector.chart,
             rangeOptions = rangeSelector.buttonOptions[i],
             baseAxis = chart.xAxis[0],
             unionExtremes = (
                 chart.scroller && chart.scroller.getUnionExtremes()
             ) || baseAxis || {},
-            dataMin = unionExtremes.dataMin,
+            type = rangeOptions.type,
+            dataGrouping = rangeOptions.dataGrouping;
+
+        let dataMin = unionExtremes.dataMin,
             dataMax = unionExtremes.dataMax,
             newMin,
             newMax = baseAxis && Math.round(
@@ -231,7 +234,6 @@ class RangeSelector {
                     baseAxis.max as any, pick(dataMax, baseAxis.max as any)
                 )
             ), // #1568
-            type = rangeOptions.type,
             baseXAxisOptions: AxisOptions,
             range = rangeOptions._range,
             rangeMin,
@@ -239,7 +241,6 @@ class RangeSelector {
             rangeSetting: (number|undefined),
             ctx: Axis,
             ytdExtremes,
-            dataGrouping = rangeOptions.dataGrouping,
             addOffsetMin = true;
 
         // chart has no data, base series is removed
@@ -309,7 +310,7 @@ class RangeSelector {
                 ) {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
-                    chart.series.forEach(function (series): void {
+                    chart.series.forEach((series): void => {
                         // reassign it to the last item
                         const xData = series.xData;
                         if (xData) {
@@ -491,7 +492,7 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#updateButtonStates
      */
     public updateButtonStates(): void {
-        let rangeSelector = this,
+        const rangeSelector = this,
             chart = this.chart,
             dropdown = this.dropdown,
             baseAxis = chart.xAxis[0],
@@ -514,21 +515,19 @@ class RangeSelector {
             ytdMin = ytdExtremes.min,
             ytdMax = ytdExtremes.max,
             selected = rangeSelector.selected,
-            selectedExists = isNumber(selected),
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
+
+        let selectedExists = isNumber(selected);
 
         rangeSelector.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
-            let range = rangeOptions._range,
+            const range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
                 button = buttons[i],
-                state = 0,
-                disable,
-                select,
                 offsetRange =
                     (rangeOptions._offsetMax as any) -
                     (rangeOptions._offsetMin as any),
@@ -539,7 +538,9 @@ class RangeSelector {
                     (dataMax as any) - (dataMin as any),
                 // Disable buttons where the range is smaller than the minimum
                 // range
-                isTooSmallRange = (range as any) < (baseAxis.minRange as any),
+                isTooSmallRange = (range as any) < (baseAxis.minRange as any);
+
+            let state = 0,
                 // Do not select the YTD button if not explicitly told so
                 isYTDButNotSelected = false,
                 // Disable the All button if we're already showing all
@@ -578,7 +579,7 @@ class RangeSelector {
             // it selected. This happens when scrolling across an ordinal gap.
             // It can be seen in the intraday demos when selecting 1h and scroll
             // across the night gap.
-            disable = (
+            const disable = (
                 !allButtonsEnabled &&
                 (
                     isTooGreatRange ||
@@ -587,7 +588,7 @@ class RangeSelector {
                     hasNoData
                 )
             );
-            select = (
+            const select = (
                 (isSelected && isSameRange) ||
                 (isSameRange && !selectedExists && !isYTDButNotSelected) ||
                 (isSelected && rangeSelector.frozenStates)
@@ -893,7 +894,7 @@ class RangeSelector {
          * @private
          */
         function updateExtremes(): void {
-            let value: number | undefined = rangeSelector.getInputValue(name),
+            const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
@@ -901,7 +902,7 @@ class RangeSelector {
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
 
-            const { maxInput, minInput } = rangeSelector;
+            let value: number | undefined = rangeSelector.getInputValue(name);
 
             if (
                 value !== Number(input.getAttribute('data-hc-time-previous')) &&
@@ -1104,19 +1105,18 @@ class RangeSelector {
         dataMin: number,
         useUTC?: boolean
     ): RangeSelector.RangeObject {
-        let time = this.chart.time,
-            min,
+        const time = this.chart.time,
             now = new time.Date(dataMax),
             year = time.get('FullYear', now),
             startOfYear = useUTC ?
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
-                +new time.Date(year, 0, 1);
+                +new time.Date(year, 0, 1),
+            min = Math.max(dataMin, startOfYear),
+            ts = now.getTime();
 
-        min = Math.max(dataMin, startOfYear);
-        const ts = now.getTime();
         return {
             max: Math.min(dataMax || ts, ts),
-            min: min
+            min
         };
     }
 
@@ -1349,11 +1349,11 @@ class RangeSelector {
                     (e: (Event|AnyRecord)): void => {
 
                         // extract events from button object and call
-                        let buttonEvents = (
-                                rangeOptions.events &&
-                                    rangeOptions.events.click
-                            ),
-                            callDefaultEvent;
+                        const buttonEvents = (
+                            rangeOptions.events && rangeOptions.events.click
+                        );
+
+                        let callDefaultEvent;
 
                         if (buttonEvents) {
                             callDefaultEvent =
@@ -1660,10 +1660,7 @@ class RangeSelector {
                 zoomText.getBBox().width + 5;
         }
 
-        this.buttonOptions.forEach(function (
-            rangeOptions: RangeSelectorButtonOptions,
-            i: number
-        ): void {
+        for (let i = 0, iEnd = this.buttonOptions.length; i < iEnd; ++i) {
             if (buttons[i].visibility !== 'hidden') {
                 buttons[i][verb]({ x: buttonLeft });
 
@@ -1672,7 +1669,7 @@ class RangeSelector {
             } else {
                 buttons[i][verb]({ x: plotLeft });
             }
-        });
+        }
     }
 
     /**
@@ -1990,16 +1987,16 @@ class RangeSelector {
      * Returns rangeSelector height
      */
     public getHeight(): number {
-        let rangeSelector = this,
+        const rangeSelector = this,
             options = rangeSelector.options,
             rangeSelectorGroup = rangeSelector.group,
             inputPosition = options.inputPosition,
             buttonPosition = options.buttonPosition,
             yPosition = options.y,
             buttonPositionY = buttonPosition.y,
-            inputPositionY = inputPosition.y,
-            rangeSelectorHeight = 0,
-            minPosition;
+            inputPositionY = inputPosition.y;
+
+        let rangeSelectorHeight = 0;
 
         if (options.height) {
             return options.height;
@@ -2015,7 +2012,7 @@ class RangeSelector {
                 yPosition :
             0;
 
-        minPosition = Math.min(inputPositionY, buttonPositionY);
+        const minPosition = Math.min(inputPositionY, buttonPositionY);
 
         if ((inputPositionY < 0 && buttonPositionY < 0) ||
             (inputPositionY > 0 && buttonPositionY > 0)

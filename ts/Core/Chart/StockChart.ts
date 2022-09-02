@@ -41,6 +41,8 @@ import D from '../DefaultOptions.js';
 const { getOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
+import RangeSelectorDefaults from
+    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import Series from '../Series/Series.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -64,9 +66,6 @@ import '../Navigator.js';
 // Has a dependency on Scrollbar due to the use of
 // defaultOptions.scrollbar
 import '../Scrollbar.js';
-// Has a dependency on RangeSelector due to the use of
-// defaultOptions.rangeSelector
-import '../../Stock/RangeSelector/RangeSelector.js';
 
 /* *
  *
@@ -183,7 +182,7 @@ class StockChart extends Chart {
                 rangeSelector: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (defaultOptions.rangeSelector as any).enabled,
+                        RangeSelectorDefaults.rangeSelector.enabled,
                         true
                     )
                 },
