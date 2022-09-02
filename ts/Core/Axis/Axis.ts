@@ -1930,6 +1930,7 @@ class Axis {
         const axis = this,
             options = this.options,
             tickPositionsOption = options.tickPositions,
+            tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
@@ -1940,8 +1941,8 @@ class Axis {
                 (isColorAxis || !hasVerticalPanning) && options.endOnTick
             );
 
-        let tickPositions,
-            tickPositioner = options.tickPositioner;
+        let tickPositions: TickPositionsArray = [],
+            tickPositionerResult: TickPositionsArray|undefined;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -1988,18 +1989,19 @@ class Axis {
          * @name Highcharts.Axis#tickPositions
          * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
-        this.tickPositions =
+
+        this.tickPositions = tickPositions =
             // Find the tick positions. Work on a copy (#1565)
-            tickPositions =
-            (tickPositionsOption && tickPositionsOption.slice()) as any;
-        if (!tickPositions) {
+            (tickPositionsOption && tickPositionsOption.slice()) || [];
+
+        if (!tickPositions.length && isNumber(this.min) && isNumber(this.max)) {
 
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
             if (
                 (!axis.ordinal || !axis.ordinal.positions) &&
                 (
-                    ((this.max as any) - (this.min as any)) /
+                    (this.max - this.min) /
                     this.tickInterval >
                     Math.max(2 * this.len, 200)
                 )
@@ -2008,7 +2010,7 @@ class Axis {
                 error(19, false, this.chart);
 
             } else if (axis.dateTime) {
-                tickPositions = (axis.getTimeTicks as any)(
+                tickPositions = axis.getTimeTicks(
                     axis.dateTime.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
@@ -2023,8 +2025,8 @@ class Axis {
             } else if (axis.logarithmic) {
                 tickPositions = axis.logarithmic.getLogTickPositions(
                     this.tickInterval,
-                    this.min as any,
-                    this.max as any
+                    this.min,
+                    this.max
                 );
             } else {
                 const startingTickInterval = this.tickInterval;
@@ -2032,8 +2034,8 @@ class Axis {
                 while (adjustedTickInterval <= startingTickInterval * 2) {
                     tickPositions = this.getLinearTickPositions(
                         this.tickInterval,
-                        this.min as any,
-                        this.max as any
+                        this.min,
+                        this.max
                     );
 
                     // If there are more tick positions than the set tickAmount,
@@ -2055,7 +2057,10 @@ class Axis {
 
             // Too dense ticks, keep only the first and last (#4477)
             if (tickPositions.length > this.len) {
-                tickPositions = [tickPositions[0], tickPositions.pop()];
+                tickPositions = [
+                    tickPositions[0],
+                    tickPositions[tickPositions.length - 1]
+                ];
                 // Reduce doubled value (#7339)
                 if (tickPositions[0] === tickPositions[1]) {
                     tickPositions.length = 1;
@@ -2067,12 +2072,12 @@ class Axis {
             // Run the tick positioner callback, that allows modifying auto tick
             // positions.
             if (tickPositioner) {
-                tickPositioner = tickPositioner.apply(
+                tickPositionerResult = tickPositioner.apply(
                     axis,
-                    [this.min, this.max] as any
-                ) as any;
-                if (tickPositioner) {
-                    this.tickPositions = tickPositions = tickPositioner as any;
+                    [this.min, this.max]
+                );
+                if (tickPositionerResult) {
+                    this.tickPositions = tickPositions = tickPositionerResult;
                 }
             }
 
@@ -2096,7 +2101,7 @@ class Axis {
                 (this.min as any) -= 0.5;
                 (this.max as any) += 0.5;
             }
-            if (!tickPositionsOption && !tickPositioner) {
+            if (!tickPositionsOption && !tickPositionerResult) {
                 this.adjustTickAmount();
             }
         }
