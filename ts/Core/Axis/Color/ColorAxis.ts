@@ -897,17 +897,13 @@ class ColorAxis extends Axis implements AxisLike {
         const valueDecimals = (legendOptions as any).valueDecimals;
         const valueSuffix = (legendOptions as any).valueSuffix || '';
 
-        const getPointsInDataClass = (i: number): Point[] => {
-            const points: Point[] = [];
-            axis.series.forEach((series): void => {
-                series.points.forEach((point): void => {
-                    if (point.dataClass === i) {
-                        points.push(point);
-                    }
-                });
-            });
-            return points;
-        };
+        const getPointsInDataClass = (i: number): Point[] =>
+            axis.series.reduce((points, s): Point[] => {
+                points.push(...s.points.filter((point): boolean =>
+                    point.dataClass === i
+                ));
+                return points;
+            }, [] as Point[]);
 
         let name;
 
@@ -937,10 +933,10 @@ class ColorAxis extends Axis implements AxisLike {
                     name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
-                legendItems.push(extend(
+                legendItems.push(extend<ColorAxis.LegendItemObject>(
                     {
-                        chart: chart,
-                        name: name,
+                        chart,
+                        name,
                         options: {},
                         drawLegendSymbol: LegendSymbol.drawRectangle,
                         visible: true,
@@ -948,13 +944,11 @@ class ColorAxis extends Axis implements AxisLike {
 
                         // Override setState to set either normal or inactive
                         // state to all points in this data class
-                        setState: function (
-                            state?: (StatesOptionsKey|'')
-                        ): void {
+                        setState: (state?: (StatesOptionsKey|'')): void => {
                             getPointsInDataClass(i).forEach((point): void =>
                                 point.setState(state)
                             );
-                        } as Function,
+                        },
 
                         // Override setState to show or hide all points in this
                         // data class
@@ -1006,9 +1000,9 @@ namespace ColorAxis {
         options: object;
         drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
         visible: boolean;
-        setState: Function;
+        setState: Point['setState'];
         isDataClass: true;
-        setVisible: () => void;
+        setVisible: Function;
     }
 
     export interface MarkerOptions {

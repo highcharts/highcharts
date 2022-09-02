@@ -83,7 +83,7 @@ declare module './PointLike' {
         onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
         setState(
-            state?: string,
+            state?: (StatesOptionsKey|''),
             move?: boolean
         ): void;
     }
