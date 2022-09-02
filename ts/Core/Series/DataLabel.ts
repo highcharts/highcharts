@@ -66,6 +66,7 @@ declare module './PointLike' {
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
         graphic?: SVGElement;
+        graphics?: Array<SVGElement>;
         /** @deprecated */
         positionIndex?: unknown;
         top?: number;
