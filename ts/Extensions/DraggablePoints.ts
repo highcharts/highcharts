@@ -872,7 +872,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[0] &&
+                    point.graphics[0].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -899,7 +903,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.upperGraphic && point.upperGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[1] &&
+                    point.graphics[1].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,

@@ -646,20 +646,28 @@ class SVGElement implements SVGElementLike {
             // For each of the tspans and text nodes, create a copy in the
             // outline.
             const parentElem = elem.querySelector('textPath') || elem;
-            let totalHeight = 0;
             [].forEach.call(
                 parentElem.childNodes,
                 (childNode: ChildNode): void => {
                     const clone = childNode.cloneNode(true);
-                    if ((clone as any).removeAttribute) {
+                    if ((clone as DOMElementType).removeAttribute) {
                         ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
-                            (prop): void => (clone as any).removeAttribute(prop)
-                        );
-                        totalHeight += Number(
-                            (clone as any).getAttribute('dy')
+                            (prop): void => (clone as DOMElementType)
+                                .removeAttribute(prop)
                         );
                     }
                     outline.appendChild(clone);
+                }
+            );
+
+            // Collect the sum of dy from all children, included nested ones
+            let totalHeight = 0;
+            [].forEach.call(
+                parentElem.querySelectorAll('text tspan'),
+                (element): void => {
+                    totalHeight += Number(
+                        (element as DOMElementType).getAttribute('dy')
+                    );
                 }
             );
 
