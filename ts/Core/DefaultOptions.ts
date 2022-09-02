@@ -1686,6 +1686,26 @@ const defaultOptions: Options = {
          */
 
         /**
+         * For a color axis with data classes, how many decimals to render in
+         * the legend. The default preserves the decimals of the range numbers.
+         *
+         * @type      {number}
+         * @default   -1
+         * @product   highcharts highmaps
+         * @apioption legend.valueDecimals
+         */
+
+        /**
+         * For a color axis with data classes, a suffix for the range numbers in
+         * the legend.
+         *
+         * @type      {string}
+         * @default   ''
+         * @product   highcharts highmaps
+         * @apioption legend.valueSuffix
+         */
+
+        /**
          * The width of the legend box. If a number is set, it translates to
          * pixels. Since v7.0.2 it allows setting a percent string of the full
          * chart width, for example `40%`.
