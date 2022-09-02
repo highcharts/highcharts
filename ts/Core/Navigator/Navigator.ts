@@ -16,33 +16,33 @@
  *
  * */
 
-import type AxisOptions from './Axis/AxisOptions';
+import type AxisOptions from '../Axis/AxisOptions';
 import type {
     NavigatorHandlesOptions,
     NavigatorOptions
-} from './Navigator/NavigatorOptions';
-import type CSSObject from './Renderer/CSSObject';
-import type { NavigatorAxisComposition } from './Axis/NavigatorAxisComposition';
-import type PointerEvent from './PointerEvent';
-import type ScrollbarOptions from './ScrollbarOptions';
-import type { SeriesTypeOptions } from './Series/SeriesType';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGPath from './Renderer/SVG/SVGPath';
+} from './NavigatorOptions';
+import type CSSObject from '../Renderer/CSSObject';
+import type { NavigatorAxisComposition } from '../Axis/NavigatorAxisComposition';
+import type PointerEvent from '../PointerEvent';
+import type ScrollbarOptions from '../ScrollbarOptions';
+import type { SeriesTypeOptions } from '../Series/SeriesType';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import Axis from './Axis/Axis.js';
-import Chart from './Chart/Chart.js';
-import H from './Globals.js';
+import Axis from '../Axis/Axis.js';
+import Chart from '../Chart/Chart.js';
+import H from '../Globals.js';
 const {
     hasTouch,
     isTouchDevice
 } = H;
-import D from './DefaultOptions.js';
+import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
-import NavigatorAxisAdditions from './Axis/NavigatorAxisComposition.js';
-import NavigatorComposition from './Navigator/NavigatorComposition.js';
-import Scrollbar from './Scrollbar.js';
-import Series from './Series/Series.js';
-import U from './Utilities.js';
+import NavigatorAxisAdditions from '../Axis/NavigatorAxisComposition.js';
+import NavigatorComposition from './NavigatorComposition.js';
+import Scrollbar from '../Scrollbar.js';
+import Series from '../Series/Series.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     clamp,
@@ -2070,6 +2070,7 @@ class Navigator {
  *
  * */
 
+// @todo move into masters
 Navigator.compose(Axis, Chart, Series);
 
 export default Navigator;

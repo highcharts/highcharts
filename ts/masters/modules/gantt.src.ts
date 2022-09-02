@@ -16,7 +16,7 @@ import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
 import Scrollbar from '../../Core/Scrollbar.js';
 import '../../Extensions/RangeSelector.js';
-import Navigator from '../../Core/Navigator.js';
+import Navigator from '../../Core/Navigator/Navigator.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Scrollbar = Scrollbar;

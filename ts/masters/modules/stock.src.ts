@@ -20,7 +20,7 @@ import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
 import Scrollbar from '../../Core/Scrollbar.js';
-import Navigator from '../../Core/Navigator.js';
+import Navigator from '../../Core/Navigator/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 const G: AnyRecord = Highcharts;

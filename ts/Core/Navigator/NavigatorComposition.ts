@@ -18,7 +18,7 @@
 
 import type Axis from '../Axis/Axis';
 import type Chart from '../Chart/Chart';
-import type Navigator from '../Navigator';
+import type Navigator from './Navigator';
 import type Scrollbar from '../Scrollbar';
 import type Series from '../Series/Series';
 
