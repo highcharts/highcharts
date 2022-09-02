@@ -66,7 +66,7 @@ import '../Navigator.js';
 import '../Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
-import '../../Extensions/RangeSelector.js';
+import '../../Stock/RangeSelector/RangeSelector.js';
 
 /* *
  *

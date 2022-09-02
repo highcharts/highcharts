@@ -16,19 +16,19 @@
  *
  * */
 
-import type Axis from '../Core/Axis/Axis';
-import type Chart from '../Core/Chart/Chart';
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type RangeSelector from './RangeSelector';
-import type Time from '../Core/Time';
-import type { VerticalAlignValue } from '../Core/Renderer/AlignObject';
+import type Time from '../../Core/Time';
+import type { VerticalAlignValue } from '../../Core/Renderer/AlignObject';
 
-import DO from '../Core/DefaultOptions.js';
+import DO from '../../Core/DefaultOptions.js';
 const {
     defaultOptions,
     setOptions
 } = DO;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,

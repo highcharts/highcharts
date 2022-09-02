@@ -16,26 +16,26 @@
  *
  * */
 
-import type AxisOptions from '../Core/Axis/AxisOptions';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
     RangeSelectorButtonOptions,
     RangeSelectorOptions,
     RangeSelectorPositionOptions
 } from './RangeSelectorOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type Time from '../Core/Time';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type Time from '../../Core/Time';
 
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import Axis from '../../Core/Axis/Axis.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import { Palette } from '../Core/Color/Palettes.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -60,14 +60,14 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         newMax?: number;
         range?: (null|number|RangeSelectorButtonOptions);
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
@@ -135,6 +135,22 @@ function preferredInputType(format: string): string {
  * @param {Highcharts.Chart} chart
  */
 class RangeSelector {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    public static compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
+        RangeSelectorComposition.compose(AxisClass, ChartClass, RangeSelector);
+    }
 
     /* *
      *
@@ -2151,13 +2167,6 @@ extend(RangeSelector.prototype, {
         'time': '%H:%M:%S'
     }
 });
-
-
-// @todo composition
-if (!(H as any).RangeSelector) {
-    (H as any).RangeSelector = RangeSelector;
-    RangeSelectorComposition.compose(Axis, Chart, RangeSelector);
-}
 
 /* *
  *

@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 const {

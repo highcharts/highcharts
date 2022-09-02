@@ -17,11 +17,11 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../Core/Color/ColorString';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type Time from '../Core/Time';
+} from '../../Core/Renderer/AlignObject';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
+import type ColorString from '../../Core/Color/ColorString';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type Time from '../../Core/Time';
 
 /* *
  *
@@ -29,7 +29,7 @@ import type Time from '../Core/Time';
  *
  * */
 
-declare module '../Core/LangOptions'{
+declare module '../../Core/LangOptions'{
     interface LangOptions {
         rangeSelectorFrom?: string;
         rangeSelectorTo?: string;
@@ -37,7 +37,7 @@ declare module '../Core/LangOptions'{
     }
 }
 
-declare module '../Core/Options'{
+declare module '../../Core/Options'{
     interface Options {
         rangeSelector?: DeepPartial<RangeSelectorOptions>;
     }

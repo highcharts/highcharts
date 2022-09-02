@@ -23,7 +23,7 @@ import type {
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type PointerEvent from './PointerEvent';
-import type RangeSelector from '../Extensions/RangeSelector';
+import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type ScrollbarOptions from './ScrollbarOptions';
 import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';

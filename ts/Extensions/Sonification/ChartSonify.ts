@@ -22,7 +22,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { DefaultSonificationInstrumentOptions } from './SonificationOptions';
 import type Options from '../../Core/Options';
 import type PointSonify from './PointSonify';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import Earcon from './Earcon.js';
 import Point from '../../Core/Series/Point.js';
