@@ -14,6 +14,10 @@
             name: 'Basemap'
         }, {
             type: 'mapbubble',
+            marker: {
+                lineWidth: 0
+            },
+            opacity: 0.75,
             data: [
                 ['pl', 1],
                 ['de', 1],

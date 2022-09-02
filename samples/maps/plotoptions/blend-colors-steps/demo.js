@@ -20,6 +20,10 @@
                 [0.4, '#00ff00'],
                 [1, '#0000ff']
             ],
+            marker: {
+                lineWidth: 0
+            },
+            opacity: 0.75,
             data: [
                 ['pl', 1],
                 ['de', 1],
