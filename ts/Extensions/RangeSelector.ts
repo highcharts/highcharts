@@ -16,7 +16,6 @@
  *
  * */
 
-import type { VerticalAlignValue } from '../Core/Renderer/AlignObject';
 import type AxisOptions from '../Core/Axis/AxisOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
@@ -34,7 +33,7 @@ import H from '../Core/Globals.js';
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
-import RangeSelectorDefaults from './RangeSelectorDefaults.js';
+import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
@@ -45,7 +44,6 @@ const {
     destroyObjectProperties,
     discardElement,
     extend,
-    find,
     fireEvent,
     isNumber,
     merge,
@@ -2154,299 +2152,11 @@ extend(RangeSelector.prototype, {
     }
 });
 
-/**
- * Get the axis min value based on the range option and the current max. For
- * stock charts this is extended via the {@link RangeSelector} so that if the
- * selected range is a multiple of months or years, it is compensated for
- * various month lengths.
- *
- * @private
- * @function Highcharts.Axis#minFromRange
- * @return {number|undefined}
- *         The new minimum value.
- */
-Axis.prototype.minFromRange = function (): (number|undefined) {
-    let rangeOptions = this.range,
-        type = (rangeOptions as any).type,
-        min,
-        max = this.max as any,
-        dataMin,
-        range,
-        time = this.chart.time,
-        // Get the true range from a start date
-        getTrueRange = function (base: number, count: number): number {
-            const timeName: Time.TimeUnitValue = type === 'year' ?
-                'FullYear' : 'Month';
-            const date = new time.Date(base);
-            const basePeriod = time.get(timeName, date);
-
-            time.set(timeName, date, basePeriod + count);
-
-            if (basePeriod === time.get(timeName, date)) {
-                time.set('Date', date, 0); // #6537
-            }
-
-            return date.getTime() - base;
-        };
-
-    if (isNumber(rangeOptions)) {
-        min = max - rangeOptions;
-        range = rangeOptions;
-    } else if (rangeOptions) {
-        min = max + getTrueRange(max, -(rangeOptions.count || 1));
-
-        // Let the fixedRange reflect initial settings (#5930)
-        if (this.chart) {
-            this.chart.fixedRange = max - min;
-        }
-    }
-
-    dataMin = pick(this.dataMin, Number.MIN_VALUE);
-    if (!isNumber(min)) {
-        min = dataMin;
-    }
-    if (min <= dataMin) {
-        min = dataMin;
-        if (typeof range === 'undefined') { // #4501
-            range = getTrueRange(min, (rangeOptions as any).count);
-        }
-        this.newMax = Math.min(
-            min + range,
-            pick(this.dataMax, Number.MAX_VALUE)
-        );
-    }
-    if (!isNumber(max)) {
-        min = void 0;
-    } else if (
-        !isNumber(rangeOptions) &&
-        rangeOptions &&
-        rangeOptions._offsetMin
-    ) {
-        min += rangeOptions._offsetMin;
-    }
-    return min;
-
-};
 
 // @todo composition
 if (!(H as any).RangeSelector) {
-    const chartDestroyEvents: [Chart, Function[]][] = [];
-
-    const initRangeSelector = (chart: Chart): void => {
-        let extremes,
-            rangeSelector = chart.rangeSelector,
-            legend,
-            alignTo,
-            verticalAlign: VerticalAlignValue|undefined;
-
-        /**
-         * @private
-         */
-        function render(): void {
-            if (rangeSelector) {
-                extremes = chart.xAxis[0].getExtremes();
-                legend = chart.legend;
-                verticalAlign = (
-                    rangeSelector &&
-                    rangeSelector.options.verticalAlign
-                );
-
-                if (isNumber(extremes.min)) {
-                    rangeSelector.render(extremes.min, extremes.max);
-                }
-
-                // Re-align the legend so that it's below the rangeselector
-                if (
-                    legend.display &&
-                    verticalAlign === 'top' &&
-                    verticalAlign === legend.options.verticalAlign
-                ) {
-                    // Create a new alignment box for the legend.
-                    alignTo = merge(chart.spacingBox);
-                    if (legend.options.layout === 'vertical') {
-                        alignTo.y = chart.plotTop;
-                    } else {
-                        alignTo.y += rangeSelector.getHeight();
-                    }
-                    legend.group.placed = false; // Don't animate the alignment.
-                    legend.align(alignTo);
-                }
-            }
-        }
-
-        if (rangeSelector) {
-            const events = find(
-                chartDestroyEvents,
-                (e: [Chart, Function[]]): boolean => e[0] === chart
-            );
-
-            if (!events) {
-                chartDestroyEvents.push([chart, [
-                    // redraw the scroller on setExtremes
-                    addEvent(
-                        chart.xAxis[0],
-                        'afterSetExtremes',
-                        function (e: RangeSelector.RangeObject): void {
-                            if (rangeSelector) {
-                                rangeSelector.render(e.min, e.max);
-                            }
-                        }
-                    ),
-                    // redraw the scroller chart resize
-                    addEvent(chart, 'redraw', render)
-                ]]);
-            }
-
-            // do it now
-            render();
-        }
-    };
-
-    // Initialize rangeselector for stock charts
-    addEvent(Chart, 'afterGetContainer', function (): void {
-        if (
-            this.options.rangeSelector &&
-            this.options.rangeSelector.enabled
-        ) {
-            this.rangeSelector = new RangeSelector(this);
-        }
-    });
-
-    addEvent(Chart, 'beforeRender', function (): void {
-
-        let chart = this,
-            axes = chart.axes,
-            rangeSelector = chart.rangeSelector,
-            verticalAlign;
-
-        if (rangeSelector) {
-
-            if (isNumber(rangeSelector.deferredYTDClick)) {
-                rangeSelector.clickButton(rangeSelector.deferredYTDClick);
-                delete rangeSelector.deferredYTDClick;
-            }
-
-            axes.forEach(function (axis): void {
-                axis.updateNames();
-                axis.setScale();
-            });
-
-            chart.getAxisMargins();
-
-            rangeSelector.render();
-            verticalAlign = rangeSelector.options.verticalAlign;
-
-            if (!rangeSelector.options.floating) {
-                if (verticalAlign === 'bottom') {
-                    this.extraBottomMargin = true;
-                } else if (verticalAlign !== 'middle') {
-                    this.extraTopMargin = true;
-                }
-            }
-        }
-
-    });
-
-    addEvent(Chart, 'update', function (e: Chart): void {
-
-        let chart = this,
-            options = e.options,
-            optionsRangeSelector = options.rangeSelector,
-            rangeSelector = chart.rangeSelector,
-            verticalAlign,
-            extraBottomMarginWas = this.extraBottomMargin,
-            extraTopMarginWas = this.extraTopMargin;
-
-        if (
-            optionsRangeSelector &&
-            optionsRangeSelector.enabled &&
-            !defined(rangeSelector) &&
-            this.options.rangeSelector
-        ) {
-            this.options.rangeSelector.enabled = true;
-            this.rangeSelector = rangeSelector = new RangeSelector(this);
-        }
-
-        this.extraBottomMargin = false;
-        this.extraTopMargin = false;
-
-        if (rangeSelector) {
-            initRangeSelector(this);
-
-            verticalAlign = (
-                optionsRangeSelector &&
-                optionsRangeSelector.verticalAlign
-            ) || (
-                rangeSelector.options && rangeSelector.options.verticalAlign
-            );
-
-            if (!rangeSelector.options.floating) {
-                if (verticalAlign === 'bottom') {
-                    this.extraBottomMargin = true;
-                } else if (verticalAlign !== 'middle') {
-                    this.extraTopMargin = true;
-                }
-            }
-
-            if (
-                this.extraBottomMargin !== extraBottomMarginWas ||
-                this.extraTopMargin !== extraTopMarginWas
-            ) {
-                this.isDirtyBox = true;
-            }
-
-        }
-
-    });
-
-    addEvent(Chart, 'render', function (): void {
-        let chart = this,
-            rangeSelector = chart.rangeSelector,
-            verticalAlign;
-
-        if (rangeSelector && !rangeSelector.options.floating) {
-
-            rangeSelector.render();
-            verticalAlign = rangeSelector.options.verticalAlign;
-
-            if (verticalAlign === 'bottom') {
-                this.extraBottomMargin = true;
-            } else if (verticalAlign !== 'middle') {
-                this.extraTopMargin = true;
-            }
-        }
-    });
-
-    addEvent(Chart, 'getMargins', function (): void {
-        let rangeSelector = this.rangeSelector,
-            rangeSelectorHeight;
-
-        if (rangeSelector) {
-            rangeSelectorHeight = rangeSelector.getHeight();
-            if (this.extraTopMargin) {
-                this.plotTop += rangeSelectorHeight;
-            }
-
-            if (this.extraBottomMargin) {
-                (this.marginBottom as any) += rangeSelectorHeight;
-            }
-        }
-    });
-
-    Chart.prototype.callbacks.push(initRangeSelector);
-
-    // Remove resize/afterSetExtremes at chart destroy
-    addEvent(Chart, 'destroy', function destroyEvents(): void {
-        for (let i = 0; i < chartDestroyEvents.length; i++) {
-            const events = chartDestroyEvents[i];
-            if (events[0] === this) {
-                events[1].forEach((unbind: Function): void => unbind());
-                chartDestroyEvents.splice(i, 1);
-                return;
-            }
-        }
-    });
     (H as any).RangeSelector = RangeSelector;
+    RangeSelectorComposition.compose(Axis, Chart, RangeSelector);
 }
 
 /* *
@@ -2466,16 +2176,6 @@ namespace RangeSelector {
         min: number;
     }
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-// @todo composition
-extend(defaultOptions, { rangeSelector: RangeSelectorDefaults.rangeSelector });
-extend(defaultOptions.lang, RangeSelectorDefaults.lang);
 
 /* *
  *
