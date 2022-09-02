@@ -16,17 +16,15 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
+import type { VerticalAlignValue } from '../Core/Renderer/AlignObject';
 import type AxisOptions from '../Core/Axis/AxisOptions';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+    RangeSelectorButtonOptions,
+    RangeSelectorOptions,
+    RangeSelectorPositionOptions
+} from './RangeSelectorOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../Core/Time';
 
@@ -66,7 +64,7 @@ const {
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
         newMax?: number;
-        range?: (null|number|Highcharts.RangeSelectorButtonsOptions);
+        range?: (null|number|RangeSelectorButtonOptions);
     }
 }
 
@@ -89,10 +87,17 @@ declare module '../Core/LangOptions'{
 
 declare module '../Core/Options'{
     interface Options {
-        rangeSelector?: DeepPartial<Highcharts.RangeSelectorOptions>;
+        rangeSelector?: DeepPartial<RangeSelectorOptions>;
     }
 }
 
+declare module './RangeSelectorOptions' {
+    export interface RangeSelectorButtonOptions {
+        _offsetMax?: number;
+        _offsetMin?: number;
+        _range?: number;
+    }
+}
 
 /**
  * Internal types
@@ -100,76 +105,19 @@ declare module '../Core/Options'{
  */
 declare global {
     namespace Highcharts {
-        type RangeSelectorButtonTypeValue = (
-            'all'|'day'|'hour'|'millisecond'|'minute'|'month'|'second'|'week'|
-            'year'|'ytd'
-        );
-        interface RangeSelectorClickCallbackFunction {
-            (e: Event): (boolean|undefined);
-        }
-        interface RangeSelectorParseCallbackFunction {
-            (value: string, useUTC: boolean, time?: Time): number;
-        }
-        interface RangeSelectorButtonsEventsOptions {
-            click?: RangeSelectorClickCallbackFunction;
-        }
-        interface RangeSelectorButtonsOptions {
-            _offsetMax?: number;
-            _offsetMin?: number;
-            _range?: number;
-            count?: number;
-            dataGrouping?: DataGroupingOptionsObject;
-            title?: string;
-            events?: RangeSelectorButtonsEventsOptions;
-            offsetMax?: number;
-            offsetMin?: number;
-            preserveDataGrouping?: boolean;
-            text: string;
-            type?: RangeSelectorButtonTypeValue;
-        }
         interface RangeSelectorInputElements {
             dateBox: SVGElement;
             input: HTMLInputElement;
             label: SVGElement;
         }
-        interface RangeSelectorOptions {
-            allButtonsEnabled: boolean;
-            buttonPosition: RangeSelectorPositionOptions;
-            buttons?: Array<RangeSelectorButtonsOptions>;
-            buttonSpacing: number;
-            buttonTheme: ButtonThemeObject;
-            dropdown: 'always'|'never'|'responsive';
-            enabled?: boolean;
-            floating: boolean;
-            height?: number;
-            inputBoxBorderColor: ColorString;
-            inputBoxHeight: number;
-            inputBoxWidth?: number;
-            inputDateFormat: string;
-            inputDateParser?: RangeSelectorParseCallbackFunction;
-            inputEditDateFormat: string;
-            inputEnabled: boolean;
-            inputPosition: RangeSelectorPositionOptions;
-            inputSpacing: number;
-            inputStyle: CSSObject;
-            labelStyle: CSSObject;
-            selected?: number;
-            verticalAlign: VerticalAlignValue;
-            x: number;
-            y: number;
-        }
-        interface RangeSelectorPositionOptions {
-            align: AlignValue;
-            x: number;
-            y: number;
-        }
+
         class RangeSelector {
             public constructor(chart: Chart);
             public buttons: Array<SVGElement>;
             public buttonGroup?: SVGElement;
-            public buttonOptions: Array<RangeSelectorButtonsOptions>;
+            public buttonOptions: Array<RangeSelectorButtonOptions>;
             public chart: Chart;
-            public defaultButtons: Array<RangeSelectorButtonsOptions>;
+            public defaultButtons: Array<RangeSelectorButtonOptions>;
             public deferredYTDClick?: number;
             public div?: HTMLDOMElement;
             public dropdown?: HTMLSelectElement;
@@ -190,7 +138,7 @@ declare global {
             public zoomText?: SVGElement;
             public clickButton(i: number, redraw?: boolean): void;
             public computeButtonRange(
-                rangeOptions: RangeSelectorButtonsOptions
+                rangeOptions: RangeSelectorButtonOptions
             ): void;
             public destroy(): void;
             public drawInput(name: ('min'|'max')): RangeSelectorInputElements;
@@ -214,7 +162,7 @@ declare global {
             public setSelected(selected: number): void;
             public showInput(name: string): void;
             public titleCollision(chart: Chart): boolean;
-            public update(options: Highcharts.RangeSelectorOptions): void;
+            public update(options: RangeSelectorOptions): void;
             public updateButtonStates(): void;
         }
     }
@@ -745,7 +693,7 @@ extend(defaultOptions, {
             /** @ignore */
             color: Palette.neutralColor60
         }
-    } as Highcharts.RangeSelectorOptions
+    } as RangeSelectorOptions
 });
 
 extend(
@@ -827,7 +775,7 @@ class RangeSelector {
      * */
     public buttons: Array<SVGElement> = void 0 as any;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> =
+    public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
     public chart: Chart;
     public deferredYTDClick?: number;
@@ -847,7 +795,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: Highcharts.RangeSelectorOptions = void 0 as any;
+    public options: RangeSelectorOptions = void 0 as any;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
@@ -1065,7 +1013,7 @@ class RangeSelector {
     ): void {
         const rangeSelector = this,
             options = (
-                chart.options.rangeSelector as Highcharts.RangeSelectorOptions
+                chart.options.rangeSelector as RangeSelectorOptions
             ),
             buttonOptions = (
                 options.buttons || rangeSelector.defaultButtons.slice()
@@ -1168,10 +1116,10 @@ class RangeSelector {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        rangeSelector.buttonOptions.forEach(function (
-            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+        rangeSelector.buttonOptions.forEach((
+            rangeOptions: RangeSelectorButtonOptions,
             i: number
-        ): void {
+        ): void => {
             let range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
@@ -1278,7 +1226,7 @@ class RangeSelector {
      * @param {Highcharts.RangeSelectorButtonsOptions} rangeOptions
      */
     public computeButtonRange(
-        rangeOptions: Highcharts.RangeSelectorButtonsOptions
+        rangeOptions: RangeSelectorButtonOptions
     ): void {
         const type = rangeOptions.type as string,
             count = rangeOptions.count || 1,
@@ -1319,7 +1267,7 @@ class RangeSelector {
     public getInputValue(name: string): number {
         const input = name === 'min' ? this.minInput : this.maxInput;
         const options = this.chart.options
-            .rangeSelector as Highcharts.RangeSelectorOptions;
+            .rangeSelector as RangeSelectorOptions;
         const time = this.chart.time;
 
         if (input) {
@@ -1535,7 +1483,7 @@ class RangeSelector {
             chartStyle = chart.renderer.style || {},
             renderer = chart.renderer,
             options =
-               chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
+               chart.options.rangeSelector as RangeSelectorOptions,
             lang = defaultOptions.lang,
             isMin = name === 'min';
 
@@ -1729,7 +1677,7 @@ class RangeSelector {
     public getPosition(): Record<string, number> {
         const chart = this.chart,
             options =
-                chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
+                chart.options.rangeSelector as RangeSelectorOptions,
             top = options.verticalAlign === 'top' ?
                 chart.plotTop - chart.axisOffset[0] :
                 0; // set offset only for varticalAlign top
@@ -1792,7 +1740,7 @@ class RangeSelector {
             container = chart.container,
             chartOptions = chart.options,
             options =
-                chartOptions.rangeSelector as Highcharts.RangeSelectorOptions,
+                chartOptions.rangeSelector as RangeSelectorOptions,
             // Place inputs above the container
             inputsZIndex = pick(
                 (chartOptions.chart as any).style &&
@@ -1984,7 +1932,7 @@ class RangeSelector {
         }, void 0, dropdown);
 
         this.buttonOptions.forEach((
-            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
             createElement('option', {
@@ -2066,7 +2014,7 @@ class RangeSelector {
         // button. This is is used both by the buttonGroup and the inputGroup.
         const getXOffsetForExportButton = (
             group: SVGElement,
-            position: Highcharts.RangeSelectorPositionOptions
+            position: RangeSelectorPositionOptions
         ): number => {
             if (
                 navButtonOptions &&
@@ -2311,7 +2259,7 @@ class RangeSelector {
         }
 
         this.buttonOptions.forEach(function (
-            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void {
             if (buttons[i].visibility !== 'hidden') {
@@ -2493,7 +2441,7 @@ class RangeSelector {
         let hasActiveButton = false;
 
         buttonOptions.forEach((
-            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
             const button = buttons[i];
@@ -2551,7 +2499,7 @@ class RangeSelector {
         }
 
         buttonOptions.forEach((
-            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
             const button = buttons[i];
@@ -2702,7 +2650,7 @@ class RangeSelector {
      */
     public update(
         this: Highcharts.RangeSelector,
-        options: Highcharts.RangeSelectorOptions
+        options: RangeSelectorOptions
     ): void {
         const chart = this.chart;
         merge(true, chart.options.rangeSelector, options);
@@ -2766,7 +2714,7 @@ class RangeSelector {
  * @private
  */
 interface RangeSelector {
-    defaultButtons: Array<Highcharts.RangeSelectorButtonsOptions>;
+    defaultButtons: Array<RangeSelectorButtonOptions>;
     inputTypeFormats: Record<string, string>;
 }
 
