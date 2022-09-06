@@ -30,6 +30,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - run: npm i
+      # tasks
+      - name: Run Browserstack Tests (Chrome)
+        run: npx gulp test --single-run --splitbrowsers Mac.Chrome
 
   ### CYPRESS ###
   test_cypress:
