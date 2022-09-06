@@ -69,10 +69,7 @@ class FlowMapSeries extends SankeySeries {
      * display route paths (e.g. flights or ships routes) or flows on a map. It
      * is drawing a link between two mappoints.
      *
-     * @sample maps/demo/flowmap-around-the-world/
-     *         Flowmap chart
-     *
-     * @extends      plotOptions.flowmap
+     * @extends      plotOptions.column
      * @product      highmaps
      * @optionparent plotOptions.flowmap
      */
@@ -92,17 +89,13 @@ class FlowMapSeries extends SankeySeries {
          * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
          *
          * @extends series.mappoint.keys
-         * @default ['from', 'to', 'curveFactor', 'weight', 'growTowards',
-                      'markerEnd']
+         * @default ['from', 'to', 'weight']
          * @private
          */
         keys: [
             'from',
             'to',
-            'curveFactor',
-            'weight',
-            'growTowards',
-            'markerEnd'
+            'weight'
         ]
 
     } as FlowMapSeriesOptions); // Sankey?
@@ -520,14 +513,10 @@ export default FlowMapSeries;
  * type, points can be given in the following ways:
  *
  * 1.  An array of arrays with 6 values. In this case, the values correspond
- *     to `from,to,curveFactor,weight,growTowards,markerEnd`. Example:
+ *     to `from,to,weight`. Example:
  *     ```js
  *     data: [
- *         ["Point 1", "Point 2", 0.5, 4, true, {
- *              enabled: true,
- *              height: 15,
- *              width: 8
- *          }],
+ *         ["Point 1", "Point 2", 4],
  *     ]
  *     ```
  *
@@ -560,6 +549,9 @@ export default FlowMapSeries;
  * Higher numbers makes the links more curved. A `curveFactor` of 0 makes the
  * lines straight.
  *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
  * @type      {number}
  * @product   highmaps
  * @apioption series.flowmap.data.curveFactor
@@ -567,6 +559,9 @@ export default FlowMapSeries;
 
 /**
  * If set to `true`, the line will grow towards its end.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
  *
  * @type      {boolean}
  * @product   highmaps
@@ -576,6 +571,9 @@ export default FlowMapSeries;
 /**
  * The marker-end defines the arrowhead that will be drawn at the final vertex
  * of the given path.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
  *
  * @type      {*|null}
  * @product   highmaps
@@ -608,6 +606,9 @@ export default FlowMapSeries;
 
 /**
  * The weight of the link.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
  *
  * @type      {number}
  * @product   highmaps
