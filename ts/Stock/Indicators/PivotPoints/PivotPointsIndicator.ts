@@ -266,7 +266,7 @@ class PivotPointsIndicator extends SMAIndicator {
                         }
                     }
                     SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
-                        .apply(indicator, arguments);
+                        .call(indicator);
                 }
             );
         }
