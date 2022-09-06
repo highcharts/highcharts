@@ -1990,11 +1990,11 @@ class Axis {
          * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
 
-        this.tickPositions = tickPositions =
+        if (tickPositionsOption) {
             // Find the tick positions. Work on a copy (#1565)
-            (tickPositionsOption && tickPositionsOption.slice()) || [];
+            tickPositions = tickPositionsOption.slice();
 
-        if (!tickPositions.length && isNumber(this.min) && isNumber(this.max)) {
+        } else if (isNumber(this.min) && isNumber(this.max)) {
 
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
@@ -2067,29 +2067,31 @@ class Axis {
                 }
             }
 
-            this.tickPositions = tickPositions;
-
             // Run the tick positioner callback, that allows modifying auto tick
             // positions.
             if (tickPositioner) {
+                // Make it available to the positioner
+                this.tickPositions = tickPositions;
                 tickPositionerResult = tickPositioner.apply(
                     axis,
                     [this.min, this.max]
                 );
                 if (tickPositionerResult) {
-                    this.tickPositions = tickPositions = tickPositionerResult;
+                    tickPositions = tickPositionerResult;
                 }
             }
 
         }
+        this.tickPositions = tickPositions;
+
 
         // Reset min/max or remove extremes based on start/end on tick
         this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
         this.trimTicks(tickPositions, startOnTick, endOnTick);
-        if (!this.isLinked) {
+        if (!this.isLinked && isNumber(this.min) && isNumber(this.max)) {
 
-            // Substract half a unit (#2619, #2846, #2515, #3390),
-            // but not in case of multiple ticks (#6897)
+            // Substract half a unit (#2619, #2846, #2515, #3390), but not in
+            // case of multiple ticks (#6897)
             if (
                 this.single &&
                 tickPositions.length < 2 &&
@@ -2098,8 +2100,8 @@ class Axis {
                     (s.is('heatmap') && s.options.pointPlacement === 'between')
                 )
             ) {
-                (this.min as any) -= 0.5;
-                (this.max as any) += 0.5;
+                this.min -= 0.5;
+                this.max += 0.5;
             }
             if (!tickPositionsOption && !tickPositionerResult) {
                 this.adjustTickAmount();
