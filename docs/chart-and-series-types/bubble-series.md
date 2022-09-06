@@ -61,6 +61,45 @@ In the following example, a color axis is added and the `x` value is used for co
 
 <iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/coloraxis/changed-default-color-key" allow="fullscreen"></iframe>
 
+Blend colors
+----------
+It is also possible to show another dimention - density. By using the [bubble.blendColors](https://api.highcharts.com/highcharts/series.bubble.blendColors) option, you can add a bubble with multiple graphics (colors) where each color graphic has the same zIndex as all other graphics with the same colors. This allows to show a nice blend effect that could be very useful for showing density ([espetially in a map chart](https://www.highcharts.com/docs/maps/mapbubble-series#mapbubble-blend-colors)).
+
+A `bubble.blendColors` option can be defined in two different formats:
+
+* An array of color strings - e.g. if 4 colors are defined, one point has 4 graphics and their widths are evenly distributed: 1st graphic occupies 100% of bubble width, 2nd graphic 75%, 3rd graphic 50%, and the last graphic 25%.
+* An array of two dimensional arrays with stop and color - e.g. for the following configuration `blendColors: [[0.2, '#ff0000'], [1, '#0000ff']]` we have only 2 graphics: the biggest is 100% width and the smallest is 20% width.
+
+[Here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/blend-colors-steps/) you can find a comparison demo.
+
+A simple series configuration could look like this:
+
+```js
+series: [{
+    blendColors: [
+        '#ff0000',
+        '#ffff00',
+        '#00ff00',
+        '#00ffff',
+        '#0000ff'
+    ],
+    data: [{
+        x: 0,
+        y: 81,
+        z: 63
+    }, {
+        ...
+    }]
+}]
+```
+
+<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/bubble-blend-colors" allow="fullscreen"></iframe>
+
+For a better visualization, it is recommended to disable/change following default bubble series options (as shown in the example above):
+* `bubble.opacity`
+* `bubble.marker.lineWidth`
+* `bubble.marker.states.hover`
+
 API Reference
 -------------
 For an overview of the bubble series options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.bubble).

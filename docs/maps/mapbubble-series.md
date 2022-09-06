@@ -35,6 +35,13 @@ series: [{
 }]
 ```
 
+Map Bubble Series with blend colors
+-----------------------------
+
+You can show a density on your map chart by using the [mapbubble.blendColors](https://api.highcharts.com/highmaps/series.mapbubble.blendColors) option. For more details, please visit this [bubble article section](https://www.highcharts.com/docs/chart-and-series-types/bubble-series#blend-colors).
+
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/blend-colors" allow="fullscreen"></iframe>
+
 All other information about bubble options can be found in the [standard bubble chart documentation](https://highcharts.com/docs/chart-and-series-types/bubble-series).
 
 API Reference
