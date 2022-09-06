@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/europe.topo.json'
     ).then(response => response.json());
 
-    QUnit.test('Temperaturemap API options.', assert => {
+    QUnit.test('Flowmap API options.', assert => {
         const chart = Highcharts.mapChart('container', {
             series: [{
                 mapData
@@ -51,9 +51,9 @@
             'Flowmap point graphic should be hidden.'
         );
 
-        // curve
+        // curveFactor
         assert.strictEqual(
-            addedPoint.options.curve,
+            addedPoint.options.curveFactor,
             0.5,
             'Flowmap point curve value should be correct.'
         );
