@@ -85,7 +85,7 @@ function draw(
     // eslint-disable-next-line dot-notation
     params.attribs['class'] = point.getClassName();
 
-    if (shouldDraw(point)) {
+    if ((point.shouldDraw())) {
         if (!graphic) {
             point.graphic = graphic = params.shapeType === 'text' ?
                 renderer.text() :
@@ -123,18 +123,6 @@ function draw(
     }
 }
 
-/**
- * @private
- */
-function shouldDraw(point: Point): boolean {
-    switch (point.series && point.series.type) {
-        case 'treemap':
-            return isNumber(point.plotY) && point.y !== null;
-        default:
-            return !point.isNull;
-    }
-}
-
 /* *
  *
  *  Default Export
@@ -142,8 +130,7 @@ function shouldDraw(point: Point): boolean {
  * */
 
 const DrawPointUtilities = {
-    draw,
-    shouldDraw
+    draw
 };
 
 export default DrawPointUtilities;

@@ -484,30 +484,31 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Order the nodes, starting with the root node(s). (#9818)
+     * @private
+     */
+    public order(node: SankeyPoint, level: number): void {
+        const series = this;
+        // Prevents circular recursion:
+        if (typeof node.level === 'undefined') {
+            node.level = level;
+            node.linksFrom.forEach(function (
+                link: SankeyPoint
+            ): void {
+                if (link.toNode) {
+                    series.order(link.toNode, level + 1);
+                }
+            });
+        }
+    }
+    /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
      * @private
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
-
-        /**
-         * Order the nodes, starting with the root node(s). (#9818)
-         * @private
-         */
-        function order(node: SankeyPoint, level: number): void {
-            // Prevents circular recursion:
-            if (typeof node.level === 'undefined') {
-                node.level = level;
-                node.linksFrom.forEach(function (
-                    link: SankeyPoint
-                ): void {
-                    if (link.toNode) {
-                        order(link.toNode, level + 1);
-                    }
-                });
-            }
-        }
+        const series = this;
 
         if (this.orderNodes) {
             this.nodes
@@ -518,7 +519,7 @@ class SankeySeries extends ColumnSeries {
                 // Start by the root node(s) and recursively set the level
                 // on all following nodes.
                 .forEach(function (node: SankeyPoint): void {
-                    order(node, 0);
+                    series.order(node, 0);
                 });
             stableSort(this.nodes, function (
                 a: SankeyPoint,
@@ -535,6 +536,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public getNodePadding(): number {
+
         let nodePadding = this.options.nodePadding || 0;
 
         // If the number of columns is so great that they will overflow with
