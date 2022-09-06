@@ -14,7 +14,6 @@
  *
  * */
 
-import type EMAIndicatorType from '../EMA/EMAIndicator';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -24,7 +23,9 @@ import type {
 import type TEMAPoint from './TEMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
+const {
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

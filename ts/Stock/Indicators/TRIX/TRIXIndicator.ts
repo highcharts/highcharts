@@ -21,7 +21,9 @@ import type {
 import type TRIXPoint from './TRIXPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const TEMAIndicator: typeof TEMAIndicatorType = SeriesRegistry.seriesTypes.tema;
+const {
+    tema: TEMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
