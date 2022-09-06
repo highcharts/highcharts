@@ -1015,7 +1015,7 @@ const ChartDefaults: ChartOptions = {
 
     /**
      * Chart zooming options.
-     * @since       next
+     * @since 10.2.1
      */
     zooming: {
         /**
@@ -1031,7 +1031,7 @@ const ChartDefaults: ChartOptions = {
          * @default    {highcharts} undefined
          * @default    {highstock} x
          * @product    highcharts highstock gantt
-         * @since      next
+         * @since 10.2.1
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.zooming.pinchType
          */
@@ -1044,7 +1044,7 @@ const ChartDefaults: ChartOptions = {
          * @default    {highcharts} undefined
          * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
-         * @since      next
+         * @since 10.2.1
          * @apioption  chart.zooming.type
          */
 
@@ -1055,7 +1055,7 @@ const ChartDefaults: ChartOptions = {
         *
         * @type       {string}
         * @default    {highcharts} undefined
-        * @since      next
+        * @since 10.2.1
         * @validvalue ["alt", "ctrl", "meta", "shift"]
         * @requires   modules/draggable-points
         * @apioption  chart.zooming.key
@@ -1072,14 +1072,14 @@ const ChartDefaults: ChartOptions = {
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
          * @product    highcharts highstock gantt
-         * @since      next
+         * @since 10.2.1
          */
         singleTouch: false,
 
         /**
          * The button that appears after a selection zoom, allowing the user
          * to reset zoom.
-         * @since      next
+         * @since 10.2.1
          */
         resetButton: {
 
@@ -1094,7 +1094,7 @@ const ChartDefaults: ChartOptions = {
              *
              * @type       {Highcharts.ButtonRelativeToValue}
              * @default    plot
-             * @since      next
+             * @since 10.2.1
              * @apioption  chart.zooming.resetButton.relativeTo
              */
 
@@ -1111,7 +1111,7 @@ const ChartDefaults: ChartOptions = {
              *         Theming the button
              *
              * @type {Highcharts.SVGAttributes}
-             * @since next
+             * @since 10.2.1
              */
             theme: {
                 /** @internal */
@@ -1129,7 +1129,7 @@ const ChartDefaults: ChartOptions = {
              *         Above the plot area
              *
              * @type  {Highcharts.AlignObject}
-             * @since next
+             * @since 10.2.1
              */
             position: {
 
@@ -1147,7 +1147,7 @@ const ChartDefaults: ChartOptions = {
                  * The vertical alignment of the button.
                  *
                  * @type       {Highcharts.VerticalAlignValue}
-                 * @since      next
+                 * @since 10.2.1
                  * @default    top
                  * @apioption  chart.zooming.resetButton.position.verticalAlign
                  */

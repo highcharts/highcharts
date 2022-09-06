@@ -90,8 +90,6 @@ class AreaRangePoint extends AreaPoint {
      */
     public low: number = void 0 as any;
 
-    public lowerGraphic?: SVGElement;
-
     public options: AreaRangePointOptions = void 0 as any;
 
     public origProps?: Partial<AreaRangePoint>;
@@ -107,8 +105,6 @@ class AreaRangePoint extends AreaPoint {
     public plotX: number = void 0 as any;
 
     public series: AreaRangeSeries = void 0 as any;
-
-    public upperGraphic?: SVGElement;
 
     /* *
      *
@@ -141,7 +137,7 @@ class AreaRangePoint extends AreaPoint {
         }
 
         // Change state also for the top marker
-        this.graphic = this.upperGraphic;
+        this.graphic = this.graphics && this.graphics[1];
         this.plotY = this.plotHigh;
 
         if (isPolar) {
@@ -155,7 +151,7 @@ class AreaRangePoint extends AreaPoint {
 
         // Now restore defaults
         this.plotY = this.plotLow;
-        this.graphic = this.lowerGraphic;
+        this.graphic = this.graphics && this.graphics[0];
 
         if (isPolar) {
             this.plotX = this.plotLowX;

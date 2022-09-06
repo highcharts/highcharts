@@ -240,27 +240,27 @@ jobs:
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/screenshots
           destination: cypress-chrome
-      - run:
-          command: |
-            rm -rf /home/circleci/repo/highcharts/cypress/videos
-            rm -rf /home/circleci/repo/highcharts/cypress/screenshots
-          name: Clear Cypress videos and screenshots after storage (Chrome)
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
-      - run:
-          command: |
-            firefox --version
-            whereis firefox
-          name: Check Chrome
-      - run:
-          name: Run cypress tests (Firefox)
-          command: TZ=UTC npx cypress run --browser firefox --headless
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/cypress/videos
-          destination: cypress-firefox
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/cypress/screenshots
-          destination: cypress-firefox
+#      - run:
+#          command: |
+#            rm -rf /home/circleci/repo/highcharts/cypress/videos
+#            rm -rf /home/circleci/repo/highcharts/cypress/screenshots
+#          name: Clear Cypress videos and screenshots after storage (Chrome)
+#      - browser-tools/install-firefox
+#      - browser-tools/install-geckodriver
+#      - run:
+#          command: |
+#            firefox --version
+#            whereis firefox
+#          name: Check Firefox
+#      - run:
+#          name: Run cypress tests (Firefox)
+#          command: TZ=UTC npx cypress run --browser firefox --headless
+#      - store_artifacts:
+#          path: /home/circleci/repo/highcharts/cypress/videos
+#          destination: cypress-firefox
+#      - store_artifacts:
+#          path: /home/circleci/repo/highcharts/cypress/screenshots
+#          destination: cypress-firefox
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -593,18 +593,18 @@ workflows:
           name: "test-Mac.Safari"
           requires: ["test-Win.IE8", "generate_ts_declarations"]
           browsers: "Mac.Safari"
-      - test_browsers:
-          name: "test-Mac.Firefox"
-          browsercount: 2
-          requires: ["test-Mac.Safari"]
-          browsers: "Mac.Firefox"
+#      - test_browsers:
+#          name: "test-Mac.Firefox"
+#          browsercount: 2
+#          requires: ["test-Mac.Safari"]
+#          browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires: ["test-Mac.Firefox"]
+          requires: ["test-Mac.Safari"]
           browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
-          requires: ["test-Mac.Firefox", "test-Win.Chrome"]
+          requires: ["test-Mac.Safari", "test-Win.Chrome"]
           filters:
             branches:
               only: [master]
@@ -652,13 +652,13 @@ workflows:
           name: "timezone-Mac.Safari"
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
-      - test_timezones:
-          name: "timezone-Mac.Firefox"
-          requires: ["timezone-Mac.Safari"]
-          browsers: "Mac.Firefox"
+#      - test_timezones:
+#          name: "timezone-Mac.Firefox"
+#          requires: ["timezone-Mac.Safari"]
+#          browsers: "Mac.Firefox"
       - test_timezones:
           name: "timezone-Win.Chrome"
-          requires: ["timezone-Mac.Firefox"]
+          requires: ["timezone-Mac.Safari"]
           browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Safari"
@@ -671,15 +671,15 @@ workflows:
           requires: ["test-Mac.Safari"]
           browsers: "Win.Chrome"
           notify_on_failure: true
-      - test_browsers:
-          name: "test-Mac.Firefox"
-          browsercount: 2
-          requires: ["test-Win.Chrome"]
-          browsers: "Mac.Firefox"
-          notify_on_failure: true
+#      - test_browsers:
+#          name: "test-Mac.Firefox"
+#          browsercount: 2
+#          requires: ["test-Win.Chrome"]
+#          browsers: "Mac.Firefox"
+#          notify_on_failure: true
       - test_oldies:
           name: "test-Win.IE8"
-          requires: ["test-Mac.Firefox"]
+          requires: ["test-Win.Chrome"]
           browsers: "Win.IE8"
           notify_on_failure: true
       - build_dist:

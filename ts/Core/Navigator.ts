@@ -22,6 +22,7 @@ import type {
 } from './Axis/AxisOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
+import type { NavigatorAxisComposition } from './Axis/NavigatorAxisComposition';
 import type PointerEvent from './PointerEvent';
 import type RangeSelector from '../Extensions/RangeSelector';
 import type ScrollbarOptions from './ScrollbarOptions';
@@ -32,17 +33,15 @@ import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from './Globals.js';
 const {
     hasTouch,
     isTouchDevice
 } = H;
-import NavigatorAxis from './Axis/NavigatorAxis.js';
 import D from './DefaultOptions.js';
 const { defaultOptions } = D;
+import NavigatorAxisAdditions from './Axis/NavigatorAxisComposition.js';
 import { Palette } from './Color/Palettes.js';
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import Scrollbar from './Scrollbar.js';
@@ -189,8 +188,8 @@ declare global {
             public stickToMin?: boolean;
             public top: number;
             public unbindRedraw?: Function;
-            public xAxis: NavigatorAxis;
-            public yAxis: NavigatorAxis;
+            public xAxis: NavigatorAxisComposition;
+            public yAxis: NavigatorAxisComposition;
             public zoomedMax: number;
             public zoomedMin: number;
             public addBaseSeriesEvents(): void;
@@ -665,7 +664,7 @@ extend(defaultOptions, {
          *
          * @type      {boolean}
          * @default   undefined
-         * @since     next
+         * @since 10.2.1
          * @sample {highstock} stock/navigator/sticktomax-false/
          * stickToMax set to false
          * @apioption navigator.stickToMax
@@ -888,8 +887,8 @@ class Navigator {
     public stickToMax?: boolean;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
-    public xAxis: NavigatorAxis = void 0 as any;
-    public yAxis: NavigatorAxis = void 0 as any;
+    public xAxis: NavigatorAxisComposition = void 0 as any;
+    public yAxis: NavigatorAxisComposition = void 0 as any;
     public zoomedMax: number = void 0 as any;
     public zoomedMin: number = void 0 as any;
 
@@ -1978,7 +1977,7 @@ class Navigator {
             } : {
                 offsets: [0, -scrollbarHeight, 0, scrollbarHeight],
                 height: height
-            })) as NavigatorAxis;
+            })) as NavigatorAxisComposition;
 
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
@@ -2002,7 +2001,7 @@ class Navigator {
                 } : {
                     height: height
                 }
-            )) as NavigatorAxis;
+            )) as NavigatorAxisComposition;
 
             // If we have a base series, initialize the navigator series
             if (baseSeries || (navigatorOptions.series as any).data) {
@@ -2064,22 +2063,22 @@ class Navigator {
                         scrollTrackWidth * (value - (min as any)) / valueRange;
                 },
                 toPixels: function (
-                    this: NavigatorAxis,
+                    this: NavigatorAxisComposition,
                     value: number
                 ): number {
                     return this.translate(value);
                 },
                 toValue: function (
-                    this: NavigatorAxis,
+                    this: NavigatorAxisComposition,
                     value: number
                 ): number {
                     return this.translate(value, true);
                 }
-            } as unknown as NavigatorAxis;
+            } as NavigatorAxisComposition;
 
             navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
             navigator.xAxis.navigatorAxis.toFixedRange = (
-                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(
+                NavigatorAxisAdditions.prototype.toFixedRange.bind(
                     navigator.xAxis.navigatorAxis
                 )
             );
@@ -2775,7 +2774,7 @@ class Navigator {
 if (!H.Navigator) {
     H.Navigator = Navigator as any;
 
-    NavigatorAxis.compose(Axis);
+    NavigatorAxisAdditions.compose(Axis);
 
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
@@ -2803,7 +2802,7 @@ if (!H.Navigator) {
         if ((options.navigator as any).enabled ||
             (options.scrollbar as any).enabled
         ) {
-            this.scroller = this.navigator = new (Navigator as any)(this);
+            this.scroller = this.navigator = new Navigator(this);
         }
     });
 

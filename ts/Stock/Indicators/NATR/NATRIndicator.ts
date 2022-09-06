@@ -21,10 +21,11 @@ import type {
     NATRParamsOptions
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
-import type ATRIndicatorType from '../ATR/ATRIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const ATRIndicator: typeof ATRIndicatorType = SeriesRegistry.seriesTypes.atr;
+const {
+    atr: ATRIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 

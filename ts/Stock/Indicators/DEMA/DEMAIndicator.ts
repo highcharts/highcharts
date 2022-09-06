@@ -19,12 +19,13 @@ import type {
     DEMAParamsOptions
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
-import type EMAIndicatorType from '../EMA/EMAIndicator';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
+const {
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

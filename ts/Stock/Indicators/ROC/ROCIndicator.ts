@@ -23,10 +23,11 @@ import type {
     ROCParamsOptions
 } from './ROCOptions';
 import type ROCPoint from './ROCPoint';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,

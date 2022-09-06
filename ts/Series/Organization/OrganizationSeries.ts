@@ -24,7 +24,6 @@ import type {
     OrganizationDataLabelFormatterContext,
     OrganizationDataLabelOptions
 } from './OrganizationDataLabelOptions';
-import type OrganizationPointOptions from './OrganizationPointOptions';
 import type {
     OrganizationSeriesLevelOptions,
     OrganizationSeriesOptions
@@ -34,11 +33,12 @@ import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelO
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PathUtilities from '../PathUtilities.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -49,8 +49,7 @@ const {
     css,
     extend,
     merge,
-    pick,
-    wrap
+    pick
 } = U;
 
 /* *
@@ -115,15 +114,76 @@ class OrganizationSeries extends SankeySeries {
         borderRadius: 3,
 
         /**
-         * Radius for the rounded corners of the links between nodes.
+         * Radius for the rounded corners of the links between nodes. This
+         * option is now deprecated, and moved to
+         * [link.radius](#plotOptions.organization.link.radius).
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
          *
+         * @deprecated
          * @private
+         * @apioption series.organization.linkRadius
          */
-        linkRadius: 10,
 
+        /**
+         * Link Styling options
+         * @since next
+         * @product highcharts
+         */
+        link: {
+            /**
+             * The color of the links between nodes.
+             *
+             * @type {Highcharts.ColorString}
+             * @private
+             */
+            color: Palette.neutralColor60,
+            /**
+             * The line width of the links connecting nodes, in pixels.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            lineWidth: 1,
+            /**
+             * Radius for the rounded corners of the links between nodes.
+             * Works for `default` link type.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            radius: 10,
+            /**
+             * Type of the link shape.
+             *
+             * @sample   highcharts/series-organization/different-link-types
+             *           Different link types
+             *
+             * @declare Highcharts.OrganizationLinkTypeValue
+             * @type {'default' | 'curved' | 'straight'}
+             * @default 'default'
+             * @product highcharts
+             *
+             */
+            type: 'default'
+            /**
+             * Modifier of the shape of the curved link. Works best for values
+             * between 0 and 1, where 0 is a straight line, and 1 is a shape
+             * close to the default one.
+             *
+             * @default 0.5
+             * @type {number}
+             * @since next
+             * @product highcharts
+             * @apioption series.organization.link.offset
+             *
+             */
+        },
         borderWidth: 1,
 
         /**
@@ -158,7 +218,6 @@ class OrganizationSeries extends SankeySeries {
                     SankeyDataLabelFormatterContext
                 )
             ): string {
-
                 const outerStyle: CSSObject = {
                         width: '100%',
                         height: '100%',
@@ -201,24 +260,33 @@ class OrganizationSeries extends SankeySeries {
                     }, 'style="') + '"';
                 }
 
-                if ((this.point as any).image) {
+                const {
+                    description,
+                    image,
+                    title
+                } = this.point as OrganizationPoint;
+
+                if (image) {
                     imageStyle['max-width'] = '30%';
                     innerStyle.width = '70%';
                 }
 
                 // PhantomJS doesn't support flex, roll back to absolute
                 // positioning
-                if ((this as any).series.chart.renderer.forExport) {
+                if (
+                    (this as OrganizationDataLabelFormatterContext)
+                        .series.chart.renderer.forExport
+                ) {
                     outerStyle.display = 'block';
                     innerStyle.position = 'absolute';
-                    innerStyle.left = (this.point as any).image ? '30%' : 0;
+                    innerStyle.left = image ? '30%' : 0;
                     innerStyle.top = 0;
                 }
 
                 let html = '<div ' + styleAttr(outerStyle) + '>';
 
-                if ((this.point as any).image) {
-                    html += '<img src="' + (this.point as any).image + '" ' +
+                if (image) {
+                    html += '<img src="' + image + '" ' +
                         styleAttr(imageStyle) + '>';
                 }
 
@@ -229,14 +297,14 @@ class OrganizationSeries extends SankeySeries {
                         this.point.name + '</h4>';
                 }
 
-                if ((this.point as any).title) {
+                if (title) {
                     html += '<p ' + styleAttr(titleStyle) + '>' +
-                        ((this.point as any).title || '') + '</p>';
+                        (title || '') + '</p>';
                 }
 
-                if ((this.point as any).description) {
+                if (description) {
                     html += '<p ' + styleAttr(descriptionStyle) + '>' +
-                        (this.point as any).description + '</p>';
+                        description + '</p>';
                 }
 
                 html += '</div>' +
@@ -290,22 +358,29 @@ class OrganizationSeries extends SankeySeries {
          */
         hangingIndentTranslation: 'inherit',
         /**
-         * The color of the links between nodes.
+         *
+         * The color of the links between nodes. This option is moved to
+         * [link.color](#plotOptions.organization.link.color).
          *
          * @type {Highcharts.ColorString}
-         *
+         * @deprecated
+         * @apioption series.organization.linkColor
          * @private
          */
-        linkColor: Palette.neutralColor60,
+
         /**
-         * The line width of the links connecting nodes, in pixels.
+         * The line width of the links connecting nodes, in pixels. This option
+         * is now deprecated and moved to the
+         * [link.radius](#plotOptions.organization.link.lineWidth).
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
          *
+         * @deprecated
+         * @apioption series.organization.linkLineWidth
          * @private
          */
-        linkLineWidth: 1,
+
         /**
          * In a horizontal chart, the minimum width of the **hanging** nodes
          * only, in pixels. In a vertical chart, the minimum height of the
@@ -341,82 +416,6 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * General function to apply corner radius to a path - can be lifted to
-     * renderer or utilities if we need it elsewhere.
-     * @private
-     */
-    public static curvedPath(
-        path: SVGPath,
-        r: number
-    ): SVGPath {
-        const d: SVGPath = [];
-
-        for (let i = 0; i < path.length; i++) {
-            const x = path[i][1];
-            const y = path[i][2];
-
-            if (typeof x === 'number' && typeof y === 'number') {
-                // moveTo
-                if (i === 0) {
-                    d.push(['M', x, y]);
-
-                } else if (i === path.length - 1) {
-                    d.push(['L', x, y]);
-
-                // curveTo
-                } else if (r) {
-                    const prevSeg = path[i - 1];
-                    const nextSeg = path[i + 1];
-                    if (prevSeg && nextSeg) {
-                        const x1 = prevSeg[1],
-                            y1 = prevSeg[2],
-                            x2 = nextSeg[1],
-                            y2 = nextSeg[2];
-
-                        // Only apply to breaks
-                        if (
-                            typeof x1 === 'number' &&
-                            typeof x2 === 'number' &&
-                            typeof y1 === 'number' &&
-                            typeof y2 === 'number' &&
-                            x1 !== x2 &&
-                            y1 !== y2
-                        ) {
-                            const directionX = x1 < x2 ? 1 : -1,
-                                directionY = y1 < y2 ? 1 : -1;
-                            d.push([
-                                'L',
-                                x - directionX * Math.min(Math.abs(x - x1), r),
-                                y - directionY * Math.min(Math.abs(y - y1), r)
-                            ], [
-                                'C',
-                                x,
-                                y,
-                                x,
-                                y,
-                                x + directionX * Math.min(Math.abs(x - x2), r),
-                                y + directionY * Math.min(Math.abs(y - y2), r)
-                            ]);
-                        }
-
-                    }
-
-                // lineTo
-                } else {
-                    d.push(['L', x, y]);
-                }
-            }
-        }
-
-        return d;
-
-    }
-
-    /* eslint-enable valid-jsdoc */
-
     /* *
      *
      *  Properties
@@ -443,9 +442,10 @@ class OrganizationSeries extends SankeySeries {
         options: OrganizationDataLabelOptions
     ): void {
         // Align the data label to the point graphic
-        if (options.useHTML) {
-            let width = (point.shapeArgs as any).width,
-                height = (point.shapeArgs as any).height,
+        const shapeArgs = point.shapeArgs;
+        if (options.useHTML && shapeArgs) {
+            let width = shapeArgs.width || 0,
+                height = shapeArgs.height || 0,
                 padjust = (
                     (this.options.borderWidth as any) +
                     2 * (this.options.dataLabels as any).padding
@@ -453,7 +453,7 @@ class OrganizationSeries extends SankeySeries {
 
             if (this.chart.inverted) {
                 width = height;
-                height = (point.shapeArgs as any).width;
+                height = shapeArgs.width || 0;
             }
 
             height -= padjust;
@@ -479,12 +479,9 @@ class OrganizationSeries extends SankeySeries {
 
             // The getBBox function is used in `alignDataLabel` to align
             // inside the box
-            dataLabel.getBBox = function (): BBoxObject {
-                return {
-                    width: width,
-                    height: height
-                } as any;
-            };
+            dataLabel.getBBox = (): BBoxObject => (
+                { width, height, x: 0, y: 0 }
+            );
 
             // Overwrite dataLabel dimensions (#13100).
             dataLabel.width = width;
@@ -498,9 +495,7 @@ class OrganizationSeries extends SankeySeries {
         const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
         // All nodes in an org chart are equal width
-        node.getSum = function (): number {
-            return 1;
-        };
+        node.getSum = (): number => 1;
 
         return node;
 
@@ -520,36 +515,59 @@ class OrganizationSeries extends SankeySeries {
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: OrganizationSeriesOptions = (
-                levelOptions.states &&
-                (levelOptions.states as any)[state as any]
-            ) || {},
-            values: (
-                OrganizationPointOptions &
-                OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth', 'linkOpacity']
-                .reduce(function (
-                    obj: Record<string, unknown>,
-                    key: string
-                ): Record<string, unknown> {
-                    obj[key] = pick(
-                        (stateOptions as any)[key],
-                        (options as any)[key],
-                        (levelOptions as any)[key],
-                        (series.options as any)[key]
-                    );
-                    return obj;
-                }, {});
+            stateOptions: OrganizationSeriesOptions =
+                (levelOptions.states &&
+                    (levelOptions.states as any)[state as any]) ||
+                {},
+            borderRadius = pick(
+                stateOptions.borderRadius,
+                options.borderRadius,
+                levelOptions.borderRadius,
+                series.options.borderRadius
+            ),
+
+            linkColor = pick(
+                stateOptions.linkColor,
+                options.linkColor,
+                levelOptions.linkColor,
+                series.options.linkColor,
+                stateOptions.link && stateOptions.link.color,
+                options.link && options.link.color,
+                levelOptions.link && levelOptions.link.color,
+                series.options.link && series.options.link.color
+            ),
+
+            linkLineWidth = pick(
+                stateOptions.linkLineWidth,
+                options.linkLineWidth,
+                levelOptions.linkLineWidth,
+                series.options.linkLineWidth,
+                stateOptions.link && stateOptions.link.lineWidth,
+                options.link && options.link.lineWidth,
+                levelOptions.link && levelOptions.link.lineWidth,
+                series.options.link && series.options.link.lineWidth
+            ),
+
+            linkOpacity = pick(
+                stateOptions.linkOpacity,
+                options.linkOpacity,
+                levelOptions.linkOpacity,
+                series.options.linkOpacity,
+                stateOptions.link && stateOptions.link.linkOpacity,
+                options.link && options.link.linkOpacity,
+                levelOptions.link && levelOptions.link.linkOpacity,
+                series.options.link && series.options.link.linkOpacity
+            );
 
         if (!point.isNode) {
-            attribs.stroke = values.linkColor;
-            attribs['stroke-width'] = values.linkLineWidth;
-            attribs.opacity = values.linkOpacity;
+            attribs.stroke = linkColor;
+            attribs['stroke-width'] = linkLineWidth;
+            attribs.opacity = linkOpacity;
 
             delete attribs.fill;
         } else {
-            if (values.borderRadius) {
-                attribs.r = values.borderRadius;
+            if (borderRadius) {
+                attribs.r = borderRadius;
             }
         }
         return attribs;
@@ -558,87 +576,131 @@ class OrganizationSeries extends SankeySeries {
     public translateLink(point: OrganizationPoint): void {
         let fromNode = point.fromNode,
             toNode = point.toNode,
-            crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
-            x1 = Math.floor(
-                (fromNode.shapeArgs as any).x +
-                (fromNode.shapeArgs as any).width
-            ) + crisp,
-            y1 = Math.floor(
-                (fromNode.shapeArgs as any).y +
-                (fromNode.shapeArgs as any).height / 2
-            ) + crisp,
-            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 = Math.floor(
-                (toNode.shapeArgs as any).y +
-                (toNode.shapeArgs as any).height / 2
-            ) + crisp,
-            xMiddle,
-            hangingIndent: number = this.options.hangingIndent as any,
-            toOffset = toNode.options.offset,
-            percentOffset =
-                /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-            inverted = this.chart.inverted;
+            linkWidth = pick(
+                this.options.linkLineWidth,
+                this.options.link.lineWidth
+            ),
+            crisp = (Math.round(linkWidth) % 2) / 2,
+            factor = pick((this as any).options.link.offset, 0.5),
+            type = pick(
+                point.options.link && point.options.link.type,
+                this.options.link.type
+            );
+        if (fromNode.shapeArgs && toNode.shapeArgs) {
 
-        if (inverted) {
-            x1 -= (fromNode.shapeArgs as any).width;
-            x2 += (toNode.shapeArgs as any).width;
-        }
-        xMiddle = Math.floor(
-            x2 +
-            (inverted ? 1 : -1) *
-            (this.colDistance - this.nodeWidth) / 2
-        ) + crisp;
-
-        // Put the link on the side of the node when an offset is given. HR
-        // node in the main demo.
-        if (
-            percentOffset &&
-            (percentOffset >= 50 || percentOffset <= -50)
-        ) {
-            xMiddle = x2 = Math.floor(
-                x2 + (inverted ? -0.5 : 0.5) *
-                (toNode.shapeArgs as any).width
-            ) + crisp;
-            y2 = (toNode.shapeArgs as any).y;
-            if (percentOffset > 0) {
-                y2 += (toNode.shapeArgs as any).height;
-            }
-        }
-
-        if (toNode.hangsFrom === fromNode) {
-            if (this.chart.inverted) {
+            let x1 = Math.floor(
+                    (fromNode.shapeArgs.x || 0) +
+                    (fromNode.shapeArgs.width || 0)
+                ) + crisp,
                 y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    (fromNode.shapeArgs as any).height -
-                    hangingIndent / 2
+                    (fromNode.shapeArgs.y || 0) +
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp,
+                y2 = Math.floor(
+                    (toNode.shapeArgs.y || 0) +
+                    (toNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                xMiddle,
+                hangingIndent: number = this.options.hangingIndent as any,
+                toOffset = toNode.options.offset,
+                percentOffset =
+                    /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
+                inverted = this.chart.inverted;
+
+            if (inverted) {
+                x1 -= (fromNode.shapeArgs.width || 0);
+                x2 += (toNode.shapeArgs.width || 0);
+            }
+            xMiddle = this.colDistance ?
+                Math.floor(
+                    x2 +
+                        ((inverted ? 1 : -1) *
+                            (this.colDistance - this.nodeWidth)) /
+                            2
+                ) + crisp :
+                Math.floor((x2 + x1) / 2) + crisp;
+
+            // Put the link on the side of the node when an offset is given. HR
+            // node in the main demo.
+            if (
+                percentOffset &&
+                (percentOffset >= 50 || percentOffset <= -50)
+            ) {
+                xMiddle = x2 = Math.floor(
+                    x2 + (inverted ? -0.5 : 0.5) *
+                    (toNode.shapeArgs.width || 0)
                 ) + crisp;
-                y2 = (
-                    (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height
-                );
+                y2 = toNode.shapeArgs.y || 0;
+                if (percentOffset > 0) {
+                    y2 += toNode.shapeArgs.height || 0;
+                }
+            }
+
+            if (toNode.hangsFrom === fromNode) {
+                if (this.chart.inverted) {
+                    y1 = Math.floor(
+                        (fromNode.shapeArgs.y || 0) +
+                        (fromNode.shapeArgs.height || 0) -
+                        hangingIndent / 2
+                    ) + crisp;
+                    y2 = (
+                        (toNode.shapeArgs.y || 0) +
+                        (toNode.shapeArgs.height || 0)
+                    );
+                } else {
+                    y1 = Math.floor(
+                        (fromNode.shapeArgs.y || 0) +
+                        hangingIndent / 2
+                    ) + crisp;
+
+                }
+                xMiddle = x2 = Math.floor(
+                    (toNode.shapeArgs.x || 0) +
+                    (toNode.shapeArgs.width || 0) / 2
+                ) + crisp;
+            }
+
+            point.plotX = xMiddle;
+            point.plotY = (y1 + y2) / 2;
+            point.shapeType = 'path';
+            if (type === 'straight') {
+                point.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        ['L', x2, y2]
+                    ]
+                };
+            } else if (type === 'curved') {
+                const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
+                point.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
+                    ]
+                };
             } else {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    hangingIndent / 2
-                ) + crisp;
-
+                point.shapeArgs = {
+                    d: PathUtilities.curvedPath(
+                        [
+                            ['M', x1, y1],
+                            ['L', xMiddle, y1],
+                            ['L', xMiddle, y2],
+                            ['L', x2, y2]
+                        ],
+                        pick(this.options.linkRadius, this.options.link.radius)
+                    )
+                };
             }
-            xMiddle = x2 = Math.floor(
-                (toNode.shapeArgs as any).x +
-                (toNode.shapeArgs as any).width / 2
-            ) + crisp;
-        }
 
-        point.plotY = 1;
-        point.shapeType = 'path';
-        point.shapeArgs = {
-            d: OrganizationSeries.curvedPath([
-                ['M', x1, y1],
-                ['L', xMiddle, y1],
-                ['L', xMiddle, y2],
-                ['L', x2, y2]
-            ], this.options.linkRadius as any)
-        };
+            point.dlBox = {
+                x: (x1 + x2) / 2,
+                y: (y1 + y2) / 2,
+                height: linkWidth,
+                width: 0
+            };
+
+        }
     }
 
     public translateNode(

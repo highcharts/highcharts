@@ -178,6 +178,10 @@ function copyFiles() {
             to
         } = folder;
         getFilesInFolder(from, true)
+            .filter(path => (
+                !(path.startsWith('es-modules') && path.endsWith('.d.ts')) &&
+                path !== 'package.json'
+            ))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);
             });

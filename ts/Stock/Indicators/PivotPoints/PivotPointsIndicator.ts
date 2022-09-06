@@ -21,13 +21,14 @@ import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
 } from './PivotPointsOptions';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -265,7 +266,7 @@ class PivotPointsIndicator extends SMAIndicator {
                         }
                     }
                     SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
-                        .apply(indicator, arguments);
+                        .call(indicator);
                 }
             );
         }
