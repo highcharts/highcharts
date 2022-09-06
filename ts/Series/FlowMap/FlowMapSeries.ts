@@ -167,6 +167,20 @@ class FlowMapSeries extends SankeySeries {
     }
 
     /**
+     * Return a scaled weight.
+     * @private
+     */
+    public scaleWeight(
+        number: number,
+        inMin: number,
+        inMax: number,
+        outMin: number,
+        outMax: number
+    ): number {
+        return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+
+    /**
      * Run translation operations for one link.
      * @private
      */
@@ -177,13 +191,28 @@ class FlowMapSeries extends SankeySeries {
             toPoint = chart.get(point.options.to || ''),
             linkHeight = 0, // 10,
             nodeW = 0, // this.nodeWidth;
-            pointOptions = point.options;
+            pointOptions = point.options,
+            weights: any = [],
+            minWeight,
+            maxWeight,
+            newWeight;
+
         const curveFactor = pointOptions.curveFactor || 0,
             weight = pointOptions.weight || 1,
             // TO DO: correct in data array
             growTowards = pointOptions.growTowards,
             offset = pointOptions.markerEnd &&
                 pointOptions.markerEnd.height || 0;
+
+        this.points.forEach((p): void =>
+            weights.push(p.options.weight)
+        );
+
+        minWeight = Math.min(...weights);
+        maxWeight = Math.max(...weights);
+
+        // Get a new rescaled weight
+        newWeight = this.scaleWeight(weight, minWeight, maxWeight, 1, 40);
 
         // Connect to the linked parent point (in mappoint) to trigger
         // series redraw for the linked point (in flow)
@@ -293,8 +322,8 @@ class FlowMapSeries extends SankeySeries {
 
             // The `fineTune` prevents an obvious mismatch along the curve.
             const fineTune = 1 + Math.sqrt(curveFactor * curveFactor) * 0.25;
-            wX *= weight * fineTune;
-            wY *= weight * fineTune;
+            wX *= newWeight * fineTune;
+            wY *= newWeight * fineTune;
 
             // Ccalculate the arc strength.
             let arcPointX = (mX + dX * curveFactor),
@@ -308,8 +337,8 @@ class FlowMapSeries extends SankeySeries {
             fromXToArc = fromYToArc;
             fromYToArc = -tmp;
 
-            fromXToArc *= weight;
-            fromYToArc *= weight;
+            fromXToArc *= newWeight;
+            fromYToArc *= newWeight;
 
 
             // Calculate edge vectors in the to-point.
@@ -323,14 +352,14 @@ class FlowMapSeries extends SankeySeries {
             // Unit vector for end edge is used to calculate the markerEnd.
             const [endEdgeXNorm, endingEdgeYNorm] = [toXToArc, toYToArc];
 
-            toXToArc *= weight;
-            toYToArc *= weight;
+            toXToArc *= newWeight;
+            toYToArc *= newWeight;
 
             // Shrink the starting edge and middle thickness to make it grow
             // towards the end.
             if (growTowards) {
-                fromXToArc /= weight;
-                fromYToArc /= weight;
+                fromXToArc /= newWeight;
+                fromYToArc /= newWeight;
                 wX /= 4;
                 wY /= 4;
             }
