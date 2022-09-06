@@ -67,6 +67,8 @@
             }]
         }, {
             type: 'flowmap',
+            keys: ['from', 'to', 'curveFactor',
+                'weight', 'growTowards', 'markerEnd'],
             data: [
                 ['Warszawa', 'Oslo', 0, 5, true, {
                     enabled: true,
