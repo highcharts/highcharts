@@ -1,0 +1,12 @@
+---
+name: Bubbles with blend colors
+authors:
+  - Rafal Sebestjanski
+js_wrap: b
+alt_text: >-
+  Highcharts Bubble chart JavaScript example graph with blend colors.
+tags:
+  - Highcharts demo
+categories:
+  - Scatter and bubble charts
+...
