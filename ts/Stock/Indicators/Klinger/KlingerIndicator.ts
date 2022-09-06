@@ -14,7 +14,6 @@
  *
  * */
 
-import type EMAIndicatorType from '../EMA/EMAIndicator';
 import type {
     KlingerOptions,
     KlingerParamsOptions
@@ -22,12 +21,13 @@ import type {
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    ema: EMAIndicator,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
