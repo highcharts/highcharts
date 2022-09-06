@@ -1786,13 +1786,14 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         /** @ignore-option */
         className: 'highcharts-full-screen',
         noDataState: 'normal',
-        // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
             button: HTMLDOMElement
         ): void {
-            this.chart.fullscreen.toggle();
+            if (this.chart.fullscreen) {
+                this.chart.fullscreen.toggle();
+            }
             fireEvent(
                 this,
                 'deselectButton',

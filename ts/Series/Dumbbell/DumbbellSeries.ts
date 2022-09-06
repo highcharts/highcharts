@@ -245,7 +245,7 @@ class DumbbellSeries extends AreaRangeSeries {
         }
 
         // Connector should reflect upper marker's zone color
-        if (point.upperGraphic) {
+        if (point.graphics && point.graphics[1]) {
             origProps = {
                 y: point.y,
                 zone: point.zone
@@ -392,16 +392,17 @@ class DumbbellSeries extends AreaRangeSeries {
         // Draw connectors and color upper markers
         while (i < pointLength) {
             point = series.points[i];
+            const [lowerGraphic, upperGraphic] = point.graphics || [];
 
             series.drawConnector(point);
 
-            if (point.upperGraphic) {
-                (point.upperGraphic.element as any).point = point;
-                point.upperGraphic.addClass('highcharts-lollipop-high');
+            if (upperGraphic) {
+                (upperGraphic.element as any).point = point;
+                upperGraphic.addClass('highcharts-lollipop-high');
             }
             (point.connector.element as any).point = point;
 
-            if (point.lowerGraphic) {
+            if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
                 lowerGraphicColor = pick(
                     point.options.lowColor,
@@ -412,11 +413,11 @@ class DumbbellSeries extends AreaRangeSeries {
                     series.color
                 );
                 if (!chart.styledMode) {
-                    point.lowerGraphic.attr({
+                    lowerGraphic.attr({
                         fill: lowerGraphicColor
                     });
                 }
-                point.lowerGraphic.addClass('highcharts-lollipop-low');
+                lowerGraphic.addClass('highcharts-lollipop-low');
             }
             i++;
         }

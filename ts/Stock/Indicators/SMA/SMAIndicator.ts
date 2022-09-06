@@ -25,7 +25,9 @@ import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const LineSeries: typeof LineSeriesType = SeriesRegistry.seriesTypes.line;
+const {
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -36,8 +38,6 @@ const {
     pick,
     splat
 } = U;
-
-import './SMAComposition.js';
 
 /* *
  *

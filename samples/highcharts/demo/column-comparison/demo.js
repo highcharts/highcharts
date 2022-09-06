@@ -288,8 +288,8 @@ locations.forEach(location => {
 
         chart.update({
             title: {
-                text: `Summer Olympics ${location.year} - Top 5 
-                countries by Gold medals`
+                text: 'Summer Olympics ' + location.year +
+                    ' - Top 5 countries by Gold medals'
             },
             subtitle: {
                 text: 'Comparing to results from Summer Olympics ' +

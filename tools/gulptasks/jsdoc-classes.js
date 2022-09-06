@@ -54,7 +54,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/Drilldown.js',
     'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
-    'js/Extensions/FullScreen.js',
+    'js/Extensions/Exporting/Fullscreen.js',
     'js/Extensions/GeoJSON.js',
     'js/Extensions/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',

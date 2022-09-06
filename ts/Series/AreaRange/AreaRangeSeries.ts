@@ -568,6 +568,7 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+            point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
             // points
@@ -580,8 +581,10 @@ class AreaRangeSeries extends AreaSeries {
                 y: point.y
             };
 
-            point.lowerGraphic = point.graphic;
-            point.graphic = point.upperGraphic;
+            if (point.graphic) {
+                point.graphics[0] = point.graphic;
+            }
+            point.graphic = point.graphics[1];
             point.plotY = point.plotHigh;
             if (defined(point.plotHighX)) {
                 point.plotX = point.plotHighX;
@@ -611,8 +614,11 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
-            point.upperGraphic = point.graphic;
-            point.graphic = point.lowerGraphic;
+            point.graphics = point.graphics || [];
+            if (point.graphic) {
+                point.graphics[1] = point.graphic;
+            }
+            point.graphic = point.graphics[0];
             if (point.origProps) {
                 extend(point, point.origProps);
                 delete point.origProps;
