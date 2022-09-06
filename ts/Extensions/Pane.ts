@@ -565,8 +565,8 @@ function isInsidePane(
             }
         }
     }
-
-    return distance <= center[2] / 2 && insideSlice;
+    // Round up radius because x and y values are rounded
+    return distance <= Math.ceil(center[2] / 2) && insideSlice;
 }
 
 Chart.prototype.getHoverPane = function (
