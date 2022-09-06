@@ -9,7 +9,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import BrokenAxis from '../../Core/Axis/BrokenAxis.js';
+import BrokenAxisAdditions from '../../Core/Axis/BrokenAxisComposition.js';
 const G: AnyRecord = Highcharts;
 // Compositions
-BrokenAxis.compose(G.Axis, G.Series);
+BrokenAxisAdditions.compose(G.Axis, G.Series);

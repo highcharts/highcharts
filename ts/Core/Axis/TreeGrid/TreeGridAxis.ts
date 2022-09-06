@@ -34,7 +34,7 @@ import type {
 } from './TreeGridOptions';
 
 import type Axis from '../Axis.js';
-import BrokenAxis from '../BrokenAxis.js';
+import BrokenAxisAdditions from '../BrokenAxisComposition.js';
 import GridAxis from '../GridAxis.js';
 import type Tick from '../Tick.js';
 import Tree from '../../../Gantt/Tree.js';
@@ -876,7 +876,7 @@ class TreeGridAxisAdditions {
         }
 
         GridAxis.compose(AxisClass, ChartClass, TickClass);
-        BrokenAxis.compose(AxisClass, SeriesClass);
+        BrokenAxisAdditions.compose(AxisClass, SeriesClass);
         TreeGridTick.compose(TickClass);
 
         return AxisClass as (T&typeof TreeGridAxisComposition);
