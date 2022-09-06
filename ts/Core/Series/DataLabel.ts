@@ -94,7 +94,7 @@ declare module './SeriesLike' {
             alignTo: BBoxObject,
             isNew?: boolean
         ): void;
-        drawDataLabels(): void;
+        drawDataLabels(points?:Array<Point>): void;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -460,12 +460,12 @@ namespace DataLabel {
      * @private
      */
     function drawDataLabels(
-        this: Series
+        this: Series,
+        points: Array<Point> = this.points
     ): void {
         const series = this,
             chart = series.chart,
             seriesOptions = series.options,
-            points = series.points,
             hasRendered = series.hasRendered || 0,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
@@ -476,7 +476,7 @@ namespace DataLabel {
             );
 
         let seriesDlOptions = seriesOptions.dataLabels,
-            pointOptions,
+            pointOptions: Array<DataLabelOptions&AnyRecord>,
             dataLabelsGroup: SVGElement;
 
         const dataLabelAnim = (seriesDlOptions as any).animation,
@@ -549,10 +549,7 @@ namespace DataLabel {
                 );
 
                 // Handle each individual data label for this point
-                pointOptions.forEach((
-                    labelOptions: DataLabelOptions,
-                    i: number
-                ): void => {
+                pointOptions.forEach((labelOptions, i): void => {
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
@@ -575,7 +572,7 @@ namespace DataLabel {
                         isNew = !dataLabel;
 
                     const labelDistance = pick(
-                        (labelOptions as any).distance,
+                        labelOptions.distance,
                         point.labelDistance
                     );
 
@@ -770,18 +767,22 @@ namespace DataLabel {
                             );
                         }
 
-                        if (labelOptions.textPath && !labelOptions.useHTML) {
+                        const textPathOptions =
+                            labelOptions[point.formatPrefix + 'TextPath'] ||
+                            labelOptions.textPath;
+
+                        if (textPathOptions && !labelOptions.useHTML) {
                             dataLabel.setTextPath(
                                 (
                                     point.getDataLabelPath &&
                                     point.getDataLabelPath(dataLabel)
                                 ) || point.graphic,
-                                labelOptions.textPath
+                                textPathOptions
                             );
 
                             if (
                                 point.dataLabelPath &&
-                                !labelOptions.textPath.enabled
+                                !textPathOptions.enabled
                             ) {
                                 // clean the DOM
                                 point.dataLabelPath = (

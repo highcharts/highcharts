@@ -76,6 +76,8 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    public description?: string;
+
     public fromNode: OrganizationPoint = void 0 as any;
 
     public image?: OrganizationSeriesNodeOptions['image'];
@@ -89,6 +91,8 @@ class OrganizationPoint extends SankeyPointClass {
     public options: OrganizationPointOptions = void 0 as any;
 
     public series: OrganizationSeries = void 0 as any;
+
+    public title?: string;
 
     public toNode: OrganizationPoint = void 0 as any;
 
