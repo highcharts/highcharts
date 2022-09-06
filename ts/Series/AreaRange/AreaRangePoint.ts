@@ -96,13 +96,13 @@ class AreaRangePoint extends AreaPoint {
 
     public origProps?: Partial<AreaRangePoint>;
 
-    public plotHigh?: number = void 0;
+    public plotHigh?: number;
 
-    public plotLow?: number = void 0;
+    public plotLow?: number;
 
-    public plotHighX?: number = void 0;
+    public plotHighX?: number;
 
-    public plotLowX?: number = void 0;
+    public plotLowX?: number;
 
     public plotX: number = void 0 as any;
 
