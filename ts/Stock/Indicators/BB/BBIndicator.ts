@@ -117,7 +117,7 @@ class BBIndicator extends SMAIndicator {
          */
 
         /**
-         * Paramters used in calculation of the regression points.
+         * Parameters used in calculation of the regression points.
          */
         params: {
             period: 20,
