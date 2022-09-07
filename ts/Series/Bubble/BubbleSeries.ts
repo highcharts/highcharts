@@ -224,6 +224,25 @@ class BubbleSeries extends ScatterSeries {
      */
     public static defaultOptions: BubbleSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
+        /**
+         * Set of colors for each point (each point will have multiple
+         * graphics). Can be an array of strings (if 3 colors defined, every
+         * next marker is 33.3% smaller) or an array of color stops (e.g. for
+         * `[[0.2, '#ff0000'], [1, '#0000ff']]` the smallest top marker is 5
+         * times smaller than the biggest bottom one).
+         *
+         * @sample highcharts/demo/bubble-blend-colors
+         *         Blend colors
+         * @sample highcharts/series-bubble/blend-colors
+         *         Blend colors themes and steps
+         * @sample {highmaps} maps/demo/blend-colors
+         *         Blend colors with mapbubble
+         *
+         * @since       {next}
+         * @type        {Array<ColorType>|Array<Array<number,ColorType>>}
+         * @apioption   plotOptions.bubble.blendColors
+         */
+
         dataLabels: {
             formatter: function (
                 this: Point.PointLabelObject

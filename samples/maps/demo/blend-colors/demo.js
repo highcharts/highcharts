@@ -39,7 +39,15 @@
                 mapbubble: {
                     minSize: 20,
                     maxSize: 200,
-                    opacity: 0.3
+                    opacity: 0.3,
+                    marker: {
+                        lineWidth: 0,
+                        states: {
+                            hover: {
+                                enabled: false
+                            }
+                        }
+                    }
                 }
             },
 

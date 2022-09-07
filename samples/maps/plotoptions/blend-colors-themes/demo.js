@@ -22,7 +22,12 @@
                 '#0000ff'
             ],
             marker: {
-                lineWidth: 0
+                lineWidth: 0,
+                states: {
+                    hover: {
+                        enabled: false
+                    }
+                }
             },
             opacity: 0.75,
             data: [

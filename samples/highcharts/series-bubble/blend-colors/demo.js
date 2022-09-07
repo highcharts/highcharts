@@ -8,7 +8,12 @@ const chart = Highcharts.chart('container', {
     series: [{
         type: 'bubble',
         marker: {
-            lineWidth: 0
+            lineWidth: 0,
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
         },
         opacity: 0.75,
         minSize: '55%',
