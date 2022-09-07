@@ -117,7 +117,7 @@ class BBIndicator extends SMAIndicator {
          */
 
         /**
-         * Paramters used in calculation of regression series' points.
+         * Paramters used in calculation of the regression points.
          */
         params: {
             period: 20,
@@ -132,7 +132,7 @@ class BBIndicator extends SMAIndicator {
          */
         bottomLine: {
             /**
-             * Styles for a bottom line.
+             * Styles for the bottom line.
              */
             styles: {
                 /**
@@ -155,7 +155,7 @@ class BBIndicator extends SMAIndicator {
          */
         topLine: {
             /**
-             * Styles for a top line.
+             * Styles for the top line.
              */
             styles: {
                 /**
