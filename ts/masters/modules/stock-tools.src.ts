@@ -14,9 +14,9 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import StockTools from '../../Stock/StockTools.js';
-import StockToolsGui from '../../Stock/StockToolsGui.js';
-import Toolbar from '../../Stock/StockToolbar.js';
+import StockTools from '../../Stock/StockTools/StockTools.js';
+import StockToolsGui from '../../Stock/StockTools/StockToolsGui.js';
+import Toolbar from '../../Stock/StockTools/StockToolbar.js';
 const G: AnyRecord = Highcharts;
 G.Toolbar = Toolbar;
 StockTools.compose(NavigationBindings);

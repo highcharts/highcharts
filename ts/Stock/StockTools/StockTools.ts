@@ -18,14 +18,14 @@
  *
  * */
 
-import type AxisType from '../Core/Axis/AxisType';
+import type AxisType from '../../Core/Axis/AxisType';
 
-import D from '../Core/DefaultOptions.js';
+import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
-import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../Extensions/Annotations/NavigationBindingsUtilities.js';
+import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
+import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
-import Series from '../Core/Series/Series.js';
+import Series from '../../Core/Series/Series.js';
 import StockToolsBindings from './StockToolsBindings.js';
 import StockToolsDefaults from './StockToolsDefaults.js';
 import STU from './StockToolsUtilities.js';
@@ -33,7 +33,7 @@ const {
     isNotNavigatorYAxis,
     isPriceIndicatorEnabled
 } = STU;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     defined,
@@ -47,7 +47,7 @@ const {
  *
  * */
 
-declare module '../Extensions/Annotations/NavigationBindingsLike' {
+declare module '../../Extensions/Annotations/NavigationBindingsLike' {
     interface NavigationBindingsLike {
         /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;
