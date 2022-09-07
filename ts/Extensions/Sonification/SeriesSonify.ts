@@ -21,7 +21,7 @@
 import type ChartSonify from './ChartSonify';
 import type PointSonify from './PointSonify';
 import type { SonificationInstrumentOptions } from './SonificationOptions';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type Series from '../../Core/Series/Series';
 import type {
     SeriesEventsOptions,

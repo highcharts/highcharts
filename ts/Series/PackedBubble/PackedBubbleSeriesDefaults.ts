@@ -41,6 +41,8 @@ const { isNumber } = U;
  * @since        7.0.0
  * @requires     highcharts-more
  * @optionparent plotOptions.packedbubble
+ *
+ * @private
  */
 const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
     /**
