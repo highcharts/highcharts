@@ -747,6 +747,8 @@ class Chart {
 
         if (!options.ignoreX) {
             const xAxis = (
+                options.axis && options.axis.isXAxis && options.axis
+            ) || (
                 series && (inverted ? series.yAxis : series.xAxis)
             ) || {
                 pos: plotLeft,
@@ -772,6 +774,8 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
+                options.axis && !options.axis.isXAxis && options.axis
+            ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
                 pos: plotTop,
@@ -3574,52 +3578,6 @@ class Chart {
     }
 
     /**
-     * Checks if mouse pointer is within pane.
-     *
-     * @private
-     * @function Highcharts.Chart#isWithinPane
-     * @emits Highcharts.Chart#event:afterIsWithinPane
-     */
-    public isWithinPane(
-        axis: Axis,
-        mouseDownX: number | undefined,
-        mouseDownY: number | undefined
-    ): boolean {
-        const chart = this,
-            mouseDownPos = chart.inverted ? mouseDownX : mouseDownY,
-            axisStartPos = chart.inverted ? axis.left : axis.top,
-            axisEndPos = chart.inverted ?
-                axisStartPos + axis.width : axisStartPos + axis.height,
-            isXAxis = axis.isXAxis;
-
-        let isWithinPane = false;
-
-        // Check if zoomed area is within the pane (#1289).
-        // In case of multiple panes only one pane should be zoomed.
-        if (
-            !defined(mouseDownPos) ||
-            (
-                !isXAxis &&
-                mouseDownPos >= axisStartPos &&
-                mouseDownPos <= axisEndPos
-            ) ||
-            isXAxis
-        ) {
-            isWithinPane = true;
-        }
-
-        let event = { isWithinPane, mouseDownX, mouseDownY };
-
-        fireEvent(
-            this,
-            'afterIsWithinPane',
-            event
-        );
-
-        return event.isWithinPane;
-    }
-
-    /**
      * Zoom into a given portion of the chart given by axis coordinates.
      *
      * @private
@@ -3651,10 +3609,16 @@ class Chart {
                 // don't zoom more than minRange
                 if (
                     pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
-                    chart.isWithinPane(
-                        axis,
-                        pointer.mouseDownX,
-                        pointer.mouseDownY
+                    (
+                        defined(pointer.mouseDownX) &&
+                        defined(pointer.mouseDownY) &&
+                        chart.isInsidePlot(
+                            pointer.mouseDownX - chart.plotLeft,
+                            pointer.mouseDownY - chart.plotTop,
+                            { axis }
+                        )
+                    ) || !defined(
+                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
                     )
                 ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
@@ -4060,6 +4024,7 @@ namespace Chart {
     );
 
     export interface IsInsideOptionsObject {
+        axis?: Axis;
         ignoreX?: boolean;
         ignoreY?: boolean;
         inverted?: boolean;
@@ -4213,6 +4178,9 @@ export default Chart;
 
 /**
  * @interface Highcharts.ChartIsInsideOptionsObject
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#axis
+ * @type {Highcharts.Axis|undefined}
  *//**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
  * @type {boolean|undefined}
