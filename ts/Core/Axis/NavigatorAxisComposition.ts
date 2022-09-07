@@ -17,7 +17,7 @@
  * */
 
 import type Axis from './Axis.js';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
 const { isTouchDevice } = H;

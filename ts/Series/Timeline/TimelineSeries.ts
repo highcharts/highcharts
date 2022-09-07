@@ -21,7 +21,7 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type {
     TimelineDataLabelContextObject,
     TimelineDataLabelOptions
