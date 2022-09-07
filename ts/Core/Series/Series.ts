@@ -31,7 +31,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,

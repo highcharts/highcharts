@@ -16,7 +16,6 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type {
     WilliamsROptions,
     WilliamsRParamsOptions
@@ -25,7 +24,9 @@ import type WilliamsRPoint from './WilliamsRPoint';
 
 import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

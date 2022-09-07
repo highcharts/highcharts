@@ -38,9 +38,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
     isArray,
+    isNumber,
     pick,
     merge
 } = U;
@@ -256,68 +258,12 @@ class AreaRangeSeries extends AreaSeries {
         const chart = this.chart,
             xy = this.xAxis.postTranslate(
                 point.rectPlotX || 0,
-                this.yAxis.len - point.plotHigh
+                this.yAxis.len - (point.plotHigh || 0)
             );
 
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;
-    }
-
-    /**
-     * Translate data points from raw values x and y to plotX and plotY.
-     * @private
-     */
-    public translate(): void {
-        const series = this;
-
-        areaProto.translate.apply(series);
-
-        // Set plotLow and plotHigh
-        series.points.forEach(function (
-            point: AreaRangePoint,
-            i: number
-        ): void {
-            const high = point.high,
-                plotY = point.plotY;
-
-            if (point.isNull) {
-                point.plotY = null as any;
-            } else {
-                const yAxis = series.chart.hasParallelCoordinates ?
-                    series.chart.yAxis[i] :
-                    series.yAxis;
-
-                point.plotLow = plotY as any;
-
-                // Calculate plotHigh value based on each yAxis scale (#15752)
-                point.plotHigh = yAxis.translate(
-                    series.dataModify ?
-                        series.dataModify.modifyValue(high) : high,
-                    0 as any,
-                    1 as any,
-                    0 as any,
-                    1 as any
-                );
-
-                if (series.dataModify) {
-                    point.yBottom = point.plotHigh;
-                }
-            }
-        });
-
-        // Postprocess plotHigh
-        if (this.chart.polar) {
-            this.points.forEach(function (
-                point: AreaRangePoint
-            ): void {
-                series.highToXY(point);
-                point.tooltipPos = [
-                    (point.plotHighX + point.plotLowX) / 2,
-                    (point.plotHigh + point.plotLow) / 2
-                ];
-            });
-        }
     }
 
     /**
@@ -492,13 +438,14 @@ class AreaRangeSeries extends AreaSeries {
                 while (i--) {
                     point = data[i];
                     if (point) {
+                        const { plotHigh = 0, plotLow = 0 } = point;
                         up = upperDataLabelOptions.inside ?
-                            point.plotHigh < point.plotLow :
-                            point.plotHigh > point.plotLow;
+                            plotHigh < plotLow :
+                            plotHigh > plotLow;
 
                         point.y = point.high;
                         point._plotY = point.plotY;
-                        point.plotY = point.plotHigh;
+                        point.plotY = plotHigh;
 
                         // Store original data labels and set preliminary label
                         // objects to be picked up in the uber method
@@ -551,9 +498,10 @@ class AreaRangeSeries extends AreaSeries {
                 while (i--) {
                     point = data[i];
                     if (point) {
+                        const { plotHigh = 0, plotLow = 0 } = point;
                         up = lowerDataLabelOptions.inside ?
-                            point.plotHigh < point.plotLow :
-                            point.plotHigh > point.plotLow;
+                            plotHigh < plotLow :
+                            plotHigh > plotLow;
 
                         // Set the default offset
                         point.below = !up;
@@ -620,6 +568,7 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+            point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
             // points
@@ -632,8 +581,10 @@ class AreaRangeSeries extends AreaSeries {
                 y: point.y
             };
 
-            point.lowerGraphic = point.graphic;
-            point.graphic = point.upperGraphic;
+            if (point.graphic) {
+                point.graphics[0] = point.graphic;
+            }
+            point.graphic = point.graphics[1];
             point.plotY = point.plotHigh;
             if (defined(point.plotHighX)) {
                 point.plotX = point.plotHighX;
@@ -663,8 +614,11 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
-            point.upperGraphic = point.graphic;
-            point.graphic = point.lowerGraphic;
+            point.graphics = point.graphics || [];
+            if (point.graphic) {
+                point.graphics[1] = point.graphic;
+            }
+            point.graphic = point.graphics[0];
             if (point.origProps) {
                 extend(point, point.origProps);
                 delete point.origProps;
@@ -674,6 +628,51 @@ class AreaRangeSeries extends AreaSeries {
     }
 
 }
+
+addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
+
+    // Set plotLow and plotHigh
+
+    // Rules out lollipop, but lollipop should not inherit range series in the
+    // first place
+    if (this.pointArrayMap.join(',') === 'low,high') {
+        this.points.forEach((point): void => {
+            const high = point.high,
+                plotY = point.plotY;
+
+            if (point.isNull) {
+                point.plotY = void 0;
+            } else {
+                point.plotLow = plotY;
+
+                // Calculate plotHigh value based on each yAxis scale (#15752)
+                point.plotHigh = isNumber(high) ? this.yAxis.translate(
+                    this.dataModify ?
+                        this.dataModify.modifyValue(high) : high,
+                    false,
+                    true,
+                    void 0,
+                    true
+                ) : void 0;
+
+                if (this.dataModify) {
+                    point.yBottom = point.plotHigh;
+                }
+            }
+        });
+
+        // Postprocess plotHigh
+        if (this.chart.polar) {
+            this.points.forEach((point): void => {
+                this.highToXY(point);
+                point.tooltipPos = [
+                    ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
+                    ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
+                ];
+            });
+        }
+    }
+}, { order: 0 });
 
 /* *
  *

@@ -16,18 +16,19 @@
 
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
-import type ColumnSeriesType from '../../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
-const columnProto: ColumnSeriesType =
-    SeriesRegistry.seriesTypes.column.prototype;
+const {
+    column: {
+        prototype: columnProto
+    },
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

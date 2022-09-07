@@ -22,14 +22,14 @@ Highcharts.chart('container', {
         name: 'Representatives',
         keys: ['name', 'y', 'color', 'label'],
         data: [
-            ['The Left', 39, '#BE3075', 'DIE LINKE'],
-            ['Social Democratic Party', 206, '#EB001F', 'SPD'],
-            ['Alliance 90/The Greens', 118, '#64A12D', 'GRÜNE'],
-            ['Free Democratic Party', 92, '#FFED00', 'FDP'],
+            ['The Left', 39, '#CC0099', 'DIE LINKE'],
+            ['Social Democratic Party', 206, '#EE0011', 'SPD'],
+            ['Alliance 90/The Greens', 118, '#448833', 'GRÜNE'],
+            ['Free Democratic Party', 92, '#FFCC00', 'FDP'],
             ['Christian Democratic Union', 152, '#000000', 'CDU'],
-            ['Christian Social Union in Bavaria', 45, '#008AC5', 'CSU'],
-            ['Alternative for Germany', 83, '#009EE0', 'AfD'],
-            ['South Schleswig Voters\' Association', 1, '#284B63', 'SSW']
+            ['Christian Social Union in Bavaria', 45, '#3366CC', 'CSU'],
+            ['Alternative for Germany', 83, '#3399FF', 'AfD'],
+            ['South Schleswig Voters\' Association', 1, '#000099', 'SSW']
         ],
         dataLabels: {
             enabled: true,

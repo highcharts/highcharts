@@ -1365,6 +1365,7 @@ function wrapSeriesProcessData(
         // do default behaviour.
         if (
             // First pass with options.data:
+            !getSeriesBoosting(dataToMeasure) ||
             series.type === 'heatmap' ||
             series.type === 'treemap' ||
             // processedYData for the stack (#7481):

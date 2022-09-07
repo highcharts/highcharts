@@ -14,7 +14,6 @@
  *
  * */
 
-import type ColumnSeriesType from '../../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -27,14 +26,15 @@ import type MACDPoint from './MACDPoint';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    column: ColumnSeries,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import ColorString from '../../../Core/Color/ColorString';
 const {

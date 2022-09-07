@@ -38,6 +38,7 @@ import U from '../../Core/Utilities.js';
 const {
     clamp,
     extend,
+    isNumber,
     merge,
     pick
 } = U;
@@ -167,57 +168,64 @@ class ColumnRangeSeries extends AreaRangeSeries {
         // Set plotLow and plotHigh
         this.points.forEach((point): void => {
             const shapeArgs = point.shapeArgs || {},
-                minPointLength = this.options.minPointLength;
-
-            point.plotHigh = plotHigh = safeBounds(
-                yAxis.translate(
+                minPointLength = this.options.minPointLength,
+                plotY = point.plotY,
+                plotHigh = yAxis.translate(
                     point.high, 0 as any, 1 as any, 0 as any, 1 as any
-                )
-            );
-            point.plotLow = safeBounds(point.plotY as any);
-
-            // adjust shape
-            y = plotHigh;
-            height = pick((point as any).rectPlotY, point.plotY) - plotHigh;
-
-            // Adjust for minPointLength
-            if (Math.abs(height) < (minPointLength as any)) {
-                heightDifference = ((minPointLength as any) - height);
-                height += heightDifference;
-                y -= heightDifference / 2;
-
-            // Adjust for negative ranges or reversed Y axis (#1457)
-            } else if (height < 0) {
-                height *= -1;
-                y -= height;
-            }
-
-            if (isRadial && this.polar) {
-
-                start = point.barX + startAngleRad;
-                point.shapeType = 'arc';
-                point.shapeArgs = this.polar.arc(
-                    y + height,
-                    y,
-                    start,
-                    start + point.pointWidth
                 );
-            } else {
 
-                shapeArgs.height = height;
-                shapeArgs.y = y;
-                const { x = 0, width = 0 } = shapeArgs;
+            if (isNumber(plotHigh) && isNumber(plotY)) {
+                point.plotHigh = safeBounds(plotHigh);
+                point.plotLow = safeBounds(plotY);
 
-                point.tooltipPos = chart.inverted ?
-                    [
-                        yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2,
-                        xAxis.len + xAxis.pos - chart.plotTop - x - width / 2,
-                        height
-                    ] : [
-                        xAxis.left - chart.plotLeft + x + width / 2,
-                        yAxis.pos - chart.plotTop + y + height / 2,
-                        height
-                    ]; // don't inherit from column tooltip position - #3372
+                // adjust shape
+                y = point.plotHigh;
+                height = pick(
+                    (point as any).rectPlotY,
+                    point.plotY
+                ) - point.plotHigh;
+
+                // Adjust for minPointLength
+                if (Math.abs(height) < (minPointLength as any)) {
+                    heightDifference = ((minPointLength as any) - height);
+                    height += heightDifference;
+                    y -= heightDifference / 2;
+
+                // Adjust for negative ranges or reversed Y axis (#1457)
+                } else if (height < 0) {
+                    height *= -1;
+                    y -= height;
+                }
+
+                if (isRadial && this.polar) {
+
+                    start = point.barX + startAngleRad;
+                    point.shapeType = 'arc';
+                    point.shapeArgs = this.polar.arc(
+                        y + height,
+                        y,
+                        start,
+                        start + point.pointWidth
+                    );
+                } else {
+
+                    shapeArgs.height = height;
+                    shapeArgs.y = y;
+                    const { x = 0, width = 0 } = shapeArgs;
+
+                    point.tooltipPos = chart.inverted ?
+                        [
+                            yAxis.len + yAxis.pos - chart.plotLeft - y -
+                                height / 2,
+                            xAxis.len + xAxis.pos - chart.plotTop - x -
+                                width / 2,
+                            height
+                        ] : [
+                            xAxis.left - chart.plotLeft + x + width / 2,
+                            yAxis.pos - chart.plotTop + y + height / 2,
+                            height
+                        ]; // don't inherit from column tooltip position - #3372
+                }
             }
         });
     }

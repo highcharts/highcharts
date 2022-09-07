@@ -19,13 +19,14 @@ import type {
     ChaikinParamsOptions
 } from './ChaikinOptions';
 import type ChaikinPoint from './ChaikinPoint';
-import type EMAIndicatorType from '../EMA/EMAIndicator';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import AD from '../AD/ADIndicator.js'; // For historic reasons, AD is built into Chaikin
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const EMAIndicator: typeof EMAIndicatorType = SeriesRegistry.seriesTypes.ema;
+const {
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
