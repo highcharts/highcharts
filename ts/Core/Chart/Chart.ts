@@ -742,7 +742,8 @@ class Chart {
             e = {
                 x,
                 y,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options
             };
 
         if (!options.ignoreX) {

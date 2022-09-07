@@ -522,6 +522,8 @@ class Pane {
  * Element's x coordinate
  * @param  {number} y
  * Element's y coordinate
+ * @param  {Array<number>} inverted
+ * `Chart.inverted` param
  * @param  {Array<number>} center
  * Pane's center (x, y) and diameter
  * @param  {number} startAngle
@@ -532,17 +534,22 @@ class Pane {
 function isInsidePane(
     x: number,
     y: number,
+    inverted: boolean | undefined,
     center: Array<number>,
     startAngle?: number,
     endAngle?: number
 ): boolean {
     let insideSlice = true;
+
+    const cx = inverted ? center[1] : center[0],
+        cy = inverted ? center[0] : center[1];
+
     const distance = Math.sqrt(
-        Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
+        Math.pow(x - cx, 2) + Math.pow(y - cy, 2)
     );
 
     if (defined(startAngle) && defined(endAngle)) {
-        const angle = Math.atan2(y - center[1], x - center[0]);
+        const angle = Math.atan2(y - cy, x - cx);
 
         // Ignore full circle panes:
         if (endAngle !== startAngle) {
@@ -585,7 +592,7 @@ Chart.prototype.getHoverPane = function (
             const x = eventArgs.chartX - chart.plotLeft,
                 y = eventArgs.chartY - chart.plotTop;
 
-            if (isInsidePane(x, y, pane.center)) {
+            if (isInsidePane(x, y, chart.inverted, pane.center)) {
                 hoverPane = pane;
             }
         });
@@ -593,41 +600,26 @@ Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-// Check if mouse pointer is within pane for polar
-addEvent(Chart, 'afterIsInsidePlot', function (event): any {
-    const chart = this,
-        x = (event as any).x - chart.plotLeft,
-        y = (event as any).y - chart.plotTop;
-
-    let isInsidePlot = false;
-
-    if (chart.polar && chart.pane && defined(x) && defined(y)) {
-        chart.pane.forEach((pane): void => {
-            isInsidePlot = isInsidePlot || isInsidePane(
-                x,
-                y,
-                pane.center
-            );
-        });
-
-        (event as any).isInsidePlot = isInsidePlot;
-    }
-});
-
+// Check if (x, y) position is within pane for polar
 addEvent(Chart, 'afterIsInsidePlot', function (
     e: {
         x: number;
         y: number;
         isInsidePlot: boolean;
+        options: Chart.IsInsideOptionsObject;
     }
 ): void {
     const chart = this;
 
     if (chart.polar) {
+        const x = e.x - (e.options.paneCoordinates ? chart.plotLeft : 0),
+            y = e.y - (e.options.paneCoordinates ? chart.plotTop : 0);
+
         e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
             (pane): boolean => isInsidePane(
-                e.x,
-                e.y,
+                x,
+                y,
+                e.options.inverted,
                 pane.center,
                 pane.axis && pane.axis.normalizedStartAngleRad,
                 pane.axis && pane.axis.normalizedEndAngleRad
@@ -675,6 +667,7 @@ addEvent(Pointer, 'afterGetHoverData', function (
         !isInsidePane(
             eventArgs.hoverPoint.plotX,
             eventArgs.hoverPoint.plotY,
+            chart.inverted,
             chart.hoverPane.center
         )
     ) {
