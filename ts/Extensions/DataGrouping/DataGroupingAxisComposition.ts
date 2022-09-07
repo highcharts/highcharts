@@ -19,7 +19,6 @@
 import type Axis from '../../Core/Axis/Axis';
 import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
-import type Tooltip from '../../Core/Tooltip';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import U from '../../Core/Utilities.js';
@@ -120,21 +119,22 @@ function compose(
 function getGroupPixelWidth(
     this: Axis
 ): number {
+    const series = this.series;
 
-    let series = this.series,
-        len = series.length,
-        i,
+    let i = series.length,
         groupPixelWidth = 0,
         doGrouping = false,
         dataLength,
         dgOptions;
 
-    // If multiple series are compared on the same x axis, give them the same
-    // group pixel width (#334)
-    i = len;
+    // If one of the series needs grouping, apply it to all (#1634)
     while (i--) {
         dgOptions = series[i].options.dataGrouping;
-        if (dgOptions) {
+
+        if (dgOptions) { // #2692
+
+            // If multiple series are compared on the same x axis, give them the
+            // same group pixel width (#334)
             groupPixelWidth = Math.max(
                 groupPixelWidth,
                 // Fallback to commonOptions (#9693)
@@ -143,16 +143,6 @@ function getGroupPixelWidth(
                     DataGroupingDefaults.common.groupPixelWidth
                 )
             );
-
-        }
-    }
-
-    // If one of the series needs grouping, apply it to all (#1634)
-    i = len;
-    while (i--) {
-        dgOptions = series[i].options.dataGrouping;
-
-        if (dgOptions) { // #2692
 
             dataLength = (series[i].processedXData || series[i].data).length;
 

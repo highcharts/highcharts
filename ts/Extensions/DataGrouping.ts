@@ -33,13 +33,10 @@ import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 
 import ApproximationRegistry from './DataGrouping/ApproximationRegistry.js';
 import Axis from '../Core/Axis/Axis.js';
-import DataGroupingAxisComposition from
-    './DataGrouping/DataGroupingAxisComposition.js';
+import DataGroupingComposition from './DataGrouping/DataGroupingComposition.js';
 import DataGroupingDefaults from './DataGrouping/DataGroupingDefaults.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import DO from '../Core/DefaultOptions.js';
-import F from '../Core/FormatUtilities.js';
-const { format } = F;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
@@ -767,95 +764,6 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
     }
 });
 
-// Extend the original method, make the tooltip's header reflect the grouped
-// range.
-addEvent(Tooltip, 'headerFormatter', function (
-    this: Tooltip,
-    e: AnyRecord
-): void {
-    let tooltip = this,
-        chart = this.chart,
-        time = chart.time,
-        labelConfig = e.labelConfig,
-        series = labelConfig.series as Series,
-        options = series.options,
-        tooltipOptions = series.tooltipOptions,
-        dataGroupingOptions = options.dataGrouping,
-        xDateFormat = tooltipOptions.xDateFormat,
-        xDateFormatEnd,
-        xAxis = series.xAxis,
-        currentDataGrouping: (TimeTicksInfoObject|undefined),
-        dateTimeLabelFormats,
-        labelFormats,
-        formattedKey,
-        formatString = tooltipOptions[
-            e.isFooter ? 'footerFormat' : 'headerFormat'
-        ];
-
-    // apply only to grouped series
-    if (
-        xAxis &&
-        xAxis.options.type === 'datetime' &&
-        dataGroupingOptions &&
-        isNumber(labelConfig.key)
-    ) {
-
-        // set variables
-        currentDataGrouping = series.currentDataGrouping;
-        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
-            // Fallback to commonOptions (#9693)
-            DataGroupingDefaults.common.dateTimeLabelFormats;
-
-        // if we have grouped data, use the grouping information to get the
-        // right format
-        if (currentDataGrouping) {
-            labelFormats =
-                dateTimeLabelFormats[(currentDataGrouping as any).unitName];
-            if ((currentDataGrouping as any).count === 1) {
-                xDateFormat = labelFormats[0];
-            } else {
-                xDateFormat = labelFormats[1];
-                xDateFormatEnd = labelFormats[2];
-            }
-        // if not grouped, and we don't have set the xDateFormat option, get the
-        // best fit, so if the least distance between points is one minute, show
-        // it, but if the least distance is one day, skip hours and minutes etc.
-        } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
-            xDateFormat = xAxis.dateTime.getXDateFormat(
-                labelConfig.x,
-                tooltipOptions.dateTimeLabelFormats
-
-            );
-        }
-
-        // now format the key
-        formattedKey = time.dateFormat(xDateFormat as any, labelConfig.key);
-        if (xDateFormatEnd) {
-            formattedKey += time.dateFormat(
-                xDateFormatEnd,
-                labelConfig.key + (currentDataGrouping as any).totalRange - 1
-            );
-        }
-
-        // Replace default header style with class name
-        if (series.chart.styledMode) {
-            formatString = this.styledModeFormat(formatString);
-        }
-
-        // return the replaced format
-        e.text = format(
-            formatString, {
-                point: extend(labelConfig.point, { key: formattedKey }),
-                series: series
-            },
-            chart
-        );
-
-        e.preventDefault();
-
-    }
-});
-
 // Destroy grouped data on series destroy
 addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
@@ -904,7 +812,7 @@ addEvent(Series, 'afterSetOptions', function (
     }
 });
 
-DataGroupingAxisComposition.compose(Axis);
+DataGroupingComposition.compose(Axis, Series, Tooltip);
 
 /* *
  *
