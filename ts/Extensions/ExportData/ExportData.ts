@@ -506,8 +506,7 @@ function chartGetDataRows(
 
                 let key: (number|string),
                     prop: string,
-                    val: number,
-                    isRowFromSeries: boolean;
+                    val: number;
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -526,14 +525,16 @@ function chartGetDataRows(
                 key = mockPoint.x as any;
 
                 if (defined(rows[key]) &&
-                    rows[key].series.includes(mockSeries.index)
+                    rows[key].seriesIndices.includes(mockSeries.index)
                 ) {
-                    const rowsFromActualSeries =
+                    // find keys, which belong to actual series
+                    const keysFromActualSeries =
                         Object.keys(rows).filter((i: string): void =>
-                            rows[i].series.includes(mockSeries.index) && key
+                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                                key
                         ),
-                        // find all properties, which start with key
-                        existingKeys = rowsFromActualSeries
+                        // find all properties, which start with actual key
+                        existingKeys = keysFromActualSeries
                             .filter((propertyName: string): boolean =>
                                 propertyName.indexOf(String(key)) === 0
                             );
@@ -571,10 +572,12 @@ function chartGetDataRows(
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
-                if (!defined(rows[key].series)) {
-                    rows[key].series = [];
+                if (!defined(rows[key].seriesIndices)) {
+                    rows[key].seriesIndices = [];
                 }
-                rows[key].series = [...rows[key].series, mockSeries.index];
+                rows[key].seriesIndices = [
+                    ...rows[key].seriesIndices, mockSeries.index
+                ];
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
