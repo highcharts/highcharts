@@ -21,6 +21,7 @@ import type {
     ApproximationKeyValue
 } from './DataGrouping/ApproximationType';
 import type AxisType from '../Core/Axis/AxisType';
+import type DataGroupingOptions from './DataGrouping/DataGroupingOptions';
 import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
     PointOptions,
@@ -46,9 +47,6 @@ import Tooltip from '../Core/Tooltip.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
     defined,
     error,
     extend,
@@ -68,7 +66,7 @@ declare module '../Core/Axis/AxisLike' {
         applyGrouping(e: Highcharts.PostProcessDataEvent): void;
         getGroupPixelWidth(): number;
         setDataGrouping(
-            dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+            dataGrouping?: (boolean|DataGroupingOptions),
             redraw?: boolean
         ): void;
     }
@@ -99,7 +97,7 @@ declare module '../Core/Series/SeriesLike' {
         hasGroupedData?: boolean;
         hasProcessed?: boolean;
         preventGraphAnimation?: boolean;
-        applyGrouping(hasExtemesChanged: boolean): void;
+        applyGrouping(hasExtremesChanged: boolean): void;
         destroyGroupedData(): void;
         generatePoints(): void;
         getDGApproximation(): ApproximationKeyValue;
@@ -109,12 +107,6 @@ declare module '../Core/Series/SeriesLike' {
             groupPosition: Array<number>,
             approximation: (string|Function)
         ): Highcharts.DataGroupingResultObject;
-    }
-}
-
-declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        dataGrouping?: Highcharts.DataGroupingOptionsObject;
     }
 }
 
@@ -134,20 +126,7 @@ declare global {
             start?: number;
         }
         interface PostProcessDataEvent {
-            hasExtemesChanged?: boolean;
-        }
-        interface DataGroupingOptionsObject {
-            anchor?: DataGroupingAnchor;
-            approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: Record<string, Array<string>>;
-            enabled?: boolean;
-            firstAnchor?: DataGroupingAnchorExtremes;
-            forced?: boolean;
-            groupAll?: boolean;
-            groupPixelWidth?: number;
-            lastAnchor?: DataGroupingAnchorExtremes;
-            smoothed?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
+            hasExtremesChanged?: boolean;
         }
         interface DataGroupingResultObject {
             groupedXData: Array<number>;
@@ -159,14 +138,6 @@ declare global {
         }
         let dataGrouping: DataGroupingFunctionsObject;
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
-        type DataGroupingApproximationValue = (
-            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'|'ichimoku-averages'|'hlc'
-        );
-        type DataGroupingAnchor = ('start'|'middle'|'end');
-        type DataGroupingAnchorExtremes = (
-            'start'|'middle'|'end'|'firstPoint'|'lastPoint'
-        );
         type AnchorChoiceType = Record<string, number>;
     }
 }
@@ -195,7 +166,7 @@ import '../Core/Axis/Axis.js';
 
 const applyGrouping = function (
     this: Series,
-    hasExtemesChanged: boolean
+    hasExtremesChanged: boolean
 ): void {
     let series = this,
         chart = series.chart,
@@ -222,7 +193,7 @@ const applyGrouping = function (
     // (in that order).
     skip = skipDataGrouping(
         series,
-        hasExtemesChanged
+        hasExtremesChanged
     ) === false || !groupingEnabled;
 
     // Revert original requireSorting value if changed
@@ -926,7 +897,7 @@ Axis.prototype.applyGrouping = function (
         }
         // Fire independing on series.groupPixelWidth to always set a proper
         // dataGrouping state, (#16238)
-        series.applyGrouping(!!e.hasExtemesChanged);
+        series.applyGrouping(!!e.hasExtremesChanged);
     });
 };
 
@@ -1001,7 +972,7 @@ Axis.prototype.getGroupPixelWidth = function (): number {
  */
 Axis.prototype.setDataGrouping = function (
     this: Axis,
-    dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
+    dataGrouping?: (boolean|DataGroupingOptions),
     redraw?: boolean
 ): void {
     const axis = this as AxisType;
@@ -1014,7 +985,7 @@ Axis.prototype.setDataGrouping = function (
         dataGrouping = {
             forced: false,
             units: null as any
-        } as Highcharts.DataGroupingOptionsObject;
+        } as DataGroupingOptions;
     }
 
     // Axis is instantiated, update all series
@@ -1163,7 +1134,7 @@ addEvent(Series, 'afterSetOptions', function (
     let options = e.options,
         type = this.type,
         plotOptions = this.chart.options.plotOptions,
-        defaultOptions: Highcharts.DataGroupingOptionsObject =
+        defaultOptions: DataGroupingOptions =
             (DO.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also inherit
         // commonOptions which are not available outside this module
