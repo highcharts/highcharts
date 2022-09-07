@@ -31,6 +31,27 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisLike' {
+    interface AxisLike {
+        applyGrouping(e: PostProcessDataEvent): void;
+        getGroupPixelWidth(): number;
+        setDataGrouping(
+            dataGrouping?: (boolean|DataGroupingOptions),
+            redraw?: boolean
+        ): void;
+    }
+}
+
+export interface PostProcessDataEvent {
+    hasExtremesChanged?: boolean;
+}
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -61,7 +82,7 @@ let AxisConstructor: typeof Axis;
  */
 function applyGrouping(
     this: Axis,
-    e: Highcharts.PostProcessDataEvent
+    e: PostProcessDataEvent
 ): void {
     const axis = this,
         series = axis.series;
@@ -249,8 +270,8 @@ function setDataGrouping(
  *
  * */
 
-const DataGroupingComposition = {
+const DataGroupingAxisComposition = {
     compose
 };
 
-export default DataGroupingComposition;
+export default DataGroupingAxisComposition;
