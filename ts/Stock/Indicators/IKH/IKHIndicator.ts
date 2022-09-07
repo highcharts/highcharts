@@ -29,6 +29,7 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
+import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
 const color = Color.parse;
@@ -163,13 +164,13 @@ function drawSenkouSpan(
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
 // @todo compose
-H.approximations['ichimoku-averages'] = function ():
+ApproximationRegistry['ichimoku-averages'] = function ():
 Array<number | null | undefined> | undefined {
     let ret: Array<number | null | undefined> = [],
         isEmptyRange: boolean | undefined;
 
     [].forEach.call(arguments, function (arr, i): void {
-        ret.push(H.approximations.average(arr));
+        ret.push(ApproximationRegistry.average(arr));
         isEmptyRange = !isEmptyRange && typeof ret[i] === 'undefined';
     });
 

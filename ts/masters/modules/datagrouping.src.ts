@@ -10,5 +10,9 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
+import '../../Extensions/DataGrouping/ApproximationDefaults.js';
 import dataGrouping from '../../Extensions/DataGrouping.js';
+const G: AnyRecord = Highcharts;
+G.dataGrouping = dataGrouping;
 export default dataGrouping;

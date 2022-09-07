@@ -10,6 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ApproximationArray,
+    ApproximationKeyValue
+} from './DataGrouping/ApproximationType';
 import type AxisType from '../Core/Axis/AxisType';
 import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
@@ -22,8 +32,10 @@ import type {
 } from '../Core/Series/SeriesType';
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 
+import ApproximationRegistry from './DataGrouping/ApproximationRegistry.js';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
+import DO from '../Core/DefaultOptions.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
@@ -31,7 +43,6 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
-import D from '../Core/DefaultOptions.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -45,6 +56,12 @@ const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
@@ -60,6 +77,12 @@ declare module '../Core/Axis/AxisLike' {
 declare module '../Core/Axis/TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
         gapSize?: number;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        dataGroup?: Highcharts.DataGroupingInfoObject;
     }
 }
 
@@ -79,7 +102,7 @@ declare module '../Core/Series/SeriesLike' {
         applyGrouping(hasExtemesChanged: boolean): void;
         destroyGroupedData(): void;
         generatePoints(): void;
-        getDGApproximation(): string;
+        getDGApproximation(): ApproximationKeyValue;
         groupData(
             xData: Array<number>,
             yData: (Array<number>|Array<Array<number>>),
@@ -101,51 +124,8 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        interface DataGroupingApproximationsArray extends Array<number> {
-            hasNulls?: boolean;
-        }
-        interface DataGroupingApproximationsDictionary
-            extends Record<string, (Function|undefined)>
-        {
-            average: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            averages: (
-                ...arrs: DataGroupingApproximationsArray
-            ) => (Array<(null|number|undefined)>|undefined);
-            close: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            high: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            low: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            open: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            sum: (
-                arr: DataGroupingApproximationsArray
-            ) => (null|number|undefined);
-            hlc: (
-                high: DataGroupingApproximationsArray,
-                low: DataGroupingApproximationsArray,
-                close: DataGroupingApproximationsArray
-            ) => ([number, number, number]|undefined);
-            ohlc: (
-                open: DataGroupingApproximationsArray,
-                high: DataGroupingApproximationsArray,
-                low: DataGroupingApproximationsArray,
-                close: DataGroupingApproximationsArray
-            ) => ([number, number, number, number]|undefined);
-            range: (
-                low: DataGroupingApproximationsArray,
-                high: DataGroupingApproximationsArray
-            ) => ([number, number]|null|undefined);
-        }
         interface DataGroupingFunctionsObject {
-            approximations: DataGroupingApproximationsDictionary;
+            approximations: typeof ApproximationRegistry;
             groupData: Series['groupData'];
         }
         interface DataGroupingInfoObject {
@@ -177,7 +157,6 @@ declare global {
             );
             groupMap: Array<DataGroupingInfoObject>;
         }
-        let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
@@ -193,18 +172,6 @@ declare global {
 }
 
 import '../Core/Axis/Axis.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-        dataGroup?: Highcharts.DataGroupingInfoObject;
-    }
-}
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -225,139 +192,6 @@ declare module '../Core/Series/PointLike' {
  * @name Highcharts.approximations
  * @type {Highcharts.Dictionary<Function>}
  */
-const approximations: Highcharts.DataGroupingApproximationsDictionary =
-H.approximations = {
-    sum: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        let len = arr.length,
-            ret;
-
-        // 1. it consists of nulls exclusive
-        if (!len && arr.hasNulls) {
-            ret = null;
-        // 2. it has a length and real values
-        } else if (len) {
-            ret = 0;
-            while (len--) {
-                ret += arr[len];
-            }
-        }
-        // 3. it has zero length, so just return undefined
-        // => doNothing()
-
-        return ret;
-    },
-    average: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        let len = arr.length,
-            ret = approximations.sum(arr);
-
-        // If we have a number, return it divided by the length. If not,
-        // return null or undefined based on what the sum method finds.
-        if (isNumber(ret) && len) {
-            ret = correctFloat((ret as any) / len);
-        }
-
-        return ret;
-    },
-    // The same as average, but for series with multiple values, like area
-    // ranges.
-    averages: function (): (Array<(null|number|undefined)>|undefined) { // #5479
-        const ret = [] as Array<(null|number|undefined)>;
-
-        [].forEach.call(arguments, function (
-            arr: Highcharts.DataGroupingApproximationsArray
-        ): void {
-            ret.push(approximations.average(arr));
-        });
-
-        // Return undefined when first elem. is undefined and let
-        // sum method handle null (#7377)
-        return typeof ret[0] === 'undefined' ? void 0 : ret;
-    },
-    open: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
-    },
-    high: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        return arr.length ?
-            arrayMax(arr) :
-            (arr.hasNulls ? null : void 0);
-    },
-    low: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        return arr.length ?
-            arrayMin(arr) :
-            (arr.hasNulls ? null : void 0);
-    },
-    close: function (
-        arr: Highcharts.DataGroupingApproximationsArray
-    ): (null|number|undefined) {
-        return arr.length ?
-            arr[arr.length - 1] :
-            (arr.hasNulls ? null : void 0);
-    },
-    // HLC, OHLC and range are special cases where a multidimensional array is
-    // input and an array is output.
-    hlc: function (
-        high: Highcharts.DataGroupingApproximationsArray,
-        low: Highcharts.DataGroupingApproximationsArray,
-        close: Highcharts.DataGroupingApproximationsArray
-    ): ([number, number, number]|undefined) {
-        high = approximations.high(high) as any;
-        low = approximations.low(low) as any;
-        close = approximations.close(close) as any;
-
-        if (
-            isNumber(high) ||
-            isNumber(low) ||
-            isNumber(close)
-        ) {
-            return [high, low, close] as any;
-        }
-    },
-    ohlc: function (
-        open: Highcharts.DataGroupingApproximationsArray,
-        high: Highcharts.DataGroupingApproximationsArray,
-        low: Highcharts.DataGroupingApproximationsArray,
-        close: Highcharts.DataGroupingApproximationsArray
-    ): ([number, number, number, number]|undefined) {
-        open = approximations.open(open) as any;
-        high = approximations.high(high) as any;
-        low = approximations.low(low) as any;
-        close = approximations.close(close) as any;
-
-        if (
-            isNumber(open) ||
-            isNumber(high) ||
-            isNumber(low) ||
-            isNumber(close)
-        ) {
-            return [open, high, low, close] as any;
-        }
-
-    },
-    range: function (
-        low: Highcharts.DataGroupingApproximationsArray,
-        high: Highcharts.DataGroupingApproximationsArray
-    ): ([number, number]|null|undefined) {
-        low = approximations.low(low) as any;
-        high = approximations.high(high) as any;
-        if (isNumber(low) || isNumber(high)) {
-            return [low, high] as any;
-        }
-        if (low === null && high === null) {
-            return null;
-        }
-        // else, return is undefined
-    }
-};
 
 const applyGrouping = function (
     this: Series,
@@ -555,7 +389,7 @@ const groupData = function (
         Array<Array<(number|null|undefined)>>
     ),
     groupPositions: Array<number>,
-    approximation: (string|Function)
+    approximation: (ApproximationKeyValue|Function)
 ): Highcharts.DataGroupingResultObject {
     let series = this,
         data = series.data,
@@ -570,8 +404,7 @@ const groupData = function (
         // when grouping the fake extended axis for panning,
         // we don't need to consider y
         handleYData = !!yData,
-        values = [] as Array<Highcharts.DataGroupingApproximationsArray>,
-        approximationFn,
+        values = [] as Array<ApproximationArray>,
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
@@ -585,22 +418,16 @@ const groupData = function (
         i,
         j;
 
-    /**
-     * @private
-     */
-    function getApproximation(approx: (string|Function)): Function {
-        if (typeof approx === 'function') {
-            return approx;
-        }
-        if (approximations[approx]) {
-            return approximations[approx] as any;
-        }
-        return approximations[
-            (series.getDGApproximation && series.getDGApproximation()) ||
-            'average'
-        ] as any;
-    }
-    approximationFn = getApproximation(approximation);
+    const approximationFn = (
+        typeof approximation === 'function' ?
+            approximation :
+            ApproximationRegistry[approximation] ?
+                ApproximationRegistry[approximation] :
+                ApproximationRegistry[(
+                    series.getDGApproximation && series.getDGApproximation() ||
+                    'average'
+                )]
+    );
 
     // Calculate values array size from pointArrayMap length
     if (pointArrayMapLength) {
@@ -867,7 +694,7 @@ const adjustExtremes = function (
 };
 
 const dataGrouping = {
-    approximations: approximations,
+    approximations: ApproximationRegistry,
     groupData: groupData
 };
 
@@ -989,7 +816,7 @@ const baseProcessData = seriesProto.processData,
 
 // Set default approximations to the prototypes if present. Properties are
 // inherited down. Can be overridden for individual series types.
-seriesProto.getDGApproximation = function (): string {
+seriesProto.getDGApproximation = function (): ApproximationKeyValue {
     if (this.is('arearange')) {
         return 'range';
     }
@@ -1337,7 +1164,7 @@ addEvent(Series, 'afterSetOptions', function (
         type = this.type,
         plotOptions = this.chart.options.plotOptions,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (D.defaultOptions.plotOptions as any)[type].dataGrouping,
+            (DO.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also inherit
         // commonOptions which are not available outside this module
         baseOptions = (
@@ -1380,9 +1207,6 @@ addEvent(Axis, 'afterSetScale', function (): void {
  *  Default Export
  *
  * */
-
-// @todo move to master
-H.dataGrouping = dataGrouping;
 
 export default dataGrouping;
 
