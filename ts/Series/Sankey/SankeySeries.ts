@@ -1009,6 +1009,7 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
     destroy: NodesComposition.SeriesComposition['destroy'];
+    drawPoints: typeof ColumnSeries.prototype.drawPoints;
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
