@@ -1,0 +1,8 @@
+figure {
+    margin: 0;
+}
+
+#container {
+    min-height: 800px;
+    min-width: 360px;
+}

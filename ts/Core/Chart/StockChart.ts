@@ -29,18 +29,18 @@ import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import D from '../DefaultOptions.js';
-const { getOptions } = D;
+import DO from '../DefaultOptions.js';
+const { getOptions } = DO;
+import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
+import RangeSelectorDefaults from
+    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import Series from '../Series/Series.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -58,15 +58,6 @@ const {
 } = U;
 
 import '../Pointer.js';
-// Has a dependency on Navigator due to the use of
-// defaultOptions.navigator
-import '../Navigator.js';
-// Has a dependency on Scrollbar due to the use of
-// defaultOptions.scrollbar
-import '../Scrollbar.js';
-// Has a dependency on RangeSelector due to the use of
-// defaultOptions.rangeSelector
-import '../../Extensions/RangeSelector.js';
 
 /* *
  *
@@ -149,7 +140,7 @@ class StockChart extends Chart {
             // navigator is enabled (#1090)
             navigatorEnabled = pick(
                 userOptions.navigator && userOptions.navigator.enabled,
-                (defaultOptions.navigator as any).enabled,
+                NavigatorDefaults.enabled,
                 true
             );
 
@@ -173,17 +164,14 @@ class StockChart extends Chart {
                 scrollbar: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (
-                            defaultOptions.scrollbar &&
-                            defaultOptions.scrollbar.enabled
-                        ),
+                        ScrollbarDefaults.enabled,
                         true
                     )
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (defaultOptions.rangeSelector as any).enabled,
+                        RangeSelectorDefaults.rangeSelector.enabled,
                         true
                     )
                 },
@@ -378,14 +366,13 @@ function getForcedAxisOptions(
     chartOptions: Partial<Options>
 ): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
-        const defaultOptions = getOptions(),
-            // Always disable startOnTick:true on the main axis when the
-            // navigator is enabled (#1090)
-            navigatorEnabled = pick(
-                chartOptions.navigator && chartOptions.navigator.enabled,
-                (defaultOptions.navigator as any).enabled,
-                true
-            );
+        // Always disable startOnTick:true on the main axis when the navigator
+        // is enabled (#1090)
+        const navigatorEnabled = pick(
+            chartOptions.navigator && chartOptions.navigator.enabled,
+            NavigatorDefaults.enabled,
+            true
+        );
 
         const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
@@ -899,7 +886,7 @@ addEvent(Chart, 'update', function (
     // case (#6615)
     if ('scrollbar' in options && this.navigator) {
         merge(true, this.options.scrollbar, options.scrollbar);
-        (this.navigator.update as any)({}, false);
+        this.navigator.update({});
         delete options.scrollbar;
     }
 });

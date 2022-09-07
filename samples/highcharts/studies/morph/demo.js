@@ -1,19 +1,47 @@
 // Morph an SVG element into a different type of element
 Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
+    // Return the point that is closest to an imaginary point directly above the
+    // shape. To avoid rotation when morphing.
+    const alignToTopPoint = (points, bBox) => {
+        // Find the point that is closest to an imaginary point directly above
+        // the bBox.
+        const topPoint = {
+            x: bBox.x + bBox.width / 2,
+            y: bBox.y - 100
+        };
+        let closestIdx;
+        let closestDist = Infinity;
+        for (let i = 0; i < points.length; i++) {
+            const dist = Math.pow(points[i].x - topPoint.x, 2) +
+                Math.pow(points[i].y - topPoint.y, 2);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestIdx = i;
+            }
+        }
+        // Remove the points before the top point
+        const head = points.splice(0, closestIdx);
+        // And apply them at the end
+        points.push(...head);
+    };
+
     const getPath = shape => {
         const totalLength = shape.element.getTotalLength();
         const count = 100;
-        const step = totalLength / count;
         const points = [];
         for (let i = 0; i < count; i++) {
-            points.push(shape.element.getPointAtLength(i * step));
+            points.push(
+                shape.element.getPointAtLength(i * totalLength / count)
+            );
         }
-        const path = points.reduce((path, point) => {
-            path.push(path.length === 0 ? 'M' : 'L');
-            path.push(point.x, point.y);
-            return path;
-        }, []);
-        return path.concat('z');
+        alignToTopPoint(points, shape.element.getBBox());
+        const path = points.map((point, i) => ([
+            i === 0 ? 'M' : 'L',
+            point.x,
+            point.y
+        ]));
+        path.push(['Z']);
+        return path;
     };
 
     const newShape = this.renderer[shapeType](shapeArgs)
@@ -32,10 +60,8 @@ Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
         .add();
 
     this.element.remove();
-    this.element = interrim.element;
-    this.d = interrim.d; // For animation
 
-    this.animate({
+    interrim.animate({
         d: getPath(newShape)
     }, {
         complete: () => {

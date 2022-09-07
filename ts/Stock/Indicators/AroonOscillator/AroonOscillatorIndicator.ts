@@ -14,7 +14,6 @@
  *
  * */
 
-import type AroonIndicatorType from '../Aroon/AroonIndicator';
 import type {
     AroonOscillatorOptions,
     AroonOscillatorParamsOptions
@@ -25,8 +24,9 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const AroonIndicator: typeof AroonIndicatorType =
-    SeriesRegistry.seriesTypes.aroon;
+const {
+    aroon: AroonIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
