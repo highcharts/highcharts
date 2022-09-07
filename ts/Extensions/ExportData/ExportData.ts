@@ -135,6 +135,7 @@ interface ExportDataSeries {
     chart: Chart;
     options: SeriesOptions;
     pointArrayMap?: Array<string>;
+    index: Number;
 }
 
 /* *
@@ -491,7 +492,8 @@ function chartGetDataRows(
                 chart: series.chart,
                 autoIncrement: series.autoIncrement,
                 options: series.options,
-                pointArrayMap: series.pointArrayMap
+                pointArrayMap: series.pointArrayMap,
+                index: series.index
             };
 
             // Export directly from options.data because we need the uncropped
@@ -504,7 +506,8 @@ function chartGetDataRows(
 
                 let key: (number|string),
                     prop: string,
-                    val: number;
+                    val: number,
+                    isRowFromSeries: boolean;
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -521,6 +524,22 @@ function chartGetDataRows(
                     [options]
                 );
                 key = mockPoint.x as any;
+
+                if (defined(rows[key]) &&
+                    rows[key].series.includes(mockSeries.index)
+                ) {
+                    const rowsFromActualSeries =
+                        Object.keys(rows).filter((i: string): void =>
+                            rows[i].series.includes(mockSeries.index) && key
+                        ),
+                        // find all properties, which start with key
+                        existingKeys = rowsFromActualSeries
+                            .filter((propertyName: string): boolean =>
+                                propertyName.indexOf(String(key)) === 0
+                            );
+
+                    key = key.toString() + ',' + existingKeys.length;
+                }
 
                 const name = series.data[pIdx] && series.data[pIdx].name;
 
@@ -551,6 +570,11 @@ function chartGetDataRows(
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
+
+                if (!defined(rows[key].series)) {
+                    rows[key].series = [];
+                }
+                rows[key].series = [...rows[key].series, mockSeries.index];
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
