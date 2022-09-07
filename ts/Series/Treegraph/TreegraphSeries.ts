@@ -523,10 +523,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public drawPoints(): void {
         super.drawPoints.apply(this, arguments);
-        const points = this.points;
-        this.points = this.links as any;
-        ColumnSeries.prototype.drawPoints.apply(this, arguments);
-        this.points = points;
+        ColumnSeries.prototype.drawPoints.call(this, this.links);
     }
     /**
      * Run translation operations for one node.

@@ -24,6 +24,16 @@ import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
 import U from '../../Core/Utilities.js';
 const { pick, extend } = U;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: {
+            prototype: {
+                pointClass: ColumnPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 
 /* *
 *
@@ -40,7 +50,7 @@ export interface LinkPointOptions extends TreegraphPointOptions {
 *  Class
 *
 * */
-class LinkPoint extends Point {
+class LinkPoint extends ColumnPoint {
     /* *
     *
     *  Class properties

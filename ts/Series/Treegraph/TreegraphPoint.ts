@@ -26,7 +26,6 @@ import U from '../../Core/Utilities.js';
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
 import Point from '../../Core/Series/Point.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { support } from 'jquery';
 const { merge, addEvent, pick, fireEvent } = U;
 const {
     seriesTypes: {
