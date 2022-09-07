@@ -38,7 +38,7 @@
         },
 
         series: [{
-            topology,
+            name: 'Basemap',
             showInLegend: false
         }, {
             type: 'mappoint',

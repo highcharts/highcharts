@@ -92,11 +92,7 @@ class FlowMapSeries extends SankeySeries {
          * @default ['from', 'to', 'weight']
          * @private
          */
-        keys: [
-            'from',
-            'to',
-            'weight'
-        ]
+        keys: ['from', 'to', 'weight']
 
     } as FlowMapSeriesOptions); // Sankey?
 
@@ -504,7 +500,7 @@ export default FlowMapSeries;
  * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
  * negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
- * @requires modules/sankey
+ * @requires  modules/sankey
  * @apioption series.flowmap
  */
 
@@ -513,7 +509,7 @@ export default FlowMapSeries;
  * type, points can be given in the following ways:
  *
  * 1.  An array of arrays with 6 values. In this case, the values correspond
- *     to `from,to,weight`. Example:
+ *     to `from, to, weight`. Example:
  *     ```js
  *     data: [
  *         ["Point 1", "Point 2", 4],
