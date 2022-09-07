@@ -17,31 +17,31 @@
  * */
 
 import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type Chart from '../../Core/Chart/Chart.js';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type {
     NavigatorHandlesOptions,
     NavigatorOptions
 } from './NavigatorOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type PointerEvent from '../../Core/PointerEvent';
 import type ScrollbarOptions from '../Scrollbar/ScrollbarOptions';
+import type Series from '../../Core/Series/Series.js';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
-import Chart from '../../Core/Chart/Chart.js';
+import DO from '../../Core/DefaultOptions.js';
+const { defaultOptions } = DO;
 import H from '../../Core/Globals.js';
 const {
     hasTouch,
     isTouchDevice
 } = H;
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
-import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
