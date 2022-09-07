@@ -35,11 +35,11 @@ import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 
 import ApproximationRegistry from './DataGrouping/ApproximationRegistry.js';
 import Axis from '../Core/Axis/Axis.js';
+import DataGroupingDefaults from './DataGrouping/DataGroupingDefaults.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import DO from '../Core/DefaultOptions.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
-import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
@@ -244,7 +244,7 @@ const applyGrouping = function (
                     DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
-                        defaultDataGroupingUnits
+                        DataGroupingDefaults.units
                     ),
                     // Processed data may extend beyond axis (#4907)
                     Math.min(xMin, processedXData[0]),
@@ -674,115 +674,7 @@ const dataGrouping = {
 // The following code applies to implementation of data grouping on a Series
 
 const baseProcessData = seriesProto.processData,
-    baseGeneratePoints = seriesProto.generatePoints,
-    /** @ignore */
-    commonOptions = {
-        // enabled: null, // (true for stock charts, false for basic),
-        // forced: undefined,
-        groupPixelWidth: 2,
-        // the first one is the point or start value, the second is the start
-        // value if we're dealing with range, the third one is the end value if
-        // dealing with a range
-        dateTimeLabelFormats: {
-            millisecond: [
-                '%A, %b %e, %H:%M:%S.%L',
-                '%A, %b %e, %H:%M:%S.%L',
-                '-%H:%M:%S.%L'
-            ],
-            second: [
-                '%A, %b %e, %H:%M:%S',
-                '%A, %b %e, %H:%M:%S',
-                '-%H:%M:%S'
-            ],
-            minute: [
-                '%A, %b %e, %H:%M',
-                '%A, %b %e, %H:%M',
-                '-%H:%M'
-            ],
-            hour: [
-                '%A, %b %e, %H:%M',
-                '%A, %b %e, %H:%M',
-                '-%H:%M'
-            ],
-            day: [
-                '%A, %b %e, %Y',
-                '%A, %b %e',
-                '-%A, %b %e, %Y'
-            ],
-            week: [
-                'Week from %A, %b %e, %Y',
-                '%A, %b %e',
-                '-%A, %b %e, %Y'
-            ],
-            month: [
-                '%B %Y',
-                '%B',
-                '-%B %Y'
-            ],
-            year: [
-                '%Y',
-                '%Y',
-                '-%Y'
-            ]
-        }
-        // smoothed = false, // enable this for navigator series only
-    },
-    specificOptions = { // extends common options
-        line: {},
-        spline: {},
-        area: {},
-        areaspline: {},
-        arearange: {},
-        column: {
-            groupPixelWidth: 10
-        },
-        columnrange: {
-            groupPixelWidth: 10
-        },
-        candlestick: {
-            groupPixelWidth: 10
-        },
-        ohlc: {
-            groupPixelWidth: 5
-        },
-        hlc: {
-            groupPixelWidth: 5
-        // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
-        },
-        heikinashi: {
-            groupPixelWidth: 10
-        }
-    } as SeriesTypePlotOptions,
-
-    // units are defined in a separate array to allow complete overriding in
-    // case of a user option
-    defaultDataGroupingUnits = H.defaultDataGroupingUnits = [
-        [
-            'millisecond', // unit name
-            [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-        ], [
-            'second',
-            [1, 2, 5, 10, 15, 30]
-        ], [
-            'minute',
-            [1, 2, 5, 10, 15, 30]
-        ], [
-            'hour',
-            [1, 2, 3, 4, 6, 8, 12]
-        ], [
-            'day',
-            [1]
-        ], [
-            'week',
-            [1]
-        ], [
-            'month',
-            [1, 3, 6]
-        ], [
-            'year',
-            null
-        ]
-    ];
+    baseGeneratePoints = seriesProto.generatePoints;
 
 
 // Set default approximations to the prototypes if present. Properties are
@@ -922,7 +814,10 @@ Axis.prototype.getGroupPixelWidth = function (): number {
             groupPixelWidth = Math.max(
                 groupPixelWidth,
                 // Fallback to commonOptions (#9693)
-                pick(dgOptions.groupPixelWidth, commonOptions.groupPixelWidth)
+                pick(
+                    dgOptions.groupPixelWidth,
+                    DataGroupingDefaults.common.groupPixelWidth
+                )
             );
 
         }
@@ -1069,7 +964,7 @@ addEvent(Tooltip, 'headerFormatter', function (
         currentDataGrouping = series.currentDataGrouping;
         dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
             // Fallback to commonOptions (#9693)
-            commonOptions.dateTimeLabelFormats;
+            DataGroupingDefaults.common.dateTimeLabelFormats;
 
         // if we have grouped data, use the grouping information to get the
         // right format
@@ -1139,12 +1034,17 @@ addEvent(Series, 'afterSetOptions', function (
         // External series, for example technical indicators should also inherit
         // commonOptions which are not available outside this module
         baseOptions = (
-            (this as IndicatorLike).useCommonDataGrouping && commonOptions
-        );
+            (this as IndicatorLike).useCommonDataGrouping &&
+            DataGroupingDefaults.common
+        ),
+        seriesSpecific = DataGroupingDefaults.seriesSpecific;
 
-    if (plotOptions && (specificOptions[type] || baseOptions)) { // #1284
+    if (plotOptions && (seriesSpecific[type] || baseOptions)) { // #1284
         if (!defaultOptions) {
-            defaultOptions = merge(commonOptions, specificOptions[type]);
+            defaultOptions = merge(
+                DataGroupingDefaults.common,
+                seriesSpecific[type]
+            );
         }
 
         const rangeSelector = this.chart.rangeSelector;
