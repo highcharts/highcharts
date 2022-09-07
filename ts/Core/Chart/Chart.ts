@@ -3590,7 +3590,7 @@ class Chart {
             hasZoomed;
 
         // If zoom is called with no arguments, reset the axes
-        if (!event || (event as any).resetSelection) {
+        if (!event || event.resetSelection) {
             chart.axes.forEach(function (axis): void {
                 hasZoomed = (axis.zoom as any)();
             });

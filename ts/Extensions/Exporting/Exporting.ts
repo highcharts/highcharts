@@ -38,7 +38,7 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
+const { defaultOptions, setOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
@@ -258,7 +258,7 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<typeof Chart> = [];
+    const composedClasses: Array<Function> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
     const inlineBlacklist: Array<RegExp> = [
@@ -688,6 +688,28 @@ namespace Exporting {
                     }
                 );
             }
+        }
+
+        if (composedClasses.indexOf(setOptions) === -1) {
+            composedClasses.push(setOptions);
+
+            defaultOptions.exporting = merge(
+                ExportingDefaults.exporting,
+                defaultOptions.exporting
+            );
+
+            defaultOptions.lang = merge(
+                ExportingDefaults.lang,
+                defaultOptions.lang
+            );
+
+            // Buttons and menus are collected in a separate config option set
+            // called 'navigation'. This can be extended later to add control
+            // buttons like zoom and pan right click menus.
+            defaultOptions.navigation = merge(
+                ExportingDefaults.navigation,
+                defaultOptions.navigation
+            );
         }
     }
 
@@ -1767,35 +1789,6 @@ namespace Exporting {
 
 /* *
  *
- *  Registry
- *
- * */
-
-defaultOptions.exporting = merge(
-    ExportingDefaults.exporting,
-    defaultOptions.exporting
-);
-defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
-
-// Buttons and menus are collected in a separate config option set called
-// 'navigation'. This can be extended later to add control buttons like
-// zoom and pan right click menus.
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module or in Stock Tools.
- *
- * @requires     modules/exporting
- * @optionparent navigation
- *
- * @private
- */
-defaultOptions.navigation = merge(
-    ExportingDefaults.navigation,
-    defaultOptions.navigation
-);
-
-/* *
- *
  *  Default Export
  *
  * */
@@ -1814,7 +1807,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event
@@ -1827,7 +1820,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event

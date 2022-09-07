@@ -19,7 +19,7 @@ import type {
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 

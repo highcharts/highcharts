@@ -561,8 +561,6 @@ const lang = {
      * in full screen.
      *
      * @since 8.0.1
-     *
-     * @private
      */
     viewFullscreen: 'View in full screen',
 
@@ -571,8 +569,6 @@ const lang = {
      * from full screen.
      *
      * @since 8.0.1
-     *
-     * @private
      */
     exitFullscreen: 'Exit from full screen',
 
@@ -582,8 +578,6 @@ const lang = {
      *
      * @since    3.0.1
      * @requires modules/exporting
-     *
-     * @private
      */
     printChart: 'Print chart',
 
@@ -592,8 +586,6 @@ const lang = {
      *
      * @since    2.0
      * @requires modules/exporting
-     *
-     * @private
      */
     downloadPNG: 'Download PNG image',
 
@@ -602,8 +594,6 @@ const lang = {
      *
      * @since    2.0
      * @requires modules/exporting
-     *
-     * @private
      */
     downloadJPEG: 'Download JPEG image',
 
@@ -612,8 +602,6 @@ const lang = {
      *
      * @since    2.0
      * @requires modules/exporting
-     *
-     * @private
      */
     downloadPDF: 'Download PDF document',
 
@@ -622,8 +610,6 @@ const lang = {
      *
      * @since    2.0
      * @requires modules/exporting
-     *
-     * @private
      */
     downloadSVG: 'Download SVG vector image',
 
@@ -633,13 +619,18 @@ const lang = {
      *
      * @since    3.0
      * @requires modules/exporting
-     *
-     * @private
      */
     contextButtonTitle: 'Chart context menu'
 
 };
 
+/**
+ * A collection of options for buttons and menus appearing in the exporting
+ * module or in Stock Tools.
+ *
+ * @requires     modules/exporting
+ * @optionparent navigation
+ */
 const navigation: NavigationOptions = {
 
     /**
@@ -650,8 +641,6 @@ const navigation: NavigationOptions = {
      * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
      *
      * @requires modules/exporting
-     *
-     * @private
      */
     buttonOptions: {
 
@@ -831,6 +820,7 @@ const navigation: NavigationOptions = {
 
             /**
              * Default stroke for the buttons.
+             *
              * @type      {Highcharts.ColorString}
              * @default   none
              * @apioption navigation.buttonOptions.theme.stroke
@@ -858,8 +848,6 @@ const navigation: NavigationOptions = {
      * @type    {Highcharts.CSSObject}
      * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
      * @since   2.0
-     *
-     * @private
      */
     menuStyle: {
         /** @ignore-option */
@@ -885,8 +873,6 @@ const navigation: NavigationOptions = {
      * @type    {Highcharts.CSSObject}
      * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
      * @since   2.0
-     *
-     * @private
      */
     menuItemStyle: {
         /** @ignore-option */
@@ -915,8 +901,6 @@ const navigation: NavigationOptions = {
      * @type    {Highcharts.CSSObject}
      * @default {"background": "#335cad", "color": "#ffffff"}
      * @since   2.0
-     *
-     * @private
      */
     menuItemHoverStyle: {
         /** @ignore-option */

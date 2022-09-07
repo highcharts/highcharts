@@ -2070,7 +2070,4 @@ class Navigator {
  *
  * */
 
-// @todo move into masters
-Navigator.compose(Axis, Chart, Series);
-
 export default Navigator;

@@ -18,6 +18,7 @@
  *
  * */
 
+import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type AxisOptions from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type ChartOptions from '../Core/Chart/ChartOptions';
@@ -399,6 +400,17 @@ addEvent(Series, 'afterTranslate', function (): void {
                 point.clientX = point.plotX;
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, void 0, true);
+
+                // Range series (#15752)
+                if (isNumber((point as AreaRangePoint).high)) {
+                    point.plotHigh = chart.yAxis[i].translate(
+                        (point as AreaRangePoint).high,
+                        false,
+                        true,
+                        void 0,
+                        true
+                    );
+                }
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
