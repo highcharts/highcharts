@@ -151,9 +151,9 @@ class PictorialSeries extends ColumnSeries {
             // The key for temporary animation clips
             animationClipKey = [
                 this.getSharedClipKey(),
-                animation.defer,
                 animation.duration,
-                animation.easing
+                animation.easing,
+                animation.defer
             ].join(',');
 
         let animationClipRect = chart.sharedClips[animationClipKey];
