@@ -1686,6 +1686,26 @@ const defaultOptions: Options = {
          */
 
         /**
+         * For a color axis with data classes, how many decimals to render in
+         * the legend. The default preserves the decimals of the range numbers.
+         *
+         * @type      {number}
+         * @default   -1
+         * @product   highcharts highmaps
+         * @apioption legend.valueDecimals
+         */
+
+        /**
+         * For a color axis with data classes, a suffix for the range numbers in
+         * the legend.
+         *
+         * @type      {string}
+         * @default   ''
+         * @product   highcharts highmaps
+         * @apioption legend.valueSuffix
+         */
+
+        /**
          * The width of the legend box. If a number is set, it translates to
          * pixels. Since v7.0.2 it allows setting a percent string of the full
          * chart width, for example `40%`.
@@ -2971,47 +2991,11 @@ export default DefaultOptions;
  * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
- * @param {global.ChartSelectionContextObject} event
+ * @param {Highcharts.SelectEventObject} event
  *        Event informations
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.
- */
-
-/**
- * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
- * datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartSelectionContextObject
- * @extends global.Event
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#xAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#yAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- */
-
-/**
- * Axis context of the selection.
- *
- * @interface Highcharts.ChartSelectionAxisContextObject
- *//**
- * The selected Axis.
- * @name Highcharts.ChartSelectionAxisContextObject#axis
- * @type {Highcharts.Axis}
- *//**
- * The maximum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#min
- * @type {number}
  */
 
 (''); // detach doclets above

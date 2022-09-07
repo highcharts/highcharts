@@ -49,6 +49,8 @@ import type Point from '../../Core/Series/Point';
  *               boostBlending
  * @requires     modules/networkgraph
  * @optionparent plotOptions.networkgraph
+ *
+ * @private
  */
 const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     stickyTracking: false,

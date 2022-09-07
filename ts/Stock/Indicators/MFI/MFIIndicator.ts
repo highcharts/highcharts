@@ -25,10 +25,11 @@ import type {
     MFIParamsOptions
 } from '../MFI/MFIOptions';
 import type MFIPoint from './MFIPoint';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

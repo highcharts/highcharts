@@ -20,15 +20,16 @@ import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
 import Scrollbar from '../../Core/Scrollbar.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import '../../Core/Navigator.js';
-import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 const G: AnyRecord = Highcharts;
-
 // Classes
+G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 Scrollbar.compose(G.Axis);
+RangeSelector.compose(G.Axis, G.Chart);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
