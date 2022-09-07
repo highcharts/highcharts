@@ -20,7 +20,6 @@ import type {
     ApproximationArray,
     ApproximationKeyValue
 } from './DataGrouping/ApproximationType';
-import type AxisType from '../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGrouping/DataGroupingOptions';
 import type IndicatorLike from '../Stock/Indicators/IndicatorLike';
 import type {
@@ -28,13 +27,14 @@ import type {
     PointShortOptions
 } from '../Core/Series/PointOptions';
 import type {
-    SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypeOptions
 } from '../Core/Series/SeriesType';
 import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 
 import ApproximationRegistry from './DataGrouping/ApproximationRegistry.js';
 import Axis from '../Core/Axis/Axis.js';
+import DataGroupingAxisComposition from
+    './DataGrouping/DataGroupingAxisComposition.js';
 import DataGroupingDefaults from './DataGrouping/DataGroupingDefaults.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import DO from '../Core/DefaultOptions.js';
@@ -758,166 +758,6 @@ seriesProto.generatePoints = function (): void {
     this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
-/**
- * Check the groupPixelWidth and apply the grouping if needed.
- * Fired only after processing the data.
- *
- * @product highstock
- *
- * @function Highcharts.Axis#applyGrouping
- */
-Axis.prototype.applyGrouping = function (
-    this: Axis,
-    e: Highcharts.PostProcessDataEvent
-): void {
-    const axis = this,
-        series = axis.series;
-
-    // Reset the groupPixelWidth for all series, #17141.
-    series.forEach(function (series): void {
-        series.groupPixelWidth = void 0; // #2110
-    });
-
-    series.forEach(function (series): void {
-        series.groupPixelWidth = (
-            axis.getGroupPixelWidth &&
-            axis.getGroupPixelWidth()
-        );
-
-        if (series.groupPixelWidth) {
-            series.hasProcessed = true; // #2692
-        }
-        // Fire independing on series.groupPixelWidth to always set a proper
-        // dataGrouping state, (#16238)
-        series.applyGrouping(!!e.hasExtremesChanged);
-    });
-};
-
-// Get the data grouping pixel width based on the greatest defined individual
-// width of the axis' series, and if whether one of the axes need grouping.
-Axis.prototype.getGroupPixelWidth = function (): number {
-
-    let series = this.series,
-        len = series.length,
-        i,
-        groupPixelWidth = 0,
-        doGrouping = false,
-        dataLength,
-        dgOptions;
-
-    // If multiple series are compared on the same x axis, give them the same
-    // group pixel width (#334)
-    i = len;
-    while (i--) {
-        dgOptions = series[i].options.dataGrouping;
-        if (dgOptions) {
-            groupPixelWidth = Math.max(
-                groupPixelWidth,
-                // Fallback to commonOptions (#9693)
-                pick(
-                    dgOptions.groupPixelWidth,
-                    DataGroupingDefaults.common.groupPixelWidth
-                )
-            );
-
-        }
-    }
-
-    // If one of the series needs grouping, apply it to all (#1634)
-    i = len;
-    while (i--) {
-        dgOptions = series[i].options.dataGrouping;
-
-        if (dgOptions) { // #2692
-
-            dataLength = (series[i].processedXData || series[i].data).length;
-
-            // Execute grouping if the amount of points is greater than the
-            // limit defined in groupPixelWidth
-            if (
-                series[i].groupPixelWidth ||
-                (
-                    dataLength >
-                    ((this.chart.plotSizeX as any) / groupPixelWidth)
-                ) ||
-                (dataLength && dgOptions.forced)
-            ) {
-                doGrouping = true;
-            }
-        }
-    }
-
-    return doGrouping ? groupPixelWidth : 0;
-};
-
-/**
- * Highcharts Stock only. Force data grouping on all the axis' series.
- *
- * @product highstock
- *
- * @function Highcharts.Axis#setDataGrouping
- *
- * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
- *        A `dataGrouping` configuration. Use `false` to disable data grouping
- *        dynamically.
- *
- * @param {boolean} [redraw=true]
- *        Whether to redraw the chart or wait for a later call to
- *        {@link Chart#redraw}.
- */
-Axis.prototype.setDataGrouping = function (
-    this: Axis,
-    dataGrouping?: (boolean|DataGroupingOptions),
-    redraw?: boolean
-): void {
-    const axis = this as AxisType;
-
-    let i;
-
-    redraw = pick(redraw, true);
-
-    if (!dataGrouping) {
-        dataGrouping = {
-            forced: false,
-            units: null as any
-        } as DataGroupingOptions;
-    }
-
-    // Axis is instantiated, update all series
-    if (this instanceof Axis) {
-        i = this.series.length;
-        while (i--) {
-            this.series[i].update({
-                dataGrouping: dataGrouping as any
-            }, false);
-        }
-
-    // Axis not yet instanciated, alter series options
-    } else {
-        (this as any).chart.options.series.forEach(function (
-            seriesOptions: any
-        ): void {
-            // Merging dataGrouping options with already defined options #16759
-            seriesOptions.dataGrouping = typeof dataGrouping === 'boolean' ?
-                dataGrouping :
-                merge(dataGrouping, seriesOptions.dataGrouping);
-        });
-    }
-
-    // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
-    if (axis.ordinal) {
-        axis.ordinal.slope = void 0;
-    }
-
-    if (redraw) {
-        this.chart.redraw();
-    }
-};
-
-// When all series are processed, calculate the group pixel width and then
-// if this value is different than zero apply groupings.
-addEvent(Axis, 'postProcessData', Axis.prototype.applyGrouping);
-
 // Override point prototype to throw a warning when trying to update grouped
 // points.
 addEvent(Point, 'update', function (): (boolean|undefined) {
@@ -1064,14 +904,7 @@ addEvent(Series, 'afterSetOptions', function (
     }
 });
 
-// When resetting the scale reset the hasProccessed flag to avoid taking
-// previous data grouping of neighbour series into accound when determining
-// group pixel width (#2692).
-addEvent(Axis, 'afterSetScale', function (): void {
-    this.series.forEach(function (series): void {
-        series.hasProcessed = false;
-    });
-});
+DataGroupingAxisComposition.compose(Axis);
 
 /* *
  *
