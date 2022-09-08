@@ -63,7 +63,7 @@ In the following example, a color axis is added and the `x` value is used for co
 
 Blend colors
 ----------
-It is also possible to show another dimention - density. By using the [bubble.blendColors](https://api.highcharts.com/highcharts/series.bubble.blendColors) option, you can add a bubble with multiple graphics (colors) where each color graphic has the same zIndex as all other graphics with the same colors. This allows to show a nice blend effect that could be very useful for showing density ([espetially in a map chart](https://www.highcharts.com/docs/maps/mapbubble-series#mapbubble-blend-colors)).
+It is also possible to show another dimension - density. By using the [bubble.blendColors](https://api.highcharts.com/highcharts/series.bubble.blendColors) option, you can add a bubble with multiple graphics (colors) where each color graphic has the same `zIndex` as all other graphics with the same colors. This allows to show a nice blend effect that could be very useful for showing density ([espetially in a map chart](https://www.highcharts.com/docs/maps/mapbubble-series#mapbubble-blend-colors)).
 
 A `bubble.blendColors` option can be defined in two different formats:
 

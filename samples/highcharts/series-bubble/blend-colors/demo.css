@@ -1,4 +1,10 @@
-#container {
+#outer-container {
     max-width: 800px;
     margin: 0 auto;
+}
+
+button {
+    border: 1px solid silver;
+    border-radius: 0.3em;
+    padding: 0.5em 1em;
 }

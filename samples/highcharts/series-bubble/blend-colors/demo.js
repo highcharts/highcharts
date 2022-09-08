@@ -1,5 +1,9 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Blend Colors'
+    },
+
     xAxis: {
         minPadding: 0.5,
         maxPadding: 0.5
