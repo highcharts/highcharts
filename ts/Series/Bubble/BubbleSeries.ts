@@ -225,11 +225,12 @@ class BubbleSeries extends ScatterSeries {
     public static defaultOptions: BubbleSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         /**
-         * Set of colors for each point (each point will have multiple
-         * graphics). Can be an array of strings (if 3 colors defined, every
-         * next marker is 33.3% smaller) or an array of color stops (e.g. for
-         * `[[0.2, '#ff0000'], [1, '#0000ff']]` the smallest top marker is 5
-         * times smaller than the biggest bottom one).
+         * Set of radial gradient colors for each point (each point will have
+         * multiple graphics). Can be an array of strings (if 3 colors defined,
+         * every next marker is 33.3% smaller) or an array of color stops
+         * (e.g. for `[[0.2, '#ff0000'], [1, '#0000ff']]` the smallest top
+         * marker is 5 times smaller than the biggest bottom one).
+         * Named colors, e.g. `'red'`, aren't working with radial gradient.
          *
          * @sample highcharts/demo/bubble-blend-colors
          *         Blend colors
@@ -798,18 +799,17 @@ class BubbleSeries extends ScatterSeries {
                     series.blendColorIndex = colorIndex;
                 }
 
-                const colorsLength = blendColors.length,
-                    fillColor = {
-                        radialGradient: {
-                            cx: 0.5,
-                            cy: 0.5,
-                            r: 0.5
-                        },
-                        stops: [
-                            [colorIndex === colorsLength - 1 ? 0 : 0.5, color],
-                            [1, (new Color(color)).setOpacity(0).get('rgba')]
-                        ]
-                    };
+                const fillColor = {
+                    radialGradient: {
+                        cx: 0.5,
+                        cy: 0.5,
+                        r: 0.5
+                    },
+                    stops: [
+                        [0.5, color],
+                        [1, (new Color(color)).setOpacity(0).get('rgba')]
+                    ]
+                };
 
                 options.marker = merge(options.marker, { fillColor });
 
@@ -887,6 +887,7 @@ class BubbleSeries extends ScatterSeries {
                             }
 
                             if (graphic) {
+                                // Styled Mode not supported at this moment
                                 if (!chart.styledMode) {
                                     const pointAttribs = series.pointAttribs(
                                             point,
@@ -901,10 +902,6 @@ class BubbleSeries extends ScatterSeries {
                                         );
 
                                     graphic[verb](attribs);
-                                } else {
-                                    if (verb === 'animate') {
-                                        graphic.animate(markerAttribs);
-                                    }
                                 }
 
                                 graphic.addClass(point.getClassName(), true);
