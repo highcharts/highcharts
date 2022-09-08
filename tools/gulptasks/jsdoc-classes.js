@@ -49,7 +49,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/Sonification/*.js',
     'js/Extensions/Breadcrumbs.js',
     'js/Extensions/Data.js',
-    'js/Extensions/DataGrouping.js',
+    'js/Extensions/DataGrouping/DataGrouping.js',
     'js/Extensions/DraggablePoints.js',
     'js/Extensions/Drilldown.js',
     'js/Extensions/ExportData/ExportData.js',

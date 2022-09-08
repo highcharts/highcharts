@@ -40,13 +40,14 @@ const {
 function average(
     arr: ApproximationArray
 ): (null|number|undefined) {
-    let len = arr.length,
-        ret = sum(arr);
+    const len = arr.length;
+
+    let ret = sum(arr);
 
     // If we have a number, return it divided by the length. If not,
     // return null or undefined based on what the sum method finds.
     if (isNumber(ret) && len) {
-        ret = correctFloat((ret as any) / len);
+        ret = correctFloat(ret / len);
     }
 
     return ret;
