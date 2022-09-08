@@ -877,7 +877,7 @@ function wrapColumnSeriesAlignDataLabel(
             // don't need to be swapped (inverted argument is false)
             this.forceDL = chart.isInsidePlot(
                 (point as PolarPoint).plotX,
-                Math.round((point as PolarPoint).plotY)
+                (point as PolarPoint).plotY
             );
 
             // Checks if labels should be positioned inside

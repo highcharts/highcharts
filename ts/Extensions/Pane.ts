@@ -23,6 +23,7 @@ import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    correctFloat,
     defined,
     extend,
     merge,
@@ -549,7 +550,11 @@ function isInsidePane(
     );
 
     if (defined(startAngle) && defined(endAngle)) {
-        const angle = Math.atan2(y - cy, x - cx);
+        // Round angle to N-decimals to avoid numeric errors
+        const angle = Math.atan2(
+            correctFloat(y - cy, 8),
+            correctFloat(x - cx, 8)
+        );
 
         // Ignore full circle panes:
         if (endAngle !== startAngle) {
@@ -568,7 +573,7 @@ function isInsidePane(
                 // In this case, we simple check if angle is within the
                 // <startAngle, endAngle> range
                 insideSlice = angle >= startAngle &&
-                    angle <= endAngle;
+                    angle <= correctFloat(endAngle, 8);
             }
         }
     }
