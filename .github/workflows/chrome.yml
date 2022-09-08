@@ -58,7 +58,7 @@ jobs:
       - run: npx cypress install && npx cypress info
       # tasks
       - name: Run Highcharts-Utils
-        run: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
+        run: sudo npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
       - name: Check Chrome
         run: |
             google-chrome --version
@@ -70,6 +70,6 @@ jobs:
         with:
           name: cypress-chrome
           path: |
-            /home/circleci/repo/highcharts/cypress/videos
-            /home/circleci/repo/highcharts/cypress/screenshots
+            ${GITHUB_WORKSPACE}/cypress/videos
+            ${GITHUB_WORKSPACE}/cypress/screenshots
           retention-days: 12
