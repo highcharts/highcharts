@@ -141,27 +141,53 @@ class FlowMapSeries extends SankeySeries {
         lCorner: [number, number],
         rCorner: [number, number],
         topCorner:[number, number],
-        edgeNormalVector: [number, number],
         options: any): SVGPath {
 
         const width = options.width || 0,
             height = options.height || 0,
             type = options.type || 'arrow',
-            [edgeX, edgeY] = edgeNormalVector;
+            [edgeX, edgeY] = this.normalize(
+                rCorner[0] - lCorner[0], rCorner[1] - lCorner[1]
+            );
+
         let path: SVGPath = [];
 
         // For arrow head calculation
-        let [x, y] = lCorner;
-        x -= edgeX * width;
-        y -= edgeY * width;
-        path.push(['L', x, y]); // Left side of arrow head
+        if (type === 'arrow') {
+            let [x, y] = lCorner;
+            x -= edgeX * width;
+            y -= edgeY * width;
+            path.push(['L', x, y]); // Left side of arrow head
 
-        path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
+            path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
 
-        [x, y] = rCorner;
-        x += edgeX * width;
-        y += edgeY * width;
-        path.push(['L', x, y]); // Right side of arrow head
+            [x, y] = rCorner;
+            x += edgeX * width;
+            y += edgeY * width;
+            path.push(['L', x, y]); // Right side of arrow head
+        }
+
+        // For mushroom head calculation
+        if (type === 'mushroom') {
+            const [xl, yl] = lCorner,
+                [xr, yr] = rCorner,
+                [xp, yp] = topCorner,
+                xv = (xr - xl) / 2 + xl,
+                yv = (yr - yl) / 2 + yl,
+                xd = (xp - xv) * 2 + xv, // control point for curve
+                yd = (yp - yv) * 2 + yv;
+
+            let [x, y] = lCorner;
+            x -= edgeX * width;
+            y -= edgeY * width;
+            path.push(['L', x, y]); // Left side of arrow head
+
+            [x, y] = rCorner; // Right side of arrow head
+            x += edgeX * width;
+            y += edgeY * width;
+
+            path.push(['Q', xd, yd, x, y]); // Curve to right side
+        }
 
         return path;
     }
@@ -192,6 +218,7 @@ class FlowMapSeries extends SankeySeries {
             linkHeight = 0, // 10,
             nodeW = 0, // this.nodeWidth;
             pointOptions = point.options,
+            markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
             weights: any = [],
             minWeight,
             maxWeight,
@@ -201,8 +228,7 @@ class FlowMapSeries extends SankeySeries {
             weight = pointOptions.weight || 1,
             // TO DO: correct in data array
             growTowards = pointOptions.growTowards,
-            offset = pointOptions.markerEnd &&
-                pointOptions.markerEnd.height || 0;
+            offset = markerEndOptions && markerEndOptions.height || 0;
 
         this.points.forEach((p): void =>
             weights.push(p.options.weight)
@@ -212,7 +238,7 @@ class FlowMapSeries extends SankeySeries {
         maxWeight = Math.max(...weights);
 
         // Get a new rescaled weight
-        newWeight = this.scaleWeight(weight, minWeight, maxWeight, 1, 40);
+        newWeight = this.scaleWeight(weight, minWeight, maxWeight, 5, 20);
 
         // Connect to the linked parent point (in mappoint) to trigger
         // series redraw for the linked point (in flow)
@@ -349,9 +375,6 @@ class FlowMapSeries extends SankeySeries {
             toXToArc = -toYToArc;
             toYToArc = tmp;
 
-            // Unit vector for end edge is used to calculate the markerEnd.
-            const [endEdgeXNorm, endingEdgeYNorm] = [toXToArc, toYToArc];
-
             toXToArc *= newWeight;
             toYToArc *= newWeight;
 
@@ -395,15 +418,14 @@ class FlowMapSeries extends SankeySeries {
                 ]
             };
 
-            if (pointOptions.markerEnd && pointOptions.markerEnd.enabled &&
+            if (markerEndOptions && markerEndOptions.enabled &&
                 point.shapeArgs.d) {
 
                 const marker: SVGPath = FlowMapSeries.markerEndPath(
                     [toX - toXToArc, toY - toYToArc],
                     [toX + toXToArc, toY + toYToArc],
                     [toPoint.plotX as number, toPoint.plotY as number],
-                    [endEdgeXNorm, endingEdgeYNorm],
-                    pointOptions.markerEnd
+                    markerEndOptions
                 );
 
                 (point.shapeArgs.d as SVGPath).splice(2, 0,
