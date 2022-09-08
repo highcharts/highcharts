@@ -22,10 +22,10 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 import { Palette } from '../../Core/Color/Palettes';
 
 /* *
-*
-*  Constants
-*
-* */
+ *
+ *  Constants
+ *
+ * */
 
 /**
  * A treegraph series is a diagram, which shows a relation between ancestors
@@ -35,7 +35,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *
  * TODO change back the demo path
  * @sample highcharts/demo/treegraph-chart
- *          Treegraph Chart
+ *         Treegraph Chart
  *
  * @extends      plotOptions.treemap
  * @excluding    layoutAlgorithm, dashStyle, linecap, lineWidth,
@@ -48,8 +48,8 @@ import { Palette } from '../../Core/Color/Palettes';
  *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
  *               zones
  *
- * @since        next
  * @product      highcharts
+ * @since        next
  * @requires     modules/treemap.js
  * @requires     modules/treegraph.js
  * @optionparent plotOptions.treegraph
@@ -59,13 +59,13 @@ const TreegraphSeriesDefaults = {
      * Flips the positions of the nodes of a treegraph along the
      * horizontal axis (vertical if chart is inverted).
      *
-     * @type {boolean}
-     * @since next
-     * @default false
-     * @product highcharts
-     *
      * @sample highcharts/series-treegraph/reversed-nodes
      *         Treegraph series with reversed nodes.
+     *
+     * @type    {boolean}
+     * @default false
+     * @product highcharts
+     * @since   next
      */
     reversed: false,
     /**
@@ -80,6 +80,18 @@ const TreegraphSeriesDefaults = {
         states: {}
     },
     link: {
+        /**
+         * Modifier of the shape of the curved link. Works best for
+         * values between 0 and 1, where 0 is a straight line, and 1 is
+         * a shape close to the default one.
+         *
+         * @type      {number}
+         * @default   0.5
+         * @product   highcharts
+         * @since     next
+         * @apioption series.treegraph.link.curveFactor
+         */
+
         /**
          * The color of the links between nodes.
          *
@@ -113,18 +125,6 @@ const TreegraphSeriesDefaults = {
          *
          */
         type: 'curved'
-        /**
-         * Modifier of the shape of the curved link. Works best for
-         * values between 0 and 1, where 0 is a straight line, and 1 is
-         * a shape close to the default one.
-         *
-         * @default 0.5
-         * @type {number}
-         * @since next
-         * @product highcharts
-         * @apioption series.treegraph.link.curveFactor
-         *
-         */
     },
     /**
      * Options applied to collapse Button. The collape button is the
@@ -189,7 +189,6 @@ const TreegraphSeriesDefaults = {
          * @type {string}
          * @since next
          * @product highcharts
-         *
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
         pointFormat: '{point.id}'
@@ -211,8 +210,6 @@ const TreegraphSeriesDefaults = {
      * links and is an empty string by default.
      *
      * @declare Highcharts.SeriesTreegraphDataLabelsOptionsObject
-     *
-     * @private
      */
     dataLabels: {
         /**
@@ -223,12 +220,11 @@ const TreegraphSeriesDefaults = {
          * **Note:** Only SVG-based renderer supports this option.
          * Setting `useHTML` to true will disable this option.
          *
-         * @extends plotOptions.treegraph.dataLabels.linkTextPath
-         * @since   next
-         *
-         *
          * @sample highcharts/series-treegraph/link-text-path
          *         Treegraph series with link text path dataLabels.
+         *
+         * @extends plotOptions.treegraph.dataLabels.linkTextPath
+         * @since   next
          */
         linkTextPath: {
             attributes: {
@@ -242,5 +238,11 @@ const TreegraphSeriesDefaults = {
         }
     }
 } as TreegraphSeriesOptions;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreegraphSeriesDefaults;

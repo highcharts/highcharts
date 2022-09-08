@@ -14,15 +14,15 @@
  *
  * */
 
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
-import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import { TreegraphLinkOptions } from './TreegraphLink';
+import type { TreegraphLinkOptions } from './TreegraphLink';
+import type TreegraphPoint from './TreegraphPoint';
+import type TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
 
 /* *
  *
@@ -30,8 +30,8 @@ import { TreegraphLinkOptions } from './TreegraphLink';
  *
  * */
 
-
 export type TreegraphLayoutTypes = 'Walker';
+
 export interface CollapseButtonOptions {
     style?: CSSObject;
     onlyOnHover: boolean;
@@ -42,6 +42,7 @@ export interface CollapseButtonOptions {
     height: number;
     width: number;
 }
+
 export interface TreegraphDataLabelFormatterCallback {
     (
         this: (
@@ -50,14 +51,17 @@ export interface TreegraphDataLabelFormatterCallback {
         )
     ): (string|undefined);
 }
+
 export interface TreegraphDataLabelFormatterContext {
     point: TreegraphPoint
 }
+
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
     linkFormatter: TreegraphDataLabelFormatterCallback;
     linkTextPath?: DataLabelTextPathOptions;
 }
+
 export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
     collapsed?: boolean;
 }
@@ -71,9 +75,9 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreegraphSeriesOptions;
