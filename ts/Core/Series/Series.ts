@@ -4219,7 +4219,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'shadowGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
