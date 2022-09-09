@@ -14,7 +14,7 @@
 
         subtitle: {
             text: `The route through the Suez Canal with a number of travel days
-            between cities.`
+            between cities`
         },
 
         mapNavigation: {
