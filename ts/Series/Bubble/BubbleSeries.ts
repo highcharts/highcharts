@@ -960,6 +960,7 @@ class BubbleSeries extends ScatterSeries {
             this.chart.plotWidth,
             this.chart.plotHeight
         );
+
         const getPxSize = (length: number|string = 1): number => {
             let isPercent;
 
@@ -969,6 +970,7 @@ class BubbleSeries extends ScatterSeries {
             }
             return isPercent ? smallestSize * length / 100 : length;
         };
+
         let minPxSize = getPxSize(
             pick(this.options.minSize, BubbleSeries.defaultOptions.minSize)
         );
