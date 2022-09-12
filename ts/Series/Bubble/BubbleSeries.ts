@@ -556,11 +556,10 @@ class BubbleSeries extends ScatterSeries {
         const animationLimit = pick(this.options.animationLimit, Infinity);
 
         if (!init && this.points.length < animationLimit) { // #8099
-            const blendColors = this.options.blendColors;
+            const blendColors = this.options.blendColors,
+                numberOfGraphics = (blendColors && blendColors.length) || 1;
 
-            // Why ['']? If standard single bubble, perform animation only for
-            // one point (one graphic). String element matches in TS
-            (blendColors || ['']).forEach((_, i: number): void => {
+            for (let i = 0; i < numberOfGraphics; i++) {
                 this.points.forEach((point): void => {
                     const graphic =
                         (point.graphics && point.graphics[i]) || point.graphic;
@@ -591,7 +590,7 @@ class BubbleSeries extends ScatterSeries {
                         graphic.animate(size, this.options.animation);
                     }
                 });
-            });
+            }
         }
     }
 
@@ -956,36 +955,29 @@ class BubbleSeries extends ScatterSeries {
 
     }
 
-    public getPxSize(
-        length: number|string|undefined,
-        isMinSize?: boolean
-    ): number {
-        const defaultValue = isMinSize ?
-            BubbleSeries.defaultOptions.minSize :
-            BubbleSeries.defaultOptions.maxSize;
+    public getPxExtremes(allowSmaller?: true): BubblePxExtremes {
         const smallestSize = Math.min(
             this.chart.plotWidth,
             this.chart.plotHeight
         );
-        let isPercent;
+        const getPxSize = (length: number|string = 1): number => {
+            let isPercent;
 
-        length = pick(length, defaultValue as number|string);
-
-        if (typeof length === 'string') {
-            isPercent = /%$/.test(length);
-            length = parseInt(length, 10);
-        }
-
-        return isPercent ? smallestSize * length / 100 : length;
-    }
-
-    public getPxExtremes(allowSmaller?: boolean): BubblePxExtremes {
-        let minPxSize = this.getPxSize(this.options.minSize, true);
-
+            if (typeof length === 'string') {
+                isPercent = /%$/.test(length);
+                length = parseInt(length, 10);
+            }
+            return isPercent ? smallestSize * length / 100 : length;
+        };
+        let minPxSize = getPxSize(
+            pick(this.options.minSize, BubbleSeries.defaultOptions.minSize)
+        );
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            this.getPxSize(this.options.maxSize),
+            getPxSize(
+                pick(this.options.maxSize, BubbleSeries.defaultOptions.maxSize)
+            ),
             minPxSize
         );
 
