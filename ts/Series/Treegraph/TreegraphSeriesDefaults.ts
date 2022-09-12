@@ -33,8 +33,7 @@ import { Palette } from '../../Core/Color/Palettes';
  * The best examples of the dataStructures, which best reflect this chart
  * are e.g. genealogy tree or directory structure.
  *
- * TODO change back the demo path
- * @sample highcharts/demo/treegraph-chart
+ * @sample highchart/series-treegraph/treegraph-chart
  *         Treegraph Chart
  *
  * @extends      plotOptions.treemap
