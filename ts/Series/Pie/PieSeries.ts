@@ -101,6 +101,8 @@ class PieSeries extends Series {
      *               boostBlending
      * @product      highcharts highmaps
      * @optionparent plotOptions.pie
+     *
+     * @private
      */
     public static defaultOptions: PieSeriesOptions = merge(Series.defaultOptions, {
         /**
@@ -218,7 +220,7 @@ class PieSeries extends Series {
             /**
              * Alignment method for data labels. Possible values are:
              *
-             * - `toPlotEdges`: Each label touches the nearest vertical edge of
+             * - `plotEdges`: Each label touches the nearest vertical edge of
              *   the plot area.
              *
              * - `connectors`: Connectors have the same x position and the

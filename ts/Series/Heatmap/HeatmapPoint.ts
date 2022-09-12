@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorMapMixin from '../ColorMapMixin';
+import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -107,45 +107,45 @@ class HeatmapPoint extends ScatterPoint {
             ),
             cellAttr: HeatmapPoint.CellAttributes = {
                 x1: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x - xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 x2: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x + xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 y1: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y - yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len),
 
                 y2: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y + yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len)
             };
 
@@ -240,9 +240,8 @@ class HeatmapPoint extends ScatterPoint {
  *
  * */
 
-interface HeatmapPoint {
-    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
-    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
+interface HeatmapPoint extends ColorMapComposition.PointComposition {
+    // nothing to add
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,

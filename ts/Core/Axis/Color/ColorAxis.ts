@@ -890,12 +890,12 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
-        const axis = this;
-        const chart = axis.chart;
-        const legendItems = axis.legendItems;
-        const legendOptions = chart.options.legend;
-        const valueDecimals = (legendOptions as any).valueDecimals;
-        const valueSuffix = (legendOptions as any).valueSuffix || '';
+        const axis = this,
+            chart = axis.chart,
+            legendItems = axis.legendItems,
+            legendOptions = chart.options.legend,
+            valueDecimals = pick(legendOptions.valueDecimals, -1),
+            valueSuffix = pick(legendOptions.valueSuffix, '');
 
         let name;
 

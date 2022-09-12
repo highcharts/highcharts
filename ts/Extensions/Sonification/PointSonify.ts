@@ -19,7 +19,7 @@
  * */
 
 import type Point from '../../Core/Series/Point';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesSonify from './SeriesSonify';
 import type SignalHandler from './SignalHandler';
 

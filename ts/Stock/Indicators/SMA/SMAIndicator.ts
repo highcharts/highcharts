@@ -14,10 +14,9 @@
  *
  * */
 
-import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type SeriesType from '../../../Core/Series/SeriesType';
+import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -27,10 +26,8 @@ import type SMAPoint from './SMAPoint';
 import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -42,22 +39,21 @@ const {
     splat
 } = U;
 
-import './SMAComposition.js';
-
 /* *
  *
  *  Declarations
  *
  * */
-interface CalculateOnObject {
-    chart: string;
-    xAxis?: string;
-}
 
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
     }
+}
+
+interface CalculateOnObject {
+    chart: string;
+    xAxis?: string;
 }
 
 /* *
@@ -170,7 +166,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
-    public linkedParent: typeof LineSeries.prototype = void 0 as any;
+    public linkedParent: LineSeriesType = void 0 as any;
 
     public nameBase?: string;
 
@@ -227,7 +223,7 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
+    public getValues<TLinkedSeries extends LineSeriesType>(
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -578,4 +574,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

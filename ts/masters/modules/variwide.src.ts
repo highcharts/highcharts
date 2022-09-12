@@ -10,4 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/Variwide/VariwideSeries.js';
+import Highcharts from '../../Core/Globals.js';
+import VariwideSeries from '../../Series/Variwide/VariwideSeries.js';
+const G: AnyRecord = Highcharts;
+VariwideSeries.compose(G.Axis, G.Tick);

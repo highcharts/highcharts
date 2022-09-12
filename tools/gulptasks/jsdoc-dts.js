@@ -21,7 +21,7 @@ function jsDocDTS() {
 
     const gulpLib = require('./lib/gulp');
     const highchartsDeclarationsGenerator = require(
-        'highcharts-declarations-generator'
+        '@highcharts/highcharts-declarations-generator'
     );
 
     return new Promise((resolve, reject) => {

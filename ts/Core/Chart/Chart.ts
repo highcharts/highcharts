@@ -477,6 +477,29 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
+            const zooming = optionsChart.zooming = optionsChart.zooming || {};
+
+            // Other options have no default so just pick
+            if (userOptions.chart && !userOptions.chart.zooming) {
+                zooming.resetButton = optionsChart.resetZoomButton;
+            }
+            zooming.key = pick(
+                zooming.key,
+                optionsChart.zoomKey
+            );
+            zooming.pinchType = pick(
+                zooming.pinchType,
+                optionsChart.pinchType
+            );
+            zooming.singleTouch = pick(
+                zooming.singleTouch,
+                optionsChart.zoomBySingleTouch
+            );
+            zooming.type = pick(
+                zooming.type,
+                optionsChart.zoomType
+            );
+
             /**
              * The options structure for the chart after merging
              * {@link #defaultOptions} and {@link #userOptions}. It contains
@@ -2775,15 +2798,17 @@ class Chart {
      * Emit console warning if the a11y module is not loaded.
      */
     public warnIfA11yModuleNotLoaded():void {
-        const opts = this.options;
-        if (opts && !this.accessibility) {
+        const { options, title } = this;
+        if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
-                'aria-label': opts.title && opts.title.text || ''
+                'aria-label': (title && title.element.textContent) || ''
             });
 
-            if (!(opts.accessibility && opts.accessibility.enabled === false)) {
+            if (!(
+                options.accessibility && options.accessibility.enabled === false
+            )) {
                 error(
                     'Highcharts warning: Consider including the ' +
                     '"accessibility.js" module to make your chart more ' +
@@ -3496,9 +3521,10 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
+
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.resetZoomButton as any,
+            btnOptions = chart.options.chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
@@ -3564,7 +3590,7 @@ class Chart {
             hasZoomed;
 
         // If zoom is called with no arguments, reset the axes
-        if (!event || (event as any).resetSelection) {
+        if (!event || event.resetSelection) {
             chart.axes.forEach(function (axis): void {
                 hasZoomed = (axis.zoom as any)();
             });
@@ -3875,6 +3901,8 @@ extend(Chart.prototype, {
      *
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
+     *
+     * @private
      */
     collectionsWithInit: {
         // collectionName: [ initializingMethod, [extraArguments] ]
@@ -3886,6 +3914,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
+     * @private
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -3896,6 +3925,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -3913,7 +3943,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @type {Array}
+     * @private
      */
     propsRequireReflow: [
         'margin',
@@ -3931,6 +3961,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireUpdateSeries: [
         'chart.inverted',

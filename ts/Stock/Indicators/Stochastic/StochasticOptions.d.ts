@@ -26,7 +26,7 @@ import type {
  *
  * */
 
-export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.Options{
+export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     dataGrouping?: Highcharts.DataGroupingOptionsObject;
     marker?: PointMarkerOptions;
     params?: StochasticParamsOptions;

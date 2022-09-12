@@ -1264,3 +1264,70 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
         'The table should render category name and value (#13785)'
     );
 });
+
+QUnit.test('Sortable table (#16972)', function (assert) {
+    const chart = Highcharts.chart("container", {
+        chart: {
+            type: "column"
+        },
+        xAxis: {
+            categories: ['NL', 'ES', 'DE', 'BE', 'NO']
+        },
+        series: [{
+            name: 'Import',
+            data: [100, 80, 60, 50, 70]
+        },
+        {
+            name: 'Export',
+            data: [20, 10, 30, 40, 50]
+        }
+        ],
+        exporting: {
+            showTable: true
+        }
+    });
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[0].innerText,
+        'BE',
+        'After clicking on the row header, table content should be sorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[1].innerText,
+        '50',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[0].innerText,
+        'DE',
+        'After clicking on the row header, table content should be sorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[1].innerText,
+        '60',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[0].innerText,
+        'NO',
+        'After clicking on the row header, table content should be resorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[1].innerText,
+        '70',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[0].innerText,
+        'NL',
+        'After clicking on the row header, table content should be resorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[1].innerText,
+        '100',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+});

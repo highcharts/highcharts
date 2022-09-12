@@ -24,6 +24,7 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -104,6 +105,8 @@ class ColumnSeries extends Series {
      *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
+     *
+     * @private
      */
     public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
@@ -804,15 +807,12 @@ class ColumnSeries extends Series {
             // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Record<string, Highcharts.StackItem>): void => {
+                (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[
-                                    this.index as any
-                                ],
-                                total = stackItem.total;
+                            const pointValues = stackItem.points[this.index];
 
                             // If true `stacking` is enabled, count the total
                             // number of non-null stacks in the category, and
@@ -828,10 +828,26 @@ class ColumnSeries extends Series {
                                 }
 
                             // If `stacking` is not enabled, look for the index
-                            // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
-                                indexInCategory = pointValues[1];
-                                totalInCategory = total || 0;
+                                // If there are multiple points with the same X
+                                // then gather all series in category, and
+                                // assign index
+                                let seriesIndexes = Object
+                                    .keys(stackItem.points)
+                                    .filter((pointKey): boolean =>
+                                        // Filter out duplicate X's
+                                        !pointKey.match(',') &&
+                                        // Filter out null points
+                                        stackItem.points[pointKey] &&
+                                        stackItem.points[pointKey].length > 1
+                                    )
+                                    .map(parseFloat)
+                                    .sort((a, b): number => b - a);
+
+                                indexInCategory = seriesIndexes.indexOf(
+                                    this.index
+                                );
+                                totalInCategory = seriesIndexes.length;
                             }
                         }
                     }

@@ -12,11 +12,22 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../../Core/Color/ColorString';
-import Color from '../../Core/Color/Color.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // Register color names since GL can't render those directly.
-// TODO: When supporting modern syntax, make this a const and a named export
+// TODO: When supporting modern syntax, make this a named export
 const defaultHTMLColorMap: Record<string, ColorString> = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
@@ -25,7 +36,6 @@ const defaultHTMLColorMap: Record<string, ColorString> = {
     azure: '#f0ffff',
     beige: '#f5f5dc',
     bisque: '#ffe4c4',
-    black: '#000000',
     blanchedalmond: '#ffebcd',
     blue: '#0000ff',
     blueviolet: '#8a2be2',
@@ -157,12 +167,19 @@ const defaultHTMLColorMap: Record<string, ColorString> = {
     violet: '#ee82ee',
     violetred: '#d02090',
     wheat: '#f5deb3',
-    white: '#ffffff',
     whitesmoke: '#f5f5f5',
     yellow: '#ffff00',
     yellowgreen: '#9acd32'
 };
 
-Color.names = defaultHTMLColorMap;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-export default defaultHTMLColorMap;
+const namedColors = {
+    defaultHTMLColorMap
+};
+
+export default namedColors;

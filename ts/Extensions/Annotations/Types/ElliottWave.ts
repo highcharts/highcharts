@@ -6,42 +6,38 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ControllableLabelOptions
+} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
-import type MockPointOptions from '../MockPointOptions';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
-declare module '../MockPointOptions' {
-    interface MockPointOptions {
-        label?: Highcharts.AnnotationsLabelOptions;
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class ElliottWave extends CrookedLine {
-    public constructor(
-        chart: Highcharts.AnnotationChart,
-        options: ElliottWave.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
      * Functions
      *
      * */
+
     public addLabels(): void {
-        this.getPointsOptions().forEach(function (
-            this: ElliottWave,
-            point: MockPointOptions,
-            i: number
-        ): void {
+        this.getPointsOptions().forEach((point, i): void => {
             const typeOptions = (
                     this.options.typeOptions as ElliottWave.TypeOptions
                 ),
@@ -55,9 +51,15 @@ class ElliottWave extends CrookedLine {
                 ), false as any);
 
             point.label = label.options;
-        }, this);
+        });
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface ElliottWave {
     defaultOptions: CrookedLine['defaultOptions'];
@@ -105,8 +107,14 @@ ElliottWave.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace ElliottWave {
-    export interface LabelOptions extends Highcharts.AnnotationsLabelOptions {
+    export interface LabelOptions extends ControllableLabelOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;
@@ -125,16 +133,19 @@ namespace ElliottWave {
  *  Registry
  *
  * */
-Annotation.types.elliottWave = ElliottWave;
-declare module './AnnotationType'{
+
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;
     }
 }
+
+Annotation.types.elliottWave = ElliottWave;
 
 /* *
  *
  *  Default Export
  *
  * */
+
 export default ElliottWave;

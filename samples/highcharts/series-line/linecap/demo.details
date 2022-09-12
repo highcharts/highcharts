@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Kamil Musialowski
+ js_wrap: b
+...
