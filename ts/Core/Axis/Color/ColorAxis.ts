@@ -897,7 +897,7 @@ class ColorAxis extends Axis implements AxisLike {
             valueDecimals = pick(legendOptions.valueDecimals, -1),
             valueSuffix = pick(legendOptions.valueSuffix, '');
 
-        const getPointsInDataClass = (i: number): Point[] =>
+        const getPointsInDataClass = (i: number): Array<Point> =>
             axis.series.reduce((points, s): Point[] => {
                 points.push(...s.points.filter((point): boolean =>
                     point.dataClass === i
@@ -945,9 +945,9 @@ class ColorAxis extends Axis implements AxisLike {
                         // Override setState to set either normal or inactive
                         // state to all points in this data class
                         setState: (state?: (StatesOptionsKey|'')): void => {
-                            getPointsInDataClass(i).forEach((point): void =>
-                                point.setState(state)
-                            );
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setState(state);
+                            }
                         },
 
                         // Override setState to show or hide all points in this
@@ -956,9 +956,9 @@ class ColorAxis extends Axis implements AxisLike {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            getPointsInDataClass(i).forEach((point): void =>
-                                point.setVisible(vis)
-                            );
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setVisible(vis);
+                            }
                             chart.legend.colorizeItem(this as any, vis);
                         }
                     },
