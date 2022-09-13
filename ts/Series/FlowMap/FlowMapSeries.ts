@@ -227,7 +227,7 @@ class FlowMapSeries extends SankeySeries {
         const curveFactor = pointOptions.curveFactor || 0,
             weight = pointOptions.weight || 1,
             // TO DO: correct in data array
-            growTowards = pointOptions.growTowards,
+            growTowards = this.options.growTowards || pointOptions.growTowards,
             offset = markerEndOptions && markerEndOptions.height || 0;
 
         this.points.forEach((p): void =>
