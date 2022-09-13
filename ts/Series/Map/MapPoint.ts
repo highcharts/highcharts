@@ -201,7 +201,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     public setVisible(vis?: boolean): void {
         const method = vis ? 'show' : 'hide';
 
-        this.visible = this.options.visible = Boolean(vis);
+        this.visible = this.options.visible = !!vis;
 
         // Show and hide associated elements
         if (this.dataLabel) {
