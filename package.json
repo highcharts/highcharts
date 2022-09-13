@@ -35,8 +35,8 @@
   "devDependencies": {
     "@babel/core": "^7.19.0",
     "@babel/preset-env": "^7.19.0",
-    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.25",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.36",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.38",
     "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.1",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.4",
