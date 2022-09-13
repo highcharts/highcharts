@@ -1202,18 +1202,8 @@ class Chart {
     ): void {
         const chart = this;
 
-        // Default style
-        const style = name === 'title' ? {
-            color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '16px' : '18px' // #2944
-        } : {
-            color: Palette.neutralColor60
-        };
-
         // Merge default options with explicit options
         const options = this.options[name] = merge(
-            // Default styles
-            (!this.styledMode && { style }) as Chart.DescriptionOptionsType,
             this.options[name],
             explicitOptions
         );
@@ -1221,7 +1211,7 @@ class Chart {
         let elem = this[name];
 
         if (elem && explicitOptions) {
-            this[name] = elem = (elem as any).destroy(); // remove old
+            this[name] = elem = elem.destroy(); // remove old
         }
 
         if (options && !elem) {
@@ -1253,7 +1243,13 @@ class Chart {
 
             // Presentational
             if (!this.styledMode) {
-                elem.css((options as any).style);
+                elem.css(extend<CSSObject>(
+                    name === 'title' ? {
+                        // #2944
+                        fontSize: this.options.isStock ? '16px' : '18px'
+                    } : {},
+                    options.style
+                ));
             }
 
             /**
@@ -4017,7 +4013,7 @@ namespace Chart {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
@@ -4067,7 +4063,7 @@ namespace Chart {
     export interface SubtitleOptions {
         align?: AlignValue;
         floating?: boolean;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
@@ -4080,7 +4076,7 @@ namespace Chart {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
