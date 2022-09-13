@@ -1,6 +1,7 @@
 {
     "extends": "stylelint-config-standard",
     "rules": {
+        "alpha-value-notation": null,
         "declaration-block-no-redundant-longhand-properties": null,
         "function-url-quotes": null,
         "indentation": 4,

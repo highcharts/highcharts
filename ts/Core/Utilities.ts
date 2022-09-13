@@ -1368,7 +1368,7 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
@@ -1503,8 +1503,6 @@ function offset(el: Element): Utilities.OffsetObject {
  *
  * @param {T} [ctx]
  *        The context.
- *
- * @return {void}
  */
 function objectEach<TObject, TContext>(
     obj: TObject,

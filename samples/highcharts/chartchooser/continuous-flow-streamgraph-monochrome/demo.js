@@ -41,6 +41,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
+        xDateFormat: '%B %Y',
         shared: true
     },
 

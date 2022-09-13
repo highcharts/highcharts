@@ -17,6 +17,7 @@
  * */
 
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
+
 import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -44,7 +45,7 @@ const {
  * */
 
 /**
- * lollipop series type
+ * Lollipop series type
  *
  * @private
  * @class
@@ -57,7 +58,7 @@ class LollipopSeries extends DumbbellSeries {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -76,7 +77,7 @@ class LollipopSeries extends DumbbellSeries {
      * @product      highcharts highstock
      * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
      *               lowColor, stickyTracking, trackByArea
-     * @since 8.0.0
+     * @since        8.0.0
      * @optionparent plotOptions.lollipop
      */
     public static defaultOptions: LollipopSeriesOptions = merge(
@@ -118,6 +119,12 @@ class LollipopSeries extends DumbbellSeries {
     public options: LollipopSeriesOptions = void 0 as any;
     public points: Array<LollipopPoint> = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     public toYData(point: LollipopPoint): Array<number> {
         return [pick(point.y, point.low)];
     }
@@ -126,7 +133,7 @@ class LollipopSeries extends DumbbellSeries {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 
@@ -187,6 +194,7 @@ export default LollipopSeries;
  * @requires  modules/lollipop
  * @apioption series.lollipop
  */
+
 /**
  * An array of data points for the series. For the `lollipop` series type,
  * points can be given in the following ways:
@@ -251,10 +259,11 @@ export default LollipopSeries;
  */
 
 /**
-* The y value of the point.
-*
-* @type      {number|null}
-* @product   highcharts highstock
-* @apioption series.line.data.y
-*/
-''; // adds doclets above to transpiled file
+ * The y value of the point.
+ *
+ * @type      {number|null}
+ * @product   highcharts highstock
+ * @apioption series.line.data.y
+ */
+
+(''); // adds doclets above to transpiled file

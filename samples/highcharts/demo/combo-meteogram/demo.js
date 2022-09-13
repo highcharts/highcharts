@@ -372,7 +372,7 @@ Meteogram.prototype.getChartOptions = function () {
                 format: '{value:<span style="font-size: 12px; font-weight: bold">%a</span> %b %e}',
                 align: 'left',
                 x: 3,
-                y: -5
+                y: 8
             },
             opposite: true,
             tickLength: 20,

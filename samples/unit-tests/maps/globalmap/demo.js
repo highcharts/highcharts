@@ -40,17 +40,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
     );
 
     series.update({
-        data: [{ 'hc-key': 'bn-tu' }]
-    });
-
-    assert.notEqual(
-        series.points[0].graphic.attr('fill'),
-        nullColor,
-        `Data should be updated correctly without updating mapData, #11636.`
-    );
-
-    series.update({
-        data: [{ 'hc-key': 'ad-6407' }, { 'hc-key': 'ad-6406' }],
+        data: [{ 'hc-key': 'ad-6407' }, { 'hc-key': 'ad-6406', value: null }],
         mapData: Highcharts.maps['countries/ad/ad-all']
     });
 
@@ -61,11 +51,16 @@ QUnit.test('Set basemap on chart object', function (assert) {
         (when updating with data), #11636.`
     );
 
-    assert.notEqual(
+    assert.strictEqual(
         series.points[0].graphic.attr('fill'),
+        series.color,
+        `undefined value is allowed, so the point should be colored, #17279.`
+    );
+
+    assert.strictEqual(
+        series.points[1].graphic.attr('fill'),
         nullColor,
-        `New data should be updated correctly
-        (when updating with mapData), #11636.`
+        `Data point with null value should not be colored, #17279.`
     );
 
     series.update({

@@ -246,7 +246,7 @@ class ItemSeries extends PieSeries {
 
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
-                graphics: Record<string, SVGElement>,
+                graphics: Array<SVGElement>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
                 symbol: SymbolKey = (
@@ -264,7 +264,7 @@ class ItemSeries extends PieSeries {
                 width: number,
                 height: number;
 
-            point.graphics = graphics = point.graphics || {};
+            point.graphics = graphics = point.graphics || [];
 
             if (!series.chart.styledMode) {
                 pointAttr = series.pointAttribs(
@@ -280,7 +280,7 @@ class ItemSeries extends PieSeries {
                         .add(series.group);
                 }
 
-                for (let val = 0; val < (point.y as any); val++) {
+                for (let val = 0; val < (point.y || 0); val++) {
 
                     // Semi-circle
                     if (series.center && series.slots) {
@@ -324,10 +324,10 @@ class ItemSeries extends PieSeries {
                         graphics[val] = renderer
                             .symbol(
                                 symbol,
-                                null as any,
-                                null as any,
-                                null as any,
-                                null as any,
+                                void 0,
+                                void 0,
+                                void 0,
+                                void 0,
                                 {
                                     backgroundSize: 'within'
                                 }
@@ -337,17 +337,13 @@ class ItemSeries extends PieSeries {
                     }
                     graphics[val].isActive = true;
 
-
                     i++;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
+            graphics.forEach((graphic, i): void => {
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    delete graphics[key];
+                    graphics.splice(i, 1);
                 } else {
                     graphic.isActive = false;
                 }

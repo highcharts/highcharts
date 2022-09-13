@@ -31,7 +31,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -41,7 +41,8 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypePlotOptions,
+    SeriesTypeRegistry
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -54,8 +55,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import D from '../DefaultOptions.js';
-const { defaultOptions } = D;
+import DO from '../DefaultOptions.js';
+const { defaultOptions } = DO;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -128,6 +129,7 @@ declare module './SeriesLike' {
         invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
+        toYData?(point: Point): Array<number>;
     }
 }
 
@@ -213,7 +215,35 @@ class Series {
      *
      * */
 
-    public static defaultOptions = SeriesDefaults;
+    public static readonly defaultOptions = SeriesDefaults;
+
+    /**
+     * Registry of all available series types.
+     *
+     * @name Highcharts.Series.types
+     * @type {Highcharts.Dictionary<typeof_Highcharts.Series>}
+     */
+    public static readonly types = SeriesRegistry.seriesTypes;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Registers a series class to be accessible via `Series.types`.
+     *
+     * @function Highcharts.Series.registerType
+     *
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     */
+    public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /* *
      *
@@ -1102,7 +1132,7 @@ class Series {
 
     /**
      * Internal function called from setData. If the point count is the same
-     * as is was, or if there are overlapping X values, just run
+     * as it was, or if there are overlapping X values, just run
      * Point.update which is cheaper, allows animation, and keeps references
      * to points. This also allows adding or removing points if the X-es
      * don't match.
@@ -1217,7 +1247,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && oldData[i].update) {
+                if (point !== oldData[i].y && (oldData[i].update)) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -1305,7 +1335,7 @@ class Series {
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
@@ -1345,7 +1375,6 @@ class Series {
 
 
         const dataLength = data.length;
-        redraw = pick(redraw, true);
 
         if (dataSorting && dataSorting.enabled) {
             data = this.sortData(data);
@@ -1363,7 +1392,7 @@ class Series {
             series.visible &&
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
-            !series.isSeriesBoosting
+            !series.boosted
         ) {
             updatedData = this.updateData(data, animation);
         }
@@ -1860,26 +1889,6 @@ class Series {
                     )
                 );
 
-                /**
-                 * Highcharts Stock only. If a point object is created by data
-                 * grouping, it doesn't reflect actual points in the raw
-                 * data. In this case, the `dataGroup` property holds
-                 * information that points back to the raw data.
-                 *
-                 * - `dataGroup.start` is the index of the first raw data
-                 *   point in the group.
-                 *
-                 * - `dataGroup.length` is the amount of points in the
-                 *   group.
-                 *
-                 * @product highstock
-                 *
-                 * @name Highcharts.Point#dataGroup
-                 * @type {Highcharts.DataGroupingInfoObject|undefined}
-                 *
-                 * @sample stock/members/point-datagroup
-                 *         Click to inspect raw data points
-                 */
                 point.dataGroup = (series.groupMap as any)[
                     groupCropStartIndex + i
                 ];
@@ -2287,7 +2296,7 @@ class Series {
             point.yBottom = defined(yBottom) ?
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                ) as any) :
+                )) :
                 null as any;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2326,7 +2335,7 @@ class Series {
                     0 as any,
                     1 as any,
                     pointPlacement
-                ) as any) :
+                )) :
                 plotX; // #1514, #5383, #5518
 
             // Negative points. For bubble charts, this means negative z
@@ -3039,7 +3048,7 @@ class Series {
             clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
-            chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
+            plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis: Axis = (this as any)[
                 (this.zoneAxis || 'y') + 'Axis'
             ],
@@ -3087,7 +3096,7 @@ class Series {
                 translatedFrom = clamp(
                     pick(translatedTo, translatedFrom),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
                 translatedTo = clamp(
                     Math.round(
@@ -3097,7 +3106,7 @@ class Series {
                         ) || 0
                     ),
                     0,
-                    chartSizeMax
+                    plotSizeMax
                 );
 
                 if (ignoreZones) {
@@ -3113,7 +3122,7 @@ class Series {
                         x: inverted ? pxPosMax : pxPosMin,
                         y: 0,
                         width: pxRange,
-                        height: chartSizeMax
+                        height: plotSizeMax
                     };
                     if (!horiz) {
                         clipAttr.x = chart.plotHeight - clipAttr.x;
@@ -3122,7 +3131,7 @@ class Series {
                     clipAttr = {
                         x: 0,
                         y: inverted ? pxPosMax : pxPosMin,
-                        width: chartSizeMax,
+                        width: plotSizeMax,
                         height: pxRange
                     };
                     if (horiz) {
@@ -3724,7 +3733,7 @@ class Series {
             }
             if (tree[sideB]) {
                 // compare distance to current best to splitting point to
-                // decide wether to check side B or not
+                // decide whether to check side B or not
                 if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
                     nPoint2 = _search(
                         search,
@@ -4210,7 +4219,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'shadowGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update

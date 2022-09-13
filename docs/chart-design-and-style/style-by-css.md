@@ -14,7 +14,7 @@ WHAT CAN BE STYLED?
 -------------------
 Typography, colors and visual properties like stroke width and style can be set by CSS.
 
-However, layout and positioning of elements like the title or legend can not be controlled by CSS. This is a limitation of CSS for SVG, that does not (yet - [SVG 2 Geometric Style Properties](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
+However, layout and positioning of elements like the title or legend cannot be controlled by CSS. This is a limitation of CSS for SVG, that does not (yet - [SVG 2 Geometric Style Properties](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
 
 
 WHAT CSS RULES APPLY

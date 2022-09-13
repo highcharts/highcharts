@@ -448,11 +448,15 @@ export default SeriesOnPointComposition;
  * */
 
 /**
- * Options for the `Series on point` feature. Only `pie` and `sunburst` series
+ * Options for the _Series on point_ feature. Only `pie` and `sunburst` series
  * are supported at this moment.
  *
+ * @sample      {highcharts} highcharts/series-on-point/series-on-point
+ *              Series on point
+ * @sample      {highmaps} maps/demo/map-pies
+ *              Pies on a map
  * @requires    modules/series-on-point
- * @since       next
+ * @since 10.2.0
  * @type        {object}
  * @apioption   plotOptions.series.onPoint
  */
@@ -464,7 +468,7 @@ export default SeriesOnPointComposition;
  * `.highcharts-connector-seriesonpoint` class name.
  *
  * @requires    modules/series-on-point
- * @since       next
+ * @since 10.2.0
  * @type        {Highcharts.SVGAttributes}
  * @apioption   plotOptions.series.onPoint.connectorOptions
  */
@@ -473,7 +477,7 @@ export default SeriesOnPointComposition;
  * Color of the connector line. By default it's the series' color.
  *
  * @requires    modules/series-on-point
- * @since       next
+ * @since 10.2.0
  * @type        {string}
  * @apioption   plotOptions.series.onPoint.connectorOptions.stroke
  */
@@ -482,7 +486,7 @@ export default SeriesOnPointComposition;
  * A name for the dash style to use for the connector.
  *
  * @requires    modules/series-on-point
- * @since       next
+ * @since 10.2.0
  * @type        {string}
  * @apioption   plotOptions.series.onPoint.connectorOptions.dashstyle
  */
@@ -493,7 +497,7 @@ export default SeriesOnPointComposition;
  * @default     1
  * @requires    modules/series-on-point
  * @type        {number}
- * @since       next
+ * @since 10.2.0
  * @apioption   plotOptions.series.onPoint.connectorOptions.width
  */
 
@@ -502,7 +506,7 @@ export default SeriesOnPointComposition;
  * `plotX` and `plotY` values and map points are valid.
  *
  * @requires   modules/series-on-point
- * @since      next
+ * @since 10.2.0
  * @type       {string}
  * @apioption  plotOptions.series.onPoint.id
  */
@@ -512,7 +516,7 @@ export default SeriesOnPointComposition;
  * _Series on point_ feature.
  *
  * @requires    modules/series-on-point
- * @since       next
+ * @since 10.2.0
  * @type        {object}
  * @apioption   plotOptions.series.onPoint.position
  */
@@ -522,7 +526,7 @@ export default SeriesOnPointComposition;
  * line is drawn connecting original position with new position.
  *
  * @requires   modules/series-on-point
- * @since      next
+ * @since 10.2.0
  * @type       {number}
  * @apioption  plotOptions.series.onPoint.position.offsetX
  */
@@ -532,7 +536,7 @@ export default SeriesOnPointComposition;
  * line is drawn from original position to a new position.
  *
  * @requires   modules/series-on-point
- * @since      next
+ * @since 10.2.0
  * @type       {number}
  * @apioption  plotOptions.series.onPoint.position.offsetY
  */
@@ -542,7 +546,7 @@ export default SeriesOnPointComposition;
  * point that it is connected to.
  *
  * @requires   modules/series-on-point
- * @since      next
+ * @since 10.2.0
  * @type       {number}
  * @apioption  plotOptions.series.onPoint.position.x
  */
@@ -552,7 +556,7 @@ export default SeriesOnPointComposition;
  * point that it is connected to.
  *
  * @requires   modules/series-on-point
- * @since      next
+ * @since 10.2.0
  * @type       {number}
  * @apioption  plotOptions.series.onPoint.position.y
  */

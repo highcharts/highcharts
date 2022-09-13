@@ -23,6 +23,7 @@ import type SMAPoint from '../SMA/SMAPoint';
 
 declare class StochasticPoint extends SMAPoint {
     public series: StochasticIndicator;
+    public smoothed?: number;
 }
 
 /* *
