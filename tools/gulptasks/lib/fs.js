@@ -39,13 +39,21 @@ function copyAllFiles(
     filterFunction
 ) {
 
+    if (directorySourcePath && !directorySourcePath.endsWith('/')) {
+        directorySourcePath += '/';
+    }
+
+    if (directoryTargetPath && !directoryTargetPath.endsWith('/')) {
+        directoryTargetPath += '/';
+    }
+
     const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
 
     if (filePaths.length === 0) {
         return;
     }
 
-    const pathIndex = (directorySourcePath.length + 1);
+    const pathIndex = directorySourcePath.length;
 
     if (typeof filterFunction === 'function') {
 

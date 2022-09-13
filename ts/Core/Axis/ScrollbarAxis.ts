@@ -17,8 +17,8 @@
  * */
 
 import type Axis from './Axis';
-import type Scrollbar from '../Scrollbar';
-import type ScrollbarOptions from '../ScrollbarOptions';
+import type Scrollbar from '../../Stock/Scrollbar/Scrollbar';
+import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
 import U from '../Utilities.js';
 const {

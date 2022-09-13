@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AroonOscillatorOptions,
     AroonOscillatorParamsOptions
@@ -19,17 +25,13 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        aroon: AroonIndicator
-    }
-} = SeriesRegistry;
+    aroon: AroonIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
-
-const AROON = SeriesRegistry.seriesTypes.aroon;
 
 /* *
  *
@@ -111,7 +113,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
             i: number;
 
         aroon = (
-            AROON.prototype.getValues.call(
+            super.getValues.call(
                 this, series, params
             ) as IndicatorValuesObject<TLinkedSeries>);
 
@@ -135,7 +137,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
 
 /* *
  *
- * Class Prototype
+ *  Class Prototype
  *
  * */
 
@@ -173,6 +175,12 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  * */
 
 export default AroonOscillatorIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * An `Aroon Oscillator` series. If the [type](#series.aroonoscillator.type)

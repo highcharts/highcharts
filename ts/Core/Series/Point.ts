@@ -83,7 +83,7 @@ declare module './PointLike' {
         onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
         setState(
-            state?: string,
+            state?: (StatesOptionsKey|''),
             move?: boolean
         ): void;
     }
@@ -411,7 +411,12 @@ class Point {
          */
         function destroyPoint(): void {
             // Remove all events and elements
-            if (point.graphic || point.dataLabel || point.dataLabels) {
+            if (
+                point.graphic ||
+                point.graphics ||
+                point.dataLabel ||
+                point.dataLabels
+            ) {
                 removeEvent(point);
                 point.destroyElements();
             }
@@ -570,7 +575,7 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic', 'upperGraphic', 'shadowGroup');
+            props.push('graphic', 'shadowGroup');
         }
         if (kinds.dataLabel) {
             props.push(
@@ -589,7 +594,11 @@ class Point {
             }
         }
 
-        ['dataLabel', 'connector'].forEach(function (prop: string): void {
+        [
+            'graphic',
+            'dataLabel',
+            'connector'
+        ].forEach(function (prop: string): void {
             const plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
                 graphicalProps.plural.push(plural);
@@ -898,6 +907,10 @@ class Point {
         return object;
     }
 
+    public shouldDraw(): boolean {
+
+        return !this.isNull;
+    }
     /**
      * Extendable method for formatting each point's tooltip line.
      *
@@ -1372,31 +1385,25 @@ class Point {
                     chart.options.chart.animation,
                     stateOptions.animation
                 );
+                const opacity = pointAttribs.opacity;
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // opacity also for their labels
-                if (
-                    series.options.inactiveOtherPoints &&
-                    isNumber(pointAttribs.opacity)
-                ) {
+                if (isNumber(opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
-                        if (label) {
-                            label.animate(
-                                {
-                                    opacity: pointAttribs.opacity
-                                },
-                                pointAttribsAnimation
-                            );
+                        if (
+                            label &&
+                            !label.hasClass('highcharts-data-label-hidden')
+                        ) {
+                            label.animate({ opacity }, pointAttribsAnimation);
                         }
                     });
 
                     if (point.connector) {
                         point.connector.animate(
-                            {
-                                opacity: pointAttribs.opacity
-                            },
+                            { opacity },
                             pointAttribsAnimation
                         );
                     }

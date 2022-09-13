@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -23,10 +29,8 @@ import type VWAPPoint from './VWAPPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -36,7 +40,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -49,8 +53,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class VWAPIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Volume Weighted Average Price indicator.
      *
@@ -262,6 +272,12 @@ SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
  * */
 
 export default VWAPIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Volume Weighted Average Price (VWAP)` series. If the

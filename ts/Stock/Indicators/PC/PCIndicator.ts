@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -125,20 +131,20 @@ class PCIndicator extends SMAIndicator {
     } as PCOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -231,6 +237,12 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  * */
 
 export default PCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not

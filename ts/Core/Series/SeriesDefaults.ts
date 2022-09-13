@@ -64,11 +64,16 @@ const seriesDefaults: SeriesOptions = {
     lineWidth: 2,
 
     /**
-     * For some series, there is a limit that shuts down initial animation
+     * For some series, there is a limit that shuts down animation
      * by default when the total number of points in the chart is too high.
      * For example, for a column chart and its derivatives, animation does
      * not run if there is more than 250 points totally. To disable this
-     * cap, set `animationLimit` to `Infinity`.
+     * cap, set `animationLimit` to `Infinity`. This option works if animation
+     * is fired on individual points, not on a group of points like e.g. during
+     * the initial animation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-animationlimit/
+     *         Animation limit on updating individual points
      *
      * @type      {number}
      * @apioption plotOptions.series.animationLimit
@@ -450,6 +455,9 @@ const seriesDefaults: SeriesOptions = {
 
     /**
      * The line cap used for line ends and line joins on the graph.
+     *
+     * @sample highcharts/series-line/linecap/
+     *         Line cap comparison
      *
      * @type       {Highcharts.SeriesLinecapValue}
      * @default    round
@@ -1951,13 +1959,13 @@ const seriesDefaults: SeriesOptions = {
         x: 0,
 
         /**
-         * The Z index of the data labels. The default Z index puts it above
-         * the series. Use a Z index of 2 to display it behind the series.
+         * The z index of the data labels. Use a `zIndex` of 6 to display it above
+         * the series, or use a `zIndex` of 2 to display it behind the series.
          *
          * @type      {number}
          * @default   6
          * @since     2.3.5
-         * @apioption plotOptions.series.dataLabels.z
+         * @apioption plotOptions.series.dataLabels.zIndex
          */
 
         /**
@@ -2430,6 +2438,8 @@ const seriesDefaults: SeriesOptions = {
      *
      * @sample highcharts/coloraxis/custom-color-key/
      *         Custom color key
+     * @sample highcharts/coloraxis/color-key-with-stops/
+     *         Custom colorKey with color axis stops
      * @sample highcharts/coloraxis/changed-default-color-key/
      *         Changed default color key
      *

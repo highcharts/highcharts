@@ -13,6 +13,8 @@
  * */
 
 import type Annotation from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type ControllableLike from './ControllableLike';
 import type ControllableOptions from './ControllableOptions';
@@ -87,14 +89,14 @@ abstract class Controllable {
      * */
 
     public annotation: Annotation;
-    public chart: Highcharts.AnnotationChart;
+    public chart: AnnotationChart;
     public collection: ('labels'|'shapes');
-    public controlPoints: Array<Highcharts.AnnotationControlPoint>;
+    public controlPoints: Array<ControlPoint>;
     public graphic: SVGElement = void 0 as any;
     public index: number;
     public itemType: ('label'|'shape');
     public options: ControllableOptions;
-    public points: Array<Highcharts.AnnotationPointType>;
+    public points: Array<AnnotationPointType>;
     public tracker?: SVGElement;
 
     /* *
@@ -140,7 +142,7 @@ abstract class Controllable {
      *         A controllable anchor
      */
     public anchor(
-        point: Highcharts.AnnotationPointType
+        point: AnnotationPointType
     ): ControllableAnchorObject {
         const plotBox = point.series.getPlotBox(),
             chart = point.series.chart,
@@ -282,13 +284,13 @@ abstract class Controllable {
      * @return {Array<Annotation.PointLike>}
      *         An array of point-like objects.
      */
-    public linkPoints(): (Array<Highcharts.AnnotationPointType>|undefined) {
+    public linkPoints(): (Array<AnnotationPointType>|undefined) {
         const pointsOptions = this.getPointsOptions(),
             points = this.points,
             len = (pointsOptions && pointsOptions.length) || 0;
 
         let i: number,
-            point: (Highcharts.AnnotationPointType|null);
+            point: (AnnotationPointType|null);
 
         for (i = 0; i < len; i++) {
             point = this.point(pointsOptions[i], points[i]);
@@ -321,8 +323,8 @@ abstract class Controllable {
      */
     public point(
         pointOptions: (string|Function|MockPoint|MockPointOptions),
-        point: (Highcharts.AnnotationPointType|null)
-    ): (Highcharts.AnnotationPointType|null) {
+        point: (AnnotationPointType|null)
+    ): (AnnotationPointType|null) {
         if (pointOptions && (pointOptions as MockPointOptions).series) {
             return pointOptions as any;
         }

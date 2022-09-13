@@ -9,10 +9,10 @@
 'use strict';
 
 /* *
-*
-* Import
-*
-* */
+ *
+ *  Import
+ *
+ * */
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type {
@@ -35,10 +35,16 @@ const color = Color.parse;
 import H from '../../../Core/Globals.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: { sma: SMAIndicator }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const { defined, extend, isArray, isNumber, merge, objectEach } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -46,7 +52,11 @@ declare module '../../../Core/Series/SeriesLike' {
     }
 }
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function maxHigh(arr: Array<Array<number>>): number {
@@ -152,6 +162,7 @@ function drawSenkouSpan(
 // Data integrity in Ichimoku is different than default 'averages':
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
+// @todo compose
 H.approximations['ichimoku-averages'] = function ():
 Array<number | null | undefined> | undefined {
     let ret: Array<number | null | undefined> = [],
@@ -167,7 +178,11 @@ Array<number | null | undefined> | undefined {
     return isEmptyRange ? void 0 : ret;
 };
 
-/* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The IKH series type.
@@ -178,13 +193,14 @@ Array<number | null | undefined> | undefined {
  *
  * @augments Highcharts.Series
  */
-
-/* *
-*
-* Class
-*
-* */
 class IKHIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
@@ -365,10 +381,10 @@ class IKHIndicator extends SMAIndicator {
             }
         } as IKHOptions);
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<IKHPoint> = void 0 as any;
     public options: IKHOptions = void 0 as any;
@@ -379,10 +395,10 @@ class IKHIndicator extends SMAIndicator {
     public nextPoints?: Array<IKHPoint> = void 0 as any;
 
     /* *
-    *
-    * Functions
-    *
-    * */
+     *
+     * Functions
+     *
+     * */
 
     public init(this: IKHIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -939,6 +955,13 @@ extend(IKHIndicator.prototype, {
     pointValKey: 'tenkanSen',
     nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
@@ -946,7 +969,19 @@ declare module '../../../Core/Series/SeriesType' {
 }
 SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default IKHIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `IKH` series. If the [type](#series.ikh.type) option is not

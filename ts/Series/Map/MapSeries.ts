@@ -133,6 +133,8 @@ class MapSeries extends ScatterSeries {
      * @excluding    marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
+     *
+     * @private
      */
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
@@ -144,6 +146,8 @@ class MapSeries extends ScatterSeries {
          *         US map with world map backdrop
          *
          * @since 10.0.0
+         *
+         * @private
          */
         affectsMapView: true,
 
@@ -394,10 +398,6 @@ class MapSeries extends ScatterSeries {
                  * @apioption plotOptions.series.states.select.color
                  */
                 color: Palette.neutralColor20
-            },
-
-            inactive: {
-                opacity: 1
             }
         }
     } as MapSeriesOptions);
@@ -966,6 +966,14 @@ class MapSeries extends ScatterSeries {
             pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
+        // Invisible map points means that the data value is removed from the
+        // map, but not the map area shape itself. Instead it is rendered like a
+        // null point. To fully remove a map area, it should be removed from the
+        // mapData.
+        if (!point.visible) {
+            attr.fill = this.options.nullColor;
+        }
+
         (attr as any)['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
@@ -1521,8 +1529,9 @@ export default MapSeries;
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
  *
+ * @declare   Highcharts.MapGeometryTypeValue
  * @type      {string}
- * @since 9.3.0
+ * @since     9.3.0
  * @product   highmaps
  * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
  * @apioption series.map.data.geometry.type

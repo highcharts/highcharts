@@ -41,6 +41,13 @@ const {
  * Class to convert between common value types.
  */
 class DataConverter {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Default options
      */

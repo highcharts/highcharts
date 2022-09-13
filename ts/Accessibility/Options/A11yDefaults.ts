@@ -593,7 +593,7 @@ const Options: DeepPartial<A11yOptions> = {
                  * Style options for the focus border drawn around elements
                  * while navigating through them. Note that some browsers in
                  * addition draw their own borders for focused elements. These
-                 * automatic borders can not be styled by Highcharts.
+                 * automatic borders cannot be styled by Highcharts.
                  *
                  * In styled mode, the border is given the
                  * `.highcharts-focus-border` class.
