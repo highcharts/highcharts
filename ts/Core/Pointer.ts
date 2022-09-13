@@ -296,13 +296,14 @@ class Pointer {
             markingsEnable = isObject(chartOptions.zooming.markings) ?
                 chartOptions.zooming.markings &&
                 chartOptions.zooming.markings.enabled :
-                chartOptions.zooming.markings;
+                chartOptions.zooming.markings,
+            markings = chartOptions.zooming.markings;
 
         let chartX = e.chartX,
             chartY = e.chartY,
             clickedInside,
             size,
-            sizeLimit = 20,
+            sizeLimit = markings && markings.length,
             width,
             height,
             selectionMarker = this.selectionMarker;
@@ -333,8 +334,9 @@ class Pointer {
             Math.pow(mouseDownX - chartX, 2) +
             Math.pow(mouseDownY - chartY, 2)
         );
-
-        if (this.hasDragged > 21) {
+        // length limit when markings are connected
+        sizeLimit = sizeLimit ? sizeLimit * 2 : 20;
+        if (this.hasDragged > sizeLimit) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
                 mouseDownY - plotTop,
@@ -602,7 +604,8 @@ class Pointer {
             ],
             'stroke-width': options.strokeWidth,
             stroke: options.stroke,
-            dashstyle: options.dashstyle
+            dashstyle: options.dashstyle,
+            zIndex: 8
         });
     }
 
