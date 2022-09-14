@@ -115,7 +115,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     // Draw the points where each point is one needle.
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
             options = series.options,
@@ -123,8 +123,9 @@ class SolidGaugeSeries extends GaugeSeries {
             overshoot = options.overshoot,
             overshootVal = isNumber(overshoot) ?
                 overshoot / 180 * Math.PI :
-                0,
-            thresholdAngleRad: (number | undefined);
+                0;
+
+        let thresholdAngleRad: (number | undefined);
 
         // Handle the threshold option
         if (isNumber(options.threshold)) {
@@ -140,10 +141,36 @@ class SolidGaugeSeries extends GaugeSeries {
             thresholdAngleRad, yAxis.startAngleRad
         );
 
-
-        series.points.forEach(function (point): void {
+        for (const point of series.points) {
             // #10630 null point should not be draw
             if (!point.isNull) { // condition like in pie chart
+                const radius = ((
+                        pInt(
+                            pick(
+                                point.options.radius,
+                                options.radius,
+                                100 // %
+                            )
+                        ) * center[2]
+                    ) / 200),
+                    innerRadius = ((
+                        pInt(
+                            pick(
+                                point.options.innerRadius,
+                                options.innerRadius,
+                                60 // %
+                            )
+                        ) * center[2]
+                    ) / 200),
+                    axisMinAngle = Math.min(
+                        yAxis.startAngleRad,
+                        yAxis.endAngleRad
+                    ),
+                    axisMaxAngle = Math.max(
+                        yAxis.startAngleRad,
+                        yAxis.endAngleRad
+                    );
+
                 let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
                         yAxis.translate(
@@ -153,35 +180,9 @@ class SolidGaugeSeries extends GaugeSeries {
                             void 0,
                             true
                         )),
-                    radius = ((
-                        pInt(
-                            pick(
-                                point.options.radius,
-                                options.radius,
-                                100
-                            )
-                        ) * center[2]
-                    ) / 200),
-                    innerRadius = ((
-                        pInt(
-                            pick(
-                                point.options.innerRadius,
-                                options.innerRadius,
-                                60
-                            )
-                        ) * center[2]
-                    ) / 200),
                     shapeArgs: (SVGAttributes | undefined),
                     d: (string | SVGPath | undefined),
                     toColor = yAxis.toColor(point.y as any, point),
-                    axisMinAngle = Math.min(
-                        yAxis.startAngleRad,
-                        yAxis.endAngleRad
-                    ),
-                    axisMaxAngle = Math.max(
-                        yAxis.startAngleRad,
-                        yAxis.endAngleRad
-                    ),
                     minAngle,
                     maxAngle;
 
@@ -254,7 +255,7 @@ class SolidGaugeSeries extends GaugeSeries {
                     graphic.addClass(point.getClassName(), true);
                 }
             }
-        });
+        }
     }
 
     // Extend the pie slice animation by animating from start angle and up.
