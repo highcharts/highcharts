@@ -48,8 +48,8 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @type      {number|string}
-     * @default   60
+     * @type      {string}
+     * @default   "60%"
      * @since     4.1.6
      * @product   highcharts
      * @apioption plotOptions.solidgauge.innerRadius
@@ -89,8 +89,8 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
      *
-     * @type      {number|string}
-     * @default   100
+     * @type      {string}
+     * @default   "100%"
      * @since     4.1.6
      * @product   highcharts
      * @apioption plotOptions.solidgauge.radius
@@ -195,7 +195,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
  *         Individual radius and innerRadius
  *
- * @type      {number|string}
+ * @type      {string}
  * @since     4.1.6
  * @product   highcharts
  * @apioption series.solidgauge.data.innerRadius
@@ -208,7 +208,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
  *         Individual radius and innerRadius
  *
- * @type      {number|string}
+ * @type      {string}
  * @since     4.1.6
  * @product   highcharts
  * @apioption series.solidgauge.data.radius
