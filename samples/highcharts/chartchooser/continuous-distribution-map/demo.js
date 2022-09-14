@@ -60,7 +60,12 @@
                     plotOptions: {
                         mapline: {
                             showInLegend: false,
-                            enableMouseTracking: false
+                            enableMouseTracking: false,
+                            states: {
+                                inactive: {
+                                    opacity: 1
+                                }
+                            }
                         }
                     },
 

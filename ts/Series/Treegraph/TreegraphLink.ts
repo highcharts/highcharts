@@ -12,18 +12,23 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
 import type PointOptions from '../../Core/Series/PointOptions.js';
 import type TreegraphSeries from './TreegraphSeries';
 import type { OrganizationLinkOptions } from '../Organization/OrganizationSeriesOptions.js';
+
 import Point from '../../Core/Series/Point.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
 import U from '../../Core/Utilities.js';
-const { pick, extend } = U;
+
+const {
+    pick,
+    extend
+} = U;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -36,21 +41,30 @@ const {
 } = SeriesRegistry;
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
+
 export interface LinkPointOptions extends TreegraphPointOptions {
-    link?: TreegraphLinkOptions
+    link?: TreegraphLinkOptions;
 }
+
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
+/**
+ * @private
+ * @class
+ */
 class LinkPoint extends ColumnPoint {
+
+
+
     /* *
     *
     *  Class properties
@@ -62,10 +76,10 @@ class LinkPoint extends ColumnPoint {
     dataLabelOnNull = true;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public init(
         series: TreegraphSeries,
@@ -111,13 +125,14 @@ class LinkPoint extends ColumnPoint {
             this.series.chart.redraw(animation);
         }
     }
+
 }
 
 /* *
-*
-*  Class Interface
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface LinkPoint {
     options: LinkPointOptions;
@@ -126,9 +141,9 @@ interface LinkPoint {
 }
 
 /* *
-*
-*  Export Default
-*
-* */
+ *
+ *  Export Default
+ *
+ * */
 
 export default LinkPoint;

@@ -135,6 +135,7 @@ interface ExportDataSeries {
     chart: Chart;
     options: SeriesOptions;
     pointArrayMap?: Array<string>;
+    index: Number;
 }
 
 /* *
@@ -491,7 +492,8 @@ function chartGetDataRows(
                 chart: series.chart,
                 autoIncrement: series.autoIncrement,
                 options: series.options,
-                pointArrayMap: series.pointArrayMap
+                pointArrayMap: series.pointArrayMap,
+                index: series.index
             };
 
             // Export directly from options.data because we need the uncropped
@@ -522,6 +524,24 @@ function chartGetDataRows(
                 );
                 key = mockPoint.x as any;
 
+                if (defined(rows[key]) &&
+                    rows[key].seriesIndices.includes(mockSeries.index)
+                ) {
+                    // find keys, which belong to actual series
+                    const keysFromActualSeries =
+                        Object.keys(rows).filter((i: string): void =>
+                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                                key
+                        ),
+                        // find all properties, which start with actual key
+                        existingKeys = keysFromActualSeries
+                            .filter((propertyName: string): boolean =>
+                                propertyName.indexOf(String(key)) === 0
+                            );
+
+                    key = key.toString() + ',' + existingKeys.length;
+                }
+
                 const name = series.data[pIdx] && series.data[pIdx].name;
 
                 j = 0;
@@ -551,6 +571,13 @@ function chartGetDataRows(
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
+
+                if (!defined(rows[key].seriesIndices)) {
+                    rows[key].seriesIndices = [];
+                }
+                rows[key].seriesIndices = [
+                    ...rows[key].seriesIndices, mockSeries.index
+                ];
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc

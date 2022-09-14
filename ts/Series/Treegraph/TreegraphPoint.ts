@@ -20,13 +20,13 @@ import type TreegraphPointOptions from './TreegraphPointOptions';
 import type TreegraphNode from './TreegraphNode';
 import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import TreegraphSeries from './TreegraphSeries';
-import U from '../../Core/Utilities.js';
+
+
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
-import Point from '../../Core/Series/Point.js';
+
 import { Palette } from '../../Core/Color/Palettes';
-const { merge, addEvent, pick, fireEvent } = U;
+import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         treemap: {
@@ -36,21 +36,33 @@ const {
         }
     }
 } = SeriesRegistry;
+import TreegraphSeries from './TreegraphSeries';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    fireEvent,
+    merge,
+    pick
+} = U;
 
 /* *
  *
  *  Class
  *
  * */
+
 /**
  * @private
+ * @class
  */
 class TreegraphPoint extends TreemapPoint {
+
     /* *
      *
      *  Properties
      *
      * */
+
     public options: TreegraphPointOptions = void 0 as any;
     public isLink = false;
     public collapseButton?: SVGElement;
@@ -95,7 +107,7 @@ class TreegraphPoint extends TreemapPoint {
             if (!point.node.children.length || !btnOptions.enabled) {
                 return;
             }
-            let { x, y } = this.getCollapseBtnPosition(btnOptions);
+            const { x, y } = this.getCollapseBtnPosition(btnOptions);
             point.collapseButton = chart.renderer
                 .label(point.collapsed ? '+' : '-', x, y, shape)
                 .attr({
@@ -211,6 +223,7 @@ addEvent(TreegraphPoint, 'mouseOver', function (): void {
 addEvent(TreegraphPoint, 'click', function (): void {
     this.toggleCollapse();
 });
+
 /* *
  *
  *  Export Default

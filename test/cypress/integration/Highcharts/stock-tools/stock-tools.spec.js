@@ -82,10 +82,10 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
-        cy.get('.highcharts-tab-item').contains('edit').click();
+        cy.get('.highcharts-tab-item').contains('Edit').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
-        cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+        cy.get('.highcharts-popup-rhs-col button').contains('Save').click();
     });
 
     it('#16159: For some indicators params, there should be a dropdown with options in popup.', () => {
