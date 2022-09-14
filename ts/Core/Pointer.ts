@@ -131,8 +131,6 @@ class Pointer {
 
     public chartPosition?: Pointer.ChartPositionObject;
 
-    public followTouchMove?: boolean;
-
     public hasDragged: (false|number);
 
     public hasPinched?: boolean;
@@ -963,9 +961,6 @@ class Pointer {
              * @type {Highcharts.Tooltip}
              */
             chart.tooltip = new Tooltip(chart, options.tooltip as any);
-            this.followTouchMove = pick(
-                (options.tooltip as any).followTouchMove, true
-            );
         }
 
         this.setDOMEvents();
@@ -1305,7 +1300,8 @@ class Pointer {
                 ) ||
                 self.runChartClick
             ),
-            clip = {};
+            clip = {},
+            tooltip = self.chart.tooltip;
 
         let selectionMarker = self.selectionMarker;
 
@@ -1314,7 +1310,10 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
-        } else if (touchesLength === 1 && this.followTouchMove) {
+        } else if (
+            touchesLength === 1 &&
+            pick((tooltip && tooltip.options.followTouchMove), true)
+        ) {
             // #16119: Prevent blocking scroll when single-finger panning is
             // not enabled
             self.initiated = false;
@@ -1383,7 +1382,10 @@ class Pointer {
             self.res = true; // reset on next move
 
         // Optionally move the tooltip on touchmove
-        } else if (self.followTouchMove && touchesLength === 1) {
+        } else if (
+            touchesLength === 1 &&
+            pick((tooltip && tooltip.options.followTouchMove), true)
+        ) {
             this.runPointActions(self.normalize(e));
 
         // Event type is touchmove, handle panning and pinching
