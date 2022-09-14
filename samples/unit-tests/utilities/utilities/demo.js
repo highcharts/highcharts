@@ -87,6 +87,26 @@
             'DOM nodes should be copied by reference, not deep copied'
         );
 
+        //---
+        result = diffObjects({
+            chart: {
+                style: {
+                    fontSize: '8px'
+                }
+            }
+        }, {
+            chart: {
+                style: {
+                    fontSize: '8px'
+                }
+            }
+        });
+        assert.deepEqual(
+            result,
+            {},
+            'Equal nested objects should be removed'
+        );
+
     });
 
     QUnit.test('Extend', function (assert) {

@@ -280,8 +280,8 @@ function diffObjects(
     const ret = {};
 
     /**
-     * Recurse over a set of options and its current values,
-     * and store the current values in the ret object.
+     * Recurse over a set of options and its current values, and store the
+     * current values in the ret object.
      */
     function diff(
         newer: AnyRecord,
@@ -337,6 +337,12 @@ function diffObjects(
             ) {
                 ret[key] = isArray(newerVal) ? [] : {};
                 diff(newerVal, older[key] || {}, ret[key], depth + 1);
+                // Delete empty nested objects, except colorAxis which is a
+                // special case where the empty object means it is enabled.
+                // Which is unfortunate and we should try to find a better way.
+                if (Object.keys(ret[key]).length === 0 && key !== 'colorAxis') {
+                    delete ret[key];
+                }
 
             } else if (newer[key] !== older[key]) {
                 ret[key] = keeper[key];
