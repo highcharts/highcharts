@@ -2589,7 +2589,7 @@ class Chart {
 
 
             if (!chart.styledMode) {
-                this.credits.css(creds.style as any);
+                this.credits.css(creds.style);
             }
 
             this.credits
@@ -4034,7 +4034,7 @@ namespace Chart {
         mapText?: string;
         mapTextFull?: string;
         position?: AlignObject;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
     }
 
