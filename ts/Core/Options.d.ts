@@ -31,7 +31,7 @@ export interface Options {
     colors?: Array<ColorString>;
     lang: LangOptions;
     loading?: LoadingOptions;
-    plotOptions?: SeriesTypePlotOptions;
+    plotOptions: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;
 }
 

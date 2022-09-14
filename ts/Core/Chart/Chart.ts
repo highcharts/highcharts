@@ -416,38 +416,11 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): void {
 
-        // Handle regular options
-        const userPlotOptions =
-            userOptions.plotOptions || {} as SeriesTypePlotOptions;
-
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions); // do the merge
-
-            const optionsChart = options.chart;
-
-            // Override (by copy of user options) or clear tooltip options
-            // in chart.options.plotOptions (#6218)
-            objectEach(options.plotOptions, function (
-                typeOptions: AnyRecord,
-                type: string
-            ): void {
-                if (isObject(typeOptions)) { // #8766
-                    typeOptions.tooltip = (
-                        userPlotOptions[type] && // override by copy:
-                        merge((userPlotOptions[type] as any).tooltip)
-                    ) || void 0; // or clear
-                }
-            });
-
-            // User options have higher priority than default options
-            // (#6218). In case of exporting: path is changed
-            (options.tooltip as any).userOptions = (
-                userOptions.chart &&
-                userOptions.chart.forExport &&
-                (userOptions.tooltip as any).userOptions
-            ) || userOptions.tooltip;
+            const options = merge(defaultOptions, userOptions), // do the merge
+                optionsChart = options.chart;
 
             /**
              * The original options given to the constructor or a chart factory
