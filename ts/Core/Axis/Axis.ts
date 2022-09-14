@@ -2967,7 +2967,7 @@ class Axis {
             autoRotation: (Array<number>|undefined);
 
         if (horiz) {
-            if (!labelOptions.staggerLines && !labelOptions.step) {
+            if (!labelOptions.staggerLines) {
                 if (isNumber(rotationOption)) {
                     autoRotation = [rotationOption];
                 } else if (slotSize < labelOptions.autoRotationLimit) {
@@ -2981,7 +2981,7 @@ class Axis {
                 // which gives the best score. The best score is that with
                 // the lowest number of steps and a rotation closest
                 // to horizontal.
-                autoRotation.forEach(function (rot: number): void {
+                for (const rot of autoRotation) {
                     let score;
 
                     if (
@@ -3001,7 +3001,7 @@ class Axis {
                             newTickInterval = step;
                         }
                     }
-                });
+                }
             }
 
         } else if (!labelOptions.step) { // #4411

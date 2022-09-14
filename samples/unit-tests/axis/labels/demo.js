@@ -314,6 +314,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
                     'Wierd Apricots'
                 ],
                 labels: {
+                    autoRotation: false,
                     step: 1
                 }
             },
