@@ -33,10 +33,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm i
+      - name: Install Dependencies
+        run: npm i
       # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
       - name: Run Browserstack Tests (Chrome)
-        run: npx gulp test --single-run --splitbrowsers Mac.Chrome
+        run: npx gulp test --single-run --splitbrowsers Win.Chrome
 
   ### CYPRESS ###
   test_cypress:
@@ -57,11 +60,15 @@ jobs:
         with:
           chrome-version: stable
       - uses: nanasess/setup-chromedriver@v1
-      - run: npm i cypress @highcharts/highcharts-utils
-      - run: npx cypress install && npx cypress info
+      - name: Install Dependencies
+        run: |
+          npm i cypress @highcharts/highcharts-utils
+          npx cypress install && npx cypress info
       # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
       - name: Run Highcharts-Utils
-        run: sudo npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
+        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
       - name: Check Chrome
         run: |
             google-chrome --version
