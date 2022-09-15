@@ -63,8 +63,6 @@ export interface LinkPointOptions extends TreegraphPointOptions {
  */
 class LinkPoint extends ColumnPoint {
 
-
-
     /* *
     *
     *  Class properties
