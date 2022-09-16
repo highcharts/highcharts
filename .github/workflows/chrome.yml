@@ -22,6 +22,7 @@ jobs:
   test_browserstack:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    environment: browserstack
     strategy:
       matrix:
         node-version: [16.x]
