@@ -83,7 +83,7 @@ declare module './PointLike' {
         onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
         setState(
-            state?: string,
+            state?: (StatesOptionsKey|''),
             move?: boolean
         ): void;
     }
@@ -1385,31 +1385,25 @@ class Point {
                     chart.options.chart.animation,
                     stateOptions.animation
                 );
+                const opacity = pointAttribs.opacity;
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // opacity also for their labels
-                if (
-                    series.options.inactiveOtherPoints &&
-                    isNumber(pointAttribs.opacity)
-                ) {
+                if (isNumber(opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
-                        if (label) {
-                            label.animate(
-                                {
-                                    opacity: pointAttribs.opacity
-                                },
-                                pointAttribsAnimation
-                            );
+                        if (
+                            label &&
+                            !label.hasClass('highcharts-data-label-hidden')
+                        ) {
+                            label.animate({ opacity }, pointAttribsAnimation);
                         }
                     });
 
                     if (point.connector) {
                         point.connector.animate(
-                            {
-                                opacity: pointAttribs.opacity
-                            },
+                            { opacity },
                             pointAttribsAnimation
                         );
                     }

@@ -19,7 +19,7 @@ import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 import '../../Series/HLC/HLCSeries.js';
-import '../../Series/OHLC/OHLCSeries.js';
+import OHLCSeries from '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
 import StockChart from '../../Core/Chart/StockChart.js';
@@ -32,6 +32,7 @@ G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 Navigator.compose(G.Axis, G.Chart, G.Series);
+OHLCSeries.compose(G.Series);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);

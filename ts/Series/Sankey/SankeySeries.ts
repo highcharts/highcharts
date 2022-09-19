@@ -625,17 +625,14 @@ class SankeySeries extends ColumnSeries {
 
     }
 
-    /**
-     * Extend the render function to also render this.nodes together with
-     * the points.
-     * @private
-     */
-    public render(): void {
-        const points = this.points;
+    public drawPoints(): void {
+        ColumnSeries.prototype.drawPoints.call(this, this.points);
+        ColumnSeries.prototype.drawPoints.call(this, this.nodes);
+    }
 
-        this.points = this.points.concat(this.nodes || []);
-        ColumnSeries.prototype.render.call(this);
-        this.points = points;
+    public drawDataLabels(): void {
+        ColumnSeries.prototype.drawDataLabels.call(this, this.points);
+        ColumnSeries.prototype.drawDataLabels.call(this, this.nodes);
     }
 
     /**

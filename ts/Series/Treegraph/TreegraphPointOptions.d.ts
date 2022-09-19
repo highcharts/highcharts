@@ -31,9 +31,9 @@ export interface TreegraphPointOptions extends TreemapPointOptions {
 }
 
 /* *
-*
-*  Export default
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreegraphPointOptions;

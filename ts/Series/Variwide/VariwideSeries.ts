@@ -20,12 +20,14 @@
 
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
+import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -33,8 +35,6 @@ const {
     merge,
     pick
 } = U;
-
-import './VariwideComposition.js';
 
 
 /* *
@@ -55,9 +55,12 @@ class VariwideSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
+
+    public static compose = VariwideComposition.compose;
+
     /**
      * A variwide chart (related to marimekko chart) is a column chart with a
      * variable width expressing a third dimension.
@@ -92,9 +95,10 @@ class VariwideSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<VariwidePoint> = void 0 as any;
     public options: VariwideSeriesOptions = void 0 as any;
     public points: Array<VariwidePoint> = void 0 as any;
@@ -107,6 +111,7 @@ class VariwideSeries extends ColumnSeries {
      * Functions
      *
      * */
+
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
@@ -136,8 +141,6 @@ class VariwideSeries extends ColumnSeries {
         }
         return;
     }
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Translate an x value inside a given category index into the distorted
@@ -276,19 +279,21 @@ class VariwideSeries extends ColumnSeries {
         }
     }
 
-    // Function that corrects stack labels positions
+    /**
+     * Function that corrects stack labels positions
+     * @private
+     */
     public correctStackLabels(): void {
-        let series = this,
+        const series = this,
             options = series.options,
-            yAxis = series.yAxis as StackingAxis,
-            pointStack,
+            yAxis = series.yAxis as StackingAxis;
+
+        let pointStack,
             pointWidth,
             stack,
             xValue;
 
-        series.points.forEach(function (
-            point: VariwidePoint
-        ): void {
+        for (const point of series.points) {
             xValue = point.x;
             pointWidth = (point.shapeArgs as any).width;
             stack = yAxis.stacking.stacks[(
@@ -314,15 +319,17 @@ class VariwideSeries extends ColumnSeries {
                     );
                 }
             }
-        });
+        }
     }
+
 }
 
 /* *
  *
- * Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface VariwideSeries {
     irregularWidths: boolean;
     parallelArrays: Array<string>;
@@ -338,9 +345,10 @@ extend(VariwideSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
@@ -351,14 +359,15 @@ SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
+
 export default VariwideSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

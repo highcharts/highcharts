@@ -202,16 +202,13 @@ class NetworkgraphSeries extends Series {
         const textPath = (this.options.dataLabels as any).textPath;
 
         // Render node labels:
-        Series.prototype.drawDataLabels.apply(this, arguments as any);
+        Series.prototype.drawDataLabels.call(this, this.nodes);
 
         // Render link labels:
-        this.points = this.data;
         (this.options.dataLabels as any).textPath =
             (this.options.dataLabels as any).linkTextPath;
-        Series.prototype.drawDataLabels.apply(this, arguments as any);
+        Series.prototype.drawDataLabels.call(this, this.data);
 
-        // Restore nodes
-        this.points = this.nodes;
         (this.options.dataLabels as any).textPath = textPath;
     }
 
