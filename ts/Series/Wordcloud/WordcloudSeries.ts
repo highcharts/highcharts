@@ -129,6 +129,9 @@ class WordcloudSeries extends ColumnSeries {
             duration: 500
         },
         borderWidth: 0,
+        /**
+         * @ignore-option
+         */
         clip: false, // Something goes wrong with clip. // @todo fix this
         colorByPoint: true,
         cropThreshold: Infinity,

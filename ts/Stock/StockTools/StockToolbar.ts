@@ -18,8 +18,8 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type Chart from '../../Core/Chart/Chart';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
     StockToolsGuiDefinitionsButtonsOptions,
     StockToolsGuiDefinitionsOptions,
@@ -27,7 +27,7 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,

@@ -16,20 +16,20 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
-import type Chart from './Chart/Chart';
-import type PointerEvent from './PointerEvent';
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
+import type PointerEvent from '../../Core/PointerEvent';
 import type ScrollbarOptions from './ScrollbarOptions';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGPath from './Renderer/SVG/SVGPath';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
-import D from './DefaultOptions.js';
+import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import H from './Globals.js';
-import ScrollbarAxis from './Axis/ScrollbarAxis.js';
+import H from '../../Core/Globals.js';
+import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
-import U from './Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
@@ -47,7 +47,7 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         scrollbarsOffsets?: [number, number];
     }

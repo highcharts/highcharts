@@ -11,19 +11,21 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import Navigator from '../../Stock/Navigator/Navigator.js';
+import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
-import Scrollbar from '../../Core/Scrollbar.js';
-import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
-import '../../Core/Navigator.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
+G.Navigator = Navigator;
 G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 // Compositions
-Scrollbar.compose(G.Axis);
+Navigator.compose(G.Axis, G.Chart, G.Series);
 RangeSelector.compose(G.Axis, G.Chart);
+Scrollbar.compose(G.Axis);
 XRangeSeries.compose(G.Axis);

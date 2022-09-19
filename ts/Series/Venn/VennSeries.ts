@@ -164,6 +164,10 @@ class VennSeries extends ScatterSeries {
          * @private
          */
         inactiveOtherPoints: true,
+        /**
+         * @ignore-option
+         * @private
+         */
         marker: false as any,
         opacity: 0.75,
         showInLegend: false,
