@@ -2627,9 +2627,8 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
-            points = series.points,
             chart = series.chart,
             options = series.options,
             seriesMarkerOptions = options.marker,
