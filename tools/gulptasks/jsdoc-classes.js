@@ -62,16 +62,12 @@ const SOURCE_GLOBS = [
     'js/Extensions/SeriesLabel/SeriesLabel.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
-    'js/Series/AreaRange/*.js',
-    'js/Series/Column/*.js',
-    'js/Series/Map/*.js',
-    'js/Series/Networkgraph/*.js',
-    'js/Series/Organization/*.js',
-    'js/Series/Pie/*.js',
-    'js/Series/PackedBubble/*.js',
-    'js/Series/Sankey/*.js',
-    'js/Series/Sunburst/*.js',
-    'js/Series/Timeline/*.js'
+    'js/Series/Column/ColumnSeries.js',
+    'js/Series/Networkgraph/NetworkgraphSeries.js',
+    'js/Series/Organization/OrganizationSeries.js',
+    'js/Series/PackedBubble/PackedBubbleSeries.js',
+    'js/Series/Sankey/SankeySeries.js',
+    'js/Series/Timeline/TimelineSeries.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
