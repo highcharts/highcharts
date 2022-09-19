@@ -53,7 +53,9 @@ const approximation = 'average'; // See https://api.highcharts.com/highstock/ser
 const {
     groupedXData,
     groupedYData
-} = Highcharts.Series.prototype.groupData(xData, yData, groupPositions, approximation);
+} = Highcharts.Series.prototype.groupData.call({
+    options: {}
+}, xData, yData, groupPositions, approximation);
 
 // Optionally, transform it to a Highcharts-compatible two-dimensional array.
 const data = groupedXData.map((x, i) => [x, groupedYData[i]]);
