@@ -1041,6 +1041,8 @@ const ChartDefaults: ChartOptions = {
          * the zoom area increases vertically in full height, move vertically
          * the zoom area expands horizontally to its full width.
          * @since      next
+         * @sample     highcharts/chart/zooming-markings
+         *             Zoom markings enabled with length
          * @apioption  chart.zooming.markings
          */
         markings: {
