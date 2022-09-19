@@ -34,8 +34,6 @@ import type { ApproximationTypeRegistry } from './ApproximationType';
  * @product highstock
  *
  * @private
- * @name Highcharts.approximations
- * @type {Highcharts.Dictionary<Function>}
  */
 const ApproximationRegistry = {
     // approximations added programmatically

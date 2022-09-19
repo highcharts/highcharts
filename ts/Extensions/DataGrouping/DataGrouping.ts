@@ -163,7 +163,8 @@ function onTooltipHeaderFormatter(
  * */
 
 const DataGroupingComposition = {
-    compose
+    compose,
+    groupData: DataGroupingSeriesComposition.groupData
 };
 
 export default DataGroupingComposition;
@@ -205,6 +206,22 @@ export default DataGroupingComposition;
  *//**
  * @name Highcharts.DataGroupingInfoObject#start
  * @type {number}
+ */
+
+/**
+ * Highcharts Stock only.
+ *
+ * @product highstock
+ * @interface Highcharts.DataGroupingResultObject
+ *//**
+ * @name Highcharts.DataGroupingResultObject#groupedXData
+ * @type {Array<number>}
+ *//**
+ * @name Highcharts.DataGroupingResultObject#groupedYData
+ * @type {Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>}
+ *//**
+ * @name Highcharts.DataGroupingResultObject#groupMap
+ * @type {Array<DataGroupingInfoObject>}
  */
 
 /**

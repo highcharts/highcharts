@@ -10,11 +10,10 @@
  * `node test/node-datagrouping`
  */
 
+import * as Highcharts from "highcharts/highstock.src";
+import DataGrouping from 'highcharts/modules/datagrouping.src';
 
-/* eslint-env node, es6 */
-/* eslint-disable no-console */
-const Highcharts = require('../code/highcharts.src.js')();
-require('../code/modules/datagrouping.src.js')(Highcharts);
+DataGrouping(Highcharts);
 
 // Generate some random, high-resolution data. This function emulates raw data
 // with an hourly resolution that we want to group into days.

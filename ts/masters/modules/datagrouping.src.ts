@@ -11,12 +11,12 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Extensions/DataGrouping/ApproximationDefaults.js';
+import ApproximationDefaults from '../../Extensions/DataGrouping/ApproximationDefaults.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import DataGrouping from '../../Extensions/DataGrouping/DataGrouping.js';
 const G: AnyRecord = Highcharts;
 G.dataGrouping = {
+    approximationDefaults: ApproximationDefaults,
     approximations: ApproximationRegistry
 };
 DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
-export default G.dataGrouping;

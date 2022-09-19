@@ -562,11 +562,23 @@ function getDGApproximation(
 }
 
 /**
- * Takes parallel arrays of x and y data and groups the data into intervals
- * defined by groupPositions, a collection of starting x values for each group.
+ * Highcharts Stock only. Takes parallel arrays of x and y data and groups the
+ * data into intervals defined by groupPositions, a collection of starting x
+ * values for each group.
  *
- * @private
+ * @product highstock
+ *
  * @function Highcharts.Series#groupData
+ * @param {Array<number>} xData
+ *        Parallel array of x data.
+ * @param {Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>} yData
+ *        Parallel array of y data.
+ * @param {Array<number>} groupPositions
+ *        Group positions.
+ * @param {string|Function} [approximation]
+ *        Approximation to use.
+ * @return {Highcharts.DataGroupingResultObject}
+ *         Mapped groups.
  */
 function groupData(
     this: Series,
@@ -576,7 +588,7 @@ function groupData(
         Array<Array<(number|null|undefined)>>
     ),
     groupPositions: Array<number>,
-    approximation: (ApproximationKeyValue|Function)
+    approximation?: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
     const series = this,
         data = series.data,
@@ -606,7 +618,7 @@ function groupData(
     const approximationFn = (
         typeof approximation === 'function' ?
             approximation :
-            ApproximationRegistry[approximation] ?
+            approximation && ApproximationRegistry[approximation] ?
                 ApproximationRegistry[approximation] :
                 ApproximationRegistry[(
                     series.getDGApproximation && series.getDGApproximation() ||
@@ -739,9 +751,9 @@ function groupData(
     }
 
     return {
-        groupedXData: groupedXData,
-        groupedYData: groupedYData,
-        groupMap: groupMap
+        groupedXData,
+        groupedYData,
+        groupMap
     };
 }
 
@@ -811,7 +823,8 @@ function skipDataGrouping(series: Series, force: boolean): boolean {
  * */
 
 const DataGroupingSeriesComposition = {
-    compose
+    compose,
+    groupData
 };
 
 export default DataGroupingSeriesComposition;
