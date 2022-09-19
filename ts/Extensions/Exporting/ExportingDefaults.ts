@@ -719,6 +719,8 @@ const navigation: NavigationOptions = {
          *
          * @sample highcharts/exporting/buttons-text/
          *         Full text button
+         * @sample highcharts/exporting/buttons-text-usehtml/
+         *         Icon using CSS font in text
          * @sample highcharts/exporting/buttons-text-symbol/
          *         Combined symbol and text
          *
@@ -726,6 +728,19 @@ const navigation: NavigationOptions = {
          * @default   null
          * @since     3.0
          * @apioption navigation.buttonOptions.text
+         */
+
+        /**
+         * Whether to use HTML for rendering the button. HTML allows for things
+         * like inline CSS or image-based icons.
+         *
+         * @sample highcharts/exporting/buttons-text-usehtml/
+         *         Icon using CSS font in text
+         *
+         * @type      boolean
+         * @default   false
+         * @since     next
+         * @apioption navigation.buttonOptions.useHTML
          */
 
         /**
