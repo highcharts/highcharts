@@ -16,7 +16,9 @@
  *
  * */
 
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type OHLCSeriesOptions from './OHLCSeriesOptions';
+import type Series from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -26,14 +28,11 @@ import OHLCPoint from './OHLCPoint.js';
 import OHLCSeriesDefaults from './OHLCSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
     seriesTypes: {
         hlc: HLCSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import LineSeriesOptions from '../Line/LineSeriesOptions';
-
 const {
     addEvent,
     extend,
@@ -42,15 +41,67 @@ const {
 
 /* *
  *
- *  Class
+ *  Constants
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        useOhlcData?: boolean;
+const composedMembers: Array<{}> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function onSeriesAfterSetOptions(
+    this: Series,
+    e: { options: LineSeriesOptions }
+): void {
+    const options = e.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        dataGrouping &&
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        dataGrouping.approximation = 'ohlc';
     }
 }
+
+/**
+ * Add useOhlcData option
+ * @private
+ */
+function onSeriesInit(
+    this: Series,
+    eventOptions: { options: OHLCSeriesOptions }
+): void {
+    // eslint-disable-next-line no-invalid-this
+    const series = this,
+        options = eventOptions.options;
+
+    if (
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        extend(series, {
+            pointValKey: OHLCSeries.prototype.pointValKey,
+            // keys: ohlcProto.keys, // @todo potentially nonsense
+            pointArrayMap: OHLCSeries.prototype.pointArrayMap,
+            toYData: OHLCSeries.prototype.toYData
+        });
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The ohlc series type.
@@ -61,8 +112,8 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-
 class OHLCSeries extends HLCSeries {
+
     /* *
      *
      *  Static Properties
@@ -73,6 +124,25 @@ class OHLCSeries extends HLCSeries {
         HLCSeries.defaultOptions,
         OHLCSeriesDefaults
     );
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        SeriesClass: typeof Series
+    ): void {
+
+        if (composedMembers.indexOf(SeriesClass) === -1) {
+            composedMembers.push(SeriesClass);
+
+            addEvent(SeriesClass, 'afterSetOptions', onSeriesAfterSetOptions);
+            addEvent(SeriesClass, 'init', onSeriesInit);
+        }
+
+    }
 
     /* *
      *
@@ -113,9 +183,6 @@ class OHLCSeries extends HLCSeries {
         }
         return path;
     }
-
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Postprocess mapping between options and SVG attributes
@@ -162,43 +229,6 @@ interface OHLCSeries {
 extend(OHLCSeries.prototype, {
     pointClass: OHLCPoint,
     pointArrayMap: ['open', 'high', 'low', 'close']
-});
-
-
-// Add useOhlcData option
-addEvent(Series, 'init', function (
-    eventOptions: { options: OHLCSeriesOptions }
-): void {
-    // eslint-disable-next-line no-invalid-this
-    const series = this,
-        options = eventOptions.options;
-
-    if (
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        extend(series, {
-            pointValKey: OHLCSeries.prototype.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
-            pointArrayMap: OHLCSeries.prototype.pointArrayMap,
-            toYData: OHLCSeries.prototype.toYData
-        });
-    }
-});
-
-addEvent(Series, 'afterSetOptions', function (
-    e: { options: LineSeriesOptions }
-): void {
-    const options = e.options,
-        dataGrouping = options.dataGrouping;
-
-    if (
-        dataGrouping &&
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        dataGrouping.approximation = 'ohlc';
-    }
 });
 
 /* *
