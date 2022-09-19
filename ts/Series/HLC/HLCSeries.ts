@@ -26,10 +26,8 @@ import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -84,8 +82,6 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Extend the path if close is not between high and low.
      *
@@ -93,7 +89,6 @@ class HLCSeries extends ColumnSeries {
      * @param {number} halfStrokeWidth
      * @param {number} value value of the point to which the stem should be extended
      */
-
     protected extendStem(
         path: SVGPath,
         halfStrokeWidth: number,
@@ -133,11 +128,10 @@ class HLCSeries extends ColumnSeries {
             crispX = Math.round(point.plotX as any) - crispCorr,
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
-        let path: SVGPath,
-            plotClose = point.plotClose;
+        let plotClose = point.plotClose;
 
         // the vertical stem
-        path = [
+        const path: SVGPath = [
             ['M', crispX, Math.round(point.yBottom as any)],
             ['L', crispX, Math.round(point.plotHigh as any)]
         ];
@@ -161,12 +155,11 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
     public drawSinglePoint(point: HLCPoint): void {
-
         const series = point.series,
             chart = series.chart;
+
         let path: SVGPath,
-            graphic = point.graphic,
-            isNew = !graphic;
+            graphic = point.graphic;
 
         if (typeof point.plotY !== 'undefined') {
 
@@ -187,7 +180,7 @@ class HLCSeries extends ColumnSeries {
 
             // crisp vector coordinates
             path = series.getPointPath(point, graphic);
-            graphic[isNew ? 'attr' : 'animate']({ d: path })
+            graphic[!graphic ? 'attr' : 'animate']({ d: path })
                 .addClass(point.getClassName(), true);
 
         }
@@ -197,7 +190,6 @@ class HLCSeries extends ColumnSeries {
      * Draw the data points
      * @private
      */
-
     public drawPoints(): void {
         this.points.forEach(this.drawSinglePoint);
     }
@@ -242,7 +234,6 @@ class HLCSeries extends ColumnSeries {
      * @private
      * @function Highcharts.seriesTypes.hlc#translate
      */
-
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
@@ -276,8 +267,6 @@ class HLCSeries extends ColumnSeries {
         });
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -287,12 +276,11 @@ class HLCSeries extends ColumnSeries {
  * */
 
 interface HLCSeries {
-    pointAttrToOptions: Record<string, string>;
     pointClass: typeof HLCPoint;
-    init(): void;
-    toYData(point: HLCPoint): Array<number>;
+    pointAttrToOptions: Record<string, string>;
 }
 extend(HLCSeries.prototype, {
+    pointClass: HLCPoint,
     animate: null as any, // Disable animation
     directTouch: false,
     pointArrayMap: ['high', 'low', 'close'],
@@ -302,8 +290,6 @@ extend(HLCSeries.prototype, {
     },
     pointValKey: 'close'
 });
-
-HLCSeries.prototype.pointClass = HLCPoint;
 
 /* *
  *
