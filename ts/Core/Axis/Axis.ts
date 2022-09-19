@@ -2962,7 +2962,7 @@ class Axis {
 
         let newTickInterval = tickInterval,
             rotation: (number|undefined),
-            step: number,
+            step = labelOptions.step,
             bestScore = Number.MAX_VALUE,
             autoRotation: (Array<number>|undefined);
 
@@ -2977,10 +2977,9 @@ class Axis {
 
             if (autoRotation) {
 
-                // Loop over the given autoRotation options, and determine
-                // which gives the best score. The best score is that with
-                // the lowest number of steps and a rotation closest
-                // to horizontal.
+                // Loop over the given autoRotation options, and determine which
+                // gives the best score. The best score is that with the lowest
+                // number of steps and a rotation closest to horizontal.
                 for (const rot of autoRotation) {
                     let score;
 
@@ -2989,7 +2988,7 @@ class Axis {
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
-                        step = getStep(
+                        step = step || getStep(
                             Math.abs(labelMetrics.h / Math.sin(deg2rad * rot))
                         );
 
@@ -3004,7 +3003,7 @@ class Axis {
                 }
             }
 
-        } else if (!labelOptions.step) { // #4411
+        } else if (!step) { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
