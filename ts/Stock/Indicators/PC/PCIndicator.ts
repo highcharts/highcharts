@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -21,10 +27,8 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -127,20 +131,20 @@ class PCIndicator extends SMAIndicator {
     } as PCOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -195,13 +199,12 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
-interface PCIndicator extends MultipleLinesComposition.Composition {
+interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof PCPoint>;
     pointClass: typeof PCPoint;
     pointValKey: string;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(PCIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
@@ -234,6 +237,12 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  * */
 
 export default PCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not

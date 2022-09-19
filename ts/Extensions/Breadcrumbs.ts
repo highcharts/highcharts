@@ -121,11 +121,15 @@ extend(
     defaultOptions.lang,
     /**
      * @optionparent lang
+     *
+     * @private
      */
     {
         /**
          * @since 10.0.0
          * @product  highcharts
+         *
+         * @private
          */
         mainBreadcrumb: 'Main'
     }
@@ -270,7 +274,7 @@ class Breadcrumbs {
          * and Hebrew.
          *
          * @type       {boolean}
-         * @since      next
+         * @since 10.2.0
          * @sample     {highcharts} highcharts/breadcrumbs/rtl
          *             Breadcrumbs in RTL
          */

@@ -16,6 +16,7 @@ import Data from '../../Extensions/Data.js';
 const G: AnyRecord = Highcharts;
 // Functions
 G.ajax = HttpUtilities.ajax;
+G.data = Data.data;
 G.getJSON = HttpUtilities.getJSON;
 G.post = HttpUtilities.post;
 // Classes

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 QUnit.test('Bullet chart', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

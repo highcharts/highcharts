@@ -102,6 +102,8 @@ class SankeySeries extends ColumnSeries {
      *               zones, minPointLength, dataSorting, boostBlending
      * @requires     modules/sankey
      * @optionparent plotOptions.sankey
+     *
+     * @private
      */
     public static defaultOptions: SankeySeriesOptions = merge(ColumnSeries.defaultOptions, {
         borderWidth: 0,
@@ -264,6 +266,13 @@ class SankeySeries extends ColumnSeries {
         linkOpacity: 0.5,
 
         /**
+         * Opacity for the nodes in the sankey diagram.
+         *
+         * @private
+         */
+        opacity: 1,
+
+        /**
          * The minimal width for a line of a sankey. By default,
          * 0 values are not shown.
          *
@@ -307,7 +316,12 @@ class SankeySeries extends ColumnSeries {
                  * Opacity for the links between nodes in the sankey diagram in
                  * hover mode.
                  */
-                linkOpacity: 1
+                linkOpacity: 1,
+
+                /**
+                 * Opacity for the nodes in the sankey diagram in hover mode.
+                 */
+                opacity: 1
             },
             /**
              * The opposite state of a hover for a single point node/link.
@@ -322,10 +336,7 @@ class SankeySeries extends ColumnSeries {
                 linkOpacity: 0.1,
 
                 /**
-                 * Opacity of inactive markers.
-                 *
-                 * @type      {number}
-                 * @apioption plotOptions.series.states.inactive.opacity
+                 * Opacity of the nodes in the sankey diagram in inactive mode.
                  */
                 opacity: 0.1,
 
@@ -473,30 +484,31 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Order the nodes, starting with the root node(s). (#9818)
+     * @private
+     */
+    public order(node: SankeyPoint, level: number): void {
+        const series = this;
+        // Prevents circular recursion:
+        if (typeof node.level === 'undefined') {
+            node.level = level;
+            node.linksFrom.forEach(function (
+                link: SankeyPoint
+            ): void {
+                if (link.toNode) {
+                    series.order(link.toNode, level + 1);
+                }
+            });
+        }
+    }
+    /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
      * @private
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
-
-        /**
-         * Order the nodes, starting with the root node(s). (#9818)
-         * @private
-         */
-        function order(node: SankeyPoint, level: number): void {
-            // Prevents circular recursion:
-            if (typeof node.level === 'undefined') {
-                node.level = level;
-                node.linksFrom.forEach(function (
-                    link: SankeyPoint
-                ): void {
-                    if (link.toNode) {
-                        order(link.toNode, level + 1);
-                    }
-                });
-            }
-        }
+        const series = this;
 
         if (this.orderNodes) {
             this.nodes
@@ -507,7 +519,7 @@ class SankeySeries extends ColumnSeries {
                 // Start by the root node(s) and recursively set the level
                 // on all following nodes.
                 .forEach(function (node: SankeyPoint): void {
-                    order(node, 0);
+                    series.order(node, 0);
                 });
             stableSort(this.nodes, function (
                 a: SankeyPoint,
@@ -524,6 +536,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public getNodePadding(): number {
+
         let nodePadding = this.options.nodePadding || 0;
 
         // If the number of columns is so great that they will overflow with
@@ -572,7 +585,11 @@ class SankeySeries extends ColumnSeries {
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
             values: AnyRecord = [
-                'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
+                'colorByPoint',
+                'borderColor',
+                'borderWidth',
+                'linkOpacity',
+                'opacity'
             ].reduce(function (
                 obj: AnyRecord,
                 key: string
@@ -596,7 +613,8 @@ class SankeySeries extends ColumnSeries {
             return {
                 fill: color,
                 stroke: values.borderColor,
-                'stroke-width': values.borderWidth
+                'stroke-width': values.borderWidth,
+                opacity: values.opacity
             };
         }
 
@@ -607,17 +625,14 @@ class SankeySeries extends ColumnSeries {
 
     }
 
-    /**
-     * Extend the render function to also render this.nodes together with
-     * the points.
-     * @private
-     */
-    public render(): void {
-        const points = this.points;
+    public drawPoints(): void {
+        ColumnSeries.prototype.drawPoints.call(this, this.points);
+        ColumnSeries.prototype.drawPoints.call(this, this.nodes);
+    }
 
-        this.points = this.points.concat(this.nodes || []);
-        ColumnSeries.prototype.render.call(this);
-        this.points = points;
+    public drawDataLabels(): void {
+        ColumnSeries.prototype.drawDataLabels.call(this, this.points);
+        ColumnSeries.prototype.drawDataLabels.call(this, this.nodes);
     }
 
     /**
@@ -1347,11 +1362,21 @@ export default SankeySeries;
  *     }]
  *  ```
  *
+ *  When you provide the data as tuples, the keys option has to be set as well.
+ *
+ *  ```js
+ *     keys: ['from', 'to', 'weight'],
+ *     data: [
+ *         ['Category1', 'Category2', 2],
+ *         ['Category1', 'Category3', 5]
+ *     ]
+ *  ```
+ *
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
  * @declare   Highcharts.SeriesSankeyPointOptionsObject
- * @type      {Array<*>}
+ * @type      {Array<*>|Array<Array<(string|number)>>}
  * @extends   series.line.data
  * @excluding dragDrop, drilldown, marker, x, y
  * @product   highcharts

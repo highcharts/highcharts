@@ -167,13 +167,6 @@ const updateStyle = function (selector, property, value, duration) {
         }
     );
 };
-const bubbleData = [bubbleData0, bubbleData1, bubbleData2, bubbleData3,
-    bubbleData4, bubbleData5, bubbleData6];
-
-
-//bubble, sankey, candlestick, bubble2, clear intervals
-//const loops = [0, 7000, 13000, 21000];
-
 
 const candlestick = function (type) {
     Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
@@ -228,7 +221,7 @@ const candlestick = function (type) {
                             }
 
                         };
-                        setTimeout(p1, 700);
+                        setTimeout(p1, 100);
 
                         if (type === 'animated') {
 
@@ -248,7 +241,7 @@ const candlestick = function (type) {
                                 }
 
                             };
-                            setTimeout(p2, 3000);
+                            setTimeout(p2, 1700);
                         }
                     }
                 }
@@ -367,7 +360,7 @@ const bubble2 = {
         margin: [0, 0, 0, 0],
         spacing: 0,
         animation: {
-            duration: 2000,
+            duration: 1000,
             easing: 'easeOutQuint'
         },
         events: {
@@ -376,34 +369,43 @@ const bubble2 = {
                 updateStyle('bubble2-purple', 'transform', 'none', '0s');
                 updateStyle('highcharts-title', 'opacity', 0, '0s');
                 updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
+                updateStyle('highcharts-bubble-series', 'opacity', 0, '0s');
 
+                const p3 = function () {
+                    if (heroChart) {
+                        heroChart.destroy();
+                    }
+                    candlestick('animated');
+                };
+
+                // if motion preference is reduced
                 if (reduced) {
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
                         updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
-                    }, 200);
+                    }, 500);
                     setTimeout(function () {
                         updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
-                    }, 5000);
+                    }, 3000);
+                    setTimeout(p3, 3100);
                 } else {
+                    // /moves the bubbles right
                     setTimeout(function () {
+                        updateStyle('highcharts-bubble-series', 'opacity', 1, '500ms');
                         chart.xAxis[0].setExtremes(-1000, 10);
-                    }, 1000);
+                    }, 200);
+                    // moves the bubbles left, shows data labels
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
                         updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
-                    }, 2600);
+                    }, 1300);
+                    // // consolidates bubbles on one line
                     setTimeout(function () {
                         updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
                         chart.yAxis[0].setExtremes(-2000, 2000);
-                    }, 5000);
-                    const p3 = function () {
-                        if (heroChart) {
-                            heroChart.destroy();
-                        }
-                        candlestick('animated');
-                    };
-                    setTimeout(p3, 5800);
+                    }, 2700);
+                    // // gets next chart
+                    setTimeout(p3, 3300);
                 }
             }
         }
@@ -467,7 +469,8 @@ const bubble2 = {
     plotOptions: {
         series: {
             name: 'Highcharts Bubble Chart',
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            animation: false
         }
     },
     legend: {
@@ -862,75 +865,67 @@ const sankey = {
         marginRight: 0,
         animation: {
             duration: 1000,
-            easing: 'easeOutQuint'
+            easing: 'easeOutBounce'
         },
         events: {
             load: function () {
                 const chart = this;
+                // hide title and data labels
                 updateStyle('highcharts-title', 'opacity', 0, '0s');
                 updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
-                updateStyle('highcharts-data-labels', 'opacity', 1, '400ms');
+                updateStyle('highcharts-link', 'opacity', 0, '0s');
+                updateStyle('highcharts-node', 'opacity', 0, '0s');
 
-                chart.series[0].update({
-                    data: []
-                });
-                const p1 = function () {
-                    //let count = 0;
-                    //adds nodes to the sankey
-                    /*const sankey = setInterval(function () {
-                        if (count < sankeyData.length) {
-                            chart.series[0].addPoint({
-                                from: sankeyData[count][0],
-                                to: sankeyData[count][1],
-                                weight: sankeyData[count][2]
-                            });
-                            count = count + 1;
-                        } else {
-                            clearInterval(sankey);
-                        }
-                    }, 10);*/
-
-                    for (let ii = 0; ii < sankeyData.length; ++ii) {
-                        chart.series[0].addPoint({
-                            from: sankeyData[ii][0],
-                            to: sankeyData[ii][1],
-                            weight: sankeyData[ii][2]
-                        }, false);
-                    }
-                    chart.redraw();
-                };
-                setTimeout(p1, 200);
 
                 const p2 = function () {
-                    //makes the node connections very thin
-                    //makes the nodes super curvy
-                    updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+
+                    updateStyle('highcharts-link', 'opacity', 1, '1s');
+                    updateStyle('highcharts-node', 'opacity', 1, '1s');
+                    // makes the node connections regular
                     chart.series[0].update({
-                        nodePadding: 130
+                        nodePadding: 10
                     });
+                    // makes the nodes super straight
                     chart.series[0].update({
-                        curveFactor: 2
+                        curveFactor: 0.33
                     });
-                    updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+                    // show the data labels
+                    updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
                 };
-                ///if it's not reduced motion, execute p2
+                // if it's not reduced motion, animate the sankey nodes
                 if (!reduced) {
-                    setTimeout(p2, 4000);
+                    setTimeout(p2, 300);
                 }
                 const p22 = function () {
+                    // fade everything out (happens at same time as p2)
                     updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
                     updateStyle('highcharts-link', 'opacity', 0, '2s');
                     updateStyle('highcharts-node', 'opacity', 0, '2s');
+
+                    chart.update({
+                        chart: {
+                            animation: {
+                                duration: 1000,
+                                easing: 'easeOutQuint'
+                            }
+                        }
+                    });
+
+                    // makes the node connections thin
+                    chart.series[0].update({
+                        nodePadding: 150
+                    });
                 };
-                setTimeout(p22, 4500);
+                setTimeout(p22, 2000);
 
                 const p3 = function () {
+                    // destroy the chart and get the next one
                     if (heroChart) {
                         heroChart.destroy();
                     }
                     heroChart = Highcharts.chart('hero', bubble2);
                 };
-                setTimeout(p3, 6000);
+                setTimeout(p3, 3000);
 
             }
         }
@@ -965,7 +960,8 @@ const sankey = {
     ],
     plotOptions: {
         series: {
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            animation: false
         },
         area: {
             marker: {
@@ -980,8 +976,9 @@ const sankey = {
         keys: ['from', 'to', 'weight'],
         centerInCategory: true,
         linkOpacity: 1,
-        data: [],
-        curveFactor: 0.33,
+        data: sankeyData,
+        curveFactor: 2,
+        nodePadding: 150,
         nodes: [{
             id: '',
             colorIndex: 0
@@ -1057,31 +1054,22 @@ const bubble = {
         events: {
             load: function () {
                 const chart = this;
-                let yaxis = 0;
-                for (let ii = 0; ii < bubbleData.length; ++ii) {
-                    chart.addSeries({
-                        type: 'bubble',
-                        data: bubbleData[ii],
-                        yAxis: yaxis
-                    });
-                    if (yaxis === 0) {
-                        yaxis = 1;
-                    } else {
-                        yaxis = 0;
-                    }
-                }
+                chart.series[0].update({ visible: false });
+                updateStyle('highcharts-bubble-series', 'opacity', 0, '0s');
 
                 if (reduced) {
                     chart.series[0].update({ visible: true });
                     updateStyle('highcharts-bubble-series', 'opacity',  1, '0s');
+                    updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
                     setTimeout(function () {
                         chart.yAxis[0].setExtremes(0, 24);
                         chart.yAxis[1].setExtremes(0, 24);
                         updateStyle('highcharts-plot-line', 'opacity', 1, '1s');
+                        updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
                     }, 1500);
 
                     setTimeout(function () {
-                        ///moves all the bubbles down, fades them out
+                        // /moves all the bubbles down, fades them out
                         const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
 
                         updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
@@ -1092,15 +1080,22 @@ const bubble = {
                             const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
                             updateStyle(bubbleSelector, 'opacity', 0, '300ms');
                         }
+                    }, 3000);
+
+                    setTimeout(function () {
+                        if (heroChart) {
+                            heroChart.destroy();
+                        }
+                        heroChart = Highcharts.chart('hero', sankey); // 5500
                     }, 3500);
 
                 } else {
-                    updateStyle('highcharts-bubble-series', 'opacity', 0, '0s');
                     setTimeout(function () {
                         chart.series[0].update({ visible: true });
-                        updateStyle('highcharts-bubble-series', 'opacity', 1, '1s');
+                        chart.xAxis[0].setExtremes(0, 7);
+                        updateStyle('highcharts-bubble-series', 'opacity', 1, '500ms');
                         updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
-                    }, 100);
+                    }, 300);
 
                     setTimeout(function () {
                         updateStyle('highcharts-plot-line', 'opacity', 1, '1s');
@@ -1109,15 +1104,18 @@ const bubble = {
                             document.querySelectorAll('.highcharts-data-labels'),
                             function (elem, index) {
                                 if (index % 2 === 0) {
+                                    elem.style.transition = 'opacity 1s';
                                     elem.style.opacity = 1;
                                 }
                             }
                         );
+                    }, 1000);
 
-                    }, 1500);
                     setTimeout(function () {
                         chart.yAxis[1].setExtremes(0, 24);
+                    }, 1400);
 
+                    setTimeout(function () {
                         [].forEach.call(
                             document.querySelectorAll('.highcharts-data-labels'),
                             function (elem, index) {
@@ -1126,30 +1124,29 @@ const bubble = {
                                 }
                             }
                         );
-
-                    }, 3000);
+                    }, 1400);
 
                     setTimeout(function () {
-                        ///moves all the bubbles down, fades them out
-                        chart.yAxis[0].setExtremes(-2, 1000);
-                        chart.yAxis[1].setExtremes(-2, 1000);
+                        // /moves all the bubbles down, fades them out
+                        chart.yAxis[0].setExtremes(-2, 100);
+                        chart.yAxis[1].setExtremes(-2, 100);
                         const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
 
                         for (let ii = 0; ii < bubbleClasses.length; ++ii) {
                             const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
-                            updateStyle(bubbleSelector, 'opacity', 0, '0s');
+                            updateStyle(bubbleSelector, 'opacity', 0, '2s');
                         }
                         updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
                         updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
                         updateStyle('highcharts-plot-line', 'opacity', 0, '1s');
-                    }, 5500);
+                    }, 2600);
 
                     setTimeout(function () {
                         if (heroChart) {
                             heroChart.destroy();
                         }
-                        heroChart = Highcharts.chart('hero', sankey); //5500
-                    }, 6000);
+                        heroChart = Highcharts.chart('hero', sankey);
+                    }, 3300);
 
                 }
             }
@@ -1176,6 +1173,8 @@ const bubble = {
     xAxis: [
         {
             offset: 0,
+            visible: true,
+            max: 24,
             labels: {
                 style: {
                     color: '#fff'
@@ -1208,9 +1207,10 @@ const bubble = {
 
     yAxis: [{
         visible: false,
+        reversed: true,
         offest: 0,
-        min: -250,
-        max: 250,
+        min: -150,
+        max: 150,
         labels: {
             style: {
                 color: '#fff'
@@ -1218,16 +1218,53 @@ const bubble = {
         }
     },
     {
-        visible: false,
+        visible: true,
         offest: 0,
-        min: -250,
-        max: 250,
+        min: -150,
+        max: 150,
         labels: {
             style: {
                 color: '#fff'
             }
         }
     }],
+    series: [{
+        type: 'bubble',
+        data: bubbleData0,
+        yAxis: 0
+    },
+    {
+        type: 'bubble',
+        data: bubbleData1,
+        yAxis: 1
+    },
+    {
+        type: 'bubble',
+        data: bubbleData2,
+        yAxis: 0
+    },
+    {
+        type: 'bubble',
+        data: bubbleData3,
+        yAxis: 1
+    },
+    {
+        type: 'bubble',
+        data: bubbleData4,
+        yAxis: 0
+    },
+    {
+        type: 'bubble',
+        data: bubbleData5,
+        yAxis: 1
+    },
+    {
+        type: 'bubble',
+        data: bubbleData6,
+        yAxis: 0
+    }
+
+    ],
     legend: {
         enabled: false,
         itemMarginTop: 10,
@@ -1252,7 +1289,9 @@ const bubble = {
             name: 'Highcharts Bubble Chart',
             allowOverlap: true,
             dataLabels: {
-                enabled: true
+                enabled: true,
+                allowOverlap: true,
+                crop: false
             }
         }
     },
@@ -1305,6 +1344,8 @@ const createBubble = function () {
         heroChart.destroy();
     }
     heroChart = Highcharts.chart('hero', bubble);
+
+    // candlestick('animated');
 };
 
 createBubble();

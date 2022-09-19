@@ -16,6 +16,7 @@ QUnit.module('Color axis for series types', function () {
                     'sunburst',
                     'sankey',
                     'dependencywheel',
+                    'treegraph',
                     'arcdiagram',
                     'venn',
                     'wordcloud'

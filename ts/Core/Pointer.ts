@@ -794,10 +794,8 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter(function (s): boolean {
-                return eventArgs.filter ? eventArgs.filter(s) : filter(s) &&
-                    s.stickyTracking;
-            });
+            series.filter((s): boolean => s.stickyTracking &&
+                (eventArgs.filter || filter)(s));
 
         // Use existing hovered point or find the one closest to coordinates.
         const hoverPoint = useExisting || !e ?
@@ -827,10 +825,10 @@ class Pointer {
                         * Boost returns a minimal point. Convert it to a usable
                         * point for tooltip and states.
                         */
-                        if (s.chart.isBoosting) {
-                            point = s.getPoint(point);
+                        if (s.boosted && s.boost) {
+                            point = s.boost.getPoint(point);
                         }
-                        hoverPoints.push(point as Point);
+                        hoverPoints.push(point);
                     }
                 });
             } else {
@@ -2049,7 +2047,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            this.chart.options.chart.zoomBySingleTouch &&
+            this.chart.options.chart.zooming.singleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2066,13 +2064,13 @@ class Pointer {
             options = chart.options.chart,
             inverted = chart.inverted;
 
-        let zoomType = options.zoomType || '',
+        let zoomType = options.zooming.type || '',
             zoomX,
             zoomY;
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(options.pinchType, zoomType);
+            zoomType = pick(options.zooming.pinchType, zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);
@@ -2127,6 +2125,7 @@ namespace Pointer {
     }
     export interface SelectEventObject {
         originalEvent: Event;
+        resetSelection?: boolean;
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
@@ -2145,6 +2144,24 @@ export default Pointer;
  *  API Declarations
  *
  * */
+
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
 
 /**
  * One position in relation to an axis.
@@ -2211,47 +2228,43 @@ export default Pointer;
  *
  * @interface Highcharts.SelectDataObject
  *//**
+ * The selected Axis.
  * @name Highcharts.SelectDataObject#axis
  * @type {Highcharts.Axis}
  *//**
+ * The maximum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#max
  * @type {number}
  *//**
+ * The minimum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#min
  * @type {number}
  */
 
 /**
  * Object for select events.
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
  *
  * @interface Highcharts.SelectEventObject
  *//**
+ * The related browser event.
  * @name Highcharts.SelectEventObject#originalEvent
  * @type {global.Event}
  *//**
+ * Indicates a reset event to restore default state.
+ * @name Highcharts.SelectEventObject#resetSelection
+ * @type {boolean|undefined}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#xAxis
  * @type {Array<Highcharts.SelectDataObject>}
  *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#yAxis
  * @type {Array<Highcharts.SelectDataObject>}
- */
-
-/**
- * Chart position and scale.
- *
- * @interface Highcharts.ChartPositionObject
- *//**
- * @name Highcharts.ChartPositionObject#left
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleX
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleY
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#top
- * @type {number}
  */
 
 ''; // keeps doclets above in JS file

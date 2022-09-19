@@ -65,6 +65,9 @@ Highcharts.chart('container', {
         name: 'Dependency wheel series',
         dataLabels: {
             color: '#333',
+            style: {
+                textOutline: 'none'
+            },
             textPath: {
                 enabled: true,
                 attributes: {
