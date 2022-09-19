@@ -416,7 +416,12 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr
+                attr,
+                {},
+                {},
+                {},
+                'rect',
+                btnOptions.useHTML
             )
             .addClass(options.className as any)
             .attr({
