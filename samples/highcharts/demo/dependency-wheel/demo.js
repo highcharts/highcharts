@@ -69,10 +69,7 @@ Highcharts.chart('container', {
                 textOutline: 'none'
             },
             textPath: {
-                enabled: true,
-                attributes: {
-                    dy: 5
-                }
+                enabled: true
             },
             distance: 10
         },
