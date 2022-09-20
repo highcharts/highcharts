@@ -122,8 +122,6 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Disable animation, but keep clipping (#8546).
      * @private
@@ -139,15 +137,19 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             points = series.points,
             chart = series.chart,
             renderer = chart.renderer,
-            plotX: (number|undefined),
-            plotY: (number|undefined),
             inverted = chart.inverted,
             options = series.options,
             optionsY = options.y,
+            yAxis = series.yAxis,
+            boxesMap: Record<string, DistributedBoxObject> = {},
+            boxes: Array<DistributedBoxObject> = [];
+
+        let plotX: (number|undefined),
+            plotY: (number|undefined),
             shape,
             i,
             point,
@@ -156,9 +158,6 @@ class FlagsSeries extends ColumnSeries {
             anchorY,
             attribs: SVGAttributes,
             outsideRight,
-            yAxis = series.yAxis,
-            boxesMap: Record<string, DistributedBoxObject> = {},
-            boxes: Array<DistributedBoxObject> = [],
             centered;
 
         i = points.length;
@@ -298,7 +297,7 @@ class FlagsSeries extends ColumnSeries {
                 maxDistance
             );
 
-            points.forEach(function (point): void {
+            for (const point of points) {
                 const plotX = point.plotX as number,
                     graphic = point.graphic,
                     box = graphic && boxesMap[plotX];
@@ -317,7 +316,7 @@ class FlagsSeries extends ColumnSeries {
                         ).show().isNew = false;
                     }
                 }
-            });
+            }
         }
 
         // Can be a mix of SVG and HTML and we need events for both (#6303)
@@ -354,7 +353,7 @@ class FlagsSeries extends ColumnSeries {
         * of vertically stacked elements as well as tight points on the x
         * axis. #1924.
         */
-        points.forEach(function (point): void {
+        for (const point of points) {
             const graphic = point.graphic;
 
             if (graphic) {
@@ -378,22 +377,22 @@ class FlagsSeries extends ColumnSeries {
                         }
 
                         // Revert other raised points
-                        points.forEach(function (otherPoint): void {
+                        for (const otherPoint of points) {
                             if (
                                 otherPoint !== point &&
-                            otherPoint.raised &&
-                            otherPoint.graphic
+                                otherPoint.raised &&
+                                otherPoint.graphic
                             ) {
                                 otherPoint.graphic.attr({
                                     y: otherPoint._y
                                 });
                                 otherPoint.raised = false;
                             }
-                        });
+                        }
                     }
                 );
             }
-        });
+        }
     }
 
     /**
@@ -404,9 +403,10 @@ class FlagsSeries extends ColumnSeries {
         point: FlagsPoint,
         state?: string
     ): SVGAttributes {
-        let options = this.options,
-            color = (point && point.color) || this.color,
-            lineColor = options.lineColor,
+        const options = this.options,
+            color = (point && point.color) || this.color;
+
+        let lineColor = options.lineColor,
             lineWidth = (point && point.lineWidth),
             fill = (point && point.fillColor) || options.fillColor;
 
@@ -436,8 +436,6 @@ class FlagsSeries extends ColumnSeries {
             this.markerGroup.clip(this.chart.sharedClips[this.sharedClipKey]);
         }
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
