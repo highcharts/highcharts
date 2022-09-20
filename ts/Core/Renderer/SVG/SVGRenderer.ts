@@ -768,24 +768,33 @@ class SVGRenderer implements SVGRendererLike {
             delete disabledState.style;
         }
 
-        // Add the events. IE9 and IE10 need mouseover and mouseout to funciton
+        // Add the events. IE9 and IE10 need mouseover and mouseout to function
         // (#667).
-        addEvent(
-            label.element, isMS ? 'mouseover' : 'mouseenter',
-            function (): void {
-                if (curState !== 3) {
-                    label.setState(1);
-                }
+        const sharedHandler = (e: MouseEvent): void => {
+            const relatedTarget = e.relatedTarget as DOMElementType;
+            if (
+                // For useHTML buttons, ignore passing pointer over the HTML
+                // counterpart (#17740)
+                (!label.div || !label.div.contains(relatedTarget)) &&
+                !label.element.contains(relatedTarget) &&
+                // Disabled
+                curState !== 3
+            ) {
+                label.setState(/(enter|over)/.test(e.type) ? 1 : curState);
             }
-        );
-        addEvent(
-            label.element, isMS ? 'mouseout' : 'mouseleave',
-            function (): void {
-                if (curState !== 3) {
-                    label.setState(curState);
-                }
+        };
+        for (const node of [label.element, label.div]) {
+            if (node) {
+                addEvent(
+                    node, isMS ? 'mouseover' : 'mouseenter',
+                    sharedHandler
+                );
+                addEvent(
+                    node, isMS ? 'mouseout' : 'mouseleave',
+                    sharedHandler
+                );
             }
-        );
+        }
 
         label.setState = function (state: number): void {
             // Hover state is temporary, don't record it
