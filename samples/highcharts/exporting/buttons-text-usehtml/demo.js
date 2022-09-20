@@ -18,7 +18,15 @@ Highcharts.chart('container', {
         buttonOptions: {
             theme: {
                 style: {
-                    fontSize: '20px'
+                    fontSize: '20px',
+                    color: '#888'
+                },
+                states: {
+                    hover: {
+                        style: {
+                            color: '#000'
+                        }
+                    }
                 }
             },
             useHTML: true
