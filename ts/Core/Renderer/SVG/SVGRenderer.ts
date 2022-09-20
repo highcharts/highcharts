@@ -832,9 +832,9 @@ class SVGRenderer implements SVGRendererLike {
             // HTML labels don't need to handle pointer events because click and
             // mouseenter/mouseleave is bound to the underlying <g> element.
             // Should this be reconsidered, we need more complex logic to share
-            // events between the <g> and its <div> counterpart, and
-            // avoid triggering mouseenter/mouseleave when hovering from one to
-            // the other (#17440).
+            // events between the <g> and its <div> counterpart, and avoid
+            // triggering mouseenter/mouseleave when hovering from one to the
+            // other (#17440).
             if (useHTML) {
                 label.text.css({ pointerEvents: 'none' });
             }
