@@ -23,6 +23,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
+import FlagsSymbols from './FlagsSymbols.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -45,8 +46,6 @@ const {
     objectEach,
     wrap
 } = U;
-
-import './FlagsSymbols.js';
 
 /* *
  *
@@ -95,6 +94,8 @@ class FlagsSeries extends ColumnSeries {
      *  Static Properties
      *
      * */
+
+    public static compose = FlagsSymbols.compose;
 
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,

@@ -21,7 +21,7 @@ import '../../Extensions/DataGrouping.js';
 import '../../Series/HLC/HLCSeries.js';
 import OHLCSeries from '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
-import '../../Series/Flags/FlagsSeries.js';
+import FlagsSeries from '../../Series/Flags/FlagsSeries.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 const G: AnyRecord = Highcharts;
 // Classes
@@ -30,6 +30,7 @@ G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
+FlagsSeries.compose(G.Renderer);
 Navigator.compose(G.Axis, G.Chart, G.Series);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
