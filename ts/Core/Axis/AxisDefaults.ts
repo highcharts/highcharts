@@ -2522,8 +2522,6 @@ namespace AxisDefaults {
              *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
-             * @default    {highcharts|highmaps} right
-             * @default    {highstock} left
              * @apioption  yAxis.labels.align
              */
 
