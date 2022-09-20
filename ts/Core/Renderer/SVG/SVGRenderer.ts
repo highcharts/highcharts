@@ -770,31 +770,22 @@ class SVGRenderer implements SVGRendererLike {
 
         // Add the events. IE9 and IE10 need mouseover and mouseout to function
         // (#667).
-        const sharedHandler = (e: MouseEvent): void => {
-            const relatedTarget = e.relatedTarget as DOMElementType;
-            if (
-                // For useHTML buttons, ignore passing pointer over the HTML
-                // counterpart (#17740)
-                (!label.div || !label.div.contains(relatedTarget)) &&
-                !label.element.contains(relatedTarget) &&
-                // Disabled
-                curState !== 3
-            ) {
-                label.setState(/(enter|over)/.test(e.type) ? 1 : curState);
+        addEvent(
+            label.element, isMS ? 'mouseover' : 'mouseenter',
+            function (): void {
+                if (curState !== 3) {
+                    label.setState(1);
+                }
             }
-        };
-        for (const node of [label.element, label.div]) {
-            if (node) {
-                addEvent(
-                    node, isMS ? 'mouseover' : 'mouseenter',
-                    sharedHandler
-                );
-                addEvent(
-                    node, isMS ? 'mouseout' : 'mouseleave',
-                    sharedHandler
-                );
+        );
+        addEvent(
+            label.element, isMS ? 'mouseout' : 'mouseleave',
+            function (): void {
+                if (curState !== 3) {
+                    label.setState(curState);
+                }
             }
-        }
+        );
 
         label.setState = function (state: number): void {
             // Hover state is temporary, don't record it
@@ -837,6 +828,16 @@ class SVGRenderer implements SVGRendererLike {
             label
                 .attr(normalState)
                 .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
+
+            // HTML labels don't need to handle pointer events because click and
+            // mouseenter/mouseleave is bound to the underlying <g> element.
+            // Should this be reconsidered, we need more complex logic to share
+            // events between the <g> and its <div> counterpart, and
+            // avoid triggering mouseenter/mouseleave when hovering from one to
+            // the other (#17440).
+            if (useHTML) {
+                label.text.css({ pointerEvents: 'none' });
+            }
         }
 
         return label
