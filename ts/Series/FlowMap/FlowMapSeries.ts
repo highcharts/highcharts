@@ -203,7 +203,16 @@ class FlowMapSeries extends SankeySeries {
         outMin: number,
         outMax: number
     ): number {
-        return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+        if (number === inMin) { // Prevent 0 division.
+            return outMin;
+        }
+
+        if (number === inMax) { // Prevent 0 division.
+            return outMax;
+        }
+
+        return (number - inMin) * (outMax - outMin) /
+            (inMax - inMin) + outMin; // TODO: Handle 0 division here
     }
 
     /**
