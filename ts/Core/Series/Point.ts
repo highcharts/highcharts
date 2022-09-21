@@ -138,6 +138,27 @@ class Point {
 
     public formatPrefix: string = 'point';
 
+    /**
+     * SVG graphic of the point in the chart. In some occasions it might be a
+     * dummy graphic to improve accessibility and actually be not visible.
+     *
+     * @see Highcharts.Point#graphics
+     *
+     * @name Highcharts.Point#graphic
+     * @type {Highcharts.SVGElement|undefined}
+     */
+    public graphic?: SVGElement;
+
+    /**
+     * Array for a complex SVG graphic of the point in the chart.
+     *
+     * @see Highcharts.Point#graphic
+     *
+     * @name Highcharts.Point#graphics
+     * @type {Array<Highcharts.SVGElement>|undefined}
+     */
+    public graphics?: Array<SVGElement>;
+
     public id: string = void 0 as any;
 
     public isNew?: boolean;
