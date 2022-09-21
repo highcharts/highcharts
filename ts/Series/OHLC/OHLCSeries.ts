@@ -132,7 +132,8 @@ class OHLCSeries extends HLCSeries {
      * */
 
     public static compose(
-        SeriesClass: typeof Series
+        SeriesClass: typeof Series,
+        ..._args: Array<never>
     ): void {
 
         if (composedMembers.indexOf(SeriesClass) === -1) {
