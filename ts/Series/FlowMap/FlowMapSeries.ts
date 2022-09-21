@@ -64,9 +64,18 @@ class FlowMapSeries extends SankeySeries {
      *
      * */
 
+    /**
+     * A flowmap series is a series laid out on top of a map series allowing to
+     * display route paths (e.g. flights or ships routes) or flows on a map. It
+     * is drawing a link between two mappoints.
+     *
+     * @extends      plotOptions.column
+     * @product      highmaps
+     * @optionparent plotOptions.flowmap
+     */
     public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
-         * DESCRIPTION
+         * Always disabled, excluded from API.
          *
          * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
          *
@@ -77,20 +86,13 @@ class FlowMapSeries extends SankeySeries {
         },
 
         /**
-         * DESCRIPTION
-         *
          * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
          *
+         * @extends series.mappoint.keys
+         * @default ['from', 'to', 'weight']
          * @private
          */
-        keys: [
-            'from',
-            'to',
-            'curveFactor',
-            'weight',
-            'growTowards',
-            'markerEnd'
-        ]
+        keys: ['from', 'to', 'weight']
 
     } as FlowMapSeriesOptions); // Sankey?
 
@@ -548,5 +550,125 @@ export default FlowMapSeries;
  *  API options
  *
  * */
+
+/**
+ * A `flowmap` series. If the [type](#series.flowmap.type) option
+ * is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.flowmap
+ * @excluding allAreas, allowPointSelect, boostBlending, boostThreshold,
+ * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
+ * negativeColor, onPoint, shadow, showCheckbox
+ * @product   highmaps
+ * @requires  modules/sankey
+ * @apioption series.flowmap
+ */
+
+/**
+ * An array of data points for the series. For the `flowmap` series
+ * type, points can be given in the following ways:
+ *
+ * 1.  An array of arrays with 6 values. In this case, the values correspond
+ *     to `from, to, weight`. Example:
+ *     ```js
+ *     data: [
+ *         ["Point 1", "Point 2", 4],
+ *     ]
+ *     ```
+ *
+ * 2.  An array of objects with named values. The following snippet shows only a
+ *     few settings, see the complete options set below.
+ *
+ *     ```js
+ *         data: [{
+ *             from: "Point 1",
+ *             to: "Point 2",
+ *             curveFactor: 0.4,
+ *             weight: 5,
+ *             growTowards: true,
+ *             markerEnd: {
+ *                 enabled: true,
+ *                 height: 15,
+ *                 width: 8
+ *             }
+ *         }]
+ *     ```
+ *
+ * @type      {Array<number|null|*>}
+ * @extends   series.sankey.data
+ * @excluding labelrank, outgoing
+ * @product   highmaps
+ * @apioption series.flowmap.data
+ */
+
+/**
+ * Higher numbers makes the links more curved. A `curveFactor` of 0 makes the
+ * lines straight.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.curveFactor
+ */
+
+/**
+ * If set to `true`, the line will grow towards its end.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
+ * @type      {boolean}
+ * @product   highmaps
+ * @apioption series.flowmap.data.growTowards
+ */
+
+/**
+ * The marker-end defines the arrowhead that will be drawn at the final vertex
+ * of the given path.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
+ * @type      {*|null}
+ * @product   highmaps
+ * @apioption series.flowmap.data.markerEnd
+ */
+
+/**
+ * Enable or disable the marker-end on the series.
+ *
+ * @type      {boolean}
+ * @product   highmaps
+ * @apioption series.flowmap.data.markerEnd.enabled
+ */
+
+/**
+ * The pixel height of the marker-end symbol.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.markerEnd.height
+ */
+
+/**
+ * The pixel width of the marker-end symbol.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.markerEnd.width
+ */
+
+/**
+ * The weight of the link.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.weight
+ */
 
 ''; // adds doclets above to transpiled file
