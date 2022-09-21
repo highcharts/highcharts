@@ -59,9 +59,6 @@ Highcharts.setOptions({
         spacingBottom: 20,
         type: 'area'
     },
-    xAxis: {
-        tickInterval: 1
-    },
     yAxis: {
         title: {
             text: null
