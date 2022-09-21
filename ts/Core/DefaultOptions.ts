@@ -1367,8 +1367,8 @@ const defaultOptions: Options = {
              * Whether to enable the legend navigation. In most cases, disabling
              * the navigation results in an unwanted overflow.
              *
-             * See also the [adapt chart to legend](
-             * https://www.highcharts.com/products/plugin-registry/single/8/Adapt-Chart-To-Legend)
+             * See also the
+             * [adapt chart to legend](https://github.com/highcharts/adapt-chart-to-legend)
              * plugin for a solution to extend the chart height to make room for
              * the legend, optionally in exported charts only.
              *
