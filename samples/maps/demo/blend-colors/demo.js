@@ -4,7 +4,11 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json', function (data) {
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@b0488c7087/samples/data/busiest-europe-airports-2021.json', data => {
+
+        data.forEach(airport => {
+            airport.z = airport.total_passengers;
+        });
 
         Highcharts.mapChart('container', {
             chart: {
@@ -13,15 +17,23 @@
             },
 
             title: {
-                text: 'World population 2013 by country'
+                text: `Top 100 busiest airports in Europe, ranked by total
+                passengers in 2021`
             },
 
             subtitle: {
-                text: 'Demo of Highcharts map with bubbles'
+                text: `Demo of Highcharts map with bubbles | Source:
+                <a href='https://w.wiki/5j6g'>
+                    Wikipedia
+                </a> and
+                <a href='https://ourairports.com/continents/EU/'>
+                    OurAirports
+                </a>`
             },
 
             accessibility: {
-                description: 'We see how China and India by far are the countries with the largest population.'
+                description: `We see how the top 100 busiest airports in Europe,
+                ranked by total passengers in 2021 look like.`
             },
 
             legend: {
@@ -35,9 +47,17 @@
                 }
             },
 
+            mapView: {
+                projection: {
+                    name: 'WebMercator'
+                },
+                zoom: 3.35,
+                center: [15, 50.5]
+            },
+
             plotOptions: {
                 mapbubble: {
-                    minSize: 20,
+                    minSize: 30,
                     maxSize: 200,
                     opacity: 0.3,
                     marker: {
@@ -57,18 +77,13 @@
                 enableMouseTracking: false
             }, {
                 type: 'mapbubble',
-                name: 'Population 2016',
-                joinBy: ['iso-a2', 'code'],
+                name: 'Europe airports',
                 data: data,
                 tooltip: {
-                    pointFormat: '{point.properties.hc-a2}: {point.z} thousands'
+                    pointFormat: '{point.name}: {point.z}'
                 },
                 blendColors: [
-                    '#ff0000',
-                    '#ffff00',
-                    '#00ff00',
-                    '#00ffff',
-                    '#0000ff'
+                    '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff'
                 ]
             }]
         });
