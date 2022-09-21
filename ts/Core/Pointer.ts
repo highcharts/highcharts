@@ -1301,7 +1301,9 @@ class Pointer {
                 self.runChartClick
             ),
             clip = {},
-            tooltip = self.chart.tooltip;
+            tooltip = self.chart.tooltip,
+            followTouchMove = touchesLength === 1 &&
+                pick((tooltip && tooltip.options.followTouchMove), true);
 
         let selectionMarker = self.selectionMarker;
 
@@ -1310,10 +1312,7 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
-        } else if (
-            touchesLength === 1 &&
-            pick((tooltip && tooltip.options.followTouchMove), true)
-        ) {
+        } else if (followTouchMove) {
             // #16119: Prevent blocking scroll when single-finger panning is
             // not enabled
             self.initiated = false;
@@ -1382,10 +1381,7 @@ class Pointer {
             self.res = true; // reset on next move
 
         // Optionally move the tooltip on touchmove
-        } else if (
-            touchesLength === 1 &&
-            pick((tooltip && tooltip.options.followTouchMove), true)
-        ) {
+        } else if (followTouchMove) {
             this.runPointActions(self.normalize(e));
 
         // Event type is touchmove, handle panning and pinching
