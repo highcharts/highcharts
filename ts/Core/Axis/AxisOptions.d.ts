@@ -82,7 +82,7 @@ AxisLabelFormatterContextObject
 export interface AxisLabelFormatterContextObject {
     axis: Axis;
     chart: Chart;
-    dateTimeLabelFormat: string;
+    dateTimeLabelFormat?: string;
     isFirst: boolean;
     isLast: boolean;
     pos: number;
