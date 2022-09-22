@@ -94,18 +94,21 @@ QUnit.test('General yAxis updates', function (assert) {
     });
 
     const checkOptionsConsistency = () => {
+
         assert.strictEqual(
             chart.options.yAxis.length,
-            chart.yAxis.length,
+            chart.yAxis.filter(axis => !axis.options.isInternal).length,
             'Chart Options yAxis should be the same length as Chart yAxis'
         );
 
         for (let i = 0; i < chart.yAxis.length; i++) {
-            assert.strictEqual(
-                chart.options.yAxis[i],
-                chart.yAxis[i].options,
-                'Current axis options should be available in chart options'
-            );
+            if (!chart.yAxis[i].options.isInternal) {
+                assert.strictEqual(
+                    chart.options.yAxis[i],
+                    chart.yAxis[i].options,
+                    'Current axis options should be available in chart options'
+                );
+            }
         }
     };
 
@@ -162,7 +165,7 @@ QUnit.test('General yAxis updates', function (assert) {
     );
     assert.strictEqual(
         chart.series[1].yAxis,
-        chart.yAxis[2],
+        chart.yAxis[1],
         '#9671: The second series should be bound to the second axis'
     );
 

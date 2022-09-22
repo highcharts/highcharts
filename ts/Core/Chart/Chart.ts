@@ -425,11 +425,14 @@ class Chart {
             /**
              * The original options given to the constructor or a chart factory
              * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
+             * The original options are shallow copied to avoid mutation. The
+             * copy, `chart.userOptions`, may later be mutated to reflect
+             * updated options throughout the lifetime of the chart.
              *
              * @name Highcharts.Chart#userOptions
              * @type {Highcharts.Options}
              */
-            this.userOptions = userOptions;
+            this.userOptions = extend<Partial<Options>>({}, userOptions);
 
             this.margin = [];
             this.spacing = [];
@@ -638,6 +641,59 @@ class Chart {
     }
 
     /**
+     * Insert a series or an axis in a collection with other items, either the
+     * chart series or yAxis series or axis collections, in the correct order
+     * according to the index option and whether it is internal. Used internally
+     * when adding series and axes.
+     *
+     * @private
+     * @function Highcharts.Chart#insertItem
+     * @param  {Highcharts.Series|Highcharts.Axis} item
+     *         The item to insert
+     * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis} collection
+     *         A collection of items, like `chart.series` or `xAxis.series`.
+     * @return {number} The index of the series in the collection.
+     */
+    public insertItem(
+        item: Series|AxisType,
+        collection: Array<Series|AxisType>
+    ): number {
+        const indexOption = (item as Series).options.index,
+            length = collection.length;
+        let i: number|undefined;
+
+        for (
+            // Internal item (navigator) should always be pushed to the end
+            i = item.options.isInternal ? length : 0;
+            i < length + 1;
+            i++
+        ) {
+            if (
+                // No index option, reached the end of the collection,
+                // equivalent to pushing
+                !collection[i] ||
+
+                // Handle index option, the element to insert has lower index
+                (
+                    isNumber(indexOption) &&
+                    indexOption < pick(
+                        (collection[i] as Series).options.index,
+                        (collection[i] as Series)._i
+                    )
+                ) ||
+
+                // Insert the new item before other internal items
+                // (navigator)
+                collection[i].options.isInternal
+            ) {
+                collection.splice(i, 0, item);
+                break;
+            }
+        }
+        return i;
+    }
+
+    /**
      * Order all series or axes above a given index. When series or axes are
      * added and ordered by configuration, only the last series is handled
      * (#248, #1123, #2456, #6112). This function is called on series and axis
@@ -653,17 +709,19 @@ class Chart {
         coll: ('colorAxis'|'series'|'xAxis'|'yAxis'|'zAxis'),
         fromIndex = 0
     ): void {
-        const collection = this[coll];
+        const collection = this[coll],
 
-        // Item options should be reflected in chart.options.series,
-        // chart.options.yAxis etc
-        let optionsArray = this.options[coll];
-        if (!isArray(optionsArray)) {
-            this.options[coll] = optionsArray = [];
-        }
+            // Item options should be reflected in chart.options.series,
+            // chart.options.yAxis etc
+            optionsArray = this.options[coll] = splat(this.options[coll]),
+            userOptionsArray = this.userOptions[coll] = this.userOptions[coll] ?
+                splat(this.userOptions[coll]).slice() :
+                [];
+
         if (this.hasRendered) {
             // Remove all above index
             optionsArray.splice(fromIndex);
+            userOptionsArray.splice(fromIndex);
         }
 
         if (collection) {
@@ -679,10 +737,13 @@ class Chart {
                      */
                     item.index = i;
 
-                    (this.options as any)[coll][i] = item.options;
-
                     if (item instanceof Series) {
                         item.name = item.getName();
+                    }
+
+                    if (!item.options.isInternal) {
+                        optionsArray[i] = item.options;
+                        userOptionsArray[i] = item.userOptions;
                     }
                 }
             }

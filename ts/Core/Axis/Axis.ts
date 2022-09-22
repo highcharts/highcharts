@@ -30,7 +30,7 @@ import type {
     YAxisOptions
 } from './AxisOptions';
 import type AxisLike from './AxisLike';
-import type { AxisTypeOptions } from './AxisType';
+import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
@@ -528,7 +528,8 @@ class Axis {
                 chart.axes.push(axis);
             }
 
-            (chart as any)[axis.coll].push(axis);
+            chart.insertItem(this, chart[this.coll] as Array<AxisType>);
+
         }
         chart.orderItems(axis.coll);
 

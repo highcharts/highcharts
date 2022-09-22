@@ -337,10 +337,14 @@ function diffObjects(
             ) {
                 ret[key] = isArray(newerVal) ? [] : {};
                 diff(newerVal, older[key] || {}, ret[key], depth + 1);
-                // Delete empty nested objects, except colorAxis which is a
-                // special case where the empty object means it is enabled.
-                // Which is unfortunate and we should try to find a better way.
-                if (Object.keys(ret[key]).length === 0 && key !== 'colorAxis') {
+                // Delete empty nested objects
+                if (
+                    Object.keys(ret[key]).length === 0 &&
+                    // Except colorAxis which is a special case where the empty
+                    // object means it is enabled. Which is unfortunate and we
+                    // should try to find a better way.
+                    !(key === 'colorAxis' && depth === 0)
+                ) {
                     delete ret[key];
                 }
 

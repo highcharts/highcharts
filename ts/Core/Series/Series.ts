@@ -502,7 +502,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderItems('series', this.insert(chartSeries));
+        chart.orderItems('series', chart.insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -529,47 +529,6 @@ class Series {
      */
     public is(type: string): boolean {
         return seriesTypes[type] && this instanceof seriesTypes[type];
-    }
-
-    /**
-     * Insert the series in a collection with other series, either the chart
-     * series or yAxis series, in the correct order according to the index
-     * option. Used internally when adding series.
-     *
-     * @private
-     * @function Highcharts.Series#insert
-     * @param {Array<Highcharts.Series>} collection
-     *        A collection of series, like `chart.series` or `xAxis.series`.
-     * @return {number}
-     *         The index of the series in the collection.
-     */
-    public insert(collection: Array<Series>): number {
-        const indexOption = this.options.index;
-        let i: any;
-
-        // Insert by index option
-        if (isNumber(indexOption)) {
-            i = collection.length;
-            while (i--) {
-                // Loop down until the interted element has higher index
-                if ((indexOption as any) >=
-                        pick(collection[i].options.index, collection[i]._i)
-                ) {
-                    collection.splice(i + 1, 0, this);
-                    break;
-                }
-            }
-            if (i === -1) {
-                collection.unshift(this);
-            }
-            i = i + 1;
-
-
-        // Or just push it to the end
-        } else {
-            collection.push(this);
-        }
-        return pick(i, collection.length - 1);
     }
 
     /**
@@ -616,7 +575,7 @@ class Series {
                     ) {
 
                         // register this series in the axis.series lookup
-                        series.insert(axis.series);
+                        chart.insertItem(series, axis.series);
 
                         // set this series.xAxis or series.yAxis reference
                         /**
