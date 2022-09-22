@@ -5,13 +5,13 @@ Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proce
     this.legendLine.attr({
         d: ['M', 0, 10, 'L', 5, 5, 8, 10]
     });
-    this.negativeLine = this.chart.renderer.path(
-        ['M', 8, 10, 'L', 11, 15, 16, 10]
-    ).attr({
-        stroke: this.options.negativeColor,
-        'stroke-width': this.options.lineWidth
-    })
-        .add(this.legendGroup);
+    this.negativeLine = this.chart.renderer
+        .path(['M', 8, 10, 'L', 11, 15, 16, 10])
+        .attr({
+            stroke: this.options.negativeColor,
+            'stroke-width': this.options.lineWidth
+        })
+        .add(this.legendData.group);
 });
 
 // Create the chart
