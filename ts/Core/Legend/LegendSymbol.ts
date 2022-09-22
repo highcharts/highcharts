@@ -139,14 +139,15 @@ namespace LegendSymbol {
                 radius = 0;
             }
 
-            this.legendSymbol = legendSymbol = renderer.symbol(
-                this.symbol as any,
-                (symbolWidth / 2) - radius,
-                verticalCenter - radius,
-                2 * radius,
-                2 * radius,
-                markerOptions
-            )
+            legendData.symbol = legendSymbol = renderer
+                .symbol(
+                    this.symbol as any,
+                    (symbolWidth / 2) - radius,
+                    verticalCenter - radius,
+                    2 * radius,
+                    2 * radius,
+                    markerOptions
+                )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
             legendSymbol.isMarker = true;
@@ -179,7 +180,7 @@ namespace LegendSymbol {
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
-        item.legendSymbol = this.chart.renderer
+        legendData.symbol = this.chart.renderer
             .rect(
                 square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
                 (legend.baseline as any) - symbolHeight + 1, // #3988

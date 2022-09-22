@@ -35,7 +35,7 @@ QUnit.test(
             'Proper color for point shape'
         );
         assert.strictEqual(
-            point.legendSymbol.attr('fill'),
+            point.legendData.symbol.attr('fill'),
             color,
             'Proper color for legend item'
         );

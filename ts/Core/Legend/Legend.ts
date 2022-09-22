@@ -372,7 +372,7 @@ class Legend {
                 options = legend.options,
                 legendItem = item.legendItem,
                 legendLine = item.legendLine,
-                legendSymbol = item.legendSymbol,
+                legendSymbol = legendData.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
                 textColor = visible ?
                     options.itemStyle.color :
@@ -1607,7 +1607,7 @@ class Legend {
             // When `useHTML`, the symbol is rendered in other group, so
             // we need to apply events listeners to both places
             legendItems = useHTML ?
-                [legendItem, item.legendSymbol] :
+                [legendItem, legendData.symbol] :
                 [legendData.group];
 
         const setOtherItemsState = (state: StatesOptionsKey): void => {
