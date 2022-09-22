@@ -223,7 +223,7 @@ class VectorSeries extends ScatterSeries {
             rotation: 270,
             'stroke-width': 1,
             'stroke': 'black'
-        }).add(item.legendGroup);
+        }).add(item.legendData.group);
     },
     */
 

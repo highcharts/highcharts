@@ -340,9 +340,9 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendData.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendData.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendData.group.element, 'click');
 
     dataLabel = chart.series[0].points[1].dataLabel;
 
