@@ -1592,6 +1592,9 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
+         * This options is deprecated.
+         * Use [style.color](#plotOptions.series.dataLabels.style) instead.
+         *
          * The text color for the data labels. Defaults to `undefined`. For
          * certain series types, like column or map, the data labels can be
          * drawn inside the points. In this case the data label will be
@@ -1605,8 +1608,11 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highmaps} maps/demo/color-axis/
          *         White data labels
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.series.dataLabels.color
+         * @see [style.color](#plotOptions.series.dataLabels.style)
+         *
+         * @type       {Highcharts.ColorType}
+         * @deprecated 10.3
+         * @apioption  plotOptions.series.dataLabels.color
          */
 
         /**
