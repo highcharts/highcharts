@@ -26,7 +26,7 @@ QUnit.test(
             test = TestController(chart),
             series = chart.series[0],
             legendGroup = chart.legend.group,
-            bbox = series.legendSymbol.getBBox(true),
+            bbox = series.legendData.symbol.getBBox(true),
             seriesLegendGroup = series.legendData.group,
             x =
                 seriesLegendGroup.translateX +

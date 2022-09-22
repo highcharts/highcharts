@@ -29,6 +29,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
 export interface LegendDataObject {
     group?: SVGElement;
+    symbol?: SVGElement;
 }
 
 export interface LegendItemObject {
@@ -45,7 +46,6 @@ export interface LegendItemObject {
     legendItemHeight?: number;
     legendItemWidth?: number;
     legendLine?: SVGElement;
-    legendSymbol?: SVGElement;
     name?: string;
     pageIx?: number;
     symbol?: SymbolKey;
