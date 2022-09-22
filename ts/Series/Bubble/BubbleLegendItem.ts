@@ -128,7 +128,6 @@ class BubbleLegendItem {
     public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
-    public legendSymbol: SVGElement = void 0 as any;
     public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
@@ -341,7 +340,7 @@ class BubbleLegendItem {
     }
 
     /**
-     * Render the legendSymbol group.
+     * Render the legendData group.
      * @private
      */
     public render(): void {
@@ -358,12 +357,12 @@ class BubbleLegendItem {
             };
         }
         // Nesting SVG groups to enable handleOverflow
-        this.legendSymbol = renderer.g('bubble-legend');
+        legendData.symbol = renderer.g('bubble-legend');
         this.legendItem = renderer.g('bubble-legend-item');
 
         // To enable default 'hideOverlappingLabels' method
-        this.legendSymbol.translateX = 0;
-        this.legendSymbol.translateY = 0;
+        legendData.symbol.translateX = 0;
+        legendData.symbol.translateY = 0;
 
         this.ranges.forEach(function (
             range: BubbleLegendItem.RangesOptions
@@ -373,7 +372,7 @@ class BubbleLegendItem {
             }
         }, this);
         // To use handleOverflow method
-        this.legendSymbol.add(this.legendItem);
+        legendData.symbol.add(this.legendItem);
         this.legendItem.add(legendData.group);
 
         this.hideOverlappingLabels();
@@ -449,7 +448,7 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-symbol ' +
                     (options.className || '')
                 ).add(
-                    this.legendSymbol
+                    this.legendData.symbol
                 )
         );
 
@@ -475,7 +474,7 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-connectors ' +
                     (options.connectorClassName || '')
                 ).add(
-                    this.legendSymbol
+                    this.legendData.symbol
                 )
         );
 
@@ -494,7 +493,7 @@ class BubbleLegendItem {
                 'highcharts-bubble-legend-labels ' +
                 ((options.labels as any).className || '')
             ).add(
-                this.legendSymbol
+                this.legendData.symbol
             );
 
         labels.push(label);

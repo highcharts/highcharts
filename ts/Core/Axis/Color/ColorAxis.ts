@@ -141,8 +141,7 @@ class ColorAxis extends Axis implements AxisLike {
         'legendData',
         'legendItemHeight',
         'legendItemWidth',
-        'legendItem',
-        'legendSymbol'
+        'legendItem'
     ];
 
     /* *
@@ -201,7 +200,6 @@ class ColorAxis extends Axis implements AxisLike {
     public legendItem: ColorAxis.LegendItemObject = void 0 as any;
     public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
     public legendItemWidth?: number;
-    public legendSymbol?: SVGElement;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
@@ -375,7 +373,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public setAxisSize(): void {
         const axis = this;
-        const symbol = axis.legendSymbol;
+        const symbol = axis.legendData && axis.legendData.symbol;
         const chart = axis.chart;
         const legendOptions = chart.options.legend || {};
 
@@ -581,8 +579,8 @@ class ColorAxis extends Axis implements AxisLike {
         this.setLegendColor();
 
         // Create the gradient
-        if (!item.legendSymbol) {
-            item.legendSymbol = this.chart.renderer.rect(
+        if (!legendData.symbol) {
+            legendData.symbol = this.chart.renderer.rect(
                 0,
                 (legend.baseline as any) - 11,
                 width,

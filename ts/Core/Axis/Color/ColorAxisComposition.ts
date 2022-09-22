@@ -278,7 +278,7 @@ namespace ColorAxisComposition {
         }
     ): void {
         if (e.visible && e.item.legendColor) {
-            (e.item.legendSymbol as any).attr({
+            (e.item.legendData as any).symbol.attr({
                 fill: e.item.legendColor
             });
         }

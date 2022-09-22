@@ -129,7 +129,7 @@ function setLegendItemHoverState(
 
     legendItem.setState(hoverActive ? 'hover' : '', true);
 
-    for (const key of ['group'] as const) {
+    for (const key of ['group', 'symbol'] as const) {
         const svgElement = legendData[key];
         const element = svgElement && svgElement.element || svgElement;
         if (element) {
@@ -137,7 +137,7 @@ function setLegendItemHoverState(
         }
     }
 
-    ['legendItem', 'legendSymbol'].forEach((i): void => {
+    ['legendItem'].forEach((i): void => {
         const obj = (legendItem as any)[i];
         const el = obj && obj.element || obj;
         if (el) {
