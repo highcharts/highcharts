@@ -491,14 +491,14 @@ class Legend {
             legendData = item.legendData || {};
 
         // destroy SVG elements
-        ['legendItem', 'legendLine', 'legendSymbol'].forEach(
+        ['legendItem', 'legendLine'].forEach(
             function (key: string): void {
                 if ((item as any)[key]) {
                     (item as any)[key] = (item as any)[key].destroy();
                 }
             }
         );
-        for (const key of ['group'] as const) {
+        for (const key of ['group', 'symbol'] as const) {
             if (legendData[key]) {
                 legendData[key] = legendData[key].destroy();
             }
