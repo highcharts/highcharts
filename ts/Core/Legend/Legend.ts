@@ -359,9 +359,13 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
-            'highcharts-legend-item-hidden'
-        );
+        const legendData = item.legendData = item.legendData || {};
+
+        if (legendData.group) {
+            legendData.group[visible ? 'removeClass' : 'addClass'](
+                'highcharts-legend-item-hidden'
+            );
+        }
 
         if (!this.chart.styledMode) {
             const legend = this,
@@ -434,6 +438,7 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
+            legendData = item.legendData = item.legendData || {},
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
@@ -441,9 +446,9 @@ class Legend {
             itemX = (legendItemPos as any)[0],
             itemY = (legendItemPos as any)[1],
             checkbox = item.checkbox,
-            legendGroup = item.legendGroup;
+            dataGroup = legendData.group;
 
-        if (legendGroup && legendGroup.element) {
+        if (dataGroup && dataGroup.element) {
             const attribs = {
                 translateX: ltr ?
                     itemX :
@@ -454,10 +459,10 @@ class Legend {
                 fireEvent(this, 'afterPositionItem', { item });
             };
 
-            if (defined(legendGroup.translateY)) {
-                legendGroup.animate(attribs, void 0, complete);
+            if (defined(dataGroup.translateY)) {
+                dataGroup.animate(attribs, void 0, complete);
             } else {
-                legendGroup.attr(attribs);
+                dataGroup.attr(attribs);
                 complete();
             }
         }
@@ -482,16 +487,22 @@ class Legend {
             Series|Point
         )
     ): void {
-        const checkbox = item.checkbox;
+        const checkbox = item.checkbox,
+            legendData = item.legendData || {};
 
         // destroy SVG elements
-        ['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'].forEach(
+        ['legendItem', 'legendLine', 'legendSymbol'].forEach(
             function (key: string): void {
                 if ((item as any)[key]) {
                     (item as any)[key] = (item as any)[key].destroy();
                 }
             }
         );
+        for (const key of ['group'] as const) {
+            if (legendData[key]) {
+                legendData[key] = legendData[key].destroy();
+            }
+        }
 
         if (checkbox) {
             discardElement((item as any).checkbox);
@@ -506,23 +517,23 @@ class Legend {
      * @function Highcharts.Legend#destroy
      */
     public destroy(): void {
-        /**
-         * @private
-         * @param {string} key
-             */
-        function destroyItems(this: Legend, key: string): void {
-            if ((this as any)[key]) {
-                (this as any)[key] = (this as any)[key].destroy();
+        const destroyThat = <T extends AnyRecord>(
+            that: T,
+            key: keyof T
+        ): void => {
+            if (that[key]) {
+                that[key] = that[key].destroy();
             }
-        }
+        };
 
         // Destroy items
         this.getAllItems().forEach(function (item): void {
-            ['legendItem', 'legendGroup'].forEach(destroyItems, item);
+            destroyThat(item.legendData || {}, 'group' as const);
+            destroyThat(item, 'legendItem' as const);
         });
 
         // Destroy legend elements
-        [
+        for (const key of [
             'clipRect',
             'up',
             'down',
@@ -531,7 +542,10 @@ class Legend {
             'box',
             'title',
             'group'
-        ].forEach(destroyItems, this);
+        ] as const) {
+            destroyThat(this, key);
+        }
+
         this.display = null as any; // Reset in .render on update.
     }
 
@@ -661,6 +675,7 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
+            legendData = item.legendData = item.legendData || {},
             chart = legend.chart,
             renderer = chart.renderer,
             options = legend.options,
@@ -690,7 +705,7 @@ class Legend {
 
             // Generate the group box, a group to hold the symbol and text. Text
             // is to be appended in Legend class.
-            item.legendGroup = renderer
+            legendData.group = renderer
                 .g('legend-item')
                 .addClass(
                     'highcharts-' + series.type + '-series ' +
@@ -729,7 +744,7 @@ class Legend {
                     align: ltr ? 'left' : 'right',
                     zIndex: 2
                 })
-                .add(item.legendGroup);
+                .add(legendData.group);
 
             // Get the baseline for the first item - the font size is equal for
             // all
@@ -1108,14 +1123,17 @@ class Legend {
              * @name Highcharts.Legend#group
              * @type {Highcharts.SVGElement}
              */
-            legend.group = legendGroup = renderer.g('legend')
+            legend.group = legendGroup = renderer
+                .g('legend')
                 .addClass(options.className || '')
                 .attr({ zIndex: 7 })
                 .add();
-            legend.contentGroup = renderer.g()
+            legend.contentGroup = renderer
+                .g()
                 .attr({ zIndex: 1 }) // above background
                 .add(legendGroup);
-            legend.scrollGroup = renderer.g()
+            legend.scrollGroup = renderer
+                .g()
                 .add(legend.contentGroup);
         }
 
@@ -1580,6 +1598,7 @@ class Legend {
         useHTML?: boolean
     ): void {
         const legend = this,
+            legendData = item.legendData = item.legendData || {},
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
@@ -1589,7 +1608,7 @@ class Legend {
             // we need to apply events listeners to both places
             legendItems = useHTML ?
                 [legendItem, item.legendSymbol] :
-                [item.legendGroup];
+                [legendData.group];
 
         const setOtherItemsState = (state: StatesOptionsKey): void => {
             legend.allItems.forEach((otherItem): void => {

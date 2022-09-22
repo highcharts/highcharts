@@ -125,8 +125,19 @@ function setLegendItemHoverState(
     hoverActive: boolean,
     legendItem: Legend.Item
 ): void {
+    const legendData = legendItem.legendData || {};
+
     legendItem.setState(hoverActive ? 'hover' : '', true);
-    ['legendGroup', 'legendItem', 'legendSymbol'].forEach((i): void => {
+
+    for (const key of ['group'] as const) {
+        const svgElement = legendData[key];
+        const element = svgElement && svgElement.element || svgElement;
+        if (element) {
+            fireEvent(element, hoverActive ? 'mouseover' : 'mouseout');
+        }
+    }
+
+    ['legendItem', 'legendSymbol'].forEach((i): void => {
         const obj = (legendItem as any)[i];
         const el = obj && obj.element || obj;
         if (el) {
@@ -419,7 +430,9 @@ class LegendComponent extends AccessibilityComponent {
     public proxyLegendItem(
         item: Legend.Item
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        const legendData = item.legendData || {};
+
+        if (!item.legendItem || !legendData.group) {
             return;
         }
 
@@ -437,9 +450,9 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ?
+        const proxyPositioningElement = legendData.group.div ?
             item.legendItem :
-            item.legendGroup;
+            legendData.group;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
             click: item.legendItem as SVGElement,

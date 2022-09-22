@@ -26,7 +26,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
-import type LegendItemObject from '../../Core/Legend/LegendItemObject';
+import type {
+    LegendDataObject,
+    LegendItemObject
+} from '../../Core/Legend/LegendItemObject';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -122,7 +125,6 @@ class BubbleLegendItem {
     public chart: Chart = void 0 as any;
     public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Legend = void 0 as any;
-    public legendGroup: SVGElement = void 0 as any;
     public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
@@ -343,7 +345,8 @@ class BubbleLegendItem {
      * @private
      */
     public render(): void {
-        const renderer = this.chart.renderer,
+        const legendData = this.legendData = this.legendData || {},
+            renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 
 
@@ -371,7 +374,7 @@ class BubbleLegendItem {
         }, this);
         // To use handleOverflow method
         this.legendSymbol.add(this.legendItem);
-        this.legendItem.add(this.legendGroup);
+        this.legendItem.add(legendData.group);
 
         this.hideOverlappingLabels();
     }
@@ -743,7 +746,7 @@ class BubbleLegendItem {
  * */
 
 interface BubbleLegendItem extends LegendItemObject {
-    // nothing more to add
+    legendData: LegendDataObject;
 }
 
 /* *

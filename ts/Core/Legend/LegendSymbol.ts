@@ -88,12 +88,13 @@ namespace LegendSymbol {
         legend: Legend
     ): void {
 
-        const options = this.options,
+        const legendData = this.legendData = this.legendData || {},
+            options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
-            legendItemGroup = this.legendGroup,
+            legendItemGroup = legendData.group,
             verticalCenter = (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3);
 
@@ -172,22 +173,25 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
-        const options = legend.options,
+        const legendData = item.legendData = item.legendData || {},
+            options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
-        item.legendSymbol = this.chart.renderer.rect(
-            square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
-            (legend.baseline as any) - symbolHeight + 1, // #3988
-            symbolWidth,
-            symbolHeight,
-            pick(legend.options.symbolRadius, symbolHeight / 2)
-        )
+        item.legendSymbol = this.chart.renderer
+            .rect(
+                square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
+                (legend.baseline as any) - symbolHeight + 1, // #3988
+                symbolWidth,
+                symbolHeight,
+                pick(legend.options.symbolRadius, symbolHeight / 2)
+            )
             .addClass('highcharts-point')
             .attr({
                 zIndex: 3
-            }).add(item.legendGroup);
+            })
+            .add(legendData.group);
 
     }
 

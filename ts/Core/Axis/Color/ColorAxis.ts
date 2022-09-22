@@ -24,6 +24,7 @@ import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
+import type { LegendDataObject } from '../../Legend/LegendItemObject';
 import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
 import type PointerEvent from '../../PointerEvent';
@@ -137,7 +138,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public static keepProps: Array<string> = [
-        'legendGroup',
+        'legendData',
         'legendItemHeight',
         'legendItemWidth',
         'legendItem',
@@ -195,7 +196,7 @@ class ColorAxis extends Axis implements AxisLike {
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
-    public legendGroup?: SVGElement;
+    public legendData?: LegendDataObject;
     public legendItemHeight?: number;
     public legendItem: ColorAxis.LegendItemObject = void 0 as any;
     public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
@@ -487,7 +488,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public getOffset(): void {
         const axis = this;
-        const group = axis.legendGroup;
+        const group = axis.legendData && axis.legendData.group;
         const sideOffset = axis.chart.axisOffset[axis.side];
 
         if (group) {
@@ -556,25 +557,26 @@ class ColorAxis extends Axis implements AxisLike {
         legend: Legend,
         item: ColorAxis
     ): void {
-        const axis = this;
-        const padding = legend.padding;
-        const legendOptions = legend.options;
-        const horiz = axis.horiz;
-        const width = pick(
-            legendOptions.symbolWidth,
-            horiz ? ColorAxis.defaultLegendLength : 12
-        );
-        const height = pick(
-            legendOptions.symbolHeight,
-            horiz ? 12 : ColorAxis.defaultLegendLength
-        );
-        const labelPadding = pick(
-            // @todo: This option is not documented, nor implemented when
-            // vertical
-            (legendOptions as any).labelPadding,
-            horiz ? 16 : 30
-        );
-        const itemDistance = pick(legendOptions.itemDistance, 10);
+        const axis = this,
+            legendData = item.legendData || {},
+            padding = legend.padding,
+            legendOptions = legend.options,
+            itemDistance = pick(legendOptions.itemDistance, 10),
+            horiz = axis.horiz,
+            width = pick(
+                legendOptions.symbolWidth,
+                horiz ? ColorAxis.defaultLegendLength : 12
+            ),
+            height = pick(
+                legendOptions.symbolHeight,
+                horiz ? 12 : ColorAxis.defaultLegendLength
+            ),
+            labelPadding = pick(
+                // @todo: This option is not documented, nor implemented when
+                // vertical
+                (legendOptions as any).labelPadding,
+                horiz ? 16 : 30
+            );
 
         this.setLegendColor();
 
@@ -587,7 +589,7 @@ class ColorAxis extends Axis implements AxisLike {
                 height
             ).attr({
                 zIndex: 1
-            }).add(item.legendGroup);
+            }).add(legendData.group);
         }
 
         // Set how much space this legend item takes up
@@ -724,11 +726,12 @@ class ColorAxis extends Axis implements AxisLike {
         e?: PointerEvent,
         point?: ColorAxisComposition.PointComposition
     ): void {
-        const axis = this;
-        const plotX = point && point.plotX;
-        const plotY = point && point.plotY;
-        const axisPos = axis.pos;
-        const axisLen = axis.len;
+        const axis = this,
+            legendData = axis.legendData || {},
+            plotX = point && point.plotX,
+            plotY = point && point.plotY,
+            axisPos = axis.pos,
+            axisLen = axis.len;
 
         let crossPos;
 
@@ -753,11 +756,11 @@ class ColorAxis extends Axis implements AxisLike {
             if (
                 axis.cross &&
                 !axis.cross.addedToColorAxis &&
-                axis.legendGroup
+                legendData.group
             ) {
                 axis.cross
                     .addClass('highcharts-coloraxis-marker')
-                    .add(axis.legendGroup);
+                    .add(legendData.group);
 
                 axis.cross.addedToColorAxis = true;
 

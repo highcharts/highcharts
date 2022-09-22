@@ -63,7 +63,8 @@ function chartDrawChartBox(
         legend = chart.legend,
         bubbleSeries = getVisibleBubbleSeriesIndex(chart) >= 0;
     let bubbleLegendOptions: BubbleLegendItem.Options,
-        bubbleSizes;
+        bubbleSizes,
+        legendData;
 
     if (
         legend && legend.options.enabled && legend.bubbleLegend &&
@@ -77,8 +78,11 @@ function chartDrawChartBox(
         if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
 
-            legend.allItems.forEach(function (item): void {
-                (item.legendGroup as any).translateY = null;
+            legend.allItems.forEach((item): void => {
+                legendData = item.legendData = item.legendData || {};
+                if (legendData.group) {
+                    legendData.group.translateY = null;
+                }
             });
         }
 
@@ -330,16 +334,24 @@ function retranslateItems(
 ): void {
     const items = legend.allItems,
         rtl = legend.options.rtl;
+
     let orgTranslateX,
         orgTranslateY,
         movementX,
+        legendData,
         actualLine = 0;
 
-    items.forEach(function (
+    items.forEach((
         item: (BubbleLegendItem|Series|Point),
         index: number
-    ): void {
-        orgTranslateX = (item.legendGroup as any).translateX;
+    ): void => {
+        legendData = item.legendData || {};
+
+        if (!legendData.group) {
+            return;
+        }
+
+        orgTranslateX = legendData.group.translateX || 0;
         orgTranslateY = (item._legendItemPos as any)[1];
 
         movementX = (item as any).movementX;
@@ -349,13 +361,13 @@ function retranslateItems(
                 orgTranslateX - (item as any).options.maxSize / 2 :
                 orgTranslateX + movementX;
 
-            (item.legendGroup as any).attr({ translateX: movementX });
+            legendData.group.attr({ translateX: movementX });
         }
         if (index > lines[actualLine].step) {
             actualLine++;
         }
 
-        (item.legendGroup as any).attr({
+        legendData.group.attr({
             translateY: Math.round(
                 orgTranslateY + lines[actualLine].height / 2
             )
