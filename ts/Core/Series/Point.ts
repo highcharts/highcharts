@@ -448,7 +448,8 @@ class Point {
             }
         }
 
-        if (point.legendItem) { // pies have legend items
+        if (point.legendData && point.legendData.item) {
+            // pies have legend items
             chart.legend.destroyItem(point);
         }
 

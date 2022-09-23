@@ -140,8 +140,7 @@ class ColorAxis extends Axis implements AxisLike {
     public static keepProps: Array<string> = [
         'legendData',
         'legendItemHeight',
-        'legendItemWidth',
-        'legendItem'
+        'legendItemWidth'
     ];
 
     /* *
@@ -197,7 +196,6 @@ class ColorAxis extends Axis implements AxisLike {
     public legendColor?: GradientColor;
     public legendData?: LegendDataObject;
     public legendItemHeight?: number;
-    public legendItem: ColorAxis.LegendItemObject = void 0 as any;
     public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
     public legendItemWidth?: number;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
@@ -826,7 +824,7 @@ class ColorAxis extends Axis implements AxisLike {
             chart = axis.chart,
             legend = chart.legend;
 
-        this.series.forEach(function (series): void {
+        this.series.forEach((series): void => {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
         });
@@ -839,7 +837,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendItem) {
+        if (axis.legendData && axis.legendData.item) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -853,7 +851,7 @@ class ColorAxis extends Axis implements AxisLike {
         const axis = this;
         const chart = axis.chart;
 
-        if (axis.legendItem) {
+        if (axis.legendData && axis.legendData.item) {
             chart.legend.destroyItem(axis);
 
         } else if (axis.legendItems) {
