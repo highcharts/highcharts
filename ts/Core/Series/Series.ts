@@ -548,8 +548,6 @@ class Series {
 
             // repeat for xAxis and yAxis
             (series.axisTypes || []).forEach(function (coll: string): void {
-                let index = 0;
-
                 // loop through the chart's axis objects
                 (chart as any)[coll].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
@@ -558,19 +556,11 @@ class Series {
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
-                        (
-                            (seriesOptions as any)[coll] === index &&
-                            !axisOptions.isInternal
-                        ) ||
+                        pick((seriesOptions as any)[coll], 0) === axis.index ||
                         (
                             typeof (seriesOptions as any)[coll] !==
                             'undefined' &&
                             (seriesOptions as any)[coll] === axisOptions.id
-                        ) ||
-                        (
-                            typeof (seriesOptions as any)[coll] ===
-                            'undefined' &&
-                            axis.index === 0
                         )
                     ) {
 
@@ -596,10 +586,6 @@ class Series {
 
                         // mark dirty for redraw
                         axis.isDirty = true;
-                    }
-
-                    if (!axisOptions.isInternal) {
-                        index++;
                     }
                 });
 

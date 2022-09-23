@@ -3387,22 +3387,8 @@ class Chart {
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
         this.collectionsWithUpdate.forEach(function (coll: string): void {
-            let indexMap: Array<number>;
 
             if ((options as any)[coll]) {
-
-                // In stock charts, the navigator series are also part of the
-                // chart.series array, but those series should not be handled
-                // here (#8196) and neither should the navigator axis (#9671).
-                indexMap = [];
-                (chart as any)[coll].forEach(function (
-                    s: (Series|Axis),
-                    i: number
-                ): void {
-                    if (!s.options.isInternal) {
-                        indexMap.push(pick((s.options as any).index, i));
-                    }
-                });
 
                 splat((options as any)[coll]).forEach(function (
                     newOptions,
@@ -3418,16 +3404,22 @@ class Chart {
 
                     // No match by id found, match by index instead
                     if (!item && (chart as any)[coll]) {
-                        item = (chart as any)[coll][indexMap ? indexMap[i] : i];
+                        item = (chart as any)[coll][pick(newOptions.index, i)];
 
                         // Check if we grabbed an item with an exising but
-                        // different id (#13541)
-                        if (item && hasId && defined(item.options.id)) {
+                        // different id (#13541). Check that the item in this
+                        // position is not internal (navigator).
+                        if (
+                            item && (
+                                (hasId && defined(item.options.id)) ||
+                                (item as Axis|Series).options.isInternal
+                            )
+                        ) {
                             item = void 0;
                         }
                     }
 
-                    if (item && (item as any).coll === coll) {
+                    if (item && (item as Axis|Series).coll === coll) {
                         item.update(newOptions, false);
 
                         if (oneToOne) {
