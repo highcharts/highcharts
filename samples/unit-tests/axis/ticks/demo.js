@@ -769,8 +769,6 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
                 }[TestUtilities.browser],
                 'Tick marks should be on tick when tickInterval != 1'
             );
-
-            template.chart.container.style.top = '-350px';
         }
     );
 });

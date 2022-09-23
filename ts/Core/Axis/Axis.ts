@@ -2976,28 +2976,29 @@ class Axis {
             }
 
             if (autoRotation) {
+                let rotStep,
+                    score;
+
 
                 // Loop over the given autoRotation options, and determine which
                 // gives the best score. The best score is that with the lowest
                 // number of steps and a rotation closest to horizontal.
                 for (const rot of autoRotation) {
-                    let score;
-
                     if (
                         rot === rotationOption ||
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
-                        step = step || getStep(
+                        rotStep = step || getStep(
                             Math.abs(labelMetrics.h / Math.sin(deg2rad * rot))
                         );
 
-                        score = step + Math.abs(rot / 360);
+                        score = rotStep + Math.abs(rot / 360);
 
                         if (score < bestScore) {
                             bestScore = score;
                             rotation = rot;
-                            newTickInterval = step;
+                            newTickInterval = rotStep;
                         }
                     }
                 }
