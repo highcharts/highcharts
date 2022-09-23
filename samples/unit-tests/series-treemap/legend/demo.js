@@ -17,7 +17,7 @@ QUnit.test('Legend Item colors', function (assert) {
         legend = chart.legend,
         series = chart.series[0],
         point = series.points[0],
-        legendItem = series.points[0].legendItem,
+        legendItem = series.points[0].legendData.item,
         legendSymbol = legendItem.parentGroup.element.lastChild;
     assert.strictEqual(
         legendSymbol.getAttribute('fill'),

@@ -2983,7 +2983,7 @@ class Series {
         });
 
         // remove legend items
-        if (series.legendItem) {
+        if (series.legendData && series.legendData.item) {
             series.chart.legend.destroyItem(series);
         }
 
@@ -4440,7 +4440,8 @@ class Series {
                     }
                     if (
                         seriesOptions.showInLegend === false &&
-                        point.legendItem
+                        point.legendData &&
+                        point.legendData.item
                     ) {
                         chart.legend.destroyItem(point);
                     }
@@ -4757,7 +4758,6 @@ class Series {
     ): void {
         const series = this,
             chart = series.chart,
-            legendItem = series.legendItem,
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
@@ -4792,7 +4792,7 @@ class Series {
         }
 
 
-        if (legendItem) {
+        if (series.legendData && series.legendData.item) {
             chart.legend.colorizeItem(series, vis);
         }
 

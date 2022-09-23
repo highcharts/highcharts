@@ -370,7 +370,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const legend = this,
                 options = legend.options,
-                legendItem = item.legendItem,
+                legendItem = legendData.item,
                 legendLine = item.legendLine,
                 legendSymbol = legendData.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
@@ -491,14 +491,14 @@ class Legend {
             legendData = item.legendData || {};
 
         // destroy SVG elements
-        ['legendItem', 'legendLine'].forEach(
+        ['legendLine'].forEach(
             function (key: string): void {
                 if ((item as any)[key]) {
                     (item as any)[key] = (item as any)[key].destroy();
                 }
             }
         );
-        for (const key of ['group', 'symbol'] as const) {
+        for (const key of ['group', 'item', 'symbol'] as const) {
             if (legendData[key]) {
                 legendData[key] = legendData[key].destroy();
             }
@@ -526,11 +526,14 @@ class Legend {
             }
         };
 
+        let legendData;
+
         // Destroy items
-        this.getAllItems().forEach(function (item): void {
-            destroyThat(item.legendData || {}, 'group' as const);
-            destroyThat(item, 'legendItem' as const);
-        });
+        for (const item of this.getAllItems()) {
+            legendData = item.legendData || {};
+            destroyThat(legendData, 'group' as const);
+            destroyThat(legendData, 'item' as const);
+        }
 
         // Destroy legend elements
         for (const key of [
@@ -655,7 +658,7 @@ class Legend {
     ): void {
         const options = this.options;
 
-        (item.legendItem as any).attr({
+        (item.legendData as any).item.attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
                 options.labelFormatter.call(item)
@@ -696,7 +699,7 @@ class Legend {
                 seriesOptions.showCheckbox,
             useHTML = options.useHTML,
             itemClassName = item.options.className;
-        let li = item.legendItem,
+        let li = legendData.item,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0);
@@ -721,7 +724,7 @@ class Legend {
                 .add(legend.scrollGroup);
 
             // Generate the list item text and add it to the group
-            item.legendItem = li = renderer.text(
+            legendData.item = li = renderer.text(
                 '',
                 ltr ?
                     symbolWidth + symbolPadding :
@@ -1046,7 +1049,7 @@ class Legend {
                 }
 
                 height = this.itemMarginTop +
-                    (item.legendItem as any).getBBox().height +
+                    (item.legendData as any).item.getBBox().height +
                     this.itemMarginBottom;
 
                 top = (item as any).yAxis.top - chart.plotTop;
@@ -1369,9 +1372,11 @@ class Legend {
 
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
-            allItems.forEach(function (item, i): void {
+            allItems.forEach((item, i): void => {
                 const y = (item._legendItemPos as any)[1],
-                    h = Math.round((item.legendItem as any).getBBox().height);
+                    h = Math.round(
+                        (item.legendData as any).item.getBBox().height
+                    );
                 let len = pages.length;
 
                 if (!len || (y - pages[len - 1] > clipHeight &&

@@ -381,7 +381,11 @@ namespace ColorAxisComposition {
             if (color && point.color !== color) {
                 point.color = color;
 
-                if (series.options.legendType === 'point' && point.legendItem) {
+                if (
+                    series.options.legendType === 'point' &&
+                    point.legendData &&
+                    point.legendData.item
+                ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }
             }

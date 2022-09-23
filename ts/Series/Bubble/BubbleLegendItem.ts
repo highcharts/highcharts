@@ -125,7 +125,6 @@ class BubbleLegendItem {
     public chart: Chart = void 0 as any;
     public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Legend = void 0 as any;
-    public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
     public maxLabel: BBoxObject = void 0 as any;
@@ -358,22 +357,21 @@ class BubbleLegendItem {
         }
         // Nesting SVG groups to enable handleOverflow
         legendData.symbol = renderer.g('bubble-legend');
-        this.legendItem = renderer.g('bubble-legend-item');
+        legendData.item = renderer.g('bubble-legend-item');
 
         // To enable default 'hideOverlappingLabels' method
         legendData.symbol.translateX = 0;
         legendData.symbol.translateY = 0;
 
-        this.ranges.forEach(function (
-            range: BubbleLegendItem.RangesOptions
-        ): void {
+        for (const range of this.ranges) {
             if (range.value >= (zThreshold as any)) {
                 this.renderRange(range);
             }
-        }, this);
+        }
+
         // To use handleOverflow method
-        legendData.symbol.add(this.legendItem);
-        this.legendItem.add(legendData.group);
+        legendData.symbol.add(legendData.item);
+        legendData.item.add(legendData.group);
 
         this.hideOverlappingLabels();
     }
