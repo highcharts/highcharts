@@ -288,7 +288,7 @@ QUnit.test('Check that tick labels do not move (#4929)', function (assert) {
     );
 });
 
-QUnit.only('Labels should be wrapped(#4415)', function (assert) {
+QUnit.test('Labels should be wrapped(#4415)', function (assert) {
     var chart = $('#container')
         .highcharts({
             chart: {
