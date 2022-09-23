@@ -19,5 +19,5 @@ const getOptions = chart => diffObjects(
 
 
 const o = getOptions(chart);
-Highcharts[factory]('container-out', o);
+// Highcharts[factory]('container-out', o);
 console.log(o);
