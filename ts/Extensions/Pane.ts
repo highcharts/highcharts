@@ -535,15 +535,14 @@ class Pane {
 function isInsidePane(
     x: number,
     y: number,
-    inverted: boolean | undefined,
     center: Array<number>,
     startAngle?: number,
     endAngle?: number
 ): boolean {
     let insideSlice = true;
 
-    const cx = inverted ? center[1] : center[0],
-        cy = inverted ? center[0] : center[1];
+    const cx = center[0],
+        cy = center[1];
 
     const distance = Math.sqrt(
         Math.pow(x - cx, 2) + Math.pow(y - cy, 2)
@@ -597,7 +596,7 @@ Chart.prototype.getHoverPane = function (
             const x = eventArgs.chartX - chart.plotLeft,
                 y = eventArgs.chartY - chart.plotTop;
 
-            if (isInsidePane(x, y, chart.inverted, pane.center)) {
+            if (isInsidePane(x, y, pane.center)) {
                 hoverPane = pane;
             }
         });
@@ -617,14 +616,17 @@ addEvent(Chart, 'afterIsInsidePlot', function (
     const chart = this;
 
     if (chart.polar) {
-        const x = e.x - (e.options.paneCoordinates ? chart.plotLeft : 0),
+        let x = e.x - (e.options.paneCoordinates ? chart.plotLeft : 0),
             y = e.y - (e.options.paneCoordinates ? chart.plotTop : 0);
+
+        if (e.options.inverted) {
+            [x, y] = [y, x];
+        }
 
         e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
             (pane): boolean => isInsidePane(
                 x,
                 y,
-                e.options.inverted,
                 pane.center,
                 pane.axis && pane.axis.normalizedStartAngleRad,
                 pane.axis && pane.axis.normalizedEndAngleRad
@@ -672,7 +674,6 @@ addEvent(Pointer, 'afterGetHoverData', function (
         !isInsidePane(
             eventArgs.hoverPoint.plotX,
             eventArgs.hoverPoint.plotY,
-            chart.inverted,
             chart.hoverPane.center
         )
     ) {
