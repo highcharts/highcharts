@@ -133,7 +133,6 @@ export interface AxisOptions {
     gridZIndex: number;
     height?: (number|string);
     id?: string;
-    isX?: boolean;
     labels: AxisLabelOptions;
     left?: (number|string);
     lineColor: ColorType;

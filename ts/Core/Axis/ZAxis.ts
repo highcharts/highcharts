@@ -95,8 +95,6 @@ function onChartAfterGetAxes(this: Chart): void {
     this.zAxis = [];
 
     zAxisOptions.forEach((axisOptions, i): void => {
-        // Z-Axis is shown horizontally, so it's kind of a X-Axis
-        axisOptions.isX = true;
         this.addZAxis(axisOptions).setScale();
     });
 }
@@ -141,11 +139,15 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public constructor(
+    public init(
         chart: Chart,
         userOptions: AxisOptions
-    ) {
-        super(chart, userOptions);
+    ):void {
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
+
+        super.init(chart, userOptions, 'zAxis');
+
     }
 
     /* *
@@ -236,12 +238,8 @@ class ZAxis extends Axis implements AxisLike {
             lineWidth: 0
         }, userOptions);
 
-        // #14793, this used to be set on the prototype
-        this.isZAxis = true;
 
         super.setOptions(userOptions);
-
-        this.coll = 'zAxis';
     }
 
 }

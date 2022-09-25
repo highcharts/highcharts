@@ -87,6 +87,7 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
+import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
 const {
     addEvent,
     attr,
@@ -1104,31 +1105,19 @@ class Chart {
      * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
-        const chart = this,
-            options = this.options,
-            xAxisOptions = options.xAxis = splat(options.xAxis || {}),
-            yAxisOptions = options.yAxis = splat(options.yAxis || {});
+        const options = this.options;
 
         fireEvent(this, 'getAxes');
 
-        // make sure the options are arrays and add some members
-        xAxisOptions.forEach(function (axis: any, i: number): void {
-            // axis.index = i;
-            axis.isX = true;
-        });
-
-        yAxisOptions.forEach(function (axis: any, i: number): void {
-            // axis.index = i;
-        });
-
-        // concatenate all axis options into one array
-        const optionsArray = xAxisOptions.concat(yAxisOptions);
-
-        optionsArray.forEach(function (
-            axisOptions: AxisOptions
-        ): void {
-            new Axis(chart, axisOptions); // eslint-disable-line no-new
-        });
+        for (const coll of ['xAxis', 'yAxis'] as Array<'xAxis'|'yAxis'>) {
+            const arr: Array<AxisOptions> = options[coll] = splat(
+                options[coll] || {}
+            );
+            for (const axisOptions of arr) {
+                // eslint-disable-next-line no-new
+                new Axis(this, axisOptions, coll);
+            }
+        }
 
         fireEvent(this, 'afterGetAxes');
     }
@@ -3021,7 +3010,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#createAxis
      *
-     * @param {string} type
+     * @param {string} coll
      *        An axis type.
      *
      * @param {...Array<*>} arguments
@@ -3031,13 +3020,10 @@ class Chart {
      *         The newly generated Axis object.
      */
     public createAxis(
-        type: string,
+        coll: AxisCollectionKey,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
-        const axis = new Axis(this, merge(options.axis, {
-            // index: (this as AnyRecord)[type].length,
-            isX: type === 'xAxis'
-        }));
+        const axis = new Axis(this, options.axis, coll);
 
         if (pick(options.redraw, true)) {
             this.redraw(options.animation);

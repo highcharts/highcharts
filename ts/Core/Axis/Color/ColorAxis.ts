@@ -244,12 +244,11 @@ class ColorAxis extends Axis implements AxisLike {
             }
         );
 
-        axis.coll = 'colorAxis';
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options);
+        super.init(chart, options, 'colorAxis');
 
         // #16053: Restore the actual userOptions.visible so the color axis
         // doesnt stay hidden forever when hiding and showing legend

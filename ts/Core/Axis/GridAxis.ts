@@ -447,8 +447,11 @@ function onAfterInit(this: Axis): void {
 
             delete (columnOptions.grid as any).columns; // Prevent recursion
 
-            const column =
-                new Axis(axis.chart, columnOptions) as GridAxisComposition;
+            const column = new Axis(
+                axis.chart,
+                columnOptions,
+                'yAxis'
+            ) as GridAxisComposition;
             column.grid.isColumn = true;
             column.grid.columnIndex = columnIndex;
 

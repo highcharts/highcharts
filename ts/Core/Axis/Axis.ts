@@ -167,6 +167,7 @@ class Axis {
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
     public static keepProps = [
+        'coll',
         'extKey',
         'hcEvents',
         'names',
@@ -183,9 +184,10 @@ class Axis {
 
     public constructor(
         chart: Chart,
-        userOptions: DeepPartial<AxisOptions>
+        userOptions: DeepPartial<AxisOptions>,
+        coll?: AxisCollectionKey
     ) {
-        this.init(chart, userOptions);
+        this.init(chart, userOptions, coll);
     }
 
     /* *
@@ -325,9 +327,12 @@ class Axis {
      * @emits Highcharts.Axis#event:afterInit
      * @emits Highcharts.Axis#event:init
      */
-    public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
-
-        const isXAxis = userOptions.isX,
+    public init(
+        chart: Chart,
+        userOptions: DeepPartial<AxisOptions>,
+        coll: AxisCollectionKey = this.coll
+    ): void {
+        const isXAxis = coll === 'xAxis',
             axis = this;
 
         /**
@@ -344,7 +349,7 @@ class Axis {
          * @name Highcharts.Axis#horiz
          * @type {boolean|undefined}
          */
-        axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
+        axis.horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
 
         /**
          * Whether the axis is the x-axis.
@@ -362,7 +367,7 @@ class Axis {
          * @name Highcharts.Axis#coll
          * @type {string}
          */
-        axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
+        axis.coll = coll;
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
