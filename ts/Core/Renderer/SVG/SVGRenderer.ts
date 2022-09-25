@@ -978,7 +978,7 @@ class SVGRenderer implements SVGRendererLike {
         return wrapper.attr(attribs);
     }
 
-    public arc(attribs: SVGAttributes): SVGElement;
+    public arc(attribs?: SVGAttributes): SVGElement;
     public arc(
         x?: number,
         y?: number,

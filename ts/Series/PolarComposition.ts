@@ -379,39 +379,6 @@ function onChartGetAxes(
     }, this);
 }
 
-function onPointerAfterCreateSelectionMarker(this: Pointer, event: any): void {
-    const chart = this.chart;
-
-    if (chart.polar && chart.hoverPane) {
-        const center = chart.hoverPane.center,
-            linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
-
-        let selectionMarker;
-
-        if (linearAxis.options.gridLineInterpolation === 'polygon') {
-            const path = (linearAxis as any).getPlotLinePath(
-                { value: linearAxis.toValue(center[2] / 2) }
-            ).concat(linearAxis.getPlotLinePath({
-                value: linearAxis.toValue(center[3] / 2),
-                reverse: true
-            }));
-
-            selectionMarker = chart.renderer.path(path);
-        } else {
-            selectionMarker = chart.renderer.arc(
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
-                center[2] / 2,
-                center[3] / 2,
-                0,
-                Math.PI * 2
-            );
-        }
-
-        event.selectionMarker = selectionMarker;
-    }
-}
-
 /**
  * Get selection dimensions
  * @private
@@ -466,7 +433,11 @@ function onPointerAfterGetSelectionMarkerAttrs(
             endAngleRad = chart.hoverPane.axis.endAngleRad,
             linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
 
-        let attrs: SVGAttributes = {};
+        let attrs: SVGAttributes = {},
+            type = 'arc';
+
+        attrs.x = center[0] + chart.plotLeft;
+        attrs.y = center[1] + chart.plotTop;
 
         // Adjust the width of the selection marker
         if (this.zoomHor) {
@@ -481,6 +452,9 @@ function onPointerAfterGetSelectionMarkerAttrs(
                     chartY - chart.plotTop - center[1],
                     chartX - chart.plotLeft - center[0]
                 ) - startAngleRad;
+
+            attrs.r = center[2] / 2;
+            attrs.innerR = center[3] / 2;
 
             if (startAngle <= 0) {
                 startAngle += fullCircle;
@@ -552,6 +526,7 @@ function onPointerAfterGetSelectionMarkerAttrs(
                     chart.plotTop + center[1]
                 ]);
                 attrs.d = path;
+                type = 'path';
             }
         }
 
@@ -604,6 +579,7 @@ function onPointerAfterGetSelectionMarkerAttrs(
                     }));
 
                 attrs.d = path;
+                type = 'path';
             }
         }
 
@@ -640,9 +616,11 @@ function onPointerAfterGetSelectionMarkerAttrs(
 
                 outerPath = [...outerPath as any].reverse();
                 attrs.d = innerPath.concat(outerPath as any);
+                type = 'path';
             }
         }
         event.attrs = attrs;
+        event.svgType = type;
     }
 }
 
@@ -1490,13 +1468,10 @@ class PolarAdditions {
             wrap(pointerProto, 'pinch', wrapPointerPinch);
 
             addEvent(PointerClass,
-                'afterCreateSelectionMarker',
-                onPointerAfterCreateSelectionMarker
-            );
-            addEvent(PointerClass,
                 'afterGetSelectionMarkerAttrs',
                 onPointerAfterGetSelectionMarkerAttrs
             );
+
             addEvent(PointerClass,
                 'afterGetSelectionBox',
                 onPointerAfterGetSelectionBox

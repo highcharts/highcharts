@@ -265,49 +265,29 @@ class Pointer {
     }
 
     /**
-     * Create selection marker.
-     * @private
-     * @function Highcharts.Pointer#createSelectionMarker
-     * @emits afterCreateSelectionMarker
-     */
-    public createSelectionMarker(): SVGElement {
-        const chart = this.chart;
-
-        let selectionMarker;
-
-        selectionMarker = chart.renderer
-            .rect(
-                chart.plotLeft,
-                chart.plotTop,
-                this.zoomHor ? 1 : chart.plotWidth,
-                this.zoomVert ? 1 : chart.plotHeight,
-                0
-            );
-
-        let selectionMarkerEvent = { selectionMarker };
-
-        fireEvent(this, 'afterCreateSelectionMarker', selectionMarkerEvent);
-
-        return selectionMarkerEvent.selectionMarker;
-    }
-
-    /**
-     * Adjust selection marker dimensions.
+     * Calculate attrs for selection marker.
      * @private
      * @function Highcharts.Pointer#getSelectionMarkerAttrs
      * @emits afterGetSelectionMarkerAttrs
      */
-    public getSelectionMarkerAttrs(
-        chartX: number,
-        chartY: number
-    ): SVGAttributes {
+    public getSelectionMarkerAttrs(chartX: number, chartY: number): {
+        attrs: SVGAttributes
+        type: 'rect' | 'arc' | 'path'
+    } {
         const zoomHor = this.zoomHor,
             zoomVert = this.zoomVert,
             mouseDownX = (this.mouseDownX || 0),
-            mouseDownY = (this.mouseDownY || 0);
+            mouseDownY = (this.mouseDownY || 0),
+            chart = this.chart;
 
         let attrs: SVGAttributes = {},
+            svgType:'rect' | 'arc' | 'path' = 'rect',
             size;
+
+        attrs.x = chart.plotLeft;
+        attrs.y = chart.plotTop;
+        attrs.width = this.zoomHor ? 1 : chart.plotWidth;
+        attrs.height = this.zoomVert ? 1 : chart.plotHeight;
 
         // Adjust the width of the selection marker
         if (zoomHor) {
@@ -323,7 +303,7 @@ class Pointer {
             attrs.y = (size > 0 ? 0 : size) + mouseDownY;
         }
 
-        let event = { attrs, chartX, chartY };
+        let event = { attrs, chartX, chartY, svgType };
 
         fireEvent(
             this,
@@ -331,7 +311,10 @@ class Pointer {
             event
         );
 
-        return event.attrs;
+        return {
+            attrs: event.attrs,
+            type: event.svgType
+        };
     }
 
     /**
@@ -400,6 +383,9 @@ class Pointer {
                 }
             );
 
+            const { type, attrs } =
+                this.getSelectionMarkerAttrs(chartX, chartY);
+
             // make a selection
             if (
                 (chart.hasCartesianSeries || chart.mapView) &&
@@ -409,7 +395,7 @@ class Pointer {
             ) {
                 if (!selectionMarker) {
                     this.selectionMarker = selectionMarker =
-                        this.createSelectionMarker();
+                        chart.renderer[type]();
 
                     selectionMarker
                         .attr({
@@ -431,7 +417,7 @@ class Pointer {
 
             if (selectionMarker) {
                 selectionMarker.attr(
-                    this.getSelectionMarkerAttrs(chartX, chartY)
+                    attrs
                 );
             }
 
