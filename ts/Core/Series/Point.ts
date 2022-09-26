@@ -139,8 +139,8 @@ class Point {
     public formatPrefix: string = 'point';
 
     /**
-     * SVG graphic of the point in the chart. In some occasions it might be a
-     * dummy graphic to improve accessibility and actually be not visible.
+     * SVG graphic representing the point in the chart. In some cases it may be
+     * a hidden graphic to improve accessibility.
      *
      * @see Highcharts.Point#graphics
      *
@@ -150,7 +150,8 @@ class Point {
     public graphic?: SVGElement;
 
     /**
-     * Array for a complex SVG graphic of the point in the chart.
+     * Array for multiple SVG graphics representing the point in the chart. Only
+     * used in cases where the point can not be represented by a single graphic.
      *
      * @see Highcharts.Point#graphic
      *
