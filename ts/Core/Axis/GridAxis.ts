@@ -435,6 +435,7 @@ function onAfterInit(this: Axis): void {
                     gridOptions.columns.length - columnIndex - 1
                 ],
                 {
+                    isInternal: true,
                     linkedTo: 0,
                     // Force to behave like category axis
                     type: 'category',
