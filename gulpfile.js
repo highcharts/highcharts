@@ -51,6 +51,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-zips',
     'lint',
     'lint-dts',
+    'lint-markdown-docs',
     'lint-samples',
     'lint-ts',
     'palette',
