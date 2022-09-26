@@ -383,7 +383,7 @@ function onChartGetAxes(
  * Get selection dimensions
  * @private
  */
-function onPointerAfterGetSelectionBox(this: Pointer, event: any):void {
+function onPointerAfterGetSelectionBox(this: Pointer, event: any): void {
     const marker = event.marker,
         xAxis = this.chart.xAxis[0],
         yAxis = this.chart.yAxis[0],
@@ -416,18 +416,20 @@ function onPointerAfterGetSelectionBox(this: Pointer, event: any):void {
  * Get attrs for Polar selection marker
  * @private
  */
-function onPointerAfterGetSelectionMarkerAttrs(
+function onPointerGetSelectionMarkerAttrs(
     this: Pointer,
     event: any
 ): void {
     const chart = this.chart;
 
     if (chart.polar && chart.hoverPane && chart.hoverPane.axis) {
+        event.preventDefault();
+
         const center = chart.hoverPane.center,
             mouseDownX = (this.mouseDownX || 0),
             mouseDownY = (this.mouseDownY || 0),
-            chartY = event.chartY,
-            chartX = event.chartX,
+            chartY = event.args.chartY,
+            chartX = event.args.chartX,
             fullCircle = Math.PI * 2,
             startAngleRad = chart.hoverPane.axis.startAngleRad,
             endAngleRad = chart.hoverPane.axis.endAngleRad,
@@ -1468,8 +1470,8 @@ class PolarAdditions {
             wrap(pointerProto, 'pinch', wrapPointerPinch);
 
             addEvent(PointerClass,
-                'afterGetSelectionMarkerAttrs',
-                onPointerAfterGetSelectionMarkerAttrs
+                'getSelectionMarkerAttrs',
+                onPointerGetSelectionMarkerAttrs
             );
 
             addEvent(PointerClass,

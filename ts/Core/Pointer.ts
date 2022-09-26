@@ -274,46 +274,55 @@ class Pointer {
         attrs: SVGAttributes
         type: 'rect' | 'arc' | 'path'
     } {
-        const zoomHor = this.zoomHor,
-            zoomVert = this.zoomVert,
-            mouseDownX = (this.mouseDownX || 0),
-            mouseDownY = (this.mouseDownY || 0),
-            chart = this.chart;
-
-        let attrs: SVGAttributes = {},
-            svgType:'rect' | 'arc' | 'path' = 'rect',
-            size;
-
-        attrs.x = chart.plotLeft;
-        attrs.y = chart.plotTop;
-        attrs.width = this.zoomHor ? 1 : chart.plotWidth;
-        attrs.height = this.zoomVert ? 1 : chart.plotHeight;
-
-        // Adjust the width of the selection marker
-        if (zoomHor) {
-            size = chartX - mouseDownX;
-            attrs.width = Math.abs(size);
-            attrs.x = (size > 0 ? 0 : size) + mouseDownX;
-        }
-
-        // Adjust the height of the selection marker
-        if (zoomVert) {
-            size = chartY - mouseDownY;
-            attrs.height = Math.abs(size);
-            attrs.y = (size > 0 ? 0 : size) + mouseDownY;
-        }
-
-        let event = { attrs, chartX, chartY, svgType };
+        const e = {
+            args: { chartX, chartY },
+            attrs: {} as SVGAttributes,
+            svgType: 'rect' as 'rect' | 'arc' | 'path'
+        };
 
         fireEvent(
             this,
-            'afterGetSelectionMarkerAttrs',
-            event
+            'getSelectionMarkerAttrs',
+            e,
+            (e: any): void => {
+                const zoomHor = this.zoomHor,
+                    zoomVert = this.zoomVert,
+                    mouseDownX = (this.mouseDownX || 0),
+                    mouseDownY = (this.mouseDownY || 0),
+                    chart = this.chart;
+
+                let attrs: SVGAttributes = {},
+                    svgType: 'rect' | 'arc' | 'path' = 'rect',
+                    size;
+
+
+                attrs.x = chart.plotLeft;
+                attrs.y = chart.plotTop;
+                attrs.width = zoomHor ? 1 : chart.plotWidth;
+                attrs.height = zoomVert ? 1 : chart.plotHeight;
+
+                // Adjust the width of the selection marker
+                if (zoomHor) {
+                    size = chartX - mouseDownX;
+                    attrs.width = Math.abs(size);
+                    attrs.x = (size > 0 ? 0 : size) + mouseDownX;
+                }
+
+                // Adjust the height of the selection marker
+                if (zoomVert) {
+                    size = chartY - mouseDownY;
+                    attrs.height = Math.abs(size);
+                    attrs.y = (size > 0 ? 0 : size) + mouseDownY;
+                }
+
+                e.attrs = attrs;
+                e.svgType = svgType;
+            }
         );
 
         return {
-            attrs: event.attrs,
-            type: event.svgType
+            attrs: e.attrs,
+            type: e.svgType
         };
     }
 
