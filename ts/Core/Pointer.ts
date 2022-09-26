@@ -462,24 +462,30 @@ class Pointer {
      * @emits afterGetSelectionBox
      */
     public getSelectionBox(marker: SVGElement): Partial<BBoxObject> {
-        let x = marker.attr ? +marker.attr('x') : marker.x,
-            y = marker.attr ? +marker.attr('y') : marker.y,
-            width = marker.attr ?
-                marker.attr('width') :
-                marker.width,
-            height = marker.attr ?
-                marker.attr('height') :
-                marker.height;
-
-        let event = { x, y, width, height, marker };
+        const e = {
+            args: { marker },
+            result: {} as Partial<BBoxObject>
+        };
 
         fireEvent(
             this,
-            'afterGetSelectionBox',
-            event
+            'getSelectionBox',
+            e,
+            (e: any): void => {
+                let x = marker.attr ? +marker.attr('x') : marker.x,
+                    y = marker.attr ? +marker.attr('y') : marker.y,
+                    width = marker.attr ?
+                        marker.attr('width') :
+                        marker.width,
+                    height = marker.attr ?
+                        marker.attr('height') :
+                        marker.height;
+
+                e.result = { x, y, width, height };
+            }
         );
 
-        return event;
+        return e.result;
     }
 
     /**

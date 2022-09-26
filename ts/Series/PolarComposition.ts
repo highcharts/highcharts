@@ -383,8 +383,8 @@ function onChartGetAxes(
  * Get selection dimensions
  * @private
  */
-function onPointerAfterGetSelectionBox(this: Pointer, event: any): void {
-    const marker = event.marker,
+function onPointerGetSelectionBox(this: Pointer, event: any): void {
+    const marker = event.args.marker,
         xAxis = this.chart.xAxis[0],
         yAxis = this.chart.yAxis[0],
         inverted = this.chart.inverted,
@@ -392,6 +392,8 @@ function onPointerAfterGetSelectionBox(this: Pointer, event: any): void {
         linearAxis = inverted ? xAxis : yAxis;
 
     if (this.chart.polar) {
+        event.preventDefault();
+
         let start = (
             marker.attr ? marker.attr('start') : marker.start
         ) - (radialAxis as any).startAngleRad;
@@ -404,11 +406,11 @@ function onPointerAfterGetSelectionBox(this: Pointer, event: any): void {
 
         let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR);
 
-        event.x = start + radialAxis.pos;
-        event.width = end - start;
+        event.result.x = start + radialAxis.pos;
+        event.result.width = end - start;
         // innerR goes from pane's center but toValue computes values from top
-        event.y = linearAxis.len + linearAxis.pos - innerR;
-        event.height = innerR - r;
+        event.result.y = linearAxis.len + linearAxis.pos - innerR;
+        event.result.height = innerR - r;
     }
 }
 
@@ -1475,8 +1477,8 @@ class PolarAdditions {
             );
 
             addEvent(PointerClass,
-                'afterGetSelectionBox',
-                onPointerAfterGetSelectionBox
+                'getSelectionBox',
+                onPointerGetSelectionBox
             );
         }
 
