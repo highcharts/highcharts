@@ -1018,7 +1018,7 @@ function seriesRenderCanvas(this: Series): void {
      * @private
      */
     function processPoint(
-        d: (number|Array<number>|Record<string, number>|number),
+        d: (number|Array<number>|Record<string, number>),
         i: number
     ): boolean {
         const chartDestroyed = typeof chart.index === 'undefined';
