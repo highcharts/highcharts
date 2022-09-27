@@ -815,7 +815,7 @@ class Legend {
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
-            item.legendItemWidth ||
+            legendData.itemWidth ||
             bBox.width + itemExtraWidth;
         legend.maxItemWidth = Math.max(
             legend.maxItemWidth, (item.itemWidth as any)
@@ -823,7 +823,7 @@ class Legend {
         legend.totalItemWidth += item.itemWidth as any;
 
         legend.itemHeight = item.itemHeight = Math.round(
-            item.legendItemHeight ||
+            legendData.itemHeight ||
             // use bBox for multiline (#16398)
             (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );
