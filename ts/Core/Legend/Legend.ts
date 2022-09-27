@@ -443,7 +443,7 @@ class Legend {
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
-            legendItemPos = item._legendItemPos,
+            legendItemPos = legendData._itemPos,
             itemX = (legendItemPos as any)[0],
             itemY = (legendItemPos as any)[1],
             checkbox = item.checkbox,
@@ -855,7 +855,8 @@ class Legend {
                     this.totalItemWidth > maxLegendWidth
             ) ?
                 this.maxItemWidth :
-                item.itemWidth;
+                item.itemWidth,
+            legendData = item.legendData = (item.legendData || {});
 
         // If the item exceeds the width, start a new line
         if (
@@ -881,7 +882,7 @@ class Legend {
         );
 
         // cache the position of the newly generated or reordered items
-        item._legendItemPos = [this.itemX, this.itemY];
+        legendData._itemPos = [this.itemX, this.itemY];
 
         // advance
         if (horizontal) {
@@ -1070,12 +1071,16 @@ class Legend {
                 });
             }
         }, this);
-        distribute(boxes, chart.plotHeight).forEach((box): void => {
-            if (box.item._legendItemPos && box.pos) {
-                box.item._legendItemPos[1] =
+
+        let legendData;
+
+        for (const box of distribute(boxes, chart.plotHeight)) {
+            legendData = (box.item.legendData || {});
+            if (box.pos && legendData._itemPos) {
+                legendData._itemPos[1] =
                     chart.plotTop - chart.spacing[0] + box.pos;
             }
-        });
+        }
 
     }
 
@@ -1376,7 +1381,7 @@ class Legend {
             // defines the scroll top for each page (#2098)
             allItems.forEach((item, i): void => {
                 legendData = item.legendData = item.legendData || {};
-                const y = (item._legendItemPos as any)[1],
+                const y = ((item.legendData || {})._itemPos || [])[1],
                     h = Math.round(
                         (item.legendData as any).item.getBBox().height
                     );
@@ -1778,7 +1783,7 @@ if (
         const legend = this,
             // If chart destroyed in sync, this is undefined (#2030)
             runPositionItem = function (): void {
-                if (item._legendItemPos) {
+                if ((item.legendData || {})._itemPos) {
                     proceed.call(legend, item);
                 }
             };

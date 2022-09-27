@@ -251,7 +251,7 @@ class LegendComponent extends AccessibilityComponent {
 
                 if (hasPages) {
                     const itemPage = legendData.pageIx || 0;
-                    const y = item._legendItemPos ? item._legendItemPos[1] : 0;
+                    const y = legendData._itemPos ? legendData._itemPos[1] : 0;
                     const h = legendData.item ?
                         Math.round(legendData.item.getBBox().height) :
                         0;
