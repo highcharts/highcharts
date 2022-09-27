@@ -1182,8 +1182,7 @@ class Pointer {
             // `useHTML` options.
             !(
                 tooltip &&
-                tooltip.shouldStickOnContact() &&
-                this.inClass(pEvt.target as any, 'highcharts-tooltip')
+                tooltip.shouldStickOnContact(pEvt)
             )
         ) {
             if (
@@ -1241,6 +1240,7 @@ class Pointer {
      */
     public onDocumentMouseMove(e: MouseEvent): void {
         const chart = this.chart;
+        const tooltip = chart.tooltip;
         const chartPosition = this.chartPosition;
         const pEvt = this.normalize(e, chartPosition);
 
@@ -1253,6 +1253,10 @@ class Pointer {
                 {
                     visiblePlotOnly: true
                 }
+            ) &&
+            !(
+                tooltip &&
+                tooltip.shouldStickOnContact(pEvt)
             ) &&
             !this.inClass(pEvt.target as any, 'highcharts-tracker')
         ) {

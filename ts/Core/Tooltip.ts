@@ -926,8 +926,16 @@ class Tooltip {
         );
     }
 
-    public shouldStickOnContact(): boolean {
-        return !!(!this.followPointer && this.options.stickOnContact);
+    public shouldStickOnContact(pointerEvent?: PointerEvent): boolean {
+        return !!(
+            !this.followPointer &&
+            this.options.stickOnContact &&
+            (
+                !pointerEvent || this.chart.pointer.inClass(
+                    pointerEvent.target as any, 'highcharts-tooltip'
+                )
+            )
+        );
     }
 
     /**
