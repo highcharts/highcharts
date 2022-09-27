@@ -90,7 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
  * @private
  */
 function scrollLegendToItem(legend: Legend, itemIx: number): void {
-    const itemPage = legend.allItems[itemIx].pageIx,
+    const itemPage = (legend.allItems[itemIx].legendData || {}).pageIx,
         curPage: number = legend.currentPage as any;
 
     if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
@@ -250,7 +250,7 @@ class LegendComponent extends AccessibilityComponent {
                 legendData = item.legendData || {};
 
                 if (hasPages) {
-                    const itemPage = item.pageIx || 0;
+                    const itemPage = legendData.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
                     const h = legendData.item ?
                         Math.round(legendData.item.getBBox().height) :
@@ -295,15 +295,16 @@ class LegendComponent extends AccessibilityComponent {
         const pages = legend.pages || [];
 
         if (newPageIx > 0 && newPageIx <= pages.length) {
-            const len = legend.allItems.length;
-            for (let i = 0; i < len; ++i) {
-                if ((legend.allItems[i].pageIx as number) + 1 === newPageIx) {
-                    const res = chart.highlightLegendItem(i);
+            let i = 0,
+                res;
+            for (const item of legend.allItems) {
+                if (((item.legendData || {}).pageIx || 0) + 1 === newPageIx) {
+                    res = chart.highlightLegendItem(i);
                     if (res) {
                         this.highlightedLegendItemIx = i;
                     }
-                    return;
                 }
+                ++i;
             }
         }
     }

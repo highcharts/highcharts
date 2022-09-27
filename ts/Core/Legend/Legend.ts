@@ -1337,6 +1337,7 @@ class Legend {
             };
         let clipHeight: number,
             lastY: number,
+            legendData,
             spaceHeight = (
                 chart.spacingBox.height +
                 (alignTop ? -optionsY : optionsY) - padding
@@ -1374,6 +1375,7 @@ class Legend {
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
             allItems.forEach((item, i): void => {
+                legendData = item.legendData = item.legendData || {};
                 const y = (item._legendItemPos as any)[1],
                     h = Math.round(
                         (item.legendData as any).item.getBBox().height
@@ -1387,9 +1389,9 @@ class Legend {
                 }
 
                 // Keep track of which page each item is on
-                item.pageIx = len - 1;
+                legendData.pageIx = len - 1;
                 if (lastY) {
-                    allItems[i - 1].pageIx = len - 1;
+                    (allItems[i - 1].legendData || {}).pageIx = len - 1;
                 }
 
                 // add the last page if needed (#2617, #13683)
@@ -1402,7 +1404,7 @@ class Legend {
                     h <= clipHeight
                 ) {
                     pages.push(y);
-                    item.pageIx = len;
+                    legendData.pageIx = len;
                 }
 
                 if (y !== lastY) {
