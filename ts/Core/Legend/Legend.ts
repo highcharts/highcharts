@@ -371,7 +371,7 @@ class Legend {
             const legend = this,
                 options = legend.options,
                 legendItem = legendData.item,
-                legendLine = item.legendLine,
+                legendLine = legendData.line,
                 legendSymbol = legendData.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
                 textColor = visible ?
@@ -389,6 +389,7 @@ class Legend {
                     color: textColor // #1553, oldIE
                 });
             }
+
             if (legendLine) {
                 legendLine.attr({ stroke: symbolColor });
             }

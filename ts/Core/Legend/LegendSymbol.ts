@@ -112,7 +112,7 @@ namespace LegendSymbol {
             }
         }
 
-        this.legendLine = renderer
+        legendData.line = renderer
             .path([
                 ['M', 0, verticalCenter],
                 ['L', symbolWidth, verticalCenter]

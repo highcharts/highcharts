@@ -33,6 +33,7 @@ export interface LegendDataObject {
     itemHeight?: number;
     items?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
     itemWidth?: number;
+    line?: SVGElement;
     symbol?: SVGElement;
 }
 
@@ -45,7 +46,6 @@ export interface LegendItemObject {
     itemHeight?: number;
     itemWidth?: number;
     legendData?: LegendDataObject;
-    legendLine?: SVGElement;
     name?: string;
     pageIx?: number;
     symbol?: SymbolKey;
