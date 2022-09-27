@@ -215,7 +215,7 @@ class VectorSeries extends ScatterSeries {
             }, {
                 length: 1
             });
-        item.legendLine = this.chart.renderer.path(path)
+        legendData.line = this.chart.renderer.path(path)
         .addClass('highcharts-point')
         .attr({
             zIndex: 3,

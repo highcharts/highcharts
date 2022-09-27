@@ -2,7 +2,7 @@
 Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proceed, legend) {
     proceed.call(this, legend);
 
-    this.legendLine.attr({
+    this.legendData.line.attr({
         d: ['M', 0, 10, 'L', 5, 5, 8, 10]
     });
     this.negativeLine = this.chart.renderer
