@@ -82,6 +82,8 @@ function indexTemplate(options) {
  * */
 
 /**
+ * Assembles samples
+ *
  * @param {string} template
  *        Template string
  *
@@ -102,6 +104,8 @@ function assembleSample(template, variables) {
 }
 
 /**
+ * Creates examples
+ *
  * @param {string} title
  *        Example title
  *
@@ -122,7 +126,6 @@ async function createExamples(title, sourcePath, targetPath, template) {
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
-    const MkDirP = require('mkdirp');
 
     const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
 
@@ -153,7 +156,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
             targetPath, directoryPath.substr(sourcePath.length)
         );
 
-        MkDirP.sync(path);
+        FS.mkdirSync(path, { recursive: true });
 
         FS.writeFileSync(
             Path.join(path, 'index.html'),
@@ -162,7 +165,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
     });
 
     /**
-     *
+     * Fetch sidebar
      * @param {string} path
      * The subpath for the product. Will substitute 'highcharts' with ''
      * @return {Promise<string>}
@@ -226,6 +229,8 @@ function convertURLToLocal(str) {
  * */
 
 /**
+ * Creates examples for distribution.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
