@@ -1027,7 +1027,6 @@ function seriesRenderCanvas(this: Series): void {
             y: number,
             clientX,
             plotY,
-            percentage,
             low: number = false as any,
             isYInside = true;
 
@@ -1055,7 +1054,6 @@ function seriesRenderCanvas(this: Series): void {
                 x = (d as any).x;
                 y = (d as any).stackY;
                 low = y - (d as any).y;
-                percentage = (d as any).percentage;
             }
 
             // Optimize for scatter zooming
@@ -1100,9 +1098,19 @@ function seriesRenderCanvas(this: Series): void {
                             yBottom =
                                 yAxis.toPixels(minVal as any, true);
 
-                            addKDPoint(clientX, plotY, maxI as any, percentage);
+                            addKDPoint(
+                                clientX,
+                                plotY,
+                                maxI as any,
+                                (d as any).percentage
+                            );
                             if (yBottom !== plotY) {
-                                addKDPoint(clientX, yBottom, minI, percentage);
+                                addKDPoint(
+                                    clientX,
+                                    yBottom,
+                                    minI,
+                                    (d as any).percentage
+                                );
                             }
                         }
 
@@ -1111,7 +1119,7 @@ function seriesRenderCanvas(this: Series): void {
                     }
                 } else {
                     plotY = Math.ceil(yAxis.toPixels(y, true));
-                    addKDPoint(clientX, plotY, i, percentage);
+                    addKDPoint(clientX, plotY, i, (d as any).percentage);
                 }
             }
         }
