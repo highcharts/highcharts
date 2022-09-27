@@ -191,12 +191,10 @@ class ColorAxis extends Axis implements AxisLike {
     // Prevents unnecessary padding with `hc-more`
     public beforePadding = false as any;
     public chart: Chart = void 0 as any;
-    public coll: 'colorAxis' = 'colorAxis';
+    public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
     public legendData?: LegendDataObject;
-    public legendItemHeight?: number;
-    public legendItemWidth?: number;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
@@ -554,7 +552,7 @@ class ColorAxis extends Axis implements AxisLike {
         item: ColorAxis
     ): void {
         const axis = this,
-            legendData = item.legendData || {},
+            legendData = item.legendData = item.legendData || {},
             padding = legend.padding,
             legendOptions = legend.options,
             itemDistance = pick(legendOptions.itemDistance, 10),
@@ -589,7 +587,7 @@ class ColorAxis extends Axis implements AxisLike {
         }
 
         // Set how much space this legend item takes up
-        axis.legendItemWidth = (
+        legendData.itemWidth = (
             width +
             padding +
             (
@@ -598,7 +596,7 @@ class ColorAxis extends Axis implements AxisLike {
                     this.options.labels.x + this.maxLabelLength
             )
         );
-        axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
+        legendData.itemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
     /**

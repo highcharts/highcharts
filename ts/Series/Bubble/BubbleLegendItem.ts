@@ -125,8 +125,6 @@ class BubbleLegendItem {
     public chart: Chart = void 0 as any;
     public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Legend = void 0 as any;
-    public legendItemHeight: number = void 0 as any;
-    public legendItemWidth: number = void 0 as any;
     public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
@@ -181,11 +179,13 @@ class BubbleLegendItem {
      */
     public drawLegendSymbol(legend: Legend): void {
         const chart = this.chart,
-            options = this.options,
             itemDistance = pick(legend.options.itemDistance, 20),
+            legendData = this.legendData = this.legendData || {},
+            options = this.options,
             ranges =
                 options.ranges as Array<BubbleLegendItem.RangesOptions>,
             connectorDistance = options.connectorDistance;
+
         let connectorSpace;
 
         // Predict label dimensions
@@ -227,8 +227,8 @@ class BubbleLegendItem {
         this.movementX = (options.labels as any).align === 'left' ?
             connectorSpace : 0;
 
-        this.legendItemWidth = size + connectorSpace + itemDistance;
-        this.legendItemHeight = size + this.fontMetrics.h / 2;
+        legendData.itemWidth = size + connectorSpace + itemDistance;
+        legendData.itemHeight = size + this.fontMetrics.h / 2;
     }
 
     /**

@@ -222,14 +222,17 @@ function getLinesHeights(
     const items = legend.allItems,
         lines = [] as Array<Record<string, number>>,
         length = items.length;
+
     let lastLine,
+        legendData,
         i = 0,
         j = 0;
 
     for (i = 0; i < length; i++) {
-        if (items[i].legendItemHeight) {
+        legendData = items[i].legendData || {};
+        if (legendData.itemHeight) {
             // for bubbleLegend
-            (items[i] as any).itemHeight = items[i].legendItemHeight;
+            (items[i] as any).itemHeight = legendData.itemHeight;
         }
         if ( // Line break
             items[i] === items[length - 1] ||
