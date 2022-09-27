@@ -932,7 +932,7 @@ class Legend {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(
-                    series.legendItems as any ||
+                    series.legendData && series.legendData.items as any ||
                     (
                         seriesOptions.legendType === 'point' ?
                             series.data :
@@ -1629,7 +1629,7 @@ class Legend {
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        legendItems.forEach(function (element): void {
+        for (const element of legendItems) {
             if (element) {
                 element
                     .on('mouseover', function (): void {
@@ -1708,7 +1708,7 @@ class Legend {
                         }
                     });
             }
-        });
+        }
     }
 
     /**

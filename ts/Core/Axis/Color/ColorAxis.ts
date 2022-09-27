@@ -196,7 +196,6 @@ class ColorAxis extends Axis implements AxisLike {
     public legendColor?: GradientColor;
     public legendData?: LegendDataObject;
     public legendItemHeight?: number;
-    public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
     public legendItemWidth?: number;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
@@ -272,15 +271,16 @@ class ColorAxis extends Axis implements AxisLike {
     public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this,
             chart = axis.chart,
-            options = axis.options,
-            len = (userOptions.dataClasses as any).length;
+            legendData = axis.legendData = axis.legendData || {},
+            len = (userOptions.dataClasses as any).length,
+            options = axis.options;
 
         let dataClasses,
             colorCounter = 0,
             colorCount = chart.options.chart.colorCount;
 
         axis.dataClasses = dataClasses = [] as Array<ColorAxis.DataClassesOptions>;
-        axis.legendItems = [] as Array<ColorAxis.LegendItemObject>;
+        legendData.items = [] as Array<ColorAxis.LegendItemObject>;
 
         (userOptions.dataClasses || []).forEach(function (dataClass, i): void {
             let colors: any;
@@ -848,16 +848,17 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public destroyItems(): void {
-        const axis = this;
-        const chart = axis.chart;
+        const axis = this,
+            chart = axis.chart,
+            legendData = axis.legendData || {};
 
-        if (axis.legendData && axis.legendData.item) {
+        if (legendData.item) {
             chart.legend.destroyItem(axis);
 
-        } else if (axis.legendItems) {
-            axis.legendItems.forEach(function (item): void {
+        } else if (legendData.items) {
+            for (const item of legendData.items) {
                 chart.legend.destroyItem(item as any);
-            });
+            }
         }
 
         chart.isDirtyLegend = true;
@@ -891,7 +892,11 @@ class ColorAxis extends Axis implements AxisLike {
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
         const axis = this,
             chart = axis.chart,
-            legendItems = axis.legendItems,
+            legendItems = (
+                axis.legendData &&
+                axis.legendData.items as Array<ColorAxis.LegendItemObject> ||
+                []
+            ),
             legendOptions = chart.options.legend,
             valueDecimals = pick(legendOptions.valueDecimals, -1),
             valueSuffix = pick(legendOptions.valueSuffix, '');
