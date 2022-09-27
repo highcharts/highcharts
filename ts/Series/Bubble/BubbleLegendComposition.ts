@@ -225,20 +225,21 @@ function getLinesHeights(
 
     let lastLine,
         legendData,
+        legendData2,
         i = 0,
         j = 0;
 
     for (i = 0; i < length; i++) {
         legendData = items[i].legendData || {};
+        legendData2 = (items[i + 1] || {}).legendData || {};
         if (legendData.itemHeight) {
             // for bubbleLegend
             (items[i] as any).itemHeight = legendData.itemHeight;
         }
         if ( // Line break
             items[i] === items[length - 1] ||
-            items[i + 1] &&
-            (items[i]._legendItemPos as any)[1] !==
-            (items[i + 1]._legendItemPos as any)[1]
+            (legendData._itemPos || [])[1] !==
+            (legendData2._itemPos || [])[1]
         ) {
             lines.push({ height: 0 });
             lastLine = lines[lines.length - 1];
@@ -355,7 +356,7 @@ function retranslateItems(
         }
 
         orgTranslateX = legendData.group.translateX || 0;
-        orgTranslateY = (item._legendItemPos as any)[1];
+        orgTranslateY = (legendData._itemPos || [])[1];
 
         movementX = (item as any).movementX;
 
@@ -375,7 +376,7 @@ function retranslateItems(
                 orgTranslateY + lines[actualLine].height / 2
             )
         });
-        (item._legendItemPos as any)[1] = orgTranslateY +
+        (legendData._itemPos || [])[1] = orgTranslateY +
             lines[actualLine].height / 2;
     });
 }
