@@ -26,9 +26,11 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 
 export interface FlowMapPointOptions extends SankeyPointOptions {
     curveFactor?: number;
-    weight?: number;
+    weight: number;
     growTowards?: boolean;
-    markerEnd?: MarkerEndOptions
+    markerEnd?: MarkerEndOptions;
+    minWeight?: number;
+    maxWeight?: number
 }
 
 interface MarkerEndOptions {

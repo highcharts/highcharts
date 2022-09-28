@@ -142,7 +142,7 @@ class FlowMapSeries extends SankeySeries {
     public static markerEndPath(
         lCorner: [number, number],
         rCorner: [number, number],
-        topCorner:[number, number],
+        topCorner: [number, number],
         options: any): SVGPath {
 
         const width = options.width || 0,
@@ -230,9 +230,9 @@ class FlowMapSeries extends SankeySeries {
             nodeW = 0, // this.nodeWidth;
             pointOptions = point.options,
             markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
-            weights: any = [],
-            minWeight,
-            maxWeight,
+            weights: number[] = [],
+            minWeight = this.options.minWeight || pointOptions.minWeight,
+            maxWeight = this.options.maxWeight || pointOptions.maxWeight,
             newWeight;
 
         const curveFactor = pointOptions.curveFactor || 0,
@@ -241,9 +241,9 @@ class FlowMapSeries extends SankeySeries {
             growTowards = this.options.growTowards || pointOptions.growTowards,
             offset = markerEndOptions && markerEndOptions.height || 0;
 
-        this.points.forEach((p): void =>
-            weights.push(p.options.weight)
-        );
+        this.points.forEach((p): void => {
+            weights.push(p.options.weight);
+        });
 
         minWeight = Math.min(...weights);
         maxWeight = Math.max(...weights);

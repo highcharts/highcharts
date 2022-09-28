@@ -24,7 +24,9 @@ import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
 
 interface FlowMapSeriesOptions extends SankeySeriesOptions {
     markerEnd?: MarkerEndOptions,
-    growTowards?: boolean
+    growTowards?: boolean,
+    minWeight?: number,
+    maxWeight?: number
 }
 
 interface MarkerEndOptions {
