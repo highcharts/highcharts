@@ -637,7 +637,7 @@ class IKHIndicator extends SMAIndicator {
 
         // Generate senkouSpan area:
 
-        // If graphColection exist then remove svg
+        // If graphCollection exist then remove svg
         // element and indicator property
         if (indicator.graphCollection) {
             indicator.graphCollection.forEach(function (
@@ -648,7 +648,7 @@ class IKHIndicator extends SMAIndicator {
             });
         }
 
-        // Clean grapCollection or initialize it
+        // Clean graphCollection or initialize it
         indicator.graphCollection = [];
 
         // When user set negativeColor property
@@ -678,7 +678,7 @@ class IKHIndicator extends SMAIndicator {
                     const x = Math.floor(sectionPoints.length / 2);
 
                     // When middle points has equal values
-                    // Compare all ponints plotY value sum
+                    // Compare all points plotY value sum
                     if (sectionPoints[x].plotY === sectionNextPoints[x].plotY) {
                         pointsPlotYSum = 0;
                         nextPointsPlotYSum = 0;
@@ -915,12 +915,6 @@ class IKHIndicator extends SMAIndicator {
 
             if (typeof IKH[i + 2 * period - 2] === 'undefined') {
                 IKH[i + 2 * period - 2] = [];
-            }
-
-            // After shifting the IKH cloud by two points 'to the left' it adds
-            // additional points needed for a proper IKH series length. #17664
-            if (typeof IKH[i + 2 * period] === 'undefined') {
-                IKH[i + 2 * period] = [];
             }
 
             IKH[i + 2 * period - 2][3] = SSA;
