@@ -36,6 +36,7 @@ export interface SeriesLabelOptions {
     minFontSize?: (number|null);
     onArea?: (boolean|null);
     style?: CSSObject;
+    useHTML?: boolean;
 }
 
 /* *
