@@ -59,6 +59,7 @@ const {
 } = SeriesRegistry;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -171,6 +172,12 @@ class VennSeries extends ScatterSeries {
         marker: false as any,
         opacity: 0.75,
         showInLegend: false,
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
+        legendType: 'point',
         states: {
             /**
              * @excluding halo
@@ -761,6 +768,7 @@ class VennSeries extends ScatterSeries {
 interface VennSeries {
     axisTypes: Array<string>;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     isCartesian: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof VennPoint;
@@ -769,6 +777,7 @@ interface VennSeries {
 extend(VennSeries.prototype, {
     axisTypes: [],
     directTouch: true,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     isCartesian: false,
     pointArrayMap: ['value'],
     pointClass: VennPoint,
