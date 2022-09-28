@@ -101,6 +101,7 @@ class PackedBubbleSeries extends BubbleSeries {
         SeriesClass: typeof SeriesType
     ): void {
         BubbleSeries.compose(AxisClass, ChartClass, LegendClass, SeriesClass);
+        DragNodesComposition.compose(ChartClass);
         PackedBubbleLayout.compose(ChartClass);
     }
 
