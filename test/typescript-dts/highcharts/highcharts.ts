@@ -8,12 +8,32 @@
 
 import * as Highcharts from "highcharts";
 
+test_legend();
 test_seriesArea();
 test_seriesBar();
 test_seriesColumn();
 test_seriesDependencyWheel();
 test_seriesLine();
 test_seriesPie();
+
+
+/**
+ * Tests legend options.
+ */
+function test_legend() {
+    Highcharts.chart('container', {
+        legend: {
+            enabled: true,
+            labelFormatter: function (): string {
+                const series = this as Highcharts.Series;
+                if (series.legendData) {
+                    return JSON.stringify(series.legendData as Record<string, SVGElement>);
+                }
+                return '';
+            }
+        }
+    });
+}
 
 /**
  * Tests Highcharts.seriesTypes.area in a common use case.
