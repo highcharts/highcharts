@@ -1838,6 +1838,19 @@ export default Legend;
  * */
 
 /**
+ * @interface Highcharts.LegendDataObject
+ *//**
+ * @name Highcharts.LegendDataObject#item
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendDataObject#line
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendDataObject#symbol
+ * @type {Highcharts.SVGElement|undefined}
+ */
+
+/**
  * Gets fired when the legend item belonging to a point is clicked. The default
  * action is to toggle the visibility of the point. This can be prevented by
  * returning `false` or calling `event.preventDefault()`.
@@ -1871,6 +1884,17 @@ export default Legend;
  * Event type.
  * @name Highcharts.PointLegendItemClickEventObject#type
  * @type {"legendItemClick"}
+ */
+
+/**
+ * Series color as used by the legend and some series types.
+ * @name Highcharts.Series#color
+ * @type {Highcharts.ColorType|undefined}
+ *//**
+ * Legend data for the series.
+ * @name Highcharts.Series#legendData
+ * @type {Highcharts.LegendDataObject|undefined}
+ * @since next
  */
 
 /**
