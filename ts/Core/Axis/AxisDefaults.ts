@@ -2354,11 +2354,11 @@ namespace AxisDefaults {
          * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
+         * @sample {highcharts} highcharts/demo/gauge-solid/
+         *         Gauge with stops
+         *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
-         *
-         * @sample {highcharts} highcharts/demo/gauge-solid/
-         *         True by default
          *
          * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
@@ -2522,8 +2522,6 @@ namespace AxisDefaults {
              *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
-             * @default    {highcharts|highmaps} right
-             * @default    {highstock} left
              * @apioption  yAxis.labels.align
              */
 

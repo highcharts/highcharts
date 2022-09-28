@@ -14,7 +14,7 @@
 /* eslint-env node, es6 */
 /* eslint-disable no-console */
 const Highcharts = require('../code/highcharts.src.js')();
-const dataGrouping = require('../code/modules/datagrouping.src.js')(Highcharts);
+require('../code/modules/datagrouping.src.js')(Highcharts);
 
 // Generate some random, high-resolution data. This function emulates raw data
 // with an hourly resolution that we want to group into days.
@@ -53,7 +53,9 @@ const approximation = 'average'; // See https://api.highcharts.com/highstock/ser
 const {
     groupedXData,
     groupedYData
-} = dataGrouping.groupData(xData, yData, groupPositions, approximation);
+} = Highcharts.Series.prototype.groupData.call({
+    options: {}
+}, xData, yData, groupPositions, approximation);
 
 // Optionally, transform it to a Highcharts-compatible two-dimensional array.
 const data = groupedXData.map((x, i) => [x, groupedYData[i]]);

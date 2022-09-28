@@ -896,7 +896,7 @@ export default Annotation;
 
 /* *
  *
- *  API Options
+ *  API Declarations
  *
  * */
 

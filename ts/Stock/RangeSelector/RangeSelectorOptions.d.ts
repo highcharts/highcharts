@@ -21,6 +21,8 @@ import type {
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DataGroupingOptions from
+    '../../Extensions/DataGrouping/DataGroupingOptions';
 import type Time from '../../Core/Time';
 
 /* *
@@ -43,15 +45,13 @@ declare module '../../Core/Options'{
     }
 }
 
-type DataGroupingOptionsObject = Highcharts.DataGroupingOptionsObject; // @todo
-
 export interface RangeSelectorButtonsEventsOptions {
     click?: RangeSelectorClickCallbackFunction;
 }
 
 export interface RangeSelectorButtonOptions {
     count?: number;
-    dataGrouping?: DataGroupingOptionsObject;
+    dataGrouping?: DataGroupingOptions;
     title?: string;
     events?: RangeSelectorButtonsEventsOptions;
     offsetMax?: number;

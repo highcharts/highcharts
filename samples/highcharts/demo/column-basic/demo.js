@@ -22,7 +22,7 @@ Highcharts.chart('container', {
             '2017',
             '2018',
             '2019',
-            '2010',
+            '2020',
             '2021'
         ],
         crosshair: true

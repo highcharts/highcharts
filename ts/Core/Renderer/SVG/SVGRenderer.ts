@@ -768,7 +768,7 @@ class SVGRenderer implements SVGRendererLike {
             delete disabledState.style;
         }
 
-        // Add the events. IE9 and IE10 need mouseover and mouseout to funciton
+        // Add the events. IE9 and IE10 need mouseover and mouseout to function
         // (#667).
         addEvent(
             label.element, isMS ? 'mouseover' : 'mouseenter',
@@ -828,6 +828,16 @@ class SVGRenderer implements SVGRendererLike {
             label
                 .attr(normalState)
                 .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
+
+            // HTML labels don't need to handle pointer events because click and
+            // mouseenter/mouseleave is bound to the underlying <g> element.
+            // Should this be reconsidered, we need more complex logic to share
+            // events between the <g> and its <div> counterpart, and avoid
+            // triggering mouseenter/mouseleave when hovering from one to the
+            // other (#17440).
+            if (useHTML) {
+                label.text.css({ pointerEvents: 'none' });
+            }
         }
 
         return label

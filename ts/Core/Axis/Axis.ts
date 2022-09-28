@@ -1857,7 +1857,8 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
-            const hasExtemesChanged = axis.min !== (axis.old && axis.old.min) ||
+            const hasExtremesChanged = axis.min !==
+                (axis.old && axis.old.min) ||
                 axis.max !== (axis.old && axis.old.max);
 
             // First process all series assigned to that axis.
@@ -1867,13 +1868,13 @@ class Axis {
                     series.forceCropping &&
                     series.forceCropping()
                 );
-                series.processData(hasExtemesChanged);
+                series.processData(hasExtremesChanged);
             });
 
-            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // Then apply grouping if needed. The hasExtremesChanged helps to
             // decide if the data grouping should be skipped in the further
             // calculations #16319.
-            fireEvent(this, 'postProcessData', { hasExtemesChanged });
+            fireEvent(this, 'postProcessData', { hasExtremesChanged });
         }
 
         // set the translation factor used in translate function
@@ -4553,6 +4554,10 @@ export default Axis;
  * @name Highcharts.AxisLabelsFormatterContextObject#chart
  * @type {Highcharts.Chart}
  *//**
+ * Default formatting of date/time labels.
+ * @name Highcharts.AxisLabelsFormatterContextObject#dateTimeLabelFormat
+ * @type {string|undefined}
+ *//**
  * Whether the label belongs to the first tick on the axis.
  * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
  * @type {boolean}
@@ -4571,7 +4576,7 @@ export default Axis;
  * dates will be formatted as strings, and numbers with language-specific comma
  * separators, thousands separators and numeric symbols like `k` or `M`.
  * @name Highcharts.AxisLabelsFormatterContextObject#text
- * @type {string}
+ * @type {string|undefined}
  *//**
  * The Tick instance.
  * @name Highcharts.AxisLabelsFormatterContextObject#tick
