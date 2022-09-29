@@ -182,9 +182,6 @@ const chart = Highcharts.chart('container', {
     title: {
         text: 'Highcharts with rounded corners'
     },
-    legend: {
-        enabled: false
-    },
     plotOptions: {
         series: {
             cornerRadius: '50%',
@@ -197,11 +194,14 @@ const chart = Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [50, -50, 500, -90]
+        data: [50, -50, 500, -90],
+        name: 'Norway'
     }, {
-        data: [50, 250, 260, -50]
+        data: [50, 250, 260, -50],
+        name: 'Sweden'
     }, {
-        data: [150, 20, 30, -120]
+        data: [150, 20, 30, -120],
+        name: 'Denmark'
     }],
     colors: ["#d7bfff", "#af80ff", "#5920b9", "#48208b"]
 });
