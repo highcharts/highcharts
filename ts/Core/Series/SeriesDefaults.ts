@@ -1754,10 +1754,12 @@ const seriesDefaults: SeriesOptions = {
         /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
-         * be applied only to series which support displaying null points.
+         * be applied only to series which support displaying null points
+         * i.e `heat map` or `tile map`. Does not work with series that don't
+         * display null points, like `line`, `column`, `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {boolean|string}
          * @since     7.1.0
@@ -1768,11 +1770,13 @@ const seriesDefaults: SeriesOptions = {
          * Callback JavaScript function that defines formatting for points
          * with the value of null. Works analogously to
          * [formatter](#plotOptions.series.dataLabels.formatter).
-         * `nullPointFormatter` can be applied only to series which support
-         * displaying null points.
+         * `nullFormatter` can be applied only to series which support
+         * displaying null points i.e `heat map` or `tile map`. Does not work
+         * with series that don't display null points, like `line`, `column`,
+         * `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
          * @since     7.1.0
