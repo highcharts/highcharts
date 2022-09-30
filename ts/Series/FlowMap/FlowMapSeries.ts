@@ -16,7 +16,6 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import type FlowMapPointOptions from './FlowMapPointOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -211,8 +210,6 @@ class FlowMapSeries extends SankeySeries {
             (inMax - inMin) + outMin; // TODO: Handle 0 division here
     }
 
-    // translate() Sankey
-
     /**
      * Run translation operations for one link.
      * @private
@@ -226,8 +223,14 @@ class FlowMapSeries extends SankeySeries {
             pointOptions = point.options,
             markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
             weights: number[] = [],
-            minWeight,
-            maxWeight,
+            currentMinWeight,
+            currentMaxWeight,
+            minWeight =
+                (pointOptions.minWeight ||
+                this.options.minWeight) || 5,
+            maxWeight =
+                (pointOptions.maxWeight ||
+                this.options.maxWeight) || 20,
             scaledWeight;
 
         const curveFactor = pointOptions.curveFactor || 0,
@@ -239,14 +242,17 @@ class FlowMapSeries extends SankeySeries {
             weights.push(p.options.weight);
         });
 
-        // currentMinWeight
-        // currentMaxWeight
-        minWeight = Math.min(...weights);
-        maxWeight = Math.max(...weights);
+        currentMinWeight = Math.min(...weights);
+        currentMaxWeight = Math.max(...weights);
 
         // Get a new rescaled weight
-        scaledWeight = this.scaleWeight(weight, minWeight, maxWeight, 5, 20);
-        // minWeight // maxWeight
+        scaledWeight = this.scaleWeight(
+            weight,
+            currentMinWeight,
+            currentMaxWeight,
+            minWeight,
+            maxWeight
+        );
 
         // Connect to the linked parent point (in mappoint) to trigger
         // series redraw for the linked point (in flow)
