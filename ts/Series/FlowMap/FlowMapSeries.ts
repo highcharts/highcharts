@@ -67,8 +67,10 @@ class FlowMapSeries extends SankeySeries {
      * display route paths (e.g. flights or ships routes) or flows on a map. It
      * is drawing a link between two mappoints.
      *
-     * @extends      plotOptions.column
+     * @extends      plotOptions.sankey
      * @product      highmaps
+     * @requires     modules/sankey
+     * @requires     modules/flowmap
      * @optionparent plotOptions.flowmap
      */
     public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
@@ -84,7 +86,30 @@ class FlowMapSeries extends SankeySeries {
         },
 
         /**
-         * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
+         * Minimum flow map links weight. It will automatically
+         * size between the minWeight and maxWeight.
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type    {number}
+         * @default 5
+         * @product highcharts
+         * @apioption series.flowmap.minWeight
+         */
+        minWeight: 5,
+
+        /**
+         * Maximum flow map links weight. It will automatically
+         * size between the minWeight and maxWeight.
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type    {number}
+         * @default 20
+         * @product highcharts
+         * @apioption series.flowmap.minWeight
+         */
+        maxWeight: 20,
+
+        /**
          *
          * @extends series.mappoint.keys
          * @default ['from', 'to', 'weight']
@@ -92,7 +117,7 @@ class FlowMapSeries extends SankeySeries {
          */
         keys: ['from', 'to', 'weight']
 
-    } as FlowMapSeriesOptions); // Sankey?
+    } as FlowMapSeriesOptions);
 
     /* *
      *
@@ -105,6 +130,10 @@ class FlowMapSeries extends SankeySeries {
     public options: FlowMapSeriesOptions = void 0 as any;
 
     public points: Array<FlowMapPoint> = void 0 as any;
+
+    public currentMinWeight: number | undefined;
+
+    public currentMaxWeight: number | undefined;
 
     /**
      *
@@ -137,12 +166,13 @@ class FlowMapSeries extends SankeySeries {
         lCorner: [number, number],
         rCorner: [number, number],
         topCorner: [number, number],
-        options: FlowMapSeriesOptions
+        options: MarkerEndOptions
     ): SVGPath {
         const width = options.width || 0,
-            type = options.type || 'arrow',
+            type = options.markerType || 'arrow',
             [edgeX, edgeY] = this.normalize(
-                rCorner[0] - lCorner[0], rCorner[1] - lCorner[1]
+                rCorner[0] - lCorner[0],
+                rCorner[1] - lCorner[1]
             );
 
         let path: SVGPath = [];
@@ -210,6 +240,19 @@ class FlowMapSeries extends SankeySeries {
             (inMax - inMin) + outMin; // TODO: Handle 0 division here
     }
 
+    public generatePoints(): void {
+        super.generatePoints.call(this);
+
+        let weights: number[] = [];
+
+        this.points.forEach((p): void => {
+            weights.push(p.options.weight);
+        });
+
+        this.currentMinWeight = Math.min(...weights);
+        this.currentMaxWeight = Math.max(...weights);
+    }
+
     /**
      * Run translation operations for one link.
      * @private
@@ -222,15 +265,8 @@ class FlowMapSeries extends SankeySeries {
             linkHeight = 0, // 10,
             pointOptions = point.options,
             markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
-            weights: number[] = [],
-            currentMinWeight,
-            currentMaxWeight,
-            minWeight =
-                (pointOptions.minWeight ||
-                this.options.minWeight) || 5,
-            maxWeight =
-                (pointOptions.maxWeight ||
-                this.options.maxWeight) || 20,
+            minWeight = this.options.minWeight,
+            maxWeight = this.options.maxWeight,
             scaledWeight;
 
         const curveFactor = pointOptions.curveFactor || 0,
@@ -238,18 +274,11 @@ class FlowMapSeries extends SankeySeries {
             growTowards = this.options.growTowards || pointOptions.growTowards,
             offset = markerEndOptions && markerEndOptions.height || 0;
 
-        this.points.forEach((p): void => {
-            weights.push(p.options.weight);
-        });
-
-        currentMinWeight = Math.min(...weights);
-        currentMaxWeight = Math.max(...weights);
-
         // Get a new rescaled weight
         scaledWeight = this.scaleWeight(
             weight,
-            currentMinWeight,
-            currentMaxWeight,
+            (this as any).currentMinWeight,
+            (this as any).currentMaxWeight,
             minWeight,
             maxWeight
         );
@@ -322,7 +351,10 @@ class FlowMapSeries extends SankeySeries {
                 arcPointY = (mY + dY * curveFactor);
 
             let [offsetX, offsetY] =
-                FlowMapSeries.normalize(arcPointX - toX, arcPointY - toY);
+                FlowMapSeries.normalize(
+                    arcPointX - toX,
+                    arcPointY - toY
+                );
 
             offsetX *= offset;
             offsetY *= offset;
@@ -363,7 +395,10 @@ class FlowMapSeries extends SankeySeries {
 
         // Calculate edge vectors in the from-point.
         let [fromXToArc, fromYToArc] =
-            FlowMapSeries.normalize(arcPointX - fromX, arcPointY - fromY);
+            FlowMapSeries.normalize(
+                arcPointX - fromX,
+                arcPointY - fromY
+            );
 
         tmp = fromXToArc;
         fromXToArc = fromYToArc;
@@ -375,7 +410,10 @@ class FlowMapSeries extends SankeySeries {
 
         // Calculate edge vectors in the to-point.
         let [toXToArc, toYToArc] =
-            FlowMapSeries.normalize(arcPointX - toX, arcPointY - toY);
+            FlowMapSeries.normalize(
+                arcPointX - toX,
+                arcPointY - toY
+            );
 
         tmp = toXToArc;
         toXToArc = -toYToArc;
@@ -424,9 +462,11 @@ class FlowMapSeries extends SankeySeries {
             ]
         };
 
-        if (markerEndOptions && markerEndOptions.enabled &&
-            point.shapeArgs.d) {
-
+        if (
+            markerEndOptions &&
+            markerEndOptions.enabled &&
+            point.shapeArgs.d
+        ) {
             const marker: SVGPath = FlowMapSeries.markerEndPath(
                 [toX - toXToArc, toY - toYToArc],
                 [toX + toXToArc, toY + toYToArc],
@@ -449,33 +489,6 @@ class FlowMapSeries extends SankeySeries {
         }
     }
 
-    public drawPoints(): void {
-        // Draw flow graphics
-        super.drawPoints.call(this);
-
-        // Draw markers
-        this.points.forEach((point): void => {
-            if ((point as any).options.markerEnd2) { // if should draw marker
-
-                // Render graphic
-                const marker = this.chart.renderer.rect(100, 100, 1000, 100, 5)
-                    .add(this.group); // add to the series group
-
-                (marker.element as any).point = point; // mouse tracking
-
-                const pointAttribs = this.pointAttribs(
-                    point,
-                    point.selected ? 'select' : void 0
-                );
-
-                // Simple PoC (at this moment) without animation
-                marker.attr(pointAttribs);
-
-                marker.addClass(point.getClassName(), true);
-            }
-        });
-    }
-
     public translateNode(): void {
         return;
     }
@@ -488,7 +501,14 @@ class FlowMapSeries extends SankeySeries {
  * */
 
 interface FlowMapSeries {
+    pointClass: typeof FlowMapPoint;
+}
 
+interface MarkerEndOptions {
+    markerType?: string,
+    enabled?: boolean,
+    width: number,
+    height: number,
 }
 
 extend(FlowMapSeries.prototype, {

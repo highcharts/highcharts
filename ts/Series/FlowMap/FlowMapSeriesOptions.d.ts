@@ -25,15 +25,15 @@ import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
 interface FlowMapSeriesOptions extends SankeySeriesOptions {
     markerEnd?: MarkerEndOptions,
     growTowards?: boolean,
-    minWeight?: number,
-    maxWeight?: number
+    minWeight: number,
+    maxWeight: number
 }
 
 interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
-    width?: number,
-    height?: number,
+    width: number,
+    height: number,
 }
 
 /* *

@@ -29,15 +29,15 @@ export interface FlowMapPointOptions extends SankeyPointOptions {
     weight: number;
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
-    minWeight?: number;
-    maxWeight?: number
+    minWeight: number;
+    maxWeight: number;
 }
 
 interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
-    width?: number,
-    height?: number
+    width: number,
+    height: number
 }
 
 export default FlowMapPointOptions;
