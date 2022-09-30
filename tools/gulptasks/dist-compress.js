@@ -3,7 +3,8 @@
  */
 
 const gulp = require('gulp');
-const fs = require('fs-extra');
+const fs = require('fs');
+const libFS = require('./lib/fs');
 const zlib = require('zlib');
 const glob = require('glob');
 const log = require('./lib/log');
@@ -64,7 +65,7 @@ function distGZip() {
     const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
     gzipDirs.forEach(dir => {
         log.message('Deleting dir ', dir);
-        fs.removeSync(dir);
+        libFS.deleteDirectory(dir, true);
     });
 
     log.starting('GZipping files..');

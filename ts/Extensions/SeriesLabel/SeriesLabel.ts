@@ -485,7 +485,15 @@ function drawSeriesLabels(chart: Chart): void {
                 }
 
                 series.labelBySeries = label = chart.renderer
-                    .label(labelText, 0, 0, 'connector')
+                    .label(
+                        labelText,
+                        0,
+                        0,
+                        'connector',
+                        0,
+                        0,
+                        labelOptions.useHTML
+                    )
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +

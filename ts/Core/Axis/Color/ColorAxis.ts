@@ -897,6 +897,14 @@ class ColorAxis extends Axis implements AxisLike {
             valueDecimals = pick(legendOptions.valueDecimals, -1),
             valueSuffix = pick(legendOptions.valueSuffix, '');
 
+        const getPointsInDataClass = (i: number): Array<Point> =>
+            axis.series.reduce((points, s): Point[] => {
+                points.push(...s.points.filter((point): boolean =>
+                    point.dataClass === i
+                ));
+                return points;
+            }, [] as Point[]);
+
         let name;
 
         if (!legendItems.length) {
@@ -925,28 +933,32 @@ class ColorAxis extends Axis implements AxisLike {
                     name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
-                legendItems.push(extend(
+                legendItems.push(extend<ColorAxis.LegendItemObject>(
                     {
-                        chart: chart,
-                        name: name,
+                        chart,
+                        name,
                         options: {},
                         drawLegendSymbol: LegendSymbol.drawRectangle,
                         visible: true,
-                        setState: noop,
                         isDataClass: true,
+
+                        // Override setState to set either normal or inactive
+                        // state to all points in this data class
+                        setState: (state?: (StatesOptionsKey|'')): void => {
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setState(state);
+                            }
+                        },
+
+                        // Override setState to show or hide all points in this
+                        // data class
                         setVisible: function (
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            axis.series.forEach(function (series): void {
-                                series.points.forEach(function (
-                                    point: Point
-                                ): void {
-                                    if (point.dataClass === i) {
-                                        (point as any).setVisible(vis);
-                                    }
-                                });
-                            });
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setVisible(vis);
+                            }
                             chart.legend.colorizeItem(this as any, vis);
                         }
                     },
@@ -988,9 +1000,9 @@ namespace ColorAxis {
         options: object;
         drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
         visible: boolean;
-        setState: Function;
+        setState: Point['setState'];
         isDataClass: true;
-        setVisible: () => void;
+        setVisible: Function;
     }
 
     export interface MarkerOptions {

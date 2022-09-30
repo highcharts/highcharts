@@ -153,10 +153,10 @@ const lang: LangOptions = {
             flags: 'Flags',
 
             // GUI elements:
-            addButton: 'add',
-            saveButton: 'save',
-            editButton: 'edit',
-            removeButton: 'remove',
+            addButton: 'Add',
+            saveButton: 'Save',
+            editButton: 'Edit',
+            removeButton: 'Remove',
             series: 'Series',
             volume: 'Volume',
             connector: 'Connector',
