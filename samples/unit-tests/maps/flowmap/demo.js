@@ -21,6 +21,14 @@
                 }]
             }, {
                 type: 'flowmap',
+                keys: [
+                    'from',
+                    'to',
+                    'weight',
+                    'curveFactor',
+                    'growTowards',
+                    'markerEnd'
+                ],
                 showInLegend: true,
                 data: [
                     ['Vik i Sogn', 'Krakow', 0.5, 3]
@@ -54,13 +62,13 @@
         // curveFactor
         assert.strictEqual(
             addedPoint.options.curveFactor,
-            0.5,
-            'Flowmap point curve value should be correct.'
+            3,
+            'Flowmap point curveFactor value should be correct.'
         );
 
         // growTowards
         assert.strictEqual(
-            addedPoint.options.growTowards,
+            addedPoint.growTowards,
             true,
             'Flowmap point should have growTowards property set.'
         );
