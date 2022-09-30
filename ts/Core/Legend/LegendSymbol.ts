@@ -174,7 +174,7 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
-        const legendData = item.legendData = item.legendData || {},
+        const legendData = item.legendData || {},
             options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,

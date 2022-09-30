@@ -180,7 +180,7 @@ class BubbleLegendItem {
     public drawLegendSymbol(legend: Legend): void {
         const chart = this.chart,
             itemDistance = pick(legend.options.itemDistance, 20),
-            legendData = this.legendData = this.legendData || {},
+            legendData = this.legendData || {},
             options = this.options,
             ranges =
                 options.ranges as Array<BubbleLegendItem.RangesOptions>,
@@ -343,7 +343,7 @@ class BubbleLegendItem {
      * @private
      */
     public render(): void {
-        const legendData = this.legendData = this.legendData || {},
+        const legendData = this.legendData || {},
             renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 

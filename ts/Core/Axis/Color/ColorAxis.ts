@@ -552,7 +552,7 @@ class ColorAxis extends Axis implements AxisLike {
         item: ColorAxis
     ): void {
         const axis = this,
-            legendData = item.legendData = item.legendData || {},
+            legendData = item.legendData || {},
             padding = legend.padding,
             legendOptions = legend.options,
             itemDistance = pick(legendOptions.itemDistance, 10),

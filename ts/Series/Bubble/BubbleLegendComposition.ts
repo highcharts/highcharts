@@ -79,7 +79,7 @@ function chartDrawChartBox(
             legend.group.placed = false;
 
             legend.allItems.forEach((item): void => {
-                legendData = item.legendData = item.legendData || {};
+                legendData = item.legendData || {};
                 if (legendData.group) {
                     legendData.group.translateY = null;
                 }

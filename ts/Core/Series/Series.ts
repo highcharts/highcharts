@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type { LegendDataObject } from '../Legend/LegendItemObject';
 import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
@@ -2983,7 +2984,7 @@ class Series {
         });
 
         // remove legend items
-        if (series.legendData && series.legendData.item) {
+        if ((series.legendData || {}).item) {
             series.chart.legend.destroyItem(series);
         }
 
@@ -4430,7 +4431,7 @@ class Series {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point): void {
+            for (const point of this.points) {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
@@ -4440,13 +4441,12 @@ class Series {
                     }
                     if (
                         seriesOptions.showInLegend === false &&
-                        point.legendData &&
-                        point.legendData.item
+                        (point.legendData || {}).item
                     ) {
                         chart.legend.destroyItem(point);
                     }
                 }
-            }, this);
+            }
         }
 
         series.initialType = initialType;
@@ -4792,7 +4792,7 @@ class Series {
         }
 
 
-        if (series.legendData && series.legendData.item) {
+        if ((series.legendData || {}).item) {
             chart.legend.colorizeItem(series, vis);
         }
 
