@@ -359,7 +359,7 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const legendData = item.legendData = item.legendData || {};
+        const legendData = item.legendData || {};
 
         if (legendData.group) {
             legendData.group[visible ? 'removeClass' : 'addClass'](
@@ -439,7 +439,7 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
-            legendData = item.legendData = item.legendData || {},
+            legendData = item.legendData || {},
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
@@ -700,6 +700,7 @@ class Legend {
                 seriesOptions.showCheckbox,
             useHTML = options.useHTML,
             itemClassName = item.options.className;
+
         let li = legendData.item,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
@@ -856,7 +857,7 @@ class Legend {
             ) ?
                 this.maxItemWidth :
                 item.itemWidth,
-            legendData = item.legendData = (item.legendData || {});
+            legendData = item.legendData || {};
 
         // If the item exceeds the width, start a new line
         if (
@@ -934,7 +935,7 @@ class Legend {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(
-                    series.legendData && series.legendData.items as any ||
+                    (series.legendData || {}).items as any ||
                     (
                         seriesOptions.legendType === 'point' ?
                             series.data :
@@ -1075,7 +1076,7 @@ class Legend {
         let legendData;
 
         for (const box of distribute(boxes, chart.plotHeight)) {
-            legendData = (box.item.legendData || {});
+            legendData = box.item.legendData || {};
             if (box.pos && legendData._itemPos) {
                 legendData._itemPos[1] =
                     chart.plotTop - chart.spacing[0] + box.pos;
@@ -1380,8 +1381,8 @@ class Legend {
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
             allItems.forEach((item, i): void => {
-                legendData = item.legendData = item.legendData || {};
-                const y = ((item.legendData || {})._itemPos || [])[1],
+                legendData = item.legendData || {};
+                const y = (legendData._itemPos || [])[1],
                     h = Math.round(
                         (item.legendData as any).item.getBBox().height
                     );
@@ -1611,7 +1612,7 @@ class Legend {
         useHTML?: boolean
     ): void {
         const legend = this,
-            legendData = item.legendData = item.legendData || {},
+            legendData = item.legendData || {},
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +

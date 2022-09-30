@@ -19,6 +19,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
+import type { LegendDataObject } from '../Legend/LegendItemObject';
 import type PointLike from './PointLike';
 import type {
     PointEventsOptions,
@@ -448,7 +449,7 @@ class Point {
             }
         }
 
-        if (point.legendData && point.legendData.item) {
+        if ((point.legendData || {}).item) {
             // pies have legend items
             chart.legend.destroyItem(point);
         }

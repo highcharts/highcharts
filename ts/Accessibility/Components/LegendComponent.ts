@@ -251,7 +251,7 @@ class LegendComponent extends AccessibilityComponent {
 
                 if (hasPages) {
                     const itemPage = legendData.pageIx || 0;
-                    const y = legendData._itemPos ? legendData._itemPos[1] : 0;
+                    const y = (legendData._itemPos || [])[1] || 0;
                     const h = legendData.item ?
                         Math.round(legendData.item.getBBox().height) :
                         0;
@@ -408,10 +408,7 @@ class LegendComponent extends AccessibilityComponent {
      */
     public proxyLegendItems(): void {
         const component = this,
-            items = (
-                this.chart.legend &&
-                this.chart.legend.allItems || []
-            );
+            items = (this.chart.legend || {}).allItems || [];
 
         let legendData;
 
