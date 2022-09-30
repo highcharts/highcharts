@@ -1755,7 +1755,7 @@ const seriesDefaults: SeriesOptions = {
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
          * be applied only to series which support displaying null points
-         * i.e `heat map` or `tile map`. Does not work with series that don't
+         * i.e `heatmap` or `tilemap`. Does not work with series that don't
          * display null points, like `line`, `column`, `bar` or `pie`.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
@@ -1771,7 +1771,7 @@ const seriesDefaults: SeriesOptions = {
          * with the value of null. Works analogously to
          * [formatter](#plotOptions.series.dataLabels.formatter).
          * `nullFormatter` can be applied only to series which support
-         * displaying null points i.e `heat map` or `tile map`. Does not work
+         * displaying null points i.e `heatmap` or `tilemap`. Does not work
          * with series that don't display null points, like `line`, `column`,
          * `bar` or `pie`.
          *
