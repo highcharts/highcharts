@@ -259,7 +259,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             component.onDataTableCreated(e);
         });
 
-        this.addEvent(chart, 'afterViewData', function (
+        this.addEvent(chart, 'afterDataTableShown', function (
             tableDiv: HTMLDOMElement
         ): void {
             component.dataTableDiv = tableDiv;

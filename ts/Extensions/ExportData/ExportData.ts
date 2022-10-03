@@ -1004,7 +1004,8 @@ function chartToggleDataTable(
     show = pick(show, !this.isDataTableVisible);
 
     // Create the div
-    if (show && !this.dataTableDiv) {
+    const createContainer = show && !this.dataTableDiv;
+    if (createContainer) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
         // Insert after the chart container
@@ -1016,14 +1017,22 @@ function chartToggleDataTable(
 
     // Toggle the visibility
     if (this.dataTableDiv) {
+        const style = this.dataTableDiv.style,
+            oldDisplay = style.display;
 
-        this.dataTableDiv.style.display = show ? 'block' : 'none';
+        style.display = show ? 'block' : 'none';
 
         // Generate the data table
         if (show) {
             this.dataTableDiv.innerHTML = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
+
+            if (createContainer || oldDisplay !== style.display) {
+                // Was hidden, is shown
+                fireEvent(this, 'afterDataTableShown', this.dataTableDiv);
+            }
+            // Is shown and updated
             fireEvent(this, 'afterViewData', this.dataTableDiv);
         }
     }
