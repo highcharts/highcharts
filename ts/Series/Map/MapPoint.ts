@@ -185,11 +185,34 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      */
     public onMouseOver(e?: PointerEvent): void {
         U.clearTimeout(this.colorInterval as any);
-        if (!this.isNull || this.series.options.nullInteraction) {
+        if (
+            // Valid...
+            (!this.isNull && this.visible) ||
+            // ... or interact anyway
+            this.series.options.nullInteraction
+        ) {
             super.onMouseOver.call(this, e);
         } else {
             // #3401 Tooltip doesn't hide when hovering over null points
             (this.series.onMouseOut as any)(e);
+        }
+    }
+
+    public setVisible(vis?: boolean): void {
+        const method = vis ? 'show' : 'hide';
+
+        this.visible = this.options.visible = !!vis;
+
+        // Show and hide associated elements
+        if (this.dataLabel) {
+            this.dataLabel[method]();
+        }
+
+        // For invisible map points, render them as null points rather than
+        // fully removing them. Makes more sense for color axes with data
+        // classes.
+        if (this.graphic) {
+            this.graphic.attr(this.series.pointAttribs(this));
         }
     }
 

@@ -2627,9 +2627,8 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
-            points = series.points,
             chart = series.chart,
             options = series.options,
             seriesMarkerOptions = options.marker,
@@ -4219,7 +4218,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'shadowGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update

@@ -65,7 +65,6 @@ function updateFileContent(filePath, fileContent) {
 
 function uploadFilesTest(params) {
     const fs = require('fs');
-    const mkDirP = require('mkdirp');
 
     return new Promise(resolve => {
         const callback = params.callback,
@@ -84,7 +83,7 @@ function uploadFilesTest(params) {
                 if (contentCallback) {
                     content = contentCallback(from, content);
                 }
-                mkDirP.sync(Path.dirname(to));
+                fs.mkdirSync(Path.dirname(to), { recursive: true });
                 fs.writeFileSync(to, content);
                 if (callback) {
                     // eslint-disable-next-line node/callback-return

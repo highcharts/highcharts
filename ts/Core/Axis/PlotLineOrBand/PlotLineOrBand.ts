@@ -204,7 +204,7 @@ class PlotLineOrBand {
             /**
              * SVG element of the plot line or band.
              *
-             * @name Highcharts.PlotLineOrBand#svgElement
+             * @name Highcharts.PlotLineOrBand#svgElem
              * @type {Highcharts.SVGElement}
              */
             plotLine.svgElem = svgElem = renderer

@@ -1132,7 +1132,7 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<ColumnPoint> = this.points): void {
         const series = this,
             chart = this.chart,
             options = series.options,
@@ -1141,7 +1141,7 @@ class ColumnSeries extends Series {
         let shapeArgs;
 
         // draw the columns
-        series.points.forEach(function (point): void {
+        points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
                 hasGraphic = !!graphic,

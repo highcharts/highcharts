@@ -23,6 +23,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
     states?: SeriesStatesOptions<ErrorBarSeries>;
     whiskerWidth?: number;
@@ -30,7 +31,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
