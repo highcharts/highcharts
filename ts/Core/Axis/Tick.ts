@@ -276,11 +276,11 @@ class Tick {
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
-            dateTimeLabelFormat: dateTimeLabelFormat as any,
+            dateTimeLabelFormat: dateTimeLabelFormat,
             isFirst,
             isLast,
             pos,
-            tick: tick as any,
+            tick: tick,
             tickPositionInfo,
             value
         };
@@ -300,7 +300,7 @@ class Tick {
                 return labelOptions.formatter.call(ctx, ctx);
             }
             if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                ctx.text = axis.defaultLabelFormatter.call(ctx, ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
             return axis.defaultLabelFormatter.call(ctx, ctx);
@@ -456,9 +456,9 @@ class Tick {
             pos = {
                 x: horiz ?
                     correctFloat(
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) +
+                        axis.translate(
+                            tickPos + tickmarkOffset, void 0, void 0, old
+                        ) +
                         axis.transB
                     ) :
                     (
@@ -487,9 +487,9 @@ class Tick {
                     ) :
                     correctFloat(
                         (cHeight as any) -
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) -
+                        axis.translate(
+                            tickPos + tickmarkOffset, void 0, void 0, old
+                        ) -
                         axis.transB
                     )
             };

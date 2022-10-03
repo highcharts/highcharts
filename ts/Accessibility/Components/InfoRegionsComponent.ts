@@ -21,11 +21,15 @@
 
 
 import type Accessibility from '../Accessibility';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type {
+    ScreenReaderFormatterCallbackFunction
+} from '../Options/A11yOptions';
 
 import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -283,7 +287,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
+                        ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
                     return formatter ? formatter(chart) :
@@ -495,7 +499,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsList = getAnnotationsInfoHTML(
-                chart as Highcharts.AnnotationChart
+                chart as AnnotationChart
             ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',

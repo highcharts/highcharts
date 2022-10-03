@@ -5,7 +5,8 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const log = require('./lib/log');
-const fs = require('fs-extra');
+const fs = require('fs');
+const libFS = require('./lib/fs');
 const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
@@ -178,6 +179,10 @@ function copyFiles() {
             to
         } = folder;
         getFilesInFolder(from, true)
+            .filter(path => (
+                !(path.startsWith('es-modules') && path.endsWith('.d.ts')) &&
+                path !== 'package.json'
+            ))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);
             });
@@ -189,7 +194,7 @@ function copyFiles() {
     // Copy all the files to release repository
     Object.keys(mapFromTo).forEach(from => {
         const to = mapFromTo[from];
-        fs.copySync(from, to);
+        libFS.copyAllFiles(from, to);
     });
     log.message('Files copied successfully!');
 }

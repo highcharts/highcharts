@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -26,12 +32,11 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import ColorString from '../../../Core/Color/ColorString';
 const {
     extend,
     correctFloat,
@@ -39,17 +44,23 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
         resetZones?: boolean;
     }
 }
 
-/**
+/* *
  *
- * Class
+ *  Class
  *
- */
+ * */
 
 /**
  * The MACD series type.
@@ -61,6 +72,13 @@ declare module '../../../Core/Series/SeriesLike' {
  * @augments Highcharts.Series
  */
 class MACDIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -166,11 +184,11 @@ class MACDIndicator extends SMAIndicator {
         minPointLength: 0
     } as MACDOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<MACDPoint> = void 0 as any;
     public options: MACDOptions = void 0 as any;
@@ -181,31 +199,47 @@ class MACDIndicator extends SMAIndicator {
     public macdZones: MACDZonesOptions = void 0 as any;
     public signalZones: MACDZonesOptions = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
+        const originalColor = this.color,
+            originalColorIndex = this.userOptions._colorIndex;
+
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
-            // Set default color for a signal line and the histogram:
-            this.options = merge({
-                signalLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
-                },
-                macdLine: {
-                    styles: {
-                        color: this.color
-                    }
+            // If the default colour doesn't set, get the next available from
+            // the array and apply it #15608.
+            if (defined(this.userOptions._colorIndex)) {
+                if (
+                    this.options.signalLine &&
+                    this.options.signalLine.styles &&
+                    !this.options.signalLine.styles.lineColor
+                ) {
+                    this.userOptions._colorIndex++;
+                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.options.signalLine.styles.lineColor =
+                        this.color as ColorString;
                 }
-            }, this.options);
+
+                if (
+                    this.options.macdLine &&
+                    this.options.macdLine.styles &&
+                    !this.options.macdLine.styles.lineColor
+                ) {
+                    this.userOptions._colorIndex++;
+                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.options.macdLine.styles.lineColor =
+                        this.color as ColorString;
+                }
+            }
+
 
             // Zones have indexes automatically calculated, we need to
             // translate them to support multiple lines within one indicator
@@ -221,6 +255,10 @@ class MACDIndicator extends SMAIndicator {
             };
             this.resetZones = true;
         }
+
+        // Reset color and index #15608.
+        this.color = originalColor;
+        this.userOptions._colorIndex = originalColorIndex;
     }
 
     public toYData(
@@ -484,6 +522,12 @@ class MACDIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype.crispCol;
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
@@ -528,6 +572,12 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  * */
 
 export default MACDIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `MACD` series. If the [type](#series.macd.type) option is not

@@ -46,6 +46,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    defined,
     merge,
     pick
 } = U;
@@ -128,7 +129,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 0,
                 scrollableMinHeight - this.chartHeight
             );
-            if (scrollablePixelsY) {
+            if (defined(scrollablePixelsY)) {
                 this.scrollablePlotBox = (
                     this.renderer.scrollablePlotBox = merge(this.plotBox)
                 );
@@ -498,7 +499,7 @@ addEvent(Series, 'show', function (): void {
  *         Scrollable plot area
  * @sample highcharts/chart/scrollable-plotarea-vertical
  *         Vertically scrollable plot area
- * @sample {gantt} highcharts/chart/scrollable-plotarea-vertical
+ * @sample {gantt} gantt/chart/scrollable-plotarea-vertical
  *         Gantt chart with vertically scrollable plot area
  *
  * @since     6.1.0

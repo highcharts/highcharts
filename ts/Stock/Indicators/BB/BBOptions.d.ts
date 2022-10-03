@@ -24,7 +24,7 @@ import type {
  *
  * */
 
-export interface BBOptions extends SMAOptions, MultipleLinesComposition.Options{
+export interface BBOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     params?: BBParamsOptions;
 }
 

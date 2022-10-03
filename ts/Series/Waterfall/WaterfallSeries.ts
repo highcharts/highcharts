@@ -342,16 +342,16 @@ class WaterfallSeries extends ColumnSeries {
                         true,
                         false,
                         true
-                    ) || 0;
+                    );
                     shapeArgs.height = Math.abs(
                         shapeArgs.y -
-                        (yAxis.translate(
+                        yAxis.translate(
                             hPos,
                             false,
                             true,
                             false,
                             true
-                        ) || 0)
+                        )
                     );
 
                     const dummyStackItem = yAxis.waterfall.dummyStackItem;
@@ -372,7 +372,7 @@ class WaterfallSeries extends ColumnSeries {
                     previousY,
                     previousY + pointY
                 ) + range[0];
-                shapeArgs.y = yAxis.translate(y, false, true, false, true) || 0;
+                shapeArgs.y = yAxis.translate(y, false, true, false, true);
 
                 // sum points
                 if (point.isSum) {
@@ -382,7 +382,7 @@ class WaterfallSeries extends ColumnSeries {
                         true,
                         false,
                         true
-                    ) || 0;
+                    );
                     shapeArgs.height = Math.min(
                         yAxis.translate(
                             range[0],
@@ -390,7 +390,7 @@ class WaterfallSeries extends ColumnSeries {
                             true,
                             false,
                             true
-                        ) || 0,
+                        ),
                         yAxis.len
                     ) - shapeArgs.y; // #4256
 
@@ -417,7 +417,7 @@ class WaterfallSeries extends ColumnSeries {
                         true,
                         false,
                         true
-                    ) || 0;
+                    );
                     shapeArgs.height = Math.abs(
                         shapeArgs.y -
                         Math.min(
@@ -427,7 +427,7 @@ class WaterfallSeries extends ColumnSeries {
                                 true,
                                 false,
                                 true
-                            ) || 0,
+                            ),
                             yAxis.len
                         )
                     );
@@ -439,26 +439,26 @@ class WaterfallSeries extends ColumnSeries {
                 // and get shape height (#3886)
                 } else {
                     shapeArgs.height = yValue > 0 ?
-                        (yAxis.translate(
+                        yAxis.translate(
                             previousY,
                             false,
                             true,
                             false,
                             true
-                        ) || 0) - shapeArgs.y :
-                        (yAxis.translate(
+                        ) - shapeArgs.y :
+                        yAxis.translate(
                             previousY,
                             false,
                             true,
                             false,
                             true
-                        ) || 0) - (yAxis.translate(
+                        ) - yAxis.translate(
                             previousY - yValue,
                             false,
                             true,
                             false,
                             true
-                        ) || 0);
+                        );
 
                     previousY += yValue;
                     point.below = previousY < threshold;
@@ -672,13 +672,13 @@ class WaterfallSeries extends ColumnSeries {
                     connectorThreshold = prevStackX.connectorThreshold;
 
                     yPos = Math.round(
-                        ((yAxis.translate(
+                        (yAxis.translate(
                             connectorThreshold,
                             0 as any,
                             1 as any,
                             0 as any,
                             1 as any
-                        ) as any) +
+                        ) +
                         (reversedYAxis ? isPos : 0))
                     ) - graphNormalizer;
                 } else {

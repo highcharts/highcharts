@@ -21,12 +21,11 @@ import type {
 import type EMAPoint from './EMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -50,6 +49,12 @@ const {
  * @augments Highcharts.Series
  */
 class EMAIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Exponential moving average indicator (EMA). This series requires the
@@ -234,6 +239,12 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
  * */
 
 export default EMAIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `EMA` series. If the [type](#series.ema.type) option is not

@@ -79,6 +79,7 @@ export interface ExportingButtonOptions {
     text?: string;
     theme?: ButtonThemeObject;
     titleKey?: string;
+    useHTML?: boolean;
     verticalAlign?: VerticalAlignValue;
     width?: number;
     x?: number;

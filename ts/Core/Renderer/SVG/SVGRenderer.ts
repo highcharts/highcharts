@@ -673,7 +673,7 @@ class SVGRenderer implements SVGRendererLike {
      * The shape type.
      *
      * @param {boolean} [useHTML=false]
-     * Wether to use HTML to render the label.
+     * Whether to use HTML to render the label.
      *
      * @return {Highcharts.SVGElement}
      * The button element.
@@ -683,7 +683,7 @@ class SVGRenderer implements SVGRendererLike {
         x: number,
         y: number,
         callback: EventCallback<SVGElement>,
-        theme?: ButtonThemeObject,
+        theme: ButtonThemeObject = {},
         hoverState?: SVGAttributes,
         selectState?: SVGAttributes,
         disabledState?: SVGAttributes,
@@ -702,26 +702,23 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            states = (theme && theme.states) || {};
+            states = theme.states || {};
 
-        if (theme) {
-            delete theme.states;
-        }
+        let curState = 0;
 
-        let curState = 0,
-            // Make a copy of normalState (#13798)
-            // (reference to options.rangeSelector.buttonTheme)
-            normalState: SVGAttributes = theme ? merge(theme) : {};
+        theme = merge(theme);
+        delete theme.states;
 
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
             fontWeight: 'normal'
-        }, normalState.style);
-        delete normalState.style;
+        }, theme.style);
+        delete theme.style;
 
-        // Remove stylable attributes
-        normalState = AST.filterUserAttributes(normalState);
+        // Remove stylable attributes. Pass in the ButtonThemeObject and get the
+        // SVGAttributes subset back.
+        let normalState = AST.filterUserAttributes(theme);
 
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
@@ -771,7 +768,7 @@ class SVGRenderer implements SVGRendererLike {
             delete disabledState.style;
         }
 
-        // Add the events. IE9 and IE10 need mouseover and mouseout to funciton
+        // Add the events. IE9 and IE10 need mouseover and mouseout to function
         // (#667).
         addEvent(
             label.element, isMS ? 'mouseover' : 'mouseenter',
@@ -828,9 +825,19 @@ class SVGRenderer implements SVGRendererLike {
 
         // Presentational attributes
         if (!styledMode) {
-            (label
-                .attr(normalState) as any)
-                .css(extend({ cursor: 'default' }, normalStyle));
+            label
+                .attr(normalState)
+                .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
+
+            // HTML labels don't need to handle pointer events because click and
+            // mouseenter/mouseleave is bound to the underlying <g> element.
+            // Should this be reconsidered, we need more complex logic to share
+            // events between the <g> and its <div> counterpart, and avoid
+            // triggering mouseenter/mouseleave when hovering from one to the
+            // other (#17440).
+            if (useHTML) {
+                label.text.css({ pointerEvents: 'none' });
+            }
         }
 
         return label
@@ -1708,7 +1715,7 @@ class SVGRenderer implements SVGRendererLike {
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
-            win.getComputedStyle // old IE doesn't support it
+            (win.getComputedStyle) // old IE doesn't support it
         ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,
@@ -2051,7 +2058,7 @@ class SVGRenderer implements SVGRendererLike {
      *        coordinates it should be pinned to.
      *
      * @param {boolean} [useHTML=false]
-     *        Wether to use HTML to render the label.
+     *        Whether to use HTML to render the label.
      *
      * @param {boolean} [baseline=false]
      *        Whether to position the label relative to the text baseline,

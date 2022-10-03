@@ -12,12 +12,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type SMAIndicatorType from '../SMA/SMAIndicator';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -35,10 +42,11 @@ const {
 } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    column: {
+        prototype: columnProto
+    },
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
@@ -53,7 +61,11 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils
 function arrayExtremesOHLC(
@@ -82,10 +94,13 @@ function arrayExtremesOHLC(
     };
 }
 
-/* eslint-enable require-jsdoc */
+const abs = Math.abs;
 
-const abs = Math.abs,
-    columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Volume By Price (VBP) series type.
@@ -97,6 +112,13 @@ const abs = Math.abs,
  * @augments Highcharts.Series
  */
 class VBPIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Volume By Price indicator.
      *
@@ -199,6 +221,12 @@ class VBPIndicator extends SMAIndicator {
         }
     } as VBPOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<VBPPoint> = void 0 as any;
     public negWidths: Array<number> = void 0 as any;
     public options: VBPOptions = void 0 as any;
@@ -209,6 +237,12 @@ class VBPIndicator extends SMAIndicator {
     public volumeDataArray: Array<number> = void 0 as any;
     public zoneStarts: Array<number> = void 0 as any;
     public zoneLinesSVG?: SVGElement = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(
         chart: Chart
@@ -324,11 +358,11 @@ class VBPIndicator extends SMAIndicator {
 
         if ((indicator.options.volumeDivision as any).enabled) {
             indicator.posNegVolume(true, true);
-            columnPrototype.drawPoints.apply(indicator, arguments);
+            columnProto.drawPoints.apply(indicator, arguments);
             indicator.posNegVolume(false, false);
         }
 
-        columnPrototype.drawPoints.apply(indicator, arguments);
+        columnProto.drawPoints.apply(indicator, arguments);
     }
 
     // Function responsible for dividing volume into positive and negative
@@ -421,7 +455,7 @@ class VBPIndicator extends SMAIndicator {
             barX: number,
             barY: number;
 
-        columnPrototype.translate.apply(indicator);
+        columnProto.translate.apply(indicator);
         indicatorPoints = indicator.points;
 
         // Do translate operation when points exist
@@ -801,25 +835,9 @@ class VBPIndicator extends SMAIndicator {
 
 /* *
  *
- *  Class Namespace
+ *  Class Prototype
  *
  * */
-namespace VBPIndicator {
-    export interface VBPIndicatorPriceZoneObject {
-        end: number;
-        index: number;
-        negativeVolumeData: number;
-        positiveVolumeData: number;
-        start: number;
-        wholeVolumeData: number;
-        x: number;
-    }
-
-    export interface VBPIndicatorStyleOptions {
-        enabled?: boolean;
-        styles?: CSSObject;
-    }
-}
 
 interface VBPIndicator {
     nameBase: string;
@@ -840,9 +858,38 @@ extend(VBPIndicator.prototype, {
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
-    getColumnMetrics: columnPrototype.getColumnMetrics,
-    crispCol: columnPrototype.crispCol
+    getColumnMetrics: columnProto.getColumnMetrics,
+    crispCol: columnProto.crispCol
 });
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace VBPIndicator {
+    export interface VBPIndicatorPriceZoneObject {
+        end: number;
+        index: number;
+        negativeVolumeData: number;
+        positiveVolumeData: number;
+        start: number;
+        wholeVolumeData: number;
+        x: number;
+    }
+
+    export interface VBPIndicatorStyleOptions {
+        enabled?: boolean;
+        styles?: CSSObject;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -859,6 +906,13 @@ SeriesRegistry.registerSeriesType('vbp', VBPIndicator);
  * */
 
 export default VBPIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `Volume By Price (VBP)` series. If the [type](#series.vbp.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

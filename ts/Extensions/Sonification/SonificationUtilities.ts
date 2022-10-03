@@ -25,7 +25,7 @@ import type {
 } from './SonificationOptions';
 import type Point from '../../Core/Series/Point';
 import type PointSonify from './PointSonify';
-import type RangeSelector from '../RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type Series from '../../Core/Series/Series';
 
 import MusicalFrequencies from './MusicalFrequencies.js';

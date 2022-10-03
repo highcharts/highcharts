@@ -867,7 +867,7 @@ namespace RadialAxis {
         value: number,
         length?: number
     ): PositionObject {
-        const translatedVal = this.translate(value) as any;
+        const translatedVal = this.translate(value);
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -1086,7 +1086,7 @@ namespace RadialAxis {
         // Disable certain features on angular and polar axes
         if (angular || polar) {
             this.isRadial = true;
-            (chartOptions.chart as any).zoomType = null as any;
+            (chartOptions.chart as any).zooming.type = null as any;
 
             if (!this.labelCollector) {
                 this.labelCollector = this.createLabelCollector();
@@ -1139,7 +1139,7 @@ namespace RadialAxis {
             labelOptions = axis.options.labels as any,
             angle = (
                 (
-                    (axis.translate(this.pos) as any) + axis.startAngleRad +
+                    axis.translate(this.pos) + axis.startAngleRad +
                     Math.PI / 2
                 ) / Math.PI * 180
             ) % 360,

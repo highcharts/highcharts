@@ -9,7 +9,7 @@ QUnit.test('Rotation mode', function (assert) {
                     },
                     {
                         parent: 'root',
-                        name: 'First',
+                        name: 'First<br>item',
                         value: 1
                     },
                     {
@@ -58,6 +58,14 @@ QUnit.test('Rotation mode', function (assert) {
         }),
         [0, 22.5, 67.5, -67.5, -22.5, 22.5, 67.5, -67.5, -22.5],
         'Auto rotationMode should be parallel'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.element
+            .querySelector('.highcharts-text-outline')
+            .getAttribute('y'),
+        null,
+        'The y attribute should not be set on text outline element (#17677)'
     );
 
     chart.series[0].update({

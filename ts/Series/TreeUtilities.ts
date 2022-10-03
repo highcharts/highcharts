@@ -144,8 +144,8 @@ function getColor(
  */
 function getLevelOptions<T extends TreeUtilities.Series>(
     params: any
-): (T['mapOptionsToLevel']|null) {
-    let result: T['mapOptionsToLevel'] = null,
+): (T['mapOptionsToLevel']) {
+    let result: T['mapOptionsToLevel'] = {},
         defaults: any,
         converted,
         i: number,
@@ -154,7 +154,6 @@ function getLevelOptions<T extends TreeUtilities.Series>(
         levels;
 
     if (isObject(params)) {
-        result = {};
         from = isNumber(params.from) ? params.from : 1;
         levels = params.levels;
         converted = {} as any;

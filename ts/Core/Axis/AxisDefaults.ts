@@ -21,6 +21,7 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
+import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -2353,11 +2354,11 @@ namespace AxisDefaults {
          * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
+         * @sample {highcharts} highcharts/demo/gauge-solid/
+         *         Gauge with stops
+         *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
-         *
-         * @sample {highcharts} highcharts/demo/gauge-solid/
-         *         True by default
          *
          * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
@@ -2521,8 +2522,6 @@ namespace AxisDefaults {
              *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
-             * @default    {highcharts|highmaps} right
-             * @default    {highstock} left
              * @apioption  yAxis.labels.align
              */
 
@@ -3043,10 +3042,10 @@ namespace AxisDefaults {
              * @since   2.1.5
              * @product highcharts
              */
-            formatter: function (this: Highcharts.StackItemObject): string {
+            formatter: function (this: StackItem): string {
                 const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total, -1);
+                return numberFormatter(this.total || 0, -1);
             },
 
             /**
