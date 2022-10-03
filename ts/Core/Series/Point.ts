@@ -19,7 +19,6 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
-import type { LegendDataObject } from '../Legend/LegendItemObject';
 import type PointLike from './PointLike';
 import type {
     PointEventsOptions,
