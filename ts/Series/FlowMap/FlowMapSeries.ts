@@ -259,23 +259,23 @@ class FlowMapSeries extends SankeySeries {
      */
     public translateLink(point: FlowMapPoint): void {
 
-        let chart = this.chart,
+        const chart = this.chart,
             fromPoint = chart.get(point.options.from || ''),
             toPoint = chart.get(point.options.to || ''),
-            linkHeight = 0, // 10,
             pointOptions = point.options,
+            // TODO: Which should override what?
             markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
             minWeight = this.options.minWeight,
             maxWeight = this.options.maxWeight,
-            scaledWeight;
-
-        const curveFactor = pointOptions.curveFactor || 0,
+            curveFactor = pointOptions.curveFactor || 0,
             weight = pointOptions.weight || 1,
-            growTowards = this.options.growTowards || pointOptions.growTowards,
+            // TODO: Make it work the other way around.
+            growTowards = pointOptions.growTowards || this.options.growTowards,
             offset = markerEndOptions && markerEndOptions.height || 0;
 
+
         // Get a new rescaled weight
-        scaledWeight = this.scaleWeight(
+        const scaledWeight = this.scaleWeight(
             weight,
             (this as any).currentMinWeight,
             (this as any).currentMaxWeight,
@@ -314,7 +314,7 @@ class FlowMapSeries extends SankeySeries {
             point.series.isDirty = true;
         }
 
-        // Save original point location for later in case there is an offset.
+        // Save original point location.
         point.oldFromPoint = fromPoint;
         point.oldToPoint = toPoint;
 
@@ -324,15 +324,12 @@ class FlowMapSeries extends SankeySeries {
             toX = toPoint.plotX || 0;
 
         point.shapeType = 'path';
-        point.linkBase = [
-            fromY,
-            fromY + linkHeight,
-            toY,
-            toY + linkHeight
-        ];
+
 
         // Links going from `fromPoint` to `toPoint`.
-        if (offset) { // Calculate ending point for the curve with offset.
+
+        // An offset makes room for arrows if they are specified.
+        if (offset) {
             let dX = toX - fromX,
                 dY = toY - fromY;
 
