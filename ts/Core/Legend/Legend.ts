@@ -919,7 +919,7 @@ class Legend {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(
-                    (series.legendData || {}).items as any ||
+                    (series.legendData || {}).labels as any ||
                     (
                         seriesOptions.legendType === 'point' ?
                             series.data :

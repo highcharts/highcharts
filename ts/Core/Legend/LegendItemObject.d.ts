@@ -32,7 +32,7 @@ export interface LegendDataObject {
     group?: SVGElement;
     item?: (ColorAxis.LegendItemObject|SVGElement);
     itemHeight?: number;
-    items?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
+    labels?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
     itemWidth?: number;
     line?: SVGElement;
     pageIx?: number;

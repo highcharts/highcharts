@@ -278,7 +278,7 @@ class ColorAxis extends Axis implements AxisLike {
             colorCount = chart.options.chart.colorCount;
 
         axis.dataClasses = dataClasses = [] as Array<ColorAxis.DataClassesOptions>;
-        legendData.items = [] as Array<ColorAxis.LegendItemObject>;
+        legendData.labels = [] as Array<ColorAxis.LegendItemObject>;
 
         (userOptions.dataClasses || []).forEach(function (dataClass, i): void {
             let colors: any;
@@ -853,8 +853,8 @@ class ColorAxis extends Axis implements AxisLike {
         if (legendData.item) {
             chart.legend.destroyItem(axis);
 
-        } else if (legendData.items) {
-            for (const item of legendData.items) {
+        } else if (legendData.labels) {
+            for (const item of legendData.labels) {
                 chart.legend.destroyItem(item as any);
             }
         }
@@ -892,7 +892,7 @@ class ColorAxis extends Axis implements AxisLike {
             chart = axis.chart,
             legendItems = (
                 axis.legendData &&
-                axis.legendData.items as Array<ColorAxis.LegendItemObject> ||
+                axis.legendData.labels as Array<ColorAxis.LegendItemObject> ||
                 []
             ),
             legendOptions = chart.options.legend,
