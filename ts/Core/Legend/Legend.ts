@@ -492,14 +492,7 @@ class Legend {
             legendData = item.legendData || {};
 
         // destroy SVG elements
-        ['legendLine'].forEach(
-            function (key: string): void {
-                if ((item as any)[key]) {
-                    (item as any)[key] = (item as any)[key].destroy();
-                }
-            }
-        );
-        for (const key of ['group', 'item', 'symbol'] as const) {
+        for (const key of ['group', 'item', 'line', 'symbol'] as const) {
             if (legendData[key]) {
                 legendData[key] = legendData[key].destroy();
             }
@@ -518,22 +511,11 @@ class Legend {
      * @function Highcharts.Legend#destroy
      */
     public destroy(): void {
-        const destroyThat = <T extends AnyRecord>(
-            that: T,
-            key: keyof T
-        ): void => {
-            if (that[key]) {
-                that[key] = that[key].destroy();
-            }
-        };
-
-        let legendData;
+        const legend: AnyRecord = this;
 
         // Destroy items
         for (const item of this.getAllItems()) {
-            legendData = item.legendData || {};
-            destroyThat(legendData, 'group' as const);
-            destroyThat(legendData, 'item' as const);
+            this.destroyItem(item);
         }
 
         // Destroy legend elements
@@ -547,7 +529,9 @@ class Legend {
             'title',
             'group'
         ] as const) {
-            destroyThat(this, key);
+            if (legend[key]) {
+                legend[key] = legend[key].destroy();
+            }
         }
 
         this.display = null as any; // Reset in .render on update.
