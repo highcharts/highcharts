@@ -4200,10 +4200,4 @@ export default Chart;
  * @type {boolean|undefined}
  */
 
-/**
- * The dimensions the user can pan the chart.
- *
- * @typedef {"x"|"y"|"xy"} Highcharts.ChartPanningTypeValue
- */
-
 ''; // keeps doclets above in JS file
