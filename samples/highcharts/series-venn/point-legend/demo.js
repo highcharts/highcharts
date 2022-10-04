@@ -1,19 +1,6 @@
 Highcharts.chart('container', {
-    accessibility: {
-        point: {
-            descriptionFormatter: function (point) {
-                var intersection = point.sets.join(', '),
-                    name = point.name,
-                    ix = point.index + 1,
-                    val = point.value;
-                return ix + '. Intersection: ' + intersection + '. ' +
-                    (point.sets.length > 1 ? name + '. ' : '') + 'Value ' + val + '.';
-            }
-        }
-    },
     series: [{
         showInLegend: true,
-        legendType: 'point',
         type: 'venn',
         name: 'The Unattainable Triangle',
         data: [{
@@ -49,5 +36,9 @@ Highcharts.chart('container', {
 
     title: {
         text: 'The Unattainable Triangle'
+    },
+
+    subtitle: {
+        text: "A venn diagram with legend enabled"
     }
 });
