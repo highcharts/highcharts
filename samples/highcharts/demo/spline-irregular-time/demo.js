@@ -12,7 +12,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
-        dateTimeLabelFormats: { // don't display the dummy year
+        dateTimeLabelFormats: { // don't display the year
             month: '%e. %b',
             year: '%b'
         },
@@ -42,7 +42,7 @@ Highcharts.chart('container', {
 
     colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
-    // Define the data points. All series have a dummy year of 1970/71 in order
+    // Define the data points. All series have a year of 1970/71 in order
     // to be compared on the same x axis. Note that in JavaScript, months start
     // at 0 for January, 1 for February etc.
     series: [

@@ -67,10 +67,7 @@ function dependencyWheel() {
             dataLabels: {
                 color: '#333',
                 textPath: {
-                    enabled: true,
-                    attributes: {
-                        dy: 5
-                    }
+                    enabled: true
                 },
                 distance: 10
             }

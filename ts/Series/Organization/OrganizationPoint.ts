@@ -102,8 +102,6 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * All nodes in an org chart are equal width.
      * @private
@@ -167,7 +165,6 @@ class OrganizationPoint extends SankeyPointClass {
         }
 
     }
-    /* eslint-enable valid-jsdoc */
 
 }
 

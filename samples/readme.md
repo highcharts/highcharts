@@ -56,7 +56,7 @@ that is available in the test environment.
 
 ```js
 // Instanciate
-var controller = new TestController(chart);
+const controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });

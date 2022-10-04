@@ -21,7 +21,9 @@ import type TreegraphNode from './TreegraphNode';
 import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+
 import { CollapseButtonOptions } from './TreegraphSeriesOptions';
+
 import { Palette } from '../../Core/Color/Palettes';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
