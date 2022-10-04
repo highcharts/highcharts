@@ -462,7 +462,9 @@ const ChartDefaults: ChartOptions = {
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
-         * @type       {Highcharts.ChartPanningTypeValue}
+         * @declare    Highcharts.OptionsChartPanningTypeValue
+         * @type       {string}
+         * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
          * @default    {highmaps} xy
          */
@@ -1029,6 +1031,7 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can zoom by dragging the mouse.
          * Can be one of `x`, `y` or `xy`.
          *
+         * @declare    Highcharts.OptionsChartZoomingTypeValue
          * @type       {string}
          * @default    {highcharts} undefined
          * @product    highcharts highstock gantt
