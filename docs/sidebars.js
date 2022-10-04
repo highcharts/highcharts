@@ -10,7 +10,7 @@ module.exports = {
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
-            'getting-started/how-to-create-custom-highcharts-files',
+            'getting-started/how-to-create-custom-highcharts-packages',
             'getting-started/optional-dependencies'
         ],
         'Chart concepts': [
