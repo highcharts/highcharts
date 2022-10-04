@@ -1027,13 +1027,10 @@ function chartToggleDataTable(
             this.dataTableDiv.innerHTML = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
-
-            if (createContainer || oldDisplay !== style.display) {
-                // Was hidden, is shown
-                fireEvent(this, 'afterDataTableShown', this.dataTableDiv);
-            }
-            // Is shown and updated
-            fireEvent(this, 'afterViewData', this.dataTableDiv);
+            fireEvent(this, 'afterViewData', {
+                element: this.dataTableDiv,
+                wasHidden: createContainer || oldDisplay !== style.display
+            });
         }
     }
 
