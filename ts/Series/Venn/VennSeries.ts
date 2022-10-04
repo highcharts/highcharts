@@ -133,6 +133,8 @@ class VennSeries extends ScatterSeries {
      *         Venn diagram
      * @sample {highcharts} highcharts/demo/euler-diagram/
      *         Euler diagram
+     * @sample {highcharts} highcharts/demo/venn-legend-point/
+     *         Venn diagram with a legend listing points
      *
      * @extends      plotOptions.scatter
      * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
