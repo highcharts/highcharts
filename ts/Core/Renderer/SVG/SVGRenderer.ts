@@ -1441,10 +1441,12 @@ class SVGRenderer implements SVGRendererLike {
             /**
              * Set the size and position
              */
-            centerImage = (obj: SVGElement): SVGElement => obj.attr({
-                width: obj.width,
-                height: obj.height
-            });
+            img.centerImage = function (): SVGElement {
+                return this.attr({
+                    width: this.width,
+                    height: this.height
+                });
+            };
 
             /**
              * Width and height setters that take both the image's physical size
@@ -1499,7 +1501,7 @@ class SVGRenderer implements SVGRendererLike {
             img.isImg = true;
 
             if (defined(img.imgwidth) && defined(img.imgheight)) {
-                centerImage(img);
+                img.centerImage();
             } else {
                 // Initialize image to be 0 size so export will still function
                 // if there's no cached sizes.
@@ -1531,7 +1533,7 @@ class SVGRenderer implements SVGRendererLike {
                         img.imgheight = (this as any).height;
 
                         if (img.element) {
-                            centerImage(img);
+                            img.centerImage();
                         }
 
                         // Clean up after #2854 workaround.
