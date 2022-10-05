@@ -370,7 +370,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const legend = this,
                 options = legend.options,
-                legendItem = legendData.item,
+                legendItem = legendData.label,
                 legendLine = legendData.line,
                 legendSymbol = legendData.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
@@ -492,7 +492,7 @@ class Legend {
             legendData = item.legendData || {};
 
         // destroy SVG elements
-        for (const key of ['group', 'item', 'line', 'symbol'] as const) {
+        for (const key of ['group', 'label', 'line', 'symbol'] as const) {
             if (legendData[key]) {
                 legendData[key] = legendData[key].destroy();
             }
@@ -643,7 +643,7 @@ class Legend {
     ): void {
         const options = this.options;
 
-        (item.legendData as any).item.attr({
+        (item.legendData as any).label.attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
                 options.labelFormatter.call(item)
@@ -685,7 +685,7 @@ class Legend {
             useHTML = options.useHTML,
             itemClassName = item.options.className;
 
-        let li = legendData.item,
+        let li = legendData.label,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0);
@@ -710,7 +710,7 @@ class Legend {
                 .add(legend.scrollGroup);
 
             // Generate the list item text and add it to the group
-            legendData.item = li = renderer.text(
+            legendData.label = li = renderer.text(
                 '',
                 ltr ?
                     symbolWidth + symbolPadding :
@@ -1036,7 +1036,7 @@ class Legend {
                 }
 
                 height = this.itemMarginTop +
-                    (item.legendData as any).item.getBBox().height +
+                    (item.legendData as any).label.getBBox().height +
                     this.itemMarginBottom;
 
                 top = (item as any).yAxis.top - chart.plotTop;
@@ -1368,7 +1368,7 @@ class Legend {
                 legendData = item.legendData || {};
                 const y = (legendData._itemPos || [])[1],
                     h = Math.round(
-                        (item.legendData as any).item.getBBox().height
+                        (item.legendData as any).label.getBBox().height
                     );
                 let len = pages.length;
 

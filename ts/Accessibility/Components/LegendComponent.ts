@@ -129,7 +129,7 @@ function setLegendItemHoverState(
 
     legendItem.setState(hoverActive ? 'hover' : '', true);
 
-    for (const key of ['group', 'item', 'symbol'] as const) {
+    for (const key of ['group', 'label', 'symbol'] as const) {
         const svgElement = legendData[key];
         const element = svgElement && svgElement.element || svgElement;
         if (element) {
@@ -252,8 +252,8 @@ class LegendComponent extends AccessibilityComponent {
                 if (hasPages) {
                     const itemPage = legendData.pageIx || 0;
                     const y = (legendData._itemPos || [])[1] || 0;
-                    const h = legendData.item ?
-                        Math.round(legendData.item.getBBox().height) :
+                    const h = legendData.label ?
+                        Math.round(legendData.label.getBBox().height) :
                         0;
                     hide = y + h - legend.pages[itemPage] > clipHeight ||
                         itemPage !== curPage - 1;
@@ -414,7 +414,7 @@ class LegendComponent extends AccessibilityComponent {
 
         items.forEach((item): void => {
             legendData = item.legendData || {};
-            if (legendData.item && legendData.item.element) {
+            if (legendData.label && legendData.label.element) {
                 component.proxyLegendItem(item);
             }
         });
@@ -430,7 +430,7 @@ class LegendComponent extends AccessibilityComponent {
     ): void {
         const legendData = item.legendData || {};
 
-        if (!legendData.item || !legendData.group) {
+        if (!legendData.label || !legendData.group) {
             return;
         }
 
@@ -449,11 +449,11 @@ class LegendComponent extends AccessibilityComponent {
         };
         // Considers useHTML
         const proxyPositioningElement = legendData.group.div ?
-            legendData.item :
+            legendData.label :
             legendData.group;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
-            click: legendData.item as SVGElement,
+            click: legendData.label as SVGElement,
             visual: proxyPositioningElement.element
         }, attribs);
     }
@@ -683,7 +683,7 @@ namespace LegendComponent {
 
             scrollLegendToItem(this.legend, ix);
 
-            const legendItemProp = legendData.item;
+            const legendItemProp = legendData.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
                 itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
