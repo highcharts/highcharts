@@ -1036,14 +1036,14 @@ class Point {
             point.applyOptions(options);
 
             // Update visuals, #4146
-            // Handle dummy graphic elements for a11y, #12718
-            const hasDummyGraphic = graphic && point.hasDummyGraphic;
+            // Handle mock graphic elements for a11y, #12718
+            const hasMockGraphic = graphic && point.hasMockGraphic;
             const shouldDestroyGraphic = point.y === null ?
-                !hasDummyGraphic :
-                hasDummyGraphic;
+                !hasMockGraphic :
+                hasMockGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasDummyGraphic;
+                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1392,8 +1392,8 @@ class Point {
         }
 
         // Apply hover styles to the existing point
-        // Prevent from dummy null points (#14966)
-        if (point.graphic && !point.hasDummyGraphic) {
+        // Prevent from mocked null points (#14966)
+        if (point.graphic && !point.hasMockGraphic) {
 
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);

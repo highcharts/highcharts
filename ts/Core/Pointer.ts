@@ -541,18 +541,6 @@ class Pointer {
         e: PointerEvent
     ): (Point|undefined) {
 
-        const chart = this.chart;
-        const hoverPoint = chart.hoverPoint;
-        const tooltip = chart.tooltip;
-
-        if (
-            hoverPoint &&
-            tooltip &&
-            tooltip.isStickyOnContact()
-        ) {
-            return hoverPoint;
-        }
-
         let closest: (Point|undefined);
 
         /** @private */
@@ -1118,14 +1106,6 @@ class Pointer {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
-        // #14434: tooltip.options.outside
-        if (tooltip && tooltip.shouldStickOnContact() && this.inClass(
-            e.relatedTarget as any,
-            'highcharts-tooltip-container'
-        )) {
-            return;
-        }
-
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
@@ -1159,8 +1139,9 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseMove
      */
     public onContainerMouseMove(e: MouseEvent): void {
-        const chart = this.chart;
-        const pEvt = this.normalize(e);
+        const chart = this.chart,
+            tooltip = chart.tooltip,
+            pEvt = this.normalize(e);
 
         this.setHoverChartIndex();
 
@@ -1189,9 +1170,19 @@ class Pointer {
                         visiblePlotOnly: true
                     }
                 )
+            ) &&
+
+            // If the tooltip has stickOnContact enabled, do nothing. This
+            // applies regardless of any combinations of the `split` and
+            // `useHTML` options.
+            !(
+                tooltip &&
+                tooltip.shouldStickOnContact(pEvt)
             )
         ) {
-            if (this.inClass(pEvt.target as any, 'highcharts-no-tooltip')) {
+            if (
+                this.inClass(pEvt.target as any, 'highcharts-no-tooltip')
+            ) {
                 this.reset(false, 0);
             } else {
                 this.runPointActions(pEvt);
@@ -1244,23 +1235,23 @@ class Pointer {
      */
     public onDocumentMouseMove(e: MouseEvent): void {
         const chart = this.chart;
+        const tooltip = chart.tooltip;
         const chartPosition = this.chartPosition;
         const pEvt = this.normalize(e, chartPosition);
-        const tooltip = chart.tooltip;
 
         // If we're outside, hide the tooltip
         if (
             chartPosition &&
-            (
-                !tooltip ||
-                !tooltip.isStickyOnContact()
-            ) &&
             !chart.isInsidePlot(
                 pEvt.chartX - chart.plotLeft,
                 pEvt.chartY - chart.plotTop,
                 {
                     visiblePlotOnly: true
                 }
+            ) &&
+            !(
+                tooltip &&
+                tooltip.shouldStickOnContact(pEvt)
             ) &&
             !this.inClass(pEvt.target as any, 'highcharts-tracker')
         ) {
