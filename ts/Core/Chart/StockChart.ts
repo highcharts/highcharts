@@ -333,20 +333,11 @@ function getDefaultAxisOptions(
                 y: -2
             },
             opposite: pick(options.opposite, true),
-
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             *
-             * @private
-             */
             showLastLabel: !!(
                 // #6104, show last label by default for category axes
                 options.categories ||
                 options.type === 'category'
             ),
-
             title: {
                 text: null
             }
