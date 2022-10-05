@@ -28,7 +28,7 @@ install the required dependencies for building custom Highcharts files.
 Create a custom master file
 ---------------------------
 
-Go in your editor to the unpacked folder `highcharts-master/ts/masters/` and
+In your editor, go to the unpacked folder `highcharts-master/ts/masters/` and
 create a new file, named for example `custom.src.ts`. In this example we want a
 basic line chart. To achieve this we will need a setup that lists all the needed
 ES modules like this:
@@ -53,7 +53,7 @@ Please note that the order of the imported ES modules sometimes have to match
 the dependencies of each file. Optional additions therefore should come last.
 See other masters for order information.
 
-For similar examples take a look at existing master files.
+For similar examples take a look at the existing master files.
 
 
 
