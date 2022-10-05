@@ -801,7 +801,7 @@ class Legend {
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
-            legendData.itemWidth ||
+            legendData.labelWidth ||
             bBox.width + itemExtraWidth;
         legend.maxItemWidth = Math.max(
             legend.maxItemWidth, (item.itemWidth as any)

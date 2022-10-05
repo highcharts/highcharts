@@ -587,7 +587,7 @@ class ColorAxis extends Axis implements AxisLike {
         }
 
         // Set how much space this legend item takes up
-        legendData.itemWidth = (
+        legendData.labelWidth = (
             width +
             padding +
             (
