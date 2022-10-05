@@ -17,7 +17,7 @@
  * */
 
 import type Legend from './Legend';
-import type LegendItemObject from './LegendItemObject';
+import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -35,19 +35,19 @@ const {
  * */
 
 declare module '../Axis/AxisLike' {
-    interface AxisLike extends LegendItemObject {
+    interface AxisLike extends LegendItem {
         // nothing to add
     }
 }
 
 declare module '../Series/PointLike' {
-    interface PointLike extends LegendItemObject {
+    interface PointLike extends LegendItem {
         // nothing to add
     }
 }
 
 declare module '../Series/SeriesLike' {
-    interface SeriesLike extends LegendItemObject {
+    interface SeriesLike extends LegendItem {
         drawLegendSymbol: (
             typeof LegendSymbol.drawLineMarker|
             typeof LegendSymbol.drawRectangle

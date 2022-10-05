@@ -27,9 +27,9 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type {
-    LegendDataObject,
-    LegendItemObject
-} from '../../Core/Legend/LegendItemObject';
+    LegendItemObject,
+    LegendItem
+} from '../../Core/Legend/LegendItem';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -742,8 +742,8 @@ class BubbleLegendItem {
  *
  * */
 
-interface BubbleLegendItem extends LegendItemObject {
-    legendData: LegendDataObject;
+interface BubbleLegendItem extends LegendItem {
+    legendData: LegendItemObject;
 }
 
 /* *
