@@ -27,7 +27,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  *
  * */
 
-export interface LegendDataObject {
+export interface LegendItemObject {
     _itemPos?: Array<number>;
     group?: SVGElement;
     label?: (ColorAxis.LegendItemObject|SVGElement);
@@ -39,14 +39,14 @@ export interface LegendDataObject {
     symbol?: SVGElement;
 }
 
-export interface LegendItemObject {
+export interface LegendItem {
     chart: Chart;
     checkbox?: Legend.CheckBoxElement;
     checkboxOffset?: number;
     color?: ColorType;
     itemHeight?: number;
     itemWidth?: number;
-    legendData?: LegendDataObject;
+    legendData?: LegendItemObject;
     name?: string;
     symbol?: SymbolKey;
 }
@@ -57,4 +57,4 @@ export interface LegendItemObject {
  *
  * */
 
-export default LegendItemObject;
+export default LegendItem;

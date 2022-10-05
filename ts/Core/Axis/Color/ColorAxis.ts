@@ -24,12 +24,11 @@ import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
-import type { LegendDataObject } from '../../Legend/LegendItemObject';
+import type { LegendItemObject } from '../../Legend/LegendItem';
 import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
@@ -194,7 +193,7 @@ class ColorAxis extends Axis implements AxisLike {
     public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
-    public legendData?: LegendDataObject;
+    public legendData?: LegendItemObject;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;

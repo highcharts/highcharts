@@ -60,8 +60,8 @@ const {
  * */
 
 
-declare module '../../Core/Legend/LegendItemObject' {
-    interface LegendItemObject {
+declare module '../../Core/Legend/LegendItem' {
+    interface LegendItem {
         a11yProxyElement?: ProxyElement;
     }
 }
