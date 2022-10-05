@@ -961,7 +961,7 @@ namespace OrdinalAxis {
                     if (
                         i > 0 &&
                         series.options.id !== 'highcharts-navigator-series' &&
-                        series.processedXData.length > 3
+                        series.processedXData.length > 1
                     ) {
                         adjustOrdinalExtremesPoints =
                             distanceBetweenPoint !== series.processedXData[1] -
