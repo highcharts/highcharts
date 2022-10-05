@@ -227,7 +227,7 @@ class BubbleLegendItem {
         this.movementX = (options.labels as any).align === 'left' ?
             connectorSpace : 0;
 
-        legendData.itemWidth = size + connectorSpace + itemDistance;
+        legendData.labelWidth = size + connectorSpace + itemDistance;
         legendData.labelHeight = size + this.fontMetrics.h / 2;
     }
 
