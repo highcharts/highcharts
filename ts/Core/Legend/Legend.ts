@@ -370,7 +370,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const legend = this,
                 options = legend.options,
-                legendItem = legendData.label,
+                legendLabel = legendData.label,
                 legendLine = legendData.line,
                 legendSymbol = legendData.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
@@ -383,8 +383,8 @@ class Legend {
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (legendItem) {
-                legendItem.css({
+            if (legendLabel) {
+                legendLabel.css({
                     fill: textColor,
                     color: textColor // #1553, oldIE
                 });
@@ -1585,14 +1585,14 @@ class Legend {
      * @private
      * @function Highcharts.Legend#setItemEvents
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
-     * @param {Highcharts.SVGElement} legendItem
+     * @param {Highcharts.SVGElement} legendLabel
      * @param {boolean} [useHTML=false]
      * @emits Highcharts.Point#event:legendItemClick
      * @emits Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
         item: Legend.Item,
-        legendItem: SVGElement,
+        legendLabel: SVGElement,
         useHTML?: boolean
     ): void {
         const legend = this,
@@ -1604,8 +1604,8 @@ class Legend {
             styledMode = legend.chart.styledMode,
             // When `useHTML`, the symbol is rendered in other group, so
             // we need to apply events listeners to both places
-            legendItems = useHTML ?
-                [legendItem, legendData.symbol] :
+            legendElements = useHTML ?
+                [legendLabel, legendData.symbol] :
                 [legendData.group];
 
         const setOtherItemsState = (state: StatesOptionsKey): void => {
@@ -1622,7 +1622,7 @@ class Legend {
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        for (const element of legendItems) {
+        for (const element of legendElements) {
             if (element) {
                 element
                     .on('mouseover', function (): void {
@@ -1640,12 +1640,12 @@ class Legend {
                         }
 
                         if (!styledMode) {
-                            legendItem.css(legend.options.itemHoverStyle);
+                            legendLabel.css(legend.options.itemHoverStyle);
                         }
                     })
                     .on('mouseout', function (): void {
                         if (!legend.chart.styledMode) {
-                            legendItem.css(
+                            legendLabel.css(
                                 merge(
                                     item.visible ?
                                         legend.itemStyle :
