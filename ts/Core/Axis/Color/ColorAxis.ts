@@ -835,7 +835,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendData && axis.legendData.item) {
+        if (axis.legendData && axis.legendData.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -850,7 +850,7 @@ class ColorAxis extends Axis implements AxisLike {
             chart = axis.chart,
             legendData = axis.legendData || {};
 
-        if (legendData.item) {
+        if (legendData.label) {
             chart.legend.destroyItem(axis);
 
         } else if (legendData.labels) {

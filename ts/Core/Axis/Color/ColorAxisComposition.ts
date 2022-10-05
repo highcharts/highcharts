@@ -384,7 +384,7 @@ namespace ColorAxisComposition {
                 if (
                     series.options.legendType === 'point' &&
                     point.legendData &&
-                    point.legendData.item
+                    point.legendData.label
                 ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }

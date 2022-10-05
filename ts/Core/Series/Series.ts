@@ -2983,7 +2983,7 @@ class Series {
         });
 
         // remove legend items
-        if ((series.legendData || {}).item) {
+        if ((series.legendData || {}).label) {
             series.chart.legend.destroyItem(series);
         }
 
@@ -4440,7 +4440,7 @@ class Series {
                     }
                     if (
                         seriesOptions.showInLegend === false &&
-                        (point.legendData || {}).item
+                        (point.legendData || {}).label
                     ) {
                         chart.legend.destroyItem(point);
                     }
@@ -4791,7 +4791,7 @@ class Series {
         }
 
 
-        if ((series.legendData || {}).item) {
+        if ((series.legendData || {}).label) {
             chart.legend.colorizeItem(series, vis);
         }
 
