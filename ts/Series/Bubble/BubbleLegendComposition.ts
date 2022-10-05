@@ -232,9 +232,9 @@ function getLinesHeights(
     for (i = 0; i < length; i++) {
         legendData = items[i].legendData || {};
         legendData2 = (items[i + 1] || {}).legendData || {};
-        if (legendData.itemHeight) {
+        if (legendData.labelHeight) {
             // for bubbleLegend
-            (items[i] as any).itemHeight = legendData.itemHeight;
+            (items[i] as any).itemHeight = legendData.labelHeight;
         }
         if ( // Line break
             items[i] === items[length - 1] ||

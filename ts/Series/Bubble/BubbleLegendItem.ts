@@ -228,7 +228,7 @@ class BubbleLegendItem {
             connectorSpace : 0;
 
         legendData.itemWidth = size + connectorSpace + itemDistance;
-        legendData.itemHeight = size + this.fontMetrics.h / 2;
+        legendData.labelHeight = size + this.fontMetrics.h / 2;
     }
 
     /**

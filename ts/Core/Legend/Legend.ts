@@ -809,7 +809,7 @@ class Legend {
         legend.totalItemWidth += item.itemWidth as any;
 
         legend.itemHeight = item.itemHeight = Math.round(
-            legendData.itemHeight ||
+            legendData.labelHeight ||
             // use bBox for multiline (#16398)
             (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );

@@ -596,7 +596,7 @@ class ColorAxis extends Axis implements AxisLike {
                     this.options.labels.x + this.maxLabelLength
             )
         );
-        legendData.itemHeight = height + padding + (horiz ? labelPadding : 0);
+        legendData.labelHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
     /**
