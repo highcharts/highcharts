@@ -2962,7 +2962,6 @@ class Axis {
 
         let newTickInterval = tickInterval,
             rotation: (number|undefined),
-            step = labelOptions.step,
             bestScore = Number.MAX_VALUE,
             autoRotation: (Array<number>|undefined);
 
@@ -2976,7 +2975,7 @@ class Axis {
             }
 
             if (autoRotation) {
-                let rotStep,
+                let step,
                     score;
 
 
@@ -2989,22 +2988,22 @@ class Axis {
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
-                        rotStep = step || getStep(
+                        step = getStep(
                             Math.abs(labelMetrics.h / Math.sin(deg2rad * rot))
                         );
 
-                        score = rotStep + Math.abs(rot / 360);
+                        score = step + Math.abs(rot / 360);
 
                         if (score < bestScore) {
                             bestScore = score;
                             rotation = rot;
-                            newTickInterval = rotStep;
+                            newTickInterval = step;
                         }
                     }
                 }
             }
 
-        } else if (!step) { // #4411
+        } else { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
@@ -3014,7 +3013,7 @@ class Axis {
             isNumber(rotationOption) ? rotationOption : 0
         );
 
-        return newTickInterval;
+        return labelOptions.step ? tickInterval : newTickInterval;
     }
 
     /**
