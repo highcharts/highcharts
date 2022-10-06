@@ -1,7 +1,7 @@
 Highcharts.Color.parsers.push({
     regex: /^[a-z]+$/u,
     parse: result => {
-        var rgb = new RGBColor(result[0]);
+        const rgb = new RGBColor(result[0]);
         if (rgb.ok) {
             return [rgb.r, rgb.g, rgb.b, 1]; // returns rgba to Highcharts
         }
