@@ -170,7 +170,7 @@ QUnit.test('Series.update', function (assert) {
 
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should be an instance of the ColumnSeries'
         );
     }
@@ -193,11 +193,11 @@ QUnit.test('Series.update', function (assert) {
     );
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.line,
+            chart.series[0] instanceof Highcharts.Series.types.line,
             'The series should be an instance of the LineSeries'
         );
         assert.notOk(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should not be an instance of the ColumnSeries'
         );
     }
@@ -208,7 +208,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'spline', 'Spline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.spline,
+        chart.series[0] instanceof Highcharts.Series.types.spline,
         'The series should be an instance of the SplineSeries'
     );
 
@@ -224,7 +224,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'area', 'Area type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.area,
+        chart.series[0] instanceof Highcharts.Series.types.area,
         'The series should be an instance of the AreaSeries'
     );
 
@@ -240,7 +240,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'areaspline', 'Areaspline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.areaspline,
+        chart.series[0] instanceof Highcharts.Series.types.areaspline,
         'The series should be an instance of the AreaSpline'
     );
 
@@ -261,7 +261,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'scatter', 'Scatter type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.scatter,
+        chart.series[0] instanceof Highcharts.Series.types.scatter,
         'The series should be an instance of the ScatterSeries'
     );
 
@@ -277,7 +277,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'pie', 'Pie type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.pie,
+        chart.series[0] instanceof Highcharts.Series.types.pie,
         'The series should be an instance of the PieSeries'
     );
 
