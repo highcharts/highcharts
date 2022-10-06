@@ -46,7 +46,7 @@ export interface LegendItem {
     color?: ColorType;
     itemHeight?: number;
     itemWidth?: number;
-    legendData?: LegendItemObject;
+    legendItem?: LegendItemObject;
     name?: string;
     symbol?: SymbolKey;
 }

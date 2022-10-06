@@ -18,8 +18,8 @@ QUnit.test(
         });
 
         assert.notEqual(
-            chart.legend.allItems[0].legendData._itemPos[1], // eslint-disable-line no-underscore-dangle
-            chart.legend.allItems[1].legendData._itemPos[1], // eslint-disable-line no-underscore-dangle
+            chart.legend.allItems[0].legendItem._itemPos[1], // eslint-disable-line no-underscore-dangle
+            chart.legend.allItems[1].legendItem._itemPos[1], // eslint-disable-line no-underscore-dangle
             'Legend item has positive height'
         );
 

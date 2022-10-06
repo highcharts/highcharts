@@ -2,7 +2,7 @@
 Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proceed, legend) {
     proceed.call(this, legend);
 
-    this.legendData.line.attr({
+    this.legendItem.line.attr({
         d: ['M', 0, 10, 'L', 5, 5, 8, 10]
     });
     this.negativeLine = this.chart.renderer
@@ -11,7 +11,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proce
             stroke: this.options.negativeColor,
             'stroke-width': this.options.lineWidth
         })
-        .add(this.legendData.group);
+        .add(this.legendItem.group);
 });
 
 // Create the chart

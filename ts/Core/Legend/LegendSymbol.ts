@@ -88,13 +88,13 @@ namespace LegendSymbol {
         legend: Legend
     ): void {
 
-        const legendData = this.legendData = this.legendData || {},
+        const legendItem = this.legendItem = this.legendItem || {},
             options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
-            legendItemGroup = legendData.group,
+            legendItemGroup = legendItem.group,
             verticalCenter = (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3);
 
@@ -112,7 +112,7 @@ namespace LegendSymbol {
             }
         }
 
-        legendData.line = renderer
+        legendItem.line = renderer
             .path([
                 ['M', 0, verticalCenter],
                 ['L', symbolWidth, verticalCenter]
@@ -139,7 +139,7 @@ namespace LegendSymbol {
                 radius = 0;
             }
 
-            legendData.symbol = legendSymbol = renderer
+            legendItem.symbol = legendSymbol = renderer
                 .symbol(
                     this.symbol as any,
                     (symbolWidth / 2) - radius,
@@ -174,13 +174,13 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
-        const legendData = item.legendData || {},
+        const legendItem = item.legendItem || {},
             options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
-        legendData.symbol = this.chart.renderer
+        legendItem.symbol = this.chart.renderer
             .rect(
                 square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
                 (legend.baseline as any) - symbolHeight + 1, // #3988
@@ -192,7 +192,7 @@ namespace LegendSymbol {
             .attr({
                 zIndex: 3
             })
-            .add(legendData.group);
+            .add(legendItem.group);
 
     }
 

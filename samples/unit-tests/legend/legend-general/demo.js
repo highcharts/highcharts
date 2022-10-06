@@ -162,7 +162,7 @@ QUnit.test(
                     }
                 ]
             }),
-            itemOriginalYPos = +chart.legend.allItems[0].legendData.label
+            itemOriginalYPos = +chart.legend.allItems[0].legendItem.label
                 .element.attributes.y.value;
 
         chart.update({
@@ -174,7 +174,7 @@ QUnit.test(
         });
 
         assert.ok(
-            itemOriginalYPos < +chart.legend.allItems[0].legendData.label
+            itemOriginalYPos < +chart.legend.allItems[0].legendItem.label
                 .element.attributes.y.value,
             'The item should be moved down.'
         );
