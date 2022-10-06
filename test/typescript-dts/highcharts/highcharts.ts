@@ -26,8 +26,8 @@ function test_legend() {
             enabled: true,
             labelFormatter: function (): string {
                 const series = this as Highcharts.Series;
-                if (series.legendData) {
-                    return JSON.stringify(series.legendData as Record<string, SVGElement>);
+                if (series.legendItem) {
+                    return JSON.stringify(series.legendItem as Record<string, SVGElement>);
                 }
                 return '';
             }
