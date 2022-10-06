@@ -38,7 +38,7 @@ QUnit.test('Legend layout', function (assert) {
         var y = s.points[2].plotY || s.yAxis.height;
 
         assert.close(
-            s.legendData.group.translateY,
+            s.legendItem.group.translateY,
             s.yAxis.top - chart.spacing[0] + y,
             20,
             'Label should be next to last point'
@@ -48,8 +48,8 @@ QUnit.test('Legend layout', function (assert) {
     chart.series[1].setData([1, 1, 1]);
     assert.ok(
         Math.abs(
-            chart.series[0].legendData.group.translateY -
-                chart.series[1].legendData.group.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 12,
         'The overlapping items should have sufficient distance'
     );
@@ -60,8 +60,8 @@ QUnit.test('Legend layout', function (assert) {
 
     assert.ok(
         Math.abs(
-            chart.series[0].legendData.group.translateY -
-                chart.series[1].legendData.group.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 12,
         'The overlapping items should have sufficient distance with useHTML (#12055)'
     );
@@ -74,8 +74,8 @@ QUnit.test('Legend layout', function (assert) {
 
     assert.ok(
         Math.abs(
-            chart.series[0].legendData.group.translateY -
-                chart.series[1].legendData.group.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 30,
         'The overlapping items should have sufficient distance when an item margin is applied'
     );
@@ -124,7 +124,7 @@ QUnit.test('Proximate layout and dataGrouping', assert => {
 
     // Avoid using strict position as it may vary between browsers
     assert.ok(
-        chart.series[1].legendData.group.translateY > chart.plotHeight / 2,
+        chart.series[1].legendItem.group.translateY > chart.plotHeight / 2,
         `Legend item for a hidden series should be placed at the bottom
             of chart even when dataGrouping is enabled (#13813).`
     );

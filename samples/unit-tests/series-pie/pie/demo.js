@@ -253,7 +253,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
 
     const point = chart.series[0].points[0];
 
-    Highcharts.fireEvent(point.legendData.label.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.strictEqual(
         point.graphic.attr('visibility'),
         'hidden',
@@ -264,7 +264,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
         'Point graphic should be inside plot'
     );
 
-    Highcharts.fireEvent(point.legendData.label.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.notStrictEqual(
         point.graphic.attr('visibility'),
         'hidden',

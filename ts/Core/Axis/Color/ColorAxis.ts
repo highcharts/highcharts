@@ -137,9 +137,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public static keepProps: Array<string> = [
-        'legendData',
-        'legendItemHeight',
-        'legendItemWidth'
+        'legendItem'
     ];
 
     /* *
@@ -193,7 +191,7 @@ class ColorAxis extends Axis implements AxisLike {
     public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
-    public legendData?: LegendItemObject;
+    public legendItem?: LegendItemObject;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
@@ -268,7 +266,7 @@ class ColorAxis extends Axis implements AxisLike {
     public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this,
             chart = axis.chart,
-            legendData = axis.legendData = axis.legendData || {},
+            legendItem = axis.legendItem = axis.legendItem || {},
             len = (userOptions.dataClasses as any).length,
             options = axis.options;
 
@@ -277,7 +275,7 @@ class ColorAxis extends Axis implements AxisLike {
             colorCount = chart.options.chart.colorCount;
 
         axis.dataClasses = dataClasses = [] as Array<ColorAxis.DataClassesOptions>;
-        legendData.labels = [] as Array<ColorAxis.LegendItemObject>;
+        legendItem.labels = [] as Array<ColorAxis.LegendItemObject>;
 
         (userOptions.dataClasses || []).forEach(function (dataClass, i): void {
             let colors: any;
@@ -368,7 +366,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public setAxisSize(): void {
         const axis = this;
-        const symbol = axis.legendData && axis.legendData.symbol;
+        const symbol = axis.legendItem && axis.legendItem.symbol;
         const chart = axis.chart;
         const legendOptions = chart.options.legend || {};
 
@@ -481,7 +479,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public getOffset(): void {
         const axis = this;
-        const group = axis.legendData && axis.legendData.group;
+        const group = axis.legendItem && axis.legendItem.group;
         const sideOffset = axis.chart.axisOffset[axis.side];
 
         if (group) {
@@ -551,7 +549,7 @@ class ColorAxis extends Axis implements AxisLike {
         item: ColorAxis
     ): void {
         const axis = this,
-            legendData = item.legendData || {},
+            legendItem = item.legendItem || {},
             padding = legend.padding,
             legendOptions = legend.options,
             itemDistance = pick(legendOptions.itemDistance, 10),
@@ -574,19 +572,19 @@ class ColorAxis extends Axis implements AxisLike {
         this.setLegendColor();
 
         // Create the gradient
-        if (!legendData.symbol) {
-            legendData.symbol = this.chart.renderer.rect(
+        if (!legendItem.symbol) {
+            legendItem.symbol = this.chart.renderer.rect(
                 0,
                 (legend.baseline as any) - 11,
                 width,
                 height
             ).attr({
                 zIndex: 1
-            }).add(legendData.group);
+            }).add(legendItem.group);
         }
 
         // Set how much space this legend item takes up
-        legendData.labelWidth = (
+        legendItem.labelWidth = (
             width +
             padding +
             (
@@ -595,7 +593,7 @@ class ColorAxis extends Axis implements AxisLike {
                     this.options.labels.x + this.maxLabelLength
             )
         );
-        legendData.labelHeight = height + padding + (horiz ? labelPadding : 0);
+        legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
     /**
@@ -720,7 +718,7 @@ class ColorAxis extends Axis implements AxisLike {
         point?: ColorAxisComposition.PointComposition
     ): void {
         const axis = this,
-            legendData = axis.legendData || {},
+            legendItem = axis.legendItem || {},
             plotX = point && point.plotX,
             plotY = point && point.plotY,
             axisPos = axis.pos,
@@ -749,11 +747,11 @@ class ColorAxis extends Axis implements AxisLike {
             if (
                 axis.cross &&
                 !axis.cross.addedToColorAxis &&
-                legendData.group
+                legendItem.group
             ) {
                 axis.cross
                     .addClass('highcharts-coloraxis-marker')
-                    .add(legendData.group);
+                    .add(legendItem.group);
 
                 axis.cross.addedToColorAxis = true;
 
@@ -834,7 +832,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendData && axis.legendData.label) {
+        if (axis.legendItem && axis.legendItem.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -847,13 +845,13 @@ class ColorAxis extends Axis implements AxisLike {
     public destroyItems(): void {
         const axis = this,
             chart = axis.chart,
-            legendData = axis.legendData || {};
+            legendItem = axis.legendItem || {};
 
-        if (legendData.label) {
+        if (legendItem.label) {
             chart.legend.destroyItem(axis);
 
-        } else if (legendData.labels) {
-            for (const item of legendData.labels) {
+        } else if (legendItem.labels) {
+            for (const item of legendItem.labels) {
                 chart.legend.destroyItem(item as any);
             }
         }
@@ -890,8 +888,8 @@ class ColorAxis extends Axis implements AxisLike {
         const axis = this,
             chart = axis.chart,
             legendItems = (
-                axis.legendData &&
-                axis.legendData.labels as Array<ColorAxis.LegendItemObject> ||
+                axis.legendItem &&
+                axis.legendItem.labels as Array<ColorAxis.LegendItemObject> ||
                 []
             ),
             legendOptions = chart.options.legend,

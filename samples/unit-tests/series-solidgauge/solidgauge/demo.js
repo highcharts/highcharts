@@ -181,7 +181,7 @@ QUnit.test('Solid gauge: legend', function (assert) {
     });
 
     assert.strictEqual(
-        chart.legend.allItems[0].legendData.symbol.element.getAttribute('fill'),
+        chart.legend.allItems[0].legendItem.symbol.element.getAttribute('fill'),
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
         'Series legend item: color taken from series'
     );

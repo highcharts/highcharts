@@ -90,7 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
  * @private
  */
 function scrollLegendToItem(legend: Legend, itemIx: number): void {
-    const itemPage = (legend.allItems[itemIx].legendData || {}).pageIx,
+    const itemPage = (legend.allItems[itemIx].legendItem || {}).pageIx,
         curPage: number = legend.currentPage as any;
 
     if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
@@ -123,14 +123,14 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  */
 function setLegendItemHoverState(
     hoverActive: boolean,
-    legendItem: Legend.Item
+    item: Legend.Item
 ): void {
-    const legendData = legendItem.legendData || {};
+    const legendItem = item.legendItem || {};
 
-    legendItem.setState(hoverActive ? 'hover' : '', true);
+    item.setState(hoverActive ? 'hover' : '', true);
 
     for (const key of ['group', 'label', 'symbol'] as const) {
-        const svgElement = legendData[key];
+        const svgElement = legendItem[key];
         const element = svgElement && svgElement.element || svgElement;
         if (element) {
             fireEvent(element, hoverActive ? 'mouseover' : 'mouseout');
@@ -238,7 +238,7 @@ class LegendComponent extends AccessibilityComponent {
         const curPage = legend.currentPage || 1;
         const clipHeight = legend.clipHeight || 0;
 
-        let legendData;
+        let legendItem;
 
         items.forEach((item): void => {
             if (item.a11yProxyElement) {
@@ -247,13 +247,13 @@ class LegendComponent extends AccessibilityComponent {
 
                 let hide = false;
 
-                legendData = item.legendData || {};
+                legendItem = item.legendItem || {};
 
                 if (hasPages) {
-                    const itemPage = legendData.pageIx || 0;
-                    const y = (legendData._itemPos || [])[1] || 0;
-                    const h = legendData.label ?
-                        Math.round(legendData.label.getBBox().height) :
+                    const itemPage = legendItem.pageIx || 0;
+                    const y = (legendItem._itemPos || [])[1] || 0;
+                    const h = legendItem.label ?
+                        Math.round(legendItem.label.getBBox().height) :
                         0;
                     hide = y + h - legend.pages[itemPage] > clipHeight ||
                         itemPage !== curPage - 1;
@@ -298,7 +298,7 @@ class LegendComponent extends AccessibilityComponent {
             let i = 0,
                 res;
             for (const item of legend.allItems) {
-                if (((item.legendData || {}).pageIx || 0) + 1 === newPageIx) {
+                if (((item.legendItem || {}).pageIx || 0) + 1 === newPageIx) {
                     res = chart.highlightLegendItem(i);
                     if (res) {
                         this.highlightedLegendItemIx = i;
@@ -410,11 +410,11 @@ class LegendComponent extends AccessibilityComponent {
         const component = this,
             items = (this.chart.legend || {}).allItems || [];
 
-        let legendData;
+        let legendItem;
 
         items.forEach((item): void => {
-            legendData = item.legendData || {};
-            if (legendData.label && legendData.label.element) {
+            legendItem = item.legendItem || {};
+            if (legendItem.label && legendItem.label.element) {
                 component.proxyLegendItem(item);
             }
         });
@@ -428,9 +428,9 @@ class LegendComponent extends AccessibilityComponent {
     public proxyLegendItem(
         item: Legend.Item
     ): void {
-        const legendData = item.legendData || {};
+        const legendItem = item.legendItem || {};
 
-        if (!legendData.label || !legendData.group) {
+        if (!legendItem.label || !legendItem.group) {
             return;
         }
 
@@ -448,12 +448,12 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = legendData.group.div ?
-            legendData.label :
-            legendData.group;
+        const proxyPositioningElement = legendItem.group.div ?
+            legendItem.label :
+            legendItem.group;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
-            click: legendData.label as SVGElement,
+            click: legendItem.label as SVGElement,
             visual: proxyPositioningElement.element
         }, attribs);
     }
@@ -674,7 +674,7 @@ namespace LegendComponent {
         const oldIx = this.accessibility &&
                 this.accessibility.components.legend.highlightedLegendItemIx;
         const itemToHighlight = items[ix],
-            legendData = itemToHighlight.legendData || {};
+            legendItem = itemToHighlight.legendItem || {};
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
@@ -683,7 +683,7 @@ namespace LegendComponent {
 
             scrollLegendToItem(this.legend, ix);
 
-            const legendItemProp = legendData.label;
+            const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
                 itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {

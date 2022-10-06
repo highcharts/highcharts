@@ -62,7 +62,7 @@ QUnit.test('Series.update', function (assert) {
 
     // Text content
     assert.strictEqual(
-        chart.series[0].legendData.label.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'Series 1',
         'Text content enitial'
     );
@@ -71,7 +71,7 @@ QUnit.test('Series.update', function (assert) {
     });
     chart.name = !chart.name;
     assert.strictEqual(
-        chart.series[0].legendData.label.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'First',
         'Text content should change'
     );
@@ -590,7 +590,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     s = chart.series[1];
 
     assert.deepEqual(
-        s.points.map(p => typeof p.legendData.label),
+        s.points.map(p => typeof p.legendItem.label),
         ['object', 'object', 'object'],
         'Pie points should show in legend'
     );

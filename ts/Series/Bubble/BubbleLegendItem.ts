@@ -180,7 +180,7 @@ class BubbleLegendItem {
     public drawLegendSymbol(legend: Legend): void {
         const chart = this.chart,
             itemDistance = pick(legend.options.itemDistance, 20),
-            legendData = this.legendData || {},
+            legendItem = this.legendItem || {},
             options = this.options,
             ranges =
                 options.ranges as Array<BubbleLegendItem.RangesOptions>,
@@ -227,8 +227,8 @@ class BubbleLegendItem {
         this.movementX = (options.labels as any).align === 'left' ?
             connectorSpace : 0;
 
-        legendData.labelWidth = size + connectorSpace + itemDistance;
-        legendData.labelHeight = size + this.fontMetrics.h / 2;
+        legendItem.labelWidth = size + connectorSpace + itemDistance;
+        legendItem.labelHeight = size + this.fontMetrics.h / 2;
     }
 
     /**
@@ -339,11 +339,11 @@ class BubbleLegendItem {
     }
 
     /**
-     * Render the legendData group.
+     * Render the legendItem group.
      * @private
      */
     public render(): void {
-        const legendData = this.legendData || {},
+        const legendItem = this.legendItem || {},
             renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 
@@ -356,12 +356,12 @@ class BubbleLegendItem {
             };
         }
         // Nesting SVG groups to enable handleOverflow
-        legendData.symbol = renderer.g('bubble-legend');
-        legendData.label = renderer.g('bubble-legend-item');
+        legendItem.symbol = renderer.g('bubble-legend');
+        legendItem.label = renderer.g('bubble-legend-item');
 
         // To enable default 'hideOverlappingLabels' method
-        legendData.symbol.translateX = 0;
-        legendData.symbol.translateY = 0;
+        legendItem.symbol.translateX = 0;
+        legendItem.symbol.translateY = 0;
 
         for (const range of this.ranges) {
             if (range.value >= (zThreshold as any)) {
@@ -370,8 +370,8 @@ class BubbleLegendItem {
         }
 
         // To use handleOverflow method
-        legendData.symbol.add(legendData.label);
-        legendData.label.add(legendData.group);
+        legendItem.symbol.add(legendItem.label);
+        legendItem.label.add(legendItem.group);
 
         this.hideOverlappingLabels();
     }
@@ -446,7 +446,7 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-symbol ' +
                     (options.className || '')
                 ).add(
-                    this.legendData.symbol
+                    this.legendItem.symbol
                 )
         );
 
@@ -472,7 +472,7 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-connectors ' +
                     (options.connectorClassName || '')
                 ).add(
-                    this.legendData.symbol
+                    this.legendItem.symbol
                 )
         );
 
@@ -491,7 +491,7 @@ class BubbleLegendItem {
                 'highcharts-bubble-legend-labels ' +
                 ((options.labels as any).className || '')
             ).add(
-                this.legendData.symbol
+                this.legendItem.symbol
             );
 
         labels.push(label);
@@ -743,7 +743,7 @@ class BubbleLegendItem {
  * */
 
 interface BubbleLegendItem extends LegendItem {
-    legendData: LegendItemObject;
+    legendItem: LegendItemObject;
 }
 
 /* *

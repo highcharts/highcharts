@@ -278,7 +278,7 @@ namespace ColorAxisComposition {
         }
     ): void {
         if (e.visible && e.item.legendColor) {
-            (e.item.legendData as any).symbol.attr({
+            (e.item.legendItem as any).symbol.attr({
                 fill: e.item.legendColor
             });
         }
@@ -383,8 +383,8 @@ namespace ColorAxisComposition {
 
                 if (
                     series.options.legendType === 'point' &&
-                    point.legendData &&
-                    point.legendData.label
+                    point.legendItem &&
+                    point.legendItem.label
                 ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }

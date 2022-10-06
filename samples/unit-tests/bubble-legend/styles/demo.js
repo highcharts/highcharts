@@ -45,8 +45,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
         'Correct label text'
     );
 
-    bubbleLegendItem = chart.legend.bubbleLegend.legendData.group;
-    seriesItem = chart.legend.allItems[0].legendData.group;
+    bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group;
+    seriesItem = chart.legend.allItems[0].legendItem.group;
 
     assert.strictEqual(
         bubbleLegendItem.translateY > seriesItem.translateY &&
@@ -60,7 +60,7 @@ QUnit.test('Bubble legend ranges', function (assert) {
     });
 
     assert.strictEqual(
-        !chart.legend.bubbleLegend.legendData.group,
+        !chart.legend.bubbleLegend.legendItem.group,
         true,
         'Bubble legend was properly disabled with the legend'
     );

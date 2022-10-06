@@ -64,7 +64,7 @@ function chartDrawChartBox(
         bubbleSeries = getVisibleBubbleSeriesIndex(chart) >= 0;
     let bubbleLegendOptions: BubbleLegendItem.Options,
         bubbleSizes,
-        legendData;
+        legendItem;
 
     if (
         legend && legend.options.enabled && legend.bubbleLegend &&
@@ -79,9 +79,9 @@ function chartDrawChartBox(
             legend.group.placed = false;
 
             legend.allItems.forEach((item): void => {
-                legendData = item.legendData || {};
-                if (legendData.group) {
-                    legendData.group.translateY = null;
+                legendItem = item.legendItem || {};
+                if (legendItem.group) {
+                    legendItem.group.translateY = null;
                 }
             });
         }
@@ -224,22 +224,22 @@ function getLinesHeights(
         length = items.length;
 
     let lastLine,
-        legendData,
-        legendData2,
+        legendItem,
+        legendItem2,
         i = 0,
         j = 0;
 
     for (i = 0; i < length; i++) {
-        legendData = items[i].legendData || {};
-        legendData2 = (items[i + 1] || {}).legendData || {};
-        if (legendData.labelHeight) {
+        legendItem = items[i].legendItem || {};
+        legendItem2 = (items[i + 1] || {}).legendItem || {};
+        if (legendItem.labelHeight) {
             // for bubbleLegend
-            (items[i] as any).itemHeight = legendData.labelHeight;
+            (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
             items[i] === items[length - 1] ||
-            (legendData._itemPos || [])[1] !==
-            (legendData2._itemPos || [])[1]
+            (legendItem._itemPos || [])[1] !==
+            (legendItem2._itemPos || [])[1]
         ) {
             lines.push({ height: 0 });
             lastLine = lines[lines.length - 1];
@@ -342,21 +342,21 @@ function retranslateItems(
     let orgTranslateX,
         orgTranslateY,
         movementX,
-        legendData,
+        legendItem,
         actualLine = 0;
 
     items.forEach((
         item: (BubbleLegendItem|Series|Point),
         index: number
     ): void => {
-        legendData = item.legendData || {};
+        legendItem = item.legendItem || {};
 
-        if (!legendData.group) {
+        if (!legendItem.group) {
             return;
         }
 
-        orgTranslateX = legendData.group.translateX || 0;
-        orgTranslateY = (legendData._itemPos || [])[1];
+        orgTranslateX = legendItem.group.translateX || 0;
+        orgTranslateY = (legendItem._itemPos || [])[1];
 
         movementX = (item as any).movementX;
 
@@ -365,18 +365,18 @@ function retranslateItems(
                 orgTranslateX - (item as any).options.maxSize / 2 :
                 orgTranslateX + movementX;
 
-            legendData.group.attr({ translateX: movementX });
+            legendItem.group.attr({ translateX: movementX });
         }
         if (index > lines[actualLine].step) {
             actualLine++;
         }
 
-        legendData.group.attr({
+        legendItem.group.attr({
             translateY: Math.round(
                 orgTranslateY + lines[actualLine].height / 2
             )
         });
-        (legendData._itemPos || [])[1] = orgTranslateY +
+        (legendItem._itemPos || [])[1] = orgTranslateY +
             lines[actualLine].height / 2;
     });
 }

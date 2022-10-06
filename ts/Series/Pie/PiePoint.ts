@@ -224,7 +224,7 @@ class PiePoint extends Point {
                 }
             );
 
-            if ((this.legendData || {}).label) {
+            if ((this.legendItem || {}).label) {
                 chart.legend.colorizeItem(this, vis);
             }
 
