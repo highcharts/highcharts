@@ -1741,45 +1741,6 @@ interface Legend extends LegendLike {
     // use declare module pattern to add
 }
 
-// Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
-// and for #2580, a similar drawing flaw in Firefox 26.
-// Explore if there's a general cause for this. The problem may be related
-// to nested group elements, as the legend item texts are within 4 group
-// elements.
-if (
-    /Trident\/7\.0/.test(win.navigator && win.navigator.userAgent) ||
-    isFirefox
-) {
-    wrap(Legend.prototype, 'positionItem', function (
-        this: Legend,
-        proceed: Function,
-        item: (Series|Point)
-    ): void {
-        const legend = this,
-            // If chart destroyed in sync, this is undefined (#2030)
-            runPositionItem = function (): void {
-                if ((item.legendItem || {}).y) {
-                    proceed.call(legend, item);
-                }
-            };
-
-        // Do it now, for export and to get checkbox placement
-        runPositionItem();
-
-        // Do it after to work around the core issue
-        if (!legend.bubbleLegend) {
-            setTimeout(runPositionItem);
-        }
-    });
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-
 /* *
  *
  *  Class Namespace
