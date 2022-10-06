@@ -359,10 +359,10 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const legendItem = item.legendItem || {};
+        const { group, label, line, symbol } = item.legendItem || {};
 
-        if (legendItem.group) {
-            legendItem.group[visible ? 'removeClass' : 'addClass'](
+        if (group) {
+            group[visible ? 'removeClass' : 'addClass'](
                 'highcharts-legend-item-hidden'
             );
         }
@@ -370,9 +370,6 @@ class Legend {
         if (!this.chart.styledMode) {
             const legend = this,
                 options = legend.options,
-                legendLabel = legendItem.label,
-                legendLine = legendItem.line,
-                legendSymbol = legendItem.symbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
                 textColor = visible ?
                     options.itemStyle.color :
@@ -383,21 +380,21 @@ class Legend {
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (legendLabel) {
-                legendLabel.css({
+            if (label) {
+                label.css({
                     fill: textColor,
                     color: textColor // #1553, oldIE
                 });
             }
 
-            if (legendLine) {
-                legendLine.attr({ stroke: symbolColor });
+            if (line) {
+                line.attr({ stroke: symbolColor });
             }
 
-            if (legendSymbol) {
+            if (symbol) {
 
                 // Apply marker options
-                if (markerOptions && legendSymbol.isMarker) { // #585
+                if (markerOptions && symbol.isMarker) { // #585
                     symbolAttr = (item as any).pointAttribs();
                     if (!visible) {
                         // #6769
@@ -405,11 +402,11 @@ class Legend {
                     }
                 }
 
-                legendSymbol.attr(symbolAttr);
+                symbol.attr(symbolAttr);
             }
         }
 
-        fireEvent(this, 'afterColorizeItem', { item: item, visible: visible });
+        fireEvent(this, 'afterColorizeItem', { item, visible });
     }
 
     /**
@@ -439,17 +436,15 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
-            legendItem = item.legendItem || {},
+            { group, _itemPos } = item.legendItem || {},
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
-            legendItemPos = legendItem._itemPos,
-            itemX = (legendItemPos as any)[0],
-            itemY = (legendItemPos as any)[1],
-            checkbox = item.checkbox,
-            dataGroup = legendItem.group;
+            itemX = (_itemPos as any)[0],
+            itemY = (_itemPos as any)[1],
+            checkbox = item.checkbox;
 
-        if (dataGroup && dataGroup.element) {
+        if (group && group.element) {
             const attribs = {
                 translateX: ltr ?
                     itemX :
@@ -460,12 +455,9 @@ class Legend {
                 fireEvent(this, 'afterPositionItem', { item });
             };
 
-            if (defined(dataGroup.translateY)) {
-                dataGroup.animate(attribs, void 0, complete);
-            } else {
-                dataGroup.attr(attribs);
-                complete();
-            }
+            group[defined(group.translateY) ? 'animate' : 'attr'](
+                attribs, void 0, complete
+            );
         }
 
         if (checkbox) {
@@ -499,7 +491,7 @@ class Legend {
         }
 
         if (checkbox) {
-            discardElement((item as any).checkbox);
+            discardElement(checkbox);
         }
     }
 
@@ -685,12 +677,12 @@ class Legend {
             useHTML = options.useHTML,
             itemClassName = item.options.className;
 
-        let li = legendItem.label,
+        let label = legendItem.label,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0);
 
-        if (!li) { // generate it once, later move it
+        if (!label) { // generate it once, later move it
 
             // Generate the group box, a group to hold the symbol and text. Text
             // is to be appended in Legend class.
@@ -710,7 +702,7 @@ class Legend {
                 .add(legend.scrollGroup);
 
             // Generate the list item text and add it to the group
-            legendItem.label = li = renderer.text(
+            legendItem.label = label = renderer.text(
                 '',
                 ltr ?
                     symbolWidth + symbolPadding :
@@ -721,14 +713,14 @@ class Legend {
 
             if (!chart.styledMode) {
                 // merge to prevent modifying original (#1021)
-                li.css(merge(
+                label.css(merge(
                     item.visible ?
                         itemStyle :
                         itemHiddenStyle
                 ));
             }
 
-            li
+            label
                 .attr({
                     align: ltr ? 'left' : 'right',
                     zIndex: 2
@@ -740,11 +732,11 @@ class Legend {
             if (!legend.baseline) {
                 legend.fontMetrics = renderer.fontMetrics(
                     chart.styledMode ? 12 : (itemStyle as any).fontSize,
-                    li
+                    label
                 );
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
-                li.attr('y', legend.baseline);
+                label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
                     options.symbolHeight || legend.fontMetrics.f;
@@ -759,7 +751,7 @@ class Legend {
                         itemDistance + (showCheckbox ? 20 : 0);
 
                     if (ltr) {
-                        li.attr('x', legend.symbolWidth + symbolPadding);
+                        label.attr('x', legend.symbolWidth + symbolPadding);
                     }
                 }
             }
@@ -768,7 +760,7 @@ class Legend {
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
-                legend.setItemEvents(item, li, useHTML);
+                legend.setItemEvents(item, label, useHTML);
             }
 
         }
@@ -783,7 +775,7 @@ class Legend {
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
-            li.css({
+            label.css({
                 width: ((
                     options.itemWidth ||
                     legend.widthOption ||
@@ -796,7 +788,7 @@ class Legend {
         legend.setText(item as Legend.Item);
 
         // calculate the positions for the next line
-        const bBox = li.getBBox();
+        const bBox = label.getBBox();
         const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
