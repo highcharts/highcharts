@@ -28,7 +28,6 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  * */
 
 export interface LegendItemObject {
-    _itemPos?: Array<number>;
     group?: SVGElement;
     label?: (ColorAxis.LegendItemObject|SVGElement);
     labelHeight?: number;
@@ -37,6 +36,8 @@ export interface LegendItemObject {
     line?: SVGElement;
     pageIx?: number;
     symbol?: SVGElement;
+    x?: number;
+    y?: number;
 }
 
 export interface LegendItem {

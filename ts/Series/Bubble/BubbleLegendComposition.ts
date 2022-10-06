@@ -238,8 +238,7 @@ function getLinesHeights(
         }
         if ( // Line break
             items[i] === items[length - 1] ||
-            (legendItem._itemPos || [])[1] !==
-            (legendItem2._itemPos || [])[1]
+            legendItem.y !== legendItem2.y
         ) {
             lines.push({ height: 0 });
             lastLine = lines[lines.length - 1];
@@ -356,7 +355,7 @@ function retranslateItems(
         }
 
         orgTranslateX = legendItem.group.translateX || 0;
-        orgTranslateY = (legendItem._itemPos || [])[1];
+        orgTranslateY = legendItem.y || 0;
 
         movementX = (item as any).movementX;
 
@@ -376,8 +375,7 @@ function retranslateItems(
                 orgTranslateY + lines[actualLine].height / 2
             )
         });
-        (legendItem._itemPos || [])[1] = orgTranslateY +
-            lines[actualLine].height / 2;
+        legendItem.y = orgTranslateY + lines[actualLine].height / 2;
     });
 }
 
