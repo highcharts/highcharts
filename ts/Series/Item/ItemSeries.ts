@@ -317,7 +317,6 @@ class ItemSeries extends PieSeries {
                         attr.r = r;
                     }
 
-
                     if (graphics[val]) {
                         graphics[val].animate(attr);
                     } else {
@@ -332,7 +331,7 @@ class ItemSeries extends PieSeries {
                                     backgroundSize: 'within'
                                 }
                             )
-                            .attr(extend(attr, pointAttr as any))
+                            .attr(extend(attr, pointAttr as SVGAttributes))
                             .add(point.graphic);
                     }
                     graphics[val].isActive = true;
@@ -543,7 +542,11 @@ class ItemSeries extends PieSeries {
     public translate(_positions?: Array<number>): void {
 
         // Initialize chart without setting data, #13379.
-        if (this.total === 0) {
+        if (
+            this.total === 0 && // check if that is a (semi-)circle
+            isNumber(this.options.startAngle) &&
+            isNumber(this.options.endAngle)
+        ) {
             this.center = this.getCenter();
         }
         if (!this.slots) {
