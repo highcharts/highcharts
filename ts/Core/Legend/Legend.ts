@@ -436,20 +436,18 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
-            { group, _itemPos } = item.legendItem || {},
+            { group, x = 0, y = 0 } = item.legendItem || {},
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
-            itemX = (_itemPos as any)[0],
-            itemY = (_itemPos as any)[1],
             checkbox = item.checkbox;
 
         if (group && group.element) {
             const attribs = {
                 translateX: ltr ?
-                    itemX :
-                    legend.legendWidth - itemX - 2 * symbolPadding - 4,
-                translateY: itemY
+                    x :
+                    legend.legendWidth - x - 2 * symbolPadding - 4,
+                translateY: y
             };
             const complete = (): void => {
                 fireEvent(this, 'afterPositionItem', { item });
@@ -461,8 +459,8 @@ class Legend {
         }
 
         if (checkbox) {
-            checkbox.x = itemX;
-            checkbox.y = itemY;
+            checkbox.x = x;
+            checkbox.y = y;
         }
     }
 
@@ -859,7 +857,8 @@ class Legend {
         );
 
         // cache the position of the newly generated or reordered items
-        legendItem._itemPos = [this.itemX, this.itemY];
+        legendItem.x = this.itemX;
+        legendItem.y = this.itemY;
 
         // advance
         if (horizontal) {
@@ -1053,9 +1052,8 @@ class Legend {
 
         for (const box of distribute(boxes, chart.plotHeight)) {
             legendItem = box.item.legendItem || {};
-            if (box.pos && legendItem._itemPos) {
-                legendItem._itemPos[1] =
-                    chart.plotTop - chart.spacing[0] + box.pos;
+            if (box.pos) {
+                legendItem.y = chart.plotTop - chart.spacing[0] + box.pos;
             }
         }
 
@@ -1358,9 +1356,9 @@ class Legend {
             // defines the scroll top for each page (#2098)
             allItems.forEach((item, i): void => {
                 legendItem = item.legendItem || {};
-                const y = (legendItem._itemPos || [])[1],
+                const y = legendItem.y || 0,
                     h = Math.round(
-                        (item.legendItem as any).label.getBBox().height
+                        (legendItem as any).label.getBBox().height
                     );
                 let len = pages.length;
 
@@ -1760,7 +1758,7 @@ if (
         const legend = this,
             // If chart destroyed in sync, this is undefined (#2030)
             runPositionItem = function (): void {
-                if ((item.legendItem || {})._itemPos) {
+                if ((item.legendItem || {}).y) {
                     proceed.call(legend, item);
                 }
             };
