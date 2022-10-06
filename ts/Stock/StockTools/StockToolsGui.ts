@@ -28,8 +28,8 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/Defaults.js';
+const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';

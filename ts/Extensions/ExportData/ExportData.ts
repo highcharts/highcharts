@@ -31,7 +31,6 @@ import type {
 import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
@@ -46,7 +45,7 @@ const {
     doc,
     win
 } = H;
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     getOptions,
     setOptions

@@ -45,8 +45,8 @@ const {
     getBoostClipRect,
     isChartSeriesBoosting
 } = BoostChart;
-import DefaultOptions from '../../Core/DefaultOptions.js';
-const { getOptions } = DefaultOptions;
+import D from '../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     doc,

@@ -30,7 +30,7 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
