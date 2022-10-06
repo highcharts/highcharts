@@ -318,7 +318,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'DataGrouping applied to MACD series too (#7823).'
     );
 
-    Highcharts.seriesTypes.macd.prototype.getValues(
+    Highcharts.Series.types.macd.prototype.getValues(
         {
             xData: [0],
             yData: [1]
@@ -331,7 +331,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'No error when longPeriod is greater than data length (#8376).'
     );
 
-    Highcharts.seriesTypes.macd.prototype.getValues(
+    Highcharts.Series.types.macd.prototype.getValues(
         {
             xData: [
                 0,
@@ -543,7 +543,7 @@ QUnit.test('#14977: Index param', assert => {
     });
 
     const getValues = index =>
-        Highcharts.seriesTypes.macd.prototype.getValues({
+        Highcharts.Series.types.macd.prototype.getValues({
             xData,
             yData
         }, Highcharts.merge(
