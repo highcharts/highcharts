@@ -20,7 +20,7 @@
 
 import type AxisType from '../../Core/Axis/AxisType';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';

@@ -9,7 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
-import DefaultOptions from '../Core/DefaultOptions.js';
+import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -82,10 +82,10 @@ G.color = Color.parse;
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
 // DefaultOptions
-G.defaultOptions = DefaultOptions.defaultOptions;
-G.getOptions = DefaultOptions.getOptions;
-G.time = DefaultOptions.defaultTime;
-G.setOptions = DefaultOptions.setOptions;
+G.defaultOptions = Defaults.defaultOptions;
+G.getOptions = Defaults.getOptions;
+G.time = Defaults.defaultTime;
+G.setOptions = Defaults.setOptions;
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;

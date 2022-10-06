@@ -59,6 +59,11 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
+import D from '../Defaults.js';
+const {
+    defaultOptions,
+    defaultTime
+} = D;
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
@@ -73,11 +78,6 @@ const {
 } = H;
 import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
-import D from '../DefaultOptions.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';

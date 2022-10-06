@@ -21,6 +21,7 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
@@ -40,7 +41,7 @@ const {
     merge
 } = U;
 
-import '../../Core/DefaultOptions.js';
+import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *
