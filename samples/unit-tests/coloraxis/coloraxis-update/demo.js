@@ -174,7 +174,7 @@ QUnit.test('Adding color axis', function (assert) {
     );
 
     assert.notOk(
-        chart.series[0].legendItem.label,
+        chart.series[0].legendItem,
         '#15436: Series legendItem.label should have been destroyed'
     );
 

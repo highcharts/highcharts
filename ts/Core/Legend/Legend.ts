@@ -491,6 +491,8 @@ class Legend {
         if (checkbox) {
             discardElement(checkbox);
         }
+
+        item.legendItem = void 0;
     }
 
     /**

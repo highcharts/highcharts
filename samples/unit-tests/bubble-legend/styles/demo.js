@@ -60,7 +60,7 @@ QUnit.test('Bubble legend ranges', function (assert) {
     });
 
     assert.strictEqual(
-        !chart.legend.bubbleLegend.legendItem.group,
+        !chart.legend.bubbleLegend.legendItem,
         true,
         'Bubble legend was properly disabled with the legend'
     );
