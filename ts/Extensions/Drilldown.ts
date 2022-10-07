@@ -107,7 +107,7 @@ declare module '../Core/Options'{
     }
 }
 
-declare module '../Core/LangOptions' {
+declare module '../Core/Options' {
     interface LangOptions {
         drillUpText?: string;
     }

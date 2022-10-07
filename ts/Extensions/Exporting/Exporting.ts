@@ -105,7 +105,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         contextButtonTitle?: string;
         exitFullscreen?: string;
@@ -116,9 +116,6 @@ declare module '../../Core/LangOptions' {
         printChart?: string;
         viewFullscreen?: string;
     }
-}
-
-declare module '../../Core/Options' {
     interface Options {
         exporting?: ExportingOptions;
         navigation?: NavigationOptions;
