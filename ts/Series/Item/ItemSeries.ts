@@ -320,6 +320,10 @@ class ItemSeries extends PieSeries {
                     if (graphics[val]) {
                         graphics[val].animate(attr);
                     } else {
+                        if (pointAttr) {
+                            extend(attr, pointAttr);
+                        }
+
                         graphics[val] = renderer
                             .symbol(
                                 symbol,
@@ -331,7 +335,7 @@ class ItemSeries extends PieSeries {
                                     backgroundSize: 'within'
                                 }
                             )
-                            .attr(extend(attr, pointAttr as SVGAttributes))
+                            .attr(attr)
                             .add(point.graphic);
                     }
                     graphics[val].isActive = true;
