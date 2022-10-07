@@ -1,10 +1,24 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
+
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
 
     // Initialize the chart
     const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Click button to add series'
+        },
+
+        mapView: {
+            projection: {
+                name: 'Miller'
+            }
         },
 
         mapNavigation: {
@@ -24,8 +38,8 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     const addSeriesButton = document.getElementById('addseries');
     addSeriesButton.onclick = () => {
         chart.addSeries({
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
+            data,
+            mapData: topology,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             states: {
@@ -40,4 +54,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
         addSeriesButton.setAttribute('disabled', 'true');
     };
-});
+
+})();

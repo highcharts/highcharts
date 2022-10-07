@@ -4,7 +4,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Should create Ellipse annotation via stock tools and test its params.', () => {
@@ -59,7 +59,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
             assert.closeTo(
                 ellipse.options.ry,
-                15,
+                3.5,
                 1,
                 'Calculated ry should be close to expected value.'
             );
@@ -148,7 +148,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
             );
             assert.closeTo(
                 ellipse.options.ry,
-                10,
+                2.5,
                 1,
                 'New ry property value should be equal to expected value.'
             );
@@ -157,14 +157,14 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     });
 
     it('Ellipse should keep its shape after popup edit.', () => {
-        cy.contains('edit').click();
-        cy.contains('save').click();
+        cy.contains('Edit').click();
+        cy.contains('Save').click();
         cy.chart().then(chart => {
 
             const ellipse = chart.annotations[0].shapes[0];
             assert.closeTo(
                 ellipse.options.ry,
-                10,
+                2.5,
                 1,
                 `Ry property shouldn't change after popup edit.`
             );

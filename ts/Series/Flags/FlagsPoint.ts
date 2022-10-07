@@ -22,10 +22,12 @@ import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
+    column: {
+        prototype: {
+            pointClass: ColumnPoint
+        }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -35,7 +37,7 @@ const { isNumber } = U;
  *
  * */
 
-class FlagsPoint extends ColumnSeries.prototype.pointClass {
+class FlagsPoint extends ColumnPoint {
 
     /* *
      *
@@ -61,6 +63,8 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
 
     public style?: CSSObject;
 
+    public ttBelow?: boolean = false;
+
     public unbindMouseOver?: Function;
 
     /* *
@@ -68,8 +72,6 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -88,6 +90,7 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
 
         return this.graphic && shape && shape !== this.graphic.symbolKey;
     }
+
 }
 
 /* *

@@ -60,6 +60,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     }
     Highcharts.chart('container', {
         series: [{
+            name: 'Regions',
             type: 'treemap',
             layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
@@ -82,6 +83,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                     }
                 }
             }],
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
             data: points
         }],
         subtitle: {

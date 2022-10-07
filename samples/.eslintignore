@@ -1,5 +1,6 @@
 highcharts/common-js/browserify/demo.js
 highcharts/esm/async-await/demo.js
+highcharts/esm/extending-members/demo.js
 data-grid/basic/simple/demo.js
 data/**/*.js
 static/*.js

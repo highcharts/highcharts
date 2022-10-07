@@ -30,6 +30,7 @@ import type {
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
 
+import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
@@ -93,13 +94,12 @@ class WordcloudSeries extends ColumnSeries {
      * A word cloud is a visualization of a set of words, where the size and
      * placement of a word is determined by how it is weighted.
      *
-     * @sample highcharts/demo/wordcloud
-     *         Word Cloud chart
+     * @sample highcharts/demo/wordcloud Word Cloud chart
      *
      * @extends      plotOptions.column
      * @excluding    allAreas, boostThreshold, clip, colorAxis, compare,
-     *               compareBase, crisp, cropTreshold, dataGrouping, dataLabels,
-     *               depth, dragDrop, edgeColor, findNearestPointBy,
+     *               compareBase, crisp, cropThreshold, dataGrouping,
+     *               dataLabels, depth, dragDrop, edgeColor, findNearestPointBy,
      *               getExtremesFromAll, grouping, groupPadding, groupZPadding,
      *               joinBy, maxPointWidth, minPointLength, navigatorOptions,
      *               negativeColor, pointInterval, pointIntervalUnit,
@@ -112,7 +112,6 @@ class WordcloudSeries extends ColumnSeries {
      * @requires     modules/wordcloud
      * @optionparent plotOptions.wordcloud
      */
-
     public static defaultOptions: WordcloudSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * If there is no space for a word on the playing field, then this
@@ -122,7 +121,7 @@ class WordcloudSeries extends ColumnSeries {
          * NB! This option is currently not decided to be published in the API,
          * and is therefore marked as private.
          *
-         * @private
+         * @ignore-option
          */
         allowExtendPlayingField: true,
         animation: {
@@ -130,8 +129,12 @@ class WordcloudSeries extends ColumnSeries {
             duration: 500
         },
         borderWidth: 0,
+        /**
+         * @ignore-option
+         */
         clip: false, // Something goes wrong with clip. // @todo fix this
         colorByPoint: true,
+        cropThreshold: Infinity,
         /**
          * A threshold determining the minimum font size that can be applied to
          * a word.
@@ -459,7 +462,7 @@ class WordcloudSeries extends ColumnSeries {
                 }
             }
 
-            point.draw({
+            DPU.draw(point, {
                 animatableAttribs: animate as any,
                 attribs: attr,
                 css: css,
@@ -703,7 +706,7 @@ export default WordcloudSeries;
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.name
+ * @apioption series.wordcloud.data.name
  */
 
 /**
@@ -713,7 +716,7 @@ export default WordcloudSeries;
  * @type      {number}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.weight
+ * @apioption series.wordcloud.data.weight
  */
 
 ''; // detach doclets above

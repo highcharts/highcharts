@@ -616,7 +616,11 @@ class FunnelSeries extends PieSeries {
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // added during translate
-    getX(y: number, half: boolean, point: FunnelPoint): number; // added during translate
+    getX(
+        y: number,
+        half: boolean,
+        point: FunnelPoint
+    ): number; // added during translate
 }
 extend(FunnelSeries.prototype, {
     animate: noop

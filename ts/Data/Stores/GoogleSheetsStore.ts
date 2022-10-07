@@ -134,18 +134,6 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
                 googleSpreadsheetKey,
                 worksheet
             } = store.options,
-            handleError = (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void => {
-                store.emit({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table: store.table,
-                    xhr
-                });
-            },
             url = GoogleSheetsStore.getFetchURL(
                 googleAPIKey,
                 googleSpreadsheetKey,
@@ -164,11 +152,12 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
 
         ajax({
             url,
-            error: handleError,
-            success: (
-                json: GoogleSheetsParser.GoogleSpreadsheetJSON
-            ): void => {
-                store.parser.parse({ firstRowAsNames, json });
+            dataType: 'json',
+            success: (json): void => {
+                store.parser.parse({
+                    firstRowAsNames,
+                    json: json as GoogleSheetsParser.GoogleSpreadsheetJSON
+                });
                 store.table.setColumns(store.parser.getTable().getColumns());
 
                 // Polling
@@ -184,6 +173,18 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
                     detail: eventDetail,
                     table: store.table,
                     url
+                });
+            },
+            error: (
+                xhr: XMLHttpRequest,
+                error: (string|Error)
+            ): void => {
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table: store.table,
+                    xhr
                 });
             }
         });

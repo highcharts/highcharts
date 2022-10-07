@@ -37,7 +37,7 @@ QUnit.test('yAxis', function (assert) {
         ]
     });
 
-    Highcharts.each(chart.series[0].points, function (point, index) {
+    chart.series[0].points.forEach((point, index) => {
         var bbox = point.graphic.getBBox(),
             bboxReversed = chart.series[1].points[index].graphic.getBBox();
 

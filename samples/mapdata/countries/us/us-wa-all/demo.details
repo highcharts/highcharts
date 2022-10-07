@@ -1,5 +1,5 @@
 ---
- name: Washington - Highmaps
- description: Highmaps demo
+ name: Washington - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

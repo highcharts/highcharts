@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,6 +27,13 @@ export namespace JSON {
     }
 
     /**
+     * Class API for JSON.stringify.
+     */
+    export interface Builder {
+        toJSON(): Type;
+    }
+
+    /**
      * Type structure of a record object as it is supported in JSON.
      */
     export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
@@ -42,11 +49,9 @@ export namespace JSON {
      * All object types, that are supported in JSON.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    export type Type = (Array|Object|Primitive);
+    export type Type = (Array|Object);
 
 }
-
-export type JSON = (JSON.Array|JSON.Object);
 
 /* *
  *

@@ -23,6 +23,7 @@ const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
+    fireEvent,
     isNumber,
     pick,
     relativeLength
@@ -48,6 +49,7 @@ namespace CenteredUtilities {
         innerSize?: (number|string);
         size?: (number|string);
         slicedOffset?: number;
+        thickness?: number;
     }
 
     export interface RadianAngles {
@@ -78,7 +80,8 @@ namespace CenteredUtilities {
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
-            smallestSize = Math.min(plotWidth, plotHeight);
+            smallestSize = Math.min(plotWidth, plotHeight),
+            thickness = options.thickness;
 
         let handleSlicingRoom,
             size = options.size,
@@ -99,7 +102,10 @@ namespace CenteredUtilities {
             pick(centerOption[1] as any, '50%' as any),
             // Prevent from negative values
             pick(size && size < 0 ? void 0 : options.size, '100%'),
-            pick(innerSize && innerSize < 0 ? void 0 : options.innerSize || 0, '0%')
+            pick(
+                innerSize && innerSize < 0 ? void 0 : options.innerSize || 0,
+                '0%'
+            )
         ];
 
         // No need for inner size in angular (gauges) series but still required
@@ -126,6 +132,16 @@ namespace CenteredUtilities {
         if (positions[3] > positions[2]) {
             positions[3] = positions[2];
         }
+        // thickness overrides innerSize, need to be less than pie size (#6647)
+        if (
+            isNumber(thickness) &&
+            thickness * 2 < positions[2] && thickness > 0
+        ) {
+            positions[3] = positions[2] - thickness * 2;
+        }
+
+        fireEvent(this, 'afterGetCenter', { positions });
+
         return positions;
     }
 

@@ -5,16 +5,16 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
     // and ranges, we need to transform it to objects. Single-value series types like
     // line will use the y option, ranges will use low and high, and OHLC will
     // use all.
-    data = Highcharts.map(data, function (config) {
-        return {
+    data = data.map(config =>
+        ({
             x: config[0],
             open: config[1],
             high: config[2],
             low: config[3],
             close: config[4],
             y: config[4] // let the closing value represent the data in single-value series
-        };
-    });
+        })
+    );
 
     // create the chart
     var chart = Highcharts.stockChart('container', {

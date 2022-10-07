@@ -8,9 +8,14 @@
  *
  * */
 
-export type ProjectionRotationOption = [number, number]|[number, number, number];
+import type { MapBounds } from './MapViewOptions';
+
+export type ProjectionRotationOption = (
+    [number, number]|[number, number, number]
+);
 
 export interface ProjectionOptions {
+    projectedBounds?: 'world'|MapBounds;
     name?: string;
     parallels?: number[];
     rotation?: ProjectionRotationOption;

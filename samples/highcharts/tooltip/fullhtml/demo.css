@@ -1,3 +1,7 @@
+#container {
+    height: 400px;
+}
+
 .highcharts-tooltip > span {
     background: rgb(255 255 255 / 85%);
     border: 1px solid silver;

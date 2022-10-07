@@ -890,7 +890,7 @@ var data = {
     };
 
 for (region in data) {
-    if (data.hasOwnProperty(region)) {
+    if ({}.hasOwnProperty.call(data, region)) {
         regionVal = 0;
         regionP = {
             id: 'id_' + regionI,
@@ -899,7 +899,7 @@ for (region in data) {
         };
         countryI = 0;
         for (country in data[region]) {
-            if (data[region].hasOwnProperty(country)) {
+            if ({}.hasOwnProperty.call(data[region], country)) {
                 countryP = {
                     id: regionP.id + '_' + countryI,
                     name: country,
@@ -908,7 +908,7 @@ for (region in data) {
                 points.push(countryP);
                 causeI = 0;
                 for (cause in data[region][country]) {
-                    if (data[region][country].hasOwnProperty(cause)) {
+                    if ({}.hasOwnProperty.call(data[region][country], cause)) {
                         causeP = {
                             id: countryP.id + '_' + causeI,
                             name: causeName[cause],
@@ -934,6 +934,7 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'treemap',
+        name: 'Regions',
         layoutAlgorithm: 'squarified',
         allowDrillToNode: true,
         animationLimit: 1000,

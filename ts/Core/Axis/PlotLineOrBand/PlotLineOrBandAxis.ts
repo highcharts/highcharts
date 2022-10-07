@@ -306,7 +306,10 @@ namespace PlotLineOrBandAxis {
         ): (PlotLineOrBand|undefined) {
             const userOptions = this.userOptions;
 
-            let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(this, options);
+            let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(
+                this,
+                options
+            );
 
             if (this.visible) {
                 obj = obj.render();

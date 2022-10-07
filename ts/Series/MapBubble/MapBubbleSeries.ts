@@ -17,14 +17,20 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
+import type Point from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
-import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        mappoint: MapPointSeries
+        map: {
+            prototype: mapProto
+        },
+        mappoint: {
+            prototype: mapPointProto
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -32,10 +38,6 @@ const {
     extend,
     merge
 } = U;
-
-import '../../Core/DefaultOptions.js';
-import '../Bubble/BubbleSeries.js';
-import '../Map/MapSeries.js';
 
 /* *
  *
@@ -49,6 +51,9 @@ import '../Map/MapSeries.js';
  * @name Highcharts.seriesTypes.mapbubble
  *
  * @augments Highcharts.Series
+ *
+ * @requires BubbleSeries
+ * @requires MapPointSeries
  */
 class MapBubbleSeries extends BubbleSeries {
 
@@ -57,7 +62,6 @@ class MapBubbleSeries extends BubbleSeries {
      *  Static Properties
      *
      * */
-    public static compose = BubbleSeries.compose;
 
     /**
      * A map bubble series is a bubble series laid out on top of a map
@@ -96,16 +100,64 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         /**
-         * @sample {highmaps} maps/demo/map-bubble/
-         *         Bubble size
+         * Color of the line connecting bubbles. The default value is the same
+         * as series' color.
          *
+         * In styled mode, the color can be defined by the
+         * [colorIndex](#plotOptions.series.colorIndex) option. Also, the series
+         * color can be set with the `.highcharts-series`,
+         * `.highcharts-color-{n}`, `.highcharts-{type}-series` or
+         * `.highcharts-series-{n}` class, or individual classes given by the
+         * `className` option.
+         *
+         *
+         * @sample {highmaps} maps/demo/spider-map/
+         *         Spider map
+         * @sample {highmaps} maps/plotoptions/spider-map-line-color/
+         *         Different line color
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.mapbubble.lineColor
+         */
+
+        /**
+         * Pixel width of the line connecting bubbles.
+         *
+         * @sample {highmaps} maps/demo/spider-map/
+         *         Spider map
+         *
+         * @product   highmaps
+         * @apioption plotOptions.mapbubble.lineWidth
+         */
+        lineWidth: 0,
+
+        /**
+         * Maximum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
+         * @sample {highmaps} highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         * @sample {highmaps} maps/demo/spider-map/
+         *         Spider map
+         *
+         * @product   highmaps
          * @apioption plotOptions.mapbubble.maxSize
          */
 
         /**
+         * Minimum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
          * @sample {highmaps} maps/demo/map-bubble/
          *         Bubble size
+         * @sample {highmaps} maps/demo/spider-map/
+         *         Spider map
          *
+         * @product   highmaps
          * @apioption plotOptions.mapbubble.minSize
          */
 
@@ -190,8 +242,15 @@ class MapBubbleSeries extends BubbleSeries {
          * @apioption plotOptions.mapbubble.zThreshold
          */
 
+        /**
+         * @default 500
+         */
         animationLimit: 500,
 
+        /**
+         * @type {string|Array<string>}
+         */
+        joinBy: 'hc-key',
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
         }
@@ -209,8 +268,18 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points: Array<MapBubblePoint> = void 0 as any;
 
+    public searchPoint(
+        e: PointerEvent,
+        compareX?: boolean
+    ): (Point|undefined) {
+        return this.searchKDTree({
+            clientX: e.chartX - this.chart.plotLeft,
+            plotY: e.chartY - this.chart.plotTop
+        }, compareX, e);
+    }
+
     translate(): void {
-        MapPointSeries.prototype.translate.call(this);
+        mapPointProto.translate.call(this);
         this.getRadii();
         this.translateBubble();
     }
@@ -224,11 +293,14 @@ class MapBubbleSeries extends BubbleSeries {
 
 interface MapBubbleSeries {
     type: string;
-    getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
+    getProjectedBounds: typeof mapProto.getProjectedBounds;
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
-    setData: typeof MapSeries.prototype['setData'];
-    setOptions: typeof MapSeries.prototype['setOptions'];
+    setData: typeof mapProto.setData;
+    processData: typeof mapProto.processData;
+    projectPoint: typeof mapPointProto.projectPoint;
+    setOptions: typeof mapProto.setOptions;
+    updateData: typeof mapProto.updateData;
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -236,7 +308,7 @@ extend(MapBubbleSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
+    getProjectedBounds: mapProto.getProjectedBounds,
 
     isCartesian: false,
 
@@ -245,9 +317,15 @@ extend(MapBubbleSeries.prototype, {
 
     pointClass: MapBubblePoint,
 
-    setData: MapSeries.prototype.setData,
+    processData: mapProto.processData,
 
-    setOptions: MapSeries.prototype.setOptions,
+    projectPoint: mapPointProto.projectPoint,
+
+    setData: mapProto.setData,
+
+    setOptions: mapProto.setOptions,
+
+    updateData: mapProto.updateData,
 
     useMapGeometry: true,
 

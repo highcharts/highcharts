@@ -1,5 +1,5 @@
 QUnit.test('utils.calculateLevelSizes', function (assert) {
-    var sunburstPrototype = Highcharts.seriesTypes.sunburst.prototype,
+    var sunburstPrototype = Highcharts.Series.types.sunburst.prototype,
         calculateLevelSizes = sunburstPrototype.utils.calculateLevelSizes,
         mapOptionsToLevel = {
             0: {
@@ -110,7 +110,7 @@ QUnit.test('utils.calculateLevelSizes', function (assert) {
 QUnit.test('utils.getLevelFromAndTo', function (assert) {
     const {
         getLevelFromAndTo
-    } = Highcharts.seriesTypes.sunburst.prototype.utils;
+    } = Highcharts.Series.types.sunburst.prototype.utils;
     assert.deepEqual(
         getLevelFromAndTo({ level: 0, height: 3 }),
         { from: 1, to: 3 },
@@ -129,7 +129,7 @@ QUnit.test('utils.getLevelFromAndTo', function (assert) {
 });
 
 QUnit.test('utils.range', function (assert) {
-    var sunburstPrototype = Highcharts.seriesTypes.sunburst.prototype,
+    var sunburstPrototype = Highcharts.Series.types.sunburst.prototype,
         range = sunburstPrototype.utils.range;
     assert.deepEqual(
         range(),

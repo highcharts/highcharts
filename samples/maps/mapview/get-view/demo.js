@@ -1,8 +1,15 @@
-let chart;
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
+
+    const mapData = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
 
     // Initialize the chart
-    chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Get MapView state'
@@ -18,9 +25,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             enabled: true
         },
 
+        mapView: {
+            projection: {
+                name: 'WebMercator'
+            }
+        },
+
         series: [{
             data,
-            mapData: Highcharts.maps['custom/world'],
+            mapData,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             states: {
@@ -51,4 +64,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     };
     printView();
     Highcharts.addEvent(chart.mapView, 'afterSetView', printView);
-});
+})();

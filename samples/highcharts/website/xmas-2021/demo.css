@@ -1,0 +1,465 @@
+/* @import "https://code.highcharts.com/css/highcharts.css"; */
+
+body {
+    margin: 0;
+    background: linear-gradient(180deg, #201836 0%, #46465c 100%) no-repeat;
+    background-color: #46465c;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif !important;
+}
+
+#item .ring0 .highcharts-point {
+    transform-origin: center;
+}
+
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #5b46b3;
+    border-color: #5b46b3;
+}
+
+.chart-container {
+    width: 110px;
+    height: 110px;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
+#message {
+    position: relative;
+    width: 330px;
+}
+
+#sled {
+    position: absolute;
+    top: -6px;
+    left: -70px;
+    width: 68px;
+    height: 25px;
+    background-size: contain;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/8cf76e1945c27e3c187f0273ca670949ce3d1e52/samples/graphics/xmas-card-2021/deer.png);
+}
+
+.button-container {
+    text-align: center;
+    width: 100%;
+    margin-left: auto;
+    position: absolute;
+    top: 250px;
+    z-index: 1000;
+}
+
+#center-message {
+    text-align: center;
+    white-space: normal;
+    position: absolute;
+    width: 110px;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 600;
+    margin-top: 5px;
+    letter-spacing: 0;
+}
+
+#charts {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 330px;
+    background-color: #00786f;
+}
+
+#ball-chart {
+    clip-path: inset(-0.56% 0% 0.22% -1.11% round 10px);
+}
+
+#ball-chart .highcharts-series-0,
+#ball-chart .highcharts-series-1 {
+    transform: translate(30px, 160px);
+}
+
+#presents-chart .highcharts-series-2,
+#presents-chart .highcharts-series-3,
+#presents-chart .highcharts-series-4,
+#presents-chart .highcharts-series-5,
+#presents-chart .highcharts-series-6,
+#presents-chart .highcharts-series-7,
+#presents-chart .highcharts-series-8,
+#presents-chart .highcharts-series-9,
+#presents-chart .highcharts-series-10,
+#presents-chart .highcharts-series-11,
+#presents-chart .highcharts-series-12,
+#presents-chart .highcharts-series-13 {
+    transform: translateY(-20px);
+}
+
+.box {
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 330px;
+    height: 110px;
+    z-index: 100;
+}
+
+.box.row2 {
+    top: 110px;
+    width: 110px;
+    height: 110px;
+    left: 0;
+}
+
+.box.row3 {
+    top: 220px;
+    width: 110px;
+    height: 110px;
+    left: 0;
+}
+
+.box.row2.center,
+.box.row3.center {
+    left: 110px;
+}
+
+.box.row2.right,
+.box.row3.right {
+    left: 220px;
+}
+
+.box p {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 40px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    margin-top: 30px;
+}
+
+.box-left,
+.box-center,
+.box-right {
+    display: flex;
+}
+
+.box-left .inner,
+.box-center .inner,
+.box-right .inner {
+    width: 45px;
+    height: 110px;
+    line-height: 110px;
+    font-size: 2.3em;
+    letter-spacing: 1px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.box-left .inner:last-child,
+.box-center .inner:last-child,
+.box-right .inner:last-child {
+    background-color: #00786f;
+    color: #f0f0f0;
+    transform-origin: left;
+    transform: perspective(360px) rotateY(0deg);
+    margin-left: 0;
+    height: 110px;
+    width: 320px;
+    overflow: hidden;
+}
+
+#box5 p {
+    color: #fff;
+}
+
+.box-center.row2 .inner:last-child {
+    background-color: transparent;
+    margin-left: 0;
+}
+
+.box-center.row3 .inner:last-child {
+    margin-left: 0;
+}
+
+.box-center .inner:last-child {
+    margin-left: 110px;
+}
+
+.box-right .inner:last-child {
+    margin-left: 232px;
+}
+
+.box-right.row2 .inner:last-child,
+.box-right.row3 .inner:last-child {
+    margin-left: 0;
+}
+
+.box-left.turn .inner:last-child,
+.box-center.turn .inner:last-child,
+.box-right.turn .inner:last-child {
+    transform: perspective(120px) rotateY(15deg);
+    margin-left: 140px;
+}
+
+.box-center.turn .inner:last-child {
+    margin-left: 182px;
+}
+
+.box-center.row2.turn .inner:last-child {
+    margin-left: 12px;
+}
+
+.box-left.row2.turn .inner:last-child {
+    margin-left: 12px;
+}
+
+.box-right.turn .inner:last-child {
+    margin-left: 330px;
+}
+
+.box-left .inner span,
+.box-center .inner span,
+.box-right .inner span {
+    position: absolute;
+}
+
+.box-left .inner span {
+    left: 80px;
+}
+
+.box-center .inner span {
+    left: 0;
+}
+
+.box-right .inner span {
+    left: -18px;
+}
+
+#box1 {
+    z-index: 200;
+}
+
+#box1 .inner span {
+    margin-left: -7px;
+}
+
+#box5 {
+    clip-path: inset(-0.56% 0% 0.22% -1.11% round 10px);
+}
+
+#item .ring1 {
+    transform-origin: center;
+    transition: all 1s;
+}
+
+#item .ring1.turn {
+    transform: translate(-45px, 18px) rotate(56deg);
+}
+
+#item .ring1 .highcharts-point {
+    transform-origin: center;
+    transform: rotate(20deg);
+}
+
+#back {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0;
+}
+
+#back a {
+    color: #fff;
+    opacity: 1;
+}
+
+#back a:hover {
+    opacity: 80%;
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2021-12-7 7:38:31
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info.
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation swing-in-right-bck
+ * ----------------------------------------
+ */
+@keyframes swing-in-right-bck {
+    0% {
+        -webkit-transform: rotateY(70deg);
+        transform: rotateY(70deg);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: rotateY(0);
+        transform: rotateY(0);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 1;
+    }
+}
+
+@keyframes swing-in-right-bck {
+    0% {
+        -webkit-transform: rotateY(70deg);
+        transform: rotateY(70deg);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: rotateY(0);
+        transform: rotateY(0);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 1;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    .chart-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    #charts {
+        width: 540px;
+    }
+
+    #center-message {
+        width: 180px;
+    }
+
+    #message {
+        width: 540px;
+    }
+
+    .box {
+        width: 540px;
+        height: 180px;
+    }
+
+    .box.row2 {
+        top: 180px;
+        width: 180px;
+        height: 170px;
+    }
+
+    .box.row3 {
+        top: 360px;
+        width: 180px;
+        height: 170px;
+    }
+
+    .box.row2.center,
+    .box.row3.center {
+        left: 180px;
+    }
+
+    .box.row2.right,
+    .box.row3.right {
+        left: 360px;
+    }
+
+    .box-left .inner,
+    .box-center .inner,
+    .box-right .inner {
+        width: 45px;
+        height: 170px;
+        font-size: 3em;
+        line-height: 200px;
+    }
+
+    .box-left .inner:last-child,
+    .box-center .inner:last-child,
+    .box-right .inner:last-child {
+        height: 180px;
+        width: 540px;
+    }
+
+    .box-center .inner:last-child {
+        margin-left: 180px;
+    }
+
+    .box-right .inner:last-child {
+        margin-left: 355px;
+    }
+
+    .box p {
+        font-size: 60px;
+        margin-top: 30px;
+    }
+
+    .box-right .inner span {
+        left: 0;
+    }
+
+    #box1 .inner span {
+        margin-left: 0;
+    }
+
+    .button-container {
+        top: 400px;
+    }
+
+    #bell-chart .higcharts-bellchart-series {
+        transform: translateY(0);
+    }
+
+    #presents-chart .highcharts-series-2,
+    #presents-chart .highcharts-series-3,
+    #presents-chart .highcharts-series-4,
+    #presents-chart .highcharts-series-5,
+    #presents-chart .highcharts-series-6,
+    #presents-chart .highcharts-series-7,
+    #presents-chart .highcharts-series-8,
+    #presents-chart .highcharts-series-9,
+    #presents-chart .highcharts-series-10,
+    #presents-chart .highcharts-series-11,
+    #presents-chart .highcharts-series-12,
+    #presents-chart .highcharts-series-13 {
+        transform: translateY(0);
+    }
+
+    #center-message {
+        width: 170px;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        margin-top: 15px;
+        margin-left: 5px;
+        letter-spacing: 0;
+    }
+}

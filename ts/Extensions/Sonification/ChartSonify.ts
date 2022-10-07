@@ -22,7 +22,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { DefaultSonificationInstrumentOptions } from './SonificationOptions';
 import type Options from '../../Core/Options';
 import type PointSonify from './PointSonify';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import Earcon from './Earcon.js';
 import Point from '../../Core/Series/Point.js';
@@ -572,7 +572,11 @@ function chartSonify(
     let order = buildPathOrder(opts.order, this, function (
         series: SeriesSonify.Composition
     ): Partial<SeriesSonify.SonifySeriesOptions> {
-        return SeriesSonify.buildChartSonifySeriesOptions(series, dataExtremes, opts);
+        return SeriesSonify.buildChartSonifySeriesOptions(
+            series,
+            dataExtremes,
+            opts
+        );
     });
 
     // Add waits after simultaneous paths with series in them.
@@ -961,7 +965,7 @@ export default ChartSonify;
  * receives the point as argument, and should return a numeric value. The points
  * with the lowest numeric values are then played first, and the time between
  * points will be proportional to the distance between the numeric values. This
- * option can not be overridden per series.
+ * option cannot be overridden per series.
  * @name Highcharts.SonificationOptions#pointPlayTime
  * @type {string|Function}
  *//**

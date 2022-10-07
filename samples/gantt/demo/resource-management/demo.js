@@ -1,7 +1,6 @@
 // Set to 00:00:00:000 today
 var today = new Date(),
     day = 1000 * 60 * 60 * 24,
-    map = Highcharts.map,
     dateFormat = Highcharts.dateFormat,
     series,
     cars;
@@ -121,6 +120,29 @@ Highcharts.ganttChart('container', {
     tooltip: {
         pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
     },
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
+                yAxisDescriptionSingular: 'The chart has a tabular Y axis showing a data table row for each point.'
+            }
+        }
+    },
+    accessibility: {
+        keyboardNavigation: {
+            seriesNavigation: {
+                mode: 'serialize'
+            }
+        },
+        point: {
+            valueDescriptionFormat: 'Rented to {point.rentedTo} from {point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
+        },
+        series: {
+            descriptionFormatter: function (series) {
+                return series.name + ', car ' + (series.index + 1) + ' of ' + series.chart.series.length + '.';
+            }
+        }
+    },
     xAxis: {
         currentDateIndicator: true
     },
@@ -131,28 +153,28 @@ Highcharts.ganttChart('container', {
                 title: {
                     text: 'Model'
                 },
-                categories: map(series, function (s) {
+                categories: series.map(function (s) {
                     return s.name;
                 })
             }, {
                 title: {
                     text: 'Rented To'
                 },
-                categories: map(series, function (s) {
+                categories: series.map(function (s) {
                     return s.current.rentedTo;
                 })
             }, {
                 title: {
                     text: 'From'
                 },
-                categories: map(series, function (s) {
+                categories: series.map(function (s) {
                     return dateFormat('%e. %b', s.current.from);
                 })
             }, {
                 title: {
                     text: 'To'
                 },
-                categories: map(series, function (s) {
+                categories: series.map(function (s) {
                     return dateFormat('%e. %b', s.current.to);
                 })
             }]

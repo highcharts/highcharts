@@ -1,0 +1,7 @@
+---
+ name: Highcharts Arc Diagram with Centered Links
+ authors:
+   - Piotr Madej
+   - Grzegorz Blachliński
+ js_wrap: b
+...

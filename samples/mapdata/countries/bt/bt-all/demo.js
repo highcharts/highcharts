@@ -1,65 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['bt-ty', 0],
-    ['bt-sg', 1],
-    ['bt-to', 2],
-    ['bt-wp', 3],
-    ['bt-mo', 4],
-    ['bt-pm', 5],
-    ['bt-sj', 6],
-    ['bt-ta', 7],
-    ['bt-ck', 8],
-    ['bt-da', 9],
-    ['bt-ha', 10],
-    ['bt-pr', 11],
-    ['bt-sm', 12],
-    ['bt-tm', 13],
-    ['bt-ga', 14],
-    ['bt-pn', 15],
-    ['bt-cr', 16],
-    ['bt-ge', 17],
-    ['bt-bu', 18],
-    ['bt-lh', 19]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/bt/bt-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/bt/bt-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['bt-ty', 10], ['bt-sg', 11], ['bt-to', 12], ['bt-wp', 13],
+        ['bt-mo', 14], ['bt-pm', 15], ['bt-sj', 16], ['bt-ta', 17],
+        ['bt-ck', 18], ['bt-da', 19], ['bt-ha', 20], ['bt-pr', 21],
+        ['bt-sm', 22], ['bt-tm', 23], ['bt-ga', 24], ['bt-pn', 25],
+        ['bt-cr', 26], ['bt-ge', 27], ['bt-bu', 28], ['bt-lh', 29]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bt/bt-all.js">Bhutan</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bt/bt-all.topo.json">Bhutan</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

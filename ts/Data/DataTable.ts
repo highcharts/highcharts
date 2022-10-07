@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -257,7 +257,11 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
 
             if (aliases.length) {
                 const cloneAliasMap = tableClone.aliasMap;
-                for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+                for (
+                    let i = 0, iEnd = aliases.length, alias: string;
+                    i < iEnd;
+                    ++i
+                ) {
                     alias = aliases[i];
                     cloneAliasMap[alias] = aliasMap[alias];
                 }
@@ -450,7 +454,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         }
 
         if (modifier) {
-            modifier.modifyRows(table, modifiedRows, (rowIndex || 0), eventDetail);
+            modifier.modifyRows(
+                table,
+                modifiedRows,
+                (rowIndex || 0),
+                eventDetail
+            );
         }
 
         table.emit({
@@ -663,7 +672,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columnNameOrAlias: string,
         asReference?: boolean
     ): (DataTable.Column|undefined) {
-        return this.getColumns([columnNameOrAlias], asReference)[columnNameOrAlias];
+        return this.getColumns(
+            [columnNameOrAlias],
+            asReference
+        )[columnNameOrAlias];
     }
 
     /**
@@ -727,7 +739,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
 
             if (useNaN) {
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i, true));
+                    columnAsNumber.push(
+                        table.getCellAsNumber(columnNameOrAlias, i, true)
+                    );
                 }
             } else {
                 for (
@@ -749,7 +763,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                     }
                 }
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i));
+                    columnAsNumber.push(table.getCellAsNumber(
+                        columnNameOrAlias,
+                        i
+                    ));
                 }
             }
         }
@@ -804,7 +821,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             tableColumns = table.columns,
             columns: DataTable.ColumnCollection = {};
 
-        columnNamesOrAliases = (columnNamesOrAliases || Object.keys(tableColumns));
+        columnNamesOrAliases = (
+            columnNamesOrAliases || Object.keys(tableColumns)
+        );
 
         for (
             let i = 0,
@@ -843,7 +862,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @function Highcharts.DataTable#getRow
      *
      * @param {number} rowIndex
-     * Row index.
+     * Row index to retrieve. First row has index 0.
      *
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases in order to retrieve.
@@ -985,7 +1004,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                 ++j
             ) {
                 columnName = columnNamesOrAliases[j];
-                row[columnName] = columns[(aliasMap[columnName] || columnName)][i];
+                row[columnName] = columns[
+                    (aliasMap[columnName] || columnName)
+                ][i];
             }
         }
 
@@ -1377,7 +1398,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                         tableColumns[columnName] = new Array(table.rowCount)
                 );
 
-                for (let i = (rowIndex || 0), iEnd = column.length; i < iEnd; ++i) {
+                for (
+                    let i = (rowIndex || 0),
+                        iEnd = column.length;
+                    i < iEnd;
+                    ++i
+                ) {
                     tableColumn[i] = column[i];
                 }
 

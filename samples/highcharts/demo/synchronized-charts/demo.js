@@ -118,6 +118,10 @@ Highcharts.ajax({
                     },
                     labels: {
                         format: '{value} km'
+                    },
+                    accessibility: {
+                        description: 'Kilometers',
+                        rangeDescription: '0km to 6.5km'
                     }
                 },
                 yAxis: {

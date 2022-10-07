@@ -125,7 +125,7 @@ class Earcon {
                 instrumentCopy,
                 copyId = '';
 
-            if (instrument && instrument.play) {
+            if (instrument && (instrument.play)) {
                 if (opts.playOptions) {
                     instrumentOpts.pan = pick(masterPan, instrumentOpts.pan);
 

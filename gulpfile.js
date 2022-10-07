@@ -24,7 +24,6 @@ Gulp.registry(new GulpForwardReference());
 }([
     'default',
     'dist',
-    'dist-ant',
     'dist-clean',
     'dist-compress',
     'dist-copy',
@@ -77,7 +76,7 @@ Gulp.registry(new GulpForwardReference());
     'tsdoc-watch',
     'update',
     'unsorted/build-modules',
-    'unsorted/compare-filesize',
+    'unsorted/compare-filesizes',
     'unsorted/filesize',
     'unsorted/get-filesizes',
     'unsorted/nightly',

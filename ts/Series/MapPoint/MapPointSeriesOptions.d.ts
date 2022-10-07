@@ -5,6 +5,7 @@
  * */
 
 import type MapPointSeries from './MapPointSeries';
+import type MapPointPointOptions from './MapPointPointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -15,6 +16,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface MapPointSeriesOptions extends ScatterSeriesOptions {
+    data?: MapPointPointOptions[];
     states?: SeriesStatesOptions<MapPointSeries>;
 }
 

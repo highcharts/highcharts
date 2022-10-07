@@ -1,5 +1,5 @@
 ---
- name: Grenada - Highmaps
- description: Highmaps demo
+ name: Grenada - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -14,15 +14,15 @@ const path = require('path');
 const INTERNAL_TARGET = path.join('build', 'api-internals');
 /*
 const INTERNAL_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-internals'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'typedoc', 'theme-internals'
 );
  */
 const NEXT_TARGET = path.join('build', 'api-next');
 /*
 const NEXT_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-next'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'typedoc', 'theme-next'
 );
  */
 /* *
@@ -57,7 +57,9 @@ function task() {
         ));
 
     /*
-    const generators = require('highcharts-documentation-generators');
+    const generators = require(
+        '@highcharts/highcharts-documentation-generators'
+    );
     const log = require('./lib/log');
 
     return new Promise(resolve => {

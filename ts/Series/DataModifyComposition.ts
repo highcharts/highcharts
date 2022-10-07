@@ -113,7 +113,7 @@ namespace DataModifyComposition {
             mode: 'compare'|'cumulative',
             modeState?: boolean|null|'percent'|'value',
             redraw?: boolean
-        ): void
+        ): void;
     }
 
     export declare class PointComposition extends Point {
@@ -738,6 +738,7 @@ export default DataModifyComposition;
  * @type      {string}
  * @since     1.0.1
  * @product   highstock
+ * @validvalue ["percent", "value"]
  * @apioption plotOptions.series.compare
  */
 

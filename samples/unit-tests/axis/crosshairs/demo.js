@@ -296,7 +296,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     series1.points[0].onMouseOver();
     assert.strictEqual(
         series1.xAxis.cross.attr('visibility'),
-        'visible',
+        'inherit',
         'Hover Series 1: crosshair on xAxis of Series 1 is visible (#6420)'
     );
     assert.strictEqual(
@@ -306,7 +306,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     );
     assert.strictEqual(
         series1.yAxis.crossLabel.attr('visibility'),
-        'visible',
+        'inherit',
         'Hover Series 1: crosshair label on yAxis of Series 1 is visible ' +
             '(#7219)'
     );
@@ -325,14 +325,14 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     );
     assert.strictEqual(
         series2.xAxis.cross.attr('visibility'),
-        'visible',
+        'inherit',
         'Hover Series 2: crosshair on xAxis of Series 2 is visible (#6420)'
     );
 
     series1.points[1].onMouseOver();
     assert.strictEqual(
-        series1.yAxis.crossLabel.attr('visibility'),
-        'visible',
+        series1.yAxis.crossLabel.visibility,
+        'inherit',
         'Hover Series 1 back: crosshair label on yAxis of Series 1 is ' +
             'visible (#7219)'
     );
@@ -385,7 +385,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
 
     assert.strictEqual(
         series1.yAxis.crossLabel.attr('visibility'),
-        'visible',
+        'inherit',
         'Crosshair should be visible for the first series (#12298)'
     );
     assert.strictEqual(
@@ -527,7 +527,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.yAxis[0].crossLabel.attr('visibility'),
-            'visible',
+            'inherit',
             'Crosshair label is visible on logarithmic ' +
                 'axis for the second point (#8542)'
         );

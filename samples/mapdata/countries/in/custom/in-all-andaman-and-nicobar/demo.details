@@ -1,5 +1,5 @@
 ---
- name: India with Andaman and Nicobar - Highmaps
- description: Highmaps demo
+ name: India with Andaman and Nicobar - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -466,7 +466,7 @@ const options = {
 };
 
 // Add flags for important milestones. This requires Highcharts Stock.
-if (Highcharts.seriesTypes.flags) {
+if (Highcharts.Series.types.flags) {
     options.series.push({
         type: 'flags',
         name: 'Cloud',

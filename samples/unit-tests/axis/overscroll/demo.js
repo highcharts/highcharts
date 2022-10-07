@@ -1,5 +1,5 @@
 // Test both, ordinal and non-ordinal axes:
-Highcharts.each([true, false], function (ordinal) {
+[true, false].forEach(ordinal => {
     // Highcharts Stock modifies "series" property, so use separate object each time:
     function getOptions() {
         return {

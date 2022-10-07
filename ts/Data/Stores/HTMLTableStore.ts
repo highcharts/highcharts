@@ -92,7 +92,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
+        this.parser = parser || new HTMLTableParser(
+            this.options,
+            this.tableElement
+        );
     }
 
     /* *
@@ -105,7 +108,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
+    public readonly options: (
+        HTMLTableStore.Options&HTMLTableParser.OptionsType
+    );
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -113,10 +118,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     public readonly parser: HTMLTableParser;
 
     /**
-     * The table element to create the store from.
-     * Is either supplied directly or is fetched by an ID.
+     * The table element to create the store from. Is either supplied directly
+     * or is fetched by an ID.
      */
-    public tableElement: (HTMLElement | null);
+    public tableElement: (HTMLElement|null);
 
     public tableID?: string;
 
@@ -132,7 +137,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         const store = this,
             { table: tableHTML } = store.options;
 
-        let tableElement: (HTMLElement | null);
+        let tableElement: (HTMLElement|null);
 
         if (typeof tableHTML === 'string') {
             store.tableID = tableHTML;
@@ -208,14 +213,16 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportOptions: HTMLTableStore.ExportOptions = {}
     ): string {
         const options = exportOptions,
-            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            decimalPoint = options.useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders,
             useRowspanHeaders = options.useRowspanHeaders;
 
         const isRowEqual = function (
-            row1: Array<(number | string | undefined)>,
-            row2: Array<(number | string | undefined)>
+            row1: Array<(number|string|undefined)>,
+            row2: Array<(number|string|undefined)>
         ): boolean {
             let i = row1.length;
 
@@ -233,8 +240,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Get table header markup from row data
         const getTableHeaderHTML = function (
-            topheaders: (Array<(number | string)> | null | undefined),
-            subheaders: Array<(number | string | undefined)>,
+            topheaders: (Array<(number|string)>|null|undefined),
+            subheaders: Array<(number|string|undefined)>,
             rowLength?: number
         ): string {
             let html = '<thead>',
@@ -318,9 +325,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         const getCellHTMLFromValue = function (
             tag: string,
-            classes: (string | null),
+            classes: (string|null),
             attrs: string,
-            value: (number | string | undefined)
+            value: (number|string|undefined)
         ): string {
             let val = value,
                 className = 'text' + (classes ? ' ' + classes : '');
@@ -353,7 +360,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            const subcategories: (string | undefined)[] = [];
+            const subcategories: (string|undefined)[] = [];
 
             // If using multilevel headers, the first value
             // of each column is a subcategory
@@ -469,7 +476,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return this.getHTMLTableForExport(
+            merge(exportOptions, htmlExportOptions)
+        );
     }
 
 }
@@ -500,7 +509,7 @@ namespace HTMLTableStore {
      * Options for exporting the store as an HTML table
      */
     export interface ExportOptions extends JSON.Object {
-        decimalPoint?: string | null;
+        decimalPoint?: string|null;
         exportIDColumn?: boolean;
         tableCaption?: string;
         useLocalDecimalPoint?: boolean;
@@ -514,22 +523,22 @@ namespace HTMLTableStore {
      */
     export interface ErrorEvent extends DataStore.Event {
         type: 'loadError';
-        error: (string | Error);
+        error: (string|Error);
     }
 
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
     export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
-        tableElement?: (HTMLElement | null);
+        type: ('load'|'afterLoad');
+        tableElement?: (HTMLElement|null);
     }
 
     /**
      * Internal options for the HTMLTableDataStore class
      */
     export interface Options {
-        table: (string | HTMLElement);
+        table: (string|HTMLElement);
     }
 
 }

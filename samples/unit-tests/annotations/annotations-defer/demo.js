@@ -82,7 +82,7 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
 
     assert.strictEqual(
         chart.annotations[1].graphic.visibility,
-        'visible',
+        'inherit',
         'Annotation should be render immediately.'
     );
 

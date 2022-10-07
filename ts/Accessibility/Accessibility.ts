@@ -24,7 +24,7 @@ import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
-import type RangeSelector from '../Extensions/RangeSelector';
+import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -40,6 +40,10 @@ const {
     fireEvent,
     merge
 } = U;
+import HU from './Utils/HTMLUtilities.js';
+const {
+    removeElement
+} = HU;
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
@@ -56,8 +60,8 @@ import ZoomComponent from './Components/ZoomComponent.js';
 
 import whcm from './HighContrastMode.js';
 import highContrastTheme from './HighContrastTheme.js';
-import defaultOptionsA11Y from './Options/Options.js';
-import defaultLangOptions from './Options/LangOptions.js';
+import defaultOptionsA11Y from './Options/A11yDefaults.js';
+import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 
 /* *
@@ -160,7 +164,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-        this.update();
     }
 
 
@@ -187,7 +190,9 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
@@ -235,7 +240,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -277,6 +284,11 @@ class Accessibility {
         // Destroy proxy provider
         if (this.proxyProvider) {
             this.proxyProvider.destroy();
+        }
+
+        // Remove announcer container
+        if (chart.announcerContainer) {
+            removeElement(chart.announcerContainer);
         }
 
         // Kill keyboard nav
@@ -454,6 +466,9 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
+                if (a11y && !a11y.zombie) {
+                    a11y.update();
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -485,7 +500,6 @@ namespace Accessibility {
         LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
-        ZoomComponent.compose(AxisClass);
         // RangeSelector
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
@@ -527,7 +541,7 @@ namespace Accessibility {
             });
 
             // Direct updates (events happen after render)
-            ['afterDrilldown', 'drillupall'].forEach((event): void => {
+            ['afterApplyDrilldown', 'drillupall'].forEach((event): void => {
                 addEvent(
                     ChartClass as typeof ChartComposition,
                     event,

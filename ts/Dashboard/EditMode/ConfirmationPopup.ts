@@ -1,6 +1,6 @@
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import Popup from '../../Extensions/Annotations/Popup.js';
+import Popup from '../../Extensions/Annotations/Popup/Popup.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';

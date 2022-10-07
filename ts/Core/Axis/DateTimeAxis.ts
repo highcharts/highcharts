@@ -43,8 +43,8 @@ declare module './AxisComposition' {
 
 declare module './AxisOptions' {
     interface AxisOptions {
-        dateTimeLabelFormats?: DateTimeAxis.LabelFormatOptions;
-        units?: Array<[DateTimeAxis.LabelFormatsKey, (Array<number>|null)]>;
+        dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
+        units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
     }
 }
 
@@ -62,7 +62,7 @@ declare module '../Series/SeriesOptions' {
 }
 
 declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends DateTimeAxis.NormalizedObject {
+    interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
         // nothing to add
     }
 }
@@ -85,29 +85,6 @@ namespace DateTimeAxis{
 
     export declare class Composition extends Axis {
         dateTime: Additions;
-    }
-
-    export type LabelFormatsKey = keyof LabelFormatOptions;
-
-    export interface LabelFormatOptions {
-        day?: (string|LabelFormatOptionsObject);
-        hour?: (string|LabelFormatOptionsObject);
-        millisecond?: (string|LabelFormatOptionsObject);
-        minute?: (string|LabelFormatOptionsObject);
-        month?: (string|LabelFormatOptionsObject);
-        second?: (string|LabelFormatOptionsObject);
-        week?: (string|LabelFormatOptionsObject);
-        year?: (string|LabelFormatOptionsObject);
-    }
-
-    export interface LabelFormatOptionsObject {
-        list?: Array<string>;
-        main?: string;
-        range?: boolean;
-    }
-
-    export interface NormalizedObject extends Time.TimeNormalizedObject {
-        unitName: LabelFormatsKey;
     }
 
     export type PointIntervalUnitValue = ('day'|'month'|'year');
@@ -237,11 +214,13 @@ namespace DateTimeAxis{
         public normalizeTimeTickInterval(
             tickInterval: number,
             unitsOption?: AxisOptions['units']
-        ): DateTimeAxis.NormalizedObject {
+        ): Time.TimeNormalizedObject {
             const units = (
                 unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                    // unit name
+                    'millisecond',
+                    // allowed multiples
+                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
                     [1, 2, 5, 10, 15, 30]
@@ -324,18 +303,21 @@ namespace DateTimeAxis{
          */
         public getXDateFormat(
             x: number,
-            dateTimeLabelFormats: Record<string, string>
+            dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
         ): string {
-            const { axis } = this;
+            const { axis } = this,
+                time = axis.chart.time;
 
             return axis.closestPointRange ?
-                axis.chart.time.getDateFormat(
+                time.getDateFormat(
                     axis.closestPointRange,
                     x,
                     axis.options.startOfWeek,
                     dateTimeLabelFormats
-                ) || dateTimeLabelFormats.year : // #2546, 2581
-                dateTimeLabelFormats.day;
+                ) ||
+                // #2546, 2581
+                time.resolveDTLFormat(dateTimeLabelFormats.year).main :
+                time.resolveDTLFormat(dateTimeLabelFormats.day).main;
         }
     }
 

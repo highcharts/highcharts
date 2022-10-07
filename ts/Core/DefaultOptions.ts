@@ -17,8 +17,7 @@
  * */
 
 import type { Options } from './Options';
-import type Point from './Series/Point';
-import type Series from './Series/Series';
+import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
 import Color from './Color/Color.js';
@@ -84,6 +83,7 @@ declare module './LangOptions'{
  * @type {Highcharts.Options}
  *//**
  * @optionparent
+ * @private
  */
 const defaultOptions: Options = {
 
@@ -117,7 +117,7 @@ const defaultOptions: Options = {
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      *
-     * @type    {Array<Highcharts.ColorString>}
+     * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
@@ -1244,7 +1244,7 @@ const defaultOptions: Options = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Series|Point)
+            this: Legend.Item
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;
@@ -1367,8 +1367,8 @@ const defaultOptions: Options = {
              * Whether to enable the legend navigation. In most cases, disabling
              * the navigation results in an unwanted overflow.
              *
-             * See also the [adapt chart to legend](
-             * https://www.highcharts.com/products/plugin-registry/single/8/Adapt-Chart-To-Legend)
+             * See also the
+             * [adapt chart to legend](https://github.com/highcharts/adapt-chart-to-legend)
              * plugin for a solution to extend the chart height to make room for
              * the legend, optionally in exported charts only.
              *
@@ -1683,6 +1683,26 @@ const defaultOptions: Options = {
          * @type      {boolean}
          * @default   false
          * @apioption legend.useHTML
+         */
+
+        /**
+         * For a color axis with data classes, how many decimals to render in
+         * the legend. The default preserves the decimals of the range numbers.
+         *
+         * @type      {number}
+         * @default   -1
+         * @product   highcharts highmaps
+         * @apioption legend.valueDecimals
+         */
+
+        /**
+         * For a color axis with data classes, a suffix for the range numbers in
+         * the legend.
+         *
+         * @type      {string}
+         * @default   ''
+         * @product   highcharts highmaps
+         * @apioption legend.valueSuffix
          */
 
         /**
@@ -2113,18 +2133,20 @@ const defaultOptions: Options = {
          */
 
         /**
-         * A callback function to place the tooltip in a default position. The
+         * A callback function to place the tooltip in a custom position. The
          * callback receives three parameters: `labelWidth`, `labelHeight` and
          * `point`, where point contains values for `plotX` and `plotY` telling
          * where the reference point is in the plot area. Add `chart.plotLeft`
          * and `chart.plotTop` to get the full coordinates.
          *
+         * To find the actual hovered `Point` instance, use
+         * `this.chart.hoverPoint`. For shared or split tooltips, all the hover
+         * points are available in `this.chart.hoverPoints`.
+         *
          * Since v7, when [tooltip.split](#tooltip.split) option is enabled,
          * positioner is called for each of the boxes separately, including
          * xAxis header. xAxis header is not a point, instead `point` argument
-         * contains info:
-         * `{ plotX: Number, plotY: Number, isHeader: Boolean }`
-         *
+         * contains info: `{ plotX: Number, plotY: Number, isHeader: Boolean }`
          *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
@@ -2489,6 +2511,8 @@ const defaultOptions: Options = {
          *
          * @sample {highcharts} highcharts/tooltip/pointformat/
          *         A different point format with value suffix
+         * @sample {highcharts|highstock} highcharts/tooltip/pointformat-extra-information/
+         *         Show extra information about points in the tooltip
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *
@@ -2967,47 +2991,11 @@ export default DefaultOptions;
  * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
- * @param {global.ChartSelectionContextObject} event
+ * @param {Highcharts.SelectEventObject} event
  *        Event informations
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.
- */
-
-/**
- * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
- * datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartSelectionContextObject
- * @extends global.Event
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#xAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#yAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- */
-
-/**
- * Axis context of the selection.
- *
- * @interface Highcharts.ChartSelectionAxisContextObject
- *//**
- * The selected Axis.
- * @name Highcharts.ChartSelectionAxisContextObject#axis
- * @type {Highcharts.Axis}
- *//**
- * The maximum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#min
- * @type {number}
  */
 
 (''); // detach doclets above

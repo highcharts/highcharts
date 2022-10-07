@@ -105,8 +105,6 @@ class MenuComponent extends AccessibilityComponent {
 
     public exportButtonProxy?: ProxyElement;
 
-    public isExportMenuShown?: boolean;
-
 
     /* *
      *
@@ -146,7 +144,6 @@ class MenuComponent extends AccessibilityComponent {
             menu.setAttribute('aria-hidden', 'true');
         }
 
-        this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
     }
 
@@ -163,7 +160,6 @@ class MenuComponent extends AccessibilityComponent {
             unhideChartElementFromAT(chart, menu);
         }
 
-        this.isExportMenuShown = true;
         this.setExportButtonExpandedState('true');
     }
 
@@ -176,7 +172,10 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
 
@@ -186,8 +185,25 @@ class MenuComponent extends AccessibilityComponent {
      * proxy overlay.
      */
     public onChartRender(): void {
+        const chart = this.chart,
+            focusEl = chart.focusElement,
+            a11y = chart.accessibility;
         this.proxyProvider.clearGroup('chartMenu');
         this.proxyMenuButton();
+
+        if (
+            this.exportButtonProxy &&
+            focusEl &&
+            focusEl === chart.exportingGroup
+        ) {
+            if (focusEl.focusBorder) {
+                chart.setFocusToElement(
+                    focusEl, this.exportButtonProxy.buttonElement
+                );
+            } else if (a11y) {
+                a11y.keyboardNavigation.tabindexContainer.focus();
+            }
+        }
     }
 
 
@@ -211,7 +227,8 @@ class MenuComponent extends AccessibilityComponent {
                             chartTitle: getChartTitle(chart)
                         }
                     ),
-                    'aria-expanded': false
+                    'aria-expanded': false,
+                    title: chart.options.lang.contextButtonTitle || null
                 }
             );
         }
@@ -256,7 +273,8 @@ class MenuComponent extends AccessibilityComponent {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });
@@ -412,7 +430,7 @@ class MenuComponent extends AccessibilityComponent {
             getExportMenuButtonElement(chart) as any
         ).element;
 
-        if (this.isExportMenuShown) {
+        if (chart.openMenu) {
             this.fakeClickEvent(curHighlightedItem);
         } else {
             this.fakeClickEvent(exportButtonElement);
@@ -534,7 +552,7 @@ namespace MenuComponent {
         const chart = this,
             exportList = chart.exportDivElements;
 
-        if (exportList && chart.exportContextMenu) {
+        if (exportList && chart.exportContextMenu && chart.openMenu) {
             // Reset hover states etc.
             exportList.forEach((el): void => {
                 if (

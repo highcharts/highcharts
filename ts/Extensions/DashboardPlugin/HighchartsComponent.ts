@@ -112,7 +112,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                     chartOptions,
                     // Highcharts, // TODO: Find a solution
                     // store: store instanceof DataStore ? store : void 0,
-                    syncHandlers: HighchartsComponent.syncHandlers // Get from static registry
+
+                    // Get from static registry:
+                    syncHandlers: HighchartsComponent.syncHandlers
                 }
             )
         );
@@ -171,8 +173,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this.chartContainer.id = this.options.chartID;
         }
 
-        this.sync = new HighchartsComponent.Sync(this, this.options.syncEvents, this.options.syncHandlers);
-        this.chartOptions = this.options.chartOptions || { chart: {} };
+        this.sync = new HighchartsComponent.Sync(
+            this, this.options.syncEvents,
+            this.options.syncHandlers
+        );
+        this.chartOptions = (
+            this.options.chartOptions ||
+            { chart: {} } as Partial<Options>
+        );
 
         if (this.store) {
             this.on('tableChanged', (): void => this.updateSeries());
@@ -275,7 +283,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
-                this.presentationTable = this.presentationModifier.modifyTable(this.presentationTable).modified;
+                this.presentationTable = this.presentationModifier
+                    .modifyTable(this.presentationTable).modified;
             }
 
             const table = this.presentationTable;
@@ -286,7 +295,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
                     const isVisible = this.activeGroup ?
-                        this.activeGroup.getSharedState().getColumnVisibility(name) !== false :
+                        this.activeGroup
+                            .getSharedState()
+                            .getColumnVisibility(name) !== false :
                         true;
 
                     if (!isVisible && !tableAxisMap[name]) {
@@ -311,7 +322,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 while (i < chart.series.length) {
                     const series = chart.series[i];
                     const seriesFromStore = series.options.id === `${storeTableID}-series-${index}`;
-                    const existingSeries = seriesNames.indexOf(series.name) !== -1;
+                    const existingSeries =
+                        seriesNames.indexOf(series.name) !== -1;
                     i++;
 
                     if (
@@ -410,7 +422,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             ].map((optionKey: string): Record<string, any> => {
                 let seriesOrAxisOptions = (options as any)[optionKey] || {};
 
-                if (!Array.isArray(seriesOrAxisOptions) && seriesOrAxisOptions.events) {
+                if (
+                    !Array.isArray(seriesOrAxisOptions) &&
+                    seriesOrAxisOptions.events
+                ) {
                     seriesOrAxisOptions = [seriesOrAxisOptions];
                 }
 
@@ -483,7 +498,9 @@ namespace HighchartsComponent {
 
     export type ComponentType = HighchartsComponent;
 
-    export type ConstructorType = 'chart' | 'stockChart' | 'mapChart' | 'ganttChart';
+    export type ConstructorType = (
+        'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
+    );
 
     export type ChartComponentEvents =
         JSONEvent |

@@ -88,11 +88,6 @@ class VectorSeries extends ScatterSeries {
         lineWidth: 2,
 
         /**
-         * @ignore
-         */
-        marker: null as any,
-
-        /**
          * What part of the vector it should be rotated around. Can be one of
          * `start`, `center` and `end`. When `start`, the vectors will start
          * from the given [x, y] position, and when `end` the vectors will end
@@ -131,7 +126,9 @@ class VectorSeries extends ScatterSeries {
          */
         vectorLength: 20
 
-    } as VectorSeriesOptions);
+    } as VectorSeriesOptions, {
+        marker: null as any
+    });
 
     /* *
      *
@@ -218,7 +215,7 @@ class VectorSeries extends ScatterSeries {
             }, {
                 length: 1
             });
-        item.legendLine = this.chart.renderer.path(path)
+        legendItem.line = this.chart.renderer.path(path)
         .addClass('highcharts-point')
         .attr({
             zIndex: 3,
@@ -226,7 +223,7 @@ class VectorSeries extends ScatterSeries {
             rotation: 270,
             'stroke-width': 1,
             'stroke': 'black'
-        }).add(item.legendGroup);
+        }).add(item.legendItem.group);
     },
     */
 

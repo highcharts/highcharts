@@ -355,7 +355,9 @@ addEvent(Series, 'afterRender', function (): void {
             // Save price
             if (series.yAxis.cross) {
                 series.lastPrice = series.yAxis.cross;
-                series.lastPrice.addClass('highcharts-color-' + series.colorIndex); // #15222
+                series.lastPrice.addClass(
+                    'highcharts-color-' + series.colorIndex
+                ); // #15222
                 series.lastPrice.y = yValue;
             }
         }

@@ -32,9 +32,26 @@ export namespace SVGPath {
      *
      * */
 
-    export type Arc = ['A'|'a', number, number, number, number, number, number, number];
+    export type Arc = [
+        'A'|'a',
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+        number
+    ];
     export type Close = ['Z'|'z'];
-    export type CurveTo = ['C'|'c', number, number, number, number, number, number];
+    export type CurveTo = [
+        'C'|'c',
+        number,
+        number,
+        number,
+        number,
+        number,
+        number
+    ];
     export type HorizontalLineTo = ['H'|'h', number];
     export type LineTo = ['L'|'l', number, number];
     export type MoveTo = ['M'|'m', number, number];

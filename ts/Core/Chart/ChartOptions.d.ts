@@ -21,6 +21,7 @@ import type Axis from '../Axis/Axis';
 import type Chart from './Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
@@ -85,6 +86,7 @@ export interface ChartLoadCallbackFunction {
     (this: Chart, event: Event): void;
 }
 export interface ChartOptions {
+    alignThresholds?: boolean;
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
     backgroundColor?: ColorType;
@@ -93,11 +95,12 @@ export interface ChartOptions {
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    allowMutatingData?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
     ignoreHiddenSeries?: boolean;
     inverted?: boolean;
-    map?: string|Array<any>|Highcharts.GeoJSON;
+    map?: string|GeoJSON|TopoJSON;
     mapTransforms?: any;
     margin?: (number|Array<number>);
     marginBottom?: number;
@@ -113,7 +116,6 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
     plotBorderWidth?: number;
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
-    polar?: boolean;
     reflow?: boolean;
     renderTo?: (string|HTMLDOMElement);
     resetZoomButton?: ChartResetZoomButtonOptions;
@@ -130,6 +132,7 @@ export interface ChartOptions {
     type?: string;
     width?: (null|number);
     zoomBySingleTouch?: boolean;
+    zooming: Partial<ChartZoomingOptions>;
     zoomType?: ('x'|'xy'|'y');
 }
 
@@ -168,6 +171,14 @@ export interface ChartSelectionCallbackFunction {
 export interface ChartSelectionContextObject {
     xAxis: Array<ChartSelectionAxisContextObject>;
     yAxis: Array<ChartSelectionAxisContextObject>;
+}
+
+export interface ChartZoomingOptions {
+    key?: string;
+    pinchType?: string;
+    resetButton?: ChartResetZoomButtonOptions;
+    singleTouch: boolean;
+    type?: ('x'|'xy'|'y');
 }
 
 /* *

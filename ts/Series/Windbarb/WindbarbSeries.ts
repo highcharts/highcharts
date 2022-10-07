@@ -18,8 +18,11 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import ApproximationRegistry from
+    '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -176,8 +179,8 @@ class WindbarbSeries extends ColumnSeries {
      * @private
      */
     public static registerApproximation(): void {
-        if (H.approximations && !H.approximations.windbarb) {
-            H.approximations.windbarb = function (
+        if (!ApproximationRegistry.windbarb) {
+            ApproximationRegistry.windbarb = function (
                 values: Array<number>,
                 directions: Array<number>
             ): Array<number> {
@@ -197,7 +200,10 @@ class WindbarbSeries extends ColumnSeries {
 
                 return [
                     // Wind speed
-                    values.reduce(function (sum: number, value: number): number {
+                    values.reduce(function (
+                        sum: number,
+                        value: number
+                    ): number {
                         return sum + value;
                     }, 0) / values.length,
                     // Wind direction

@@ -41,6 +41,13 @@ const {
  * Class to convert between common value types.
  */
 class DataConverter {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Default options
      */
@@ -113,7 +120,7 @@ class DataConverter {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    private dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
+    private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -171,7 +178,11 @@ class DataConverter {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -457,7 +468,9 @@ class DataConverter {
 
                     // Timestamp
                 } else if (isNumber(match)) {
-                    result = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    result = match - (
+                        new Date(match)
+                    ).getTimezoneOffset() * 60000;
                     if (// reset dates without year in Chrome
                         value.indexOf('2001') === -1 &&
                         (new Date(result)).getFullYear() === 2001
@@ -618,12 +631,15 @@ class DataConverter {
  */
 namespace DataConverter {
 
-    /**
-     * Contains supported types to convert values from and to.
-     */
-    export type Type = (
-        boolean|null|number|string|DataTable|Date|undefined
-    );
+    export interface DateFormatObject {
+        alternative?: string;
+        parser: DateFormatCallbackFunction;
+        regex: RegExp;
+    }
+
+    export interface DateFormatCallbackFunction {
+        (match: ReturnType<string['match']>): number;
+    }
 
     /**
      * Internal options for DataConverter.
@@ -641,6 +657,14 @@ namespace DataConverter {
     export interface ParseDateFunction {
         (dateValue: string): number;
     }
+
+    /**
+     * Contains supported types to convert values from and to.
+     */
+    export type Type = (
+        boolean|null|number|string|DataTable|Date|undefined
+    );
+
 }
 
 /* *

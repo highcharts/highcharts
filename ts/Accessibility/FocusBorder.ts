@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from './Accessibility';
+import type {
+    AccessibilityKeyboardNavigationFocusBorderOptions
+} from './Options/A11yOptions';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
@@ -135,7 +138,9 @@ namespace FocusBorderComposition {
         if (composedClasses.indexOf(SVGElementClass) === -1) {
             composedClasses.push(SVGElementClass);
 
-            const svgElementProto = SVGElementClass.prototype as SVGElementCompositon;
+            const svgElementProto = (
+                SVGElementClass.prototype as SVGElementCompositon
+            );
 
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;
@@ -154,7 +159,7 @@ namespace FocusBorderComposition {
     ): void {
         const focusElement = this.focusElement,
             focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
+                AccessibilityKeyboardNavigationFocusBorderOptions
             ) = this.options.accessibility.keyboardNavigation.focusBorder;
 
         if (focusElement) {
@@ -190,7 +195,7 @@ namespace FocusBorderComposition {
         focusElement?: DOMElementType
     ): void {
         const focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
+                AccessibilityKeyboardNavigationFocusBorderOptions
             ) = this.options.accessibility.keyboardNavigation.focusBorder,
             browserFocusElement = focusElement || svgElement.element;
 
@@ -271,7 +276,13 @@ namespace FocusBorderComposition {
         }
         // Add the border rect
         const bb = this.getBBox(),
-            pad = pick(margin, 3);
+            pad = pick(margin, 3),
+            parent = this.parentGroup,
+            scaleX = this.scaleX || parent && parent.scaleX,
+            scaleY = this.scaleY || parent && parent.scaleY,
+            oneDefined = scaleX ? !scaleY : scaleY,
+            scaleBoth = oneDefined ? Math.abs(scaleX || scaleY || 1) :
+                (Math.abs(scaleX || 1) + Math.abs(scaleY || 1)) / 2;
 
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
@@ -281,11 +292,13 @@ namespace FocusBorderComposition {
             borderWidth = bb.width + 2 * pad,
             borderHeight = bb.height + 2 * pad;
 
-        // For text elements, apply x and y offset, #11397.
         /**
+         * For text elements, apply x and y offset, #11397.
          * @private
          */
-        function getTextAnchorCorrection(text: SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(
+            text: SVGElement
+        ): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 
@@ -339,18 +352,19 @@ namespace FocusBorderComposition {
             borderPosY,
             borderWidth,
             borderHeight,
-            parseInt((attribs && attribs.r || 0).toString(), 10)
+            parseInt((attribs && attribs.r || 0).toString(), 10) / scaleBoth
         )
             .addClass('highcharts-focus-border')
             .attr({
                 zIndex: 99
             })
-            .add(this.parentGroup);
+            .add(parent);
 
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
                 stroke: attribs && attribs.stroke,
-                'stroke-width': attribs && attribs.strokeWidth
+                'stroke-width':
+                    (attribs && attribs.strokeWidth || 0) / scaleBoth
             });
         }
 

@@ -30,35 +30,14 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import ChartUtilities from '../Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT
-} = ChartUtilities;
-import H from '../../Core/Globals.js';
-const {
-    noop
-} = H;
+import CU from '../Utils/ChartUtilities.js';
+const { unhideChartElementFromAT } = CU;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    extend,
     pick
 } = U;
-
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
-        /** @requires modules/accessibility */
-        panStep(direction: number, granularity?: number): void;
-    }
-}
 
 
 /* *
@@ -67,7 +46,34 @@ declare module '../../Core/Axis/AxisLike' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
+
+/**
+ * Pan along axis in a direction (1 or -1), optionally with a defined
+ * granularity (number of steps it takes to walk across current view)
+ * @private
+ */
+function axisPanStep(
+    axis: Axis,
+    direction: number,
+    granularity?: number
+): void {
+    const gran = granularity || 3;
+    const extremes = axis.getExtremes();
+    const step = (extremes.max - extremes.min) / gran * direction;
+    let newMax = extremes.max + step;
+    let newMin = extremes.min + step;
+    const size = newMax - newMin;
+
+    if (direction < 0 && newMin < extremes.dataMin) {
+        newMin = extremes.dataMin;
+        newMax = newMin + size;
+    } else if (direction > 0 && newMax > extremes.dataMax) {
+        newMax = extremes.dataMax;
+        newMin = newMax - size;
+    }
+
+    axis.setExtremes(newMin, newMax);
+}
 
 
 /**
@@ -77,9 +83,9 @@ function chartHasMapZoom(
     chart: Highcharts.MapNavigationChart
 ): boolean {
     return !!(
-        chart.mapZoom &&
-        chart.mapNavButtons &&
-        chart.mapNavButtons.length
+        (chart.mapZoom) &&
+        chart.mapNavigation &&
+        chart.mapNavigation.navButtons.length
     );
 }
 
@@ -130,8 +136,8 @@ class ZoomComponent extends AccessibilityComponent {
         this.proxyProvider.addGroup('zoom', 'div');
 
         [
-            'afterShowResetZoom', 'afterDrilldown', 'drillupall'
-        ].forEach(function (eventType: string): void {
+            'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
+        ].forEach((eventType): void => {
             component.addEvent(chart, eventType, function (): void {
                 component.updateProxyOverlays();
             });
@@ -147,11 +153,8 @@ class ZoomComponent extends AccessibilityComponent {
             component = this;
 
         // Make map zoom buttons accessible
-        if (chart.mapNavButtons) {
-            chart.mapNavButtons.forEach(function (
-                button: SVGElement,
-                i: number
-            ): void {
+        if (chart.mapNavigation) {
+            chart.mapNavigation.navButtons.forEach((button, i): void => {
                 unhideChartElementFromAT(chart, button.element);
                 component.setMapNavButtonAttrs(
                     button.element,
@@ -213,14 +216,23 @@ class ZoomComponent extends AccessibilityComponent {
             );
         }
 
-        if (chart.drillUpButton) {
+        if (
+            chart.drillUpButton &&
+            chart.breadcrumbs &&
+            chart.breadcrumbs.list
+        ) {
+            const lastBreadcrumb =
+                chart.breadcrumbs.list[chart.breadcrumbs.list.length - 1];
+
             this.createZoomProxyButton(
                 chart.drillUpButton, 'drillUpProxyButton',
                 chart.langFormat(
                     'accessibility.drillUpButton',
                     {
                         chart: chart,
-                        buttonText: chart.getDrilldownBackText()
+                        buttonText: chart.breadcrumbs.getButtonText(
+                            lastBreadcrumb
+                        )
                     }
                 )
             );
@@ -317,7 +329,7 @@ class ZoomComponent extends AccessibilityComponent {
             stepDirection = (keyCode === keys.left || keyCode === keys.up) ?
                 -1 : 1;
 
-        this.chart[panAxis][0].panStep(stepDirection);
+        axisPanStep(this.chart[panAxis][0], stepDirection);
 
         return keyboardNavigationHandler.response.success;
     }
@@ -333,14 +345,16 @@ class ZoomComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler,
         event: KeyboardEvent
     ): number {
-        const chart: Highcharts.MapNavigationChart = this.chart as Highcharts.MapNavigationChart;
+        const chart: Highcharts.MapNavigationChart = (
+            this.chart as Highcharts.MapNavigationChart
+        );
         const response = keyboardNavigationHandler.response;
         const isBackwards = event.shiftKey;
         const isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||
                 !isBackwards && this.focusedMapNavButtonIx;
 
         // Deselect old
-        chart.mapNavButtons[this.focusedMapNavButtonIx].setState(0);
+        chart.mapNavigation.navButtons[this.focusedMapNavButtonIx].setState(0);
 
         if (isMoveOutOfRange) {
             chart.mapZoom(); // Reset zoom
@@ -349,7 +363,9 @@ class ZoomComponent extends AccessibilityComponent {
 
         // Select other button
         this.focusedMapNavButtonIx += isBackwards ? -1 : 1;
-        const button = chart.mapNavButtons[this.focusedMapNavButtonIx];
+        const button = chart.mapNavigation.navButtons[
+            this.focusedMapNavButtonIx
+        ];
         chart.setFocusToElement(button.box, button.element);
         button.setState(2);
 
@@ -381,8 +397,8 @@ class ZoomComponent extends AccessibilityComponent {
         direction: number
     ): void {
         const chart: Highcharts.MapNavigationChart = this.chart as any,
-            zoomIn = chart.mapNavButtons[0],
-            zoomOut = chart.mapNavButtons[1],
+            zoomIn = chart.mapNavigation.navButtons[0],
+            zoomOut = chart.mapNavigation.navButtons[1],
             initialButton = direction > 0 ? zoomIn : zoomOut;
 
         chart.setFocusToElement(initialButton.box, initialButton.element);
@@ -418,8 +434,11 @@ class ZoomComponent extends AccessibilityComponent {
                         keyCode: number,
                         e: KeyboardEvent
                     ): number {
-                        const isBackwards = keyCode === keys.tab && e.shiftKey ||
-                            keyCode === keys.left || keyCode === keys.up;
+                        const isBackwards = (
+                            keyCode === keys.tab && e.shiftKey ||
+                            keyCode === keys.left ||
+                            keyCode === keys.up
+                        );
 
                         // Arrow/tab => just move
                         return this.response[isBackwards ? 'prev' : 'next'];
@@ -486,99 +505,6 @@ class ZoomComponent extends AccessibilityComponent {
             this.getMapZoomNavigation()
         ];
     }
-
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-
-namespace ZoomComponent {
-
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-
-    export declare class AxisComposition extends Axis {
-
-    }
-
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-
-    export const composedClasses: Array<Function> = [];
-
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-
-    /**
-     * @private
-     */
-    export function compose(
-        AxisClass: typeof Axis
-    ): void {
-
-
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
-            const axisProto = AxisClass.prototype as AxisComposition;
-
-            axisProto.panStep = axisPanStep;
-        }
-    }
-
-
-    /**
-     * Pan along axis in a direction (1 or -1), optionally with a defined
-     * granularity (number of steps it takes to walk across current view)
-     *
-     * @private
-     * @function Highcharts.Axis#panStep
-     *
-     * @param {number} direction
-     * @param {number} [granularity]
-     */
-    function axisPanStep(
-        this: AxisComposition,
-        direction: number,
-        granularity?: number
-    ): void {
-        const gran = granularity || 3;
-        const extremes = this.getExtremes();
-        const step = (extremes.max - extremes.min) / gran * direction;
-        let newMax = extremes.max + step;
-        let newMin = extremes.min + step;
-        const size = newMax - newMin;
-
-        if (direction < 0 && newMin < extremes.dataMin) {
-            newMin = extremes.dataMin;
-            newMax = newMin + size;
-        } else if (direction > 0 && newMax > extremes.dataMax) {
-            newMax = extremes.dataMax;
-            newMin = newMax - size;
-        }
-        this.setExtremes(newMin, newMax);
-    }
-
 
 }
 

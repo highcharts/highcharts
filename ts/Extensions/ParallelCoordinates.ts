@@ -18,6 +18,7 @@
  *
  * */
 
+import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type AxisOptions from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type ChartOptions from '../Core/Chart/ChartOptions';
@@ -42,6 +43,8 @@ const {
     defined,
     erase,
     extend,
+    isArray,
+    isNumber,
     merge,
     pick,
     splat,
@@ -75,10 +78,12 @@ declare module '../Core/Axis/AxisType' {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
+        hasParallelCoordinates?: Highcharts.ParallelChart[
+            'hasParallelCoordinates'
+        ];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
-        setParallelInfo(options: Partial<Options>): void;
+        setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
 declare module '../Core/Chart/ChartOptions'{
@@ -125,7 +130,7 @@ const defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-const defaultParallelOptions: ChartOptions = {
+const defaultParallelOptions: DeepPartial<ChartOptions> = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -175,7 +180,7 @@ const defaultParallelOptions: ChartOptions = {
      *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops
+     *            minColor, scrollbar, stackLabels, stops,
      * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
@@ -212,7 +217,7 @@ setOptions({
 // Initialize parallelCoordinates
 addEvent(Chart, 'init', function (
     e: {
-        args: { 0: Partial<Options> };
+        args: { 0: DeepPartial<Options> };
     }
 ): void {
     const options = e.args[0],
@@ -324,7 +329,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
-        options: Partial<Options>
+        options: DeepPartial<Options>
     ): void {
         const chart = this,
             seriesOptions: Array<SeriesOptions> =
@@ -380,7 +385,9 @@ addEvent(Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = (chart.yAxis[i] as RadialAxis.AxisComposition).angleRad || 0;
+                    point.plotX = (
+                        chart.yAxis[i] as RadialAxis.AxisComposition
+                    ).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -
@@ -391,9 +398,19 @@ addEvent(Series, 'afterTranslate', function (): void {
                     point.plotX = chart.yAxis[i].left - chart.plotLeft;
                 }
                 point.clientX = point.plotX;
-
                 point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
+                    .translate(point.y, false, true, void 0, true);
+
+                // Range series (#15752)
+                if (isNumber((point as AreaRangePoint).high)) {
+                    point.plotHigh = chart.yAxis[i].translate(
+                        (point as AreaRangePoint).high,
+                        false,
+                        true,
+                        void 0,
+                        true
+                    );
+                }
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
@@ -572,7 +589,8 @@ class ParallelAxisAdditions {
         const parallel = this,
             axis = parallel.axis,
             chart = axis.chart,
-            fraction = ((parallel.position || 0) + 0.5) / (chart.parallelInfo.counter + 1);
+            fraction = ((parallel.position || 0) + 0.5) /
+                (chart.parallelInfo.counter + 1);
 
         if (chart.polar) {
             options.angle = 360 * fraction;
@@ -673,18 +691,23 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            const index = parallelCoordinates.position,
-                currentPoints: Array<Point> = [];
+            const index = parallelCoordinates.position;
+            let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
                 if (
+                    series.yData &&
                     series.visible &&
-                    defined((series.yData as any)[index as any])
+                    isNumber(index)
                 ) {
-                    // We need to use push() beacause of null points
-                    currentPoints.push((series.yData as any)[index as any]);
+                    const y = series.yData[index];
+
+                    // Take into account range series points as well (#15752)
+                    currentPoints.push.apply(currentPoints, splat(y));
                 }
             });
+
+            currentPoints = currentPoints.filter(isNumber);
 
             axis.dataMin = arrayMin(currentPoints);
             axis.dataMax = arrayMax(currentPoints);
@@ -699,9 +722,10 @@ namespace ParallelAxis {
      */
     function onInit(this: Axis): void {
         const axis = this;
-
         if (!axis.parallelCoordinates) {
-            axis.parallelCoordinates = new ParallelAxisAdditions(axis as ParallelAxis);
+            axis.parallelCoordinates = new ParallelAxisAdditions(
+                axis as ParallelAxis
+            );
         }
     }
 }

@@ -12,7 +12,7 @@
  *
  * */
 
-import type LinearRegressionSlopesIndicator from './LinearRegressionSlopes';
+import type LinearRegressionSlopesIndicator from './LinearRegressionSlopesIndicator';
 import type LinearRegressionPoint from '../LinearRegression/LinearRegressionPoint';
 
 /* *

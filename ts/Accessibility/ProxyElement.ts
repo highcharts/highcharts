@@ -33,6 +33,11 @@ import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+type Nullable<T> = {
+    [P in keyof T]: T[P] | null;
+};
+export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
+
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
@@ -98,11 +103,12 @@ class ProxyElement {
         private chart: Accessibility.ChartComposition,
         public target: ProxyElement.Target,
         public groupType: ProxyElement.GroupType,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ) {
+        const isListItem = groupType === 'ul';
         this.eventProvider = new EventProvider();
 
-        const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
+        const wrapperEl = isListItem ? doc.createElement('li') : null;
         const btnEl = this.buttonElement = doc.createElement('button');
 
         if (!chart.styledMode) {
@@ -110,6 +116,10 @@ class ProxyElement {
         }
 
         if (wrapperEl) {
+            if (isListItem && !chart.styledMode) {
+                wrapperEl.style.listStyle = 'none';
+            }
+
             wrapperEl.appendChild(btnEl);
             this.element = wrapperEl;
         } else {
@@ -136,26 +146,37 @@ class ProxyElement {
         pos.x += pos.width / 2;
         pos.y += pos.height / 2;
         const fakeEventObject = getFakeMouseEvent('click', pos);
-        fireEventOnWrappedOrUnwrappedElement(this.target.click, fakeEventObject);
+        fireEventOnWrappedOrUnwrappedElement(
+            this.target.click,
+            fakeEventObject
+        );
     }
 
 
     /**
-     * Update the target to be proxied.
-     * The position and events are updated to match the new target.
+     * Update the target to be proxied. The position and events are updated to
+     * match the new target.
      * @param target The new target definition
-     * @param attributes New HTML attributes to apply to the button. Set an attribute to null to remove.
+     * @param attributes New HTML attributes to apply to the button. Set an
+     * attribute to null to remove.
      */
     public updateTarget(
         target: ProxyElement.Target,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ): void {
         this.target = target;
         this.updateCSSClassName();
+        const attrs = attributes || {};
+
+        Object.keys(attrs).forEach((a): void => {
+            if (attrs[a as keyof HTMLAttributes] === null) {
+                delete attrs[a as keyof HTMLAttributes];
+            }
+        });
 
         attr(this.buttonElement, merge({
             'aria-label': this.getTargetAttr(target.click, 'aria-label')
-        }, attributes));
+        }, attrs as HTMLAttributes));
 
         this.eventProvider.removeAddedEvents();
         this.addProxyEventsToButton(this.buttonElement, target.click);
@@ -193,11 +214,18 @@ class ProxyElement {
      * Update the CSS class name to match target
      */
     private updateCSSClassName(): void {
-        const stringHasNoTooltip = (s: string): boolean => s.indexOf('highcharts-no-tooltip') > -1;
+        const stringHasNoTooltip = (s: string): boolean => (
+            s.indexOf('highcharts-no-tooltip') > -1
+        );
         const legend = this.chart.legend;
         const groupDiv = legend.group && legend.group.div;
-        const noTooltipOnGroup = stringHasNoTooltip(groupDiv && groupDiv.className || '');
-        const targetClassName = this.getTargetAttr(this.target.click, 'class') as string || '';
+        const noTooltipOnGroup = stringHasNoTooltip(
+            groupDiv && groupDiv.className || ''
+        );
+        const targetClassName = this.getTargetAttr(
+            this.target.click,
+            'class'
+        ) as string || '';
         const noTooltipOnTarget = stringHasNoTooltip(targetClassName);
 
         this.buttonElement.className = noTooltipOnGroup || noTooltipOnTarget ?
@@ -219,22 +247,31 @@ class ProxyElement {
         ].forEach((evtType: string): void => {
             const isTouchEvent = evtType.indexOf('touch') === 0;
 
-            this.eventProvider.addEvent(button, evtType, (e: MouseEvent | TouchEvent): void => {
-                const clonedEvent = isTouchEvent ?
-                    cloneTouchEvent(e as TouchEvent) :
-                    cloneMouseEvent(e as MouseEvent);
+            this.eventProvider.addEvent(
+                button,
+                evtType,
+                (e: MouseEvent | TouchEvent): void => {
+                    const clonedEvent = isTouchEvent ?
+                        cloneTouchEvent(e as TouchEvent) :
+                        cloneMouseEvent(e as MouseEvent);
 
-                if (target) {
-                    fireEventOnWrappedOrUnwrappedElement(target, clonedEvent);
-                }
+                    if (target) {
+                        fireEventOnWrappedOrUnwrappedElement(
+                            target,
+                            clonedEvent
+                        );
+                    }
 
-                e.stopPropagation();
+                    e.stopPropagation();
 
-                // #9682, #15318: Touch scrolling didnt work when touching proxy
-                if (!isTouchEvent) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
+                    // #9682, #15318: Touch scrolling didnt work when touching
+                    // proxy
+                    if (!isTouchEvent) {
+                        e.preventDefault();
+                    }
+                },
+                { passive: false }
+            );
         });
     }
 
@@ -275,13 +312,15 @@ class ProxyElement {
 
         if (chartDiv && posElement && posElement.getBoundingClientRect) {
             const rectEl = posElement.getBoundingClientRect(),
-                rectDiv = chartDiv.getBoundingClientRect();
+                chartPos = this.chart.pointer.getChartPosition();
 
             return {
-                x: rectEl.left - rectDiv.left,
-                y: rectEl.top - rectDiv.top,
-                width: rectEl.right - rectEl.left,
-                height: rectEl.bottom - rectEl.top
+                x: (rectEl.left - chartPos.left) / chartPos.scaleX,
+                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                width: rectEl.right / chartPos.scaleX -
+                    rectEl.left / chartPos.scaleX,
+                height: rectEl.bottom / chartPos.scaleY -
+                    rectEl.top / chartPos.scaleY
             };
         }
 
@@ -292,7 +331,10 @@ class ProxyElement {
     /**
      * Get an attribute value of a target
      */
-    private getTargetAttr(target: SVGElement|HTMLElement|DOMElementType, key: string): unknown {
+    private getTargetAttr(
+        target: SVGElement|HTMLElement|DOMElementType,
+        key: string
+    ): unknown {
         if ((target as SVGElement).element) {
             return (target as SVGElement).element.getAttribute(key);
         }

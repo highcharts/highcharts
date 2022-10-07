@@ -56,6 +56,7 @@ class CSVStore extends DataStore<CSVStore.Event> {
      *  Static Properties
      *
      * */
+
     protected static readonly defaultOptions: CSVStore.Options = {
         csv: '',
         csvURL: '',
@@ -94,7 +95,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
     ) {
         super(table);
 
-        const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
+        const {
+            csv,
+            csvURL,
+            enablePolling,
+            dataRefreshRate,
+            ...parserOptions
+        } = options;
 
         this.parserOptions = parserOptions;
         this.options = merge(
@@ -141,9 +148,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * Handles polling of live data
      */
     private poll(): void {
-        const { dataRefreshRate, enablePolling: pollingEnabled, csvURL } = this.options;
-        const updateIntervalMs = (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
-        if (pollingEnabled && csvURL === this.liveDataURL) {
+        const { dataRefreshRate, enablePolling, csvURL } = this.options;
+        const updateIntervalMs = (
+            dataRefreshRate > 1 ? dataRefreshRate : 1
+        ) * 1000;
+        if (enablePolling && csvURL === this.liveDataURL) {
             // We need to stop doing this if the URL has changed
             this.liveDataTimeout = setTimeout((): void => {
                 this.fetchCSV();
@@ -183,9 +192,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
         store.emit({ type: 'load', detail: eventDetail, table: store.table });
 
         ajax({
-            url: store.liveDataURL,
+            url: store.liveDataURL || '',
             dataType: 'text',
-            success: function (csv: string): void {
+            success: function (csv): void {
+                csv = `${csv}`;
+
                 store.parser.parse({ csv });
 
                 // On inital fetch we need to set the columns

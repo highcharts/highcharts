@@ -1,5 +1,9 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
+#container {
+    height: 400px;
+}
+
 .highcharts-flags-series .highcharts-point {
     transition: fill 250ms;
 }

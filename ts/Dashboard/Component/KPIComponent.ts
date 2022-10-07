@@ -46,13 +46,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        },
+        } as DeepPartial<Options['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        },
+        } as DeepPartial<Options['yAxis']>,
         legend: {
             enabled: false
         },
@@ -93,7 +93,11 @@ class KPIComponent extends Component {
         this.options = options as KPIComponent.ComponentOptions;
 
         this.type = 'KPI';
-        this.sync = new Component.Sync(this, this.options.syncEvents, this.options.syncHandlers);
+        this.sync = new Component.Sync(
+            this,
+            this.options.syncEvents,
+            this.options.syncHandlers
+        );
 
         this.valueWrap = createElement('div', {
             className: `${Component.defaultOptions.className}-kpi-value-wrap`
@@ -141,7 +145,8 @@ class KPIComponent extends Component {
 
     private updateTitleSize(width: number, height: number): void {
         if (this.titleElement) {
-            this.titleElement.style.fontSize = 0.1 * Math.min(width, height) + 'px';
+            this.titleElement.style.fontSize =
+                0.1 * Math.min(width, height) + 'px';
         }
     }
 
@@ -207,11 +212,17 @@ class KPIComponent extends Component {
                 if (old) {
                     this.element.replaceChild(this.titleElement, old);
                 } else {
-                    this.element.insertBefore(this.titleElement, this.contentElement);
+                    this.element.insertBefore(
+                        this.titleElement,
+                        this.contentElement
+                    );
                 }
             }
             if (this.dimensions.width && this.dimensions.height) {
-                this.updateTitleSize(this.dimensions.width, this.dimensions.height);
+                this.updateTitleSize(
+                    this.dimensions.width,
+                    this.dimensions.height
+                );
             }
         }
 

@@ -24,6 +24,7 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -104,6 +105,8 @@ class ColumnSeries extends Series {
      *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
+     *
+     * @private
      */
     public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
@@ -538,7 +541,9 @@ class ColumnSeries extends Series {
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY';
+            translateProp: 'translateX'|'translateY' = inverted ?
+                'translateX' :
+                'translateY';
         let translateStart: number,
             translatedThreshold;
 
@@ -647,7 +652,10 @@ class ColumnSeries extends Series {
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
-                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
+                    if (
+                        otherOptions.stacking &&
+                        otherOptions.stacking !== 'group'
+                    ) {
                         stackKey = otherSeries.stackKey;
                         if (
                             typeof stackGroups[stackKey as any] ===
@@ -788,41 +796,58 @@ class ColumnSeries extends Series {
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            let indexInCategory = 0;
-            let totalInCategory = 0;
+            const reversedStacks = this.yAxis.options.reversedStacks;
+            let indexInCategory = 0,
+                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
 
-            // Loop over all the stacks on the Y axis. When stacking is
-            // enabled, these are real point stacks. When stacking is not
-            // enabled, but `centerInCategory` is true, there is one stack
-            // handling the grouping of points in each category. This is
-            // done in the `setGroupedPoints` function.
+            // Loop over all the stacks on the Y axis. When stacking is enabled,
+            // these are real point stacks. When stacking is not enabled, but
+            // `centerInCategory` is true, there is one stack handling the
+            // grouping of points in each category. This is done in the
+            // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Record<string, Highcharts.StackItem>): void => {
+                (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[this.index as any],
-                                total = stackItem.total;
+                            const pointValues = stackItem.points[this.index];
 
-                            // If true `stacking` is enabled, count the
-                            // total number of non-null stacks in the
-                            // category, and note which index this point is
-                            // within those stacks.
+                            // If true `stacking` is enabled, count the total
+                            // number of non-null stacks in the category, and
+                            // note which index this point is within those
+                            // stacks.
                             if (stacking) {
                                 if (pointValues) {
                                     indexInCategory = totalInCategory;
                                 }
                                 if (stackItem.hasValidPoints) {
-                                    totalInCategory++;
+                                    reversedStacks ? // #16169
+                                        totalInCategory++ : totalInCategory--;
                                 }
 
-                            // If `stacking` is not enabled, look for the
-                            // index and total of the `group` stack.
+                            // If `stacking` is not enabled, look for the index
                             } else if (isArray(pointValues)) {
-                                indexInCategory = pointValues[1];
-                                totalInCategory = total || 0;
+                                // If there are multiple points with the same X
+                                // then gather all series in category, and
+                                // assign index
+                                let seriesIndexes = Object
+                                    .keys(stackItem.points)
+                                    .filter((pointKey): boolean =>
+                                        // Filter out duplicate X's
+                                        !pointKey.match(',') &&
+                                        // Filter out null points
+                                        stackItem.points[pointKey] &&
+                                        stackItem.points[pointKey].length > 1
+                                    )
+                                    .map(parseFloat)
+                                    .sort((a, b): number => b - a);
+
+                                indexInCategory = seriesIndexes.indexOf(
+                                    this.index
+                                );
+                                totalInCategory = seriesIndexes.length;
                             }
                         }
                     }
@@ -950,7 +975,12 @@ class ColumnSeries extends Series {
 
             // Adjust for null or missing points
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
             }
 
             // Cache for access in polar
@@ -1102,7 +1132,7 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<ColumnPoint> = this.points): void {
         const series = this,
             chart = this.chart,
             options = series.options,
@@ -1111,7 +1141,7 @@ class ColumnSeries extends Series {
         let shapeArgs;
 
         // draw the columns
-        series.points.forEach(function (point): void {
+        points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
                 hasGraphic = !!graphic,

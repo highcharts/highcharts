@@ -33,6 +33,7 @@ const {
     addEvent,
     css,
     objectEach,
+    pick,
     removeEvent
 } = U;
 
@@ -223,10 +224,13 @@ class MSPointer extends Pointer {
 
     // Add IE specific touch events to chart
     public setDOMEvents(): void {
-
+        const tooltip = this.chart.tooltip;
         super.setDOMEvents();
 
-        if (this.hasZoom || this.followTouchMove) {
+        if (
+            this.hasZoom ||
+            pick((tooltip && tooltip.options.followTouchMove), true)
+        ) {
             this.batchMSEvents(addEvent);
         }
     }

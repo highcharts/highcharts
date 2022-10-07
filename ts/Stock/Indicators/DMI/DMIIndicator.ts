@@ -29,10 +29,8 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -93,11 +91,14 @@ class DMIIndicator extends SMAIndicator {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+            pointFormat: '<span style="color: {point.color}">' +
+                '\u25CF</span><b> {series.name}</b><br/>' +
                 '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.plusDILine.styles.lineColor}">' +
+                '<span style="color: ' +
+                '{point.series.options.plusDILine.styles.lineColor}">' +
                     '+DI</span>: {point.plusDI}<br/>' +
-                '<span style="color: {point.series.options.minusDILine.styles.lineColor}">' +
+                '<span style="color: ' +
+                '{point.series.options.minusDILine.styles.lineColor}">' +
                     '-DI</span>: {point.minusDI}<br/>'
         },
         /**
@@ -345,14 +346,19 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator extends MultipleLinesComposition.Composition {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof DMIPoint>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
     areaLinesNames: [],
@@ -384,6 +390,12 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  * */
 
 export default DMIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Directional Movement Index (DMI) indicator series.

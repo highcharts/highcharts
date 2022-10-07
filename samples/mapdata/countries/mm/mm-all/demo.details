@@ -1,5 +1,5 @@
 ---
- name: Myanmar - Highmaps
- description: Highmaps demo
+ name: Myanmar - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

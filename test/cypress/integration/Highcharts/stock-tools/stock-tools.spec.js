@@ -4,7 +4,7 @@ describe('Stock Tools annotation popup, #15725', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
@@ -15,9 +15,9 @@ describe('Stock Tools annotation popup, #15725', () => {
             .first()
             .click();
         cy.get('.highcharts-container')
-            .click(100, 210)
+            .click(100, 210);
 
-    cy.chart().should(chart =>
+        cy.chart().should(chart =>
             assert.notOk(
                 chart.annotations.length,
                 'Annotation should not be added.'
@@ -29,8 +29,7 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.get('.highcharts-label-annotation').first().click();
         cy.get('.highcharts-container').click();
         cy.chart().should(chart =>
-            assert.strictEqual(chart.annotations.length, 1)
-        );
+            assert.strictEqual(chart.annotations.length, 1));
         cy.get('.highcharts-annotation').click();
         cy.get('.highcharts-popup').should('be.visible');
         cy.get('.highcharts-toggle-annotations').click();
@@ -70,7 +69,7 @@ describe('Stock Tools annotation popup, #15725', () => {
             .click(160, 260);
         cy.chart().should(chart =>
             chart.annotations[1].points.forEach(point =>
-                assert.ok(point.y > -50 && point.y < 50)
+                assert.ok(point.y > -50 && point.y < 75)
             )
         );
     });
@@ -83,21 +82,63 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
-        cy.get('.highcharts-tab-item').contains('edit').click();
+        cy.get('.highcharts-tab-item').contains('Edit').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
-        cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+        cy.get('.highcharts-popup-rhs-col button').contains('Save').click();
     });
 
-    it('For some indicators params, there should be a dropdown with options in popup, #16159.', () => {
+    it('#16159: For some indicators params, there should be a dropdown with options in popup.', () => {
         cy.openIndicators();
         cy.get('.highcharts-indicator-list')
             .contains('Disparity Index')
             .click();
 
         cy.get('#highcharts-select-params\\.average')
-            .select('ema')
+            .select('ema');
         cy.addIndicator();
+    });
+
+    it('#17425: Editing labels of Elliott3 line should not hide the line.', () => {
+        cy.get('.highcharts-elliott3').first()
+            .click();
+
+        cy.get('.highcharts-container')
+            .click(300, 100, { force: true })
+            .click(320, 120, { force: true })
+            .click(340, 120, { force: true })
+            .click(360, 100, { force: true });
+
+        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
+        cy.get('.highcharts-annotation-edit-button').click();
+
+        cy.get('input[name="highcharts-annotation-0"]').clear().type(1);
+
+        cy.get('div.highcharts-popup-bottom-row button').click();
+
+        cy.chart().should(chart =>
+            assert.strictEqual(
+                chart.annotations[0].graphic.opacity,
+                1,
+                '#17425: Editing labels of Elliott3 line should not hide the line.'
+            )
+        );
+    });
+
+    it('#17425: Editing labels of Elliott3 line to number should not change type of input.', () => {
+        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
+        cy.get('.highcharts-annotation-edit-button').click();
+
+        cy.get('input[name="highcharts-annotation-0"]').clear().type('(X)');
+
+        cy.get('div.highcharts-popup-bottom-row button').click();
+
+        cy.get('.highcharts-annotation-shapes').last().click({ force: true });
+        cy.get('.highcharts-annotation-edit-button').click();
+
+        cy.get('input[name="highcharts-annotation-0"]').should('value', '(X)');
+
+        cy.get('div.highcharts-popup-close').click();
     });
 });
 
@@ -107,7 +148,7 @@ describe('Indicator popup searchbox, #16019.', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Search indicator input should filter and sort the list, #16019.', () => {
@@ -117,9 +158,9 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.get('input[name="highcharts-input-search-indicators"]')
             .click()
             .type('ac');
-        cy.get('.highcharts-indicator-list').should(($p) => {
-            expect($p).to.have.length(5)
-        })
+        cy.get('.highcharts-indicator-list').should($p => {
+            expect($p).to.have.length(5);
+        });
 
         // Test the sorting.
         cy.get('input[name="highcharts-input-search-indicators"]')
@@ -141,10 +182,10 @@ describe('Indicator popup searchbox, #16019.', () => {
             .click();
 
         cy.get('input[name="highcharts-input-search-indicators"]')
-            .should('have.value', '')
+            .should('have.value', '');
 
         cy.get('.highcharts-indicator-list')
-            .should('have.length', 50)
+            .should('have.length', 50);
     });
 
     it('Indicators should be accessible through aliases, #16019.', () => {
@@ -154,7 +195,6 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.get('.highcharts-indicator-list li:first')
             .should('contain.text', 'BB');
     });
-
 
     it('Popup should warn when no items are found using the filter, #16019.', () => {
         cy.get('input[name="highcharts-input-search-indicators"]')

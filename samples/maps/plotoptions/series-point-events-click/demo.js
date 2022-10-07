@@ -1,58 +1,65 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initialize the chart
-    Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        title: {
-            text: 'Point click event test'
-        },
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
+        // Initialize the chart
+        Highcharts.mapChart('container', {
 
-        plotOptions: {
-            series: {
-                point: {
-                    events: {
-                        click: function () {
-                            var text = '<b>Clicked point</b><br>Series: ' + this.series.name +
-                                    '<br>Point: ' + this.name + ' (' + this.value + '/km²)',
-                                chart = this.series.chart;
-                            if (!chart.clickLabel) {
-                                chart.clickLabel = chart.renderer
-                                    .label(text, 0, 250)
-                                    .css({
-                                        width: '180px'
-                                    })
-                                    .add();
-                            } else {
-                                chart.clickLabel.attr({
-                                    text: text
-                                });
+            title: {
+                text: 'Point click event test'
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            click: function () {
+                                var text = '<b>Clicked point</b><br>Series: ' + this.series.name +
+                                        '<br>Point: ' + this.name + ' (' + this.value + '/km²)',
+                                    chart = this.series.chart;
+                                if (!chart.clickLabel) {
+                                    chart.clickLabel = chart.renderer
+                                        .label(text, 0, 250)
+                                        .css({
+                                            width: '180px'
+                                        })
+                                        .add();
+                                } else {
+                                    chart.clickLabel.attr({
+                                        text: text
+                                    });
+                                }
                             }
                         }
                     }
                 }
-            }
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            pointer: 'cursor',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                pointer: 'cursor',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
+})();

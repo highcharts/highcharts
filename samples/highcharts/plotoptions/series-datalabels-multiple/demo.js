@@ -42,7 +42,7 @@ Highcharts.chart('container', {
             name: 'Gabriel',
             age: 12,
             dataLabels: {
-                color: 'red'
+                color: '#ec0000'
             }
         }, {
             y: 121,

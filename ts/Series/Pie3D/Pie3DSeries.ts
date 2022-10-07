@@ -157,11 +157,19 @@ class Pie3DSeries extends PieSeries {
                 const shapeArgs = point.shapeArgs,
                     r = (shapeArgs as any).r,
                     // #3240 issue with datalabels for 0 and null values
-                    a1 = ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
-                    b1 = ((shapeArgs as any).beta || options3d.beta) * deg2rad,
-                    a2 = ((shapeArgs as any).start + (shapeArgs as any).end) / 2,
+                    a1 = (
+                        ((shapeArgs as any).alpha || options3d.alpha) * deg2rad
+                    ),
+                    b1 = (
+                        ((shapeArgs as any).beta || options3d.beta) * deg2rad
+                    ),
+                    a2 = (
+                        ((shapeArgs as any).start + (shapeArgs as any).end) / 2
+                    ),
                     labelPosition = point.labelPosition,
-                    connectorPosition = (labelPosition as any).connectorPosition,
+                    connectorPosition = (
+                        (labelPosition as any).connectorPosition
+                    ),
                     yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
                     xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
@@ -252,6 +260,27 @@ class Pie3DSeries extends PieSeries {
         });
     }
 
+    /**
+     * @private
+     */
+    public drawTracker(): void {
+        super.drawTracker.apply(this, arguments);
+
+        // Do not do this if the chart is not 3D
+        if (!this.chart.is3d()) {
+            return;
+        }
+
+        this.points.forEach(function (point): void {
+            if (point.graphic) {
+                ['out', 'inn', 'side1', 'side2'].forEach((face): void => {
+                    if (point.graphic) {
+                        point.graphic[face].element.point = point;
+                    }
+                });
+            }
+        });
+    }
     /* eslint-enable valid-jsdoc */
 
 }

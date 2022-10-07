@@ -19,7 +19,7 @@ body {
 }
 
 .chart-container .transparent {
-    opacity: 100%;
+    opacity: 1;
     stroke-width: 1;
     stroke: white;
     color: white;
@@ -50,6 +50,7 @@ body {
     user-select: none;
     touch-action: manipulation;
     outline: none;
+    top: 0 !important;
 }
 
 .chart-container .highcharts-background {
@@ -70,11 +71,11 @@ body {
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
@@ -116,6 +117,9 @@ body {
 #charts {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #charts .highcharts-plot-background,
@@ -199,7 +203,7 @@ body {
 }
 
 #charts .highcharts-grid.fade-out {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1500ms;
 }
 
@@ -269,7 +273,7 @@ body {
 }
 
 #charts #particle-3 {
-    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p3.svg");
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/homepage/p3.svg");
     width: 60px;
     height: 86px;
     top: 154px;
@@ -389,9 +393,9 @@ body {
 }
 
 #charts .berg-depth {
-    stroke: #fff;
+    stroke: #201735;
     fill: #201735;
-    opacity: 0%;
+    opacity: 1;
     stroke-dasharray: 2px;
     transition: opacity 1s;
     stroke-width: 1px;
@@ -402,19 +406,34 @@ body {
 }
 
 #charts .berg-label {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
 #charts .berg-depth-0.highcharts-series-hover,
-#charts .berg-depth-2.highcharts-series-hover,
+#charts .berg-depth-2,
 #charts .berg-depth-4.highcharts-series-hover,
-#charts .berg-depth-6.highcharts-series-hover,
-#charts .berg-depth-8.highcharts-series-hover {
-    opacity: 100%;
+#charts .berg-depth-6,
+#charts .berg-depth-8.highcharts-series-hover,
+#charts .berg-depth-10,
+#charts .berg-depth-12.highcharts-series-hover,
+#charts .berg-depth-14,
+#charts .berg-depth-16.highcharts-series-hover,
+#charts .berg-depth-18 {
+    opacity: 1;
     stroke-dasharray: 0;
-    stroke-width: 2px;
+    stroke-width: 1px;
     cursor: pointer;
+}
+
+#charts .berg-depth-0,
+#charts .berg-depth-4,
+#charts .berg-depth-8,
+#charts .berg-depth-12,
+#charts .berg-depth-16 {
+    stroke-dasharray: 2;
+    stroke-width: 1px;
+    stroke: #fff;
 }
 
 #charts .berg-depth-0.highcharts-series-hover,
@@ -466,7 +485,7 @@ body {
 
 #charts .highcharts-plot-line {
     stroke: #f0f0f0;
-    opacity: 100%;
+    opacity: 1;
     transition: all 2s;
 }
 
@@ -504,7 +523,7 @@ body {
     fill: #000;
     font-size: 0.5em;
     width: 100%;
-    opacity: 100%;
+    opacity: 1;
     text-transform: uppercase;
     transform: translateY(0);
 }
@@ -513,7 +532,7 @@ body {
     font-size: 1em;
     transform: translateY(20px);
     font-weight: 700;
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
@@ -528,11 +547,11 @@ body {
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle.show {
-    opacity: 100% !important;
+    opacity: 1 !important;
 }
 
 #charts .label-title {
@@ -568,6 +587,10 @@ body {
     #charts .highcharts-subtitle {
         width: 180px;
     }
+
+    #charts .berg-tip {
+        width: 200px;
+    }
 }
 
 @media screen  and (min-width: 400px) {
@@ -589,7 +612,7 @@ body {
         font-size: 1.4em;
         transform: translateY(20px);
         font-weight: 700;
-        opacity: 0%;
+        opacity: 0;
         transition: opacity 1s;
     }
 
@@ -608,7 +631,7 @@ body {
         width: 300px;
         white-space: normal;
         font-size: 1.1em;
-        opacity: 0%;
+        opacity: 0;
     }
 
     #charts .label-title {

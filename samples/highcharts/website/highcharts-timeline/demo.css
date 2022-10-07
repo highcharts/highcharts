@@ -55,7 +55,7 @@ table th {
 }
 
 #timeline .highcharts-yaxis-labels text:last-of-type {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #timeline .time-1 {

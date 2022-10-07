@@ -1,5 +1,12 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
+#container {
+    min-width: 310px;
+    max-width: 400px;
+    height: 300px;
+    margin: 0 auto;
+}
+
 .highcharts-yaxis-grid .highcharts-grid-line,
 .highcharts-yaxis-grid .highcharts-minor-grid-line {
     display: none;

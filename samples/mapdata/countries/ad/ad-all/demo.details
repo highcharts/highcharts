@@ -1,5 +1,5 @@
 ---
- name: Andorra - Highmaps
- description: Highmaps demo
+ name: Andorra - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,55 +1,62 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initialize the chart
-    Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        title: {
-            text: 'Vertical gradient legend'
-        },
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        subtitle: {
-            text: 'Population<br>density per km²',
-            floating: true,
-            align: 'left',
-            verticalAlign: 'bottom',
-            y: -80,
-            x: 60
-        },
+        // Initialize the chart
+        Highcharts.mapChart('container', {
 
-        legend: {
-            borderWidth: 0,
-            layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'bottom',
-            floating: true,
-            width: 100,
-            symbolHeight: 100,
-            symbolWidth: 20
-        },
-
-        mapNavigation: {
-            enabled: true
-        },
-
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
+            title: {
+                text: 'Vertical gradient legend'
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            subtitle: {
+                text: 'Population<br>density per km²',
+                floating: true,
+                align: 'left',
+                verticalAlign: 'bottom',
+                y: -80,
+                x: 60
+            },
+
+            legend: {
+                borderWidth: 0,
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'bottom',
+                floating: true,
+                width: 100,
+                symbolHeight: 100,
+                symbolWidth: 20
+            },
+
+            mapNavigation: {
+                enabled: true
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
+})();

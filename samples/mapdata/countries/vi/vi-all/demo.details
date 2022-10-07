@@ -1,5 +1,5 @@
 ---
- name: United States Virgin Islands - Highmaps
- description: Highmaps demo
+ name: United States Virgin Islands - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

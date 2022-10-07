@@ -19,10 +19,9 @@ const SOURCE_GLOBS = [
     'js/Core/Axis/Color/ColorAxis.js',
     'js/Core/Axis/PlotLineOrBand/PlotLineOrBand.js',
     'js/Core/Axis/Tick.js',
-    'js/Core/Axis/TreeGridAxis.js',
-    'js/Core/Axis/TreeGridTick.js',
+    'js/Core/Axis/TreeGrid/TreeGridAxis.js',
+    'js/Core/Axis/TreeGrid/TreeGridTick.js',
     'js/Core/Chart/Chart.js',
-    'js/Core/Chart/ChartDefaults.js',
     'js/Core/Chart/GanttChart.js',
     'js/Core/Chart/MapChart.js',
     'js/Core/Chart/StockChart.js',
@@ -43,41 +42,41 @@ const SOURCE_GLOBS = [
     'js/Core/Utilities.js',
     'js/Dashboard/Dashboard.js',
     'js/Data/DataTable.js',
-    'js/Extensions/Annotations/Mixins/ControllableMixin.js',
-    'js/Extensions/Annotations/Annotations.js',
+    'js/Extensions/Annotations/Controllables/Controllable.js',
+    'js/Extensions/Annotations/Annotation.js',
+    'js/Extensions/Annotations/AnnotationChart.js',
     'js/Extensions/Annotations/ControlPoint.js',
     'js/Extensions/Annotations/NavigationBindings.js',
     'js/Extensions/Sonification/*.js',
+    'js/Extensions/Breadcrumbs.js',
     'js/Extensions/Data.js',
-    'js/Extensions/DataGrouping.js',
+    'js/Extensions/DataGrouping/DataGrouping.js',
+    'js/Extensions/DataGrouping/DataGroupingSeriesComposition.js',
     'js/Extensions/DraggablePoints.js',
     'js/Extensions/Drilldown.js',
-    'js/Extensions/ExportData.js',
+    'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
-    'js/Extensions/FullScreen.js',
+    'js/Extensions/Exporting/Fullscreen.js',
     'js/Extensions/GeoJSON.js',
     'js/Extensions/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
-    'js/Extensions/SeriesLabel.js',
+    'js/Extensions/SeriesLabel/SeriesLabel.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
-    'js/Series/Networkgraph/*.js',
-    'js/Series/AreaRange/*.js',
-    'js/Series/Column/*.js',
-    'js/Series/Map/*.js',
-    'js/Series/Organization/*.js',
-    'js/Series/Pie/*.js',
-    'js/Series/PackedBubble/*.js',
-    'js/Series/Sankey/*.js',
-    'js/Series/Sunburst/*.js',
-    'js/Series/Timeline/*.js'
+    'js/Series/Column/ColumnSeries.js',
+    'js/Series/Networkgraph/NetworkgraphSeries.js',
+    'js/Series/Organization/OrganizationSeries.js',
+    'js/Series/PackedBubble/PackedBubbleSeries.js',
+    'js/Series/Sankey/SankeySeries.js',
+    'js/Series/Timeline/TimelineSeries.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
 
 const TEMPLATE_DIRECTORY = Path.join(
-    'node_modules', 'highcharts-documentation-generators', 'docstrap'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'docstrap'
 );
 
 /* *

@@ -1,5 +1,5 @@
 ---
- name: European Union - Highmaps
- description: Highmaps demo
+ name: European Union - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

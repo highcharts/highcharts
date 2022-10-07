@@ -38,12 +38,14 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
+const { defaultOptions, setOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
+import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
     doc,
+    SVG_NS,
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
@@ -256,7 +258,7 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<typeof Chart> = [];
+    const composedClasses: Array<Function> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
     const inlineBlacklist: Array<RegExp> = [
@@ -345,10 +347,7 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme,
-            states = attr.states,
-            hover = states && states.hover,
-            select = states && states.select;
+        const attr = btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
@@ -358,8 +357,6 @@ namespace Exporting {
             attr.fill = pick(attr.fill, Palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
-
-        delete attr.states;
 
         if (onclick) {
             callback = function (
@@ -420,8 +417,11 @@ namespace Exporting {
                 0,
                 callback as any,
                 attr,
-                hover,
-                select
+                void 0,
+                void 0,
+                void 0,
+                void 0,
+                btnOptions.useHTML
             )
             .addClass(options.className as any)
             .attr({
@@ -562,7 +562,8 @@ namespace Exporting {
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        const handleMaxWidth: (boolean|number) = printMaxWidth && chart.chartWidth > printMaxWidth;
+        const handleMaxWidth: (boolean|number) = printMaxWidth &&
+            chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
                 chart.options.chart.width,
@@ -645,6 +646,7 @@ namespace Exporting {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         ExportingSymbols.compose(SVGRendererClass);
+        Fullscreen.compose(ChartClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -668,7 +670,11 @@ namespace Exporting {
             chartProto.renderExporting = renderExporting;
 
             chartProto.callbacks.push(chartCallback);
-            addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'init',
+                onChartInit
+            );
 
             if (G.isSafari) {
                 G.win.matchMedia('print').addListener(
@@ -687,6 +693,28 @@ namespace Exporting {
                     }
                 );
             }
+        }
+
+        if (composedClasses.indexOf(setOptions) === -1) {
+            composedClasses.push(setOptions);
+
+            defaultOptions.exporting = merge(
+                ExportingDefaults.exporting,
+                defaultOptions.exporting
+            );
+
+            defaultOptions.lang = merge(
+                ExportingDefaults.lang,
+                defaultOptions.lang
+            );
+
+            // Buttons and menus are collected in a separate config option set
+            // called 'navigation'. This can be extended later to add control
+            // buttons like zoom and pan right click menus.
+            defaultOptions.navigation = merge(
+                ExportingDefaults.navigation,
+                defaultOptions.navigation
+            );
         }
     }
 
@@ -827,9 +855,12 @@ namespace Exporting {
                         );
 
                     } else {
-                        // When chart initialized with the table,
-                        // wrong button text displayed, #14352.
-                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                        // When chart initialized with the table, wrong button
+                        // text displayed, #14352.
+                        if (
+                            item.textKey === 'viewData' &&
+                            chart.isDataTableVisible
+                        ) {
                             item.textKey = 'hideData';
                         }
 
@@ -864,7 +895,7 @@ namespace Exporting {
                             } as any;
                             css(element, extend({
                                 cursor: 'pointer'
-                            }, navOptions.menuItemStyle as any));
+                            } as CSSObject, navOptions.menuItemStyle || {}));
                         }
                     }
 
@@ -1339,10 +1370,14 @@ namespace Exporting {
             visibility: 'hidden'
         });
         doc.body.appendChild(iframe);
-        const iframeDoc: Document = (iframe.contentWindow as any).document;
-        iframeDoc.open();
-        iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-        iframeDoc.close();
+        const iframeDoc = (
+            iframe.contentWindow && iframe.contentWindow.document
+        );
+        if (iframeDoc) {
+            iframeDoc.body.appendChild(
+                iframeDoc.createElementNS(SVG_NS, 'svg')
+            );
+        }
 
         /**
          * Call this on all elements and recurse to children
@@ -1351,9 +1386,11 @@ namespace Exporting {
          *        Element child
              */
         function recurse(node: HTMLDOMElement): void {
+            const filteredStyles: CSSObject = {};
+
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
-                cssText = '',
+                // cssText = '',
                 dummy: Element,
                 styleAttr,
                 blacklisted: (boolean|undefined),
@@ -1369,7 +1406,10 @@ namespace Exporting {
              * @param {string} prop
              *        Style property name
                      */
-            function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
+            function filterStyles(
+                val: (string|number|boolean|undefined),
+                prop: string
+            ): void {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
@@ -1416,14 +1456,15 @@ namespace Exporting {
                                 node.setAttribute(hyphenate(prop), val);
                             }
                         // Styles
-                        } else {
-                            cssText += hyphenate(prop) + ':' + val + ';';
+                        } else if (prop !== 'parentRule') {
+                            (filteredStyles as any)[prop] = val;
                         }
                     }
                 }
             }
 
             if (
+                iframeDoc &&
                 node.nodeType === 1 &&
                 unstyledElements.indexOf(node.nodeName) === -1
             ) {
@@ -1461,16 +1502,21 @@ namespace Exporting {
                 }
 
                 // Loop through all styles and add them inline if they are ok
-                if (G.isFirefox || G.isMS) {
-                    // Some browsers put lots of styles on the prototype
-                    for (const p in styles) { // eslint-disable-line guard-for-in
+                for (const p in styles) {
+                    if (
+                        // Some browsers put lots of styles on the prototype...
+                        G.isFirefox ||
+                        G.isMS ||
+                        G.isSafari || // #16902
+                        // ... Chrome puts them on the instance
+                        Object.hasOwnProperty.call(styles, p)
+                    ) {
                         filterStyles((styles as any)[p], p);
                     }
-                } else {
-                    objectEach(styles, filterStyles as any);
                 }
 
                 // Apply styles
+                /*
                 if (cssText) {
                     styleAttr = node.getAttribute('style');
                     node.setAttribute(
@@ -1478,6 +1524,8 @@ namespace Exporting {
                         (styleAttr ? styleAttr + ';' : '') + cssText
                     );
                 }
+                */
+                css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)
                 if (node.nodeName === 'svg') {
@@ -1496,7 +1544,7 @@ namespace Exporting {
         /**
          * Remove the dummy objects used to get defaults
          * @private
-             */
+         */
         function tearDown(): void {
             dummySVG.parentNode.removeChild(dummySVG);
             // Remove trash from DOM that stayed after each exporting
@@ -1571,7 +1619,7 @@ namespace Exporting {
             }
         };
 
-        // Register update() method for navigation. Can not be set the same way
+        // Register update() method for navigation. Cannot be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
         ChartNavigationComposition
@@ -1746,27 +1794,6 @@ namespace Exporting {
 
 /* *
  *
- *  Registry
- *
- * */
-
-defaultOptions.exporting = merge(ExportingDefaults.exporting, defaultOptions.exporting);
-defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
-
-// Buttons and menus are collected in a separate config option set called
-// 'navigation'. This can be extended later to add control buttons like
-// zoom and pan right click menus.
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module or in Stock Tools.
- *
- * @requires     modules/exporting
- * @optionparent navigation
- */
-defaultOptions.navigation = merge(ExportingDefaults.navigation, defaultOptions.navigation);
-
-/* *
- *
  *  Default Export
  *
  * */
@@ -1785,7 +1812,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event
@@ -1798,7 +1825,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event

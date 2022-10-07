@@ -43,9 +43,13 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-export type TreemapSeriesLayoutAlgorithmValue = ('sliceAndDice'|'stripes'|'squarified'|'strip');
+export type TreemapSeriesLayoutAlgorithmValue = (
+    'sliceAndDice'|'stripes'|'squarified'|'strip'
+);
 
-export type TreemapSeriesLayoutStartingDirectionValue = ('vertical'|'horizontal');
+export type TreemapSeriesLayoutStartingDirectionValue = (
+    'vertical'|'horizontal'
+);
 
 export interface TreemapSeriesLevelsColorVariationOptions {
     key?: string;

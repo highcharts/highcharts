@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -118,7 +118,10 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modified = table.modified,
-            modifiedRowIndex = modified.getRowIndexBy('columnNames', columnName);
+            modifiedRowIndex = modified.getRowIndexBy(
+                'columnNames',
+                columnName
+            );
 
         if (typeof modifiedRowIndex === 'undefined') {
             modified.setColumns(

@@ -195,7 +195,8 @@ class Timeline {
                                 nextPath: TimelinePath
                             ): void {
                                 nextPath[
-                                    direction > 0 ? 'resetCursor' : 'resetCursorEnd'
+                                    direction > 0 ?
+                                        'resetCursor' : 'resetCursorEnd'
                                 ]();
                             });
                             // Play next

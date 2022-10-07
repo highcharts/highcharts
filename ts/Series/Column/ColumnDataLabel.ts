@@ -71,8 +71,12 @@ namespace ColumnDataLabel {
     ): void {
         let inverted = this.chart.inverted,
             series = point.series,
-            xLen = (series.xAxis ? series.xAxis.len : this.chart.plotSizeX) || 0,
-            yLen = (series.yAxis ? series.yAxis.len : this.chart.plotSizeY) || 0,
+            xLen = (
+                series.xAxis ? series.xAxis.len : this.chart.plotSizeX
+            ) || 0,
+            yLen = (
+                series.yAxis ? series.yAxis.len : this.chart.plotSizeY
+            ) || 0,
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(

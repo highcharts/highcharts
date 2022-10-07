@@ -5,6 +5,8 @@
 import type Cell from '../Layout/Cell.js';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
+import type NavigationBindingsOptionsObject from
+    '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
 import type DataEventEmitter from '../../Data/DataEventEmitter';
@@ -88,7 +90,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'caption'
         ],
         editableOptionsBindings: void 0
-    }
+    };
 
     public parentElement: HTMLElement;
     public parentCell?: Cell;
@@ -135,7 +137,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         if (typeof this.options.parentElement === 'string') {
             const el = document.getElementById(this.options.parentElement);
             if (!el) {
-                throw new Error('Could not find element with id: ' + this.options.parentElement);
+                throw new Error(
+                    'Could not find element with id: ' +
+                    this.options.parentElement
+                );
             }
             this.parentElement = el;
 
@@ -154,7 +159,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
-        this.editableOptions = new EditableOptions(this, options.editableOptionsBindings);
+        this.editableOptions =
+            new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
@@ -194,17 +200,23 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     this.resizeTo(this.parentElement);
                 }),
                 // Listen for changed parent
-                addEvent(this.parentCell.row, 'cellChange', (e: { row: Row }): void => {
-                    const { row } = e;
-                    if (row && this.parentCell) {
-                        const hasLeftTheRow = row.getCellIndex(this.parentCell) === void 0;
-                        if (hasLeftTheRow) {
-                            if (this.parentCell) {
-                                this.setCell(this.parentCell);
+                addEvent(
+                    this.parentCell.row,
+                    'cellChange',
+                    (e: { row: Row }): void => {
+                        const { row } = e;
+                        if (row && this.parentCell) {
+                            const hasLeftTheRow =
+                                row.getCellIndex(this.parentCell) === void 0;
+                            if (hasLeftTheRow) {
+                                if (this.parentCell) {
+                                    this.setCell(this.parentCell);
+                                }
                             }
                         }
                     }
-                }));
+                )
+            );
 
         }
     }
@@ -257,18 +269,23 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     private clearTableListeners(): void {
         if (this.tableEvents.length) {
-            this.tableEvents.forEach((removeEventCallback): void => removeEventCallback());
+            this.tableEvents.forEach(
+                (removeEventCallback): void => removeEventCallback()
+            );
         }
 
         if (this.store) {
-            this.tableEvents.push(this.store.table.on('afterSetModifier', (e): void => {
-                if (e.type === 'afterSetModifier') {
-                    this.emit({
-                        ...e,
-                        type: 'tableChanged'
-                    });
+            this.tableEvents.push(this.store.table.on(
+                'afterSetModifier',
+                (e): void => {
+                    if (e.type === 'afterSetModifier') {
+                        this.emit({
+                            ...e,
+                            type: 'tableChanged'
+                        });
+                    }
                 }
-            }));
+            ));
         }
     }
 
@@ -280,7 +297,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             this.setupTableListeners(this.store.table);
 
             // re-setup if modifier changes
-            this.store.table.on('setModifier', (): void => this.clearTableListeners());
+            this.store.table.on(
+                'setModifier',
+                (): void => this.clearTableListeners()
+            );
             this.store.table.on('afterSetModifier', (e): void => {
                 if (e.type === 'afterSetModifier' && e.modified) {
                     this.setupTableListeners(e.modified);
@@ -334,12 +354,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
 
     private getContentHeight(): number {
-        const parentHeight = this.dimensions.height || Number(getStyle(this.element, 'height'));
+        const parentHeight =
+            this.dimensions.height || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;
         const captionHeight = this.captionElement ?
-            this.captionElement.clientHeight + getMargins(this.captionElement).y :
+            this.captionElement.clientHeight +
+            getMargins(this.captionElement).y :
             0;
 
         return parentHeight - titleHeight - captionHeight;
@@ -365,15 +387,21 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         if (height) {
             // Get offset for border, padding
-            const pad = getPaddings(this.element).y + getMargins(this.element).y;
+            const pad =
+                getPaddings(this.element).y + getMargins(this.element).y;
 
-            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height'))) - pad;
+            this.dimensions.height = relativeLength(
+                height, Number(getStyle(this.parentElement, 'height'))
+            ) - pad;
             this.element.style.height = this.dimensions.height + 'px';
             this.contentElement.style.height = this.getContentHeight() + 'px';
         }
         if (width) {
-            const pad = getPaddings(this.element).x + getMargins(this.element).x;
-            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width'))) - pad;
+            const pad =
+                getPaddings(this.element).x + getMargins(this.element).x;
+            this.dimensions.width = relativeLength(
+                width, Number(getStyle(this.parentElement, 'width'))
+            ) - pad;
             this.element.style.width = this.dimensions.width + 'px';
         }
 
@@ -409,7 +437,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             const padding = getPaddings(element);
             const margins = getMargins(element);
 
-            this.resize(width - padding.x - margins.x, height - padding.y - margins.y);
+            this.resize(
+                width - padding.x - margins.x,
+                height - padding.y - margins.y
+            );
         });
 
         this.resizeTimeouts.push(timeoutID);
@@ -421,6 +452,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * The options to apply
      *
      * @return {this}
+     * The component for chaining
      */
     public update(newOptions: Partial<Component.ComponentOptions>): this {
         // Update options
@@ -433,14 +465,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
-        const titleElement = Component.createTextElement('h1', 'title', titleOptions);
+        const titleElement =
+            Component.createTextElement('h1', 'title', titleOptions);
         if (titleElement) {
             this.titleElement = titleElement;
         }
     }
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
-        const captionElement = Component.createTextElement('div', 'caption', captionOptions);
+        const captionElement =
+            Component.createTextElement('div', 'caption', captionOptions);
         if (captionElement) {
             this.captionElement = captionElement;
         }
@@ -450,6 +484,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Handles setting things up on initial render
      *
      * @return {this}
+     * The component for chaining
      */
     public load(): this {
 
@@ -460,7 +495,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
-        [this.titleElement, this.contentElement, this.captionElement].forEach((element): void => {
+        [
+            this.titleElement,
+            this.contentElement,
+            this.captionElement
+        ].forEach((element): void => {
             if (element) {
                 this.element.appendChild(element);
             }
@@ -491,7 +530,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             }
         });
 
-        window.addEventListener('resize', (): void => this.resizeTo(this.parentElement));
+        window.addEventListener(
+            'resize',
+            (): void => this.resizeTo(this.parentElement)
+        );
 
         this.hasLoaded = true;
 
@@ -502,6 +544,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * @todo make this call load on initial render
      *
      * @return {this}
+     * The component for chaining
      */
     public render(): this {
         if (!this.hasLoaded) {
@@ -515,6 +558,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * @todo redraw should (usually) call render
      * @return {this}
+     * The component for chaining
      */
     public redraw(): this {
         // Do a redraw
@@ -558,7 +602,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public postMessage(
         message: Component.MessageType,
-        target: Component.MessageTarget = { type: 'componentType', target: 'all' }
+        target: Component.MessageTarget = {
+            type: 'componentType',
+            target: 'all'
+        }
     ): void {
         const component = Component.getInstanceById(this.id);
 
@@ -573,7 +620,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             return;
         }
 
-        if (typeof message === 'object' && typeof message.callback === 'function') {
+        if (
+            typeof message === 'object' &&
+            typeof message.callback === 'function'
+        ) {
             message.callback.apply(this);
         }
     }
@@ -667,8 +717,9 @@ namespace Component {
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
     }>;
-    export type TableChangedEvent = Event<'tableChanged', {}>
-    export type PresentationModifierEvent = Component.Event<'afterPresentationModifier', { table: DataTable }>
+    export type TableChangedEvent = Event<'tableChanged', {}>;
+    export type PresentationModifierEvent =
+        Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
 
     export type Event<
@@ -685,7 +736,7 @@ namespace Component {
         className?: string;
         type: string;
         // allow overwriting gui elements
-        navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
+        navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
@@ -705,7 +756,7 @@ namespace Component {
         id: string;
     }
 
-    export type StoreTypes = DataStore<DataStore.Event>
+    export type StoreTypes = DataStore<DataStore.Event>;
 
     export interface EditableOptions {
         store?: StoreTypes;
@@ -719,12 +770,16 @@ namespace Component {
 
     export interface MessageTarget {
         type: 'group' | 'componentType' | 'componentID';
-        target: ComponentType['id'] | ComponentType['type'] | ComponentGroup['id'];
+        target: (
+            ComponentType['id'] |
+            ComponentType['type'] |
+            ComponentGroup['id']
+        );
     }
 
     export type MessageType = string | {
         callback: Function;
-    }
+    };
 
     /* *
      *
@@ -794,7 +849,9 @@ namespace Component {
      * Component name, if the extraction was successful, otherwise an empty
      * string.
      */
-    export function getName(component: (NewableFunction | ComponentType)): string {
+    export function getName(
+        component: (NewableFunction | ComponentType)
+    ): string {
         return (
             component.toString().match(nameRegExp) ||
             ['', '']
@@ -849,7 +906,8 @@ namespace Component {
         return instanceRegistry[id];
     }
     export function relayMessage(
-        sender: ComponentType | ComponentGroup, // Are there cases where a group should be the sender?
+        sender: ComponentType | ComponentGroup,
+        // Are there cases where a group should be the sender?
         message: Component.MessageEvent['message'],
         targetObj: Component.MessageTarget
     ): void {
@@ -865,18 +923,25 @@ namespace Component {
             });
 
         const handlers: Record<Component.MessageTarget['type'], Function> = {
-            'componentID': (recipient: Component.MessageTarget['target']): void => {
+            'componentID': (
+                recipient: Component.MessageTarget['target']
+            ): void => {
                 const component = getInstanceById(recipient);
                 if (component) {
                     emit(component);
                 }
             },
-            'componentType': (recipient: Component.MessageTarget['target']): void => {
+            'componentType': (
+                recipient: Component.MessageTarget['target']
+            ): void => {
                 getAllInstanceIDs()
                     .forEach((instanceID): void => {
                         const component = getInstanceById(instanceID);
                         if (component && component.id !== sender.id) {
-                            if (component.type === recipient || recipient === 'all') {
+                            if (
+                                component.type === recipient ||
+                                recipient === 'all'
+                            ) {
                                 emit(component);
                             }
                         }

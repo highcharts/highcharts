@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     KeltnerChannelsOptions,
@@ -19,16 +25,20 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Keltner Channels series type.
@@ -40,6 +50,13 @@ const {
  * @augments Highcharts.Series
  */
 class KeltnerChannelsIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -67,7 +84,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
          *      Background fill between lines.
          *
          * @type {Highcharts.Color}
-         * @since     next
+         * @since 9.3.2
          * @apioption plotOptions.keltnerchannels.fillColor
          *
          */
@@ -132,9 +149,21 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         lineWidth: 1
     } as KeltnerChannelsOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<KeltnerChannelsPoint> = void 0 as any;
     public options: KeltnerChannelsOptions = void 0 as any;
     public points: Array<KeltnerChannelsPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(this: KeltnerChannelsIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -222,13 +251,12 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
-interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition {
+interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
+    pointArrayMap: Array<keyof KeltnerChannelsPoint>;
     pointClass: typeof KeltnerChannelsPoint;
-    pointValKey: MultipleLinesComposition.Composition['pointValKey'];
-    toYData: MultipleLinesComposition.Composition['toYData'];
+    pointValKey: string;
 }
 extend(KeltnerChannelsIndicator.prototype, {
     nameBase: 'Keltner Channels',
@@ -260,6 +288,12 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  * */
 
 export default KeltnerChannelsIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)

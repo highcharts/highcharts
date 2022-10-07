@@ -216,6 +216,25 @@ QUnit.test('Drilldown methods', function (assert) {
         2,
         '#15771: Point should be at correct index in ddPoints'
     );
+
+    chart.series[0].update({
+        point: {
+            events: {
+                mouseOver() {
+                    this.series.chart.addSeriesAsDrilldown(this, {
+                        data: [1, 2, 3, 4]
+                    });
+                }
+            }
+        },
+        data: [2, 5]
+    });
+    chart.series[0].points[0].onMouseOver();
+    assert.ok(
+        true,
+        `Adding drill down series through mouseover should not
+        generate errors in console, #16820.`
+    );
 });
 
 QUnit.test('Chart type update after drilldown', function (assert) {

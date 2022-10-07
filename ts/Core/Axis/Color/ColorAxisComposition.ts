@@ -134,7 +134,9 @@ namespace ColorAxisComposition {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
-            chartProto.collectionsWithInit.colorAxis = [chartProto.addColorAxis];
+            chartProto.collectionsWithInit.colorAxis = [
+                chartProto.addColorAxis
+            ];
 
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
@@ -152,7 +154,11 @@ namespace ColorAxisComposition {
             composedClasses.push(LegendClass);
 
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-            addEvent(LegendClass, 'afterColorizeItem', onLegendAfterColorizeItem);
+            addEvent(
+                LegendClass,
+                'afterColorizeItem',
+                onLegendAfterColorizeItem
+            );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
         if (composedClasses.indexOf(SeriesClass) === -1) {
@@ -272,7 +278,7 @@ namespace ColorAxisComposition {
         }
     ): void {
         if (e.visible && e.item.legendColor) {
-            (e.item.legendSymbol as any).attr({
+            (e.item.legendItem as any).symbol.attr({
                 fill: e.item.legendColor
             });
         }
@@ -331,7 +337,10 @@ namespace ColorAxisComposition {
      * @function Highcharts.colorPointMixin.setVisible
      * @param {boolean} visible
      */
-    export function pointSetVisible(this: PointComposition, vis?: boolean): void {
+    export function pointSetVisible(
+        this: PointComposition,
+        vis?: boolean
+    ): void {
         const point = this,
             method = vis ? 'show' : 'hide';
 
@@ -372,7 +381,11 @@ namespace ColorAxisComposition {
             if (color && point.color !== color) {
                 point.color = color;
 
-                if (series.options.legendType === 'point' && point.legendItem) {
+                if (
+                    series.options.legendType === 'point' &&
+                    point.legendItem &&
+                    point.legendItem.label
+                ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }
             }
