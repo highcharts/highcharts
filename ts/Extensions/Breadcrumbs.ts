@@ -64,7 +64,7 @@ declare module '../Core/Chart/ChartLike' {
         breadcrumbs?: Breadcrumbs;
     }
 }
-declare module '../Core/LangOptions' {
+declare module '../Core/Options' {
     interface LangOptions {
         breadcrumbsToLabel?: string;
         mainBreadcrumb?: string;

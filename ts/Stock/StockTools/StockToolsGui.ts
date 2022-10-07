@@ -54,13 +54,10 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
     }
-}
-
-declare module '../../Core/Options'{
     interface Options {
         stockTools?: StockToolsOptions;
     }

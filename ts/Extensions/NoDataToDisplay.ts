@@ -40,13 +40,10 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/Options'{
     interface LangOptions {
         noData?: string;
     }
-}
-
-declare module '../Core/Options'{
     interface Options {
         noData?: Highcharts.NoDataOptions;
     }
