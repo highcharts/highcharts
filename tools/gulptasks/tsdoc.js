@@ -32,6 +32,7 @@ const NEXT_THEME = path.join(
  * */
 
 /**
+ * TSDoc task
  * @return {Promise<undefined>}
  *         Promise to keep
  */
@@ -44,7 +45,7 @@ function task() {
     // const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
 
     const command = (
-        'cd ts && npx typedoc' +
+        'cd ts && npx highcharts-typedoc' +
         ` --json "${path.join('..', target, 'tree.json')}"` +
         ` --out "${path.join('..', target)}"`
         // + ` --theme "${path.join('..', theme)}"`
