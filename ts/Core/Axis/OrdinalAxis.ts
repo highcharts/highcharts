@@ -16,8 +16,7 @@
  *
  * */
 
-import type DateTimeAxis from './DateTimeAxis';
-import type NavigatorAxis from './NavigatorAxis';
+import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
@@ -708,7 +707,7 @@ namespace OrdinalAxis {
                 // it happens on the current x axis which is smaller and faster.
                 chart.fixedRange = max - min;
 
-                trimmedRange = (xAxis as NavigatorAxis).navigatorAxis
+                trimmedRange = (xAxis as NavigatorAxisComposition).navigatorAxis
                     .toFixedRange(
                         void 0,
                         void 0,
@@ -961,7 +960,8 @@ namespace OrdinalAxis {
                     // between points is identical throughout all series.
                     if (
                         i > 0 &&
-                        series.options.id !== 'highcharts-navigator-series'
+                        series.options.id !== 'highcharts-navigator-series' &&
+                        series.processedXData.length > 1
                     ) {
                         adjustOrdinalExtremesPoints =
                             distanceBetweenPoint !== series.processedXData[1] -

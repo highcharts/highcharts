@@ -13,7 +13,7 @@ const { defined } = U;
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 
@@ -618,9 +618,8 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
      * Options from the controlPointOptions can be overwritten
      * by options in a specific control point.
      *
-     * @declare   Highcharts.AnnotationControlPointOptionsObject
-     * @requires  modules/annotations
-     * @apioption annotations.controlPointOptions
+     * @declare  Highcharts.AnnotationControlPointOptionsObject
+     * @requires modules/annotations
      */
     controlPointOptions: {
 
@@ -629,17 +628,29 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
          * @apioption annotations.controlPointOptions.positioner
          */
 
-        symbol: 'circle',
-        width: 10,
-        height: 10,
+        /**
+         * @type {Highcharts.Dictionary<Function>}
+         */
+        events: {},
+
+        /**
+         * @type {Highcharts.SVGAttributes}
+         */
         style: {
             cursor: 'pointer',
             fill: Palette.backgroundColor,
             stroke: Palette.neutralColor100,
             'stroke-width': 2
         },
+
+        height: 10,
+
+        symbol: 'circle',
+
         visible: false,
-        events: {}
+
+        width: 10
+
     },
 
     /**

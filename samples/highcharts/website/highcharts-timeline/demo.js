@@ -292,7 +292,7 @@ const options = {
             [1561932000000, 60],
             [1564610400000, 69],
             [1567288800000, 83],
-            [1569880800000, 91], ///september 2019
+            [1569880800000, 91], // september 2019
             [1572480000000, 79],
             [1575072000000, 65],
             [1577750400000, 92],
@@ -359,7 +359,7 @@ const options = {
     }
 };
 
-if (Highcharts.seriesTypes.flags) {
+if (Highcharts.Series.types.flags) {
     options.series.push(
         {
             type: 'flags',

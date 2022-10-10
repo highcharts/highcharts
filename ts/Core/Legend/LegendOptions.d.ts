@@ -76,6 +76,8 @@ export interface LegendOptions {
     symbolWidth?: number;
     title: LegendTitleOptions;
     useHTML?: boolean;
+    valueDecimals?: number;
+    valueSuffix?: string;
     verticalAlign: VerticalAlignValue;
     width?: (number|string);
     x: number;

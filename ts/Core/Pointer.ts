@@ -83,7 +83,7 @@ declare module './Chart/ChartLike'{
 
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
- * assosiated Pointer item that can be accessed from the  {@link Chart.pointer}
+ * associated Pointer item that can be accessed from the  {@link Chart.pointer}
  * property.
  *
  * @class
@@ -132,8 +132,6 @@ class Pointer {
     public chart: Chart;
 
     public chartPosition?: Pointer.ChartPositionObject;
-
-    public followTouchMove?: boolean;
 
     public hasDragged: (false|number);
 
@@ -363,7 +361,7 @@ class Pointer {
             return;
         }
 
-        // If the mouse is outside the plot area, adjust to cooordinates
+        // If the mouse is outside the plot area, adjust to coordinates
         // inside to prevent the selection marker from going outside
         if (chartX < plotLeft) {
             chartX = plotLeft;
@@ -627,18 +625,6 @@ class Pointer {
         e: PointerEvent
     ): (Point|undefined) {
 
-        const chart = this.chart;
-        const hoverPoint = chart.hoverPoint;
-        const tooltip = chart.tooltip;
-
-        if (
-            hoverPoint &&
-            tooltip &&
-            tooltip.isStickyOnContact()
-        ) {
-            return hoverPoint;
-        }
-
         let closest: (Point|undefined);
 
         /** @private */
@@ -820,10 +806,10 @@ class Pointer {
      * @function Highcharts.Pointer#getHoverData
      *
      * @param {Highcharts.Point|undefined} existingHoverPoint
-     * The point currrently beeing hovered.
+     * The point currently being hovered.
      *
      * @param {Highcharts.Series|undefined} existingHoverSeries
-     * The series currently beeing hovered.
+     * The series currently being hovered.
      *
      * @param {Array<Highcharts.Series>} series
      * All the series in the chart.
@@ -976,7 +962,7 @@ class Pointer {
 
     /**
      * Utility to detect whether an element has, or has a parent with, a
-     * specificclass name. Used on detection of tracker objects and on deciding
+     * specific class name. Used on detection of tracker objects and on deciding
      * whether hovering the tooltip should cause the active series to mouse out.
      *
      * @function Highcharts.Pointer#inClass
@@ -1047,9 +1033,6 @@ class Pointer {
              * @type {Highcharts.Tooltip}
              */
             chart.tooltip = new Tooltip(chart, options.tooltip as any);
-            this.followTouchMove = pick(
-                (options.tooltip as any).followTouchMove, true
-            );
         }
 
         this.setDOMEvents();
@@ -1207,14 +1190,6 @@ class Pointer {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
-        // #14434: tooltip.options.outside
-        if (tooltip && tooltip.shouldStickOnContact() && this.inClass(
-            e.relatedTarget as any,
-            'highcharts-tooltip-container'
-        )) {
-            return;
-        }
-
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
@@ -1248,8 +1223,9 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseMove
      */
     public onContainerMouseMove(e: MouseEvent): void {
-        const chart = this.chart;
-        const pEvt = this.normalize(e);
+        const chart = this.chart,
+            tooltip = chart.tooltip,
+            pEvt = this.normalize(e);
 
         this.setHoverChartIndex();
 
@@ -1278,9 +1254,19 @@ class Pointer {
                         visiblePlotOnly: true
                     }
                 )
+            ) &&
+
+            // If the tooltip has stickOnContact enabled, do nothing. This
+            // applies regardless of any combinations of the `split` and
+            // `useHTML` options.
+            !(
+                tooltip &&
+                tooltip.shouldStickOnContact(pEvt)
             )
         ) {
-            if (this.inClass(pEvt.target as any, 'highcharts-no-tooltip')) {
+            if (
+                this.inClass(pEvt.target as any, 'highcharts-no-tooltip')
+            ) {
                 this.reset(false, 0);
             } else {
                 this.runPointActions(pEvt);
@@ -1333,23 +1319,23 @@ class Pointer {
      */
     public onDocumentMouseMove(e: MouseEvent): void {
         const chart = this.chart;
+        const tooltip = chart.tooltip;
         const chartPosition = this.chartPosition;
         const pEvt = this.normalize(e, chartPosition);
-        const tooltip = chart.tooltip;
 
         // If we're outside, hide the tooltip
         if (
             chartPosition &&
-            (
-                !tooltip ||
-                !tooltip.isStickyOnContact()
-            ) &&
             !chart.isInsidePlot(
                 pEvt.chartX - chart.plotLeft,
                 pEvt.chartY - chart.plotTop,
                 {
                     visiblePlotOnly: true
                 }
+            ) &&
+            !(
+                tooltip &&
+                tooltip.shouldStickOnContact(pEvt)
             ) &&
             !this.inClass(pEvt.target as any, 'highcharts-tracker')
         ) {
@@ -1389,7 +1375,10 @@ class Pointer {
                 ) ||
                 self.runChartClick
             ),
-            clip = {};
+            clip = {},
+            tooltip = self.chart.tooltip,
+            followTouchMove = touchesLength === 1 &&
+                pick((tooltip && tooltip.options.followTouchMove), true);
 
         let selectionMarker = self.selectionMarker;
 
@@ -1398,7 +1387,7 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
-        } else if (touchesLength === 1 && this.followTouchMove) {
+        } else if (followTouchMove) {
             // #16119: Prevent blocking scroll when single-finger panning is
             // not enabled
             self.initiated = false;
@@ -1467,7 +1456,7 @@ class Pointer {
             self.res = true; // reset on next move
 
         // Optionally move the tooltip on touchmove
-        } else if (self.followTouchMove && touchesLength === 1) {
+        } else if (followTouchMove) {
             this.runPointActions(self.normalize(e));
 
         // Event type is touchmove, handle panning and pinching
@@ -2209,6 +2198,7 @@ namespace Pointer {
     }
     export interface SelectEventObject {
         originalEvent: Event;
+        resetSelection?: boolean;
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
@@ -2227,6 +2217,24 @@ export default Pointer;
  *  API Declarations
  *
  * */
+
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
 
 /**
  * One position in relation to an axis.
@@ -2293,47 +2301,43 @@ export default Pointer;
  *
  * @interface Highcharts.SelectDataObject
  *//**
+ * The selected Axis.
  * @name Highcharts.SelectDataObject#axis
  * @type {Highcharts.Axis}
  *//**
+ * The maximum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#max
  * @type {number}
  *//**
+ * The minimum axis value, either automatic or set manually.
  * @name Highcharts.SelectDataObject#min
  * @type {number}
  */
 
 /**
  * Object for select events.
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
  *
  * @interface Highcharts.SelectEventObject
  *//**
+ * The related browser event.
  * @name Highcharts.SelectEventObject#originalEvent
  * @type {global.Event}
  *//**
+ * Indicates a reset event to restore default state.
+ * @name Highcharts.SelectEventObject#resetSelection
+ * @type {boolean|undefined}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#xAxis
  * @type {Array<Highcharts.SelectDataObject>}
  *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
  * @name Highcharts.SelectEventObject#yAxis
  * @type {Array<Highcharts.SelectDataObject>}
- */
-
-/**
- * Chart position and scale.
- *
- * @interface Highcharts.ChartPositionObject
- *//**
- * @name Highcharts.ChartPositionObject#left
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleX
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#scaleY
- * @type {number}
- *//**
- * @name Highcharts.ChartPositionObject#top
- * @type {number}
  */
 
 ''; // keeps doclets above in JS file

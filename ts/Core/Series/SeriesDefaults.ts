@@ -64,11 +64,16 @@ const seriesDefaults: SeriesOptions = {
     lineWidth: 2,
 
     /**
-     * For some series, there is a limit that shuts down initial animation
+     * For some series, there is a limit that shuts down animation
      * by default when the total number of points in the chart is too high.
      * For example, for a column chart and its derivatives, animation does
      * not run if there is more than 250 points totally. To disable this
-     * cap, set `animationLimit` to `Infinity`.
+     * cap, set `animationLimit` to `Infinity`. This option works if animation
+     * is fired on individual points, not on a group of points like e.g. during
+     * the initial animation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-animationlimit/
+     *         Animation limit on updating individual points
      *
      * @type      {number}
      * @apioption plotOptions.series.animationLimit
@@ -1587,6 +1592,9 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
+         * This options is deprecated.
+         * Use [style.color](#plotOptions.series.dataLabels.style) instead.
+         *
          * The text color for the data labels. Defaults to `undefined`. For
          * certain series types, like column or map, the data labels can be
          * drawn inside the points. In this case the data label will be
@@ -1600,8 +1608,11 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highmaps} maps/demo/color-axis/
          *         White data labels
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.series.dataLabels.color
+         * @see [style.color](#plotOptions.series.dataLabels.style)
+         *
+         * @type       {Highcharts.ColorType}
+         * @deprecated 10.3
+         * @apioption  plotOptions.series.dataLabels.color
          */
 
         /**
@@ -1743,10 +1754,12 @@ const seriesDefaults: SeriesOptions = {
         /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
-         * be applied only to series which support displaying null points.
+         * be applied only to series which support displaying null points
+         * i.e `heatmap` or `tilemap`. Does not work with series that don't
+         * display null points, like `line`, `column`, `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {boolean|string}
          * @since     7.1.0
@@ -1757,11 +1770,13 @@ const seriesDefaults: SeriesOptions = {
          * Callback JavaScript function that defines formatting for points
          * with the value of null. Works analogously to
          * [formatter](#plotOptions.series.dataLabels.formatter).
-         * `nullPointFormatter` can be applied only to series which support
-         * displaying null points.
+         * `nullFormatter` can be applied only to series which support
+         * displaying null points i.e `heatmap` or `tilemap`. Does not work
+         * with series that don't display null points, like `line`, `column`,
+         * `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
          * @since     7.1.0

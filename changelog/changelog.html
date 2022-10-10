@@ -15,6 +15,44 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-v10.2.1"></a>
+              <a href="#highcharts-v10.2.1">Highcharts v10.2.1 (2022-08-29)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-10.2.1.zip" title="Download the zip archive for Highcharts v10.2.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Refactored zoom options, introduced new object structure as <a href="https://api.highcharts.com/highcharts/chart.zooming">chart.zooming</a>.</li>
+              <li>Added <code>Highcharts.Series.types</code> and <code>Series.registerType(type, class)</code> for custom series, see <a href="https://github.com/highcharts/highcharts/issues/17551">#17551</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="heading-10-2-1-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts v10.2.1">
+                    <button aria-label="Bug Fixes Highcharts v10.2.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-10-2-1"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-10-2-1" class="collapse" aria-labelledby="heading-10-2-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17413">#17413</a>, data labels contrast color omitted the chart background.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17547">#17547</a>; if <a href="https://api.highcharts.com/highcharts/chart.zoomType">chart.zoomType</a> option is set, boosted rendering will not be forced as long as threshold is not reached.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17627">#17627</a>, single quoted attributes were not recognized and caused color style not to apply in tooltips.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/15752">#15752</a>, arearange didn’t work in parallel coordinates.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17442">#17442</a>, color axis data classes were not keyboard navigable.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17438">#17438</a>, updating points with the category axis gave the wrong x position.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17486">#17486</a>, <code>bubbleZExtremes</code> was not removed when the bubble series was removed.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17481">#17481</a>, zones clip was incorrectly calculated and the line was partially missing when <a href="https://api.highcharts.com/highcharts/chart.scrollablePlotArea">scrollablePlotArea</a> was enabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17484">#17484</a>, changed the link opacity on hover in organization series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17472">#17472</a>, shared tooltip did not work in polar charts.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17359">#17359</a>, <a href="https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking">stickyTracking</a> was not respected correctly for polar charts.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17401">#17401</a>, console error from accessibility module when using numeric point id.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-v10.2.0"></a>
               <a href="#highcharts-v10.2.0">Highcharts v10.2.0 (2022-07-05)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-10.2.0.zip" title="Download the zip archive for Highcharts v10.2.0"><i class="fas fa-download"></i></a></span>
@@ -6283,6 +6321,35 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-stock-v10.2.1"></a>
+              <a href="#highcharts-stock-v10.2.1">Highcharts Stock v10.2.1 (2022-08-29)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-10.2.1.zip" title="Download the zip archive for Highcharts Stock v10.2.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.2.1 above also apply to Highcharts Stock 10.2.1.</li>
+              <li>Added new option <a href="https://api.highcharts.com/highstock/navigator.stickToMax">navigator.stickToMax</a>, see <a href="https://github.com/highcharts/highcharts/issues/17539">#17539</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hs-heading-10-2-1-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-stock v10.2.1">
+                    <button aria-label="Bug Fixes Highcharts-stock v10.2.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-hs-10-2-1"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hs-10-2-1" class="collapse" aria-labelledby="hs-heading-10-2-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17423">#17423</a>, Stock Tools were unreachable when the container was wrapped.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17425">#17425</a>, editing labels hid Elliott3 line.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17522">#17522</a>, when the <a href="https://api.highcharts.com/highstock/plotOptions.series.lastPrice">lastPrice</a> label was enabled, there was an error in the console.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-stock-v10.2.0"></a>
               <a href="#highcharts-stock-v10.2.0">Highcharts Stock v10.2.0 (2022-07-05)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-10.2.0.zip" title="Download the zip archive for Highcharts Stock v10.2.0"><i class="fas fa-download"></i></a></span>
@@ -9680,6 +9747,14 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-maps-v10.2.1"></a>
+              <a href="#highcharts-maps-v10.2.1">Highcharts Maps v10.2.1 (2022-08-29)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-10.2.1.zip" title="Download the zip archive for Highcharts Maps v10.2.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.2.1 above also apply to Highcharts Maps 10.2.1.</li>
+            </ul>
+            <h3 class="release-header">
               <a id="highcharts-maps-v10.2.0"></a>
               <a href="#highcharts-maps-v10.2.0">Highcharts Maps v10.2.0 (2022-07-05)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-10.2.0.zip" title="Download the zip archive for Highcharts Maps v10.2.0"><i class="fas fa-download"></i></a></span>
@@ -11243,6 +11318,14 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-gantt-v10.2.1"></a>
+              <a href="#highcharts-gantt-v10.2.1">Highcharts Gantt v10.2.1 (2022-08-29)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-10.2.1.zip" title="Download the zip archive for Highcharts Gantt v10.2.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.2.1 above also apply to Highcharts Gantt 10.2.1.</li>
+            </ul>
             <h3 class="release-header">
               <a id="highcharts-gantt-v10.2.0"></a>
               <a href="#highcharts-gantt-v10.2.0">Highcharts Gantt v10.2.0 (2022-07-05)</a>

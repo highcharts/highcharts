@@ -20,7 +20,7 @@
 
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type WordcloudPoint from './WordcloudPoint';
 import type WordcloudSeries from './WordcloudSeries';
 

@@ -812,10 +812,7 @@ class ColumnSeries extends Series {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[
-                                    this.index as any
-                                ],
-                                total = stackItem.total;
+                            const pointValues = stackItem.points[this.index];
 
                             // If true `stacking` is enabled, count the total
                             // number of non-null stacks in the category, and
@@ -831,10 +828,26 @@ class ColumnSeries extends Series {
                                 }
 
                             // If `stacking` is not enabled, look for the index
-                            // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
-                                indexInCategory = pointValues[1];
-                                totalInCategory = total || 0;
+                                // If there are multiple points with the same X
+                                // then gather all series in category, and
+                                // assign index
+                                let seriesIndexes = Object
+                                    .keys(stackItem.points)
+                                    .filter((pointKey): boolean =>
+                                        // Filter out duplicate X's
+                                        !pointKey.match(',') &&
+                                        // Filter out null points
+                                        stackItem.points[pointKey] &&
+                                        stackItem.points[pointKey].length > 1
+                                    )
+                                    .map(parseFloat)
+                                    .sort((a, b): number => b - a);
+
+                                indexInCategory = seriesIndexes.indexOf(
+                                    this.index
+                                );
+                                totalInCategory = seriesIndexes.length;
                             }
                         }
                     }
@@ -1119,7 +1132,7 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<ColumnPoint> = this.points): void {
         const series = this,
             chart = this.chart,
             options = series.options,
@@ -1128,7 +1141,7 @@ class ColumnSeries extends Series {
         let shapeArgs;
 
         // draw the columns
-        series.points.forEach(function (point): void {
+        points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
                 hasGraphic = !!graphic,
