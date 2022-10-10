@@ -91,18 +91,19 @@ class PictorialSeries extends ColumnSeries {
      * */
 
     /**
-     * A pictorial graph is a variation of a column graph. The biggest
-     * difference is related to the shape of the data point, taken
-     * from the path parameter.
+     * A pictorial chart uses vector images to represents the data.
+     * The shape of the data point is taken from the path parameter.
      *
-     * @sample {highcharts} highcharts/demo/pictorial-graph/
-     *         Pictorial graph
+     * @sample {highcharts} highcharts/demo/pictorial/
+     *         Pictorial chart
      *
      * @extends      plotOptions.column
      * @since        next
      * @product      highcharts
-     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
-     *               dataSorting, boostBlending
+     * @excluding    allAreas, borderRadius,
+     *               centerInCategory, colorAxis, connectEnds, connectNulls,
+     *               crisp, compare, compareBase, dataSorting, dashStyle,
+     *               dataAsColumns, linecap, lineWidth, shadow, onPoint
      * @requires     modules/pictorial
      * @optionparent plotOptions.pictorial
      */
@@ -569,8 +570,10 @@ export default PictorialSeries;
  * @extends   series,plotOptions.pictorial
  * @since     next
  * @product   highcharts
- * @excluding dataParser, dataURL, marker, dataSorting, boostThreshold,
- *            boostBlending, edgeColor
+ * @excluding dataParser, borderRadius,
+ *            centerInCategory, connectEnds, connectNulls, crisp,
+ *            dataURL, dataAsColumns, edgeColor, linecap, lineWidth,  marker,
+ *            dataSorting, dashStyle, onPoint, shadow
  * @requires  modules/pictorial
  * @apioption series.pictorial
  */
@@ -615,9 +618,99 @@ export default PictorialSeries;
  *
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
+ * @excluding borderColor, borderWidth, dashStyle, dragDrop
  * @since     next
  * @product   highcharts
  * @apioption series.pictorial.data
+ */
+
+/**
+ * The paths include options describing the point image.
+ *
+ * @declare   Highcharts.SeriesPictorialPathsOptionsObject
+ * @type      {Array<*>}
+ * @since     next
+ * @product   highcharts
+ * @apioption series.pictorial.paths
+ */
+
+/**
+ * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.pictorial.paths.definition
+ */
+
+/**
+ * The max option determines height of the image. It is the ratio of
+ * `yAxis.max` to the `paths.max`.
+ *
+ * @sample {highcharts} highcharts/pictorial/max/
+ *         Pictorial max option
+ *
+ * @type      {number}
+ * @default   yAxis.max
+ * @product   highcharts
+ * @apioption series.pictorial.paths.max
+ */
+
+/**
+ * The stackShadow forms the background of stacked points. Requires the `series.stacking` to be defined.
+ *
+ * @sample {highcharts} highcharts/yaxis/stackShadow/
+ *         Pictorial stackShadow option
+ *
+ * @declare   Highcharts.XAxisOptions
+ * @type      {*}
+ * @since     next
+ * @product   highcharts
+ * @requires  modules/pictorial
+ * @apioption xAxis.stackShadow
+ */
+
+/**
+ * The color of the stackShadow  border.
+ *
+ * @declare   Highcharts.XAxisOptions
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @default   transparent
+ * @product   highcharts
+ * @requires  modules/pictorial
+ * @apioption xAxis.stackShadow.borderColor
+ */
+
+/**
+ * The width of the stackShadow border.
+ *
+ * @declare   Highcharts.XAxisOptions
+ * @type      {number}
+ * @default   0
+ * @product   highcharts
+ * @requires  modules/pictorial
+ * @apioption xAxis.stackShadow.borderWidth
+ */
+
+/**
+ * The color of the stackShadow.
+ *
+ * @declare   Highcharts.XAxisOptions
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @default   #dedede
+ * @product   highcharts
+ * @requires  modules/pictorial
+ * @apioption xAxis.stackShadow.color
+ */
+
+/**
+ * Enable or disable stackShadow.
+ *
+ * @declare   Highcharts.XAxisOptions
+ * @type      {boolean}
+ * @default   undefined
+ * @product   highcharts
+ * @requires  modules/pictorial
+ * @apioption xAxis.stackShadow.enabled
  */
 
 ''; // adds doclets above to transpiled file
