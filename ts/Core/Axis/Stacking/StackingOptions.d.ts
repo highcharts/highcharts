@@ -38,7 +38,7 @@ declare module '../AxisOptions' {
 }
 
 declare module '../../Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         stack?: (number|string);
         stacking?: StackOverflowValue;
     }

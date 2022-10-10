@@ -26,7 +26,7 @@ import HLCSeriesOptions from '../HLC/HLCSeriesOptions';
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         useOhlcData?: boolean;
     }
 }

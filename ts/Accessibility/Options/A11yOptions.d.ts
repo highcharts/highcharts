@@ -195,7 +195,7 @@ declare module '../../Core/Series/PointOptions' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         accessibility?: SeriesAccessibilityOptions;
     }
 }

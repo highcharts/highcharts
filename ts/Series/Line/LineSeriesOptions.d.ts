@@ -16,9 +16,11 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type LineSeries from './LineSeries';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesPlotOptions
+} from '../../Core/Series/SeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -27,7 +29,13 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface LineSeriesOptions extends SeriesOptions {
+export interface LineSeriesOptions
+    extends SeriesOptions, LineSeriesPlotOptions
+{
+    // nothing to add
+}
+
+export interface LineSeriesPlotOptions extends SeriesPlotOptions {
     allAreas?: boolean;
     animation?: (boolean|DeepPartial<AnimationOptions>);
     animationLimit?: number;
@@ -36,7 +44,6 @@ export interface LineSeriesOptions extends SeriesOptions {
     borderWidth?: number;
     colorAxis?: boolean;
     connectEnds?: boolean;
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     description?: string;
     linkedTo?: string;
     pointDescriptionFormatter?: Function;

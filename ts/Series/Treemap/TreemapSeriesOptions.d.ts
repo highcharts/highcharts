@@ -38,7 +38,7 @@ import type TreemapSeries from './TreemapSeries';
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         cropThreshold?: number;
     }
 }

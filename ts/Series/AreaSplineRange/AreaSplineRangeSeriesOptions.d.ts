@@ -14,9 +14,14 @@
  *
  * */
 
-import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
+import type {
+    AreaRangeSeriesPlotOptions
+} from '../AreaRange/AreaRangeSeriesOptions';
 import type AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -24,7 +29,15 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
+export interface AreaSplineRangeSeriesOptions
+    extends SeriesOptions, AreaSplineRangeSeriesPlotOptions
+{
+    dataLabels?: AreaRangeSeriesPlotOptions['dataLabels'];
+}
+
+export interface AreaSplineRangeSeriesPlotOptions
+    extends AreaRangeSeriesPlotOptions
+{
     states?: SeriesStatesOptions<AreaSplineSeries>;
 }
 

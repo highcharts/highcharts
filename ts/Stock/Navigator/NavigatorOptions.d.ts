@@ -48,7 +48,7 @@ declare module '../../Core/Options'{
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         fillOpacity?: number;
         navigatorOptions?: SeriesOptions;
         showInNavigator?: boolean;

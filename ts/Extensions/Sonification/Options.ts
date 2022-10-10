@@ -34,7 +34,7 @@ declare module '../../Core/Options'{
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         sonification?: SeriesSonify.SeriesSonificationOptions;
     }
 }

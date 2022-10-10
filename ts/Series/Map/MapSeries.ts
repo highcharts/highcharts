@@ -90,7 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         /** @requires modules/map */
         mapData?: (Array<MapPointOptions>|GeoJSON|TopoJSON);
     }

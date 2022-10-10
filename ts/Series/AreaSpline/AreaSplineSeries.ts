@@ -16,7 +16,10 @@
  *
  * */
 
-import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
+import type {
+    AreaSplineSeriesOptions,
+    AreaSplineSeriesPlotOptions
+} from './AreaSplineSeriesOptions';
 import type AreaSplinePoint from './AreaSplinePoint';
 
 import SplineSeries from '../Spline/SplineSeries.js';
@@ -55,7 +58,7 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    public static defaultOptions: AreaSplineSeriesOptions = merge(
+    public static defaultOptions: AreaSplineSeriesPlotOptions = merge(
         SplineSeries.defaultOptions,
         AreaSeries.defaultOptions
     );

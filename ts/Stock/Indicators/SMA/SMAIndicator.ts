@@ -46,7 +46,7 @@ const {
  * */
 
 declare module '../../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         useOhlcData?: boolean;
     }
 }

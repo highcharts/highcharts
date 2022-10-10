@@ -17,7 +17,10 @@
  * */
 
 import type SplinePoint from './SplinePoint';
-import type SplineSeriesOptions from './SplineSeriesOptions';
+import type {
+    SplineSeriesOptions,
+    SplineSeriesPlotOptions
+} from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -63,7 +66,8 @@ class SplineSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions);
+    public static defaultOptions: SplineSeriesPlotOptions =
+        merge(LineSeries.defaultOptions);
 
     /* *
      *
