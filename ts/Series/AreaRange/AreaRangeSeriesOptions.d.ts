@@ -16,27 +16,37 @@
 
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeries from './AreaRangeSeries';
-import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { AreaSeriesPlotOptions } from '../Area/AreaSeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 
 /* *
  *
  *  Declarations
  *
  * */
-export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesPlotOptions {
+        trackByArea?: boolean;
+    }
+}
+
+export interface AreaRangeSeriesOptions
+    extends SeriesOptions, AreaRangeSeriesPlotOptions
+{
+    dataLabels?: AreaRangeSeriesPlotOptions['dataLabels'];
+}
+
+export interface AreaRangeSeriesPlotOptions extends AreaSeriesPlotOptions {
     dataLabels?: (
         AreaRangeDataLabelOptions |
         Array<AreaRangeDataLabelOptions>
     );
     states?: SeriesStatesOptions<AreaRangeSeries>;
     trackByArea?: boolean;
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        trackByArea?: boolean;
-    }
 }
 
 /* *

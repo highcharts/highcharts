@@ -147,7 +147,7 @@ declare module '../Core/Series/SeriesLike' {
 }
 
 declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         _colorIndex?: number;
         _ddSeriesId?: number;
         _levelNumber?: number;

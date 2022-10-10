@@ -36,13 +36,13 @@ import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
     SeriesOptions,
+    SeriesPlotOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -215,7 +215,7 @@ class Series {
      *
      * */
 
-    public static readonly defaultOptions = SeriesDefaults;
+    public static readonly defaultOptions: SeriesPlotOptions = SeriesDefaults;
 
     /**
      * Registry of all available series types.

@@ -108,7 +108,7 @@ const getNormalizedTickInterval = (
  * */
 
 declare module '../Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         softThreshold?: boolean;
         startFromThreshold?: boolean;
         threshold?: number|null;

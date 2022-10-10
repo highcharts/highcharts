@@ -74,7 +74,7 @@ declare module './Series/SeriesLike' {
 }
 
 declare module './Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         tooltip?: DeepPartial<TooltipOptions>;
     }
 }

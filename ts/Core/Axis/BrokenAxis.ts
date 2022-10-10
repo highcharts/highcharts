@@ -80,7 +80,7 @@ declare module '../Series/SeriesLike' {
 }
 
 declare module '../Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         gapSize?: number;
         gapUnit?: string;
     }

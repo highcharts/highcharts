@@ -80,7 +80,7 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         depth?: number;
         edgeColor?: ColorString;
         edgeWidth?: number;
