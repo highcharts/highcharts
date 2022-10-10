@@ -1,5 +1,9 @@
 QUnit.test('Testing exportChart', function (assert) {
     var chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 300
+        },
         credits: {
             enabled: false
         },
@@ -18,6 +22,11 @@ QUnit.test('Testing exportChart', function (assert) {
                 'Nov',
                 'Dec'
             ]
+        },
+        yAxis: {
+            title: {
+                useHTML: true
+            }
         },
         series: [
             {
@@ -38,28 +47,43 @@ QUnit.test('Testing exportChart', function (assert) {
             }
         ],
         exporting: {
-            filename: 'custom-file-name'
+            filename: 'custom-file-name',
+            allowHTML: true
         }
     });
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
         // Run export
         chart.exportChart();
+
+        // Assert
         assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
+
         assert.strictEqual(
             postData.filename,
             'custom-file-name',
             'Custom filename'
         );
+
+        assert.ok(
+            /foreignObject/.test(postData.svg),
+            'The generated SVG should contain a foreignObjet'
+        );
+
+        assert.notOk(
+            /NaN/.test(postData.svg),
+            'The generated SVG should not contain NaN (17498)'
+        );
+
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.HttpUtilities.post = originalPost;
     }
 });

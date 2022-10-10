@@ -1,0 +1,249 @@
+#container {
+    min-width: 310px;
+    height: 530px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.planets-title-container {
+    text-align: center;
+    color: #000;
+    background: url(https://cdn.rawgit.com/highcharts/highcharts/21f272733db68faeaa77a23073ff2d1d73963f96samples/graphics/homepage/sun.svg) center top no-repeat;
+    background-size: 40%;
+    background-color: transparent;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 230px;
+    height: 120px;
+    z-index: 1;
+}
+
+.planets-sub-title {
+    padding-top: 50px;
+    text-align: center;
+}
+
+.gas-label {
+    z-index: 20;
+    border: 1px solid;
+}
+
+.gas-label.carbon-dioxide {
+    border-color: #31dcff;
+}
+
+.planets-element-box.carbon-dioxide.on {
+    background-color: #31dcff;
+}
+
+.gas-label.nitrogen {
+    border-color: #88e276;
+}
+
+.planets-element-box.nitrogen.on {
+    background-color: #88e276;
+}
+
+.gas-label.methane {
+    border-color: #fe874c;
+}
+
+.planets-element-box.methane.on {
+    background-color: #fe874c;
+}
+
+.gas-label.argon {
+    border-color: #c1e160;
+}
+
+.planets-element-box.argon.on {
+    background-color: #c1e160;
+}
+
+.gas-label.oxygen {
+    border-color: #53f7fc;
+}
+
+.planets-element-box.oxygen.on {
+    background-color: #53f7fc;
+}
+
+.gas-label.sodium {
+    border-color: #64e572;
+}
+
+.planets-element-box.sodium.on {
+    background-color: #64e572;
+}
+
+.gas-label.hydrogen {
+    border-color: #ff81ce;
+}
+
+.planets-element-box.hydrogen.on {
+    background-color: #ff81ce;
+}
+
+.gas-label.helium {
+    border-color: #ffe372;
+}
+
+.planets-element-box.helium.on {
+    background-color: #ffe372;
+}
+
+.gas-label.other {
+    border-color: #d5b5e7;
+}
+
+.planets-element-box.other.on {
+    background-color: #d5b5e7;
+}
+
+.gas-label.venus.nitrogen {
+    top: -30px;
+}
+
+.gas-label.venus.other {
+    top: -20px;
+    left: 10px;
+}
+
+.gas-label.earth.argon {
+    top: -25px;
+}
+
+.gas-label.earth.other {
+    top: 0;
+    left: 10px;
+}
+
+.gas-label.mars.argon {
+    top: -15px;
+    left: 5px;
+}
+
+.gas-label.mars.nitrogen {
+    top: -25px;
+}
+
+.gas-label.mars.other {
+    top: 0;
+    left: 0;
+}
+
+.gas-label.saturn.helium {
+    top: -20px;
+    left: 0;
+}
+
+.gas-label.uranus.methane {
+    top: -25px;
+    left: 0;
+}
+
+.gas-label.uranus.helium {
+    top: -25px;
+    left: 0;
+}
+
+.gas-label.neptune.helium {
+    top: -20px;
+    left: 0;
+}
+
+.gas-label.neptune.methane {
+    top: -25px;
+    left: 0;
+}
+
+.gas-label.neptune.helium {
+    top: -25px;
+    left: 0;
+}
+
+.planets-title {
+    max-height: 30px;
+    padding: 4px;
+    border-radius: 4px;
+    margin: auto;
+    text-align: center;
+}
+
+.planets-chart-title {
+    text-align: center;
+    position: absolute;
+    left: 25px;
+    top: -50px;
+}
+
+h3.planets {
+    padding: 100px 0 0;
+    margin: 0;
+    color: #000;
+    font-size: 24px;
+}
+
+.highcharts-legend-item rect {
+    display: none;
+}
+
+.highcharts-legend-item {
+    margin-top: 0;
+}
+
+.planets-element-box {
+    filter: grayscale(1);
+    border-radius: 4px;
+    background-color: #ebebeb;
+    margin-bottom: 5px;
+    font-family: Mono, sans-serif;
+    text-align: center;
+    padding: 4px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    transition: all 600ms;
+}
+
+.planets-element-box.on {
+    filter: grayscale(0);
+}
+
+.planets-element-symbol {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    display: block;
+    flex-basis: 100%;
+}
+
+.planets-element-symbol sub {
+    font-size: 8px;
+}
+
+.planets-element-value {
+    color: #666;
+    font-weight: bold;
+    font-size: 12px;
+    display: block;
+    flex-basis: 100%;
+}
+
+.planets-element-name {
+    font-weight: normal;
+    font-size: 11px;
+    color: #666;
+    display: none;
+}
+
+@media screen  and (min-width: 500px) {
+    .planets-title-container {
+        top: 80px;
+    }
+}

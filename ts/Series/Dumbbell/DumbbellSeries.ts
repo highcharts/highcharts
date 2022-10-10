@@ -27,7 +27,7 @@ const { prototype: colProto } = ColumnSeries;
 import DumbbellPoint from './DumbbellPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -126,7 +126,7 @@ class DumbbellSeries extends AreaRangeSeries {
              * @since 8.0.0
              * @product   highcharts highstock
              */
-            lowColor: palette.neutralColor80,
+            lowColor: Palette.neutralColor80,
             /**
              * Color of the line that connects the dumbbell point's values.
              * By default it is the series' color.
@@ -182,7 +182,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
     public getConnectorAttribs(point: DumbbellPoint): SVGAttributes {
-        var series = this,
+        let series = this,
             chart = series.chart,
             pointOptions = point.options,
             seriesOptions = series.options,
@@ -220,6 +220,10 @@ class DumbbellSeries extends AreaRangeSeries {
             attribs: SVGAttributes,
             origProps;
 
+        if (typeof pointTop !== 'number') {
+            return {};
+        }
+
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
@@ -241,7 +245,7 @@ class DumbbellSeries extends AreaRangeSeries {
         }
 
         // Connector should reflect upper marker's zone color
-        if (point.upperGraphic) {
+        if (point.graphics && point.graphics[1]) {
             origProps = {
                 y: point.y,
                 zone: point.zone
@@ -293,10 +297,9 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Point} point The point to inspect.
      *
-     * @return {void}
      */
     public drawConnector(point: DumbbellPoint): void {
-        var series = this,
+        const series = this,
             animationLimit = pick(series.options.animationLimit, 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
@@ -326,7 +329,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
+        const metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;
 
@@ -343,7 +346,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public translate(): void {
         // Calculate shapeargs
@@ -354,7 +356,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
         // Correct x position
         this.points.forEach(function (point): void {
-            var shapeArgs = point.shapeArgs,
+            const shapeArgs = point.shapeArgs,
                 pointWidth = point.pointWidth;
 
             point.plotX = (shapeArgs as any).x;
@@ -374,10 +376,9 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             chart = series.chart,
             pointLength = series.points.length,
             seriesLowColor = series.lowColor = series.options.lowColor,
@@ -391,16 +392,17 @@ class DumbbellSeries extends AreaRangeSeries {
         // Draw connectors and color upper markers
         while (i < pointLength) {
             point = series.points[i];
+            const [lowerGraphic, upperGraphic] = point.graphics || [];
 
             series.drawConnector(point);
 
-            if (point.upperGraphic) {
-                (point.upperGraphic.element as any).point = point;
-                point.upperGraphic.addClass('highcharts-lollipop-high');
+            if (upperGraphic) {
+                (upperGraphic.element as any).point = point;
+                upperGraphic.addClass('highcharts-lollipop-high');
             }
             (point.connector.element as any).point = point;
 
-            if (point.lowerGraphic) {
+            if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
                 lowerGraphicColor = pick(
                     point.options.lowColor,
@@ -411,11 +413,11 @@ class DumbbellSeries extends AreaRangeSeries {
                     series.color
                 );
                 if (!chart.styledMode) {
-                    point.lowerGraphic.attr({
+                    lowerGraphic.attr({
                         fill: lowerGraphicColor
                     });
                 }
-                point.lowerGraphic.addClass('highcharts-lollipop-low');
+                lowerGraphic.addClass('highcharts-lollipop-low');
             }
             i++;
         }
@@ -437,10 +439,10 @@ class DumbbellSeries extends AreaRangeSeries {
      *         CSS.
      */
     public markerAttribs(): SVGAttributes {
-        var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
+        const ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
-        ret.x = Math.floor(ret.x);
-        ret.y = Math.floor(ret.y);
+        ret.x = Math.floor(ret.x || 0);
+        ret.y = Math.floor(ret.y || 0);
 
         return ret;
     }
@@ -460,7 +462,7 @@ class DumbbellSeries extends AreaRangeSeries {
         point: DumbbellPoint,
         state?: string
     ): SVGAttributes {
-        var pointAttribs;
+        let pointAttribs;
 
         pointAttribs = seriesProto.pointAttribs.apply(this, arguments as any);
         if (state === 'hover') {

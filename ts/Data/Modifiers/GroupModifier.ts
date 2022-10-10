@@ -1,12 +1,13 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,14 +20,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import DataJSON from '../DataJSON.js';
+import type JSON from '../../Core/JSON';
+
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -36,6 +35,8 @@ const {
 
 /**
  * Groups table rows into subtables depending on column values.
+ *
+ * @private
  */
 class GroupModifier extends DataModifier {
 
@@ -52,25 +53,6 @@ class GroupModifier extends DataModifier {
         modifier: 'Group',
         groupColumn: ''
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a group modifier.
-     *
-     * @param {ChainDataModifier.ClassJSON} json
-     * Class JSON to convert to an instance of group modifier.
-     *
-     * @return {ChainDataModifier}
-     * Group modifier of the class JSON.
-     */
-    public static fromJSON(json: GroupModifier.ClassJSON): GroupModifier {
-        return new GroupModifier(json.options);
-    }
 
     /* *
      *
@@ -122,41 +104,41 @@ class GroupModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table with `modified` property as a reference.
      */
-    public execute(
-        table: DataTable,
+    public modifyTable<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): T {
+        const modifier = this;
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const modifier = this,
+        const byGroups: Array<string> = [],
+            tableGroups: Array<DataTable> = [],
+            valueGroups: Array<JSON.Primitive> = [],
+            groupColumn = (
+                modifier.options.groupColumn ||
+                table.getColumnNames()[0]
+            ),
+            valueColumn = (
+                table.getColumn(groupColumn) ||
+                []
+            ),
             {
                 invalidValues,
                 validValues
             } = modifier.options,
-            columnGroups: Array<string> = [],
-            tableGroups: Array<DataTable> = [],
-            valueGroups: Array<DataJSON.JSONPrimitive> = [];
+            modified = table.modified = table.clone(true, eventDetail);
 
-        let groupColumn = modifier.options.groupColumn,
-            row: (DataTableRow|undefined),
-            value: DataTableRow.CellType,
+        let value: DataTable.CellType,
             valueIndex: number;
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
-            if (row) {
-                if (!groupColumn) {
-                    groupColumn = row.getCellNames()[0];
-                }
-
-                value = row.getCell(groupColumn);
-
+        for (let i = 0, iEnd = valueColumn.length; i < iEnd; ++i) {
+            value = valueColumn[i];
+            if (typeof value !== 'undefined') {
                 if (
                     value instanceof DataTable ||
-                    value instanceof Date ||
                     (
                         invalidValues &&
                         invalidValues.indexOf(value) >= 0
@@ -171,45 +153,29 @@ class GroupModifier extends DataModifier {
                 valueIndex = valueGroups.indexOf(value);
 
                 if (valueIndex === -1) {
-                    columnGroups.push(groupColumn);
-                    tableGroups.push(new DataTable([row]));
+                    const newTable = new DataTable();
+
+                    newTable.setRows([table.getRowObject(i) || {}]);
+
+                    byGroups.push(groupColumn);
+                    tableGroups.push(newTable);
                     valueGroups.push(value);
                 } else {
-                    tableGroups[valueIndex].insertRow(row);
+                    tableGroups[valueIndex].setRows([table.getRow(i) || []]);
                 }
             }
         }
 
-        table = new DataTable();
+        modified.deleteColumns();
+        modified.setColumns({
+            groupBy: byGroups,
+            table: tableGroups,
+            value: valueGroups
+        });
 
-        for (let i = 0, iEnd = tableGroups.length; i < iEnd; ++i) {
-            table.insertRow(new DataTableRow({
-                id: `${i}`,
-                groupBy: columnGroups[i],
-                table: tableGroups[i],
-                value: valueGroups[i]
-            }));
-        }
-
-        this.emit({ type: 'afterExecute', detail: eventDetail, table });
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
-    }
-
-    /**
-     * Converts the group modifier to a class JSON, including all containing all
-     * modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this group modifier.
-     */
-    public toJSON(): GroupModifier.ClassJSON {
-        const json = {
-            $class: 'GroupModifier',
-            options: merge(this.options)
-        };
-
-        return json;
     }
 
 }
@@ -227,13 +193,6 @@ class GroupModifier extends DataModifier {
 namespace GroupModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -244,11 +203,11 @@ namespace GroupModifier {
         /**
          * Array of invalid group values.
          */
-        invalidValues?: Array<DataJSON.JSONPrimitive>;
+        invalidValues?: Array<JSON.Primitive>;
         /**
          * Array of valid group values.
          */
-        validValues?: Array<DataJSON.JSONPrimitive>;
+        validValues?: Array<JSON.Primitive>;
     }
 
 }
@@ -259,7 +218,6 @@ namespace GroupModifier {
  *
  * */
 
-DataJSON.addClass(GroupModifier);
 DataModifier.addModifier(GroupModifier);
 
 declare module './ModifierType' {

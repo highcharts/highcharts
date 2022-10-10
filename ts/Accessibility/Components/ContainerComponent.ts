@@ -10,49 +10,30 @@
  *
  * */
 
-import type {
-    SVGDOMElement
-} from '../../Core/Renderer/DOMElementType';
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import ChartUtilities from '../Utils/ChartUtilities.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import CU from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
     getChartTitle
-} = ChartUtilities;
+} = CU;
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
-import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { doc } = H;
+import HU from '../Utils/HTMLUtilities.js';
+const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ContainerComponent extends AccessibilityComponent {
-            public constructor();
-            public svgTitleElement: SVGDOMElement;
-            public destroy(): void;
-            public handleSVGTitleElement(): void;
-            public makeCreditsAccessible(): void;
-            public onChartUpdate(): void;
-            public setGraphicContainerAttrs(): void;
-            public setRenderToAttrs(): void;
-            public setSVGContainerLabel(): void;
-        }
-    }
-}
-
-/* eslint-disable valid-jsdoc */
 
 /**
  * The ContainerComponent class
@@ -61,30 +42,42 @@ declare global {
  * @class
  * @name Highcharts.ContainerComponent
  */
-var ContainerComponent: typeof Highcharts.ContainerComponent =
-    function (): void {} as any;
-ContainerComponent.prototype = new (AccessibilityComponent as any)();
-extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ {
+class ContainerComponent extends AccessibilityComponent {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public svgTitleElement?: SVGDOMElement;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Called on first render/updates to the chart, including options changes.
      */
-    onChartUpdate: function (this: Highcharts.ContainerComponent): void {
+    public onChartUpdate(): void {
         this.handleSVGTitleElement();
         this.setSVGContainerLabel();
         this.setGraphicContainerAttrs();
         this.setRenderToAttrs();
         this.makeCreditsAccessible();
-    },
+    }
 
 
     /**
      * @private
      */
-    handleSVGTitleElement: function (
-        this: Highcharts.ContainerComponent
-    ): void {
-        var chart = this.chart,
+    public handleSVGTitleElement(): void {
+        const chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
             titleContents = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
@@ -93,7 +86,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             ));
 
         if (titleContents.length) {
-            var titleElement = this.svgTitleElement =
+            const titleElement = this.svgTitleElement =
                 this.svgTitleElement || doc.createElementNS(
                     'http://www.w3.org/2000/svg',
                     'title'
@@ -105,14 +98,14 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                 titleElement, chart.renderTo.firstChild
             );
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    setSVGContainerLabel: function (this: Highcharts.ContainerComponent): void {
-        var chart = this.chart,
+    public setSVGContainerLabel(): void {
+        const chart = this.chart,
             svgContainerLabel = chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: getChartTitle(chart)
@@ -122,16 +115,14 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    setGraphicContainerAttrs: function (
-        this: Highcharts.ContainerComponent
-    ): void {
-        var chart = this.chart,
+    public setGraphicContainerAttrs(): void {
+        const chart = this.chart,
             label = chart.langFormat('accessibility.graphicContainerLabel', {
                 chartTitle: getChartTitle(chart)
             });
@@ -139,41 +130,39 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         if (label.length) {
             chart.container.setAttribute('aria-label', label);
         }
-    },
+    }
 
 
     /**
+     * Set attributes on the chart container element.
      * @private
      */
-    setRenderToAttrs: function (this: Highcharts.ContainerComponent): void {
-        var chart = this.chart;
-
-        if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
-            chart.renderTo.setAttribute('role', 'region');
-        } else {
-            chart.renderTo.removeAttribute('role');
-        }
-
-        chart.renderTo.setAttribute(
-            'aria-label',
-            chart.langFormat(
+    public setRenderToAttrs(): void {
+        const chart = this.chart,
+            shouldHaveLandmark = chart.options.accessibility
+                .landmarkVerbosity !== 'disabled',
+            containerLabel = chart.langFormat(
                 'accessibility.chartContainerLabel',
                 {
                     title: getChartTitle(chart),
                     chart: chart
                 }
-            )
-        );
-    },
+            );
+
+        if (containerLabel) {
+            chart.renderTo.setAttribute(
+                'role', shouldHaveLandmark ? 'region' : 'group'
+            );
+            chart.renderTo.setAttribute('aria-label', containerLabel);
+        }
+    }
 
 
     /**
      * @private
      */
-    makeCreditsAccessible: function (
-        this: Highcharts.ContainerComponent
-    ): void {
-        var chart = this.chart,
+    public makeCreditsAccessible(): void {
+        const chart = this.chart,
             credits = chart.credits;
 
         if (credits) {
@@ -187,16 +176,47 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             }
             unhideChartElementFromAT(chart, credits.element);
         }
-    },
+    }
+
+
+    /**
+     * Empty handler to just set focus on chart
+     * @private
+     */
+    public getKeyboardNavigation(): KeyboardNavigationHandler {
+        const chart = this.chart;
+        return new (KeyboardNavigationHandler as any)(chart, {
+            keyCodeMap: [],
+
+            validate: function (): (boolean) {
+                return true;
+            },
+
+            init: function (): void {
+                const a11y = chart.accessibility;
+                if (a11y) {
+                    a11y.keyboardNavigation.tabindexContainer.focus();
+                }
+            }
+        });
+    }
 
 
     /**
      * Accessibility disabled/chart destroyed.
      */
-    destroy: function (this: Highcharts.ContainerComponent): void {
+    public destroy(): void {
         this.chart.renderTo.setAttribute('aria-hidden', true);
     }
 
-});
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 
 export default ContainerComponent;

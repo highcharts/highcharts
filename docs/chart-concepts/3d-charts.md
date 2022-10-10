@@ -5,10 +5,10 @@ Highcharts 3D is a Highcharts module providing limited 3D support to charts. It 
 
 ### Load the required files.
 
-To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional 3D plugin module:
+To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional [3D plugin module](https:/code.highcharts.com/highcharts-3d.js):
 
 ```html
-<script src="[https://code.highcharts.com/highcharts-3d.js](\"https:/code.highcharts.com/highcharts-3d.js\")"><script>
+<script src="https://code.highcharts.com/highcharts-3d.js"><script>
 ````
 
 (This should be included after highcharts.js)
@@ -21,23 +21,23 @@ Loading the 3D module will not alter existing charts unless they are specificall
     chart: {
         ....
         options3d: {
-            enabled: ´boolean value´,
-            alpha: ´numeric value´,
-            beta: ´numeric value´,
-            depth: ´numeric value´,
-            viewDistance: ´numeric value´,
+            enabled: 'boolean value',
+            alpha: 'numeric value',
+            beta: 'numeric value',
+            depth: 'numeric value',
+            viewDistance: 'numeric value',
             frame: {
                 bottom: {
-                    size: ´numeric value´,
-                    color: ´color value´
+                    size: 'numeric value',
+                    color: 'color value'
                 },
                 side: {
-                    size: ´numeric value´,
-                    color: ´color value´
+                    size: 'numeric value',
+                    color: 'color value'
                 },
                 back: {
-                    size: ´numeric value´,
-                    color: ´color value´
+                    size: 'numeric value',
+                    color: 'color value'
                 }
            }
        },
@@ -48,13 +48,13 @@ Loading the 3D module will not alter existing charts unless they are specificall
         ...
         column: {
             ...
-            depth: ´numeric value´,
-            groupZPadding: ´numeric value´,
+            depth: 'numeric value',
+            groupZPadding: 'numeric value',
             ...
         },
         ...
         pie: {
-            depth: ´numeric value´
+            depth: 'numeric value'
         },
         ...
     }
@@ -64,7 +64,7 @@ General
 
 For all 3D charts the following options are the most important (part of _chart.options3d_):
 
-*   enabled                   This indicates wether the chart has to have 3D or not, set this to true.
+*   enabled                   This indicates whether the chart has to have 3D or not, set this to true.
 *   depth                        The total depth of the chart, defaults to 100.
 *   viewDistance          This defines how far a viewer is from the chart.
 *   alpha & beta           The angles to rotate the view of the chart.
@@ -128,7 +128,7 @@ In addition to x & y coordinates like in a regular [scatter chart](https://highc
 3D Area
 ----------
 
-A 3D chart of type [area](https://highcharts.com/docs/chart-and-series-types/area-chart) is working similar to the column series. It will draw each area series as a 3D plane. By default the depth of an area series is set to 25. 
+A 3D chart of type [area](https://highcharts.com/docs/chart-and-series-types/area-chart) is working similar to the column series. It will draw each area series as a 3D plane. By default the depth of an area series is set to 25.
 
 ### Displaying multiple areas
 

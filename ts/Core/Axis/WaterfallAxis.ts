@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -16,21 +18,28 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart.js';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import StackItem from '../../Extensions/Stacking.js';
+import type SVGLabel from '../Renderer/SVG/SVGLabel';
+
+import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     objectEach
 } = U;
 
-/**
- * @private
- */
-declare module '../../Core/Axis/Types' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AxisComposition' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
+}
+
+declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }
@@ -61,7 +70,7 @@ namespace WaterfallAxis {
     }
 
     export interface StacksItemObject {
-        label?: SVGElement;
+        label?: SVGLabel;
         negTotal: number;
         posTotal: number;
         stackState: Array<string>;
@@ -123,9 +132,11 @@ namespace WaterfallAxis {
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
         public renderStackTotals(): void {
-            var yAxis = this.axis,
+            const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
+                stackTotalGroup = (
+                    yAxis.stacking && yAxis.stacking.stackTotalGroup
+                ),
                 dummyStackItem = new StackItem(
                     yAxis as any,
                     yAxis.options.stackLabels as any,
@@ -170,7 +181,10 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
+    export function compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
 
         addEvent(AxisClass, 'init', onInit);
         addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
@@ -209,7 +223,7 @@ namespace WaterfallAxis {
      * @private
      */
     function onBeforeRedraw(this: Chart): void {
-        var axes = this.axes as Array<WaterfallAxis>,
+        let axes = this.axes as Array<WaterfallAxis>,
             series = this.series,
             i = series.length;
 

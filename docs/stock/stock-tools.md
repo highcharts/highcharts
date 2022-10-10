@@ -4,7 +4,7 @@ Stock tools
 Stock Tools is a Highcharts Stock module for building a GUI that enables user interaction with the chart, such as adding annotations, technical indicators or just for zooming in or out. The module is released with Highcharts Stock 7 and won't work with previous versions.
 
 Building the GUI is facilitated by the Stock Tools module, where your HTML elements for user interaction are automatically bound to predefined events in this module. Full list of the available bindings can be found in the API [navigation.bindings](https://api.highcharts.com/highstock/navigation.bindings).
-
+![basicStock.png](basicStock.png)
 
 ## Quick start
 To get started quickly it's recommended to use the default toolbar of the Stock Tools module. We need to load the JavaScript files in the following order.
@@ -19,8 +19,8 @@ To get started quickly it's recommended to use the default toolbar of the Stock 
   ```html
   <script src="https://code.highcharts.com/indicators/indicators.js"></script>
   <script src="https://code.highcharts.com/indicators/rsi.js"></script>
-  <script src="https://code.highcharts.com/indicators/ema.js"></script> 
-  <script src="https://code.highcharts.com/indicators/macd.js"></script> 
+  <script src="https://code.highcharts.com/indicators/ema.js"></script>
+  <script src="https://code.highcharts.com/indicators/macd.js"></script>
   <script src="/ .... other technical indicators ...  "
   ```
 
@@ -68,7 +68,7 @@ _The code snippet below demonstrates how to disable the default toolbar, and tri
 ```js
 Highcharts.stockChart('container', {
     navigation: {
-        bindingsClassName: ‘tools-container’ // informs Stock Tools where to look for HTML elements for adding technical indicators, annotations etc. 
+        bindingsClassName: 'tools-container' // informs Stock Tools where to look for HTML elements for adding technical indicators, annotations etc.
     },
     stockTools: {
         gui: {
@@ -140,13 +140,11 @@ How to implement a custom dialog window, is best explained with an example where
                   chart.annotationsPopupContainer.style.display = 'block';
               }
           },
-          
           closePopup: function() {
               // Hide the popup container, and reset currentAnnotation
               this.chart.annotationsPopupContainer.style.display = 'none';
               this.chart.currentAnnotation = null;
           },
-          
           selectButton: function(event) {
               // Select button
               event.button.classList.add('active');
@@ -154,7 +152,6 @@ How to implement a custom dialog window, is best explained with an example where
               // an annotation.
               this.chart.activeButton = event.button;
           },
-              
           deselectButton: function(event) {
               // Unselect the button
               event.button.classList.remove('active');

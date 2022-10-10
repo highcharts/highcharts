@@ -1,32 +1,49 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
-import DataJSON from '../DataJSON.js';
+import type JSON from '../../Core/JSON';
+
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const { merge, objectEach } = U;
+const {
+    merge,
+    objectEach
+} = U;
 
 /** eslint-disable valid-jsdoc */
 
 /**
  * Class that handles creating a datastore from an HTML table
+ *
+ * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements DataJSON.Class {
+class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
     /* *
      *
@@ -43,32 +60,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         exportIDColumn: false,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates an HTMLTableStore from ClassJSON
-     *
-     * @param {HTMLTableStore.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {HTMLTableStore}
-     * HTMLTableStore from the ClassJSON
-     */
-    public static fromJSON(json: HTMLTableStore.ClassJSON): HTMLTableStore {
-        const options = json.options,
-            parser = HTMLTableParser.fromJSON(json.parser),
-            table = DataTable.fromJSON(json.table),
-            store = new HTMLTableStore(table, options, parser);
-
-        store.metadata = merge(json.metadata);
-
-        return store;
-    }
+    };
 
     /* *
      *
@@ -80,7 +72,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Constructs an instance of HTMLTableDataStore
      *
      * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * Optional table to create the store from
      *
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
@@ -100,7 +92,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
+        this.parser = parser || new HTMLTableParser(
+            this.options,
+            this.tableElement
+        );
     }
 
     /* *
@@ -113,7 +108,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
+    public readonly options: (
+        HTMLTableStore.Options & HTMLTableParser.OptionsType
+    );
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -121,8 +118,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     public readonly parser: HTMLTableParser;
 
     /**
-     * The table element to create the store from.
-     * Is either supplied directly or is fetched by an ID.
+     * The table element to create the store from. Is either supplied directly
+     * or is fetched by an ID.
      */
     public tableElement: (HTMLElement | null);
 
@@ -169,7 +166,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         store.fetchTable();
 
         // If already loaded, clear the current rows
-        store.table.clear();
+        store.table.deleteColumns();
 
         store.emit({
             type: 'load',
@@ -193,7 +190,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table.insertRows(store.parser.getTable().getAllRows());
+        store.table.setColumns(store.parser.getTable().getColumns());
 
         store.emit({
             type: 'afterLoad',
@@ -216,7 +213,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         exportOptions: HTMLTableStore.ExportOptions = {}
     ): string {
         const options = exportOptions,
-            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            decimalPoint = options.useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders,
             useRowspanHeaders = options.useRowspanHeaders;
@@ -225,7 +224,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             row1: Array<(number | string | undefined)>,
             row2: Array<(number | string | undefined)>
         ): boolean {
-            var i = row1.length;
+            let i = row1.length;
 
             if (row2.length === i) {
                 while (i--) {
@@ -245,7 +244,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             subheaders: Array<(number | string | undefined)>,
             rowLength?: number
         ): string {
-            var html = '<thead>',
+            let html = '<thead>',
                 i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
@@ -350,13 +349,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         };
 
         const { columnNames, columnValues } = this.getColumnsForExport(
-                options.exportIDColumn,
                 options.usePresentationOrder
             ),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+        const rowArray: Array<DataTable.Row> = [];
 
         let tableHead = '';
 
@@ -387,7 +385,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta?.dataType;
+                columnDataType = columnMeta.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
@@ -432,7 +430,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         // Add table caption
         // Current exportdata falls back to chart title
         // but that should probably be handled elsewhere?
-        if (options?.tableCaption) {
+        if (options.tableCaption) {
             caption = '<caption class="highcharts-table-caption">' +
                 options.tableCaption +
                 '</caption>';
@@ -463,7 +461,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: HTMLTableStore.ExportOptions,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -475,28 +476,11 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return this.getHTMLTableForExport(
+            merge(exportOptions, htmlExportOptions)
+        );
     }
 
-    /**
-     * Converts the store to a class JSON.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this store.
-     */
-    public toJSON(): HTMLTableStore.ClassJSON {
-        const store = this,
-            json: HTMLTableStore.ClassJSON = {
-                $class: 'HTMLTableStore',
-                metadata: merge(store.metadata),
-                options: merge(this.options),
-                parser: store.parser.toJSON(),
-                table: store.table.toJSON(),
-                tableElementID: store.tableID || ''
-            };
-
-        return json;
-    }
 }
 
 
@@ -514,26 +498,17 @@ namespace HTMLTableStore {
     /**
      * Type for event object fired from HTMLTableDataStore
      */
-    export type EventObjects = (ErrorEventObject | LoadEventObject);
+    export type Event = (ErrorEvent|LoadEvent);
 
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>
-
-    /**
-     * The ClassJSON used to import/export HTMLTableDataStore
-     */
-    export interface ClassJSON extends DataStore.ClassJSON {
-        options: HTMLTableStore.OptionsType;
-        parser: HTMLTableParser.ClassJSON;
-        tableElementID: string;
-    }
+    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
 
     /**
      * Options for exporting the store as an HTML table
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends JSON.Object {
         decimalPoint?: string | null;
         exportIDColumn?: boolean;
         tableCaption?: string;
@@ -546,7 +521,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on errors within HTMLTableDataStore
      */
-    export interface ErrorEventObject extends DataStore.EventObject {
+    export interface ErrorEvent extends DataStore.Event {
         type: 'loadError';
         error: (string | Error);
     }
@@ -554,7 +529,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
-    export interface LoadEventObject extends DataStore.EventObject {
+    export interface LoadEvent extends DataStore.Event {
         type: ('load' | 'afterLoad');
         tableElement?: (HTMLElement | null);
     }
@@ -574,7 +549,6 @@ namespace HTMLTableStore {
  *
  * */
 
-DataJSON.addClass(HTMLTableStore);
 DataStore.addStore(HTMLTableStore);
 
 declare module './StoreType' {

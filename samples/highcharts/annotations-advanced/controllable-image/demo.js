@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         zoomType: 'x',
         events: {
             load: function () {
-                Highcharts.each(this.annotations, function (annotation) {
+                this.annotations.forEach(function (annotation) {
                     // showControlPoints/hide
                     annotation.setControlPointsVisibility(true);
                 });

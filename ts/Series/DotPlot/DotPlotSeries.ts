@@ -31,13 +31,11 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import './DotPlotSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
-    objectEach,
     pick
 } = U;
 
@@ -95,7 +93,7 @@ class DotPlotSeries extends ColumnSeries {
      * */
 
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
             itemPaddingTranslated = this.yAxis.transA *
@@ -104,10 +102,9 @@ class DotPlotSeries extends ColumnSeries {
             crisp = borderWidth % 2 ? 0.5 : 1;
 
         this.points.forEach(function (point: DotPlotPoint): void {
-            var yPos: number,
+            let yPos: number,
                 attr: SVGAttributes,
-                graphics: Record<string, SVGElement>,
-                itemY: (number|undefined),
+                graphics: Array<SVGElement>,
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -124,10 +121,12 @@ class DotPlotSeries extends ColumnSeries {
                 x: number,
                 y: number;
 
-            point.graphics = graphics = point.graphics || {};
+            point.graphics = graphics = point.graphics || [];
             pointAttr = point.pointAttr ?
                 (
-                    point.pointAttr[point.selected ? 'selected' : ''] ||
+                    (point.pointAttr as any)[
+                        point.selected ? 'selected' : ''
+                    ] ||
                     (series.pointAttr as any)['']
                 ) :
                 series.pointAttribs(point, (point.selected as any) && 'select');
@@ -144,13 +143,13 @@ class DotPlotSeries extends ColumnSeries {
                     point.graphic = renderer.g('point').add(series.group);
                 }
 
-                itemY = point.y;
                 yTop = pick(point.stackY, point.y as any);
                 size = Math.min(
                     point.pointWidth,
                     series.yAxis.transA - itemPaddingTranslated
                 );
-                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--) {
+                let i = Math.floor(yTop);
+                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--, i--) {
 
                     x = point.barX + (
                         isSquare ?
@@ -172,24 +171,20 @@ class DotPlotSeries extends ColumnSeries {
                         r: radius
                     };
 
-                    if (graphics[itemY as any]) {
-                        graphics[itemY as any].animate(attr);
+                    if (graphics[i]) {
+                        graphics[i].animate(attr);
                     } else {
-                        graphics[itemY as any] = renderer.symbol(symbol)
+                        graphics[i] = renderer.symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
-                    graphics[itemY as any].isActive = true;
-                    (itemY as any)--;
+                    graphics[i].isActive = true;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
+            graphics.forEach((graphic, i): void => {
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    delete graphic[key];
+                    graphics.splice(i, 1);
                 } else {
                     graphic.isActive = false;
                 }

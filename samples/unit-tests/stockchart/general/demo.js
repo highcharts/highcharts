@@ -1,4 +1,4 @@
-QUnit.test('Pie in Highstock, StockChart constructor', function (assert) {
+QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) {
     var chart;
 
     chart = new Highcharts.StockChart({
@@ -88,7 +88,7 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     );
 });
 
-QUnit.test('Default plot options for stock chart', function (assert) {
+QUnit.test('Default options for stock chart', function (assert) {
     const chart = Highcharts.stockChart('container', {
         series: [
             {
@@ -161,4 +161,41 @@ QUnit.test('Default plot options for stock chart', function (assert) {
         'percent',
         '#14932: Updating compare through plotOptions should be possible'
     );
+
+    chart.addAxis({});
+
+    assert.strictEqual(
+        chart.yAxis[1].options.title.text,
+        null,
+        '#8603: Axis should have stock defaults applied'
+    );
+
+    chart.addAxis({}, true);
+
+    assert.strictEqual(
+        chart.xAxis[1].options.type,
+        'datetime',
+        '#8603: Axis should have stock forced options applied'
+    );
+});
+
+QUnit.test('The stock chart in hidden div, #16901.', function (assert) {
+    document.querySelector('#container').style.visibility = 'hidden';
+    Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-navigator')).visibility,
+        'hidden',
+        'Navigator should be hidden.'
+    );
+
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-button-box')).visibility,
+        'hidden',
+        'Elements of range selector should be hidden.'
+    );
+    document.querySelector('#container').style.visibility = 'unset';
 });

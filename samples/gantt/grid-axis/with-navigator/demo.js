@@ -8,7 +8,7 @@ Highcharts.stockChart('container', {
     },
 
     subtitle: {
-        text: 'Using the time navigation features from Highstock'
+        text: 'Using the time navigation features from Highcharts Stock'
     },
 
     xAxis: [{

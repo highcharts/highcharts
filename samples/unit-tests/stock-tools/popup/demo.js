@@ -77,6 +77,24 @@ QUnit.test('Touch event test on popup', function (assert) {
         'Edit popup should be displayed by touch event'
     );
 
+
+    let chartPos = Highcharts.offset(chart.container);
+    let { left, top } = Highcharts.offset(
+        chart.navigationBindings.popup.container
+    );
+
+    testController.moveTo(left - chartPos.left + 5, top - chartPos.top + 5);
+    assert.ok(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should be hidden when hovering popup'
+    );
+
+    testController.moveTo(left - chartPos.left - 5, top - chartPos.top + 5);
+    assert.notOk(
+        chart.tooltip.isHidden,
+        '#14403: Tooltip should not be hidden when not hovering popup'
+    );
+
     let fired = false;
     // adding event to check, if closePopup event was fired, when closing popup
     Highcharts.addEvent(chart.navigationBindings, 'closePopup', () => {
@@ -85,7 +103,6 @@ QUnit.test('Touch event test on popup', function (assert) {
 
     // closing popup
 
-
     const closeButton = chart.container.getElementsByClassName('highcharts-popup-close')[0];
     // css are not loaded in karma, so it is mandatory to set the position of the button manually
     closeButton.style.position = 'absolute';
@@ -93,10 +110,10 @@ QUnit.test('Touch event test on popup', function (assert) {
     closeButton.style.height = 40;
     closeButton.style.width = 40;
     closeButton.style.right = 0;
-    const { left, top } = Highcharts.offset(closeButton);
+    ({ left, top } = Highcharts.offset(closeButton));
 
-    const offsetOfContainer = Highcharts.offset(chart.container);
-    testController.triggerEvent('click', left - offsetOfContainer.left + 20, top - offsetOfContainer.top + 20, {}, true);
+    chartPos = Highcharts.offset(chart.container);
+    testController.triggerEvent('click', left - chartPos.left + 20, top - chartPos.top + 20, {}, true);
 
     assert.equal(
         fired,

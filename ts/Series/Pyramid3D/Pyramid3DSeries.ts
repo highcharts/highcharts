@@ -39,7 +39,8 @@ const { merge } = U;
 /**
  * The pyramid3d series type.
  *
- * @constructor seriesTypes.pyramid3d
+ * @class
+ * @name Highcharts.seriesTypes.pyramid3d
  * @augments seriesTypes.funnel3d
  * @requires highcharts-3d
  * @requires modules/cylinder
@@ -103,7 +104,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

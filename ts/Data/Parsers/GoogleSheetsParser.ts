@@ -1,14 +1,20 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
+ *
  * */
+
+'use strict';
 
 /* *
  *
@@ -17,10 +23,8 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 import type DataValueType from '../DataValueType';
 
-import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
@@ -34,14 +38,24 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+type JSONType = ReturnType<JSON['parse']>;
+
+/* *
+ *
  *  Class
  *
  * */
 
 /**
- * Handles parsing and transformation of an Google Sheets to a DataTable
+ * Handles parsing and transformation of an Google Sheets to a table.
+ *
+ * @private
  */
-class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
+class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -52,31 +66,12 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: GoogleSheetsParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions,
-        json: {}
-    }
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Creates a GoogleSheetsParser instance from ClassJSON.
-     *
-     * @param {GoogleSheetsParser.ClassJSON} json
-     * Class JSON to convert to the parser instance.
-     *
-     * @return {GoogleSheetsParser}
-     * An instance of GoogleSheetsParser.
-     */
-    public static fromJSON(json: GoogleSheetsParser.ClassJSON): GoogleSheetsParser {
-        return new GoogleSheetsParser(
-            json.options
-        );
-    }
+    protected static readonly defaultOptions: (
+        GoogleSheetsParser.ClassJSONOptions
+    ) = {
+            ...DataParser.defaultOptions,
+            json: {}
+        };
 
     /* *
      *
@@ -110,7 +105,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: GoogleSheetsParser.ClassJSONOptions;
@@ -121,7 +116,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private getSheetColumns(json: Highcharts.JSONType): Array<Array<DataValueType>> {
+    private getSheetColumns(json: JSONType): Array<Array<DataValueType>> {
         const parser = this,
             {
                 startColumn,
@@ -178,7 +173,8 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
 
                 if (cellInner.numericValue) {
                     if (cellInner.$t.indexOf('/') >= 0 || (
-                        cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1
+                        cellInner.$t.indexOf('-') >= 0 &&
+                        cellInner.$t.indexOf('.') === -1
                     )) {
                         // This is a date - for future reference.
                         val = cellInner.$t;
@@ -226,7 +222,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      */
 
     public parse(
-        jsonProp: Highcharts.JSONType,
+        jsonProp: JSONType,
         eventDetail?: DataEventEmitter.EventDetail
     ): (boolean|undefined) {
         const parser = this,
@@ -241,8 +237,10 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
         if (!cells || cells.length === 0) {
             return false;
         }
+        parser.headers = [];
+        parser.columns = [];
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -252,17 +250,25 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
         parser.columns = parser.getSheetColumns(json);
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
-            headers.push(parser.columns[i][0]?.toString() || uniqueKey());
-
             column = parser.columns[i];
+            parser.headers[i] = parserOptions.firstRowAsNames ?
+                column.splice(0, 1).toString() :
+                uniqueKey();
+
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
-                    parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                    let cellValue = converter.asGuessedType(
+                        column[j] as string
+                    );
+                    if (cellValue instanceof Date) {
+                        cellValue = cellValue.getTime();
+                    }
+                    parser.columns[i][j] = cellValue;
                 }
             }
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
@@ -271,29 +277,13 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a table.
      *
      * @return {DataTable}
-     * A DataTable from the parsed Google Sheet
+     * Table from the parsed Google Sheet
      */
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
-    }
-
-    /**
-     * Converts the parser instance to ClassJSON.
-     *
-     * @return {GoogleSheetsParser.ClassJSON}
-     * ClassJSON from the parser instance.
-     */
-    public toJSON(): GoogleSheetsParser.ClassJSON {
-        const parser = this,
-            json: GoogleSheetsParser.ClassJSON = {
-                $class: 'GoogleSheetsParser',
-                options: parser.options
-            };
-
-        return json;
     }
 
 }
@@ -312,27 +302,13 @@ namespace GoogleSheetsParser {
     export type OptionsType = Partial<ClassJSONOptions>;
 
     /**
-     * ClassJSON for GoogleSheetsParser
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        options: ClassJSONOptions;
-    }
-
-    /**
      * Options for the parser compatible with ClassJSON
      */
     export interface ClassJSONOptions extends DataParser.Options {
-        json: Highcharts.JSONType;
+        json: JSONType;
     }
+
 }
-
-/* *
- *
- *  Register
- *
- * */
-
-DataJSON.addClass(GoogleSheetsParser);
 
 /* *
  *

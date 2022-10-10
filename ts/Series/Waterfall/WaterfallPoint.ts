@@ -54,7 +54,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
     public getClassName(): string {
-        var className = Point.prototype.getClassName.call(this);
+        let className = Point.prototype.getClassName.call(this);
 
         if (this.isSum) {
             className += ' highcharts-sum';

@@ -15,6 +15,7 @@
  * */
 
 import type Point from './Series/Point';
+import type Pointer from './Pointer';
 
 /* *
  *
@@ -29,8 +30,12 @@ export interface PointerEvent extends globalThis.PointerEvent {
     accumulate?: boolean;
     chartX: number;
     chartY: number;
+    lat?: number;
+    lon?: number;
     point?: Point;
     touches?: Array<Touch>;
+    xAxis?: Array<Pointer.AxisCoordinateObject>;
+    yAxis?: Array<Pointer.AxisCoordinateObject>;
 }
 
 /* *

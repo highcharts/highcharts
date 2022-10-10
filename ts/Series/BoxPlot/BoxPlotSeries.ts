@@ -23,7 +23,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -116,7 +116,7 @@ class BoxPlotSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        fillColor: palette.backgroundColor,
+        fillColor: Palette.backgroundColor,
 
         /**
          * The width of the line surrounding the box. If any of
@@ -355,7 +355,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     // Translate data points from raw values x and y to plotX and plotY
     public translate(): void {
-        var series = this,
+        const series = this,
             yAxis = series.yAxis,
             pointArrayMap = series.pointArrayMap;
 
@@ -384,7 +384,7 @@ class BoxPlotSeries extends ColumnSeries {
      * @private
      */
     public drawPoints(): void {
-        var series = this,
+        let series = this,
             points = series.points,
             options = series.options,
             chart = series.chart,
@@ -409,7 +409,7 @@ class BoxPlotSeries extends ColumnSeries {
 
         points.forEach(function (point: BoxPlotPoint): void {
 
-            var graphic = point.graphic,
+            let graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
                 boxAttr: SVGAttributes = {},
@@ -603,7 +603,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype Properties
+ * Class Prototype
  *
  * */
 interface BoxPlotSeries extends ColumnSeries {
@@ -619,8 +619,8 @@ extend(BoxPlotSeries.prototype, {
     // defines the top of the tracker
     pointValKey: 'high',
     // Disable data labels for box plot
-    drawDataLabels: noop as any,
-    setStackedPoints: noop as any // #3890
+    drawDataLabels: noop,
+    setStackedPoints: noop // #3890
 });
 
 /* *

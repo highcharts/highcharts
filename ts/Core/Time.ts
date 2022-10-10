@@ -16,7 +16,9 @@
  *
  * */
 
+import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+
 import H from './Globals.js';
 const {
     win
@@ -41,148 +43,40 @@ const {
  *
  * */
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    interface Window {
-        moment: any;
-        Date: any;
-    }
-    namespace Highcharts {
-        type TimeUnitValue = (
-            'Date'|
-            'Day'|
-            'FullYear'|
-            'Hours'|
-            'Milliseconds'|
-            'Minutes'|
-            'Month'|
-            'Seconds'
-        );
-        interface AxisTickPositionsArray {
-            info?: TimeTicksInfoObject;
-        }
-        interface TimeNormalizedObject {
-            count: number;
-            unitRange: number;
-        }
-        interface TimeOptions {
-            Date?: any;
-            getTimezoneOffset?: Function;
-            timezone?: string;
-            timezoneOffset?: number;
-            useUTC?: boolean;
-            moment?: any;
-        }
-        interface TimeFormatCallbackFunction {
-            (timestamp: number): string;
-        }
-        class Time {
-            public constructor(options: TimeOptions);
-            public Date: DateConstructor;
-            public options: TimeOptions;
-            public timezoneOffset?: number;
-            public useUTC: boolean;
-            public variableTimezone: boolean;
-            public dateFormat(
-                format: string,
-                timestamp?: number,
-                capitalize?: boolean
-            ): string;
-            public get(unit: TimeUnitValue, date: Date): number;
-            public getTimeTicks(
-                normalizedInterval: TimeNormalizedObject,
-                min?: number,
-                max?: number,
-                startOfWeek?: number
-            ): AxisTickPositionsArray;
-            public getTimezoneOffset(timestamp: (number|Date)): number;
-            public makeTime(
-                year: number,
-                month: number,
-                date?: number,
-                hours?: number,
-                minutes?: number,
-                seconds?: number
-            ): number;
-            public resolveDTLFormat<T>(
-                f: (string|Array<T>|Record<string, T>)
-            ): Record<string, T>;
-            public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
-            public timezoneOffsetFunction(): Time['getTimezoneOffset']
-            public update(options: TimeOptions): void;
-        }
+declare module './Options' {
+    interface Options {
+        time?: Time.TimeOptions;
     }
 }
 
-/**
- * Normalized interval.
- *
- * @interface Highcharts.TimeNormalizedObject
- *//**
- * The count.
- *
- * @name Highcharts.TimeNormalizedObject#count
- * @type {number}
- *//**
- * The interval in axis values (ms).
- *
- * @name Highcharts.TimeNormalizedObject#unitRange
- * @type {number}
- */
+declare module './Axis/TickPositionsArray'{
+    interface TickPositionsArray {
+        info?: TimeTicksInfoObject;
+    }
+}
 
-/**
- * Function of an additional date format specifier.
+/* *
  *
- * @callback Highcharts.TimeFormatCallbackFunction
+ *  Constants
  *
- * @param {number} timestamp
- *        The time to format.
- *
- * @return {string}
- *         The formatted portion of the date.
- */
+ * */
 
-/**
- * Time ticks.
- *
- * @interface Highcharts.AxisTickPositionsArray
- * @extends global.Array<number>
- *//**
- * @name Highcharts.AxisTickPositionsArray#info
- * @type {Highcharts.TimeTicksInfoObject|undefined}
- */
+const hasNewSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    win.Intl.DateTimeFormat.prototype.formatRange;
 
-/**
- * A callback to return the time zone offset for a given datetime. It
- * takes the timestamp in terms of milliseconds since January 1 1970,
- * and returns the timezone offset in minutes. This provides a hook
- * for drawing time based charts in specific time zones using their
- * local DST crossover dates, with the help of external libraries.
- *
- * @callback Highcharts.TimezoneOffsetCallbackFunction
- *
- * @param {number} timestamp
- * Timestamp in terms of milliseconds since January 1 1970.
- *
- * @return {number}
- * Timezone offset in minutes.
- */
+// To do: Remove this when we no longer need support for Safari < v14.1
+const hasOldSafariBug =
+    H.isSafari &&
+    win.Intl &&
+    !win.Intl.DateTimeFormat.prototype.formatRange;
 
-/**
- * Allows to manually load the `moment.js` library from Highcharts options
- * instead of the `window`.
- * In case of loading the library from a `script` tag,
- * this option is not needed, it will be loaded from there by default.
+/* *
  *
- * @type {function}
- * @since 8.2.0
- * @apioption time.moment
- */
-
-''; // detach doclets above
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -204,7 +98,7 @@ declare global {
  * });
  *
  * // Apply time settings by instance
- * var chart = Highcharts.chart('container', {
+ * let chart = Highcharts.chart('container', {
  *     time: {
  *         timezone: 'America/New_York'
  *     },
@@ -224,7 +118,7 @@ declare global {
  * @class
  * @name Highcharts.Time
  *
- * @param {Highcharts.TimeOptions} options
+ * @param {Highcharts.TimeOptions} [options]
  * Time options as defined in [chart.options.time](/highcharts/time).
  */
 class Time {
@@ -236,7 +130,7 @@ class Time {
      * */
 
     public constructor(
-        options: Highcharts.TimeOptions
+        options?: Time.TimeOptions
     ) {
         /**
          * Get the time zone offset based on the current timezone information as
@@ -261,7 +155,7 @@ class Time {
      *
      * */
 
-    public options: Highcharts.TimeOptions = {};
+    public options: Time.TimeOptions = {};
 
     public timezoneOffset?: number;
 
@@ -300,7 +194,7 @@ class Time {
      * @return {number}
      *        The given time unit
      */
-    public get(unit: Highcharts.TimeUnitValue, date: Date): number {
+    public get(unit: Time.TimeUnitValue, date: Date): number {
         if (this.variableTimezone || this.timezoneOffset) {
             const realMs = date.getTime();
             const ms = realMs - this.getTimezoneOffset(date);
@@ -336,7 +230,7 @@ class Time {
      * @return {number}
      *        The epoch milliseconds of the updated date
      */
-    public set(unit: Highcharts.TimeUnitValue, date: Date, value: number): number {
+    public set(unit: Time.TimeUnitValue, date: Date, value: number): number {
         // UTC time with timezone handling
         if (this.variableTimezone || this.timezoneOffset) {
             // For lower order time units, just set it directly using UTC
@@ -344,7 +238,10 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (
+                    unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0
+                ) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -365,7 +262,11 @@ class Time {
         }
 
         // UTC time with no timezone handling
-        if (this.useUTC) {
+        if (
+            this.useUTC ||
+            // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear')
+        ) {
             return (date as any)['setUTC' + unit](value);
         }
 
@@ -381,21 +282,21 @@ class Time {
      * @private
      * @function Highcharts.Time#update
      *
-     * @param {Highcharts.TimeOptions} options
+     * @param {Highcharts.TimeOptions} [options]
      *
-     * @return {void}
      */
-    public update(options: Highcharts.TimeOptions): void {
-        var useUTC = pick(options && options.useUTC, true) as boolean,
-            time = this;
+    public update(
+        options: Time.TimeOptions = {}
+    ): void {
+        const useUTC = pick(options.useUTC, true);
 
-        this.options = options = merge(true, this.options || {}, options);
+        this.options = options = merge(true, this.options, options);
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
-        this.timezoneOffset = (useUTC && options.timezoneOffset) as any;
+        this.timezoneOffset = (useUTC && options.timezoneOffset) || void 0;
 
         this.getTimezoneOffset = this.timezoneOffsetFunction();
 
@@ -445,7 +346,7 @@ class Time {
         minutes?: number,
         seconds?: number
     ): number {
-        var d, offset, newOffset;
+        let d, offset, newOffset;
 
         if (this.useUTC) {
             d = this.Date.UTC.apply(0, arguments);
@@ -462,7 +363,7 @@ class Time {
             // 2 am. We need to make the same time as local Date does.
             } else if (
                 offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-                !H.isSafari
+                !hasOldSafariBug
             ) {
                 d -= 36e5;
             }
@@ -496,11 +397,14 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
-            moment = options.moment || win.moment;
+            getTimezoneOffset = options.getTimezoneOffset,
+            moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+                return new Date(
+                    timestamp.toString()
+                ).getTimezoneOffset() * 60000;
             };
         }
 
@@ -521,9 +425,9 @@ class Time {
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && options.getTimezoneOffset) {
+        if (this.useUTC && getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+                return getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
 
@@ -586,11 +490,15 @@ class Time {
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return H.defaultOptions.lang?.invalidDate || '';
+            return (
+                H.defaultOptions.lang &&
+                H.defaultOptions.lang.invalidDate ||
+                ''
+            );
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-        var time = this,
+        const time = this,
             date = new this.Date(timestamp as any),
             // get the basic time values
             hours = this.get('Hours', date),
@@ -599,8 +507,8 @@ class Time {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = (lang?.weekdays as any),
-            shortWeekdays = lang?.shortWeekdays,
+            langWeekdays = (lang && lang.weekdays as any),
+            shortWeekdays = (lang && lang.shortWeekdays),
 
             // List all format keys. Custom formats can be added from the
             // outside.
@@ -626,9 +534,9 @@ class Time {
 
                     // Month
                     // Short month, like 'Jan'
-                    b: (lang as any).shortMonths[month],
+                    b: lang.shortMonths[month],
                     // Long month, like 'January'
-                    B: (lang as any).months[month],
+                    B: lang.months[month],
                     // Two digit month number, 01 through 12
                     m: pad(month + 1),
                     // Month number, 1 through 12 (#8150)
@@ -692,12 +600,14 @@ class Time {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
-     * @return {Highcharts.Dictionary<T>} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f
+     * General format description
+     * @return {Highcharts.Dictionary<T>}
+     * The object definition
      */
-    public resolveDTLFormat<T>(
-        f: (string|Array<T>|Record<string, T>)
-    ): Record<string, T> {
+    public resolveDTLFormat(
+        f: Time.DateTimeLabelFormatOption
+    ): Time.DateTimeLabelFormatObject {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -706,7 +616,7 @@ class Time {
                 to: f[2]
             };
         }
-        return f as any;
+        return f;
     }
 
     /**
@@ -728,23 +638,25 @@ class Time {
      * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Time positions
      */
     public getTimeTicks(
-        normalizedInterval: Highcharts.TimeNormalizedObject,
+        normalizedInterval: Time.TimeNormalizedObject,
         min?: number,
         max?: number,
         startOfWeek?: number
-    ): Highcharts.AxisTickPositionsArray {
-        var time = this,
+    ): TickPositionsArray {
+        const time = this,
             Date = time.Date,
-            tickPositions = [] as Highcharts.AxisTickPositionsArray,
-            i,
+            tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,
-            minYear: any, // used in months and years as a basis for Date.UTC()
             // When crossing DST, use the max. Resolves #6278.
             minDate = new Date(min as any),
             interval = normalizedInterval.unitRange,
-            count = normalizedInterval.count || 1,
+            count = normalizedInterval.count || 1;
+
+        let i,
+            minYear: any, // used in months and years as a basis for Date.UTC()
             variableDayLength,
             minDay;
 
@@ -843,7 +755,7 @@ class Time {
 
             // Get basics for variable time spans
             minYear = time.get('FullYear', minDate);
-            var minMonth = time.get('Month', minDate),
+            const minMonth = time.get('Month', minDate),
                 minDateDate = time.get('Date', minDate),
                 minHours = time.get('Hours', minDate);
 
@@ -868,7 +780,7 @@ class Time {
             }
 
             // Iterate and add tick positions at appropriate values
-            var t = minDate.getTime();
+            let t = minDate.getTime();
 
             i = 1;
             while (t < (max as any)) {
@@ -941,16 +853,234 @@ class Time {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval, {
-            higherRanks: higherRanks,
-            totalRange: interval * count
-        }) as TimeTicksInfoObject;
+        tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
+            normalizedInterval,
+            {
+                higherRanks,
+                totalRange: interval * count
+            }
+        ) as TimeTicksInfoObject;
 
         return tickPositions;
     }
 
+    /**
+     * Get the optimal date format for a point, based on a range.
+     *
+     * @private
+     * @function Highcharts.Time#getDateFormat
+     *
+     * @param {number} range
+     *        The time range
+     *
+     * @param {number} timestamp
+     *        The timestamp of the date
+     *
+     * @param {number} startOfWeek
+     *        An integer representing the first day of the week, where 0 is
+     *        Sunday.
+     *
+     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+     *        A map of time units to formats.
+     *
+     * @return {string}
+     *         The optimal date format for a point.
+     */
+    public getDateFormat(
+        range: number,
+        timestamp: number,
+        startOfWeek: number,
+        dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
+    ): string|undefined {
+        const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
+            blank = '01-01 00:00:00.000',
+            strpos = {
+                millisecond: 15,
+                second: 12,
+                minute: 9,
+                hour: 6,
+                day: 3
+            } as Record<Time.TimeUnit, number>;
+
+        let n: Time.TimeUnit = 'millisecond',
+            // for sub-millisecond data, #4223
+            lastN: Time.TimeUnit = n;
+
+        for (n in timeUnits) { // eslint-disable-line guard-for-in
+            // If the range is exactly one week and we're looking at a
+            // Sunday/Monday, go for the week format
+            if (
+                range === timeUnits.week &&
+                +this.dateFormat('%w', timestamp) === startOfWeek &&
+                dateStr.substr(6) === blank.substr(6)
+            ) {
+                n = 'week';
+                break;
+            }
+
+            // The first format that is too great for the range
+            if (timeUnits[n] > range) {
+                n = lastN;
+                break;
+            }
+
+            // If the point is placed every day at 23:59, we need to show
+            // the minutes as well. #2637.
+            if (
+                strpos[n] &&
+                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])
+            ) {
+                break;
+            }
+
+            // Weeks are outside the hierarchy, only apply them on
+            // Mondays/Sundays like in the first condition
+            if (n !== 'week') {
+                lastN = n;
+            }
+        }
+
+        return this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
+    }
 }
 
-H.Time = Time;
+/* *
+ *
+ * Class namespace
+ *
+ * */
 
-export default H.Time;
+namespace Time {
+    export interface DateTimeLabelFormatObject {
+        from?: string;
+        list?: string[];
+        main: string;
+        range?: boolean;
+        to?: string;
+    }
+    export type DateTimeLabelFormatOption = (
+        string|
+        Array<string>|
+        Time.DateTimeLabelFormatObject
+    );
+    export type DateTimeLabelFormatsOption = (
+        Record<TimeUnit, DateTimeLabelFormatOption>
+    );
+    export interface TimeOptions {
+        Date?: any;
+        getTimezoneOffset?: Function;
+        timezone?: string;
+        timezoneOffset?: number;
+        useUTC?: boolean;
+        moment?: any;
+    }
+    export interface TimeFormatCallbackFunction {
+        (timestamp: number): string;
+    }
+    export interface TimeNormalizedObject {
+        count: number;
+        unitName: TimeUnit;
+        unitRange: number;
+    }
+    export type TimeUnit = (
+        'millisecond'|
+        'second'|
+        'minute'|
+        'hour'|
+        'day'|
+        'week'|
+        'month'|
+        'year'
+    );
+    export type TimeUnitValue = (
+        'Date'|
+        'Day'|
+        'FullYear'|
+        'Hours'|
+        'Milliseconds'|
+        'Minutes'|
+        'Month'|
+        'Seconds'
+    );
+}
+
+/* *
+ *
+ * Default export
+ *
+ * */
+
+export default Time;
+
+/* *
+ *
+ * API Declarations
+ *
+ * */
+
+/**
+ * Normalized interval.
+ *
+ * @interface Highcharts.TimeNormalizedObject
+ *//**
+ * The count.
+ *
+ * @name Highcharts.TimeNormalizedObject#count
+ * @type {number|undefined}
+ *//**
+ * The interval in axis values (ms).
+ *
+ * @name Highcharts.TimeNormalizedObject#unitRange
+ * @type {number}
+ */
+
+/**
+ * Function of an additional date format specifier.
+ *
+ * @callback Highcharts.TimeFormatCallbackFunction
+ *
+ * @param {number} timestamp
+ *        The time to format.
+ *
+ * @return {string}
+ *         The formatted portion of the date.
+ */
+
+/**
+ * Time ticks.
+ *
+ * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
+ *//**
+ * @name Highcharts.AxisTickPositionsArray#info
+ * @type {Highcharts.TimeTicksInfoObject|undefined}
+ */
+
+/**
+ * A callback to return the time zone offset for a given datetime. It
+ * takes the timestamp in terms of milliseconds since January 1 1970,
+ * and returns the timezone offset in minutes. This provides a hook
+ * for drawing time based charts in specific time zones using their
+ * local DST crossover dates, with the help of external libraries.
+ *
+ * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *
+ * @param {number} timestamp
+ * Timestamp in terms of milliseconds since January 1 1970.
+ *
+ * @return {number}
+ * Timezone offset in minutes.
+ */
+
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type      {Function}
+ * @since     8.2.0
+ * @apioption time.moment
+ */
+
+''; // keeps doclets above in JS file

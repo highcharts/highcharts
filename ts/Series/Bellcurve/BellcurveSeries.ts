@@ -24,7 +24,8 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -142,7 +143,7 @@ class BellcurveSeries extends AreaSplineSeries {
      * @private
      */
     private static mean(data: Array<number>): (number|false) {
-        var length = data.length,
+        const length = data.length,
             sum = data.reduce(function (sum: number, value: number): number {
                 return (sum += value);
             }, 0);
@@ -157,13 +158,14 @@ class BellcurveSeries extends AreaSplineSeries {
         data: Array<number>,
         average?: number
     ): (number|false) {
-        var len = data.length,
+        let len = data.length,
             sum;
 
-        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+        average = isNumber(average) ?
+            average : (BellcurveSeries.mean(data) as any);
 
         sum = data.reduce(function (sum: number, value: number): number {
-            var diff = value - (average as any);
+            const diff = value - (average as any);
 
             return (sum += diff * diff);
         }, 0);
@@ -179,7 +181,7 @@ class BellcurveSeries extends AreaSplineSeries {
         mean: number,
         standardDeviation: number
     ): number {
-        var translation = x - mean;
+        const translation = x - mean;
 
         return Math.exp(
             -(translation * translation) /
@@ -217,7 +219,7 @@ class BellcurveSeries extends AreaSplineSeries {
         mean: number,
         standardDeviation: number
     ): Array<Array<number>> {
-        var intervals = this.options.intervals,
+        let intervals = this.options.intervals,
             pointsInInterval = this.options.pointsInInterval,
             x = mean - (intervals as any) * standardDeviation,
             stop = (intervals as any) * (pointsInInterval as any) * 2 + 1,
@@ -226,7 +228,9 @@ class BellcurveSeries extends AreaSplineSeries {
             i: number;
 
         for (i = 0; i < stop; i++) {
-            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            data.push(
+                [x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]
+            );
             x += increment;
         }
 
@@ -271,29 +275,16 @@ class BellcurveSeries extends AreaSplineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface BellcurveSeries extends Highcharts.DerivedSeries {
-    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
-    addEvents: typeof DerivedSeriesMixin['addEvents'];
-    destroy: typeof DerivedSeriesMixin['destroy'];
+interface BellcurveSeries extends DerivedComposition.SeriesComposition {
     drawLegendSymbol: typeof AreaSplineSeries.prototype.drawLegendSymbol;
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-    initialised: Highcharts.DerivedSeries['initialised'];
-    init: typeof DerivedSeriesMixin['init'];
     pointClass: typeof BellcurvePoint;
-    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 }
-extend(BellcurveSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
-});
+
+DerivedComposition.compose(BellcurveSeries);
 
 /* *
  *

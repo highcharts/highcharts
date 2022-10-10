@@ -1,6 +1,6 @@
 const log = require('./log');
 const AWSS3 = require('aws-sdk').S3;
-const fs = require('fs-extra');
+const fs = require('fs');
 const S3 = new AWSS3({
     region: process.env.AWS_REGION || 'eu-west-1'
 });
@@ -133,7 +133,8 @@ function uploadFiles(params) {
     const upload = require('../../upload');
     const { files, name, bucket } = params;
 
-    log.starting(`Uploading ${files.length} files for ${name} to bucket ${bucket}:\n`);
+    const nFiles = files.length === 1 ? '1 file' : `${files.length} files`;
+    log.starting(`Uploading ${nFiles} for ${name} to bucket ${bucket}:\n`);
 
     if (files.length === 0) {
         log.message('Upload initiated, but no files specified.');

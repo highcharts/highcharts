@@ -23,12 +23,13 @@ import type ColorType from '../../Core/Color/ColorType';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -188,14 +189,14 @@ class FunnelSeries extends PieSeries {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
                  *
                  * @type {Highcharts.ColorString}
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         }
     } as FunnelSeriesOptions);
@@ -227,12 +228,12 @@ class FunnelSeries extends PieSeries {
      */
     public alignDataLabel(
         point: FunnelPoint,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: FunnelDataLabelOptions,
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        var series = point.series,
+        let series = point.series,
             reversed = series.options.reversed,
             dlBox = point.dlBox || point.shapeArgs,
             align = options.align,
@@ -255,10 +256,16 @@ class FunnelSeries extends PieSeries {
             y = dlBox.y,
             x = dlBox.x;
 
+        // #16176: Only SVGLabel has height set
+        const dataLabelHeight = pick(
+            dataLabel.height,
+            dataLabel.getBBox().height
+        );
+
         if (verticalAlign === 'middle') {
-            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+            y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabel.height +
+            y = dlBox.y - dlBox.height + dataLabelHeight +
                 options.padding;
         }
 
@@ -316,7 +323,7 @@ class FunnelSeries extends PieSeries {
      * @private
      */
     public drawDataLabels(): void {
-        var series = this,
+        let series = this,
             data = series.data,
             labelDistance: number =
                 (series.options.dataLabels as any).distance,
@@ -391,7 +398,7 @@ class FunnelSeries extends PieSeries {
      */
     public translate(): void {
 
-        var sum = 0,
+        let sum = 0,
             series = this,
             chart = series.chart,
             options = series.options,
@@ -449,7 +456,7 @@ class FunnelSeries extends PieSeries {
             this: FunnelSeries,
             y: number
         ): number {
-            var top = (centerY - height / 2);
+            const top = (centerY - height / 2);
 
             return (y > neckY || height === neckHeight) ?
                 neckWidth :
@@ -573,7 +580,7 @@ class FunnelSeries extends PieSeries {
             };
 
             // Slice is a noop on funnel points
-            point.slice = noop as any;
+            point.slice = noop;
 
             // Mimicking pie data label placement logic
             point.half = half;
@@ -602,17 +609,21 @@ class FunnelSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // added during translate
-    getX(y: number, half: boolean, point: FunnelPoint): number; // added during translate
+    getX(
+        y: number,
+        half: boolean,
+        point: FunnelPoint
+    ): number; // added during translate
 }
 extend(FunnelSeries.prototype, {
-    animate: noop as any
+    animate: noop
 });
 
 /* *

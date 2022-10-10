@@ -72,6 +72,7 @@ QUnit.test('Marker size and position', function (assert) {
                 data: [1, 2, 3],
                 animation: false,
                 marker: {
+                    radius: 2.5,
                     animation: false,
                     states: {
                         hover: {
@@ -82,6 +83,18 @@ QUnit.test('Marker size and position', function (assert) {
             }
         ]
     }).series[0];
+
+    assert.strictEqual(
+        series.points[0].graphic.x % 1,
+        0,
+        '#15179: Position should be a whole number because of crisping'
+    );
+
+    series.update({
+        marker: {
+            radius: 4
+        }
+    });
 
     // Default size
     assert.strictEqual(
@@ -163,6 +176,11 @@ QUnit.test('Marker size and position', function (assert) {
         Math.floor(series.stateMarkerGraphic.attr('y')),
         'Correct image y-position (#7273)'
     );
+
+    assert.ok(
+        series.stateMarkerGraphic.attr('class'),
+        '#5430: State marker should have class set'
+    );
 });
 
 QUnit.test('visibility', assert => {
@@ -221,7 +239,7 @@ QUnit.test('visibility', assert => {
     );
     assert.strictEqual(
         series1.stateMarkerGraphic.visibility,
-        'visible',
+        'inherit',
         'Should have stateMarkerGraphic on Series 1 with visibility "visible"'
     );
     assert.ok(

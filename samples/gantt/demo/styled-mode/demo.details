@@ -6,5 +6,7 @@ authors:
 tags:
   - Highcharts Gantt demo
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 4
+use_png_thumbnail: true
 ...

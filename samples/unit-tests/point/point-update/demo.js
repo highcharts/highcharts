@@ -331,6 +331,41 @@ QUnit.test(
             '[object Array],[object Array],[object Object]',
             'Points are mixed'
         );
+
+        chart.series[0].update({
+            pointStart: 5,
+            pointInterval: 2
+        });
+        chart.series[0].setData([[1], [2], [3]], true, false, false);
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [5, 7, 9],
+            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+        );
+        assert.deepEqual(
+            chart.series[0].yData,
+            [1, 2, 3],
+            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+        );
+
+        const map = Highcharts.Series.types.line.prototype.pointArrayMap;
+        Highcharts.Series.types.line.prototype.pointArrayMap = ['y'];
+
+        chart.series[0].setData([[2], [4], [6]], true, false, false);
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [5, 7, 9],
+            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+        );
+        assert.deepEqual(
+            chart.series[0].yData,
+            [[2], [4], [6]],
+            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+        );
+
+        Highcharts.Series.types.line.prototype.pointArrayMap = map;
     }
 );
 

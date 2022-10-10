@@ -669,4 +669,27 @@
             'Events should fire in order across the prototype chain'
         );
     });
+
+    QUnit.test('FireEvent on dom element keeps params', assert => {
+        const container = document.getElementById('container');
+        const value = 'test';
+
+        Highcharts.addEvent(container, 'testEvent', function (e) {
+            e.test = value;
+        });
+
+        Highcharts.fireEvent(container, 'testEvent', { a: 'test' }, function (e) {
+            assert.equal(e.test, value);
+        });
+
+        const obj = {};
+
+        Highcharts.addEvent(obj, 'testEvent2', function (e) {
+            e.test = value;
+        });
+
+        Highcharts.fireEvent(obj, 'testEvent2', { a: 'testt2' }, function (e) {
+            assert.equal(e.test, value);
+        });
+    });
 }());

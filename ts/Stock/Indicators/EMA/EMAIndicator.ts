@@ -21,12 +21,11 @@ import type {
 import type EMAPoint from './EMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -51,18 +50,23 @@ const {
  */
 class EMAIndicator extends SMAIndicator {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
      *
      * @sample stock/indicators/ema
-     *         Exponential moving average indicator
+     * Exponential moving average indicator
      *
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
@@ -72,9 +76,10 @@ class EMAIndicator extends SMAIndicator {
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * By default index value used to be set to 0. Since Highstock 7
-             * by default index is set to 3 which means that the ema
-             * indicator will be calculated using Close values.
+             * By default index value used to be set to 0. Since
+             * Highcharts Stock 7 by default index is set to 3
+             * which means that the ema indicator will be
+             * calculated using Close values.
              */
             index: 3,
             period: 9 // @merge 14 in v6.2
@@ -104,7 +109,7 @@ class EMAIndicator extends SMAIndicator {
         index: number,
         yVal: Array<Array<number>>
     ): number {
-        var sum = 0,
+        let sum = 0,
             i = 0,
             y: (number|Array<number>) = 0;
 
@@ -126,7 +131,7 @@ class EMAIndicator extends SMAIndicator {
         index: number,
         SMA: number
     ): [number, number] {
-        var x: number = xVal[i - 1],
+        let x: number = xVal[i - 1],
             yValue: number = index < 0 ?
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
@@ -143,7 +148,7 @@ class EMAIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,
@@ -206,7 +211,7 @@ class EMAIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -235,6 +240,12 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
 
 export default EMAIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `EMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
@@ -244,7 +255,6 @@ export default EMAIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 

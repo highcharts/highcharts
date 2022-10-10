@@ -1,5 +1,5 @@
 ---
- name: Sweden - Highmaps
- description: Highmaps demo
+ name: Sweden - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

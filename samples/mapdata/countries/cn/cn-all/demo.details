@@ -1,5 +1,5 @@
 ---
- name: China - Highmaps
- description: Highmaps demo
+ name: China - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

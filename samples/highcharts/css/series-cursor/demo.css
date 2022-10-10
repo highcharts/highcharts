@@ -1,15 +1,16 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	min-width: 300px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    min-width: 300px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .highcharts-series-0 {
-	cursor: pointer;
+    cursor: pointer;
 }
+
 .highcharts-series-1 {
-	cursor: pointer;
+    cursor: pointer;
 }

@@ -94,7 +94,16 @@ QUnit.test('Navigator (#4053)', function (assert) {
 });
 
 QUnit.test('General Navigator tests', function (assert) {
+    let left = 0;
+
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    afterSetChartSize() {
+                        left = this.navigator && this.navigator.left;
+                    }
+                }
+            },
             legend: {
                 enabled: true
             },
@@ -104,7 +113,10 @@ QUnit.test('General Navigator tests', function (assert) {
                 }
             },
             navigator: {
-                height: 100
+                height: 100,
+                xAxis: {
+                    left: 200
+                }
             },
             series: [
                 {
@@ -121,6 +133,37 @@ QUnit.test('General Navigator tests', function (assert) {
         x,
         y;
 
+    assert.strictEqual(
+        left,
+        200,
+        '#15803: navigator.left should be correct after afterSetChartSize'
+    );
+
+    const eventCount = el => {
+        let count = 0;
+        //eslint-disable-next-line
+        for (const t in el.hcEvents) {
+            count += el.hcEvents[t].length;
+        }
+        return count;
+    };
+
+    const before = eventCount(chart.series[0]);
+    const beforeAxis = eventCount(chart.xAxis[0]);
+
+    chart.series[0].update();
+
+    assert.strictEqual(
+        eventCount(chart.series[0]),
+        before,
+        '#10296: Navigator should not leak events into series on Series.update'
+    );
+    assert.strictEqual(
+        eventCount(chart.xAxis[0]),
+        beforeAxis,
+        '#10296: Navigator should not leak events into xAxis on Series.update'
+    );
+
     chart.series[0].hide();
 
     assert.deepEqual(
@@ -130,7 +173,7 @@ QUnit.test('General Navigator tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].clipBox.height,
+        chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height'),
         100,
         'Navigator series has correct clipping rect height (#5904)'
     );
@@ -541,16 +584,16 @@ QUnit.test(
                 }
             ];
 
-        Highcharts.each(series, function (s) {
+        series.forEach(s => {
             chart.addSeries(s, false);
         });
         chart.xAxis[0].setExtremes();
 
-        Highcharts.each(points, function (s, index) {
+        points.forEach((s, index) => {
             if (
                 chart.series[index].options.id !== 'highcharts-navigator-series'
             ) {
-                Highcharts.each(s.data, function (p) {
+                s.data.forEach(p => {
                     chart.series[index].addPoint(p, false);
                 });
             }
@@ -980,6 +1023,33 @@ QUnit.test('stickToMin and stickToMax', function (assert) {
         'stickToMax, multiple series with different ranges: ' +
             'Correct extremes after rangeSelector use and adding points(#9075)'
     );
+
+    chart.series[0].addPoint(100);
+
+    const { max: initialMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.max + 1,
+        initialMax,
+        'By default, navigator should stick to max after adding point(#17539).'
+    );
+
+    chart.update({
+        navigator: {
+            stickToMax: false
+        }
+    });
+
+    chart.series[0].addPoint(0);
+
+    const { max: updatedMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        initialMax,
+        updatedMax,
+        `Max value of the navigator xAxis extremes did not change after
+        adding points.`
+    );
 });
 
 QUnit.test(
@@ -1119,3 +1189,192 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3],
+            dataLabels: [{
+                enabled: true,
+                format: 'T2'
+            }]
+        }]
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        false,
+        'DataLabels in Navigator should be disabled in default.'
+    );
+    // The problem was connected with merge Utils function,
+    // that doesn't handle merging objects with different structures.
+    chart.update({
+        navigator: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        }
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        true,
+        'DataLabels in Navigator should be enabled, if specified in options.'
+    );
+
+    chart.update({
+        navigator: {
+            series: {
+                dataLabels: [{
+                    enabled: false
+                }]
+            }
+        }
+    });
+
+    assert.equal(
+        chart.navigator.series[0].options.dataLabels[0].enabled,
+        false,
+        'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
+    );
+});
+
+QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
+    let cursor = 8;
+    const chunk = 3,
+        originalData = [7, 6, 9, 14, 8, 8, 5, 6, 4, 1, 3, 9, 4, 6, 7, 4],
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                range: 15
+            },
+            series: [{
+                // 16 points -> range is 15
+                data: originalData
+            }]
+        });
+
+    function addPoints() {
+        const data = originalData.slice(cursor, cursor + chunk);
+        cursor += chunk;
+        for (let i = 0; i < data.length; i++) {
+            chart.series[0].addPoint(data[i], false, true);
+        }
+
+        chart.redraw();
+    }
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `Initially, for that number of points,
+        the navigator should be placed on the left.`
+    );
+
+    chart.series[0].addPoint(3);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        1,
+        `After adding the point, the number of sections between ticks
+        is greater than the range so the extremes should have changed.`
+    );
+
+    chart.series[0].addPoint(5);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        2,
+        `Adding another point should result in changing the extremes.`
+    );
+
+    chart.rangeSelector.clickButton(5); // all
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `After selecting all, extremes should return to the initial one.`
+    );
+
+    chart.series[0].addPoint(5);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        `When all button enabled, adding point should not change the extremes.`
+    );
+
+    chart.xAxis[0].setExtremes(2, 5);
+    addPoints();
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        chart.series[0].data[0].x,
+        `After changing the extremes and adding shifted points,
+        min should stay at the begging of the data.`
+    );
+    assert.ok(
+        chart.xAxis[0].max > chart.xAxis[0].min,
+        `After changing the extremes and adding shifted points,
+        the range should not equal zero.`
+    );
+});
+
+
+QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        series: [{
+            pointInterval: 36e7
+        }]
+    });
+    assert.notStrictEqual(
+        chart.xAxis[0].max,
+        0,
+        `After adding series to the chart that has set the range,
+        the navigator shouldn't stick to min.`
+    );
+});
+
+
+QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+    const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
+
+    const mocks = [
+        // Regular case, simple series
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] }
+            ]
+        },
+        // Two series, one without xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { }
+            ]
+        },
+        // Two series, one without empty xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { xData: [] }
+            ]
+        },
+        // One series, undefiend in xData
+        {
+            baseSeries: [
+                { xData: [-5, undefined, 5] }
+            ]
+        }
+    ];
+
+    mocks.forEach(mock => {
+        const result = method.call(mock, 0);
+
+        assert.strictEqual(
+            result,
+            -5,
+            `With config: ${JSON.stringify(mock)}, the min should not be a NaN`
+        );
+    });
+});

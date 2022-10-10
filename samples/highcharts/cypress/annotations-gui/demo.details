@@ -1,0 +1,7 @@
+---
+name: Annotations GUI for cypress test
+authors:
+  - Pawel Lysy
+skipTest: true
+js_wrap: b
+...

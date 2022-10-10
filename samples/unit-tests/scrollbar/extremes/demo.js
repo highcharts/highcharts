@@ -34,7 +34,7 @@ QUnit.test(
     }
 );
 
-// Highstock 4.0.1, Issue #3040
+// Highcharts Stock 4.0.1, Issue #3040
 // Scrolling outside data range possible
 QUnit.test('Scrolling outside range (#3040)', function (assert) {
     TestTemplate.test(

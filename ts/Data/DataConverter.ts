@@ -1,24 +1,31 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Gøran Slettemark
+ *  - Torstein Hønsi
+ *  - Wojciech Chmiel
+ *
  * */
+
+'use strict';
 
 /* *
  *
  *  Imports
  *
  * */
-import type DataTable from './DataTable.js';
-import type DataJSON from './DataJSON';
-import U from './../Core/Utilities.js';
 
+import type DataTable from './DataTable.js';
+import type JSON from '../Core/JSON';
+
+import U from './../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -34,6 +41,13 @@ const {
  * Class to convert between common value types.
  */
 class DataConverter {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Default options
      */
@@ -106,7 +120,7 @@ class DataConverter {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    private dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
+    private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -141,11 +155,13 @@ class DataConverter {
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
+                const d = new Date();
+
                 if (!match) {
                     return NaN;
                 }
-                var year = +match[3],
-                    d = new Date();
+
+                let year = +match[3];
 
                 if (year > (d.getFullYear() - 2000)) {
                     year += 1900;
@@ -162,7 +178,11 @@ class DataConverter {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -177,8 +197,6 @@ class DataConverter {
 
     /**
      * Getter for a date format.
-     *
-     * @return {string|undefined}
      */
     public getDateFormat(): (string|undefined) {
         return this.options.dateFormat;
@@ -200,7 +218,7 @@ class DataConverter {
         if (typeof value === 'string') {
             return value !== '' && value !== '0' && value !== 'false';
         }
-        return this.asNumber(value) !== 0;
+        return !!this.asNumber(value);
     }
 
     /**
@@ -245,10 +263,13 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            const trimVal = this.trim(value),
-                cast = parseFloat(trimVal);
-
-            return !isNaN(cast) ? cast : 0;
+            if (value.indexOf(' ') > -1) {
+                value = value.replace(/\s+/g, '');
+            }
+            if (this.decimalRegex) {
+                value = value.replace(this.decimalRegex, '$1.$2');
+            }
+            return parseFloat(value);
         }
         if (value instanceof Date) {
             return value.getDate();
@@ -256,7 +277,8 @@ class DataConverter {
         if (value) {
             return value.getRowCount();
         }
-        return 0;
+
+        return NaN;
     }
 
     /**
@@ -312,10 +334,12 @@ class DataConverter {
      *
      * @param {string} value
      * The string to examine
-     * @return {string}
+     * @return {'number'|'string'|'Date'}
      * `string`, `Date` or `number`
      */
-    public guessType(value: string): ('string' | 'Date' | 'number') {
+    public guessType(
+        value: string
+    ): ('number'|'string'|'Date') {
         const converter = this,
             trimVal = converter.trim(value),
             trimInsideVal = converter.trim(value, true),
@@ -359,12 +383,12 @@ class DataConverter {
      * @param {string} value
      * The string to examine
      *
-     * @return {number|Date|string}
+     * @return {number|string|Date}
      * The converted value
      */
-    public asGuessedType(value: string): (number | Date | string) {
+    public asGuessedType(value: string): (number|string|Date) {
         const converter = this,
-            typeMap: Record<('string' | 'Date' | 'number'), Function> = {
+            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
                 'number': converter.asNumber,
                 'Date': converter.asDate,
                 'string': converter.asString
@@ -384,8 +408,6 @@ class DataConverter {
      * @param {string} dateFormatProp
      * Which of the predefined date formats
      * to use to parse date values.
-     *
-     * @return {number}
      */
     public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this;
@@ -446,7 +468,15 @@ class DataConverter {
 
                     // Timestamp
                 } else if (isNumber(match)) {
-                    result = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    result = match - (
+                        new Date(match)
+                    ).getTimezoneOffset() * 60000;
+                    if (// reset dates without year in Chrome
+                        value.indexOf('2001') === -1 &&
+                        (new Date(result)).getFullYear() === 2001
+                    ) {
+                        result = NaN;
+                    }
                 }
             }
         }
@@ -471,8 +501,6 @@ class DataConverter {
      *
      * @param {boolean} save
      * Whether to save the date format in the converter options.
-     *
-     * @return {string}
      */
     public deduceDateFormat(
         data: Array<string>,
@@ -603,17 +631,20 @@ class DataConverter {
  */
 namespace DataConverter {
 
-    /**
-     * Contains supported types to convert values from and to.
-     */
-    export type Type = (
-        boolean|null|number|string|Date|DataTable|undefined
-    );
+    export interface DateFormatObject {
+        alternative?: string;
+        parser: DateFormatCallbackFunction;
+        regex: RegExp;
+    }
+
+    export interface DateFormatCallbackFunction {
+        (match: ReturnType<string['match']>): number;
+    }
 
     /**
      * Internal options for DataConverter.
      */
-    export interface Options extends DataJSON.JSONObject {
+    export interface Options extends JSON.Object {
         dateFormat?: string;
         alternativeFormat?: string;
         decimalPoint?: string;
@@ -626,6 +657,14 @@ namespace DataConverter {
     export interface ParseDateFunction {
         (dateValue: string): number;
     }
+
+    /**
+     * Contains supported types to convert values from and to.
+     */
+    export type Type = (
+        boolean|null|number|string|DataTable|Date|undefined
+    );
+
 }
 
 /* *

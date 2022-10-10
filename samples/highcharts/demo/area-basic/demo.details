@@ -9,6 +9,6 @@ alt_text: >-
 tags:
   - Highcharts demo
 categories:
-  - Area charts
-priority: 1
+  - Area charts:
+      priority: 1
 ...

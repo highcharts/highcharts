@@ -1,5 +1,5 @@
 ---
- name: Mecklenburg-Vorpommern - Highmaps
- description: Highmaps demo
+ name: Mecklenburg-Vorpommern - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

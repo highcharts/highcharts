@@ -64,6 +64,10 @@ function prepareRelease() {
             reject(new Error('Please provide either --nextversion x.y.z or --cleanup when starting the command.'));
             return;
         }
+        if (nextVersion && !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/.test(nextVersion)) {
+            reject(new Error('--nextversion must be on the form x.x.x'));
+            return;
+        }
         /*
             Replace version in relevant files (ideally all current versions should be equal, but since they
             sometimes have proven not to be, we make sure to replace the existing version in the exact file

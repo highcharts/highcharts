@@ -1,58 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['fr-occ-hp', 0],
-    ['fr-occ-ga', 1],
-    ['fr-occ-lz', 2],
-    ['fr-occ-ag', 3],
-    ['fr-occ-ad', 4],
-    ['fr-occ-he', 5],
-    ['fr-occ-ta', 6],
-    ['fr-occ-tg', 7],
-    ['fr-occ-av', 8],
-    ['fr-occ-hg', 9],
-    ['fr-occ-ge', 10],
-    ['fr-occ-po', 11],
-    ['fr-occ-lo', 12]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/fr/fr-occ-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/fr/fr-occ-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['fr-occ-hp', 10], ['fr-occ-ga', 11], ['fr-occ-lz', 12],
+        ['fr-occ-ag', 13], ['fr-occ-ad', 14], ['fr-occ-he', 15],
+        ['fr-occ-ta', 16], ['fr-occ-tg', 17], ['fr-occ-av', 18],
+        ['fr-occ-hg', 19], ['fr-occ-ge', 20], ['fr-occ-po', 21],
+        ['fr-occ-lo', 22]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-occ-all.js">Occitanie</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-occ-all.topo.json">Occitanie</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

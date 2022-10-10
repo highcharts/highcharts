@@ -1,5 +1,5 @@
 ---
- name: Virginia congressional districts - Highmaps
- description: Highmaps demo
+ name: Virginia congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

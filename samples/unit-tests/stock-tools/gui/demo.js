@@ -1,5 +1,5 @@
 QUnit.test('Stocktools GUI', function (assert) {
-    /*const chart = */Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         stockTools: {
             gui: {
                 enabled: true,
@@ -60,4 +60,161 @@ QUnit.test('Stocktools GUI', function (assert) {
         '#9744: Title should have the correct position after hiding toolbar'
     );
     */
+
+    // Shorthand for selecting a button
+    function selectButton(name, text = '') {
+
+        let button = document.getElementsByClassName('highcharts-' + name)[0];
+
+        if (button.tagName === 'UL' && text !== '') {
+
+            button = button.getElementsByTagName('li');
+            let found = false,
+                i = -1;
+
+            while (!found && ++i < button.length) { // Find the button with text
+                if (button[i].innerHTML.indexOf(text) !== -1) {
+                    found = true;
+                    button = button[i];
+                    button.click();
+                }
+            }
+        } else {
+            button.click();
+        }
+
+    }
+
+    selectButton('indicators'); // Click on indicators
+    selectButton('indicator-list', 'APO'); // Click on APO.
+
+    const textLabel = chart
+        .navigationBindings
+        .popup.container
+        .childNodes[3]
+        .childNodes[1]
+        .childNodes[0]
+        .childNodes[6]
+        .firstChild
+        .data; // Periods textLabel of APO
+
+    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
 });
+
+QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
+    function (assert) {
+        var wasInitCalled = false;
+
+        // Creating test controller and adding styles to button.
+        const toolsContainer = document.createElement('div'),
+            button = document.createElement('button');
+
+        toolsContainer.className += 'tools-container';
+        button.className += 'dummy-button';
+        button.innerHTML = 'dummy button';
+        toolsContainer.appendChild(button);
+
+        document.getElementById('container').parentNode
+            .insertBefore(toolsContainer, document.getElementById('container'));
+
+        var chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: false // disable the built-in toolbar
+                }
+            },
+            navigation: {
+                bindings: {
+                    dummyButton: {
+                        className: 'dummy-button',
+                        init: function () {
+                            wasInitCalled = true;
+
+                            Highcharts.fireEvent(
+                                this,
+                                'deselectButton',
+                                { button }
+                            );
+                        }
+                    }
+                },
+                bindingsClassName: 'tools-container'
+            }
+        });
+
+        var controller = new TestController(chart);
+        toolsContainer.style.position = 'absolute';
+        toolsContainer.style['z-index'] = 99999;
+
+        controller.click(10, 10);
+        assert.equal(wasInitCalled,
+            false,
+            'Init function should not be executed, when there is no series.'
+        );
+
+        wasInitCalled = false;
+        chart.addSeries({
+            data: [1, 2, 3, 2, 3, 2]
+        });
+
+        controller.click(10, 10);
+        assert.equal(wasInitCalled,
+            true,
+            'Init function should be executed, after series was added.'
+        );
+
+        chart.series[0].setVisible(false);
+        wasInitCalled = false;
+        controller.click(10, 10);
+        assert.equal(wasInitCalled,
+            false,
+            'Init function should not be called, when series are invisible.'
+        );
+
+        chart.series[0].setVisible(true);
+        wasInitCalled = false;
+        controller.click(10, 10);
+        assert.equal(wasInitCalled,
+            true,
+            'Init function should not be called, when series are visible.'
+        );
+
+        chart.series[0].remove();
+        wasInitCalled = false;
+        controller.click(10, 10);
+        assert.equal(wasInitCalled,
+            false,
+            'Init function should not be called, after deleting the series.'
+        );
+
+        chart.addSeries({
+            data: [1, 2, 3, 2, 3, 2]
+        }, false);
+
+        chart.update({
+            navigation: {
+                bindings: {
+                    dummyButton: {
+                        className: 'dummy-button',
+                        noDataState: 'normal',
+                        init: function () {
+                            wasInitCalled = true;
+                        }
+                    }
+                }
+            }
+        }, false);
+
+        chart.series[0].setVisible(false, false);
+        chart.redraw();
+        wasInitCalled = false;
+        controller.click(10, 10);
+        assert.equal(
+            wasInitCalled,
+            true,
+            'Init function should be always called for button with alwaysVisible property defined.'
+        );
+
+        button.remove();
+        toolsContainer.remove();
+    });

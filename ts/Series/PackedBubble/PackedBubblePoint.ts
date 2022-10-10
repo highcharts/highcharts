@@ -16,14 +16,22 @@
  *
  * */
 
+import type BubblePointType from '../Bubble/BubblePoint';
+import type { DragNodesPoint } from '../DragNodesComposition';
+import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        bubble: BubbleSeries
+        bubble: {
+            prototype: {
+                pointClass: BubblePoint
+            }
+        }
     }
 } = SeriesRegistry;
 
@@ -45,7 +53,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
+class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     /* *
      *
@@ -63,7 +71,7 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
     public dispY?: number;
 
-    public fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
+    public fixedPosition: DragNodesPoint['fixedPosition'];
 
     public isParentNode?: boolean;
 
@@ -116,7 +124,9 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
         if (this.isParentNode && seriesOptions.parentNode) {
             const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            seriesOptions.allowPointSelect = (
+                seriesOptions.parentNode.allowPointSelect
+            );
             Point.prototype.firePointEvent.apply(this, arguments);
             seriesOptions.allowPointSelect = temp;
         } else {
@@ -139,6 +149,23 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface PackedBubblePoint extends NetworkgraphPoint {
+    className: BubblePointType['className'];
+    fromNode: NetworkgraphPoint;
+    linksFrom: Array<NetworkgraphPoint>;
+    linksTo: Array<NetworkgraphPoint>;
+    toNode: NetworkgraphPoint;
+    init: NetworkgraphPoint['init'];
+    isValid: NetworkgraphPoint['isValid'];
+    remove: BubblePointType['remove'];
 }
 
 /* *

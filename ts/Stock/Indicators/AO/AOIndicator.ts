@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
@@ -15,13 +21,14 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: {
+        prototype: columnProto
+    },
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -45,8 +52,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class AOIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -64,8 +77,12 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
-    public static defaultOptions: AOOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0
+        },
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -77,7 +94,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: '#06B535',
+        greaterBarColor: Palette.positiveColor,
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -89,7 +106,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: '#F21313',
+        lowerBarColor: Palette.negativeColor,
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
@@ -103,24 +120,24 @@ class AOIndicator extends SMAIndicator {
         }
     } as AOOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<AOPoint> = void 0 as any;
     public options: AOOptions = void 0 as any;
     public points: Array<AOPoint> = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public drawGraph(this: AOIndicator): void {
-        var indicator = this,
+        let indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
@@ -149,7 +166,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var shortPeriod = 5,
+        let shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =
@@ -229,14 +246,20 @@ class AOIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
     pointClass: typeof AOPoint;
-    crispCol: typeof ColumnSeries.prototype['crispCol'];
-    drawPoints: typeof ColumnSeries.prototype['drawPoints'];
-    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
-    translate: typeof ColumnSeries.prototype['translate'];
+    crispCol: typeof columnProto.crispCol;
+    drawPoints: typeof columnProto.drawPoints;
+    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    translate: typeof columnProto.translate;
 }
 
 extend(AOIndicator.prototype, {
@@ -244,11 +267,11 @@ extend(AOIndicator.prototype, {
     nameComponents: (false as any),
 
     // Columns support:
-    markerAttribs: (noop as any),
-    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
-    crispCol: ColumnSeries.prototype.crispCol,
-    translate: ColumnSeries.prototype.translate,
-    drawPoints: ColumnSeries.prototype.drawPoints
+    markerAttribs: noop as any,
+    getColumnMetrics: columnProto.getColumnMetrics,
+    crispCol: columnProto.crispCol,
+    translate: columnProto.translate,
+    drawPoints: columnProto.drawPoints
 });
 
 /* *
@@ -273,6 +296,12 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
 
 export default AOIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -287,4 +316,5 @@ export default AOIndicator;
  * @requires  stock/indicators/ao
  * @apioption series.ao
  */
+
 ''; // for including the above in the doclets

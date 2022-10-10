@@ -1,9 +1,12 @@
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     title: {
         text: 'Click on series to sonify'
     },
     legend: {
         enabled: false
+    },
+    accessibility: {
+        landmarkVerbosity: 'one'
     },
     plotOptions: {
         series: {
@@ -19,6 +22,11 @@ Highcharts.chart('container', {
                 events: {
                     onPointStart: function (e, point) {
                         point.onMouseOver();
+                        document.getElementById('stop').style.visibility = 'visible';
+                        document.getElementById('stop').focus();
+                    },
+                    onSeriesEnd: function () {
+                        document.getElementById('stop').style.visibility = 'hidden';
                     }
                 }
             },
@@ -39,3 +47,8 @@ Highcharts.chart('container', {
         data: [4, 5, 7, 9, 11, 13, 11, 9]
     }]
 });
+
+document.getElementById('stop').onclick = function () {
+    chart.cancelSonify();
+    document.getElementById('stop').style.visibility = 'hidden';
+};

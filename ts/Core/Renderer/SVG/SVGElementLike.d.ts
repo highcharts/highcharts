@@ -19,12 +19,12 @@
  * this file by `declare module` pattern.
  */
 export interface SVGElementLike {
-    // nothing here yet
+    [key: string]: any;
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

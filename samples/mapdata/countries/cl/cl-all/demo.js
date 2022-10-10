@@ -1,60 +1,57 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['cl-2730', 0],
-    ['cl-bi', 1],
-    ['cl-ll', 2],
-    ['cl-li', 3],
-    ['cl-ai', 4],
-    ['cl-ma', 5],
-    ['cl-co', 6],
-    ['cl-at', 7],
-    ['cl-vs', 8],
-    ['cl-rm', 9],
-    ['cl-ar', 10],
-    ['cl-ml', 11],
-    ['cl-ta', 12],
-    ['cl-2740', 13],
-    ['cl-an', 14]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/cl/cl-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/cl/cl-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['cl-2730', 10], ['cl-bi', 11], ['cl-ll', 12], ['cl-li', 13],
+        ['cl-ai', 14], ['cl-ma', 15], ['cl-co', 16], ['cl-at', 17],
+        ['cl-vs', 18], ['cl-rm', 19], ['cl-ar', 20], ['cl-ml', 21],
+        ['cl-ta', 22], ['cl-2740', 23], ['cl-an', 24]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cl/cl-all.js">Chile</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cl/cl-all.topo.json">Chile</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

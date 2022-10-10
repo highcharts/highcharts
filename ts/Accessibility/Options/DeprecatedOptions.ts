@@ -20,6 +20,8 @@
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
+ *  series.accessibility.pointDescriptionFormatter ->
+ *      series.accessibility.point.descriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
  *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
@@ -61,7 +63,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    AxisAccessibilityOptions,
+    SeriesAccessibilityOptions
+} from './A11yOptions';
+import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
+
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -70,24 +84,31 @@ const {
     pick
 } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface XAxisOptions {
-            /** @deprecated */
-            description?: XAxisAccessibilityOptions['description'];
-        }
-        interface Options {
-            /** @deprecated */
-            exposeElementToA11y?: (
-                SeriesAccessibilityOptions['exposeAsGroupOnly']
-            );
-        }
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../../Core/Axis/AxisOptions' {
+    interface AxisOptions {
+        /** @deprecated */
+        description?: AxisAccessibilityOptions['description'];
     }
 }
+
+declare module '../../Core/Options'{
+    interface Options {
+        /** @deprecated */
+        exposeElementToA11y?: SeriesAccessibilityOptions['exposeAsGroupOnly'];
+    }
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -105,7 +126,7 @@ function traverseSetOption<T>(
     optionAsArray: Array<string>,
     val: T
 ): void {
-    var opt = root,
+    let opt = root,
         prop,
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
@@ -129,7 +150,7 @@ function deprecateFromOptionsMap(
      * @private
      */
     function getChildProp(
-        root: Highcharts.Options,
+        root: Options,
         propAsArray: Array<string>
     ): Record<string, unknown> {
         return propAsArray.reduce(function (
@@ -140,11 +161,11 @@ function deprecateFromOptionsMap(
         }, root as any);
     }
 
-    var rootOld = getChildProp(chart.options, rootOldAsArray),
+    const rootOld = getChildProp(chart.options, rootOldAsArray),
         rootNew = getChildProp(chart.options, rootNewAsArray);
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
-        var val = rootOld[oldOptionKey];
+        const val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
             traverseSetOption(
                 rootNew,
@@ -156,8 +177,10 @@ function deprecateFromOptionsMap(
                 false,
                 chart,
                 {
-                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
-                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                    [rootOldAsArray.join('.') + '.' + oldOptionKey]: (
+                        rootNewAsArray.join('.') + '.' +
+                        mapToNewOptions[oldOptionKey].join('.')
+                    )
                 }
             );
         }
@@ -168,14 +191,19 @@ function deprecateFromOptionsMap(
  * @private
  */
 function copyDeprecatedChartOptions(chart: Chart): void {
-    var chartOptions = chart.options.chart || {},
+    const chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
         prop: string
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
+            error(
+                32,
+                false,
+                chart,
+                { [`chart.${prop}`]: `use accessibility.${prop}` }
+            );
         }
     });
 }
@@ -185,11 +213,13 @@ function copyDeprecatedChartOptions(chart: Chart): void {
  */
 function copyDeprecatedAxisOptions(chart: Chart): void {
     chart.axes.forEach(function (axis: Axis): void {
-        var opts = axis.options;
+        const opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
+            error(32, false, chart, {
+                'axis.description': 'use axis.accessibility.description'
+            });
         }
     });
 }
@@ -200,14 +230,17 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
 function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
-    var oldToNewSeriesOptions = {
+    const oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'pointDescriptionFormatter'
+            'accessibility', 'point', 'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
             'accessibility', 'keyboardNavigation', 'enabled'
+        ],
+        'accessibility.pointDescriptionFormatter': [
+            'accessibility', 'point', 'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series: Series): void {
@@ -215,7 +248,17 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string
         ): void {
-            var optionVal = (series.options as any)[oldOption];
+            let optionVal = (series.options as any)[oldOption];
+
+            // Special case
+            if (oldOption === 'accessibility.pointDescriptionFormatter') {
+                optionVal = (
+                    series.options.accessibility &&
+                    (series.options.accessibility as any)
+                        .pointDescriptionFormatter
+                );
+            }
+
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(
@@ -230,7 +273,12 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     32,
                     false,
                     chart,
-                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
+                    {
+                        [`series.${oldOption}`]: (
+                            'series.' +
+                            (oldToNewSeriesOptions as any)[oldOption].join('.')
+                        )
+                    }
                 );
             }
         });
@@ -328,5 +376,11 @@ function copyDeprecatedOptions(chart: Chart): void {
     copyDeprecatedKeyboardNavigationOptions(chart);
     copyDeprecatedLangOptions(chart);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default copyDeprecatedOptions;

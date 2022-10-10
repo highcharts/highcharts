@@ -8,6 +8,9 @@ Highcharts.chart('container', {
     legend: {
         enabled: false
     },
+    accessibility: {
+        landmarkVerbosity: 'one'
+    },
     series: [{
         marker: {
             radius: 8

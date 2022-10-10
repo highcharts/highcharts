@@ -122,21 +122,22 @@ QUnit.test('Export buttons', function (assert) {
 
     assert.strictEqual(button.nodeName, 'g', 'Button is there');
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
         // Click it
-        $(button).click();
+        Highcharts.fireEvent(button, 'click');
+
         assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is posted');
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.HttpUtilities.post = originalPost;
     }
 });
 

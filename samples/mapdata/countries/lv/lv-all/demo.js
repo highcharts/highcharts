@@ -1,164 +1,83 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['lv-an', 0],
-    ['lv-jj', 1],
-    ['lv-vc', 2],
-    ['lv-r', 3],
-    ['lv-me', 4],
-    ['lv-jp', 5],
-    ['lv-jk', 6],
-    ['lv-sc', 7],
-    ['lv-ko', 8],
-    ['lv-ak', 9],
-    ['lv-sr', 10],
-    ['lv-og', 11],
-    ['lv-pl', 12],
-    ['lv-vt', 13],
-    ['lv-je', 14],
-    ['lv-oz', 15],
-    ['lv-rd', 16],
-    ['lv-vl', 17],
-    ['lv-ba', 18],
-    ['lv-zi', 19],
-    ['lv-dd', 20],
-    ['lv-lv', 21],
-    ['lv-rb', 22],
-    ['lv-kt', 23],
-    ['lv-se', 24],
-    ['lv-ad', 25],
-    ['lv-cr', 26],
-    ['lv-ga', 27],
-    ['lv-in', 28],
-    ['lv-br', 29],
-    ['lv-ju', 30],
-    ['lv-kg', 31],
-    ['lv-bd', 32],
-    ['lv-kk', 33],
-    ['lv-ol', 34],
-    ['lv-bb', 35],
-    ['lv-ml', 36],
-    ['lv-rp', 37],
-    ['lv-ss', 38],
-    ['lv-ik', 39],
-    ['lv-su', 40],
-    ['lv-sp', 41],
-    ['lv-am', 42],
-    ['lv-vm', 43],
-    ['lv-be', 44],
-    ['lv-er', 45],
-    ['lv-vr', 46],
-    ['lv-km', 47],
-    ['lv-lg', 48],
-    ['lv-bt', 49],
-    ['lv-na', 50],
-    ['lv-ce', 51],
-    ['lv-pg', 52],
-    ['lv-pu', 53],
-    ['lv-vb', 54],
-    ['lv-sm', 55],
-    ['lv-lu', 56],
-    ['lv-ci', 57],
-    ['lv-l', 58],
-    ['lv-vg', 59],
-    ['lv-bu', 60],
-    ['lv-dg', 61],
-    ['lv-lm', 62],
-    ['lv-gu', 63],
-    ['lv-ma', 64],
-    ['lv-bl', 65],
-    ['lv-ta', 66],
-    ['lv-jg', 67],
-    ['lv-tu', 68],
-    ['lv-jm', 69],
-    ['lv-mr', 70],
-    ['lv-lj', 71],
-    ['lv-vs', 72],
-    ['lv-kn', 73],
-    ['lv-kd', 74],
-    ['lv-au', 75],
-    ['lv-az', 76],
-    ['lv-pk', 77],
-    ['lv-rc', 78],
-    ['lv-gr', 79],
-    ['lv-ni', 80],
-    ['lv-as', 81],
-    ['lv-pt', 82],
-    ['lv-vn', 83],
-    ['lv-ne', 84],
-    ['lv-ka', 85],
-    ['lv-ag', 86],
-    ['lv-il', 87],
-    ['lv-aj', 88],
-    ['lv-en', 89],
-    ['lv-sl', 90],
-    ['lv-ap', 91],
-    ['lv-si', 92],
-    ['lv-ru', 93],
-    ['lv-rn', 94],
-    ['lv-kr', 95],
-    ['lv-vi', 96],
-    ['lv-sa', 97],
-    ['lv-al', 98],
-    ['lv-st', 99],
-    ['lv-rj', 100],
-    ['lv-do', 101],
-    ['lv-vd', 102],
-    ['lv-dn', 103],
-    ['lv-rr', 104],
-    ['lv-ll', 105],
-    ['lv-ie', 106],
-    ['lv-te', 107],
-    ['lv-vv', 108],
-    ['lv-pr', 109],
-    ['lv-cv', 110],
-    ['lv-ja', 111],
-    ['lv-lb', 112],
-    ['lv-mz', 113],
-    ['lv-dv', 114],
-    ['lv-rk', 115],
-    ['lv-vx', 116],
-    ['lv-sk', 117],
-    ['lv-dr', 118]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/lv/lv-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/lv/lv-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['lv-an', 10], ['lv-jj', 11], ['lv-vc', 12], ['lv-r', 13],
+        ['lv-me', 14], ['lv-jp', 15], ['lv-jk', 16], ['lv-sc', 17],
+        ['lv-ko', 18], ['lv-ak', 19], ['lv-sr', 20], ['lv-og', 21],
+        ['lv-pl', 22], ['lv-vt', 23], ['lv-je', 24], ['lv-oz', 25],
+        ['lv-rd', 26], ['lv-vl', 27], ['lv-ba', 28], ['lv-zi', 29],
+        ['lv-dd', 30], ['lv-lv', 31], ['lv-rb', 32], ['lv-kt', 33],
+        ['lv-se', 34], ['lv-ad', 35], ['lv-cr', 36], ['lv-ga', 37],
+        ['lv-in', 38], ['lv-br', 39], ['lv-ju', 40], ['lv-kg', 41],
+        ['lv-bd', 42], ['lv-kk', 43], ['lv-ol', 44], ['lv-bb', 45],
+        ['lv-ml', 46], ['lv-rp', 47], ['lv-ss', 48], ['lv-ik', 49],
+        ['lv-su', 50], ['lv-sp', 51], ['lv-am', 52], ['lv-vm', 53],
+        ['lv-be', 54], ['lv-er', 55], ['lv-vr', 56], ['lv-km', 57],
+        ['lv-lg', 58], ['lv-bt', 59], ['lv-na', 60], ['lv-ce', 61],
+        ['lv-pg', 62], ['lv-pu', 63], ['lv-vb', 64], ['lv-sm', 65],
+        ['lv-lu', 66], ['lv-ci', 67], ['lv-l', 68], ['lv-vg', 69],
+        ['lv-bu', 70], ['lv-dg', 71], ['lv-lm', 72], ['lv-gu', 73],
+        ['lv-ma', 74], ['lv-bl', 75], ['lv-ta', 76], ['lv-jg', 77],
+        ['lv-tu', 78], ['lv-jm', 79], ['lv-mr', 80], ['lv-lj', 81],
+        ['lv-vs', 82], ['lv-kn', 83], ['lv-kd', 84], ['lv-au', 85],
+        ['lv-az', 86], ['lv-pk', 87], ['lv-rc', 88], ['lv-gr', 89],
+        ['lv-ni', 90], ['lv-as', 91], ['lv-pt', 92], ['lv-vn', 93],
+        ['lv-ne', 94], ['lv-ka', 95], ['lv-ag', 96], ['lv-il', 97],
+        ['lv-aj', 98], ['lv-en', 99], ['lv-sl', 100], ['lv-ap', 101],
+        ['lv-si', 102], ['lv-ru', 103], ['lv-rn', 104], ['lv-kr', 105],
+        ['lv-vi', 106], ['lv-sa', 107], ['lv-al', 108], ['lv-st', 109],
+        ['lv-rj', 110], ['lv-do', 111], ['lv-vd', 112], ['lv-dn', 113],
+        ['lv-rr', 114], ['lv-ll', 115], ['lv-ie', 116], ['lv-te', 117],
+        ['lv-vv', 118], ['lv-pr', 119], ['lv-cv', 120], ['lv-ja', 121],
+        ['lv-lb', 122], ['lv-mz', 123], ['lv-dv', 124], ['lv-rk', 125],
+        ['lv-vx', 126], ['lv-sk', 127], ['lv-dr', 128]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lv/lv-all.js">Latvia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lv/lv-all.topo.json">Latvia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

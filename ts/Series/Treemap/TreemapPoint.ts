@@ -18,10 +18,13 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMapComposition';
+import type { DrawPointParams } from '../DrawPointUtilities';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+
+import DPU from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -43,6 +46,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import type TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,
@@ -55,7 +59,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
+class TreemapPoint extends ScatterPoint {
 
     /* *
      *
@@ -67,13 +71,15 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
 
     public name: string = void 0 as any;
 
-    public node: TreemapSeries.NodeObject = void 0 as any;
+    public node: TreemapNode = void 0 as any;
 
     public options: TreemapPointOptions = void 0 as any;
 
     public parent?: string;
 
     public series: TreemapSeries = void 0 as any;
+
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = 'rect';
 
     public sortIndex?: number;
 
@@ -87,8 +93,14 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
 
     /* eslint-disable valid-jsdoc */
 
+    public draw(
+        params: DrawPointParams
+    ): void {
+        DPU.draw(this, params);
+    }
+
     public getClassName(): string {
-        var className = Point.prototype.getClassName.call(this),
+        let className = Point.prototype.getClassName.call(this),
             series = this.series,
             options = series.options;
 
@@ -140,16 +152,14 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapPoint extends DrawPointMixin.DrawPoint {
-    draw: typeof DrawPointMixin.drawPoint;
+interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
     setVisible: PiePoint.prototype.setVisible
 });
 

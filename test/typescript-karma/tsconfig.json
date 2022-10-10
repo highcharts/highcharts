@@ -35,11 +35,7 @@
         "tsglobal.d.ts"
     ],
     "include": [
-        "**/tests.*"
-    ],
-    "references": [
-        {
-            "path": "../../ts"
-        }
+        "ts/**/*.ts",
+        "**/*.test.js",
     ]
 }

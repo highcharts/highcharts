@@ -2,49 +2,49 @@
     "Mac.Chrome": {
         "base": "BrowserStack",
         "browser": "chrome",
-        "browser_version": "88.0",
+        "browser_version": "103.0",
         "os": "OS X",
         "os_version": "Big Sur"
     },
     "Mac.Edge": {
         "base": "BrowserStack",
         "browser": "edge",
-        "browser_version": "87.0",
+        "browser_version": "101.0",
         "os": "OS X",
         "os_version": "Big Sur"
     },
     "Mac.Firefox": {
         "base": "BrowserStack",
         "browser": "firefox",
-        "browser_version": "84.0",
+        "browser_version": "99.0",
         "os": "OS X",
         "os_version": "Big Sur"
     },
     "Mac.Safari": {
         "base": "BrowserStack",
         "browser": "safari",
-        "browser_version": "14.0",
+        "browser_version": "14.1",
         "os": "OS X",
         "os_version": "Big Sur"
     },
     "Win.Chrome": {
         "base": "BrowserStack",
         "browser": "chrome",
-        "browser_version": "88.0",
+        "browser_version": "103.0",
         "os": "Windows",
         "os_version": "10"
     },
     "Win.Edge": {
         "base": "BrowserStack",
         "browser": "edge",
-        "browser_version": "87.0",
+        "browser_version": "101.0",
         "os": "Windows",
-        "os_version": "10"
+        "os_version": "11"
     },
     "Win.Firefox": {
         "base": "BrowserStack",
         "browser": "firefox",
-        "browser_version": "84.0",
+        "browser_version": "99.0",
         "os": "Windows",
         "os_version": "10"
     },

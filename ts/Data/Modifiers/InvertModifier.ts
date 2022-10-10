@@ -1,12 +1,14 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
  *
  * */
 
@@ -21,14 +23,9 @@
 import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
-import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    defined
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -38,6 +35,8 @@ const {
 
 /**
  * Inverts columns and rows in a table.
+ *
+ * @private
  */
 class InvertModifier extends DataModifier {
 
@@ -53,25 +52,6 @@ class InvertModifier extends DataModifier {
     public static readonly defaultOptions: InvertModifier.Options = {
         modifier: 'InvertModifier'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a invert modifier.
-     *
-     * @param {InvertModifier.ClassJSON} json
-     * Class JSON to convert to an instance of invert modifier.
-     *
-     * @return {InvertModifier}
-     * Series points modifier of the class JSON.
-     */
-    public static fromJSON(json: InvertModifier.ClassJSON): InvertModifier {
-        return new InvertModifier(json.options);
-    }
 
     /* *
      *
@@ -109,72 +89,283 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with inverted rows and columns.
+     * Applies partial modifications of a cell change to the property `modified`
+     * of the given modified table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {string} columnName
+     * Column name of changed cell.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index of changed cell.
+     *
+     * @param {Highcharts.DataTableCellType} cellValue
+     * Changed cell value.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyCell<T extends DataTable>(
+        table: T,
+        columnName: string,
+        rowIndex: number,
+        cellValue: DataTable.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const modified = table.modified,
+            modifiedRowIndex = modified.getRowIndexBy(
+                'columnNames',
+                columnName
+            );
+
+        if (typeof modifiedRowIndex === 'undefined') {
+            modified.setColumns(
+                this.modifyTable(table.clone()).getColumns(),
+                void 0,
+                eventDetail
+            );
+        } else {
+            modified.setCell(
+                `${rowIndex}`,
+                modifiedRowIndex,
+                cellValue,
+                eventDetail
+            );
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of column changes to the property
+     * `modified` of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Changed columns as a collection, where the keys are the column names.
+     *
+     * @param {number} [rowIndex=0]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyColumns<T extends DataTable>(
+        table: T,
+        columns: DataTable.ColumnCollection,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const modified = table.modified,
+            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+
+        let columnNames = table.getColumnNames(),
+            reset = (table.getRowCount() !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        if (reset) {
+            return this.modifyTable(table, eventDetail);
+        }
+
+        columnNames = Object.keys(columns);
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                column: DataTable.Column,
+                columnName: string,
+                modifiedRowIndex: (number|undefined);
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            column = columns[columnName];
+            modifiedRowIndex = (
+                modified.getRowIndexBy('columnNames', columnName) ||
+                modified.getRowCount()
+            );
+
+            for (
+                let j = 0,
+                    j2 = rowIndex,
+                    jEnd = column.length;
+                j < jEnd;
+                ++j, ++j2
+            ) {
+                modified.setCell(
+                    `${j2}`,
+                    modifiedRowIndex,
+                    column[j],
+                    eventDetail
+                );
+            }
+        }
+
+        return table;
+    }
+
+    /**
+     * Applies partial modifications of row changes to the property `modified`
+     * of the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Modified table.
+     *
+     * @param {Array<(Highcharts.DataTableRow|Highcharts.DataTableRowObject)>} rows
+     * Changed rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first changed row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Highcharts.DataTable}
+     * Table with `modified` property as a reference.
+     */
+    public modifyRows<T extends DataTable>(
+        table: T,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rowIndex: number,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): T {
+        const columnNames = table.getColumnNames(),
+            modified = table.modified,
+            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+
+        let reset = (table.getRowCount() !== modifiedColumnNames.length);
+
+        if (!reset) {
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (columnNames[i] !== modifiedColumnNames[i]) {
+                    reset = true;
+                    break;
+                }
+            }
+        }
+
+        if (reset) {
+            return this.modifyTable(table, eventDetail);
+        }
+
+        for (
+            let i = 0,
+                i2 = rowIndex,
+                iEnd = rows.length,
+                row: (DataTable.Row|DataTable.RowObject);
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            row = rows[i];
+
+            if (row instanceof Array) {
+                modified.setColumn(`${i2}`, row);
+            } else {
+                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    modified.setCell(
+                        `${i2}`,
+                        j,
+                        row[columnNames[j]],
+                        eventDetail
+                    );
+                }
+            }
+        }
+
+        return table;
+    }
+
+    /**
+     * Inverts rows and columns in the table.
      *
      * @param {DataTable} table
-     * Table to modify.
+     * Table to invert.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table with inverted `modified` property as a reference.
      */
-    public execute(
-        table: DataTable,
+    public modifyTable<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifier = this,
-            newTable = new DataTable(),
-            columns = table.getColumns(),
-            newRowIds = Object.keys(columns),
-            oldRowsLength = table.getRowCount();
+    ): T {
+        const modifier = this;
 
-        let oldRow: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            newRow: (DataTableRow|undefined),
-            rowCell: (DataTableRow.CellType|undefined);
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
+        const modified = table.modified;
 
-        for (let i = 0, iEnd = newRowIds.length; i < iEnd; i++) {
-            if (newRowIds[i] !== 'id') {
-                newCells = {
-                    id: newRowIds[i]
-                };
+        if (table.hasColumns(['columnNames'])) { // inverted table
+            const columnNames: Array<string> = (
+                    (table.deleteColumns(['columnNames']) || {})
+                        .columnNames || []
+                ).map(
+                    (column): string => `${column}`
+                ),
+                columns: DataTable.ColumnCollection = {};
 
-                for (let j = 0; j < oldRowsLength; j++) {
-                    oldRow = table.getRow(j);
-                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
-
-                    if (defined(rowCell) && oldRow && oldRow.id) {
-                        newCells[oldRow.id] = rowCell;
-                    }
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[columnNames[i]] = row;
                 }
-
-                newRow = new DataTableRow(newCells);
-                newTable.insertRow(newRow);
             }
+
+            modified.deleteColumns();
+            modified.setColumns(columns);
+
+        } else { // regular table
+            const columns: DataTable.ColumnCollection = {};
+
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[`${i}`] = row;
+                }
+            }
+            columns.columnNames = table.getColumnNames();
+
+            modified.deleteColumns();
+            modified.setColumns(columns);
         }
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
-        return newTable;
+        return table;
     }
 
-    /**
-     * Converts the invert modifier to a class JSON,
-     * including all containing all modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this invert modifier.
-     */
-    public toJSON(): InvertModifier.ClassJSON {
-        return {
-            $class: 'InvertModifier',
-            options: merge(this.options)
-        };
-    }
 }
 
 /* *
@@ -190,13 +381,6 @@ class InvertModifier extends DataModifier {
 namespace InvertModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -210,7 +394,6 @@ namespace InvertModifier {
  *
  * */
 
-DataJSON.addClass(InvertModifier);
 DataModifier.addModifier(InvertModifier);
 
 declare module './ModifierType' {

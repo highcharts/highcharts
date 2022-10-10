@@ -1,5 +1,5 @@
 /**
- * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highstock.
+ * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highcharts Stock.
  * It also shows custom graphics drawn in the chart area on chart load.
  */
 
@@ -14,7 +14,9 @@ function onChartLoad() {
         path = [],
         angle,
         radius,
-        badgeColor = Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.2).get(),
+        badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
+            .brighten(-0.2)
+            .get(),
         spike,
         empImage,
         big5,
@@ -478,8 +480,8 @@ const options = {
     }]
 };
 
-// Add flags for important milestones. This requires Highstock.
-if (Highcharts.seriesTypes.flags) {
+// Add flags for important milestones. This requires Highcharts Stock.
+if (Highcharts.Series.types.flags) {
     options.series.push({
         type: 'flags',
         name: 'Highmaps',
@@ -537,7 +539,7 @@ if (Highcharts.seriesTypes.flags) {
         },
         {
             x: Date.UTC(2011, 9, 18),
-            text: 'Highstock version 1.0 released',
+            text: 'Highcharts Stock version 1.0 released',
             title: 'Stock',
             shape: 'squarepin'
         },

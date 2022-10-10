@@ -1,5 +1,5 @@
 ---
- name: Alberta - Highmaps
- description: Highmaps demo
+ name: Alberta - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

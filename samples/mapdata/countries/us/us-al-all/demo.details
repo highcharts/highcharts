@@ -1,5 +1,5 @@
 ---
- name: Alabama - Highmaps
- description: Highmaps demo
+ name: Alabama - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

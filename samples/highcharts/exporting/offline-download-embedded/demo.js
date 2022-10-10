@@ -1,6 +1,6 @@
 var nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
+    isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
@@ -12,7 +12,7 @@ function addText(text) {
 
 function fallbackHandler(options) {
     if (isMSBrowser &&
-        !(options.type === 'image/svg+xml' && isEdgeBrowser) ||
+        !(options.type === 'image/svg+xml' && isOldEdgeBrowser) ||
         options.type === 'application/pdf') {
         addText(options.type + ' fell back on purpose');
     } else {
@@ -60,12 +60,12 @@ Highcharts.chart('container', {
         data: [29.9, 71.5, {
             y: 106.4,
             marker: {
-                symbol: 'url(http://upload.wikimedia.org/wikipedia/no/b/bc/Wiki.png)'
+                symbol: 'url(https://upload.wikimedia.org/wikipedia/no/b/bc/Wiki.png)'
             }
         }, 129.2, 144.0, 176.0, 135.6, {
             y: 126,
             marker: {
-                symbol: 'url(http://upload.wikimedia.org/wikipedia/no/b/bc/Wiki.png)'
+                symbol: 'url(https://upload.wikimedia.org/wikipedia/no/b/bc/Wiki.png)'
             }
         }, 148.5, 216.4, 194.1, 95.6, 54.4]
     }]

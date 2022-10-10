@@ -1,77 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['cn-3664', 0],
-    ['cn-gd', 1],
-    ['cn-sh', 2],
-    ['cn-zj', 3],
-    ['cn-ha', 4],
-    ['cn-xz', 5],
-    ['cn-yn', 6],
-    ['cn-ah', 7],
-    ['cn-hu', 8],
-    ['cn-sa', 9],
-    ['cn-cq', 10],
-    ['cn-gz', 11],
-    ['cn-hn', 12],
-    ['cn-sc', 13],
-    ['cn-sx', 14],
-    ['cn-he', 15],
-    ['cn-jx', 16],
-    ['cn-nm', 17],
-    ['cn-gx', 18],
-    ['cn-hl', 19],
-    ['cn-fj', 20],
-    ['cn-bj', 21],
-    ['cn-hb', 22],
-    ['cn-ln', 23],
-    ['cn-sd', 24],
-    ['cn-tj', 25],
-    ['cn-js', 26],
-    ['cn-qh', 27],
-    ['cn-gs', 28],
-    ['cn-xj', 29],
-    ['cn-jl', 30],
-    ['cn-nx', 31]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/cn/cn-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/cn/cn-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['cn-3664', 10], ['cn-gd', 11], ['cn-sh', 12], ['cn-zj', 13],
+        ['cn-ha', 14], ['cn-xz', 15], ['cn-yn', 16], ['cn-ah', 17],
+        ['cn-hu', 18], ['cn-sa', 19], ['cn-cq', 20], ['cn-gz', 21],
+        ['cn-hn', 22], ['cn-sc', 23], ['cn-sx', 24], ['cn-he', 25],
+        ['cn-jx', 26], ['cn-nm', 27], ['cn-gx', 28], ['cn-hl', 29],
+        ['cn-fj', 30], ['cn-bj', 31], ['cn-hb', 32], ['cn-ln', 33],
+        ['cn-sd', 34], ['cn-tj', 35], ['cn-js', 36], ['cn-qh', 37],
+        ['cn-gs', 38], ['cn-xj', 39], ['cn-jl', 40], ['cn-nx', 41]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/cn-all.js">China</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/cn-all.topo.json">China</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -21,6 +21,9 @@
 import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
+import Axis from '../../Core/Axis/Axis.js';
+import Chart from '../../Core/Chart/Chart.js';
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -29,6 +32,7 @@ const {
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
+import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -37,7 +41,8 @@ const {
     splat
 } = U;
 
-import '../../Core/Axis/TreeGridAxis.js';
+import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
+TreeGridAxis.compose(Axis, Chart, Series, Tick);
 import '../../Extensions/CurrentDateIndication.js';
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
@@ -79,9 +84,8 @@ class GanttSeries extends XRangeSeries {
                 '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: null as any,
             pointFormatter: function (this: GanttPoint): string {
-                var point = this,
+                let point = this,
                     series = point.series,
-                    tooltip = series.chart.tooltip,
                     xAxis = series.xAxis,
                     formats = series.tooltipOptions.dateTimeLabelFormats,
                     startOfWeek = xAxis.options.startOfWeek,
@@ -96,19 +100,23 @@ class GanttSeries extends XRangeSeries {
                     return point.tooltipFormatter(ttOptions.pointFormat);
                 }
 
-                if (!format) {
-                    format = splat(
-                        (tooltip as any).getDateFormat(
-                            xAxis.closestPointRange,
-                            point.start,
-                            startOfWeek,
-                            formats
-                        )
-                    )[0];
+                if (!format && isNumber(point.start)) {
+                    format = series.chart.time.getDateFormat(
+                        xAxis.closestPointRange,
+                        point.start,
+                        startOfWeek,
+                        formats || {}
+                    );
                 }
 
-                start = series.chart.time.dateFormat(format as any, point.start as any);
-                end = series.chart.time.dateFormat(format as any, point.end as any);
+                start = series.chart.time.dateFormat(
+                    format as any,
+                    point.start as any
+                );
+                end = series.chart.time.dateFormat(
+                    format as any,
+                    point.end as any
+                );
 
                 retVal += '<br/>';
 
@@ -135,11 +143,11 @@ class GanttSeries extends XRangeSeries {
                 symbol: 'arrow-filled',
                 radius: 4,
                 fill: '#fa0',
-                align: 'left' as 'left'
+                align: 'left' as const
             },
             endMarker: {
                 enabled: false, // Only show arrow on the dependent task
-                align: 'right' as 'right'
+                align: 'right' as const
             }
         }
     } as GanttSeriesOptions);
@@ -185,7 +193,7 @@ class GanttSeries extends XRangeSeries {
         point: GanttPoint,
         verb: string
     ): void {
-        var series = this,
+        let series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             shapeArgs: SVGAttributes = point.shapeArgs as any,
@@ -196,12 +204,16 @@ class GanttSeries extends XRangeSeries {
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (
+                isNumber(plotY) &&
+                point.y !== null &&
+                point.visible !== false
+            ) {
                 diamondShape = renderer.symbols.diamond(
-                    shapeArgs.x,
-                    shapeArgs.y,
-                    shapeArgs.width,
-                    shapeArgs.height
+                    shapeArgs.x || 0,
+                    shapeArgs.y || 0,
+                    shapeArgs.width || 0,
+                    shapeArgs.height || 0
                 );
 
                 if (graphic) {
@@ -233,7 +245,7 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        var series = this,
+        let series = this,
             shapeArgs: SVGAttributes,
             size: number;
 
@@ -241,9 +253,9 @@ class GanttSeries extends XRangeSeries {
 
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs as any;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size
@@ -257,7 +269,7 @@ class GanttSeries extends XRangeSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -266,9 +278,6 @@ interface GanttSeries{
     pointClass: typeof GanttPoint;
 }
 extend(GanttSeries.prototype, { // props - series member overrides
-
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
 
     pointArrayMap: ['start', 'end', 'y'],
 

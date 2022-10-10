@@ -12,7 +12,8 @@ var chart = Highcharts.chart('container', {
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+            148.5, 216.4, 194.1, 95.6, 54.4]
     }]
 });
 
@@ -21,7 +22,7 @@ var chart = Highcharts.chart('container', {
 // namespace to avoid conflicts with other chart properties.
 chart.myNamespace = {};
 chart.myNamespace.myButton = chart.renderer.button(
-    'button', 60, 10, function () {
+    'Custom button', 60, 10, function () {
         alert('Custom Button Pressed');
     }
 ).add();
@@ -44,6 +45,9 @@ Highcharts.extend(CustomComponent.prototype, {
                 role: 'button',
                 tabindex: -1
             });
+            Highcharts.A11yChartUtilities.unhideChartElementFromAT(
+                this.chart, namespace.myButton.element
+            );
         }
     },
 

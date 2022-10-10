@@ -24,9 +24,11 @@ import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -36,8 +38,8 @@ const {
     hasTouch,
     noop
 } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -66,6 +68,12 @@ declare module '../../Core/Series/SeriesLike' {
         pointXOffset?: number;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The column series type.
@@ -97,6 +105,8 @@ class ColumnSeries extends Series {
      *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
+     *
+     * @private
      */
     public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
@@ -390,7 +400,7 @@ class ColumnSeries extends Series {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -399,7 +409,7 @@ class ColumnSeries extends Series {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         },
 
@@ -474,7 +484,7 @@ class ColumnSeries extends Series {
          *
          * @private
          */
-        borderColor: palette.backgroundColor
+        borderColor: Palette.backgroundColor
 
     });
 
@@ -526,13 +536,15 @@ class ColumnSeries extends Series {
      *        Whether to initialize the animation or run it
      */
     public animate(init: boolean): void {
-        var series = this,
+        const series = this,
             yAxis = this.yAxis,
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp = inverted ? 'translateX' : 'translateY',
-            translateStart: number,
+            translateProp: 'translateX'|'translateY' = inverted ?
+                'translateX' :
+                'translateY';
+        let translateStart: number,
             translatedThreshold;
 
         if (init) {
@@ -548,7 +560,7 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highstock) (#7083)
+            // apply finnal clipping (used in Highcharts Stock) (#7083)
             // animation is done by scaleY, so cliping is for panes
             if (series.clipBox) {
                 series.setClip();
@@ -557,7 +569,7 @@ class ColumnSeries extends Series {
             series.group.attr(attr);
 
         } else { // run the animation
-            translateStart = series.group.attr(translateProp) as any;
+            translateStart = Number(series.group.attr(translateProp));
             series.group.animate(
                 { scaleY: 1 },
                 extend(animObject(series.options.animation), {
@@ -585,8 +597,9 @@ class ColumnSeries extends Series {
     public init(chart: Chart, options: ColumnSeriesOptions): void {
         super.init.apply(this, arguments as any);
 
-        var series = this,
-            chart = series.chart;
+        const series = this;
+
+        chart = series.chart;
 
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
@@ -605,10 +618,9 @@ class ColumnSeries extends Series {
      *
      * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
-     * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
-        var series = this,
+        const series = this,
             options = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -617,8 +629,8 @@ class ColumnSeries extends Series {
             // stacks
             reverseStacks = (xAxis.reversed && !reversedStacks) ||
             (!xAxis.reversed && reversedStacks),
-            stackKey,
-            stackGroups: Record<string, number> = {},
+            stackGroups: Record<string, number> = {};
+        let stackKey,
             columnCount = 0;
 
         // Get the total number of column type series. This is called on
@@ -628,20 +640,22 @@ class ColumnSeries extends Series {
             columnCount = 1;
         } else {
             series.chart.series.forEach(function (otherSeries): void {
-                var otherYAxis = otherSeries.yAxis,
-                    otherOptions = otherSeries.options,
-                    columnIndex;
+                const otherYAxis = otherSeries.yAxis,
+                    otherOptions = otherSeries.options;
+                let columnIndex;
 
                 if (otherSeries.type === series.type &&
-                    (otherSeries.visible ||
-                    !(
-                        series.chart.options.chart as any)
-                        .ignoreHiddenSeries
+                    (
+                        otherSeries.visible ||
+                        !series.chart.options.chart.ignoreHiddenSeries
                     ) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
-                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
+                    if (
+                        otherOptions.stacking &&
+                        otherOptions.stacking !== 'group'
+                    ) {
                         stackKey = otherSeries.stackKey;
                         if (
                             typeof stackGroups[stackKey as any] ===
@@ -658,7 +672,7 @@ class ColumnSeries extends Series {
             });
         }
 
-        var categoryWidth = Math.min(
+        const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
                     (xAxis.ordinal && xAxis.ordinal.slope) ||
                 options.pointRange ||
@@ -714,13 +728,11 @@ class ColumnSeries extends Series {
         w: number,
         h: number
     ): BBoxObject {
-        var chart = this.chart,
+        const chart = this.chart,
             borderWidth = this.borderWidth,
-            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
-            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
-            right,
-            bottom,
-            fromTop;
+            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
+        let right,
+            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
 
         if (chart.inverted && chart.renderer.isVML) {
             yCrisp += 1;
@@ -735,8 +747,8 @@ class ColumnSeries extends Series {
         }
 
         // Vertical
-        bottom = Math.round(y + h) + yCrisp;
-        fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+        const bottom = Math.round(y + h) + yCrisp,
+            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
         y = Math.round(y) + yCrisp;
         h = bottom - y;
 
@@ -784,41 +796,58 @@ class ColumnSeries extends Series {
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            let indexInCategory = 0;
-            let totalInCategory = 0;
+            const reversedStacks = this.yAxis.options.reversedStacks;
+            let indexInCategory = 0,
+                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
 
-            // Loop over all the stacks on the Y axis. When stacking is
-            // enabled, these are real point stacks. When stacking is not
-            // enabled, but `centerInCategory` is true, there is one stack
-            // handling the grouping of points in each category. This is
-            // done in the `setGroupedPoints` function.
+            // Loop over all the stacks on the Y axis. When stacking is enabled,
+            // these are real point stacks. When stacking is not enabled, but
+            // `centerInCategory` is true, there is one stack handling the
+            // grouping of points in each category. This is done in the
+            // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Record<string, Highcharts.StackItem>): void => {
+                (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[this.index as any],
-                                total = stackItem.total;
+                            const pointValues = stackItem.points[this.index];
 
-                            // If true `stacking` is enabled, count the
-                            // total number of non-null stacks in the
-                            // category, and note which index this point is
-                            // within those stacks.
+                            // If true `stacking` is enabled, count the total
+                            // number of non-null stacks in the category, and
+                            // note which index this point is within those
+                            // stacks.
                             if (stacking) {
                                 if (pointValues) {
                                     indexInCategory = totalInCategory;
                                 }
                                 if (stackItem.hasValidPoints) {
-                                    totalInCategory++;
+                                    reversedStacks ? // #16169
+                                        totalInCategory++ : totalInCategory--;
                                 }
 
-                            // If `stacking` is not enabled, look for the
-                            // index and total of the `group` stack.
+                            // If `stacking` is not enabled, look for the index
                             } else if (isArray(pointValues)) {
-                                indexInCategory = pointValues[1];
-                                totalInCategory = total || 0;
+                                // If there are multiple points with the same X
+                                // then gather all series in category, and
+                                // assign index
+                                let seriesIndexes = Object
+                                    .keys(stackItem.points)
+                                    .filter((pointKey): boolean =>
+                                        // Filter out duplicate X's
+                                        !pointKey.match(',') &&
+                                        // Filter out null points
+                                        stackItem.points[pointKey] &&
+                                        stackItem.points[pointKey].length > 1
+                                    )
+                                    .map(parseFloat)
+                                    .sort((a, b): number => b - a);
+
+                                indexInCategory = seriesIndexes.indexOf(
+                                    this.index
+                                );
+                                totalInCategory = seriesIndexes.length;
                             }
                         }
                     }
@@ -843,7 +872,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#translate
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             options = series.options,
             dense = series.dense =
@@ -860,12 +889,12 @@ class ColumnSeries extends Series {
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
-            // postprocessed for border width
-            seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
             seriesXOffset = series.pointXOffset = metrics.offset,
             dataMin = series.dataMin,
             dataMax = series.dataMax;
+        // postprocessed for border width
+        let seriesBarW = series.barW =
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         if (chart.inverted) {
             (translatedThreshold as any) -= 0.5; // #3355
@@ -883,9 +912,8 @@ class ColumnSeries extends Series {
 
         // Record the new values
         series.points.forEach(function (point): void {
-            var yBottom = pick(point.yBottom, translatedThreshold as any),
+            const yBottom = pick(point.yBottom, translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
-                pointWidth = seriesPointWidth,
                 plotX = point.plotX || 0,
                 // Don't draw too far outside plot area (#1303, #2241,
                 // #4264)
@@ -893,12 +921,13 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                ),
-                barX = plotX + seriesXOffset,
-                barW = seriesBarW,
+                );
+            let up,
                 barY = Math.min(plotY, yBottom),
-                up,
-                barH = Math.max(plotY, yBottom) - barY;
+                barH = Math.max(plotY, yBottom) - barY,
+                pointWidth = seriesPointWidth,
+                barX = plotX + seriesXOffset,
+                barW = seriesBarW;
 
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
@@ -946,7 +975,12 @@ class ColumnSeries extends Series {
 
             // Adjust for null or missing points
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
             }
 
             // Cache for access in polar
@@ -962,7 +996,7 @@ class ColumnSeries extends Series {
                         yAxis.pos - chart.plotLeft,
                         yAxis.len + yAxis.pos - chart.plotLeft
                     ),
-                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                    xAxis.len + xAxis.pos - chart.plotTop - barX - barW / 2,
                     barH
                 ] :
                 [
@@ -1013,28 +1047,26 @@ class ColumnSeries extends Series {
         point?: ColumnPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var options = this.options,
-            stateOptions: SeriesStateHoverOptions,
-            ret: SVGAttributes,
+        const options = this.options,
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
-            strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
+            strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+        let stateOptions: SeriesStateHoverOptions,
+            zone,
+            brightness,
             fill = (point && point.color) || this.color,
             // set to fill when borderColor null:
             stroke = (
                 (point && (point as any)[strokeOption]) ||
                 (options as any)[strokeOption] ||
-                this.color ||
                 fill
             ),
+            dashstyle =
+                (point && point.options.dashStyle) || options.dashStyle,
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            dashstyle =
-                (point && point.options.dashStyle) || options.dashStyle,
-            opacity = pick(point && point.opacity, options.opacity, 1),
-            zone,
-            brightness;
+            opacity = pick(point && point.opacity, options.opacity, 1);
 
         // Handle zone colors
         if (point && this.zones.length) {
@@ -1078,7 +1110,7 @@ class ColumnSeries extends Series {
             opacity = pick(stateOptions.opacity, opacity);
         }
 
-        ret = {
+        const ret: SVGAttributes = {
             fill: fill as any,
             stroke: stroke,
             'stroke-width': strokeWidth,
@@ -1100,18 +1132,18 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(): void {
-        var series = this,
+    public drawPoints(points: Array<ColumnPoint> = this.points): void {
+        const series = this,
             chart = this.chart,
             options = series.options,
             renderer = chart.renderer,
-            animationLimit = options.animationLimit || 250,
-            shapeArgs;
+            animationLimit = options.animationLimit || 250;
+        let shapeArgs;
 
         // draw the columns
-        series.points.forEach(function (point): void {
-            var plotY = point.plotY,
-                graphic = point.graphic,
+        points.forEach(function (point): void {
+            const plotY = point.plotY;
+            let graphic = point.graphic,
                 hasGraphic = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
@@ -1128,7 +1160,7 @@ class ColumnSeries extends Series {
                 // Set starting position for point sliding animation.
                 if (series.enabledDataSorting) {
                     point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? shapeArgs.width : 0) :
+                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
                         series.xAxis.width;
                 }
 
@@ -1197,19 +1229,19 @@ class ColumnSeries extends Series {
      * @private
      */
     public drawTracker(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                var point = pointer.getPointFromEvent(e);
+                const point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
                 if (typeof point !== 'undefined') {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
-            },
-            dataLabels;
+            };
+        let dataLabels;
 
         // Add reference to the point
         series.points.forEach(function (point): void {
@@ -1268,7 +1300,7 @@ class ColumnSeries extends Series {
      * @function Highcharts.seriesTypes.column#remove
      */
     public remove(): void {
-        var series = this,
+        const series = this,
             chart = series.chart;
 
         // column and bar series affects other series of the same type
@@ -1316,9 +1348,9 @@ extend(ColumnSeries.prototype, {
      * @param {Highcharts.Series|Highcharts.Point} item
      *        The series (this) or point
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
-    getSymbol: noop as any,
+    getSymbol: noop,
 
     // use separate negative stacks, unlike area stacks where a negative
     // point is substracted from previous (#1910)
@@ -1342,7 +1374,7 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
@@ -1513,4 +1545,4 @@ export default ColumnSeries;
  * @apioption series.column.states.select
  */
 
-''; // includes above doclets in transpilat
+''; // keeps doclets above in JS file

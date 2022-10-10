@@ -36,16 +36,16 @@ The data series has no `x`property set.
         label: 'Event label',
         description: 'Description of this event.'
     }, {
-        name: ‘Another date’,
-        label: ‘Another event label’,
-        description: ‘Description of second event’
+        name: 'Another date',
+        label: 'Another event label',
+        description: 'Description of second event'
     }] 
 
 ### Events tied to a datetime axis
 
-Set for each data point the n `x` property with a timestamp in milliseconds since 1970.
+To place events on a datetime axis, the `x` property can be set with a timestamp in milliseconds since 1970.
 
-Examples of data series:
+Example of data series:
 
     
     data: [{
@@ -56,8 +56,8 @@ Examples of data series:
     }, {
         x: 1526774400000,
         name: 'Event name',
-        label: ‘Another event label’,
-        description: ‘Description of second event’
+        label: 'Another event label',
+        description: 'Description of second event'
     }]
 
 _The demo below illustrates a timeline of space exploration. The demo shows even intervals_

@@ -86,9 +86,19 @@ QUnit.test('i18nFormat', function (assert) {
         'Indexing non-array 2'
     );
     assert.strictEqual(
+        Highcharts.i18nFormat('Test {substitute.arr[3]}', { substitute: { arr: [0, 1, 2, 3] } }),
+        'Test 3',
+        'Indexing nested array'
+    );
+    assert.strictEqual(
         Highcharts.i18nFormat('Test {#each(arr)}', { arr: [0, 1, 2, 3, 4, 5] }),
         'Test 012345',
         'Simple array each'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat('Test {#each(nested.arr)}', { nested: { arr: [0, 1, 2, 3, 4, 5] } }),
+        'Test 012345',
+        'Simple nested array each'
     );
     assert.strictEqual(
         Highcharts.i18nFormat('Test {!#each(arr)} {#each(arr)!}.', {
@@ -180,6 +190,11 @@ QUnit.test('i18nFormat', function (assert) {
         Highcharts.i18nFormat('Items: {#plural(num, many,)}.', { num: 1 }),
         'Items: .',
         'Plural conditional 7'
+    );
+    assert.strictEqual(
+        Highcharts.i18nFormat('Items: {#plural(nested.deep.arr.length, two, one)}.', { nested: { deep: { arr: [0] } } }),
+        'Items: one.',
+        'Plural nested'
     );
 });
 

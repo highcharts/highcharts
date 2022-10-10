@@ -1,5 +1,5 @@
 ---
- name: Innlandet - Highmaps
- description: Highmaps demo
+ name: Innlandet - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -59,23 +59,31 @@ var chart = Highcharts.chart('highcharts-container', {
         }
     },
     sonification: {
-        maxDuration: 1000000,
-        minPointDuration: 40,
-        mode: 'musical',
-        polyphonic: true,
-        waveType: 'sine',
-        maxPointDuration: 200,
-        startRampTime: 0.01,
-        endRampTime: 0.01,
-        maxFrequency: 1661.2187903197805,
-        minFrequency: 155.56349186104046
+        duration: 31000,
+        order: 'simultaneous',
+        masterVolume: 0.12,
+        defaultInstrumentOptions: {
+            instrument: 'sineMusical',
+            mapping: {
+                frequency: point => point.y,
+                duration: 210
+            }
+        },
+        events: {
+            onPointStart: (_, p) => p.onMouseOver()
+        }
     },
     plotOptions: {
         line: {
             step: 'center'
         },
         series: {
-            turboThreshold: 1000000
+            turboThreshold: 1000000,
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            }
         }
     },
 
@@ -98,29 +106,31 @@ var chart = Highcharts.chart('highcharts-container', {
             enableMouseTracking: false
         },
         {
-            sonification: {
-                waveType: 'sine',
-                showCursor: true
-            },
-
             data: highchartsData[0]
         },
         {
+            data: highchartsData[1],
             sonification: {
-                showCursor: true,
-                waveType: 'square',
-                pan: -0.2
-            },
-
-            data: highchartsData[1]
+                instruments: [{
+                    instrument: 'triangleMusical',
+                    mapping: {
+                        volume: 0.55,
+                        pan: -0.35
+                    }
+                }]
+            }
         },
         {
+            data: highchartsData[2],
             sonification: {
-                showCursor: true,
-                waveType: 'triangle',
-                pan: 0.2
-            },
-            data: highchartsData[2]
+                instruments: [{
+                    instrument: 'triangleMusical',
+                    mapping: {
+                        volume: 0.55,
+                        pan: 0.35
+                    }
+                }]
+            }
         }
     ],
     xAxis: [
@@ -134,6 +144,10 @@ var chart = Highcharts.chart('highcharts-container', {
                 style: {
                     color: '#afafaf'
                 }
+            },
+            crosshair: {
+                enabled: true,
+                color: 'rgba(255, 255, 255, 0.1)'
             }
         },
         {
@@ -196,19 +210,22 @@ var chart = Highcharts.chart('highcharts-container', {
 });
 
 function togglePlay() {
-    if (chart.series[1].isSonifying) {
+    const timeline = chart.sonification && chart.sonification.timeline;
+    const playing = Object.keys(timeline && timeline.pathsPlaying || {}).length;
+    if (playing) {
+        chart.cancelSonify();
         clearTimeout(chart.clickToPlayTimeout);
         clickToStart.style.display = '';
     } else {
         clickToStart.style.display = 'none';
         chart.clickToPlayTimeout = setTimeout(function () {
             clickToStart.style.display = '';
-        }, 39000);
+        }, 35000);
+        chart.sonify();
     }
-    chart.sonify();
 }
 
-if (Highcharts.supportsSonification) {
+if (window.AudioContext || window.webkitAudioContext) {
     clickToStart.onclick = snowman.onclick = togglePlay;
 } else {
     bubble.innerHTML = 'Your browser does not support audio';

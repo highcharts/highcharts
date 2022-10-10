@@ -13,7 +13,7 @@ QUnit.test(
                 }
             ]
         });
-        Highcharts.each(chart.series[0].data, function (p) {
+        chart.series[0].data.forEach(p => {
             p.update({ color: 'blue' });
         });
         assert.strictEqual(

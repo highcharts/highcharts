@@ -48,9 +48,7 @@ QUnit.test(
             range = period + Math.floor(period / 2 + 1);
 
         function toFastDPOWithRound(arr) {
-            return Highcharts.map(arr, function (point) {
-                return parseFloat(point.toFixed(4));
-            });
+            return arr.map(point => parseFloat(point.toFixed(4)));
         }
 
         assert.strictEqual(

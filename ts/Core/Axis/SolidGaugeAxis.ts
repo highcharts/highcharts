@@ -17,7 +17,7 @@
  * */
 
 import type SolidGaugePoint from '../../Series/SolidGauge/SolidGaugePoint';
-import type ColorAxis from './ColorAxis';
+import type ColorAxis from './Color/ColorAxis';
 import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
 import type RadialAxis from './RadialAxis';
@@ -35,7 +35,7 @@ const {
 /**
  * @private
  */
-interface SolidGaugeAxis extends RadialAxis {
+interface SolidGaugeAxis extends RadialAxis.AxisComposition {
     dataClasses: ColorAxis['dataClasses'];
     options: SolidGaugeAxis.Options;
     stops: ColorAxis['stops'];
@@ -85,7 +85,7 @@ namespace SolidGaugeAxis {
             this: SolidGaugeAxis,
             userOptions: ColorAxis.Options
         ): void {
-            var chart = this.chart,
+            let chart = this.chart,
                 dataClasses: Array<ColorAxis.DataClassesOptions>,
                 colorCounter = 0,
                 options = this.options;
@@ -96,7 +96,7 @@ namespace SolidGaugeAxis {
                 dataClass: ColorAxis.DataClassesOptions,
                 i: number
             ): void {
-                var colors: (Array<string>|undefined);
+                let colors: (Array<string>|undefined);
 
                 dataClass = merge(dataClass);
                 dataClasses.push(dataClass);
@@ -138,7 +138,7 @@ namespace SolidGaugeAxis {
             value: number,
             point: SolidGaugePoint
         ): (ColorType|undefined) {
-            var pos: number,
+            let pos: number,
                 stops = this.stops,
                 from: (number|GradientColor['stops'][0]|undefined),
                 to: (number|GradientColor['stops'][0]|undefined),
@@ -202,8 +202,8 @@ namespace SolidGaugeAxis {
     /**
      * @private
      */
-    export function init(axis: RadialAxis): void {
-        extend(axis, methods);
+    export function init(axis: RadialAxis.AxisComposition): void {
+        extend<SolidGaugeAxis|RadialAxis.AxisComposition>(axis, methods);
     }
 
 }

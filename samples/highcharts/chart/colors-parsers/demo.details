@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Torstein Hønsi
+ resources:
+   - 'https://cdn.jsdelivr.net/canvg/1.4.0/rgbcolor.min.js'
+ js_wrap: b
+...

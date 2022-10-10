@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Custom Map
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+...

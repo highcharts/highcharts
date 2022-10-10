@@ -8,11 +8,12 @@
 
 'use strict';
 
-const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     APOOptions,
     APOParamsOptions
@@ -20,8 +21,11 @@ import type {
 import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -45,10 +49,16 @@ const {
  * @augments Highcharts.Series
  */
 class APOIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Absolute Price Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
+     * be set and should be loaded after the `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/apo
      *         Absolute Price Oscillator
@@ -60,7 +70,6 @@ class APOIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/apo
      * @optionparent plotOptions.apo
      */
@@ -72,6 +81,7 @@ class APOIndicator extends EMAIndicator {
          * @excluding period
          */
         params: {
+            period: void 0, // unchangeable period, do not inherit (#15362)
             /**
              * Periods for Absolute Price Oscillator calculations.
              *
@@ -84,26 +94,27 @@ class APOIndicator extends EMAIndicator {
     } as APOOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<APOPoint> = void 0 as any;
     public options: APOOptions = void 0 as any;
     public points: Array<APOPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: APOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        var periods: Array<number> = (params.periods as any),
-            index: number = (params.index as any),
+        let periods: Array<number> = (params.periods as number[]),
+            index: number = (params.index as number),
             // 0- date, 1- Absolute price oscillator
             APO: Array<Array<number>> = [],
             xData: Array<number> = [],
@@ -165,28 +176,13 @@ class APOIndicator extends EMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    public init(this: APOIndicator): void {
-        var args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface APOIndicator {
     nameBase: string;
@@ -221,6 +217,12 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
 
 export default APOIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * An `Absolute Price Oscillator` series. If the [type](#series.apo.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
@@ -232,7 +234,6 @@ export default APOIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/apo
  * @apioption series.apo
  */

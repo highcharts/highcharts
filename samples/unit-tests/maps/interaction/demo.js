@@ -1,7 +1,7 @@
 QUnit.test('Hover color', function (assert) {
     // Cache names from Boost module
-    var colorNames = Highcharts.Color.prototype.names;
-    Highcharts.Color.prototype.names = {};
+    var colorNames = Highcharts.Color.names;
+    Highcharts.Color.names = {};
 
     var chart = Highcharts.mapChart('container', {
             series: [
@@ -54,5 +54,5 @@ QUnit.test('Hover color', function (assert) {
     );
 
     // Reset
-    Highcharts.Color.prototype.names = colorNames;
+    Highcharts.Color.names = colorNames;
 });

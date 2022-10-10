@@ -19,7 +19,7 @@
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
 
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -134,7 +134,7 @@ class ParetoSeries extends LineSeries {
         sum: number,
         isSum?: T
     ): (T extends true ? number : Array<Array<number>>) {
-        var sumY = 0,
+        let sumY = 0,
             sumPercent = 0,
             percentPoints: Array<Array<number>> = [],
             percentPoint: (number | undefined);
@@ -167,7 +167,7 @@ class ParetoSeries extends LineSeries {
      * @requires modules/pareto
      */
     public setDerivedData(): void {
-        var xValues = (this.baseSeries as any).xData,
+        const xValues = (this.baseSeries as any).xData,
             yValues = (this.baseSeries as any).yData,
             sum = this.sumPointsPercents(
                 yValues,
@@ -189,33 +189,16 @@ class ParetoSeries extends LineSeries {
  *
  * */
 
-interface ParetoSeries {
-    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
-
-    addEvents: typeof DerivedSeriesMixin['addEvents'];
-
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-
-    init: typeof DerivedSeriesMixin['init'];
-
+interface ParetoSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof ParetoPoint;
-
-    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
-
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-
-    initialised: Highcharts.DerivedSeries['initialised'];
 }
 
 extend(ParetoSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
-}
-);
+    hasDerivedData: DerivedComposition.hasDerivedData
+});
+
+DerivedComposition.compose(ParetoSeries);
+
 
 /* *
  *

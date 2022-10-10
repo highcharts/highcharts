@@ -1,0 +1,24 @@
+.selectors-container {
+    background: #f2f2f2;
+    margin-bottom: 1rem;
+    font-size: 0;
+}
+
+.selectors-container .col {
+    font-size: 1.2rem;
+    width: calc(50% - 1em);
+    padding: 0.5em;
+    display: inline-block;
+}
+
+.selectors-container select {
+    width: 100%;
+    font-size: 16px; /* prevent page zoom in iOS */
+}
+
+@media (max-width: 768px) {
+    .selectors-container .col {
+        display: block;
+        width: calc(100% - 1em);
+    }
+}

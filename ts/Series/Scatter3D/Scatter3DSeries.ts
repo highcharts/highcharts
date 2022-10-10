@@ -20,7 +20,7 @@
 
 import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { pointCameraDistance } = Math3D;
 import Scatter3DPoint from './Scatter3DPoint.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
@@ -101,7 +101,7 @@ class Scatter3DSeries extends ScatterSeries {
      * */
 
     public pointAttribs(point: Scatter3DPoint): SVGAttributes {
-        var attribs = super.pointAttribs.apply(this, arguments);
+        const attribs = super.pointAttribs.apply(this, arguments);
 
         if (this.chart.is3d() && point) {
             attribs.zIndex =
@@ -114,7 +114,7 @@ class Scatter3DSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

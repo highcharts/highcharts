@@ -15,8 +15,15 @@
  * */
 
 export interface DataExtremesObject {
+    activeYData?: Array<number>;
     dataMin?: number;
     dataMax?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataExtremesObject;

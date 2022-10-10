@@ -10,17 +10,20 @@
 import type Chart from '../../Core/Chart/Chart';
 import type DataPlotOptions from './DataPlotOptions';
 import type DataPointOptions from './DataPointOptions';
+import type DataPromise from '../DataPromise';
 import type DataSeriesOptions from './DataSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Time from '../../Core/Time';
 
 import CS from '../../Core/Series/Series.js';
 import DataPoint from './DataPoint.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import D from '../../Core/DefaultOptions.js';
+const { defaultTime } = D;
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SortModifier from '../Modifiers/SortModifier.js';
 import U from '../../Core/Utilities.js';
@@ -58,11 +61,140 @@ class DataSeries {
      *
      * */
 
-    public static readonly getSeriesOptionsFromTable = CS.getSeriesOptionsFromTable;
+    /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @private
+     *
+     * @param {DataTable} table
+     * Table to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from table rows.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    public static getSeriesOptionsFromTable(
+        table: DataTable,
+        keys?: Array<string>
+    ): DataSeriesOptions {
+        const rows = table.getRowObjects(),
+            data: Array<DataPointOptions> = [];
 
-    public static readonly getTableFromSeriesOptions = CS.getTableFromSeriesOptions;
+        let pointStart: (number|undefined);
 
-    public static readonly increment = CS.increment;
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (i === 0) {
+                pointStart = (
+                    parseInt(rows[i][keys && keys[0] || 'x'] as string, 10) ||
+                    void 0
+                );
+            }
+            data.push(DataPoint.getPointOptionsFromTableRow(rows[i]) || {});
+        }
+
+        return {
+            data,
+            id: table.id,
+            keys,
+            pointStart,
+            type: 'data'
+        };
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @private
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableFromSeriesOptions(
+        seriesOptions: DataSeriesOptions
+    ): DataTable {
+        const table = new DataTable(void 0, seriesOptions.id),
+            data = (seriesOptions.data || []);
+
+        let keys = (seriesOptions.keys || []),
+            x = (seriesOptions.pointStart || 0);
+
+        if (
+            !keys.length &&
+            seriesOptions.type
+        ) {
+            const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
+            keys = (
+                seriesClass &&
+                seriesClass.prototype.pointArrayMap ||
+                []
+            );
+        }
+
+        if (!keys.length) {
+            keys = ['y'];
+        }
+
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+            table.setRow(
+                DataPoint.getTableRowFromPointOptions(data[i], keys, x)
+            );
+            x = DataSeries.increment(x, seriesOptions);
+        }
+
+        return table;
+    }
+
+    // eslint-disable-next-line valid-jsdoc
+    /** @private */
+    public static increment(
+        value: number,
+        options: DataPlotOptions = { },
+        time: Time = defaultTime
+    ): number {
+        const intervalUnit = options.pointIntervalUnit;
+
+        let interval = pick(options.pointInterval, 1);
+
+        // Added code for pointInterval strings
+        if (intervalUnit) {
+            const date = new time.Date(value);
+
+            switch (intervalUnit) {
+                case 'day':
+                    time.set(
+                        'Date',
+                        date,
+                        time.get('Date', date) + interval
+                    );
+                    break;
+                case 'month':
+                    time.set(
+                        'Month',
+                        date,
+                        time.get('Month', date) + interval
+                    );
+                    break;
+                case 'year':
+                    time.set(
+                        'FullYear',
+                        date,
+                        time.get('FullYear', date) + interval
+                    );
+                    break;
+                default:
+            }
+
+            interval = date.getTime() - value;
+
+        }
+
+        return value + interval;
+    }
 
     /* *
      *
@@ -230,7 +362,7 @@ class DataSeries {
                 translateY: chart.plotTop,
                 scaleX: 1,
                 scaleY: 1,
-                visibility: series.visible,
+                visibility: series.visible ? 'visible' : 'hidden',
                 zIndex
             };
 
@@ -312,7 +444,8 @@ class DataSeries {
 
         series.setTable(DataSeries.getTableFromSeriesOptions({
             data: data as any,
-            keys: series.pointArrayMap
+            keys: series.pointArrayMap,
+            type: 'data'
         }));
     }
 
@@ -364,8 +497,8 @@ class DataSeries {
             pointsToKeep: Array<PointType> = [],
             seriesData = series.data,
             seriesDataLength = seriesData.length,
-            tableRows = table.getAllRows(),
-            tableRowsLength = tableRows.length,
+            tableIds = table.getColumnAsNumbers('id', true) || [],
+            tableIdsLength = tableIds.length,
             PointClass = series.pointClass;
 
         if (series.table === table) {
@@ -373,64 +506,66 @@ class DataSeries {
         }
 
         if (dataSorting && dataSorting.enabled) {
-            table = (
-                new SortModifier({
-                    orderByColumn: series.pointArrayMap[0],
-                    orderInColumn: 'x'
-                })
-            ).execute(table);
+            table = (new SortModifier({
+                orderByColumn: series.pointArrayMap[0],
+                orderInColumn: 'x'
+            })).modifyTable(table);
         }
 
         series.destroyTableListeners();
 
         series.table = table;
         series.tableListeners.push(
-            table.on('afterInsertRow', function (
+            table.on('afterSetRows', function (
                 this: DataTable,
-                e: DataTable.EventObject
+                e: DataTable.Event
             ): void {
-                if (e.type === 'afterInsertRow') {
+                if (e.type === 'afterSetRows') {
                     const {
-                            index,
-                            row
-                        } = e,
-                        point = new PointClass(series, row, index);
+                        rowIndex,
+                        rows
+                    } = e;
 
-                    if (index >= seriesData.length) {
-                        seriesData[index] = point;
-                    } else {
-                        seriesData.splice(index, 0, point);
+                    let currentIndex = rowIndex,
+                        point: DataPoint;
+
+                    for (const row of rows || []) {
+                        point = new PointClass(series, rows, currentIndex++);
+
+                        if (currentIndex >= seriesData.length) {
+                            seriesData[currentIndex] = point;
+                        } else {
+                            seriesData.splice(currentIndex, 0, point);
+                        }
                     }
                 }
             }),
-            table.on('afterDeleteRow', function (
+            table.on('afterDeleteRows', function (
                 this: DataTable,
-                e: DataTable.EventObject
+                e: DataTable.Event
             ): void {
-                if (e.type === 'afterUpdateRow') {
-                    const index = e.index;
-                    seriesData.splice(index, 1);
+                if (e.type === 'afterDeleteRows') {
+                    seriesData.splice(e.rowIndex, e.rowCount);
                 }
             })
         );
 
         for (
             let i = 0,
-                iEnd = tableRowsLength,
+                iEnd = tableIdsLength,
                 point: (PointType|null),
-                pointTableRow: DataTableRow,
-                tableRow: DataTableRow;
+                pointTableRow: DataTable.RowObject,
+                id: number;
             i < iEnd;
             ++i
         ) {
             point = seriesData[i];
-            tableRow = tableRows[i];
+            id = tableIds[i];
 
-            if (!tableRow.autoId) {
+            if (!table.autoId) {
                 for (
                     let j = 0,
-                        jEnd = seriesData.length,
-                        id = tableRow.id;
+                        jEnd = seriesData.length;
 
                     j < jEnd;
 
@@ -449,7 +584,7 @@ class DataSeries {
                 }
             }
 
-            if (tableRow.isNull()) {
+            if (isNaN(id)) {
                 if (point) {
                     point.destroy();
                     point = null;
@@ -457,13 +592,20 @@ class DataSeries {
                 seriesData[i] = null;
             } else if (point) {
                 pointTableRow = point.tableRow;
-                if (pointTableRow.id !== tableRow.id) {
-                    point.setTableRow(tableRow);
-                } else if (pointTableRow !== tableRow) {
-                    pointTableRow.setCells(tableRow.getAllCells());
+                if (pointTableRow.id !== id) {
+                    point.setTableRow(
+                        table.getRowObject(
+                            table.getRowIndexBy('id', id) || i
+                        ) ||
+                        {}
+                    );
                 }
             } else {
-                point = new PointClass(series, tableRow, i);
+                point = new PointClass(
+                    series,
+                    table.getRowObject(table.getRowIndexBy('id', id) || i),
+                    i
+                );
                 seriesData[i] = point;
             }
             if (point) {
@@ -471,7 +613,7 @@ class DataSeries {
             }
         }
 
-        if (seriesDataLength > tableRowsLength) {
+        if (seriesDataLength > tableIdsLength) {
             for (
                 let i = 0,
                     iEnd = seriesDataLength,
@@ -540,7 +682,7 @@ class DataSeries {
 interface DataSeries {
     axisTypes: Array<string>;
     bindAxes: typeof CS.prototype.bindAxes;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     insert: typeof CS.prototype.insert;
     is: typeof CS.prototype.is;
     parallelArrays: Array<string>;
@@ -552,7 +694,7 @@ interface DataSeries {
 extend(DataSeries.prototype, {
     axisTypes: [],
     bindAxes: CS.prototype.bindAxes,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     insert: CS.prototype.insert,
     is: CS.prototype.is,
     parallelArrays: [],

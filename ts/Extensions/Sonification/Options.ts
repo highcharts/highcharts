@@ -12,23 +12,39 @@
 
 'use strict';
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        sonification?: Highcharts.SeriesSonificationOptions;
+/* *
+ *
+ * Imports
+ *
+ * */
+
+import type ChartSonify from './ChartSonify';
+import type SeriesSonify from './SeriesSonify';
+
+/* *
+ *
+ * Declarations
+ *
+ * */
+
+declare module '../../Core/Options'{
+    interface Options {
+        sonification?: ChartSonify.ChartSonificationOptions;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            sonification?: ChartSonificationOptions;
-        }
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        sonification?: SeriesSonify.SeriesSonificationOptions;
     }
 }
+
+/* *
+ *
+ * Constants
+ *
+ * */
+
 
 // Experimental, disabled by default, not exposed in API
 const options = {
@@ -51,5 +67,11 @@ const options = {
         }
     }
 };
+
+/* *
+ *
+ * Default Export
+ *
+ * */
 
 export default options;

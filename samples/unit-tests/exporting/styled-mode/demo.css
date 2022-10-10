@@ -1,4 +1,10 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#container {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
 
 .highcharts-yaxis-labels {
     filter: url(#glow);

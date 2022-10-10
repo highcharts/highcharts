@@ -21,7 +21,7 @@ export interface SizeObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

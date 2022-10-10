@@ -15,7 +15,9 @@ import type PointShortOptions from '../../Core/Series/PointOptions';
  * */
 
 export interface DataSeriesOptions extends DataPlotOptions {
+    id?: string;
     data?: Array<(DataPointOptions|PointShortOptions)>;
+    pointStart?: number;
     type: 'data';
 }
 

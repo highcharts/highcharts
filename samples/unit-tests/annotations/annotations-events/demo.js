@@ -2,6 +2,8 @@ QUnit.test('Annotations events - general', function (assert) {
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
+        closeEventCalled = 0,
+        circleAfterUpdateCalled = 0,
         popupOptions,
         getShapes = function () {
             return [
@@ -43,6 +45,7 @@ QUnit.test('Annotations events - general', function (assert) {
                     }
                 },
                 {
+                    type: 'basicAnnotation',
                     shapes: [
                         {
                             type: 'circle',
@@ -54,13 +57,21 @@ QUnit.test('Annotations events - general', function (assert) {
                             },
                             r: 10
                         }
-                    ]
+                    ],
+                    events: {
+                        afterUpdate: function () {
+                            circleAfterUpdateCalled++;
+                        }
+                    }
                 }
             ],
             navigation: {
                 events: {
                     showPopup: function (event) {
                         popupOptions = event.options;
+                    },
+                    closePopup: function () {
+                        closeEventCalled++;
                     }
                 }
             },
@@ -85,6 +96,17 @@ QUnit.test('Annotations events - general', function (assert) {
         annotation = chart.annotations[0],
         point = chart.series[0].points[2],
         controller = new TestController(chart);
+
+    const controlPoint = chart.annotations[1].shapes[0].controlPoints[0];
+
+    Highcharts.fireEvent(controlPoint.graphic.element, 'mousedown');
+    Highcharts.fireEvent(controlPoint.graphic.element, 'mouseup');
+
+    assert.strictEqual(
+        circleAfterUpdateCalled,
+        1,
+        '#15952: afterUpdate event should fire when clicking control point'
+    );
 
     assert.strictEqual(
         addEventCalled,
@@ -178,8 +200,14 @@ QUnit.test('Annotations events - general', function (assert) {
                     strokeWidth: [1, 'number']
                 }
             ],
-            type: 'circle'
+            type: 'basicAnnotation'
         },
         "Annotations' popup should get correct config for fields (#11716)"
+    );
+
+    chart.navigationBindings.activeAnnotation.setVisibility();
+    assert.ok(
+        closeEventCalled,
+        '#15730: Popup should close when hiding annotation'
     );
 });

@@ -45,7 +45,7 @@ export interface PointTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

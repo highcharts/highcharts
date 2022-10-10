@@ -5,6 +5,8 @@ The accessibility of Highcharts is critical to us. Accessibility should be funda
 
 We recommend to always include the accessibility module, unless there is an explicit reason not to do so. Including this module will make your charts compatible with assistive technologies used by people with disabilities, and also improve the usability of your charts, helping you reach a broader audience. Including the Accessibility module will also help with SEO by making your charts more visible to web crawlers.
 
+Visit our [accessibility portal](https://www.highcharts.com/accessibility/) to learn more about Highcharts' accessibility features.
+
 Getting started with accessibility
 ----------------------------------
 *Read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart).*
@@ -18,8 +20,8 @@ To include the accessibility module, simply include the following file after inc
 We also recommend including the exporting and export-data modules. This lets users download the chart for use with e.g. tactile printers, as well as viewing the chart as a data table. These modules should be loaded before the Accessibility module.
 
 ```html
-<script src="https://code.highcharts.com/modules/exporting.js"></script>  
-<script src="https://code.highcharts.com/modules/export-data.js"></script>  
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 ```
 

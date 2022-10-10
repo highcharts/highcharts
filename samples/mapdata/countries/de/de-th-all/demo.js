@@ -1,68 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['de-th-16062000', 0],
-    ['de-th-16055000', 1],
-    ['de-th-16064000', 2],
-    ['de-th-16054000', 3],
-    ['de-th-16070000', 4],
-    ['de-th-16051000', 5],
-    ['de-th-16071000', 6],
-    ['de-th-16074000', 7],
-    ['de-th-16052000', 8],
-    ['de-th-16056000', 9],
-    ['de-th-16075000', 10],
-    ['de-th-16069000', 11],
-    ['de-th-16068000', 12],
-    ['de-th-16067000', 13],
-    ['de-th-16053000', 14],
-    ['de-th-16076000', 15],
-    ['de-th-16065000', 16],
-    ['de-th-16073000', 17],
-    ['de-th-16061000', 18],
-    ['de-th-16077000', 19],
-    ['de-th-16063000', 20],
-    ['de-th-16072000', 21],
-    ['de-th-16066000', 22]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/de/de-th-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/de/de-th-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['de-th-16062000', 10], ['de-th-16055000', 11], ['de-th-16064000', 12],
+        ['de-th-16054000', 13], ['de-th-16070000', 14], ['de-th-16051000', 15],
+        ['de-th-16071000', 16], ['de-th-16074000', 17], ['de-th-16052000', 18],
+        ['de-th-16056000', 19], ['de-th-16075000', 20], ['de-th-16069000', 21],
+        ['de-th-16068000', 22], ['de-th-16067000', 23], ['de-th-16053000', 24],
+        ['de-th-16076000', 25], ['de-th-16065000', 26], ['de-th-16073000', 27],
+        ['de-th-16061000', 28], ['de-th-16077000', 29], ['de-th-16063000', 30],
+        ['de-th-16072000', 31], ['de-th-16066000', 32]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-th-all.js">Thüringen</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-th-all.topo.json">Thüringen</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

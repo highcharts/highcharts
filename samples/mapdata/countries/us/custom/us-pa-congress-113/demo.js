@@ -1,63 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['us-pa-18', 0],
-    ['us-pa-01', 1],
-    ['us-pa-13', 2],
-    ['us-pa-08', 3],
-    ['us-pa-07', 4],
-    ['us-pa-02', 5],
-    ['us-pa-03', 6],
-    ['us-pa-05', 7],
-    ['us-pa-10', 8],
-    ['us-pa-04', 9],
-    ['us-pa-17', 10],
-    ['us-pa-06', 11],
-    ['us-pa-14', 12],
-    ['us-pa-16', 13],
-    ['us-pa-11', 14],
-    ['us-pa-09', 15],
-    ['us-pa-15', 16],
-    ['us-pa-12', 17]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/us/custom/us-pa-congress-113'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/custom/us-pa-congress-113.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['us-pa-18', 10], ['us-pa-01', 11], ['us-pa-13', 12], ['us-pa-08', 13],
+        ['us-pa-07', 14], ['us-pa-02', 15], ['us-pa-03', 16], ['us-pa-05', 17],
+        ['us-pa-10', 18], ['us-pa-04', 19], ['us-pa-17', 20], ['us-pa-06', 21],
+        ['us-pa-14', 22], ['us-pa-16', 23], ['us-pa-11', 24], ['us-pa-09', 25],
+        ['us-pa-15', 26], ['us-pa-12', 27]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-pa-congress-113.js">Pennsylvania congressional districts</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-pa-congress-113.topo.json">Pennsylvania congressional districts</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

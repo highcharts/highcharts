@@ -1,6 +1,6 @@
 // Test both, ordinal and non-ordinal axes:
-Highcharts.each([true, false], function (ordinal) {
-    // Highstock modifies "series" property, so use separate object each time:
+[true, false].forEach(ordinal => {
+    // Highcharts Stock modifies "series" property, so use separate object each time:
     function getOptions() {
         return {
             chart: {
@@ -84,7 +84,7 @@ Highcharts.each([true, false], function (ordinal) {
                 xAxis.max - xAxis.min,
                 xAxis.series[0].options.data.length -
                     1 +
-                    options.xAxis[0].overscroll,
+                    xAxis.options.overscroll,
                 'Correct range with ALL'
             );
         }
@@ -168,7 +168,7 @@ Highcharts.each([true, false], function (ordinal) {
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
-                xAxis.dataMax + options.xAxis[0].overscroll,
+                xAxis.dataMax + xAxis.options.overscroll,
                 'Correct range with ALL'
             );
         }

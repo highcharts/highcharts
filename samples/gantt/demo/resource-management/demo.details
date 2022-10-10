@@ -6,5 +6,6 @@ authors:
 tags:
   - Highcharts Gantt demo
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 10
 ...

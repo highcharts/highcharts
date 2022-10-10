@@ -1,4 +1,4 @@
-QUnit.test('Drilldown with Highstock (#5764)', function (assert) {
+QUnit.test('Drilldown with Highcharts Stock (#5764)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'

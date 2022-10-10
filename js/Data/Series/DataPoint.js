@@ -1,10 +1,41 @@
 /* eslint-disable brace-style */
 /* eslint-disable no-console */
 /* eslint-disable no-invalid-this */
-import CP from '../../Core/Series/Point.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
+/* *
+ *
+ *  Functions
+ *
+ * */
+/**
+ * Reconstructs object keys in dot syntax to tree-like objects.
+ * @private
+ */
+function tree(flatObj) {
+    var obj = {};
+    Object
+        .getOwnPropertyNames(flatObj)
+        .forEach(function (name) {
+        if (name.indexOf('.') === -1) {
+            if (flatObj[name] instanceof Array) {
+                obj[name] = flatObj[name].map(tree);
+            }
+            else {
+                obj[name] = flatObj[name];
+            }
+        }
+        else {
+            var subNames = name.split('.'), subObj = subNames
+                .slice(0, -1)
+                .reduce(function (subObj, subName) {
+                return (subObj[subName] = (subObj[subName] || {}));
+            }, obj);
+            subObj[(subNames.pop() || '')] = flatObj[name];
+        }
+    });
+    return obj;
+}
 /* *
  *
  *  Class
@@ -20,16 +51,83 @@ var DataPoint = /** @class */ (function () {
         console.log('DataPoint.constructor');
         this.options = { x: x };
         this.series = series;
-        this.tableRow = DataTableRow.NULL;
+        this.tableRow = {};
         if (data) {
-            if (data instanceof DataTableRow) {
-                this.setTableRow(data);
-            }
-            else {
-                this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
-            }
+            this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
         }
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    DataPoint.getPointOptionsFromTableRow = function (tableRow) {
+        return tree(tableRow);
+    };
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    DataPoint.getTableRowFromPointOptions = function (pointOptions, keys, x) {
+        var _a;
+        if (keys === void 0) { keys = ['y']; }
+        if (x === void 0) { x = 0; }
+        var tableRow;
+        keys = keys.slice();
+        // Array
+        if (pointOptions instanceof Array) {
+            tableRow = {};
+            if (pointOptions.length > keys.length) {
+                keys.unshift(typeof pointOptions[0] === 'string' ?
+                    'name' :
+                    'x');
+            }
+            for (var i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRow[keys[i] || "".concat(i)] = pointOptions[i];
+            }
+            // Object
+        }
+        else if (typeof pointOptions === 'object') {
+            if (pointOptions === null) {
+                tableRow = {};
+            }
+            else {
+                tableRow = tree(pointOptions);
+            }
+            // Primitive
+        }
+        else {
+            tableRow = (_a = {
+                    x: x
+                },
+                _a[keys[0] || 'y'] = pointOptions,
+                _a);
+        }
+        return tableRow;
+    };
     /* *
      *
      *  Functions
@@ -38,7 +136,7 @@ var DataPoint = /** @class */ (function () {
     DataPoint.prototype.destroy = function () {
         console.log('DataPoint.destroy');
         var point = this;
-        point.tableRow = DataTableRow.NULL;
+        point.tableRow = {};
         if (point.tableRowListener) {
             point.tableRowListener();
         }
@@ -50,7 +148,7 @@ var DataPoint = /** @class */ (function () {
             point.graphic.destroy();
         }
         point.graphic = parent.renderer
-            .rect(tableRow.getCellAsNumber('x') * 10, tableRow.getCellAsNumber(valueKey) * 10, 1, 1)
+            .rect(tableRow['x'] * 10, tableRow[valueKey] * 10, 1, 1)
             .addClass('highcharts-data-point')
             .attr({
             fill: '#333',
@@ -68,20 +166,29 @@ var DataPoint = /** @class */ (function () {
                 point.tableRowListener();
             }
             point.tableRow = tableRow;
-            point.tableRowListener = tableRow.on('afterChangeRow', function () {
-                point.update(DataPoint.getPointOptionsFromTableRow(this, series.options.keys || series.pointArrayMap) || {}, false, false);
-                series.isDirty = true;
-                series.isDirtyData = true;
-                // POC by Torstein
-                if (typeof chart.redrawTimer === 'undefined') {
-                    chart.redrawTimer = setTimeout(function () {
-                        chart.redrawTimer = void 0;
-                        chart.redraw();
-                    });
-                }
-            });
+            // point.tableRowListener = tableRow.on('afterChangeRow', function (
+            //     this: DataTableRow
+            // ): void {
+            //     point.update(
+            //         DataPoint.getPointOptionsFromTableRow(
+            //             this,
+            //             series.options.keys || series.pointArrayMap
+            //         ) || {},
+            //         false,
+            //         false
+            //     );
+            //     series.isDirty = true;
+            //     series.isDirtyData = true;
+            //     // POC by Torstein
+            //     if (typeof chart.redrawTimer === 'undefined') {
+            //         chart.redrawTimer = setTimeout(function (): void {
+            //             chart.redrawTimer = void 0;
+            //             chart.redraw();
+            //         });
+            //     }
+            // });
         }
-        point.update(DataPoint.getPointOptionsFromTableRow(tableRow, series.pointArrayMap) || {}, true, false);
+        point.update(DataPoint.getPointOptionsFromTableRow(tableRow) || {}, true, false);
     };
     DataPoint.prototype.update = function (options, redraw, animation) {
         console.log('DataPoint.update');
@@ -93,13 +200,6 @@ var DataPoint = /** @class */ (function () {
             series.chart.redraw(animation);
         }
     };
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    DataPoint.getPointOptionsFromTableRow = CP.getPointOptionsFromTableRow;
-    DataPoint.getTableRowFromPointOptions = CP.getTableRowFromPointOptions;
     return DataPoint;
 }());
 /* *

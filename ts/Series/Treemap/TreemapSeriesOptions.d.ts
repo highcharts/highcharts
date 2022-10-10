@@ -20,6 +20,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
@@ -27,7 +28,6 @@ import type {
     SeriesOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 
@@ -43,9 +43,13 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-export type TreemapSeriesLayoutAlgorithmValue = ('sliceAndDice'|'stripes'|'squarified'|'strip');
+export type TreemapSeriesLayoutAlgorithmValue = (
+    'sliceAndDice'|'stripes'|'squarified'|'strip'
+);
 
-export type TreemapSeriesLayoutStartingDirectionValue = ('vertical'|'horizontal');
+export type TreemapSeriesLayoutStartingDirectionValue = (
+    'vertical'|'horizontal'
+);
 
 export interface TreemapSeriesLevelsColorVariationOptions {
     key?: string;
@@ -82,7 +86,7 @@ export interface TreemapSeriesUpButtonOptions {
     position?: TreemapSeriesUpButtonPositionOptions;
     relativeTo?: string;
     text?: string;
-    theme?: SVGAttributes;
+    theme?: ButtonThemeObject;
 }
 
 export interface TreemapSeriesUpButtonPositionOptions {

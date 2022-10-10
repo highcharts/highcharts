@@ -1,5 +1,5 @@
 ---
- name: Guyana - Highmaps
- description: Highmaps demo
+ name: Guyana - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

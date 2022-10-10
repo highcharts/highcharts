@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type CandlestickSeries from './CandlestickSeries';
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
@@ -23,6 +24,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
     lineColor?: ColorType;
     states?: SeriesStatesOptions<CandlestickSeries>;
@@ -31,7 +33,8 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default CandlestickSeriesOptions;

@@ -56,6 +56,7 @@ export function testStockSeries() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags'
@@ -163,15 +164,15 @@ export function testHighchartsMoreSeries() {
         'pie',
         'arearange',
         'areasplinerange',
+        'boxplot',
+        'bubble',
         'columnrange',
         'columnpyramid',
-        'gauge',
-        'boxplot',
         'errorbar',
-        'waterfall',
+        'gauge',
+        'packedbubble',
         'polygon',
-        'bubble',
-        'packedbubble'
+        'waterfall'
     ];
 
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
@@ -221,10 +222,12 @@ export function testStockIndicators() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags',
         'sma',
+        'ema',
         'ad',
         'ao',
         'aroon',
@@ -233,19 +236,22 @@ export function testStockIndicators() {
         'bb',
         'cci',
         'cmf',
+        'dmi',
         'dpo',
-        'ema',
         'chaikin',
+        'cmo',
         'dema',
         'tema',
         'trix',
         'apo',
         'ikh',
         'keltnerchannels',
+        'klinger',
         'macd',
         'mfi',
         'momentum',
         'natr',
+        'obv',
         'pivotpoints',
         'ppo',
         'pc',
@@ -266,7 +272,8 @@ export function testStockIndicators() {
         'linearRegressionIntercept',
         'linearRegressionAngle',
         'abands',
-        'trendline'
+        'trendline',
+        'disparityindex'
     ];
 
     deepStrictEqual(
@@ -371,7 +378,7 @@ export function testHighchartsWithModules() {
     // Series Label
     require('../../../code/modules/series-label.src')(Highcharts);
     strictEqual(
-        typeof Highcharts.Series.prototype.checkClearPoint,
+        typeof Highcharts.SVGRenderer.prototype.symbols.connector,
         'function',
         'Series Label is loaded.'
     );

@@ -46,7 +46,7 @@ const getBuildOptions = input => {
     const files = (
         isArray(input.files) ?
             input.files :
-            getFilesInFolder(base, true)
+            getFilesInFolder(base, true).filter(path => path.endsWith('.js'))
     );
     const type = ['classic'];
     const mapTypeToSource = {
@@ -185,7 +185,6 @@ const fnFirstBuild = options => {
         version
     });
     const promises = [];
-    promises.push(require('./error-messages')());
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');

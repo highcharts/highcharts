@@ -18,11 +18,11 @@ Allowed properties are:
 
 ```js
 rangeSelector: {
-	verticalAlign: ‘top’,
+	verticalAlign: 'top',
 	x: 0,
 	y: 0
 },
-```    
+```
 
 Use the x and y options to customize position. The x and y options offset the selector by pixels from the given alignment.
 
@@ -36,9 +36,9 @@ The option allows to skip adding extra space for range selector. [See a live dem
 ```js
 rangeSelector: {
 	floating: true,
-	y: 250 
+	y: 250
 },
-```   
+```
 
 ![DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1](https://lh3.googleusercontent.com/DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1) 
 
@@ -56,12 +56,12 @@ For example, we can make them swap places like this:
 ```js
 rangeSelector: {
 	inputPosition: {
-		align: ‘left’,
+		align: 'left',
 		x: 0,
 		y: 0
 	},
 	buttonPosition: {
-		align: ‘right’,
+		align: 'right',
 		x: 0,
 		y: 0
 	},
@@ -99,7 +99,7 @@ rangeSelector: {
 		text: '1m',
 		events: {
 			click: function() {
-				alert(‘Clicked button’);
+				alert('Clicked button');
 			}
 		}
 	}, {

@@ -1,12 +1,14 @@
 /* *
  *
- *  Data Layer
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
  *
  * */
 
@@ -19,14 +21,11 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+
 import DataModifier from './DataModifier.js';
-import DataJSON from './../DataJSON.js';
-import DataTable from './../DataTable.js';
-import U from './../../Core/Utilities.js';
-const {
-    merge
-} = U;
-import DataTableRow from './../DataTableRow.js';
+import DataTable from '../DataTable.js';
+import U from '../../Core/Utilities.js';
+const { merge } = U;
 
 /* *
  *
@@ -34,6 +33,9 @@ import DataTableRow from './../DataTableRow.js';
  *
  * */
 
+/**
+ * @private
+ */
 class SeriesPointsModifier extends DataModifier {
 
     /* *
@@ -48,25 +50,6 @@ class SeriesPointsModifier extends DataModifier {
     public static readonly defaultOptions: SeriesPointsModifier.Options = {
         modifier: 'SeriesPoints'
     };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts a class JSON to a series points modifier.
-     *
-     * @param {SeriesPointsModifier.ClassJSON} json
-     * Class JSON to convert to an instance of series points modifier.
-     *
-     * @return {SeriesPointsModifier}
-     * Series points modifier of the class JSON.
-     */
-    public static fromJSON(json: SeriesPointsModifier.ClassJSON): SeriesPointsModifier {
-        return new SeriesPointsModifier(json.options);
-    }
 
     /* *
      *
@@ -104,8 +87,8 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with the same rows and add alternative
-     * column names (alias) depending on mapping option.
+     * Renames columns to alternative column names (alias) depending on mapping
+     * option.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -114,74 +97,30 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table with `modified` property as a reference.
      */
-    public execute(
-        table: DataTable,
+    public modifyTable<T extends DataTable>(
+        table: T,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
-        const modifier = this,
-            aliasMap = modifier.options.aliasMap || {},
-            aliasKeys = Object.keys(aliasMap),
-            aliasValues = [],
-            newTable = new DataTable();
+    ): T {
+        const modifier = this;
 
-        let row: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            cellName: string,
-            cellAliasOrName: string,
-            cellNames: Array<string>,
-            aliasIndex: number;
+        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        this.emit({ type: 'execute', detail: eventDetail, table });
+        const aliasMap = modifier.options.aliasMap || {},
+            aliases = Object.keys(aliasMap),
+            modified = table.modified = table.clone(false, eventDetail);
 
-        for (let k = 0, kEnd = aliasKeys.length; k < kEnd; ++k) {
-            aliasValues.push(aliasMap[aliasKeys[k]]);
+        for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+            alias = aliases[i];
+            modified.renameColumn(aliasMap[alias], alias);
         }
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
+        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
-            if (row) {
-                newCells = {};
-                cellNames = row.getCellNames();
-
-                for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-                    cellName = cellNames[j];
-                    aliasIndex = aliasValues.indexOf(cellName);
-                    cellAliasOrName = (
-                        aliasIndex >= 0 ?
-                            aliasKeys[aliasIndex] :
-                            cellName
-                    );
-
-                    newCells[cellAliasOrName] = row.getCell(cellName);
-                }
-
-                newTable.insertRow(new DataTableRow(newCells));
-            }
-        }
-
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
-
-        return newTable;
+        return table;
     }
 
-    /**
-     * Converts the series points modifier to a class JSON,
-     * including all containing all modifiers.
-     *
-     * @return {DataJSON.ClassJSON}
-     * Class JSON of this series points modifier.
-     */
-    public toJSON(): SeriesPointsModifier.ClassJSON {
-        const json = {
-            $class: 'SeriesPointsModifier',
-            options: merge(this.options)
-        };
-
-        return json;
-    }
 }
 
 /* *
@@ -197,13 +136,6 @@ class SeriesPointsModifier extends DataModifier {
 namespace SeriesPointsModifier {
 
     /**
-     * Interface of the class JSON to convert to modifier instances.
-     */
-    export interface ClassJSON extends DataModifier.ClassJSON {
-        // nothing here yet
-    }
-
-    /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
@@ -217,7 +149,6 @@ namespace SeriesPointsModifier {
  *
  * */
 
-DataJSON.addClass(SeriesPointsModifier);
 DataModifier.addModifier(SeriesPointsModifier);
 
 declare module './ModifierType' {

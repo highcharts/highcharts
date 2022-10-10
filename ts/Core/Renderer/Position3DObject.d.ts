@@ -28,7 +28,7 @@ export interface Position3DObject extends PositionObject {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

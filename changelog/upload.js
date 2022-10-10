@@ -18,9 +18,9 @@ function uploadFile(filename) {
         bucket: 'assets.highcharts.com',
         files: [{
             from: filename,
-            to: 'changelog/changelog.html',
-            name: 'changelog'
-        }]
+            to: 'changelog/changelog.html'
+        }],
+        name: 'changelog'
     });
 }
 

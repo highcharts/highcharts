@@ -20,7 +20,6 @@
  *
  * */
 
-import type SunburstSeries from './SunburstSeries';
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -29,6 +28,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import type SunburstNode from './SunburstNode.js';
 const {
     isNumber,
     isObject,
@@ -63,7 +63,7 @@ namespace SunburstUtilities {
      * @private
      * @function calculateLevelSizes
      *
-     * @param {object} levelOptions
+     * @param {Object} levelOptions
      * Map of level to its options.
      *
      * @param {Highcharts.Dictionary<number>} params
@@ -76,7 +76,7 @@ namespace SunburstUtilities {
         levelOptions: SunburstSeriesLevelOptions,
         params: Record<string, number>
     ): (SunburstSeriesLevelOptions|undefined) {
-        var result: (SunburstSeriesLevelOptions|undefined),
+        let result: (SunburstSeriesLevelOptions|undefined),
             p = isObject(params) ? params : {},
             totalWeight = 0,
             diffRadius: number,
@@ -99,14 +99,15 @@ namespace SunburstUtilities {
             ): boolean {
                 return levels.indexOf(+k) === -1;
             });
-            diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+            diffRadius = remainingSize = isNumber(p.diffRadius) ?
+                p.diffRadius : 0;
 
             // Convert percentage to pixels.
             // Calculate the remaining size to divide between "weight" levels.
             // Calculate total weight to use in convertion from weight to
             // pixels.
             levels.forEach(function (level: number): void {
-                var options = (result as any)[level],
+                const options = (result as any)[level],
                     unit = options.levelSize.unit,
                     value = options.levelSize.value;
 
@@ -125,7 +126,7 @@ namespace SunburstUtilities {
 
             // Convert weight to pixels.
             levels.forEach(function (level: number): void {
-                var options = (result as any)[level],
+                let options = (result as any)[level],
                     weight;
 
                 if (options.levelSize.unit === 'weight') {
@@ -153,7 +154,7 @@ namespace SunburstUtilities {
      * @private
      */
     export function getLevelFromAndTo(
-        { level, height }: SunburstSeries.NodeObject
+        { level, height }: SunburstNode
     ): { from: number; to: number } {
         //  Never displays level below 1
         const from = level > 0 ? level : 1;
@@ -166,7 +167,7 @@ namespace SunburstUtilities {
      * @private
      */
     export function range(from: unknown, to: unknown): Array<number> {
-        var result: Array<number> = [],
+        let result: Array<number> = [],
             i: number;
 
         if (isNumber(from) && isNumber(to) && from <= to) {

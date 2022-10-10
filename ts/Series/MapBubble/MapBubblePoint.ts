@@ -16,19 +16,21 @@
  *
  * */
 
-import type MapBubblePointOptions from './MapBubblePointOptions';
+import BubblePoint from '../Bubble/BubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        bubble: BubbleSeries,
-        map: MapSeries
+        map: {
+            prototype: {
+                pointClass: {
+                    prototype: mapPointProto
+                }
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend } = U;
 
 /* *
  *
@@ -36,7 +38,7 @@ const {
  *
  * */
 
-class MapBubblePoint extends BubbleSeries.prototype.pointClass {
+class MapBubblePoint extends BubblePoint {
 
     /* *
      *
@@ -44,61 +46,25 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    public applyOptions(
-        options: MapBubblePointOptions,
-        x?: number
-    ): MapBubblePoint {
-        var point: MapBubblePoint;
-
-        if (
-            options &&
-            typeof (options as any).lat !== 'undefined' &&
-            typeof (options as any).lon !== 'undefined'
-        ) {
-            point = super.applyOptions.call(
-                this,
-                merge(
-                    options,
-                    this.series.chart.fromLatLonToPoint(options as any)
-                ),
-                x
-            ) as MapBubblePoint;
-        } else {
-            point = MapSeries.prototype.pointClass.prototype
-                .applyOptions.call(
-                    this, options as any, x as any
-                ) as any;
-        }
-        return point;
-    }
-
-    /**
-     * @private
-     */
     public isValid(): boolean {
         return typeof this.z === 'number';
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface MapBubblePoint {
-    ttBelow: boolean;
+    getProjectedBounds: typeof mapPointProto.getProjectedBounds;
 }
+
 extend(MapBubblePoint.prototype, {
-    ttBelow: false
+    applyOptions: mapPointProto.applyOptions,
+    getProjectedBounds: mapPointProto.getProjectedBounds
 });
 
 /* *

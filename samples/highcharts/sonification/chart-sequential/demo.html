@@ -1,5 +1,16 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/sonification.js"></script>
 
-<div id="container" style="max-width:700px; margin: auto"></div>
-<button id="sonify">Click to play chart</button>
+<div id="outer">
+    <div id="overlay">
+      <button class="btn btn-play" id="sonify">Click to play chart</button>
+    </div>
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+        <p class="highcharts-description">This chart is sonified in sequence.</p>
+    </figure>
+    <div class="text-center">
+      <button class="btn btn-stop" id="stop">Stop playing</button>
+    </div>
+</div>

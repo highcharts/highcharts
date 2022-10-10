@@ -17,7 +17,10 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
             subtitle: {
                 text: 'Click and drag to zoom in. Hold down shift key to pan.'
             },
+            yAxis: {
+                min: 0, max: 250
 
+            },
             xAxis: {
                 categories: [
                     'Jan',
@@ -57,49 +60,38 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
         }),
         firstZoom = {};
 
-    chart.container.parentNode.style.position = 'absolute';
-    chart.container.parentNode.style.top = 0;
 
     assert.strictEqual(chart.xAxis[0].min, 0, 'Initial min');
     assert.strictEqual(chart.xAxis[0].max, 11, 'Initial max');
-
+    const controller = new TestController(chart);
+    controller.mouseDown(
+        200,
+        150
+    );
     // Zoom
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: 200,
-        pageY: 150,
-        target: chart.container
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: 200,
-        pageY: 200,
-        target: chart.container
-    });
-    chart.pointer.onDocumentMouseUp({});
+    controller.mouseMove(
+        200,
+        200
+    );
+    controller.mouseUp();
+    // Zoom
 
     assert.strictEqual(chart.xAxis[0].min > 0, true, 'Zoomed min');
     assert.strictEqual(chart.xAxis[0].max < 11, true, 'Zoomed max');
 
     firstZoom = chart.xAxis[0].getExtremes();
 
-    // Pan
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: 200,
-        pageY: 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: 200,
-        pageY: 50,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onDocumentMouseUp({});
-
+    // // Pan
+    controller.mouseDown(
+        200,
+        150, { shiftKey: true }
+    );
+    // Zoom
+    controller.mouseMove(
+        200,
+        50, { shiftKey: true }
+    );
+    controller.mouseUp();
     assert.strictEqual(chart.xAxis[0].min > firstZoom.min, true, 'Has panned');
     assert.strictEqual(
         (chart.xAxis[0].max - chart.xAxis[0].min).toFixed(2),
@@ -107,7 +99,6 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
         'Has preserved range'
     );
 
-    chart.container.parentNode.style.position = 'static';
 });
 
 QUnit.test('Zoom and pan key', function (assert) {
@@ -300,7 +291,9 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     assert.strictEqual(chart.xAxis[0].max, 1514505600000, 'Initial max');
 
     // Pan
-    controller.pan([100, 200], [300, 200]);
+    controller.mouseDown(100, 200, { shiftKey: true }, true);
+    controller.mouseMove(300, 200, { shiftKey: true }, true);
+    controller.mouseUp();
 
     assert.ok(chart.xAxis[0].min < initialMin, 'Has panned');
 
@@ -547,7 +540,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
 });
 
 QUnit.test(
-    'Pan in vertical direction, and both directions. (Highstock only)',
+    'Pan in vertical direction, and both directions. (Highcharts Stock only)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {

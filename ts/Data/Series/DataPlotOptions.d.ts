@@ -20,6 +20,8 @@ export interface DataPlotOptions {
     index?: number;
     keys?: Array<string>;
     markerOptions?: PointMarkerOptions;
+    pointInterval?: number;
+    pointIntervalUnit?: string;
     zIndex?: number;
 }
 

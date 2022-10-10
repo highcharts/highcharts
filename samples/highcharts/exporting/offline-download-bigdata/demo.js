@@ -1,6 +1,6 @@
 var nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
+    isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
@@ -11,7 +11,7 @@ function addText(text) {
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isEdgeBrowser ||
+    if (options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
         options.type === 'application/pdf' && isMSBrowser) {
         addText(options.type + ' fell back on purpose');
     } else {
@@ -25,7 +25,7 @@ function fallbackHandler(options) {
 
 var arr = [];
 for (var i = 0; i < 15000; i++) {
-    arr.push(i);
+    arr.push(Math.sin(i / 15000) * i * Math.random());
 }
 
 Highcharts.chart('container', {

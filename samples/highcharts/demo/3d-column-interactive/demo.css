@@ -2,15 +2,17 @@
     height: 400px;
 }
 
-.highcharts-figure, .highcharts-data-table table {
+.highcharts-figure,
+.highcharts-data-table table {
     min-width: 310px;
     max-width: 800px;
     margin: 1em auto;
 }
 
-#sliders td input[type=range] {
+#sliders td input[type="range"] {
     display: inline;
 }
+
 #sliders td {
     padding-right: 1em;
     white-space: nowrap;

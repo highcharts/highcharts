@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+import '../Column/ColumnSeries.js';
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -33,8 +34,6 @@ const {
     pick,
     relativeLength
 } = U;
-
-import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -135,7 +134,12 @@ class BulletSeries extends ColumnSeries {
              *
              * @since   6.0.0
              */
-            borderWidth: 0
+            borderWidth: 0,
+
+            /**
+             * The border radius of the rectangle representing the target.
+             */
+            borderRadius: 0
         },
 
         tooltip: {
@@ -176,7 +180,7 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#drawPoints
      */
     public drawPoints(): void {
-        var series = this,
+        const series = this,
             chart = series.chart,
             options = series.options,
             animationLimit = options.animationLimit || 250;
@@ -186,12 +190,12 @@ class BulletSeries extends ColumnSeries {
         series.points.forEach(function (
             point: BulletPoint
         ): void {
-            var pointOptions = point.options,
-                shapeArgs,
-                targetGraphic = point.targetGraphic,
-                targetShapeArgs,
+            const pointOptions = point.options,
                 targetVal = point.target,
-                pointVal = point.y,
+                pointVal = point.y;
+
+            let targetShapeArgs,
+                targetGraphic = point.targetGraphic,
                 width,
                 height,
                 targetOptions,
@@ -204,18 +208,24 @@ class BulletSeries extends ColumnSeries {
                 );
                 height = targetOptions.height;
 
-                shapeArgs = point.shapeArgs;
+                let shapeArgs = point.shapeArgs;
+
+                // #15547
+                if (point.dlBox && shapeArgs && !isNumber(shapeArgs.width)) {
+                    shapeArgs = point.dlBox;
+                }
+
                 width = relativeLength(
                     targetOptions.width as any,
                     (shapeArgs as any).width
                 );
-                y = (series.yAxis.translate(
+                y = series.yAxis.translate(
                     targetVal,
                     false,
                     true,
                     false,
                     true
-                ) as any) - (targetOptions.height as any) / 2 - 0.5;
+                ) - (targetOptions.height as any) / 2 - 0.5;
 
                 targetShapeArgs = series.crispCol.apply({
                 // Use fake series object to set borderWidth of target
@@ -275,7 +285,8 @@ class BulletSeries extends ColumnSeries {
                             point.borderColor,
                             series.options.borderColor
                         ),
-                        'stroke-width': targetOptions.borderWidth
+                        'stroke-width': targetOptions.borderWidth,
+                        r: targetOptions.borderRadius
                     });
                 }
 
@@ -300,12 +311,8 @@ class BulletSeries extends ColumnSeries {
      * @function Highcharts.Series#getExtremes
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
-        var series = this,
-            targetData = series.targetData,
-            yMax,
-            yMin;
-
-        const dataExtremes = super.getExtremes.call(this, yData);
+        const dataExtremes = super.getExtremes.call(this, yData),
+            targetData = this.targetData;
 
         if (targetData && targetData.length) {
             const targetExtremes = super.getExtremes.call(
@@ -334,7 +341,7 @@ class BulletSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

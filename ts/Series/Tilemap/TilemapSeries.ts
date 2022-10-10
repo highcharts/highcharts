@@ -46,7 +46,7 @@ import './TilemapComposition.js';
  *
  * */
 
-declare module '../../Core/Axis/Types' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         recomputingForTilemap?: boolean;
     }
@@ -239,7 +239,7 @@ class TilemapSeries extends HeatmapSeries {
      * @private
      */
     public getSeriesPixelPadding(axis: Axis): Record<string, number> {
-        var isX = axis.isXAxis,
+        let isX = axis.isXAxis,
             padding = this.tileShape.getSeriesPadding(this),
             coord1,
             coord2;
@@ -263,7 +263,7 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
         coord2 = Math.round(
             axis.translate(
@@ -272,7 +272,7 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
 
         return {
@@ -294,7 +294,7 @@ class TilemapSeries extends HeatmapSeries {
      */
     public setOptions(): TilemapSeriesOptions {
         // Call original function
-        var ret: TilemapSeriesOptions = super.setOptions.apply(
+        const ret: TilemapSeriesOptions = super.setOptions.apply(
             this,
             Array.prototype.slice.call(arguments) as any
         );
@@ -320,7 +320,7 @@ class TilemapSeries extends HeatmapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -335,7 +335,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
     // TODO: Consider standarizing heatmap and tilemap into more
     // consistent form.
     markerAttribs: ScatterSeries.prototype.markerAttribs,
-    pointAttribs: ColumnSeries.prototype.pointAttribs,
+    pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: TilemapPoint
 });
 

@@ -40,7 +40,7 @@ var TestUtilities = /** @class */ (function () {
      * requestAnimationFrame. Returns a clock object.
      *
      * @param lolexConfig
-     *        Config supplied to lolex.install
+     * Config supplied to lolex.install
      */
     TestUtilities.lolexInstall = function (lolexConfig) {
         if (!lolex) {

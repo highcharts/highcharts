@@ -11,11 +11,10 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeries from './DataSeries';
+import type DataTable from '../DataTable';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import CP from '../../Core/Series/Point.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -36,6 +35,45 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+/**
+ * Reconstructs object keys in dot syntax to tree-like objects.
+ * @private
+ */
+function tree(
+    flatObj: Record<string, any>
+): Record<string, any> {
+    const obj: Record<string, any> = {};
+    Object
+        .getOwnPropertyNames(flatObj)
+        .forEach(function (name: string): void {
+            if (name.indexOf('.') === -1) {
+                if (flatObj[name] instanceof Array) {
+                    obj[name] = flatObj[name].map(tree);
+                } else {
+                    obj[name] = flatObj[name];
+                }
+            } else {
+                const subNames = name.split('.'),
+                    subObj = subNames
+                        .slice(0, -1)
+                        .reduce(function (
+                            subObj: Record<string, any>,
+                            subName: string
+                        ): Record<string, any> {
+                            return (subObj[subName] = (subObj[subName] || {}));
+                        }, obj);
+                subObj[(subNames.pop() || '')] = flatObj[name];
+            }
+        });
+    return obj;
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -48,9 +86,85 @@ class DataPoint {
      *
      * */
 
-    public static readonly getPointOptionsFromTableRow = CP.getPointOptionsFromTableRow;
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    public static getPointOptionsFromTableRow(
+        tableRow: DataTable.RowObject
+    ): (DataPointOptions|null) {
+        return tree(tableRow);
+    }
 
-    public static readonly getTableRowFromPointOptions = CP.getTableRowFromPointOptions;
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableRowFromPointOptions(
+        pointOptions: (
+            (DataPointOptions&Record<string, any>)|
+            PointShortOptions
+        ),
+        keys: Array<string> = ['y'],
+        x: number = 0
+    ): DataTable.RowObject {
+        let tableRow: DataTable.RowObject;
+
+        keys = keys.slice();
+
+        // Array
+        if (pointOptions instanceof Array) {
+            tableRow = {};
+            if (pointOptions.length > keys.length) {
+                keys.unshift(
+                    typeof pointOptions[0] === 'string' ?
+                        'name' :
+                        'x'
+                );
+            }
+            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRow[keys[i] || `${i}`] = pointOptions[i];
+            }
+
+        // Object
+        } else if (
+            typeof pointOptions === 'object'
+        ) {
+            if (pointOptions === null) {
+                tableRow = {};
+            } else {
+                tableRow = tree(pointOptions);
+            }
+
+        // Primitive
+        } else {
+            tableRow = {
+                x,
+                [keys[0] || 'y']: pointOptions
+            };
+        }
+
+        return tableRow;
+    }
 
     /* *
      *
@@ -60,21 +174,17 @@ class DataPoint {
 
     public constructor(
         series: DataSeries,
-        data?: (DataPointOptions|DataTableRow|PointShortOptions),
+        data?: (DataPointOptions|DataTable.RowObject|PointShortOptions),
         x?: number
     ) {
         console.log('DataPoint.constructor');
 
         this.options = { x };
         this.series = series;
-        this.tableRow = DataTableRow.NULL;
+        this.tableRow = {};
 
         if (data) {
-            if (data instanceof DataTableRow) {
-                this.setTableRow(data);
-            } else {
-                this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
-            }
+            this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
         }
     }
 
@@ -92,7 +202,7 @@ class DataPoint {
 
     public readonly series: DataSeries;
 
-    public tableRow: DataTableRow;
+    public tableRow: DataTable.RowObject;
 
     private tableRowListener?: Function;
 
@@ -107,7 +217,7 @@ class DataPoint {
 
         const point = this;
 
-        point.tableRow = DataTableRow.NULL;
+        point.tableRow = {};
 
         if (point.tableRowListener) {
             point.tableRowListener();
@@ -127,8 +237,8 @@ class DataPoint {
 
         point.graphic = parent.renderer
             .rect(
-                tableRow.getCellAsNumber('x') * 10,
-                tableRow.getCellAsNumber(valueKey) * 10,
+                tableRow['x'] as number * 10,
+                tableRow[valueKey] as number * 10,
                 1,
                 1
             )
@@ -143,7 +253,7 @@ class DataPoint {
     }
 
     public setTableRow(
-        tableRow: DataTableRow
+        tableRow: DataTable.RowObject
     ): void {
         console.log('DataPoint.setTableRow');
 
@@ -157,34 +267,33 @@ class DataPoint {
             }
 
             point.tableRow = tableRow;
-            point.tableRowListener = tableRow.on('afterChangeRow', function (
-                this: DataTableRow
-            ): void {
-                point.update(
-                    DataPoint.getPointOptionsFromTableRow(
-                        this,
-                        series.options.keys || series.pointArrayMap
-                    ) || {},
-                    false,
-                    false
-                );
-                series.isDirty = true;
-                series.isDirtyData = true;
+            // point.tableRowListener = tableRow.on('afterChangeRow', function (
+            //     this: DataTableRow
+            // ): void {
+            //     point.update(
+            //         DataPoint.getPointOptionsFromTableRow(
+            //             this,
+            //             series.options.keys || series.pointArrayMap
+            //         ) || {},
+            //         false,
+            //         false
+            //     );
+            //     series.isDirty = true;
+            //     series.isDirtyData = true;
 
-                // POC by Torstein
-                if (typeof chart.redrawTimer === 'undefined') {
-                    chart.redrawTimer = setTimeout(function (): void {
-                        chart.redrawTimer = void 0;
-                        chart.redraw();
-                    });
-                }
-            });
+            //     // POC by Torstein
+            //     if (typeof chart.redrawTimer === 'undefined') {
+            //         chart.redrawTimer = setTimeout(function (): void {
+            //             chart.redrawTimer = void 0;
+            //             chart.redraw();
+            //         });
+            //     }
+            // });
         }
 
         point.update(
             DataPoint.getPointOptionsFromTableRow(
-                tableRow,
-                series.pointArrayMap
+                tableRow
             ) || {},
             true,
             false

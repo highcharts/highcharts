@@ -20,25 +20,25 @@ Specific description of new options
 Alignment method for data labels. Possible values are:
 
 *   `connectors`: each label touches the nearest vertical edge of the plot area.
-*   `toPlotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
+*   `plotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
 
 **Demo with connectors**
 
-    
+
     dataLabels: {
         alignTo: 'connectors'
     }
-    
+
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors allow="fullscreen"></iframe>
 
 **Demo with plotEdges**
 
-    
+
     dataLabels: {
         alignTo: 'plotEdges'
     }
-    
+
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges allow="fullscreen"></iframe>
 
@@ -48,33 +48,33 @@ Specifies the method that is used to generate the connector path. Highcharts pro
 
 **fixedOffset (default):**
 
-    
+
     dataLabels: {
         connectorShape: 'fixedOffset'
     }
-    
+
 
 <iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/ allow="fullscreen"></iframe>
 
 **straight:**
 
-    
+
     dataLabels: {
-        connectorShape: ‘straight’,
+        connectorShape: 'straight',
         crookDistance: '70%'
     }
-    
+
 
 **crookedLine**
 
 This option can be used with the `crookDistance` parameter. It defines how far from the vertical plot edge the connector path should be crooked. Using `crookedLine` makes the most sense (in most cases) when `alignTo` is set.
 
-    
+
     dataLabels: {
         connectorShape: 'crookedLine',
         crookDistance: '70%'
     }
-    
+
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance allow="fullscreen"></iframe>
 

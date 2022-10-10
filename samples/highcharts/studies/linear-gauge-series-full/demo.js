@@ -9,8 +9,7 @@
 //import '../Core/Utilities.js';
 var H = Highcharts;
 
-var each = H.each,
-    pick = H.pick,
+var pick = H.pick,
     isNumber = H.isNumber,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
@@ -18,7 +17,9 @@ var each = H.each,
     relativeLength = H.relativeLength,
     columnProto = H.seriesTypes.column.prototype;
 
-H.SVGRenderer.prototype.symbols.target = function (x, y, w, h, bh, i, inverted) {
+H.SVGRenderer.prototype.symbols.target = function (
+    x, y, w, h, bh, i, inverted
+) {
     return inverted ? [
         ['M', x, y],
         ['L', -w / 2, -h + bh],
@@ -231,11 +232,15 @@ seriesType('lineargauge', 'column',
         /**
          * Function responsible for creating or updating target symbol and target line.
          */
-        createUpdateGraphic: function (graphic, path, xPosition, yPosition, beginningAtrr, endAttr) {
+        createUpdateGraphic: function (
+            graphic, path, xPosition, yPosition, beginningAtrr, endAttr
+        ) {
             var series = this,
                 chart = series.chart,
                 seriesOptions = series.options,
-                updateGraphic = chart.pointCount < (seriesOptions.animationLimit || 250) ? 'animate' : 'attr';
+                updateGraphic = chart.pointCount < (
+                    seriesOptions.animationLimit || 250
+                ) ? 'animate' : 'attr';
 
             if (graphic) {
                 graphic[updateGraphic]({
@@ -248,7 +253,10 @@ seriesType('lineargauge', 'column',
                     .attr(beginningAtrr)
                     .add();
 
-                graphic[updateGraphic](endAttr, pick(seriesOptions.animation, { duration: 1000 }));
+                graphic[updateGraphic](
+                    endAttr,
+                    pick(seriesOptions.animation, { duration: 1000 })
+                );
             }
 
             return graphic;
@@ -275,11 +283,12 @@ seriesType('lineargauge', 'column',
                 seriesOptions = series.options,
                 minPointLength = seriesOptions.minPointLength,
                 seriesTargetOptions = seriesOptions.targetOptions,
-                shape = seriesTypes[series.type].prototype.pointClass.prototype.shape;
+                shape = seriesTypes[series.type].prototype.pointClass.prototype
+                    .shape;
 
             columnProto.drawPoints.apply(series);
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var targetSymGraphic = point.targetSymGraphic,
                     targetLinGraphic = point.targetLinGraphic,
                     pointOptions = point.options,
@@ -323,8 +332,12 @@ seriesType('lineargauge', 'column',
                     pPlotY = point.plotY;
                     barX = point.barX;
 
-                    pixelX = inverted ? xAxisLength - barX - halfPointWidth + plotTop : barX + halfPointWidth + plotLeft;
-                    pixelY = target ? yAxis.toPixels(target, false) : yAxis.toPixels(valueY, false);
+                    pixelX = inverted ?
+                        xAxisLength - barX - halfPointWidth + plotTop :
+                        barX + halfPointWidth + plotLeft;
+                    pixelY = target ?
+                        yAxis.toPixels(target, false) :
+                        yAxis.toPixels(valueY, false);
 
                     if (inverted) {
                         // Considering minPointLength when chart is inverted
@@ -335,7 +348,8 @@ seriesType('lineargauge', 'column',
                                 }
                             } else {
                                 if (pPlotY < minPointLength) {
-                                    pixelY = yAxisLength - minPointLength + plotLeft;
+                                    pixelY = yAxisLength - minPointLength +
+                                        plotLeft;
                                 }
                             }
                         }
@@ -343,8 +357,13 @@ seriesType('lineargauge', 'column',
                         // Considering minPointLength when chart is not inverted
                         if (minPointLength) {
                             if (!yAxisReversed) {
-                                if ((yAxisLength - pixelY) < (minPointLength - plotTop)) {
-                                    pixelY = yAxisLength - minPointLength + plotTop;
+                                if (
+                                    (yAxisLength - pixelY) < (
+                                        minPointLength - plotTop
+                                    )
+                                ) {
+                                    pixelY = yAxisLength - minPointLength +
+                                        plotTop;
                                 }
                             } else {
                                 if (pPlotY < minPointLength) {
@@ -361,45 +380,102 @@ seriesType('lineargauge', 'column',
                     onPoint = pick(pointOptions.onPoint, seriesOptions.onPoint);
 
                     // Show/hide additional column
-                    showColumn = pick(pointOptions.showColumn, seriesOptions.showColumn);
+                    showColumn = pick(
+                        pointOptions.showColumn,
+                        seriesOptions.showColumn
+                    );
 
                     // The option which controls whether target should have an additional line
-                    showLine = pick(pointOptions.showLine, seriesOptions.showLine);
+                    showLine = pick(
+                        pointOptions.showLine,
+                        seriesOptions.showLine
+                    );
 
                     // Total length of a target
-                    length = relativeLength(pick(pointTargetOptions.length, seriesTargetOptions.length), shapeArgsWidth);
+                    length = relativeLength(
+                        pick(
+                            pointTargetOptions.length,
+                            seriesTargetOptions.length
+                        ),
+                        shapeArgsWidth
+                    );
 
                     // Total width of a target
-                    width = relativeLength(pick(pointTargetOptions.width, seriesTargetOptions.width), shapeArgsWidth);
+                    width = relativeLength(
+                        pick(
+                            pointTargetOptions.width,
+                            seriesTargetOptions.width
+                        ),
+                        shapeArgsWidth
+                    );
 
                     // Border width of a target
-                    borderWidth = pick(pointTargetOptions.borderWidth, seriesTargetOptions.borderWidth);
+                    borderWidth = pick(
+                        pointTargetOptions.borderWidth,
+                        seriesTargetOptions.borderWidth
+                    );
 
                     // The zIndex of a target symbol
-                    zIndex = pick(pointTargetOptions.zIndex, seriesTargetOptions.zIndex);
+                    zIndex = pick(
+                        pointTargetOptions.zIndex,
+                        seriesTargetOptions.zIndex
+                    );
 
                     // Width of a target line
-                    lineWidth = pick(pointTargetOptions.lineWidth, seriesTargetOptions.lineWidth, seriesOptions.borderWidth, point.borderWidth, 1);
+                    lineWidth = pick(
+                        pointTargetOptions.lineWidth,
+                        seriesTargetOptions.lineWidth,
+                        seriesOptions.borderWidth,
+                        point.borderWidth,
+                        1
+                    );
 
                     // The zIndex of a target line
-                    lineZIndex = pick(pointTargetOptions.lineZIndex, seriesTargetOptions.lineZIndex);
+                    lineZIndex = pick(
+                        pointTargetOptions.lineZIndex,
+                        seriesTargetOptions.lineZIndex
+                    );
 
                     // Shape for lineargauge series
                     if (shape === 'target') {
                         // Base length of a target
-                        baseLength = relativeLength(pick(pointTargetOptions.baseLength, seriesTargetOptions.baseLength), length);
+                        baseLength = relativeLength(
+                            pick(
+                                pointTargetOptions.baseLength,
+                                seriesTargetOptions.baseLength
+                            ),
+                            length
+                        );
 
                         // Vertical indent of a target
-                        indent = relativeLength(pick(pointTargetOptions.indent, seriesTargetOptions.indent), length);
+                        indent = relativeLength(
+                            pick(
+                                pointTargetOptions.indent,
+                                seriesTargetOptions.indent
+                            ),
+                            length
+                        );
 
-                        symbolPath = renderer.symbols[shape](0, 0, width, length, baseLength, indent, inverted);
-                        symbolPath = renderer.crispLine(symbolPath, borderWidth || 1);
+                        symbolPath = renderer.symbols[shape](
+                            0,
+                            0,
+                            width,
+                            length,
+                            baseLength,
+                            indent,
+                            inverted
+                        );
+                        symbolPath = renderer.crispLine(
+                            symbolPath,
+                            borderWidth || 1
+                        );
                     } else if (shape === 'rectangle') { // Shape for bullet series
                         onPoint = true;
                         showLine = false;
                         showColumn = true;
 
-                        symbolPath = renderer.symbols[shape](0, 0, width, length, inverted);
+                        symbolPath = renderer
+                            .symbols[shape](0, 0, width, length, inverted);
                     }
 
                     if (inverted) {
@@ -409,7 +485,8 @@ seriesType('lineargauge', 'column',
                         xPosition = onPoint ? pixelX : xAxis.left;
                         yPosition = pixelY;
                     }
-                    columnStart = yAxis.toPixels(series.options.threshold, false);
+                    columnStart = yAxis
+                        .toPixels(series.options.threshold, false);
 
                     xAttr = {
                         translateX: xPosition
@@ -428,10 +505,23 @@ seriesType('lineargauge', 'column',
                     beginningAtrr.zIndex = zIndex;
 
                     // Creating/updating target symbol
-                    point.targetSymGraphic = targetSymGraphic = series.createUpdateGraphic(targetSymGraphic, symbolPath, xPosition, yPosition, beginningAtrr, (inverted ? xAttr : yAttr));
+                    point.targetSymGraphic = targetSymGraphic = series
+                        .createUpdateGraphic(
+                            targetSymGraphic,
+                            symbolPath,
+                            xPosition,
+                            yPosition,
+                            beginningAtrr,
+                            (inverted ? xAttr : yAttr)
+                        );
 
                     if (showLine) {
-                        offsetOnPoint = xAxisLength - (onPoint ? pixelX - (inverted ? plotTop : plotLeft) : 0);
+                        offsetOnPoint = xAxisLength -
+                            (
+                                onPoint ?
+                                    pixelX - (inverted ? plotTop : plotLeft) :
+                                    0
+                            );
 
                         linePath = inverted ? [
                             ['M', 0, 0],
@@ -445,7 +535,15 @@ seriesType('lineargauge', 'column',
                         beginningAtrr.zIndex = lineZIndex;
 
                         // Creating/updating target line
-                        point.targetLinGraphic = targetLinGraphic = series.createUpdateGraphic(targetLinGraphic, linePath, xPosition, yPosition, beginningAtrr, (inverted ? xAttr : yAttr));
+                        point.targetLinGraphic = targetLinGraphic = series
+                            .createUpdateGraphic(
+                                targetLinGraphic,
+                                linePath,
+                                xPosition,
+                                yPosition,
+                                beginningAtrr,
+                                (inverted ? xAttr : yAttr)
+                            );
                     }
 
                     if (!showColumn) {
@@ -455,46 +553,56 @@ seriesType('lineargauge', 'column',
                             dataLabelBox = dataLabel.getBBox();
 
                             dataLabel.attr(inverted ? {
-                                x: yAxis.toPixels(valueY, true) - dataLabelBox.width / 2,
+                                x: yAxis.toPixels(valueY, true) -
+                                    dataLabelBox.width / 2,
                                 y: 0
                             } : {
                                 x: 0,
-                                y: yAxis.toPixels(valueY, true) - dataLabelBox.height / 2
+                                y: yAxis.toPixels(valueY, true) -
+                                    dataLabelBox.height / 2
                             });
                         }
                     }
 
                     // Adding event to target symbol for handling tooltip
                     if (tooltip) {
-                        targetEvents.push(addEvent(targetSymGraphic.element, 'mouseover', function () {
-                            point.setState('hover');
+                        targetEvents.push(addEvent(
+                            targetSymGraphic.element,
+                            'mouseover',
+                            function () {
+                                point.setState('hover');
 
-                            if (!onPoint) {
-                                tooltip.refresh({
-                                    plotX: inverted ? xAxisLength : 0,
-                                    plotY: point.shapeArgs.y,
-                                    series: point.series,
-                                    x: valueX,
-                                    y: valueY,
-                                    category: point.category,
-                                    color: point.color,
-                                    colorIndex: point.colorIndex,
-                                    name: point.name,
-                                    percentage: point.percentage,
-                                    total: point.total,
-                                    stackTotal: point.stackTotal,
-                                    getLabelConfig: point.getLabelConfig,
-                                    tooltipFormatter: point.tooltipFormatter
-                                });
-                            } else {
-                                tooltip.refresh(point);
+                                if (!onPoint) {
+                                    tooltip.refresh({
+                                        plotX: inverted ? xAxisLength : 0,
+                                        plotY: point.shapeArgs.y,
+                                        series: point.series,
+                                        x: valueX,
+                                        y: valueY,
+                                        category: point.category,
+                                        color: point.color,
+                                        colorIndex: point.colorIndex,
+                                        name: point.name,
+                                        percentage: point.percentage,
+                                        total: point.total,
+                                        stackTotal: point.stackTotal,
+                                        getLabelConfig: point.getLabelConfig,
+                                        tooltipFormatter: point.tooltipFormatter
+                                    });
+                                } else {
+                                    tooltip.refresh(point);
+                                }
                             }
-                        }));
+                        ));
 
-                        targetEvents.push(addEvent(targetSymGraphic.element, 'mouseout', function () {
-                            point.setState('normal');
-                            tooltip.hide();
-                        }));
+                        targetEvents.push(addEvent(
+                            targetSymGraphic.element,
+                            'mouseout',
+                            function () {
+                                point.setState('normal');
+                                tooltip.hide();
+                            }
+                        ));
 
                         series.targetEvents = targetEvents;
                     }
@@ -545,11 +653,19 @@ seriesType('lineargauge', 'column',
 
                     // Add styles
                     if (targetSymGraphic) {
-                        targetSymGraphic.addClass(point.getClassName() + ' highcharts-' + series.type + '-target', true);
+                        targetSymGraphic.addClass(
+                            point.getClassName() + ' highcharts-' +
+                                series.type + '-target',
+                            true
+                        );
                     }
 
                     if (targetLinGraphic) {
-                        targetLinGraphic.addClass(point.getClassName() + ' highcharts-lineargauge-target-line', true);
+                        targetLinGraphic.addClass(
+                            point.getClassName() +
+                                ' highcharts-lineargauge-target-line',
+                            true
+                        );
                     }
                 } else if (targetSymGraphic) {
                     point.targetSymGraphic = targetSymGraphic.destroy();
@@ -582,7 +698,7 @@ seriesType('lineargauge', 'column',
             }
 
             // Deleting target events
-            each(point.series.targetEvents, function (targetEvent) {
+            point.series.targetEvents.forEach(function (targetEvent) {
                 targetEvent();
             });
 

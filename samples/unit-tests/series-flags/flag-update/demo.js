@@ -37,7 +37,8 @@ QUnit.test('Update flag (#4222)', function (assert) {
     var flag = {
             x: Date.UTC(2015, 5, 1),
             title: 'Name2',
-            text: 'new'
+            text: 'new',
+            shape: 'squarepin'
         },
         point = chart.series[1].points[0];
 
@@ -47,6 +48,11 @@ QUnit.test('Update flag (#4222)', function (assert) {
         flag.title,
         'Updated title'
     );
+    assert.strictEqual(
+        point.graphic.box.symbolName,
+        'squarepin',
+        '#15384: Shape should have updated'
+    );
 
     chart.tooltip.refresh([point]);
 
@@ -55,6 +61,23 @@ QUnit.test('Update flag (#4222)', function (assert) {
             .replace('\u200B', ''),
         flag.text,
         'Updated text'
+    );
+
+    const eventCount = el => {
+        let count = 0;
+        //eslint-disable-next-line
+        for (const t in el.hcEvents) {
+            count += el.hcEvents[t].length;
+        }
+        return count;
+    };
+
+    const before = eventCount(point.graphic.element);
+    chart.series[1].redraw();
+    assert.strictEqual(
+        eventCount(point.graphic.element),
+        before,
+        'Event handlers should not leak into point graphic on series redraw'
     );
 });
 

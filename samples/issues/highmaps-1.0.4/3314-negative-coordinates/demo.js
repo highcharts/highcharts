@@ -104,7 +104,7 @@ $(function () {
     };
 
 
-    // Initiate the chart
+    // Initialize the chart
     $('#container').highcharts('Map', {
 
         title: {
