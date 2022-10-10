@@ -3,10 +3,10 @@
 import DataSeriesComposition from '../../../../code/es-modules/Data/DataSeriesComposition.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
-DataSeriesComposition.compose(Highcharts.seriesTypes.line);
-DataSeriesComposition.compose(Highcharts.seriesTypes.column);
-DataSeriesComposition.compose(Highcharts.seriesTypes.pie);
-DataSeriesComposition.compose(Highcharts.seriesTypes.scatter);
+DataSeriesComposition.compose(Highcharts.Series.types.line);
+DataSeriesComposition.compose(Highcharts.Series.types.column);
+DataSeriesComposition.compose(Highcharts.Series.types.pie);
+DataSeriesComposition.compose(Highcharts.Series.types.scatter);
 
 const benchmarks = document.getElementById('benchmarks');
 const benchmarkSeries = 'scatter';
