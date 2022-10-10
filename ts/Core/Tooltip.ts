@@ -1134,6 +1134,14 @@ class Tooltip {
                                 Palette.neutralColor60
                             )
                         });
+                    } else if (currentSeries.options.className) {
+                        // label.removeClass(/^(?!.*highcharts-.*\ )+/g);
+                        this.chart.series.forEach(
+                            function (string: s): void {
+                                label.removeClass(s.options.className as any);
+                            }
+                        );
+                        label.addClass(currentSeries.options.className);
                     }
 
                     tooltip.updatePosition({
@@ -1745,6 +1753,15 @@ class Tooltip {
             // Replace default header style with class name
             if (series.chart.styledMode) {
                 formatString = this.styledModeFormat(formatString);
+
+                // Attach a series classname if it has been provided
+                if (series.options.className) {
+                    formatString = formatString
+                        .replace(
+                            /(class=".*)"/,
+                            '$1 ' + series.options.className + '"'
+                        );
+                }
             }
 
             (e as any).text = format(formatString, {
