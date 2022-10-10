@@ -60,7 +60,6 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
-import { isNumeric } from 'jquery';
 const {
     extend,
     find,
@@ -977,9 +976,9 @@ class MapSeries extends ScatterSeries {
         }
 
         if (defined(pointStrokeWidth)) {
-            (attr as any)['stroke-width'] = pointStrokeWidth;
+            attr['stroke-width'] = pointStrokeWidth;
         } else {
-            delete (attr as any)['stroke-width'];
+            delete attr['stroke-width'];
         }
 
         return attr;
