@@ -270,12 +270,12 @@ class Pointer {
      */
     public getSelectionMarkerAttrs(chartX: number, chartY: number): {
         attrs: SVGAttributes
-        type: 'rect' | 'arc' | 'path'
+        shapeType: 'rect' | 'arc' | 'path'
     } {
         const e = {
             args: { chartX, chartY },
             attrs: {} as SVGAttributes,
-            svgType: 'rect' as 'rect' | 'arc' | 'path'
+            shapeType: 'rect' as 'rect' | 'arc' | 'path'
         };
 
         fireEvent(
@@ -290,7 +290,7 @@ class Pointer {
                     chart = this.chart;
 
                 let attrs: SVGAttributes = {},
-                    svgType: 'rect' | 'arc' | 'path' = 'rect',
+                    shapeType: 'rect' | 'arc' | 'path' = 'rect',
                     size;
 
 
@@ -314,13 +314,13 @@ class Pointer {
                 }
 
                 e.attrs = attrs;
-                e.svgType = svgType;
+                e.shapeType = shapeType;
             }
         );
 
         return {
             attrs: e.attrs,
-            type: e.svgType
+            shapeType: e.shapeType
         };
     }
 
@@ -390,7 +390,7 @@ class Pointer {
                 }
             );
 
-            const { type, attrs } =
+            const { shapeType, attrs } =
                 this.getSelectionMarkerAttrs(chartX, chartY);
 
             // make a selection
@@ -402,7 +402,7 @@ class Pointer {
             ) {
                 if (!selectionMarker) {
                     this.selectionMarker = selectionMarker =
-                        chart.renderer[type]();
+                        chart.renderer[shapeType]();
 
                     selectionMarker
                         .attr({

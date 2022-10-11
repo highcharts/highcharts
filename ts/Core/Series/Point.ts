@@ -369,7 +369,7 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = Point.prototype.determineIsNull.call(point);
+        point.isNull = this.isValid && !this.isValid();
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
@@ -472,19 +472,6 @@ class Point {
         }
 
         chart.pointCount--;
-    }
-
-    /**
-     * Determine if point is null.
-     *
-     * @private
-     * @function Highcharts.Point#determineIsNull
-     */
-    public determineIsNull(): boolean {
-        return pick(
-            this.isValid && !this.isValid(),
-            this.x === null || !isNumber(this.y)
-        ); // #3571, check for NaN
     }
 
     /**
@@ -767,9 +754,13 @@ class Point {
     }
 
     /**
+     * Determine if point is valid.
      * @private
+     * @function Highcharts.Point#isValid
      */
-    public isValid?(): boolean;
+    public isValid(): boolean {
+        return this.x !== null && isNumber(this.y);
+    }
 
     /**
      * Transform number or array configs into objects. Also called for object

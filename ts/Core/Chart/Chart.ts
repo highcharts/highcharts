@@ -748,9 +748,8 @@ class Chart {
 
         if (!options.ignoreX) {
             const xAxis = (
-                options.axis && options.axis.isXAxis && options.axis
-            ) || (
-                series && (inverted ? series.yAxis : series.xAxis)
+                series &&
+                (inverted && !this.polar ? series.yAxis : series.xAxis)
             ) || {
                 pos: plotLeft,
                 len: Infinity

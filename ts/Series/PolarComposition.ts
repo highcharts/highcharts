@@ -438,7 +438,7 @@ function onPointerGetSelectionMarkerAttrs(
             linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
 
         let attrs: SVGAttributes = {},
-            type = 'arc';
+            shapeType = 'arc';
 
         attrs.x = center[0] + chart.plotLeft;
         attrs.y = center[1] + chart.plotTop;
@@ -530,7 +530,7 @@ function onPointerGetSelectionMarkerAttrs(
                     chart.plotTop + center[1]
                 ]);
                 attrs.d = path;
-                type = 'path';
+                shapeType = 'path';
             }
         }
 
@@ -583,7 +583,7 @@ function onPointerGetSelectionMarkerAttrs(
                     }));
 
                 attrs.d = path;
-                type = 'path';
+                shapeType = 'path';
             }
         }
 
@@ -592,7 +592,6 @@ function onPointerGetSelectionMarkerAttrs(
             linearAxis.options.gridLineInterpolation === 'polygon'
         ) {
             const radialAxis = chart.hoverPane.axis,
-                tickInterval = radialAxis.tickInterval,
                 start = attrs.start || 0,
                 end = attrs.end || 0,
                 min = start - radialAxis.startAngleRad + radialAxis.pos,
@@ -601,30 +600,30 @@ function onPointerGetSelectionMarkerAttrs(
                 pathEnd = radialAxis.toValue(min + max);
 
             // Trim path
-            if (attrs.d) {
+            if (attrs.d instanceof Array) {
                 let innerPath = attrs.d.slice(0, attrs.d.length / 2),
                     outerPath = attrs.d.slice(
                         attrs.d.length / 2,
                         attrs.d.length
                     );
 
-                outerPath = [...outerPath as any].reverse();
+                outerPath = [...outerPath].reverse();
 
                 const radialAxis = chart.hoverPane.axis;
                 innerPath = trimPath(innerPath, pathStart, pathEnd, radialAxis);
                 outerPath = trimPath(outerPath, pathStart, pathEnd, radialAxis);
 
                 if (outerPath) {
-                    (outerPath[0][0] as any) = 'L';
+                    (outerPath[0][0]) = 'L';
                 }
 
-                outerPath = [...outerPath as any].reverse();
-                attrs.d = innerPath.concat(outerPath as any);
-                type = 'path';
+                outerPath = [...outerPath].reverse();
+                attrs.d = innerPath.concat(outerPath);
+                shapeType = 'path';
             }
         }
         event.attrs = attrs;
-        event.svgType = type;
+        event.shapeType = shapeType;
     }
 }
 
@@ -690,9 +689,9 @@ function onSeriesAfterTranslate(
                 !series.yAxis.reversed
             ) {
                 if (
-                    (points[i].y as any) < series.yAxis.min ||
-                    (points[i].x as any) < series.xAxis.min ||
-                    (points[i].x as any) > series.xAxis.max
+                    pick(points[i].y, Number.MIN_VALUE) < series.yAxis.min ||
+                    points[i].x < series.xAxis.min ||
+                    points[i].x > series.xAxis.max
                 ) {
                     // Destroy markers
                     points[i].isNull = true;
@@ -700,7 +699,8 @@ function onSeriesAfterTranslate(
                     points[i].plotY = NaN;
                 } else {
                     // Restore isNull flag
-                    points[i].isNull = points[i].determineIsNull();
+                    points[i].isNull =
+                        points[i].isValid && !points[i].isValid();
                 }
             }
         }
@@ -770,19 +770,12 @@ function searchPointByAngle(
  * @private
  */
 function trimPath(
-    path: any,
+    path: SVGPath,
     start: number,
     end: number,
     radialAxis: RadialAxis.AxisComposition
 ):any {
-    const pathStart = radialAxis.toValue(
-            start - radialAxis.startAngleRad + radialAxis.pos
-        ),
-        max = end - start,
-        pathEnd = radialAxis.toValue(
-            start - radialAxis.startAngleRad + radialAxis.pos + max
-        ),
-        tickInterval = radialAxis.tickInterval,
+    const tickInterval = radialAxis.tickInterval,
         ticks = radialAxis.tickPositions;
 
     let lastTick = find(ticks, (tick): boolean => tick >= end),
