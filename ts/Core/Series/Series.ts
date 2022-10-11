@@ -41,8 +41,7 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';

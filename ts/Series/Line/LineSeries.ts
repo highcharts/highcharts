@@ -18,6 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
+import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -51,14 +52,17 @@ class LineSeries extends Series {
      *
      * */
 
-    /**
-     * General options for all series types.
-     *
-     * @optionparent plotOptions.series
-     */
-    public static defaultOptions: LineSeriesOptions = merge(Series.defaultOptions, {
-        // nothing here yet
-    } as LineSeriesOptions);
+    public static defaultOptions = merge(
+        Series.defaultOptions,
+        /**
+         * General options for all series types.
+         *
+         * @optionparent plotOptions.series
+         */
+        {
+            // nothing here yet
+        } as PlotOptionsOf<LineSeries>
+    );
 
     /* *
      *

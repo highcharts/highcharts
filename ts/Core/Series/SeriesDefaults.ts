@@ -17,7 +17,11 @@
  * */
 
 import type Point from './Point';
-import type SeriesOptions from './SeriesOptions';
+import type Series from './Series';
+import type {
+    PlotOptionsOf,
+    SeriesOptions
+} from './SeriesOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -32,7 +36,7 @@ import { Palette } from '../Color/Palettes.js';
  *
  * @optionparent plotOptions.series
  */
-const seriesDefaults: SeriesOptions = {
+const seriesDefaults: PlotOptionsOf<Series> = {
     // base series options
 
     /**

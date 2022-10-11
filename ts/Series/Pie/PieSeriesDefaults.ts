@@ -16,7 +16,8 @@
  *
  * */
 
-import type PieSeriesOptions from './PieSeriesOptions';
+import type PieSeries from './PieSeries';
+import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -47,7 +48,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @private
  */
-const PieSeriesDefaults: PieSeriesOptions = {
+const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
 
     /**
      * @excluding legendItemClick
