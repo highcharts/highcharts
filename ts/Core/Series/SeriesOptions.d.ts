@@ -27,7 +27,6 @@ import type {
     PointShortOptions
 } from './PointOptions';
 import type Series from './Series';
-import type { SeriesTypeRegistry } from './SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type {
     StateGenericOptions,
@@ -80,21 +79,13 @@ export type SeriesFindNearestPointByValue = ('x'|'xy');
 
 export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
 
-export interface SeriesOptions extends SeriesPlotOptions {
-    data?: Array<(PointOptions|PointShortOptions)>;
-    id?: string;
-    index?: number;
-    name?: string;
-    type?: keyof SeriesTypeRegistry;
-}
-
 /**
  * Helper interface for series types to add options to all series options.
  *
  * Use the `declare module` pattern to overload the interface in this definition
  * file.
  */
-export interface SeriesPlotOptions {
+export interface SeriesOptions {
     allowPointSelect?: boolean;
     animation?: (boolean|DeepPartial<AnimationOptions>);
     className?: string;
@@ -107,11 +98,14 @@ export interface SeriesPlotOptions {
     crisp?: (boolean|number);
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
+    data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;
     findNearestPointBy?: SeriesFindNearestPointByValue;
     getExtremesFromAll?: boolean;
+    id?: string;
+    index?: number;
     inactiveOtherPoints?: boolean;
     /** @private */
     isInternal?: boolean;
@@ -123,6 +117,7 @@ export interface SeriesPlotOptions {
     lineWidth?: number;
     linkedTo?: string;
     marker?: PointMarkerOptions;
+    name?: string;
     negativeColor?: ColorType;
     opacity?: number;
     point?: SeriesPointOptions;
@@ -136,6 +131,7 @@ export interface SeriesPlotOptions {
     step?: SeriesStepValue;
     stickyTracking?: boolean;
     turboThreshold?: number;
+    type?: string;
     visible?: boolean;
     xAxis?: (number|string);
     yAxis?: (number|string);

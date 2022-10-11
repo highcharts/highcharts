@@ -114,7 +114,7 @@ declare module './SeriesLike' {
 }
 
 declare module './SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }

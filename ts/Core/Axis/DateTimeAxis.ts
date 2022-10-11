@@ -55,7 +55,7 @@ declare module './AxisType' {
 }
 
 declare module '../Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         pointInterval?: number;
         pointIntervalUnit?: DateTimeAxis.PointIntervalUnitValue;
     }

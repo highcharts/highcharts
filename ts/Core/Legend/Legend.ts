@@ -72,7 +72,7 @@ const {
  * */
 
 declare module '../Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         legendIndex?: number;
         legendType?: ('point'|'series');
         showCheckbox?: boolean;

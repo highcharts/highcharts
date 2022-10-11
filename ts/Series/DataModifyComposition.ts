@@ -75,7 +75,7 @@ declare module '../Core/Series/SeriesLike' {
 }
 
 declare module '../Core/Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         compare?: 'percent'|'value'|null;
         compareBase?: (0|100);
         compareStart?: boolean;

@@ -52,7 +52,7 @@ declare module '../Core/Series/SeriesLike' {
 }
 
 declare module '../Core/Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         onPoint?: OnPoint;
     }
 }
