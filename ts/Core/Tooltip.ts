@@ -1135,10 +1135,11 @@ class Tooltip {
                             )
                         });
                     } else if (currentSeries.options.className) {
-                        // label.removeClass(/^(?!.*highcharts-.*\ )+/g);
                         this.chart.series.forEach(
-                            function (string: s): void {
-                                label.removeClass(s.options.className as any);
+                            function (s): void {
+                                label.removeClass(
+                                    s.options.className as string
+                                );
                             }
                         );
                         label.addClass(currentSeries.options.className);
