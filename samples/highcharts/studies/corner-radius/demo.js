@@ -4,7 +4,8 @@
  * @todo
  * - Stacks, refactor math for reuse of top and bottom logic
  * - Optionally round only end or also base of the stack
- * - Columnrange, both ends rounded
+ * - Columnrange, both ends rounded. Requires translate to be refactored to
+ *   ordered events so we can put rounding after columnrange translate.
  * - What next? Core inclusion, separate module or update the featured plugin?
  */
 
