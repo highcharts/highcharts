@@ -23,7 +23,7 @@ import type { ApproximationKeyValue } from './ApproximationType';
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         dataGrouping?: DataGroupingOptions;
     }
 }

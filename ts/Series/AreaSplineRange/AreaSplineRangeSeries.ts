@@ -17,10 +17,7 @@
  * */
 
 import type AreaSplineRangePoint from './AreaSplineRangePoint';
-import type {
-    AreaSplineRangeSeriesOptions,
-    AreaSplineRangeSeriesPlotOptions
-} from './AreaSplineRangeSeriesOptions';
+import type AreaSplineRangeSeriesOptions from './AreaSplineRangeSeriesOptions';
 
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -56,7 +53,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      *
      * */
 
-    public static defaultOptions: AreaSplineRangeSeriesPlotOptions = merge(
+    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
         AreaRangeSeries.defaultOptions
     );
 

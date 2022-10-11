@@ -35,7 +35,7 @@ declare module '../../Core/Options' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         includeInDataExport?: boolean;
     }
 }

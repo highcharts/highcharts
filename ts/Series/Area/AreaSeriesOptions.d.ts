@@ -16,11 +16,8 @@
 
 import type AreaSeries from './AreaSeries';
 import type ColorType from '../../Core/Color/ColorType';
-import type { LineSeriesPlotOptions } from '../Line/LineSeriesOptions';
-import type {
-    SeriesOptions,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -28,13 +25,7 @@ import type {
  *
  * */
 
-export interface AreaSeriesOptions
-    extends SeriesOptions, AreaSeriesPlotOptions
-{
-    // nothing to add
-}
-
-export interface AreaSeriesPlotOptions extends LineSeriesPlotOptions {
+export interface AreaSeriesOptions extends LineSeriesOptions {
     fillColor?: ColorType;
     fillOpacity?: number;
     negativeFillColor?: ColorType;

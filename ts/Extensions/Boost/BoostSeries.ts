@@ -83,7 +83,7 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesPlotOptions {
+    interface SeriesOptions {
         boostData?: Array<unknown>;
         xData?: Array<number>;
         yData?: Array<(number|null)>;
