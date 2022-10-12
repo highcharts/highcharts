@@ -2,7 +2,6 @@ Highcharts.stockChart('container', {
 
     yAxis: {
         crosshair: {
-            enabled: true,
             label: {
                 enabled: true
             }
