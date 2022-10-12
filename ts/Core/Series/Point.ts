@@ -958,7 +958,11 @@ class Point {
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
-                (series.chart.tooltip as any).styledModeFormat(pointFormat);
+                (series.chart.tooltip as any).styledModeFormat(
+                    pointFormat,
+                    this.options.className ||
+                    this.series.options.className
+                );
         }
 
         // Loop over the point array map and replace unformatted values with

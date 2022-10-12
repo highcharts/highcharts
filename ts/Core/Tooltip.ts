@@ -310,6 +310,12 @@ class Tooltip {
         // build the values
         s = s.concat(tooltip.bodyFormatter(items));
 
+        // ### TEMP proof of concept while learning the formatting related code
+        // if(tooltip.chart.styledMode && items[0].series.options.className){
+        //     s[1] = tooltip.attachCustomClass(s[1],
+        //  items[0].series.options.className);
+        // }
+
         // footer
         s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
 
@@ -436,7 +442,6 @@ class Tooltip {
      * Tooltip label
      */
     public getLabel(): SVGElement { // getLabel
-
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
@@ -1134,7 +1139,14 @@ class Tooltip {
                                 Palette.neutralColor60
                             )
                         });
-                    } else if (currentSeries.options.className) {
+
+                    // ### TODO regex for removal
+                    } else if (
+                        point.options.className ||
+                        currentSeries.options.className
+                    ) {
+
+                        // ### only works for series for now
                         this.chart.series.forEach(
                             function (s): void {
                                 label.removeClass(
@@ -1142,7 +1154,11 @@ class Tooltip {
                                 );
                             }
                         );
-                        label.addClass(currentSeries.options.className);
+
+                        label.addClass(
+                            point.options.className as string ||
+                            currentSeries.options.className as string
+                        );
                     }
 
                     tooltip.updatePosition({
@@ -1690,7 +1706,10 @@ class Tooltip {
     /**
      * @private
      */
-    public styledModeFormat(formatString: string): string {
+    public styledModeFormat(
+        formatString: string,
+        customClass?: string
+    ): string {
         return formatString
             .replace(
                 'style="font-size: 10px"',
@@ -1698,7 +1717,8 @@ class Tooltip {
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
-                'class="highcharts-color-{$1.colorIndex}"'
+                `class="highcharts-color-{$1.colorIndex}
+                    ${customClass ? ' ' + customClass : ''}"`
             );
     }
 
@@ -1754,15 +1774,6 @@ class Tooltip {
             // Replace default header style with class name
             if (series.chart.styledMode) {
                 formatString = this.styledModeFormat(formatString);
-
-                // Attach a series classname if it has been provided
-                if (series.options.className) {
-                    formatString = formatString
-                        .replace(
-                            /(class=".*)"/,
-                            '$1 ' + series.options.className + '"'
-                        );
-                }
             }
 
             (e as any).text = format(formatString, {
