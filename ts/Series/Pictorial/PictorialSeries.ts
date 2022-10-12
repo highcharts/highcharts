@@ -646,7 +646,7 @@ export default PictorialSeries;
  * The max option determines height of the image. It is the ratio of
  * `yAxis.max` to the `paths.max`.
  *
- * @sample {highcharts} highcharts/pictorial/max/
+ * @sample {highcharts} highcharts\series-pictorial\paths-max
  *         Pictorial max option
  *
  * @type      {number}
@@ -658,7 +658,7 @@ export default PictorialSeries;
 /**
  * The stackShadow forms the background of stacked points. Requires the `series.stacking` to be defined.
  *
- * @sample {highcharts} highcharts/yaxis/stackShadow/
+ * @sample {highcharts} highcharts/yaxis/stackshadow/
  *         Pictorial stackShadow option
  *
  * @declare   Highcharts.XAxisOptions
