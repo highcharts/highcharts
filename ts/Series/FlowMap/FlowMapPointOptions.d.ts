@@ -16,7 +16,7 @@
  *
  * */
 
-import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
+import type MapLinePointOptions from '../MapLine/MapLinePointOptions';
 
 /* *
  *
@@ -24,13 +24,15 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  *
  * */
 
-export interface FlowMapPointOptions extends SankeyPointOptions {
+export interface FlowMapPointOptions extends MapLinePointOptions {
     curveFactor?: number;
-    weight: number;
+    from?: string;
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
-    minWeight: number;
     maxWeight: number;
+    minWeight: number;
+    to?: string;
+    weight: number;
 }
 
 interface MarkerEndOptions {

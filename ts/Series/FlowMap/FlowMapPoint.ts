@@ -20,9 +20,9 @@ import Point from '../../Core/Series/Point';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sankey: {
+        mapline: {
             prototype: {
-                pointClass: SankeyPoint
+                pointClass: MapLinePoint
             }
         }
     }
@@ -34,7 +34,7 @@ const {
  *
  * */
 
-declare class FlowMapPoint extends SankeyPoint {
+declare class FlowMapPoint extends MapLinePoint {
     public options: FlowMapPointOptions;
     public series: FlowMapSeries;
     public oldFromPoint?: Point;

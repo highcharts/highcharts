@@ -8,7 +8,7 @@
  *
  * */
 
-import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
+import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
 
 /* *
  *
@@ -22,7 +22,7 @@ import SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
  *
  * */
 
-interface FlowMapSeriesOptions extends SankeySeriesOptions {
+interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     markerEnd?: MarkerEndOptions,
     growTowards?: boolean,
     minWeight: number,

@@ -19,7 +19,8 @@ import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sankey: SankeySeries
+        column: ColumnSeries,
+        mapline: MapLineSeries
     }
 } = SeriesRegistry;
 
@@ -54,7 +55,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-class FlowMapSeries extends SankeySeries {
+class FlowMapSeries extends MapLineSeries {
 
     /* *
      *
@@ -67,13 +68,12 @@ class FlowMapSeries extends SankeySeries {
      * display route paths (e.g. flights or ships routes) or flows on a map. It
      * is drawing a link between two mappoints.
      *
-     * @extends      plotOptions.sankey
+     * @extends      plotOptions.mapline
      * @product      highmaps
-     * @requires     modules/sankey
      * @requires     modules/flowmap
      * @optionparent plotOptions.flowmap
      */
-    public static defaultOptions: FlowMapSeriesOptions = merge(SankeySeries.defaultOptions, {
+    public static defaultOptions: FlowMapSeriesOptions = merge(MapLineSeries.defaultOptions, {
         /**
          * Always disabled, excluded from API.
          *
@@ -257,233 +257,238 @@ class FlowMapSeries extends SankeySeries {
      * Run translation operations for one link.
      * @private
      */
-    public translateLink(point: FlowMapPoint): void {
+    public drawPoints(): void {
+        this.points.forEach((point): void => {
+            const chart = this.chart,
+                fromPoint = chart.get(point.options.from || ''),
+                toPoint = chart.get(point.options.to || ''),
+                pointOptions = point.options,
+                // TODO: Which should override what?
+                markerEndOptions =
+                    pointOptions.markerEnd || this.options.markerEnd,
+                minWeight = this.options.minWeight,
+                maxWeight = this.options.maxWeight,
+                curveFactor = pointOptions.curveFactor || 0,
+                weight = pointOptions.weight || 1,
+                // TODO: Make it work the other way around.
+                growTowards =
+                    pointOptions.growTowards || this.options.growTowards,
+                offset = markerEndOptions && markerEndOptions.height || 0;
 
-        const chart = this.chart,
-            fromPoint = chart.get(point.options.from || ''),
-            toPoint = chart.get(point.options.to || ''),
-            pointOptions = point.options,
-            // TODO: Which should override what?
-            markerEndOptions = pointOptions.markerEnd || this.options.markerEnd,
-            minWeight = this.options.minWeight,
-            maxWeight = this.options.maxWeight,
-            curveFactor = pointOptions.curveFactor || 0,
-            weight = pointOptions.weight || 1,
-            // TODO: Make it work the other way around.
-            growTowards = pointOptions.growTowards || this.options.growTowards,
-            offset = markerEndOptions && markerEndOptions.height || 0;
 
+            // Get a new rescaled weight
+            const scaledWeight = this.scaleWeight(
+                weight,
+                (this as any).currentMinWeight,
+                (this as any).currentMaxWeight,
+                minWeight,
+                maxWeight
+            );
 
-        // Get a new rescaled weight
-        const scaledWeight = this.scaleWeight(
-            weight,
-            (this as any).currentMinWeight,
-            (this as any).currentMaxWeight,
-            minWeight,
-            maxWeight
-        );
-
-        // Connect to the linked parent point (in mappoint) to trigger
-        // series redraw for the linked point (in flow)
-        if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
-            return;
-        }
-
-        // We have from and to & before the proceed
-        if (toPoint !== point.oldToPoint || !point.oldToPoint) {
-            if (point.removeEventForToPoint) {
-                point.removeEventForToPoint();
+            // Connect to the linked parent point (in mappoint) to trigger
+            // series redraw for the linked point (in flow)
+            if (!(fromPoint instanceof Point) || !(toPoint instanceof Point)) {
+                return;
             }
 
-            point.removeEventForToPoint = addEvent(
-                toPoint, 'update', dirtySeries
-            );
-        }
+            // We have from and to & before the proceed
+            if (toPoint !== point.oldToPoint || !point.oldToPoint) {
+                if (point.removeEventForToPoint) {
+                    point.removeEventForToPoint();
+                }
 
-        if (fromPoint !== point.oldFromPoint || !point.oldFromPoint) {
-            if (point.removeEventForFromPoint) {
-                point.removeEventForFromPoint();
+                point.removeEventForToPoint = addEvent(
+                    toPoint, 'update', dirtySeries
+                );
             }
 
-            point.removeEventForFromPoint = addEvent(
-                fromPoint, 'update', dirtySeries
-            );
-        }
+            if (fromPoint !== point.oldFromPoint || !point.oldFromPoint) {
+                if (point.removeEventForFromPoint) {
+                    point.removeEventForFromPoint();
+                }
 
-        function dirtySeries(): void {
-            point.series.isDirty = true;
-        }
+                point.removeEventForFromPoint = addEvent(
+                    fromPoint, 'update', dirtySeries
+                );
+            }
 
-        // Save original point location.
-        point.oldFromPoint = fromPoint;
-        point.oldToPoint = toPoint;
+            function dirtySeries(): void {
+                point.series.isDirty = true;
+            }
 
-        let fromY = fromPoint.plotY || 0,
-            toY = toPoint.plotY || 0,
-            fromX = fromPoint.plotX || 0,
-            toX = toPoint.plotX || 0;
+            // Save original point location.
+            point.oldFromPoint = fromPoint;
+            point.oldToPoint = toPoint;
 
-        point.shapeType = 'path';
+            let fromY = fromPoint.plotY || 0,
+                toY = toPoint.plotY || 0,
+                fromX = fromPoint.plotX || 0,
+                toX = toPoint.plotX || 0;
+
+            point.shapeType = 'path';
 
 
-        // Links going from `fromPoint` to `toPoint`.
+            // Links going from `fromPoint` to `toPoint`.
 
-        // An offset makes room for arrows if they are specified.
-        if (offset) {
+            // An offset makes room for arrows if they are specified.
+            if (offset) {
+                let dX = toX - fromX,
+                    dY = toY - fromY;
+
+                dX *= 0.5;
+                dY *= 0.5;
+
+                let mX = fromX + dX,
+                    mY = fromY + dY;
+
+                let tmp = dX;
+                dX = dY;
+                dY = -tmp;
+
+                // Calculate the arc strength.
+                let arcPointX = (mX + dX * curveFactor),
+                    arcPointY = (mY + dY * curveFactor);
+
+                let [offsetX, offsetY] =
+                    FlowMapSeries.normalize(
+                        arcPointX - toX,
+                        arcPointY - toY
+                    );
+
+                offsetX *= offset;
+                offsetY *= offset;
+
+                toX += offsetX;
+                toY += offsetY;
+            }
+
+            // Vector between the points.
             let dX = toX - fromX,
                 dY = toY - fromY;
 
+            // Vector is halved.
             dX *= 0.5;
             dY *= 0.5;
 
+            // Vector points exactly between the points.
             let mX = fromX + dX,
                 mY = fromY + dY;
 
+            // Rotating the halfway distance by 90 anti-clockwise.
+            // We can then use this to create an arc.
             let tmp = dX;
             dX = dY;
             dY = -tmp;
 
-            // Calculate the arc strength.
+            // Weight vector calculation for the middle of the curve.
+            let [wX, wY] = FlowMapSeries.normalize(dX, dY);
+
+            // The `fineTune` prevents an obvious mismatch along the curve.
+            const fineTune = 1 + Math.sqrt(curveFactor * curveFactor) * 0.25;
+            wX *= scaledWeight * fineTune;
+            wY *= scaledWeight * fineTune;
+
+            // Ccalculate the arc strength.
             let arcPointX = (mX + dX * curveFactor),
                 arcPointY = (mY + dY * curveFactor);
 
-            let [offsetX, offsetY] =
+            // Calculate edge vectors in the from-point.
+            let [fromXToArc, fromYToArc] =
+                FlowMapSeries.normalize(
+                    arcPointX - fromX,
+                    arcPointY - fromY
+                );
+
+            tmp = fromXToArc;
+            fromXToArc = fromYToArc;
+            fromYToArc = -tmp;
+
+            fromXToArc *= scaledWeight;
+            fromYToArc *= scaledWeight;
+
+
+            // Calculate edge vectors in the to-point.
+            let [toXToArc, toYToArc] =
                 FlowMapSeries.normalize(
                     arcPointX - toX,
                     arcPointY - toY
                 );
 
-            offsetX *= offset;
-            offsetY *= offset;
+            tmp = toXToArc;
+            toXToArc = -toYToArc;
+            toYToArc = tmp;
 
-            toX += offsetX;
-            toY += offsetY;
-        }
+            toXToArc *= scaledWeight;
+            toYToArc *= scaledWeight;
 
-        // Vector between the points.
-        let dX = toX - fromX,
-            dY = toY - fromY;
+            // Shrink the starting edge and middle thickness to make it grow
+            // towards the end.
+            if (growTowards) {
+                fromXToArc /= scaledWeight;
+                fromYToArc /= scaledWeight;
+                wX /= 4;
+                wY /= 4;
+            }
 
-        // Vector is halved.
-        dX *= 0.5;
-        dY *= 0.5;
+            point.shapeArgs = {
+                d: [
+                    [
+                        'M',
+                        fromX - fromXToArc,
+                        fromY - fromYToArc
+                    ],
+                    [
+                        'Q',
+                        arcPointX - wX,
+                        arcPointY - wY,
+                        toX - toXToArc,
+                        toY - toYToArc
+                    ],
+                    // This is where markerEnd will be spliced to.
+                    [
+                        'L',
+                        toX + toXToArc,
+                        toY + toYToArc
+                    ],
+                    [
+                        'Q',
+                        arcPointX + wX,
+                        arcPointY + wY,
+                        fromX + fromXToArc,
+                        fromY + fromYToArc
+                    ],
+                    ['Z']
+                ]
+            };
 
-        // Vector points exactly between the points.
-        let mX = fromX + dX,
-            mY = fromY + dY;
+            if (
+                markerEndOptions &&
+                markerEndOptions.enabled &&
+                point.shapeArgs.d
+            ) {
+                const marker: SVGPath = FlowMapSeries.markerEndPath(
+                    [toX - toXToArc, toY - toYToArc],
+                    [toX + toXToArc, toY + toYToArc],
+                    [toPoint.plotX as number, toPoint.plotY as number],
+                    markerEndOptions
+                );
 
-        // Rotating the halfway distance by 90 anti-clockwise.
-        // We can then use this to create an arc.
-        let tmp = dX;
-        dX = dY;
-        dY = -tmp;
+                (point.shapeArgs.d as SVGPath).splice(2, 0,
+                    ...marker
+                );
+            }
 
-        // Weight vector calculation for the middle of the curve.
-        let [wX, wY] = FlowMapSeries.normalize(dX, dY);
+            // plotX and plotY need to be defined for dataLabels. (#15863)
+            point.y = point.plotY = 1;
+            point.x = point.plotX = 1;
 
-        // The `fineTune` prevents an obvious mismatch along the curve.
-        const fineTune = 1 + Math.sqrt(curveFactor * curveFactor) * 0.25;
-        wX *= scaledWeight * fineTune;
-        wY *= scaledWeight * fineTune;
+            if (!point.color) {
+                point.color = fromPoint.color;
+            }
+        });
 
-        // Ccalculate the arc strength.
-        let arcPointX = (mX + dX * curveFactor),
-            arcPointY = (mY + dY * curveFactor);
-
-        // Calculate edge vectors in the from-point.
-        let [fromXToArc, fromYToArc] =
-            FlowMapSeries.normalize(
-                arcPointX - fromX,
-                arcPointY - fromY
-            );
-
-        tmp = fromXToArc;
-        fromXToArc = fromYToArc;
-        fromYToArc = -tmp;
-
-        fromXToArc *= scaledWeight;
-        fromYToArc *= scaledWeight;
-
-
-        // Calculate edge vectors in the to-point.
-        let [toXToArc, toYToArc] =
-            FlowMapSeries.normalize(
-                arcPointX - toX,
-                arcPointY - toY
-            );
-
-        tmp = toXToArc;
-        toXToArc = -toYToArc;
-        toYToArc = tmp;
-
-        toXToArc *= scaledWeight;
-        toYToArc *= scaledWeight;
-
-        // Shrink the starting edge and middle thickness to make it grow
-        // towards the end.
-        if (growTowards) {
-            fromXToArc /= scaledWeight;
-            fromYToArc /= scaledWeight;
-            wX /= 4;
-            wY /= 4;
-        }
-
-        point.shapeArgs = {
-            d: [
-                [
-                    'M',
-                    fromX - fromXToArc,
-                    fromY - fromYToArc
-                ],
-                [
-                    'Q',
-                    arcPointX - wX,
-                    arcPointY - wY,
-                    toX - toXToArc,
-                    toY - toYToArc
-                ],
-                // This is where markerEnd will be spliced to.
-                [
-                    'L',
-                    toX + toXToArc,
-                    toY + toYToArc
-                ],
-                [
-                    'Q',
-                    arcPointX + wX,
-                    arcPointY + wY,
-                    fromX + fromXToArc,
-                    fromY + fromYToArc
-                ],
-                ['Z']
-            ]
-        };
-
-        if (
-            markerEndOptions &&
-            markerEndOptions.enabled &&
-            point.shapeArgs.d
-        ) {
-            const marker: SVGPath = FlowMapSeries.markerEndPath(
-                [toX - toXToArc, toY - toYToArc],
-                [toX + toXToArc, toY + toYToArc],
-                [toPoint.plotX as number, toPoint.plotY as number],
-                markerEndOptions
-            );
-
-            (point.shapeArgs.d as SVGPath).splice(2, 0,
-                ...marker
-            );
-        }
-
-        // Pass test in drawPoints. plotX/Y needs to be defined for dataLabels.
-        // #15863
-        point.y = point.plotY = 1;
-        point.x = point.plotX = 1;
-
-        if (!point.color) {
-            point.color = fromPoint.color;
-        }
+        // Draw the points
+        ColumnSeries.prototype.drawPoints.apply(this);
     }
 
     public translateNode(): void {
@@ -549,7 +554,6 @@ export default FlowMapSeries;
  * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
  * negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
- * @requires  modules/sankey
  * @apioption series.flowmap
  */
 
@@ -584,7 +588,6 @@ export default FlowMapSeries;
  *     ```
  *
  * @type      {Array<number|null|*>}
- * @extends   series.sankey.data
  * @excluding labelrank, outgoing
  * @product   highmaps
  * @apioption series.flowmap.data
