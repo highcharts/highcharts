@@ -20,7 +20,6 @@
  *
  * */
 
-import type SunburstSeries from './SunburstSeries';
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -29,6 +28,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import type SunburstNode from './SunburstNode.js';
 const {
     isNumber,
     isObject,
@@ -154,7 +154,7 @@ namespace SunburstUtilities {
      * @private
      */
     export function getLevelFromAndTo(
-        { level, height }: SunburstSeries.NodeObject
+        { level, height }: SunburstNode
     ): { from: number; to: number } {
         //  Never displays level below 1
         const from = level > 0 ? level : 1;

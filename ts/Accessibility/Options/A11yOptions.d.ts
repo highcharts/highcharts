@@ -200,8 +200,8 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Extensions/Annotations/AnnotationsOptions' {
-    interface AnnotationsLabelOptions {
+declare module '../../Extensions/Annotations/Controllables/ControllableOptions' {
+    interface ControllableLabelOptions {
         accessibility?: AnnotationsAccessibilityOptionsObject;
     }
 }

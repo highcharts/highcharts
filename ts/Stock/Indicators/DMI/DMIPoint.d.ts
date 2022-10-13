@@ -22,6 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  * */
 
 declare class DMIPoint extends SMAPoint {
+    public minusDI?: number;
+    public plusDI?: number;
     public series: DMIIndicator;
 }
 

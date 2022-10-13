@@ -36,7 +36,7 @@ const {
     charts,
     deg2rad
 } = H;
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';

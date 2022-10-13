@@ -91,11 +91,11 @@ function spider() {
                 buttons: {
                     zoomIn: {
                         x: 5,
-                        y: 10
+                        y: 5
                     },
                     zoomOut: {
                         x: 5,
-                        y: 36
+                        y: 31
                     }
                 },
                 buttonOptions: mapbuttons
@@ -140,10 +140,10 @@ function spider() {
             }],
             responsive: {
                 rules: [
-                    ///up to 219
+                    // up to 219
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -318,11 +318,11 @@ function temps() {
                 buttons: {
                     zoomIn: {
                         x: 5,
-                        y: 10
+                        y: 5
                     },
                     zoomOut: {
                         x: 5,
-                        y: 36
+                        y: 31
                     }
                 }
             },
@@ -405,10 +405,10 @@ function temps() {
             }],
             responsive: {
                 rules: [
-                    ///up to 219
+                    // /up to 219
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -480,11 +480,11 @@ function clusters() {
                 buttons: {
                     zoomIn: {
                         x: 5,
-                        y: 10
+                        y: 5
                     },
                     zoomOut: {
                         x: 5,
-                        y: 36
+                        y: 31
                     }
                 },
                 enableMouseWheelZoom: false
@@ -593,10 +593,10 @@ function clusters() {
             }],
             responsive: {
                 rules: [
-                    ///up to 219
+                    // /up to 219
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -1698,11 +1698,11 @@ function projection() {
                     buttons: {
                         zoomIn: {
                             x: 5,
-                            y: 10
+                            y: 5
                         },
                         zoomOut: {
                             x: 5,
-                            y: 36
+                            y: 31
                         }
                     }
                 },
@@ -1767,10 +1767,10 @@ function projection() {
                 }],
                 responsive: {
                     rules: [
-                        ///up to 219
+                        // /up to 219
                         {
                             condition: {
-                                ///up tp this
+                                // /up tp this
                                 maxWidth: 219
                             },
                             chartOptions: {

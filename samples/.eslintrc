@@ -13,6 +13,7 @@ globals:
     MSFT: true
     ohlcdata: true
     QUnit: true
+    RGBColor: true
     temperatures: true          # pointinterval-pointstart demo
     TestController: true
     TestTemplate: true
@@ -46,5 +47,6 @@ rules:
     prefer-rest-params: 0
     require-jsdoc: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
+    spaced-comment: 1
     strict: 0
     jsdoc/valid-jsdoc: 0

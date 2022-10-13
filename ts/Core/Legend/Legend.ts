@@ -359,16 +359,17 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
-            'highcharts-legend-item-hidden'
-        );
+        const { group, label, line, symbol } = item.legendItem || {};
+
+        if (group) {
+            group[visible ? 'removeClass' : 'addClass'](
+                'highcharts-legend-item-hidden'
+            );
+        }
 
         if (!this.chart.styledMode) {
             const legend = this,
                 options = legend.options,
-                legendItem = item.legendItem,
-                legendLine = item.legendLine,
-                legendSymbol = item.legendSymbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
                 textColor = visible ?
                     options.itemStyle.color :
@@ -379,20 +380,21 @@ class Legend {
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (legendItem) {
-                legendItem.css({
+            if (label) {
+                label.css({
                     fill: textColor,
                     color: textColor // #1553, oldIE
                 });
             }
-            if (legendLine) {
-                legendLine.attr({ stroke: symbolColor });
+
+            if (line) {
+                line.attr({ stroke: symbolColor });
             }
 
-            if (legendSymbol) {
+            if (symbol) {
 
                 // Apply marker options
-                if (markerOptions && legendSymbol.isMarker) { // #585
+                if (markerOptions && symbol.isMarker) { // #585
                     symbolAttr = (item as any).pointAttribs();
                     if (!visible) {
                         // #6769
@@ -400,11 +402,11 @@ class Legend {
                     }
                 }
 
-                legendSymbol.attr(symbolAttr);
+                symbol.attr(symbolAttr);
             }
         }
 
-        fireEvent(this, 'afterColorizeItem', { item: item, visible: visible });
+        fireEvent(this, 'afterColorizeItem', { item, visible });
     }
 
     /**
@@ -434,37 +436,31 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
+            { group, x = 0, y = 0 } = item.legendItem || {},
             options = legend.options,
             symbolPadding = options.symbolPadding,
             ltr = !options.rtl,
-            legendItemPos = item._legendItemPos,
-            itemX = (legendItemPos as any)[0],
-            itemY = (legendItemPos as any)[1],
-            checkbox = item.checkbox,
-            legendGroup = item.legendGroup;
+            checkbox = item.checkbox;
 
-        if (legendGroup && legendGroup.element) {
+        if (group && group.element) {
             const attribs = {
                 translateX: ltr ?
-                    itemX :
-                    legend.legendWidth - itemX - 2 * symbolPadding - 4,
-                translateY: itemY
+                    x :
+                    legend.legendWidth - x - 2 * symbolPadding - 4,
+                translateY: y
             };
             const complete = (): void => {
                 fireEvent(this, 'afterPositionItem', { item });
             };
 
-            if (defined(legendGroup.translateY)) {
-                legendGroup.animate(attribs, void 0, complete);
-            } else {
-                legendGroup.attr(attribs);
-                complete();
-            }
+            group[defined(group.translateY) ? 'animate' : 'attr'](
+                attribs, void 0, complete
+            );
         }
 
         if (checkbox) {
-            checkbox.x = itemX;
-            checkbox.y = itemY;
+            checkbox.x = x;
+            checkbox.y = y;
         }
     }
 
@@ -482,20 +478,21 @@ class Legend {
             Series|Point
         )
     ): void {
-        const checkbox = item.checkbox;
+        const checkbox = item.checkbox,
+            legendItem = item.legendItem || {};
 
         // destroy SVG elements
-        ['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'].forEach(
-            function (key: string): void {
-                if ((item as any)[key]) {
-                    (item as any)[key] = (item as any)[key].destroy();
-                }
+        for (const key of ['group', 'label', 'line', 'symbol'] as const) {
+            if (legendItem[key]) {
+                legendItem[key] = legendItem[key].destroy();
             }
-        );
+        }
 
         if (checkbox) {
-            discardElement((item as any).checkbox);
+            discardElement(checkbox);
         }
+
+        item.legendItem = void 0;
     }
 
     /**
@@ -506,23 +503,15 @@ class Legend {
      * @function Highcharts.Legend#destroy
      */
     public destroy(): void {
-        /**
-         * @private
-         * @param {string} key
-             */
-        function destroyItems(this: Legend, key: string): void {
-            if ((this as any)[key]) {
-                (this as any)[key] = (this as any)[key].destroy();
-            }
-        }
+        const legend: AnyRecord = this;
 
         // Destroy items
-        this.getAllItems().forEach(function (item): void {
-            ['legendItem', 'legendGroup'].forEach(destroyItems, item);
-        });
+        for (const item of this.getAllItems()) {
+            this.destroyItem(item);
+        }
 
         // Destroy legend elements
-        [
+        for (const key of [
             'clipRect',
             'up',
             'down',
@@ -531,7 +520,12 @@ class Legend {
             'box',
             'title',
             'group'
-        ].forEach(destroyItems, this);
+        ] as const) {
+            if (legend[key]) {
+                legend[key] = legend[key].destroy();
+            }
+        }
+
         this.display = null as any; // Reset in .render on update.
     }
 
@@ -641,7 +635,7 @@ class Legend {
     ): void {
         const options = this.options;
 
-        (item.legendItem as any).attr({
+        (item.legendItem as any).label.attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
                 options.labelFormatter.call(item)
@@ -661,6 +655,7 @@ class Legend {
         item: Legend.Item
     ): void {
         const legend = this,
+            legendItem = item.legendItem = item.legendItem || {},
             chart = legend.chart,
             renderer = chart.renderer,
             options = legend.options,
@@ -681,16 +676,17 @@ class Legend {
                 seriesOptions.showCheckbox,
             useHTML = options.useHTML,
             itemClassName = item.options.className;
-        let li = item.legendItem,
+
+        let label = legendItem.label,
             // full width minus text width
             itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0);
 
-        if (!li) { // generate it once, later move it
+        if (!label) { // generate it once, later move it
 
             // Generate the group box, a group to hold the symbol and text. Text
             // is to be appended in Legend class.
-            item.legendGroup = renderer
+            legendItem.group = renderer
                 .g('legend-item')
                 .addClass(
                     'highcharts-' + series.type + '-series ' +
@@ -706,7 +702,7 @@ class Legend {
                 .add(legend.scrollGroup);
 
             // Generate the list item text and add it to the group
-            item.legendItem = li = renderer.text(
+            legendItem.label = label = renderer.text(
                 '',
                 ltr ?
                     symbolWidth + symbolPadding :
@@ -717,30 +713,30 @@ class Legend {
 
             if (!chart.styledMode) {
                 // merge to prevent modifying original (#1021)
-                li.css(merge(
+                label.css(merge(
                     item.visible ?
                         itemStyle :
                         itemHiddenStyle
                 ));
             }
 
-            li
+            label
                 .attr({
                     align: ltr ? 'left' : 'right',
                     zIndex: 2
                 })
-                .add(item.legendGroup);
+                .add(legendItem.group);
 
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
                 legend.fontMetrics = renderer.fontMetrics(
                     chart.styledMode ? 12 : (itemStyle as any).fontSize,
-                    li
+                    label
                 );
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
-                li.attr('y', legend.baseline);
+                label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
                     options.symbolHeight || legend.fontMetrics.f;
@@ -755,7 +751,7 @@ class Legend {
                         itemDistance + (showCheckbox ? 20 : 0);
 
                     if (ltr) {
-                        li.attr('x', legend.symbolWidth + symbolPadding);
+                        label.attr('x', legend.symbolWidth + symbolPadding);
                     }
                 }
             }
@@ -764,7 +760,7 @@ class Legend {
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
-                legend.setItemEvents(item, li, useHTML);
+                legend.setItemEvents(item, label, useHTML);
             }
 
         }
@@ -779,7 +775,7 @@ class Legend {
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
-            li.css({
+            label.css({
                 width: ((
                     options.itemWidth ||
                     legend.widthOption ||
@@ -792,12 +788,12 @@ class Legend {
         legend.setText(item as Legend.Item);
 
         // calculate the positions for the next line
-        const bBox = li.getBBox();
+        const bBox = label.getBBox();
         const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
-            item.legendItemWidth ||
+            legendItem.labelWidth ||
             bBox.width + itemExtraWidth;
         legend.maxItemWidth = Math.max(
             legend.maxItemWidth, (item.itemWidth as any)
@@ -805,7 +801,7 @@ class Legend {
         legend.totalItemWidth += item.itemWidth as any;
 
         legend.itemHeight = item.itemHeight = Math.round(
-            item.legendItemHeight ||
+            legendItem.labelHeight ||
             // use bBox for multiline (#16398)
             (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );
@@ -836,7 +832,8 @@ class Legend {
                     this.totalItemWidth > maxLegendWidth
             ) ?
                 this.maxItemWidth :
-                item.itemWidth;
+                item.itemWidth,
+            legendItem = item.legendItem || {};
 
         // If the item exceeds the width, start a new line
         if (
@@ -862,7 +859,8 @@ class Legend {
         );
 
         // cache the position of the newly generated or reordered items
-        item._legendItemPos = [this.itemX, this.itemY];
+        legendItem.x = this.itemX;
+        legendItem.y = this.itemY;
 
         // advance
         if (horizontal) {
@@ -914,7 +912,7 @@ class Legend {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(
-                    series.legendItems as any ||
+                    (series.legendItem || {}).labels as any ||
                     (
                         seriesOptions.legendType === 'point' ?
                             series.data :
@@ -1031,7 +1029,7 @@ class Legend {
                 }
 
                 height = this.itemMarginTop +
-                    (item.legendItem as any).getBBox().height +
+                    (item.legendItem as any).label.getBBox().height +
                     this.itemMarginBottom;
 
                 top = (item as any).yAxis.top - chart.plotTop;
@@ -1051,12 +1049,15 @@ class Legend {
                 });
             }
         }, this);
-        distribute(boxes, chart.plotHeight).forEach((box): void => {
-            if (box.item._legendItemPos && box.pos) {
-                box.item._legendItemPos[1] =
-                    chart.plotTop - chart.spacing[0] + box.pos;
+
+        let legendItem;
+
+        for (const box of distribute(boxes, chart.plotHeight)) {
+            legendItem = box.item.legendItem || {};
+            if (box.pos) {
+                legendItem.y = chart.plotTop - chart.spacing[0] + box.pos;
             }
-        });
+        }
 
     }
 
@@ -1108,14 +1109,17 @@ class Legend {
              * @name Highcharts.Legend#group
              * @type {Highcharts.SVGElement}
              */
-            legend.group = legendGroup = renderer.g('legend')
+            legend.group = legendGroup = renderer
+                .g('legend')
                 .addClass(options.className || '')
                 .attr({ zIndex: 7 })
                 .add();
-            legend.contentGroup = renderer.g()
+            legend.contentGroup = renderer
+                .g()
                 .attr({ zIndex: 1 }) // above background
                 .add(legendGroup);
-            legend.scrollGroup = renderer.g()
+            legend.scrollGroup = renderer
+                .g()
                 .add(legend.contentGroup);
         }
 
@@ -1200,7 +1204,7 @@ class Legend {
         }
 
         // hide the border if no items
-        box[display ? 'show' : 'hide']();
+        legendGroup[display ? 'show' : 'hide']();
 
         // Open for responsiveness
         if (chart.styledMode && legendGroup.getStyle('display') === 'none') {
@@ -1315,6 +1319,7 @@ class Legend {
             };
         let clipHeight: number,
             lastY: number,
+            legendItem,
             spaceHeight = (
                 chart.spacingBox.height +
                 (alignTop ? -optionsY : optionsY) - padding
@@ -1351,9 +1356,12 @@ class Legend {
 
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
-            allItems.forEach(function (item, i): void {
-                const y = (item._legendItemPos as any)[1],
-                    h = Math.round((item.legendItem as any).getBBox().height);
+            allItems.forEach((item, i): void => {
+                legendItem = item.legendItem || {};
+                const y = legendItem.y || 0,
+                    h = Math.round(
+                        (legendItem as any).label.getBBox().height
+                    );
                 let len = pages.length;
 
                 if (!len || (y - pages[len - 1] > clipHeight &&
@@ -1363,9 +1371,9 @@ class Legend {
                 }
 
                 // Keep track of which page each item is on
-                item.pageIx = len - 1;
+                legendItem.pageIx = len - 1;
                 if (lastY) {
-                    allItems[i - 1].pageIx = len - 1;
+                    (allItems[i - 1].legendItem || {}).pageIx = len - 1;
                 }
 
                 // add the last page if needed (#2617, #13683)
@@ -1378,7 +1386,7 @@ class Legend {
                     h <= clipHeight
                 ) {
                     pages.push(y);
-                    item.pageIx = len;
+                    legendItem.pageIx = len;
                 }
 
                 if (y !== lastY) {
@@ -1569,17 +1577,18 @@ class Legend {
      * @private
      * @function Highcharts.Legend#setItemEvents
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
-     * @param {Highcharts.SVGElement} legendItem
+     * @param {Highcharts.SVGElement} legendLabel
      * @param {boolean} [useHTML=false]
      * @emits Highcharts.Point#event:legendItemClick
      * @emits Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
         item: Legend.Item,
-        legendItem: SVGElement,
+        legendLabel: SVGElement,
         useHTML?: boolean
     ): void {
         const legend = this,
+            legendItem = item.legendItem || {},
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
@@ -1587,9 +1596,9 @@ class Legend {
             styledMode = legend.chart.styledMode,
             // When `useHTML`, the symbol is rendered in other group, so
             // we need to apply events listeners to both places
-            legendItems = useHTML ?
-                [legendItem, item.legendSymbol] :
-                [item.legendGroup];
+            legendElements = useHTML ?
+                [legendLabel, legendItem.symbol] :
+                [legendItem.group];
 
         const setOtherItemsState = (state: StatesOptionsKey): void => {
             legend.allItems.forEach((otherItem): void => {
@@ -1605,7 +1614,7 @@ class Legend {
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        legendItems.forEach(function (element): void {
+        for (const element of legendElements) {
             if (element) {
                 element
                     .on('mouseover', function (): void {
@@ -1623,12 +1632,12 @@ class Legend {
                         }
 
                         if (!styledMode) {
-                            legendItem.css(legend.options.itemHoverStyle);
+                            legendLabel.css(legend.options.itemHoverStyle);
                         }
                     })
                     .on('mouseout', function (): void {
                         if (!legend.chart.styledMode) {
-                            legendItem.css(
+                            legendLabel.css(
                                 merge(
                                     item.visible ?
                                         legend.itemStyle :
@@ -1684,7 +1693,7 @@ class Legend {
                         }
                     });
             }
-        });
+        }
     }
 
     /**
@@ -1734,45 +1743,6 @@ interface Legend extends LegendLike {
     // use declare module pattern to add
 }
 
-// Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
-// and for #2580, a similar drawing flaw in Firefox 26.
-// Explore if there's a general cause for this. The problem may be related
-// to nested group elements, as the legend item texts are within 4 group
-// elements.
-if (
-    /Trident\/7\.0/.test(win.navigator && win.navigator.userAgent) ||
-    isFirefox
-) {
-    wrap(Legend.prototype, 'positionItem', function (
-        this: Legend,
-        proceed: Function,
-        item: (Series|Point)
-    ): void {
-        const legend = this,
-            // If chart destroyed in sync, this is undefined (#2030)
-            runPositionItem = function (): void {
-                if (item._legendItemPos) {
-                    proceed.call(legend, item);
-                }
-            };
-
-        // Do it now, for export and to get checkbox placement
-        runPositionItem();
-
-        // Do it after to work around the core issue
-        if (!legend.bubbleLegend) {
-            setTimeout(runPositionItem);
-        }
-    });
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-
 /* *
  *
  *  Class Namespace
@@ -1804,6 +1774,19 @@ export default Legend;
  *  API Declarations
  *
  * */
+
+/**
+ * @interface Highcharts.LegendItemObject
+ *//**
+ * @name Highcharts.LegendItemObject#item
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#line
+ * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#symbol
+ * @type {Highcharts.SVGElement|undefined}
+ */
 
 /**
  * Gets fired when the legend item belonging to a point is clicked. The default
@@ -1839,6 +1822,17 @@ export default Legend;
  * Event type.
  * @name Highcharts.PointLegendItemClickEventObject#type
  * @type {"legendItemClick"}
+ */
+
+/**
+ * Series color as used by the legend and some series types.
+ * @name Highcharts.Series#color
+ * @type {Highcharts.ColorType|undefined}
+ *//**
+ * Legend data for the series.
+ * @name Highcharts.Series#legendItem
+ * @type {Highcharts.LegendItemObject|undefined}
+ * @since next
  */
 
 /**

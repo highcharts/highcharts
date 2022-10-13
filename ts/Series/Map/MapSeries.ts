@@ -37,7 +37,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import ColorMapMixin from '../ColorMapMixin.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -101,31 +101,6 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare global {
-    namespace Highcharts {
-        class MapPoint extends ScatterPoint {
-            public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapMixin.ColorMapPoint[
-                'dataLabelOnNull'
-            ];
-            public isValid: ColorMapMixin.ColorMapPoint['isValid'];
-            public middleX: number;
-            public middleY: number;
-            public options: MapPointOptions;
-            public path: SVGPath;
-            public properties?: object;
-            public series: MapSeries;
-            public value: ColorMapMixin.ColorMapPoint['value'];
-            public applyOptions(
-                options: (MapPointOptions|PointShortOptions),
-                x?: number
-            ): MapPoint;
-            public onMouseOver(e?: PointerEvent): void;
-            public zoomTo(): void;
-        }
-    }
-}
-
 /* *
  *
  *  Class
@@ -158,6 +133,8 @@ class MapSeries extends ScatterSeries {
      * @excluding    marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
+     *
+     * @private
      */
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
@@ -169,6 +146,8 @@ class MapSeries extends ScatterSeries {
          *         US map with world map backdrop
          *
          * @since 10.0.0
+         *
+         * @private
          */
         affectsMapView: true,
 
@@ -419,10 +398,6 @@ class MapSeries extends ScatterSeries {
                  * @apioption plotOptions.series.states.select.color
                  */
                 color: Palette.neutralColor20
-            },
-
-            inactive: {
-                opacity: 1
             }
         }
     } as MapSeriesOptions);
@@ -991,6 +966,14 @@ class MapSeries extends ScatterSeries {
             pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
+        // Invisible map points means that the data value is removed from the
+        // map, but not the map area shape itself. Instead it is rendered like a
+        // null point. To fully remove a map area, it should be removed from the
+        // mapData.
+        if (!point.visible) {
+            attr.fill = this.options.nullColor;
+        }
+
         (attr as any)['stroke-width'] = pick(
             pointStrokeWidth,
             // By default set the stroke-width on the group element and let all
@@ -1320,14 +1303,13 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries {
-    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
+interface MapSeries extends ColorMapComposition.SeriesComposition {
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
-    pointArrayMap: ColorMapMixin.ColorMapSeries['pointArrayMap'];
+    pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
-    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
+    trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     animate(init?: boolean): void;
     animateDrilldown(init?: boolean): void;
     animateDrillupTo(init?: boolean): void;
@@ -1344,11 +1326,11 @@ interface MapSeries {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
+    axisTypes: ColorMapComposition.seriesMembers.axisTypes,
 
-    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
-    colorKey: ColorMapMixin.SeriesMixin.colorKey,
+    colorKey: ColorMapComposition.seriesMembers.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1369,27 +1351,28 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: ColorMapMixin.SeriesMixin.getSymbol,
+    getSymbol: noop,
 
     isCartesian: false,
 
-    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
+    parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 
-    pointArrayMap: ColorMapMixin.SeriesMixin.pointArrayMap,
+    pointArrayMap: ColorMapComposition.seriesMembers.pointArrayMap,
 
     pointClass: MapPoint,
 
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
-    searchPoint: noop as any,
+    searchPoint: noop,
 
-    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups,
+    trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     // Get axis extremes from paths, not values
     useMapGeometry: true
 
 });
+ColorMapComposition.compose(MapSeries);
 
 /* *
  *
@@ -1546,8 +1529,9 @@ export default MapSeries;
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
  *
+ * @declare   Highcharts.MapGeometryTypeValue
  * @type      {string}
- * @since 9.3.0
+ * @since     9.3.0
  * @product   highmaps
  * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
  * @apioption series.map.data.geometry.type

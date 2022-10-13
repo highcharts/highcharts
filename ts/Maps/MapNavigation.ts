@@ -37,7 +37,7 @@ const {
     objectEach,
     pick
 } = U;
-import './MapNavigationOptionsDefault.js';
+import './MapNavigationDefaults.js';
 import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *

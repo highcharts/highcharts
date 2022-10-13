@@ -25,7 +25,7 @@ function ok(description, success) {
 //----------------------------------------------------------------------------//
 // Start of actual tests
 
-//var types = Highcharts.seriesTypes;
+//var types = Highcharts.Series.types;
 var types = {
     line: 1,
     column: 1,

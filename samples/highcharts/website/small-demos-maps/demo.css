@@ -1,7 +1,7 @@
 body {
-    background-color: #46465c;
+    background-color: #f0f0f0;
     padding: 0;
-    color: #fff;
+    color: #000;
 }
 
 .chart-container {
@@ -11,7 +11,7 @@ body {
 
 a,
 a:hover {
-    color: #fff;
+    color: #000;
 }
 
 a:hover {

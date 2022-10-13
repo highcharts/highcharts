@@ -1,6 +1,6 @@
 QUnit.test('tooltip', function (assert) {
     assert.strictEqual(
-        Highcharts.seriesTypes.solidgauge.prototype.noSharedTooltip,
+        Highcharts.Series.types.solidgauge.prototype.noSharedTooltip,
         true,
         'noSharedTooltip: true. #5354'
     );
@@ -181,7 +181,7 @@ QUnit.test('Solid gauge: legend', function (assert) {
     });
 
     assert.strictEqual(
-        chart.legend.allItems[0].legendSymbol.element.getAttribute('fill'),
+        chart.legend.allItems[0].legendItem.symbol.element.getAttribute('fill'),
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
         'Series legend item: color taken from series'
     );
