@@ -201,39 +201,43 @@ class FlowMapSeries extends MapLineSeries {
 
         // For arrow head calculation
         if (type === 'arrow') {
+
+            // Left side of arrow head
             let [x, y] = lCorner;
             x -= edgeX * width;
             y -= edgeY * width;
-            path.push(['L', x, y]); // Left side of arrow head
+            path.push(['L', x, y]);
 
             path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
 
+            // Right side of arrow head
             [x, y] = rCorner;
             x += edgeX * width;
             y += edgeY * width;
-            path.push(['L', x, y]); // Right side of arrow head
+            path.push(['L', x, y]);
         }
 
         // For mushroom head calculation
         if (type === 'mushroom') {
-            const [xl, yl] = lCorner,
-                [xr, yr] = rCorner,
-                [xp, yp] = topCorner,
-                xv = (xr - xl) / 2 + xl,
-                yv = (yr - yl) / 2 + yl,
-                xd = (xp - xv) * 2 + xv, // control point for curve
-                yd = (yp - yv) * 2 + yv;
+            let [xLeft, yLeft] = lCorner,
+                [xRight, yRight] = rCorner;
+            const [xTop, yTop] = topCorner,
+                xMid = (xRight - xLeft) / 2 + xLeft,
+                yMid = (yRight - yLeft) / 2 + yLeft,
+                xControl = (xTop - xMid) * 2 + xMid, // control point for curve
+                yControl = (yTop - yMid) * 2 + yMid;
 
-            let [x, y] = lCorner;
-            x -= edgeX * width;
-            y -= edgeY * width;
-            path.push(['L', x, y]); // Left side of arrow head
+            // Left side of arrow head
+            xLeft -= edgeX * width;
+            yLeft -= edgeY * width;
+            path.push(['L', xLeft, yLeft]);
 
-            [x, y] = rCorner; // Right side of arrow head
-            x += edgeX * width;
-            y += edgeY * width;
+            // Right side of arrow head
+            xRight += edgeX * width;
+            yRight += edgeY * width;
 
-            path.push(['Q', xd, yd, x, y]); // Curve to right side
+            // Curve from left to right
+            path.push(['Q', xControl, yControl, xRight, yRight]);
         }
 
         return path;
