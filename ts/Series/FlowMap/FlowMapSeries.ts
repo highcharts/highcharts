@@ -31,7 +31,9 @@ import SVGPath from '../../Core/Renderer/SVG/SVGPath';
 const {
     extend,
     merge,
-    addEvent
+    addEvent,
+    arrayMax,
+    arrayMin
 } = U;
 
 /* *
@@ -269,8 +271,8 @@ class FlowMapSeries extends MapLineSeries {
             weights.push(p.options.weight);
         });
 
-        this.currentMinWeight = Math.min(...weights);
-        this.currentMaxWeight = Math.max(...weights);
+        this.currentMinWeight = arrayMin(weights);
+        this.currentMaxWeight = arrayMax(weights);
     }
 
     /**
