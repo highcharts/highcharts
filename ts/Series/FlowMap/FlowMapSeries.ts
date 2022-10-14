@@ -115,7 +115,27 @@ class FlowMapSeries extends MapLineSeries {
          * @default ['from', 'to', 'weight']
          * @private
          */
-        keys: ['from', 'to', 'weight']
+        keys: ['from', 'to', 'weight'],
+
+        tooltip: {
+            /**
+             * A callback for defining the format for in the chart's
+             * tooltip for flowmap links.
+             *
+             * @type      {Highcharts.FormatterCallbackFunction}
+             * @since     recent
+             * @apioption plotOptions.flowmap.tooltip
+             */
+
+            /**
+             * Whether the tooltip should follow the pointer or stay fixed on
+             * the item.
+             */
+
+            headerFormat:
+            '<span style="font-size: 10px">{series.name}</span><br/>',
+            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
+        }
 
     } as FlowMapSeriesOptions);
 
@@ -274,7 +294,6 @@ class FlowMapSeries extends MapLineSeries {
                 growTowards =
                     pointOptions.growTowards || this.options.growTowards,
                 offset = markerEndOptions && markerEndOptions.height || 0;
-
 
             // Get a new rescaled weight
             const scaledWeight = this.scaleWeight(
