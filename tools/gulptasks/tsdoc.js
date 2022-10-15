@@ -39,13 +39,19 @@ const NEXT_THEME = path.join(
 function task() {
 
     const argv = require('yargs').argv;
+    const fsLib = require('./lib/fs');
     const processLib = require('./lib/process');
 
+    const folders = fsLib
+        .getDirectoryPaths('ts')
+        .map(folder => folder.substring(3))
+        .filter(folder => !folder.startsWith('masters'));
     const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
     // const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
 
     const command = (
-        'cd ts && npx highcharts-typedoc' +
+        'cd ts && npx typedoc' +
+        ` {${folders}}/{*,**/*,**/**/*,**/**/**/*} ` +
         ` --json "${path.join('..', target, 'tree.json')}"` +
         ` --out "${path.join('..', target)}"`
         // + ` --theme "${path.join('..', theme)}"`
