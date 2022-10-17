@@ -841,7 +841,7 @@ class Connection {
             path: SVGPath,
             options = merge(
                 chart.options.connectors, series.options.connectors,
-                fromPoint.options.connectors, connection.options
+                fromPoint.options.connect, connection.options
             ),
             attribs: SVGAttributes = {};
 
