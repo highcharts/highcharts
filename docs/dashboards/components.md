@@ -283,6 +283,71 @@ public scaleText(): void {
 
 ```
 
-* KPIComponent
+### KPIComponent
 
-* Highcharts TM component
+Reactive KPI component.
+Formatting function, and threshold support for changing colours depending on value:
+
+```js
+[{
+    title: 'Stuff',
+    value: 1881,
+    valueFormatter: v => `${(v / 10000).toFixed(1)}%`
+},
+{
+    title: 'Cake',
+    value: 1337,
+    threshold: [20000, 200000],
+    thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
+}]
+
+```
+
+### ThresholdComponent
+
+Wrapper component, renders other components based on value. Not tied to DataStore yet.
+
+```js
+{
+    component: HTMLComponent, // default component
+    options: {
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/ok-hand_1f44c.png'
+            }
+        }]
+    },
+    value: 70,
+    thresholds: [{
+        min: 50,
+        component: KPIComponent,
+        options: {
+            title: 'Errors'
+        }
+    }, {
+        min: 1000,
+        options: {
+            title: 'Tons of errors!'
+        }
+    }, {
+        min: 9001,
+        options: {
+            title: {
+                text: 'Its over 9000!!!',
+                style: {
+                    fontWeight: 700
+                }
+            },
+            style: {
+                color: 'red',
+                background: 'black'
+            }
+        }
+    }]
+}
+```
+
+
+### Highcharts TM component
+
