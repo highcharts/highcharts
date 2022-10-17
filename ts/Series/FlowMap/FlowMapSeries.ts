@@ -34,7 +34,9 @@ import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
-    addEvent
+    addEvent,
+    arrayMax,
+    arrayMin
 } = U;
 
 /* *
@@ -118,7 +120,27 @@ class FlowMapSeries extends MapLineSeries {
          * @default ['from', 'to', 'weight']
          * @private
          */
-        keys: ['from', 'to', 'weight']
+        keys: ['from', 'to', 'weight'],
+
+        tooltip: {
+            /**
+             * A callback for defining the format for in the chart's
+             * tooltip for flowmap links.
+             *
+             * @type      {Highcharts.FormatterCallbackFunction}
+             * @since     recent
+             * @apioption plotOptions.flowmap.tooltip
+             */
+
+            /**
+             * Whether the tooltip should follow the pointer or stay fixed on
+             * the item.
+             */
+
+            headerFormat:
+            '<span style="font-size: 10px">{series.name}</span><br/>',
+            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
+        }
 
     } as FlowMapSeriesOptions);
 
@@ -166,39 +188,43 @@ class FlowMapSeries extends MapLineSeries {
 
         // For arrow head calculation
         if (type === 'arrow') {
+
+            // Left side of arrow head
             let [x, y] = lCorner;
             x -= edgeX * width;
             y -= edgeY * width;
-            path.push(['L', x, y]); // Left side of arrow head
+            path.push(['L', x, y]);
 
             path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
 
+            // Right side of arrow head
             [x, y] = rCorner;
             x += edgeX * width;
             y += edgeY * width;
-            path.push(['L', x, y]); // Right side of arrow head
+            path.push(['L', x, y]);
         }
 
         // For mushroom head calculation
         if (type === 'mushroom') {
-            const [xl, yl] = lCorner,
-                [xr, yr] = rCorner,
-                [xp, yp] = topCorner,
-                xv = (xr - xl) / 2 + xl,
-                yv = (yr - yl) / 2 + yl,
-                xd = (xp - xv) * 2 + xv, // control point for curve
-                yd = (yp - yv) * 2 + yv;
+            let [xLeft, yLeft] = lCorner,
+                [xRight, yRight] = rCorner;
+            const [xTop, yTop] = topCorner,
+                xMid = (xRight - xLeft) / 2 + xLeft,
+                yMid = (yRight - yLeft) / 2 + yLeft,
+                xControl = (xTop - xMid) * 2 + xMid, // control point for curve
+                yControl = (yTop - yMid) * 2 + yMid;
 
-            let [x, y] = lCorner;
-            x -= edgeX * width;
-            y -= edgeY * width;
-            path.push(['L', x, y]); // Left side of arrow head
+            // Left side of arrow head
+            xLeft -= edgeX * width;
+            yLeft -= edgeY * width;
+            path.push(['L', xLeft, yLeft]);
 
-            [x, y] = rCorner; // Right side of arrow head
-            x += edgeX * width;
-            y += edgeY * width;
+            // Right side of arrow head
+            xRight += edgeX * width;
+            yRight += edgeY * width;
 
-            path.push(['Q', xd, yd, x, y]); // Curve to right side
+            // Curve from left to right
+            path.push(['Q', xControl, yControl, xRight, yRight]);
         }
 
         return path;
@@ -258,8 +284,8 @@ class FlowMapSeries extends MapLineSeries {
             weights.push(p.options.weight);
         });
 
-        this.currentMinWeight = Math.min(...weights);
-        this.currentMaxWeight = Math.max(...weights);
+        this.currentMinWeight = arrayMin(weights);
+        this.currentMaxWeight = arrayMax(weights);
     }
 
     /**
@@ -283,7 +309,6 @@ class FlowMapSeries extends MapLineSeries {
                 growTowards =
                     pointOptions.growTowards || this.options.growTowards,
                 offset = markerEndOptions && markerEndOptions.height || 0;
-
 
             // Get a new rescaled weight
             const scaledWeight = this.scaleWeight(
