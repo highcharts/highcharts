@@ -16,18 +16,21 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import FlowMapPoint from './FlowMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
         column: ColumnSeries,
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
-
 import U from '../../Core/Utilities.js';
-import FlowMapPoint from './FlowMapPoint';
-import Point from '../../Core/Series/Point.js';
-import SVGPath from '../../Core/Renderer/SVG/SVGPath';
 const {
     extend,
     merge,
@@ -59,7 +62,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /* *
      *
-     * Static properties
+     *  Static properties
      *
      * */
 
@@ -121,25 +124,9 @@ class FlowMapSeries extends MapLineSeries {
 
     /* *
      *
-     * Properties
+     *  Static Function
      *
      * */
-
-    public data: Array<FlowMapPoint> = void 0 as any;
-
-    public options: FlowMapSeriesOptions = void 0 as any;
-
-    public points: Array<FlowMapPoint> = void 0 as any;
-
-    public currentMinWeight: number | undefined;
-
-    public currentMaxWeight: number | undefined;
-
-    /**
-     *
-     *  Functions
-     *
-     */
 
     /**
      * Get vector length.
@@ -216,6 +203,28 @@ class FlowMapSeries extends MapLineSeries {
 
         return path;
     }
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+
+    public data: Array<FlowMapPoint> = void 0 as any;
+
+    public options: FlowMapSeriesOptions = void 0 as any;
+
+    public points: Array<FlowMapPoint> = void 0 as any;
+
+    public currentMinWeight: number | undefined;
+
+    public currentMaxWeight: number | undefined;
+
+    /**
+     *
+     *  Functions
+     *
+     */
 
     /**
      * Return a scaled weight.
@@ -514,6 +523,7 @@ interface MarkerEndOptions {
 }
 
 extend(FlowMapSeries.prototype, {
+    pointClass: FlowMapPoint,
     // Make it work on zoom or pan
     useMapGeometry: true
 });
