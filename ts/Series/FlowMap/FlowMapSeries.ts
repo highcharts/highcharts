@@ -140,6 +140,12 @@ class FlowMapSeries extends MapLineSeries {
             headerFormat:
             '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
+        },
+
+        markerEnd: {
+            enabled: true,
+            height: 10,
+            width: 5
         }
 
     } as FlowMapSeriesOptions);
@@ -177,12 +183,19 @@ class FlowMapSeries extends MapLineSeries {
         topCorner: [number, number],
         options: MarkerEndOptions
     ): SVGPath {
-        const width = options.width || 0,
-            type = options.markerType || 'arrow',
+        let width = options.width || 0;
+        const type = options.markerType || 'arrow',
             [edgeX, edgeY] = this.normalize(
                 rCorner[0] - lCorner[0],
                 rCorner[1] - lCorner[1]
             );
+
+        if (typeof width === 'string') {
+            const percentage = parseInt(width, 10);
+            width = this.getLength(
+                rCorner[0] - lCorner[0],
+                rCorner[1] - lCorner[1]) * percentage / 100;
+        }
 
         let path: SVGPath = [];
 
@@ -307,8 +320,9 @@ class FlowMapSeries extends MapLineSeries {
                 weight = pointOptions.weight || 1,
                 // TODO: Make it work the other way around.
                 growTowards =
-                    pointOptions.growTowards || this.options.growTowards,
-                offset = markerEndOptions && markerEndOptions.height || 0;
+                    pointOptions.growTowards || this.options.growTowards;
+            let offset = markerEndOptions &&
+                markerEndOptions.enabled && markerEndOptions.height || 0;
 
             // Get a new rescaled weight
             const scaledWeight = this.scaleWeight(
@@ -366,6 +380,11 @@ class FlowMapSeries extends MapLineSeries {
 
             // An offset makes room for arrows if they are specified.
             if (offset) {
+                // Prepare offset if it's a percentage by converting to number.
+                if (typeof offset === 'string') {
+                    const percentage = parseInt(offset, 10);
+                    offset = scaledWeight * percentage * 4 / 100;
+                }
                 let dX = toX - fromX,
                     dY = toY - fromY;
 
@@ -540,11 +559,12 @@ interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
 }
 
+// TODO: This is a  triplicate of MarkerEndOptions in FlowMapPointOptions
 interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
-    width: number,
-    height: number,
+    width: number | string,
+    height: number | string,
 }
 
 extend(FlowMapSeries.prototype, {
