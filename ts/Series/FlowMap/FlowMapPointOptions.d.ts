@@ -32,7 +32,7 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
     maxWeight: number;
     minWeight: number;
     to?: string;
-    weight: number;
+    weight?: number;
 }
 
 interface MarkerEndOptions {

@@ -112,7 +112,7 @@ class FlowMapSeries extends MapLineSeries {
          * @product highcharts
          * @apioption series.flowmap.minWeight
          */
-        maxWeight: 20,
+        maxWeight: 25,
 
         /**
          *
@@ -140,7 +140,10 @@ class FlowMapSeries extends MapLineSeries {
             headerFormat:
             '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
-        }
+        },
+
+        // @TODO: add API description
+        weight: void 0
 
     } as FlowMapSeriesOptions);
 
@@ -242,9 +245,9 @@ class FlowMapSeries extends MapLineSeries {
 
     public points: Array<FlowMapPoint> = void 0 as any;
 
-    public currentMinWeight: number | undefined;
+    public smallestWeight?: number = void 0 as any;
 
-    public currentMaxWeight: number | undefined;
+    public greatestWeight?: number = void 0 as any;
 
     /**
      *
@@ -253,39 +256,51 @@ class FlowMapSeries extends MapLineSeries {
      */
 
     /**
-     * Return a scaled weight.
+     *
      * @private
      */
-    public scaleWeight(
-        number: number,
-        inMin: number,
-        inMax: number,
-        outMin: number,
-        outMax: number
-    ): number {
-        if (number === inMin) { // Prevent 0 division.
-            return outMin;
-        }
-
-        if (number === inMax) { // Prevent 0 division.
-            return outMax;
-        }
-
-        return (number - inMin) * (outMax - outMin) /
-            (inMax - inMin) + outMin; // TODO: Handle 0 division here
-    }
-
     public generatePoints(): void {
         super.generatePoints.call(this);
 
-        let weights: number[] = [];
+        let weights: Array<number|undefined> = [];
 
         this.points.forEach((p): void => {
-            weights.push(p.options.weight);
+            if (p.options.weight || this.options.weight) {
+                weights.push(p.options.weight || this.options.weight);
+            }
         });
 
-        this.currentMinWeight = arrayMin(weights);
-        this.currentMaxWeight = arrayMax(weights);
+        this.smallestWeight = arrayMin(weights);
+        this.greatestWeight = arrayMax(weights);
+    }
+
+    /**
+     * Get a scaled weight.
+     * @private
+     */
+    public scaleWeight(weight?: number): number {
+        const smallestWeight = this.smallestWeight,
+            greatestWeight = this.greatestWeight,
+            minWeightLimit = this.options.minWeight,
+            maxWeightLimit = this.options.maxWeight;
+
+        weight = weight || this.options.weight;
+
+        if (!weight || !smallestWeight || !greatestWeight) {
+            return 0;
+        }
+
+        if (weight === smallestWeight) { // Prevent 0 division.
+            return minWeightLimit;
+        }
+
+        if (weight === greatestWeight) { // Prevent 0 division.
+            return maxWeightLimit;
+        }
+
+        return (weight - smallestWeight) * (maxWeightLimit - minWeightLimit) /
+            // TODO: Handle 0 division here
+            (greatestWeight - smallestWeight) + minWeightLimit;
     }
 
     /**
@@ -301,23 +316,14 @@ class FlowMapSeries extends MapLineSeries {
                 // TODO: Which should override what?
                 markerEndOptions =
                     pointOptions.markerEnd || this.options.markerEnd,
-                minWeight = this.options.minWeight,
-                maxWeight = this.options.maxWeight,
                 curveFactor = pointOptions.curveFactor || 0,
-                weight = pointOptions.weight || 1,
+                weight = pointOptions.weight || this.options.weight,
                 // TODO: Make it work the other way around.
                 growTowards =
                     pointOptions.growTowards || this.options.growTowards,
-                offset = markerEndOptions && markerEndOptions.height || 0;
-
-            // Get a new rescaled weight
-            const scaledWeight = this.scaleWeight(
-                weight,
-                (this as any).currentMinWeight,
-                (this as any).currentMaxWeight,
-                minWeight,
-                maxWeight
-            );
+                offset = markerEndOptions && markerEndOptions.height || 0,
+                // Get a new rescaled weight
+                scaledWeight = this.scaleWeight(weight);
 
             // Connect to the linked parent point (in mappoint) to trigger
             // series redraw for the linked point (in flow)

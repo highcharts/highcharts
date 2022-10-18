@@ -23,17 +23,18 @@ import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
  * */
 
 interface FlowMapSeriesOptions extends MapLineSeriesOptions {
-    markerEnd?: MarkerEndOptions,
-    growTowards?: boolean,
-    minWeight: number,
-    maxWeight: number
+    growTowards?: boolean;
+    markerEnd?: MarkerEndOptions;
+    maxWeight: number;
+    minWeight: number;
+    weight?: number;
 }
 
 interface MarkerEndOptions {
-    markerType?: string,
-    enabled?: boolean,
-    width: number,
-    height: number,
+    markerType?: string;
+    enabled?: boolean;
+    width: number;
+    height: number;
 }
 
 /* *
