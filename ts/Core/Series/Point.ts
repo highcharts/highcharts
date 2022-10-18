@@ -959,8 +959,8 @@ class Point {
             pointFormat =
                 (series.chart.tooltip as any).styledModeFormat(
                     pointFormat,
-                    this.options.className ||
-                    this.series.options.className
+                    this.series.options.className ?
+                        'highcharts-point' : null
                 );
         }
 
