@@ -749,9 +749,6 @@ class Pathfinder {
         ) {
             found = false;
             for (k = 0; k < lenNew; ++k) {
-                /* if(
-                    oldConnections[j].options ? .type ===
-                        pathfinder.connections[k].options ? .type */
                 if (
                     oldConnections[j].fromPoint ===
                         pathfinder.connections[k].fromPoint &&
