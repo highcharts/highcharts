@@ -38,8 +38,8 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
 interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
-    width: number,
-    height: number
+    width: number | string,
+    height: number | string
 }
 
 export default FlowMapPointOptions;

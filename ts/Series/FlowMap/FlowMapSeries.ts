@@ -143,7 +143,12 @@ class FlowMapSeries extends MapLineSeries {
         },
 
         // @TODO: add API description
-        weight: void 0
+        weight: void 0,
+        markerEnd: {
+            enabled: true,
+            height: 10,
+            width: 5
+        }
 
     } as FlowMapSeriesOptions);
 
@@ -180,12 +185,19 @@ class FlowMapSeries extends MapLineSeries {
         topCorner: [number, number],
         options: MarkerEndOptions
     ): SVGPath {
-        const width = options.width || 0,
-            type = options.markerType || 'arrow',
+        let width = options.width || 0;
+        const type = options.markerType || 'arrow',
             [edgeX, edgeY] = this.normalize(
                 rCorner[0] - lCorner[0],
                 rCorner[1] - lCorner[1]
             );
+
+        if (typeof width === 'string') {
+            const percentage = parseInt(width, 10);
+            width = this.getLength(
+                rCorner[0] - lCorner[0],
+                rCorner[1] - lCorner[1]) * percentage / 100;
+        }
 
         let path: SVGPath = [];
 
@@ -321,9 +333,11 @@ class FlowMapSeries extends MapLineSeries {
                 // TODO: Make it work the other way around.
                 growTowards =
                     pointOptions.growTowards || this.options.growTowards,
-                offset = markerEndOptions && markerEndOptions.height || 0,
                 // Get a new rescaled weight
                 scaledWeight = this.scaleWeight(weight);
+
+            let offset = markerEndOptions &&
+                    markerEndOptions.enabled && markerEndOptions.height || 0;
 
             // Connect to the linked parent point (in mappoint) to trigger
             // series redraw for the linked point (in flow)
@@ -372,6 +386,11 @@ class FlowMapSeries extends MapLineSeries {
 
             // An offset makes room for arrows if they are specified.
             if (offset) {
+                // Prepare offset if it's a percentage by converting to number.
+                if (typeof offset === 'string') {
+                    const percentage = parseInt(offset, 10);
+                    offset = scaledWeight * percentage * 4 / 100;
+                }
                 let dX = toX - fromX,
                     dY = toY - fromY;
 
@@ -546,11 +565,12 @@ interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
 }
 
+// TODO: This is a  triplicate of MarkerEndOptions in FlowMapPointOptions
 interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
-    width: number,
-    height: number,
+    width: number | string,
+    height: number | string,
 }
 
 extend(FlowMapSeries.prototype, {

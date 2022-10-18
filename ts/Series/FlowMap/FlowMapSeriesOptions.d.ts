@@ -33,8 +33,8 @@ interface FlowMapSeriesOptions extends MapLineSeriesOptions {
 interface MarkerEndOptions {
     markerType?: string;
     enabled?: boolean;
-    width: number;
-    height: number;
+    width: number | string;
+    height: number | string;
 }
 
 /* *
