@@ -634,7 +634,9 @@ class HeatmapSeries extends ScatterSeries {
                 stateOptions.color ||
                 Color.parse(attr.fill).brighten(brightness || 0).get();
 
-            attr.stroke = stateOptions.lineColor;
+            if (stateOptions.lineColor) {
+                attr.stroke = stateOptions.lineColor;
+            }
         }
 
         return attr;
