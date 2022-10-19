@@ -235,19 +235,11 @@ class Tooltip {
         });
     }
 
-    /**
-     * Build the body (lines) of the tooltip by iterating over the items and
-     * returning one entry for each item, abstracting this functionality allows
-     * to easily overwrite and extend it.
-     *
-     * @private
-     * @function Highcharts.Tooltip#bodyFormatter
-     */
     public bodyFormatter(items: Array<Point>): Array<string> {
         return items.map(function (item): string {
             const tooltipOptions = (item as any).series.tooltipOptions;
 
-            return (
+            const ttLine = (
                 (tooltipOptions as any)[
                     ((item as any).point.formatPrefix || 'point') + 'Formatter'
                 ] ||
@@ -258,6 +250,10 @@ class Tooltip {
                     ((item as any).point.formatPrefix || 'point') + 'Format'
                 ] || ''
             );
+
+            return tooltipOptions.shared ? (
+                `<span class="${item.series.options.className}">${ttLine}`
+            ).replace('</span>', '</span></span>') : ttLine;
         });
     }
 
@@ -309,12 +305,6 @@ class Tooltip {
 
         // build the values
         s = s.concat(tooltip.bodyFormatter(items));
-
-        // ### TEMP proof of concept while learning the formatting related code
-        // if(tooltip.chart.styledMode && items[0].series.options.className){
-        //     s[1] = tooltip.attachCustomClass(s[1],
-        //  items[0].series.options.className);
-        // }
 
         // footer
         s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
@@ -1702,10 +1692,7 @@ class Tooltip {
     /**
      * @private
      */
-    public styledModeFormat(
-        formatString: string,
-        customClass?: string
-    ): string {
+    public styledModeFormat(formatString: string): string {
         return formatString
             .replace(
                 'style="font-size: 10px"',
@@ -1713,8 +1700,7 @@ class Tooltip {
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
-                `class="highcharts-color-{$1.colorIndex}
-                    ${customClass ? ' ' + customClass : ''}"`
+                'class="highcharts-color-{$1.colorIndex}"'
             );
     }
 

@@ -957,11 +957,12 @@ class Point {
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
-                (series.chart.tooltip as any).styledModeFormat(
-                    pointFormat,
-                    this.series.options.className ?
-                        'highcharts-point' : null
-                );
+                (series.chart.tooltip as any).styledModeFormat(pointFormat);
+
+            if (series.options.className) {
+                pointFormat =
+                    pointFormat.replace('">', ' highcharts-point">');
+            }
         }
 
         // Loop over the point array map and replace unformatted values with
