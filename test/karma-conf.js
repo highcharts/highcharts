@@ -250,6 +250,7 @@ module.exports = function (config) {
             f.indexOf('vendor/jquery') !== 0 &&
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('vendor/rgbcolor') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
             f.indexOf('topojson-client') === -1 &&
 

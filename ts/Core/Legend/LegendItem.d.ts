@@ -28,22 +28,27 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  * */
 
 export interface LegendItemObject {
-    _legendItemPos?: Array<number>;
+    group?: SVGElement;
+    label?: (ColorAxis.LegendItemObject|SVGElement);
+    labelHeight?: number;
+    labels?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
+    labelWidth?: number;
+    line?: SVGElement;
+    pageIx?: number;
+    symbol?: SVGElement;
+    x?: number;
+    y?: number;
+}
+
+export interface LegendItem {
     chart: Chart;
     checkbox?: Legend.CheckBoxElement;
     checkboxOffset?: number;
     color?: ColorType;
     itemHeight?: number;
     itemWidth?: number;
-    legendGroup?: SVGElement;
-    legendItem?: (ColorAxis.LegendItemObject|SVGElement);
-    legendItems?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
-    legendItemHeight?: number;
-    legendItemWidth?: number;
-    legendLine?: SVGElement;
-    legendSymbol?: SVGElement;
+    legendItem?: LegendItemObject;
     name?: string;
-    pageIx?: number;
     symbol?: SymbolKey;
 }
 
@@ -53,4 +58,4 @@ export interface LegendItemObject {
  *
  * */
 
-export default LegendItemObject;
+export default LegendItem;

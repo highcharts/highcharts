@@ -154,11 +154,12 @@ const seriesDefaults: SeriesOptions = {
      *
      * - `defer`: The animation delay time in milliseconds.
      *
-     * - `duration`: The duration of the animation in milliseconds.
+     * - `duration`: The duration of the animation in milliseconds. (Defaults to
+     *   `1000`)
      *
      * - `easing`: Can be a string reference to an easing function set on
      *   the `Math` object or a function. See the _Custom easing function_
-     *   demo below.
+     *   demo below. (Defaults to `easeInOutSine`)
      *
      * Due to poor performance, animation is disabled in old IE browsers
      * for several chart types.
@@ -178,7 +179,7 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
      *         Disabled on mapbubble series
      *
-     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
+     * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
@@ -186,16 +187,9 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     animation: {
-        /** @internal */
+        /** @ignore-option */
         duration: 1000
     },
-
-    /**
-     * @default   0
-     * @type      {number}
-     * @since     8.2.0
-     * @apioption plotOptions.series.animation.defer
-     */
 
     /**
      * An additional class name to apply to the series' graphical elements.

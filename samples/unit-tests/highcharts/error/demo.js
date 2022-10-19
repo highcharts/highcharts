@@ -14,6 +14,7 @@ QUnit.test('Error 19', function (assert) {
         },
         xAxis: {
             labels: {
+                autoRotation: false,
                 step: 1
             },
             type: 'datetime',

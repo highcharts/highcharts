@@ -17,7 +17,7 @@
  * */
 
 import type Legend from './Legend';
-import type LegendItemObject from './LegendItemObject';
+import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -35,19 +35,19 @@ const {
  * */
 
 declare module '../Axis/AxisLike' {
-    interface AxisLike extends LegendItemObject {
+    interface AxisLike extends LegendItem {
         // nothing to add
     }
 }
 
 declare module '../Series/PointLike' {
-    interface PointLike extends LegendItemObject {
+    interface PointLike extends LegendItem {
         // nothing to add
     }
 }
 
 declare module '../Series/SeriesLike' {
-    interface SeriesLike extends LegendItemObject {
+    interface SeriesLike extends LegendItem {
         drawLegendSymbol: (
             typeof LegendSymbol.drawLineMarker|
             typeof LegendSymbol.drawRectangle
@@ -88,12 +88,13 @@ namespace LegendSymbol {
         legend: Legend
     ): void {
 
-        const options = this.options,
+        const legendItem = this.legendItem = this.legendItem || {},
+            options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
-            legendItemGroup = this.legendGroup,
+            legendItemGroup = legendItem.group,
             verticalCenter = (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3);
 
@@ -111,7 +112,7 @@ namespace LegendSymbol {
             }
         }
 
-        this.legendLine = renderer
+        legendItem.line = renderer
             .path([
                 ['M', 0, verticalCenter],
                 ['L', symbolWidth, verticalCenter]
@@ -138,14 +139,15 @@ namespace LegendSymbol {
                 radius = 0;
             }
 
-            this.legendSymbol = legendSymbol = renderer.symbol(
-                this.symbol as any,
-                (symbolWidth / 2) - radius,
-                verticalCenter - radius,
-                2 * radius,
-                2 * radius,
-                markerOptions
-            )
+            legendItem.symbol = legendSymbol = renderer
+                .symbol(
+                    this.symbol as any,
+                    (symbolWidth / 2) - radius,
+                    verticalCenter - radius,
+                    2 * radius,
+                    2 * radius,
+                    markerOptions
+                )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
             legendSymbol.isMarker = true;
@@ -172,22 +174,25 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
-        const options = legend.options,
+        const legendItem = item.legendItem || {},
+            options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
-        item.legendSymbol = this.chart.renderer.rect(
-            square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
-            (legend.baseline as any) - symbolHeight + 1, // #3988
-            symbolWidth,
-            symbolHeight,
-            pick(legend.options.symbolRadius, symbolHeight / 2)
-        )
+        legendItem.symbol = this.chart.renderer
+            .rect(
+                square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
+                (legend.baseline as any) - symbolHeight + 1, // #3988
+                symbolWidth,
+                symbolHeight,
+                pick(legend.options.symbolRadius, symbolHeight / 2)
+            )
             .addClass('highcharts-point')
             .attr({
                 zIndex: 3
-            }).add(item.legendGroup);
+            })
+            .add(legendItem.group);
 
     }
 

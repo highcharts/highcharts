@@ -4430,7 +4430,7 @@ class Series {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point): void {
+            for (const point of this.points) {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
@@ -4445,7 +4445,7 @@ class Series {
                         chart.legend.destroyItem(point);
                     }
                 }
-            }, this);
+            }
         }
 
         series.initialType = initialType;
@@ -4757,7 +4757,6 @@ class Series {
     ): void {
         const series = this,
             chart = series.chart,
-            legendItem = series.legendItem,
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
@@ -4792,7 +4791,7 @@ class Series {
         }
 
 
-        if (legendItem) {
+        if (series.legendItem) {
             chart.legend.colorizeItem(series, vis);
         }
 
