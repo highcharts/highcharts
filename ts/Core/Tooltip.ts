@@ -1141,7 +1141,6 @@ class Tooltip {
                         });
 
                     } else if (
-                        point.options.className ||
                         currentSeries.options.className
                     ) {
 
