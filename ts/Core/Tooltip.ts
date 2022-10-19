@@ -251,9 +251,11 @@ class Tooltip {
                 ] || ''
             );
 
-            return tooltipOptions.shared ? (
-                `<span class="${item.series.options.className}">${ttLine}`
-            ).replace('</span>', '</span></span>') : ttLine;
+            return (
+                (item as any).series.chart.styled &&
+                tooltipOptions.shared) ? (
+                    `<span class="${item.series.options.className}">${ttLine}`
+                ).replace('</span>', '</span></span>') : ttLine;
         });
     }
 
