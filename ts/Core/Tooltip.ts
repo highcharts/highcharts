@@ -1140,13 +1140,11 @@ class Tooltip {
                             )
                         });
 
-                    // ### TODO regex for removal
                     } else if (
                         point.options.className ||
                         currentSeries.options.className
                     ) {
 
-                        // ### only works for series for now
                         this.chart.series.forEach(
                             function (s): void {
                                 label.removeClass(
@@ -1156,7 +1154,6 @@ class Tooltip {
                         );
 
                         label.addClass(
-                            point.options.className as string ||
                             currentSeries.options.className as string
                         );
                     }
