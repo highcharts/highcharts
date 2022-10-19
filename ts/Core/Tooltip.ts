@@ -252,7 +252,7 @@ class Tooltip {
             );
 
             return (
-                (item as any).series.chart.styled &&
+                (item as any).series.chart.styledMode &&
                 tooltipOptions.shared) ? (
                     `<span class="${item.series.options.className}">${ttLine}`
                 ).replace('</span>', '</span></span>') : ttLine;
