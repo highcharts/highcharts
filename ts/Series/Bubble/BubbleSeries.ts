@@ -774,7 +774,7 @@ class BubbleSeries extends ScatterSeries {
         this.translateBubble();
     }
 
-    public drawPoints(): void {
+    public drawPoints(points: Array<Point> = this.points): void {
         if (!this.options.blendColors) {
             // Run the parent method
             super.drawPoints();
