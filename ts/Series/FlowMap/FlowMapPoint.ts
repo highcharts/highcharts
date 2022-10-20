@@ -34,6 +34,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     isString
 } = U;
 
@@ -73,7 +74,9 @@ class FlowMapPoint extends MapLinePoint {
      * @private
      */
     public isValid(): boolean {
-        return isString(this.options.from) && isString(this.options.to);
+        return isString(this.options.from) &&
+            isString(this.options.to) &&
+            defined(this.options.weight || this.series.options.weight);
     }
 
     /**
