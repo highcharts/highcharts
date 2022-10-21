@@ -754,8 +754,7 @@ class Pathfinder {
                 const newCon = pathfinder.connections[k];
 
                 if (
-                    typeof oldCon.options !== 'undefined' &&
-                    typeof newCon.options !== 'undefined' &&
+                    oldCon.options && newCon.options &&
                     newCon.options.type === oldCon.options.type &&
                     oldCon.fromPoint === newCon.fromPoint &&
                     oldCon.toPoint === newCon.toPoint
