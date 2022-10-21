@@ -767,7 +767,7 @@ class Pathfinder {
                 oldCon.destroy();
             }
         }
-        
+
         // Clear obstacles to force recalculation. This must be done on every
         // redraw in case positions have changed. Recalculation is handled in
         // Connection.getPath on demand.
