@@ -25,7 +25,7 @@
     Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            plotBackgroundColor: 'rgba(0, 0, 255, 0.1)',
+            plotBackgroundColor: 'rgba(0, 128, 255, 0.1)',
             margin: 1
         },
 
