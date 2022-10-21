@@ -753,8 +753,8 @@ class Pathfinder {
                 const newCon = pathfinder.connections[k];
 
                 if (
-                    oldCon.options && newCon.options &&
-                    newCon.options.type === oldCon.options.type &&
+                    (oldCon.options && oldCon.options.type) ===
+                    (newCon.options && newCon.options.type) &&
                     oldCon.fromPoint === newCon.fromPoint &&
                     oldCon.toPoint === newCon.toPoint
                 ) {
@@ -767,7 +767,7 @@ class Pathfinder {
                 oldCon.destroy();
             }
         }
-
+        
         // Clear obstacles to force recalculation. This must be done on every
         // redraw in case positions have changed. Recalculation is handled in
         // Connection.getPath on demand.
