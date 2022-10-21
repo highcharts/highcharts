@@ -748,21 +748,25 @@ class Pathfinder {
             ++j
         ) {
             found = false;
+            const oldCon = oldConnections[j];
+
             for (k = 0; k < lenNew; ++k) {
+                const newCon = pathfinder.connections[k];
+
                 if (
-                    oldConnections[j].fromPoint ===
-                        pathfinder.connections[k].fromPoint &&
-                    oldConnections[j].toPoint ===
-                        pathfinder.connections[k].toPoint
+                    typeof oldCon.options !== 'undefined' &&
+                    typeof newCon.options !== 'undefined' &&
+                    newCon.options.type === oldCon.options.type &&
+                    oldCon.fromPoint === newCon.fromPoint &&
+                    oldCon.toPoint === newCon.toPoint
                 ) {
-                    pathfinder.connections[k].graphics =
-                        oldConnections[j].graphics;
+                    newCon.graphics = oldCon.graphics;
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                oldConnections[j].destroy();
+                oldCon.destroy();
             }
         }
 
