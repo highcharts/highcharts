@@ -18,7 +18,8 @@ Highcharts.chart("container", {
     yAxis: {
         title: {
             text: "Volume fraction"
-        }
+        },
+        max: 100
     },
     tooltip: {
         shared: true,
