@@ -4,7 +4,7 @@ const startYear = 1960,
     input = document.getElementById("play-range"),
     nbr = 20;
 
-let initialData, chart;
+let dataset, chart;
 
 
 /*
@@ -81,12 +81,9 @@ let initialData, chart;
     });
 }(Highcharts));
 
-/**
- * Calculate the data output
- */
 
 function getData(year) {
-    const output = Object.entries(initialData)
+    const output = Object.entries(dataset)
         .map(country => {
             const [countryName, countryData] = country;
             return [countryName, Number(countryData[year])];
@@ -95,76 +92,112 @@ function getData(year) {
     return [output[0], output.slice(1, nbr)];
 }
 
-Highcharts.getJSON(
-    "https://demo-live-data.highcharts.com/population.json",
-    function (data) {
-        initialData = data;
+function getSubtitle() {
+    const population = (getData(input.value)[0][1] / 1000000000).toFixed(2);
+    return `<span style="font-size: 80px">${input.value}</span>
+        <br>
+        <span style="font-size: 22px">
+            Total: <b>: ${population}</b> billion
+        </span>`;
+}
 
-        chart = Highcharts.chart("container", {
-            chart: {
-                animation: {
-                    duration: 500
-                },
-                marginRight: 50
+(async () => {
+
+    dataset = await fetch(
+        'https://demo-live-data.highcharts.com/population.json'
+    ).then(response => response.json());
+
+
+    chart = Highcharts.chart("container", {
+        chart: {
+            animation: {
+                duration: 500
             },
-            plotOptions: {
-                series: {
-                    animation: false,
-                    groupPadding: 0,
-                    pointPadding: 0.1,
-                    borderWidth: 0
-                }
-            },
+            marginRight: 50
+        },
+        title: {
+            text: 'World population by country',
+            align: 'left'
+        },
+        subtitle: {
+            useHTML: true,
+            text: getSubtitle(),
+            floating: true,
+            align: 'right',
+            verticalAlign: 'middle',
+            x: -100
+        },
+
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            type: "category"
+        },
+        yAxis: {
+            opposite: true,
+            tickPixelInterval: 150,
             title: {
-                useHTML: true,
-                text:
-                    `World population - overall: <b>${
-                        getData(startYear)[0][1]}</b>`
-            },
-
-            legend: {
-                align: "right",
-                verticalAlign: "bottom",
-                itemStyle: {
-                    fontWeight: "bold",
-                    fontSize: "50px"
+                text: null
+            }
+        },
+        plotOptions: {
+            series: {
+                animation: false,
+                groupPadding: 0,
+                pointPadding: 0.1,
+                borderWidth: 0,
+                colorByPoint: true,
+                dataSorting: {
+                    enabled: true,
+                    matchByName: true
                 },
-                symbolHeight: 0.001,
-                symbolWidth: 0.001,
-                symbolRadius: 0.001
-            },
-            xAxis: {
-                type: "category"
-            },
-            yAxis: [
-                {
-                    opposite: true,
-                    title: {
-                        text: "Population per country"
-                    },
-                    tickAmount: 5
+                type: "bar",
+                dataLabels: {
+                    enabled: true
                 }
-            ],
-            series: [
-                {
-                    colorByPoint: true,
-                    dataSorting: {
-                        enabled: true,
-                        matchByName: true
+            }
+        },
+        series: [
+            {
+                type: 'bar',
+                name: startYear,
+                data: getData(startYear)[1]
+            }
+        ],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 550
+                },
+                chartOptions: {
+                    xAxis: {
+                        visible: false
                     },
-                    type: "bar",
-                    dataLabels: [
-                        {
-                            enabled: true
+                    subtitle: {
+                        x: 0
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: [{
+                                enabled: true,
+                                y: 8
+                            }, {
+                                enabled: true,
+                                format: '{point.name}',
+                                y: -8,
+                                style: {
+                                    fontWeight: 'normal',
+                                    opacity: 0.7
+                                }
+                            }]
                         }
-                    ],
-                    name: startYear,
-                    data: getData(startYear)[1]
+                    }
                 }
-            ]
-        });
-    }
-);
+            }]
+        }
+    });
+})();
 
 /*
  * Pause the timeline, either when the range is ended, or when clicking the pause button.
@@ -192,11 +225,8 @@ function update(increment) {
 
     chart.update(
         {
-            title: {
-                useHTML: true,
-                text: `<div>World population - overall: <b>${
-                    getData(input.value)[0][1]
-                }</b></span></div>`
+            subtitle: {
+                text: getSubtitle()
             }
         },
         false,
