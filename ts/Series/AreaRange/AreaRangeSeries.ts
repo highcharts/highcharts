@@ -121,6 +121,9 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      */
     lineWidth: 1,
 
+    /**
+     * @type {number|null}
+     */
     threshold: null,
 
     tooltip: {
