@@ -1,9 +1,11 @@
-var initialData, chart;
 const startYear = 1960,
     endYear = 2018,
     btn = document.getElementById("play-pause-button"),
     input = document.getElementById("play-range"),
     nbr = 20;
+
+let initialData, chart;
+
 
 /*
  * Animate dataLabels functionality
@@ -12,14 +14,14 @@ const startYear = 1960,
     const FLOAT = /^-?\d+\.?\d*$/;
 
     // Add animated textSetter, just like fill/strokeSetters
-    H.Fx.prototype.textSetter = function (proceed) {
-        var startValue = this.start.replace(/ /g, ""),
+    H.Fx.prototype.textSetter = function () {
+        let startValue = this.start.replace(/ /g, ""),
             endValue = this.end.replace(/ /g, ""),
             currentValue = this.end.replace(/ /g, "");
 
         if ((startValue || "").match(FLOAT)) {
-            startValue = parseInt(startValue, nbr);
-            endValue = parseInt(endValue, nbr);
+            startValue = parseInt(startValue, 10);
+            endValue = parseInt(endValue, 10);
 
             // No support for float
             currentValue = Highcharts.numberFormat(
@@ -34,34 +36,30 @@ const startYear = 1960,
     };
 
     // Add textGetter, not supported at all at this moment:
-    H.SVGElement.prototype.textGetter = function (hash, elem) {
-        var ct = this.text.element.textContent || "";
+    H.SVGElement.prototype.textGetter = function () {
+        const ct = this.text.element.textContent || "";
         return this.endText ? this.endText : ct.substring(0, ct.length / 2);
     };
 
     // Temporary change label.attr() with label.animate():
     // In core it's simple change attr(...) => animate(...) for text prop
     H.wrap(H.Series.prototype, "drawDataLabels", function (proceed) {
-        var ret,
-            attr = H.SVGElement.prototype.attr,
+        const attr = H.SVGElement.prototype.attr,
             chart = this.chart;
 
         if (chart.sequenceTimer) {
             this.points.forEach(point =>
                 (point.dataLabels || []).forEach(
                     label =>
-                        (label.attr = function (hash, val) {
+                        (label.attr = function (hash) {
                             if (hash && hash.text !== undefined) {
-                                var text = hash.text;
+                                const text = hash.text;
 
                                 delete hash.text;
 
-                                this.attr(hash);
-
-                                this.animate({
-                                    text: text
-                                });
-                                return this;
+                                return this
+                                    .attr(hash)
+                                    .animate({ text });
                             }
                             return attr.apply(this, arguments);
 
@@ -70,7 +68,10 @@ const startYear = 1960,
             );
         }
 
-        ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        const ret = proceed.apply(
+            this,
+            Array.prototype.slice.call(arguments, 1)
+        );
 
         this.points.forEach(p =>
             (p.dataLabels || []).forEach(d => (d.attr = attr))
@@ -103,19 +104,6 @@ Highcharts.getJSON(
             chart: {
                 animation: {
                     duration: 500
-                },
-                events: {
-                    render() {
-                        const chart = this;
-
-                        // Responsive input
-                        input.style.width =
-              chart.plotWidth -
-              chart.legend.legendWidth +
-              chart.plotLeft / 2 -
-              10 +
-              "px"; // where 10 is a padding
-                    }
                 },
                 marginRight: 50
             },
@@ -198,7 +186,7 @@ function update(increment) {
         input.value = parseInt(input.value, 10) + increment;
     }
     if (input.value >= endYear) {
-    // Auto-pause
+        // Auto-pause
         pause(btn);
     }
 
