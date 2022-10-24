@@ -1,16 +1,22 @@
-@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
+@import "https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
 
-#play-controls,
-#container {
+.highcharts-figure {
+    margin: 0;
+}
+
+#play-controls {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 1em auto;
 }
 
 #container {
     height: 900px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 #play-pause-button {
+    margin-left: 10px;
     width: 30px;
     height: 30px;
     cursor: pointer;
