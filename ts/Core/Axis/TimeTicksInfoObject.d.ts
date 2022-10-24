@@ -10,13 +10,27 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type Time from '../Time';
+
+/* *
+ *
  *  Declarations
  *
  * */
 
-export interface TimeTicksInfoObject extends Highcharts.TimeNormalizedObject {
-    higherRanks: Array<string>;
+export interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
+    higherRanks: Record<string, string>;
     totalRange: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TimeTicksInfoObject;

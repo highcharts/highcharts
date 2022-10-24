@@ -22,7 +22,6 @@ import type {
     MapNavigationOptions
 } from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -33,11 +32,13 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
+    isNumber,
     merge,
     objectEach,
     pick
 } = U;
-import './MapNavigationOptionsDefault.js';
+import './MapNavigationDefaults.js';
+import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -47,7 +48,6 @@ import './MapNavigationOptionsDefault.js';
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        mapNavButtons?: Array<SVGElement>;
         mapNavigation?: Highcharts.MapNavigation;
     }
 }
@@ -60,21 +60,23 @@ declare global {
     namespace Highcharts {
 
         interface MapNavigationChart extends Chart {
-            mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
+            /** @deprecated */
             mapZoom(
                 howMuch?: number,
-                centerXArg?: number,
-                centerYArg?: number,
-                mouseX?: number,
-                mouseY?: number
+                xProjected?: number,
+                yProjected?: number,
+                chartX?: number,
+                chartY?: number
             ): void;
         }
         class MapNavigation {
             public constructor(chart: Chart);
             public chart: MapNavigationChart;
+            public navButtons: Array<SVGElement>;
+            public navButtonsGroup: SVGElement;
             public unbindDblClick?: Function;
             public unbindMouseWheel?: Function;
             public init(chart: Chart): void;
@@ -119,6 +121,7 @@ function MapNavigation(
     this: Highcharts.MapNavigation,
     chart: Chart
 ): void {
+    this.navButtons = [];
     this.init(chart);
 }
 
@@ -137,7 +140,6 @@ MapNavigation.prototype.init = function (
     chart: Chart
 ): void {
     this.chart = chart as Highcharts.MapNavigationChart;
-    chart.mapNavButtons = [];
 };
 
 /**
@@ -155,21 +157,18 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    var chart = this.chart,
+    let mapNav = this,
+        chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
-        buttonOptions,
-        attr: SVGAttributes,
-        states: SVGAttributes,
-        hoverStates: SVGAttributes,
-        selectStates: SVGAttributes,
+        attr: ButtonThemeObject,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Record<string, any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
         },
-        mapNavButtons = chart.mapNavButtons;
+        navButtons = mapNav.navButtons;
 
     // Merge in new options in case of update, and register back to chart
     // options.
@@ -179,40 +178,41 @@ MapNavigation.prototype.update = function (
     }
 
     // Destroy buttons in case of dynamic update
-    while (mapNavButtons.length) {
-        (mapNavButtons.pop() as any).destroy();
+    while (navButtons.length) {
+        (navButtons.pop() as any).destroy();
     }
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-
+        if (!mapNav.navButtonsGroup) {
+            mapNav.navButtonsGroup = chart.renderer.g().attr({
+                zIndex: 4 // #4955, // #8392
+            }).add();
+        }
         objectEach(o.buttons, function (
-            button: MapNavigationButtonOptions,
+            buttonOptions: MapNavigationButtonOptions,
             n: string
         ): void {
-            buttonOptions = merge(o.buttonOptions, button);
+            buttonOptions = merge(o.buttonOptions, buttonOptions);
 
             // Presentational
-            if (!chart.styledMode) {
-                attr = buttonOptions.theme as any;
+            if (!chart.styledMode && buttonOptions.theme) {
+                attr = buttonOptions.theme;
                 attr.style = merge(
-                    (buttonOptions.theme as any).style,
+                    buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
-                states = attr.states;
-                hoverStates = states && states.hover;
-                selectStates = states && states.select;
             }
 
-            button = chart.renderer
+            const button = chart.renderer
                 .button(
-                    buttonOptions.text as any,
+                    buttonOptions.text || '',
                     0,
                     0,
                     outerHandler,
                     attr,
-                    hoverStates,
-                    selectStates,
-                    0 as any,
+                    void 0,
+                    void 0,
+                    void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
                 .addClass('highcharts-map-navigation highcharts-' + ({
@@ -226,29 +226,87 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add() as any;
-            (button as any).handler = buttonOptions.onclick;
+                .add(mapNav.navButtonsGroup);
+            button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
-            addEvent((button as any).element, 'dblclick', stopEvent);
+            addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button as any);
+            navButtons.push(button);
 
-            // Align it after the plotBox is known (#12776)
-            const bo = buttonOptions;
-            const un = addEvent(chart, 'load', (): void => {
-                (button as any).align(
-                    extend(bo, {
-                        width: button.width,
-                        height: 2 * (button.height as any)
-                    }),
-                    null,
-                    bo.alignTo
-                );
-                un();
+            extend(buttonOptions, {
+                width: button.width,
+                height: 2 * button.height
             });
 
+            if (!chart.hasLoaded) {
+                // Align it after the plotBox is known (#12776)
+                const unbind = addEvent(chart, 'load', (): void => {
+                    // #15406: Make sure button hasnt been destroyed
+                    if (button.element) {
+                        button.align(
+                            buttonOptions,
+                            false,
+                            buttonOptions.alignTo
+                        );
+                    }
+
+                    unbind();
+                });
+            } else {
+                button.align(buttonOptions, false, buttonOptions.alignTo);
+            }
         });
+
+        // Borrowed from overlapping-datalabels. Consider a shared module.
+        const isIntersectRect = (
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean => !(
+            box2.x >= box1.x + box1.width ||
+            box2.x + box2.width <= box1.x ||
+            box2.y >= box1.y + box1.height ||
+            box2.y + box2.height <= box1.y
+        );
+
+        // Check the mapNavigation buttons collision with exporting button
+        // and translate the mapNavigation button if they overlap.
+        const adjustMapNavBtn = function (): void {
+            const expBtnBBox =
+                    chart.exportingGroup && chart.exportingGroup.getBBox();
+
+            if (expBtnBBox) {
+                const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
+
+                // If buttons overlap
+                if (isIntersectRect(expBtnBBox, navBtnsBBox)) {
+                    // Adjust the mapNav buttons' position by translating them
+                    // above or below the exporting button
+                    const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
+                            expBtnBBox.y - 5,
+                        belowExpBtn = expBtnBBox.y + expBtnBBox.height -
+                            navBtnsBBox.y + 5,
+                        mapNavVerticalAlign =
+                            o.buttonOptions && o.buttonOptions.verticalAlign;
+
+                    // If bottom aligned and adjusting the mapNav button would
+                    // translate it out of the plotBox, translate it up
+                    // instead of down
+                    mapNav.navButtonsGroup.attr({
+                        translateY: mapNavVerticalAlign === 'bottom' ?
+                            aboveExpBtn :
+                            belowExpBtn
+                    });
+                }
+            }
+        };
+
+        if (!chart.hasLoaded) {
+            // Align it after the plotBox is known (#12776) and after the
+            // hamburger button's position is known so they don't overlap
+            // (#15782)
+            addEvent(chart, 'render', adjustMapNavBtn);
+        }
     }
 
     this.updateEvents(o);
@@ -269,7 +327,7 @@ MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
     options: MapNavigationOptions
 ): void {
-    var chart = this.chart;
+    const chart = this.chart;
 
     // Add the double click event
     if (
@@ -292,13 +350,21 @@ MapNavigation.prototype.updateEvents = function (
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
             chart.container,
-            typeof doc.onmousewheel === 'undefined' ?
-                'DOMMouseScroll' : 'mousewheel',
+            doc.onwheel !== void 0 ? 'wheel' : // Newer Firefox
+                doc.onmousewheel !== void 0 ? 'mousewheel' :
+                    'DOMMouseScroll',
             function (e: PointerEvent): boolean {
-                chart.pointer.onContainerMouseWheel(e);
-                // Issue #5011, returning false from non-jQuery event does
-                // not prevent default
-                stopEvent(e as Event);
+                // Prevent scrolling when the pointer is over the element with
+                // that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(
+                    e.target as any,
+                    'highcharts-no-mousewheel'
+                )) {
+                    chart.pointer.onContainerMouseWheel(e);
+                    // Issue #5011, returning false from non-jQuery event does
+                    // not prevent default
+                    stopEvent(e as Event);
+                }
                 return false;
             }
         );
@@ -310,7 +376,7 @@ MapNavigation.prototype.updateEvents = function (
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
@@ -336,7 +402,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {
-            var pos = dim[0],
+            const pos = dim[0],
                 size = dim[1];
 
             if ((inner as any)[pos] + (inner as any)[size] >
@@ -363,10 +429,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     },
 
     /**
-     * Highmaps only. Zoom in or out of the map. See also {@link Point#zoomTo}.
-     * See {@link Chart#fromLatLonToPoint} for how to get the `centerX` and
-     * `centerY` parameters for a geographic location.
+     * Highcharts Maps only. Zoom in or out of the map. See also
+     * {@link Point#zoomTo}. See {@link Chart#fromLatLonToPoint} for how to get
+     * the `centerX` and `centerY` parameters for a geographic location.
      *
+     * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
+     *
+     * @deprecated
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]
@@ -374,103 +443,49 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *        in to half the current view. 2 zooms to twice the current view. If
      *        omitted, the zoom is reset.
      *
-     * @param {number} [centerX]
-     *        The X axis position to center around if available space.
+     * @param {number} [xProjected]
+     *        The projected x position to keep stationary when zooming, if
+     *        available space.
      *
-     * @param {number} [centerY]
-     *        The Y axis position to center around if available space.
+     * @param {number} [yProjected]
+     *        The projected y position to keep stationary when zooming, if
+     *        available space.
      *
-     * @param {number} [mouseX]
-     *        Fix the zoom to this position if possible. This is used for
+     * @param {number} [chartX]
+     *        Keep this chart position stationary if possible. This is used for
      *        example in mousewheel events, where the area under the mouse
      *        should be fixed as we zoom in.
      *
-     * @param {number} [mouseY]
-     *        Fix the zoom to this position if possible.
+     * @param {number} [chartY]
+     *        Keep this chart position stationary if possible.
      *
-     * @return {void}
+     * @deprecated
      */
     mapZoom: function (
         this: Highcharts.MapNavigationChart,
         howMuch?: number,
-        centerXArg?: number,
-        centerYArg?: number,
-        mouseX?: number,
-        mouseY?: number
+        xProjected?: number,
+        yProjected?: number,
+        chartX?: number,
+        chartY?: number
     ): void {
-        var chart = this,
-            xAxis = chart.xAxis[0],
-            xRange = (xAxis.max as any) - (xAxis.min as any),
-            centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),
-            newXRange = xRange * (howMuch as any),
-            yAxis = chart.yAxis[0],
-            yRange = (yAxis.max as any) - (yAxis.min as any),
-            centerY = pick(centerYArg, (yAxis.min as any) + yRange / 2),
-            newYRange = yRange * (howMuch as any),
-            fixToX = mouseX ? ((mouseX - (xAxis.pos as any)) / xAxis.len) : 0.5,
-            fixToY = mouseY ? ((mouseY - (yAxis.pos as any)) / yAxis.len) : 0.5,
-            newXMin = centerX - newXRange * fixToX,
-            newYMin = centerY - newYRange * fixToY,
-            newExt = chart.fitToBox({
-                x: newXMin,
-                y: newYMin,
-                width: newXRange,
-                height: newYRange
-            }, {
-                x: xAxis.dataMin,
-                y: yAxis.dataMin,
-                width: (xAxis.dataMax as any) - (xAxis.dataMin as any),
-                height: (yAxis.dataMax as any) - (yAxis.dataMin as any)
-            } as any),
-            zoomOut = (
-                newExt.x <= (xAxis.dataMin as any) &&
-                newExt.width >=
-                    (xAxis.dataMax as any) - (xAxis.dataMin as any) &&
-                newExt.y <= (yAxis.dataMin as any) &&
-                newExt.height >= (yAxis.dataMax as any) - (yAxis.dataMin as any)
+        if (this.mapView) {
+
+            if (isNumber(howMuch)) {
+                // Compliance, mapView.zoomBy uses different values
+                howMuch = Math.log(howMuch) / Math.log(0.5);
+            }
+
+            this.mapView.zoomBy(
+                howMuch,
+                isNumber(xProjected) && isNumber(yProjected) ?
+                    this.mapView.projection.inverse([xProjected, yProjected]) :
+                    void 0,
+                isNumber(chartX) && isNumber(chartY) ?
+                    [chartX, chartY] :
+                    void 0
             );
-
-        // When mousewheel zooming, fix the point under the mouse
-        if (mouseX && xAxis.mapAxis) {
-            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any), (centerXArg as any)];
         }
-        if (mouseY && yAxis.mapAxis) {
-            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any), (centerYArg as any)];
-        }
-
-        // Zoom
-        if (typeof howMuch !== 'undefined' && !zoomOut) {
-            xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
-            yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-
-        // Reset zoom
-        } else {
-            xAxis.setExtremes(void 0, void 0, false);
-            yAxis.setExtremes(void 0, void 0, false);
-        }
-
-        // Prevent zooming until this one is finished animating
-        /*
-        chart.holdMapZoom = true;
-        setTimeout(function () {
-            chart.holdMapZoom = false;
-        }, 200);
-        */
-        /*
-        delay = animation ? animation.duration || 500 : 0;
-        if (delay) {
-            chart.isMapZooming = true;
-            setTimeout(function () {
-                chart.isMapZooming = false;
-                if (chart.mapZoomQueue) {
-                    chart.mapZoom.apply(chart, chart.mapZoomQueue);
-                }
-                chart.mapZoomQueue = null;
-            }, delay);
-        }
-        */
-
-        chart.redraw();
     }
 });
 

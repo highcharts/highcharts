@@ -1,4 +1,4 @@
-Candlestick chart (Highcharts Stock only)
+Candlestick chart
 ================
 
 A candlestick chart is typically used to present the open, high, low and close price over a period of time. A candlestick chart is composed of a body and an upper and a lower wick. The body represents the the opening and closing price. If the opening price is higher than the closing price the body is filled. If the closing price is higher than the opening price the body is unfilled. The upper wick represent the highest price during a time period and the lower wick represents the lowest price during a time period.

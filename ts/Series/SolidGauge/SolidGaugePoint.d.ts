@@ -27,6 +27,7 @@ import type GaugePoint from '../Gauge/GaugePoint';
 declare class SolidGaugePoint extends GaugePoint {
     options: SolidGaugePointOptions;
     series: SolidGaugeSeries;
+    startR?: number;
 }
 
 /* *

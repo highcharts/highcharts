@@ -1,5 +1,5 @@
 QUnit.test('directTouch', function (assert) {
-    var candlestickSeries = Highcharts.seriesTypes.candlestick;
+    var candlestickSeries = Highcharts.Series.types.candlestick;
     assert.strictEqual(
         candlestickSeries.prototype.directTouch,
         false,

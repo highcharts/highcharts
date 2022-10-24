@@ -35,6 +35,11 @@ QUnit.test('Tilemap and ColorAxis', function (assert) {
         'ColorAxis.max should be the same as max value in points (#11644)'
     );
 
+    // Square shape: no errors should be visible in the console, #14267
+    chart.series[0].update({
+        tileShape: 'square'
+    });
+
     chart.series[0].update({
         tileShape: 'circle'
     });

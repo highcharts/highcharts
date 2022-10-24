@@ -22,44 +22,21 @@ QUnit.test(
 );
 
 QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
-    var series = Highcharts.seriesTypes.map,
-        setState = series.prototype.pointClass.prototype.setState,
-        pointAttribs = series.prototype.pointAttribs,
-        noop = Highcharts.noop,
-        point = {
-            graphic: {
-                attr: function (obj) {
-                    var graphic = this,
-                        keys = Object.keys(obj);
-                    keys.forEach(function (key) {
-                        var value = obj[key];
-                        graphic[key] = value;
-                    });
-                },
-                animate: noop,
-                addClass: noop,
-                removeClass: noop
-            },
-            series: {
-                type: 'map',
-                options: {
-                    states: {
-                        hover: {},
-                        select: {}
-                    }
-                },
-                pointAttribs: pointAttribs,
-                zones: [],
-                chart: {
-                    options: {
-                        chart: {
-                            animation: false
-                        }
-                    }
-                }
-            },
-            options: {}
-        };
+    const chart = Highcharts.mapChart('container', {
+            colorAxis: {},
+            series: [{
+                data: [{
+                    name: 'Test',
+                    value: 1,
+                    path:
+                        'M385,111,392,109,400,111,401,105z'
+                }]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        setState = Highcharts.Series.types.map.prototype
+            .pointClass.prototype.setState;
+
     setState.call(point, '');
     assert.strictEqual(
         point.graphic.zIndex,

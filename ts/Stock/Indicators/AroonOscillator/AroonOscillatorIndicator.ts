@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AroonOscillatorOptions,
     AroonOscillatorParamsOptions
@@ -16,21 +22,16 @@ import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        aroon: AroonIndicator
-    }
-} = SeriesRegistry;
+    aroon: AroonIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
-
-const AROON = SeriesRegistry.seriesTypes.aroon;
 
 /* *
  *
@@ -47,7 +48,14 @@ const AROON = SeriesRegistry.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.MultipleLinesIndicator {
+class AroonOscillatorIndicator extends AroonIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and
@@ -69,20 +77,6 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      * @optionparent plotOptions.aroonoscillator
      */
     public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of aroon oscillator series points.
-         *
-         * @excluding periods, index
-         */
-        params: {
-            /**
-             * Period for Aroon Oscillator
-             *
-             * @since   7.0.0
-             * @product highstock
-             */
-            period: 25
-        },
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
@@ -109,7 +103,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
         params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         // 0- date, 1- Aroon Oscillator
-        var ARO: Array<Array<number>> = [],
+        let ARO: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             aroon: IndicatorValuesObject<TLinkedSeries>,
@@ -119,7 +113,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
             i: number;
 
         aroon = (
-            AROON.prototype.getValues.call(
+            super.getValues.call(
                 this, series, params
             ) as IndicatorValuesObject<TLinkedSeries>);
 
@@ -139,43 +133,26 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
-    public init(this: AroonOscillatorIndicator): void {
-        var args = arguments,
-            ctx = this;
-
-        requiredIndicator.isParentLoaded(
-            (AROON as any),
-            'aroon',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
-interface AroonOscillatorIndicator {
+interface AroonOscillatorIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointArrayMap: Array<keyof AroonOscillatorPoint>;
     pointClass: typeof AroonOscillatorPoint;
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
 }
-
-extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
+extend(AroonOscillatorIndicator.prototype, {
     nameBase: 'Aroon Oscillator',
+    linesApiNames: [],
     pointArrayMap: ['y'],
-    pointValKey: 'y',
-    linesApiNames: []
-}));
+    pointValKey: 'y'
+});
+MultipleLinesComposition.compose(AroonIndicator);
 
 /* *
  *
@@ -198,6 +175,12 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  * */
 
 export default AroonOscillatorIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * An `Aroon Oscillator` series. If the [type](#series.aroonoscillator.type)

@@ -1,0 +1,169 @@
+.highcharts-demo .container {
+    margin: 0 auto;
+}
+
+.highcharts-spline-series {
+    transition: all 100ms;
+}
+
+.highcharts-demo h5 {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.highcharts-demo .c-container,
+.highcharts-demo #container-area {
+    height: 300px;
+}
+
+.highcharts-demo #container-area {
+    width: 80%;
+}
+
+.highcharts-demo .btn-sm {
+    max-width: 70px;
+    max-height: 30px;
+}
+
+.highcharts-demo .container.controls {
+    max-width: 320px;
+    border-radius: 4px;
+}
+
+.highcharts-demo .form-group {
+    margin-bottom: 0;
+}
+
+.highcharts-demo .form-check-inline {
+    margin-right: 4px !important;
+}
+
+.highcharts-demo label {
+    line-height: 12px;
+    white-space: normal;
+    display: block !important;
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.highcharts-demo .badge {
+    display: block;
+    width: fit-content;
+}
+
+.highcharts-demo .badge-secondary {
+    color: #000 !important;
+    display: block;
+    font-size: 13px !important;
+    border: 0 solid #424bcd !important;
+    background-color: #fff !important;
+}
+
+.highcharts-demo .badge-secondary label {
+    padding: 4px !important;
+}
+
+.highcharts-demo .highcharts-demo .badge-secondary.active {
+    max-width: 95px;
+    width: 85px;
+}
+
+.highcharts-demo .badge-secondary.active label {
+    font-weight: normal;
+    border-radius: 4px;
+    color: #fff;
+    white-space: pre-wrap;
+    background-color: #424bcd !important;
+}
+
+.highcharts-demo .badge-secondary.active label span {
+    font-weight: bold;
+    font-size: 11px;
+    display: block;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.highcharts-demo input[type="range"] {
+    margin-right: 2px;
+    padding: 0;
+}
+
+.highcharts-demo .form-control {
+    height: calc(0.8em + 0.75rem + 2px) !important;
+}
+
+.highcharts-demo .fas,
+.highcharts-demo .fa {
+    font-size: 18px !important;
+    color: #424bcd !important;
+}
+
+.highcharts-demo .fas.disabled,
+.highcharts-demo .fa.disabled {
+    font-size: 18px !important;
+    color: #ccc !important;
+}
+
+.highcharts-demo .fas:hover,
+.highcharts-demo .fa:hover {
+    font-size: 18px !important;
+    font-weight: bold;
+    color: #6a73f1 !important;
+}
+
+.highcharts-demo .fas.disabled:hover,
+.highcharts-demo .fa.disabled:hover {
+    font-size: 18px !important;
+    color: #ccc !important;
+}
+
+.highcharts-demo .btn-primary {
+    color: #424bcd !important;
+    border-color: #424bcd !important;
+    background-color: #fff !important;
+    height: 30px !important;
+    padding-top: 2px !important;
+}
+
+.highcharts-demo .btn-primary:not(:disabled):not(.disabled).active,
+.highcharts-demo .btn-primary:not(:disabled):not(.disabled):active,
+.highcharts-demo .show > .btn-primary.dropdown-toggle {
+    color: #fff !important;
+    font-weight: bold;
+    border-color: #424bcd !important;
+    background-color: #424bcd !important;
+}
+
+.highcharts-demo .btn-secondary {
+    color: #fff !important;
+    border-color: #424bcd !important;
+    background-color: #424bcd !important;
+}
+
+.highcharts-demo .btn-secondary:hover {
+    color: #fff;
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.highcharts-demo .max,
+.min {
+    font-size: 12px;
+}
+
+.highcharts-demo #thing {
+    font-weight: bold;
+}
+
+.highcharts-demo #play:hover,
+.highcharts-demo #play:active {
+    text-decoration: none;
+}
+
+.highcharts-item-series {
+    transform: translateX(-30px) scale(1.2);
+}

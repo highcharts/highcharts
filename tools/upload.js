@@ -37,7 +37,7 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
 };
 
 const uploadFiles = params => {
-    const storage = require('./jsdoc/storage/cdn.storage');
+    const aws = require('aws-sdk');
     const mimeType = {
         css: 'text/css',
         eot: 'application/vnd.ms-fontobject',
@@ -62,6 +62,7 @@ const uploadFiles = params => {
         bucket,
         profile,
         callback,
+        contentCallback,
         onError = Promise.reject,
         files,
         s3Params = {}
@@ -69,14 +70,30 @@ const uploadFiles = params => {
     const errors = [];
     let result;
     if (isString(bucket) && isArray(files)) {
-        const cdn = storage.strategy.s3({
-            Bucket: bucket,
-            profile
-        });
-
-        if (cdn.error) {
-            return Promise.reject(cdn.error.message);
+        if (profile) {
+            aws.config.credentials = new aws.SharedIniFileCredentials({ profile });
+            if (!aws.config.credentials.accessKeyId) {
+                return Promise.reject(new Error('No accessKeyId found for profile ' + profile));
+            }
         }
+        const s3 = new aws.S3();
+        const s3Put = (filename, data, mime, s3Params = {}) => {
+            return new Promise((resolve, reject) => {
+                s3.putObject({
+                    Bucket: bucket,
+                    Key: filename,
+                    Body: data,
+                    ContentType: mime,
+                    ACL: 'public-read',
+                    ...s3Params
+                }, (err, data) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(data);
+                });
+            });
+        };
 
         const uploadFile = file => {
             const { from, to } = file;
@@ -86,6 +103,9 @@ const uploadFiles = params => {
                 let content;
                 try {
                     content = fs.readFileSync(from, '');
+                    if (contentCallback) {
+                        content = contentCallback(from, content);
+                    }
                 } catch (err) {
                     errors.push(err);
                 }
@@ -93,7 +113,7 @@ const uploadFiles = params => {
                 const fileType = from.split('.').pop();
                 const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
-                    filePromise = storage.push(cdn, to, content, fileMime, s3Params)
+                    filePromise = s3Put(to, content, fileMime, s3Params)
                         .then(() => isFunction(callback) && callback(from, to, fileMime))
                         .catch(err => {
                             const error = {

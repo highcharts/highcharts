@@ -3,6 +3,18 @@
 const fs = require('fs');
 const path = require('path');
 
+function sineData (_request, response, _next) {
+    const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
+
+    for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
+        x = 3184606 + Math.random();
+        csv.push([x, Math.sin(x), Math.sin(-x)]);
+    }
+
+    response.end(csv.map(line => line.join(',')).join('\n'));
+}
+sineData.url = '/data/sine-data.csv';
+
 /**
  * Get browserstack credentials from the environment variables.
  * e.g for Mac/Linux run the below with correct credentials or
@@ -124,28 +136,33 @@ module.exports = function (config) {
     }
 
     const tests = (
-        argv.tests || argv.testsAbsolutePath ?
-            // specific tests
-            argv.testsAbsolutePath ?
+        // debugger test
+        argv.testsAbsolutePath ?
                 argv.testsAbsolutePath.split(',').filter(path => !!path) :
-                argv.tests
-                    .split(',')
-                    .filter(path => !!path)
-                    .map(path => ({
-                        pattern: `test/typescript-karma/${path}/tests.js`,
-                        type: 'module'
-                    })) :
-            // default tests
+        // specific tests
+        argv.tests ?
+            argv.tests
+                .split(',')
+                .filter(path => !!path)
+                .map(path => ({
+                    pattern: `test/typescript-karma/${path}.test.js`,
+                    type: 'module'
+                }))
+                .concat([{
+                    pattern: 'test/typescript-karma/**/!(*.test).js',
+                    type: 'module'
+                }]) :
+            // all tests
             [{
-                pattern: 'test/typescript-karma/**/tests.js',
+                pattern: 'test/typescript-karma/**/!(demo).js',
                 type: 'module'
-            }
-        ]
-    )
+            }]
+    );
 
     let options = {
         basePath: '../../', // Root relative to this file
         frameworks: ['qunit'],
+        middleware: ['data'],
         files: [].concat([
             // Set up
             'vendor/require.js',
@@ -159,10 +176,6 @@ module.exports = function (config) {
             {
                 included: false,
                 pattern: 'js/**/*.js',
-                type: 'module'
-            },
-            {
-                pattern: 'test/typescript-karma/**/!(demo).js',
                 type: 'module'
             }
         ], tests),
@@ -178,6 +191,20 @@ module.exports = function (config) {
         reportSlowerThan: 3000,
         plugins: [
             'karma-*',
+            {
+                'middleware:data': [
+                    'factory',
+                    function (config) {
+                        return function (request, response, next) {
+                            if (request.url === sineData.url) {
+                                sineData(request, response, next);
+                            } else {
+                                next();
+                            }
+                        }
+                    }
+                ]
+            }
         ],
 
         formatError: function (s) {

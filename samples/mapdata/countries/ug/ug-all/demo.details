@@ -1,5 +1,5 @@
 ---
- name: Uganda - Highmaps
- description: Highmaps demo
+ name: Uganda - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

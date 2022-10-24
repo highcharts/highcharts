@@ -1,5 +1,5 @@
 ---
- name: Saint Vincent and the Grenadines - Highmaps
- description: Highmaps demo
+ name: Saint Vincent and the Grenadines - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

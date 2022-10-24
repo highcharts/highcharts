@@ -6,56 +6,45 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../../../Core/Color/ColorString';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Controllable from '../Controllables/Controllable';
+import type MockPointOptions from '../MockPointOptions';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
+import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
- * Internal types.
  * @private
  */
-declare global {
-    namespace Highcharts {
-        class AnnotationFibonacci extends Tunnel {
-            public static levels: Array<number>;
-            public options: AnnotationFibonacciOptionsObject;
-            public endRetracements: Array<AnnotationMockPoint>;
-            public startRetracements: Array<AnnotationMockPoint>;
-            public addLabels(): void;
-            public addShapes(): void;
-            public linkPoints: () => undefined;
-            public linkRetracementPoint(
-                pointIndex: number,
-                x: number,
-                y: number,
-                retracements: Array<AnnotationMockPoint>
-            ): void;
-            public linkRetracementsPoints(): void;
-        }
-        interface AnnotationFibonacciOptionsObject extends AnnotationTunnelOptionsObject {
-            typeOptions: AnnotationFibonacciTypeOptionsObject;
-        }
-        interface AnnotationFibonacciTypeOptionsObject extends AnnotationTunnelTypeOptionsObject {
-            backgroundColors: Array<ColorString>;
-            labels: Array<AnnotationCrookedLineOptionsObject['labelOptions']>;
-            lineColor: ColorString;
-            lineColors: Array<ColorString>;
-        }
-    }
-}
+function createPathDGenerator(
+    retracementIndex: number,
+    isBackground?: boolean
+): Function {
+    return function (this: Controllable): SVGPath {
+        const annotation = this.annotation as Fibonacci;
 
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
-var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
-    return function (this: Highcharts.AnnotationControllable): SVGPath {
-        var annotation = this.annotation as Highcharts.AnnotationFibonacci,
-            leftTop = this.anchor(
+        if (!annotation.startRetracements || !annotation.endRetracements) {
+            return [];
+        }
+        const leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
@@ -64,16 +53,14 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
             d: SVGPath = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
-            ],
-            rightBottom: PositionObject,
-            leftBottom: PositionObject;
+            ];
 
         if (isBackground) {
-            rightBottom = this.anchor(
+            const rightBottom = this.anchor(
                 annotation.endRetracements[retracementIndex - 1]
             ).absolutePosition;
 
-            leftBottom = this.anchor(
+            const leftBottom = this.anchor(
                 annotation.startRetracements[retracementIndex - 1]
             ).absolutePosition;
 
@@ -85,13 +72,19 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
 
         return d;
     };
-};
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -99,26 +92,16 @@ class Fibonacci extends Tunnel {
 
     /* *
      *
-     * Constructors
-     *
-     * */
-
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationFibonacciOptionsObject) {
-        super(chart, options);
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
 
-    public endRetracements?: Array<Highcharts.AnnotationMockPoint>;
-    public startRetracements?: Array<Highcharts.AnnotationMockPoint>;
+    public endRetracements?: Array<MockPoint>;
+    public startRetracements?: Array<MockPoint>;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -131,14 +114,14 @@ class Fibonacci extends Tunnel {
     }
 
     public linkRetracementsPoints(): void {
-        var points = this.points,
+        const points = this.points,
             startDiff = (points[0].y as any) - (points[3].y as any),
             endDiff = (points[1].y as any) - (points[2].y as any),
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
-        Fibonacci.levels.forEach(function (level: number, i: number): void {
-            var startRetracement = (points[0].y as any) - startDiff * level,
+        Fibonacci.levels.forEach((level, i): void => {
+            const startRetracement = (points[0].y as any) - startDiff * level,
                 endRetracement = (points[1].y as any) - endDiff * level;
 
             this.startRetracements = this.startRetracements || [];
@@ -157,22 +140,22 @@ class Fibonacci extends Tunnel {
                 endRetracement,
                 this.endRetracements
             );
-        }, this);
+        });
     }
 
     public linkRetracementPoint(
         pointIndex: number,
         x: number,
         y: number,
-        retracements: Array<Highcharts.AnnotationMockPoint>
+        retracements: Array<MockPoint>
     ): void {
-        var point = retracements[pointIndex],
+        const point = retracements[pointIndex],
             typeOptions = this.options.typeOptions;
 
         if (!point) {
             retracements[pointIndex] = new MockPoint(
                 this.chart,
-                this,
+                this as any,
                 {
                     x: x,
                     y: y,
@@ -189,46 +172,66 @@ class Fibonacci extends Tunnel {
     }
 
     public addShapes(): void {
-        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
-            this.initShape({
-                type: 'path',
-                d: createPathDGenerator(i)
-            }, false as any);
+        Fibonacci.levels.forEach(
+            function (this: Fibonacci, _level: number, i: number): void {
+                const {
+                    backgroundColors,
+                    lineColor,
+                    lineColors
+                } = this.options.typeOptions;
 
-            if (i > 0) {
-                (this.initShape as any)({
+                this.initShape({
                     type: 'path',
-                    fill: this.options.typeOptions.backgroundColors[i - 1],
-                    strokeWidth: 0,
-                    d: createPathDGenerator(i, true)
-                });
-            }
-        }, this);
+                    d: createPathDGenerator(i),
+                    stroke: lineColors[i] || lineColor
+                }, i);
+
+                if (i > 0) {
+                    (this.initShape as any)({
+                        type: 'path',
+                        fill: backgroundColors[i - 1],
+                        strokeWidth: 0,
+                        d: createPathDGenerator(i, true)
+                    });
+                }
+            },
+            this
+        );
     }
 
     public addLabels(): void {
-        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
-            var options = this.options.typeOptions,
-                label = (this.initLabel as any)(
-                    merge(options.labels[i], {
-                        point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                            var point = MockPoint.pointToOptions(
-                                target.annotation.startRetracements[i]
-                            );
+        Fibonacci.levels.forEach(
+            function (this: Fibonacci, level: number, i: number): void {
+                const options = this.options.typeOptions,
+                    label = (this.initLabel as any)(
+                        merge(options.labels[i], {
+                            point: function (target: any): MockPointOptions {
+                                const point = MockPoint.pointToOptions(
+                                    target.annotation.startRetracements[i]
+                                );
 
-                            return point;
-                        },
-                        text: level.toString()
-                    })
-                );
+                                return point;
+                            },
+                            text: level.toString()
+                        })
+                    );
 
-            options.labels[i] = label.options;
-        }, this);
+                options.labels[i] = label.options;
+            },
+            this
+        );
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Fibonacci {
     defaultOptions: Tunnel['defaultOptions'];
+    options: Fibonacci.Options;
 }
 
 Fibonacci.prototype.defaultOptions = merge(
@@ -276,7 +279,7 @@ Fibonacci.prototype.defaultOptions = merge(
             /**
              * The color of line.
              */
-            lineColor: 'grey',
+            lineColor: Palette.neutralColor40,
 
             /**
              * An array of colors for the lines.
@@ -310,6 +313,42 @@ Fibonacci.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        fibonacci: typeof Fibonacci;
+    }
+}
+
 Annotation.types.fibonacci = Fibonacci;
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Fibonacci {
+    export interface Options extends Tunnel.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends Tunnel.TypeOptions {
+        backgroundColors: Array<ColorString>;
+        labels: Array<CrookedLine.Options['labelOptions']>;
+        lineColor: ColorString;
+        lineColors: Array<ColorString>;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Fibonacci;

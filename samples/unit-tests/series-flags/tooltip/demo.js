@@ -85,5 +85,12 @@ QUnit.test(
                 'Flag clipped (#8546).'
             );
         }
-    }
-);
+        // Empty shared tooltip visible, when text is not defined in flag point, #6332
+        chart.tooltip.update({ split: true });
+
+        chart.tooltip.refresh(chart.series[2].points[0]);
+        assert.ok(
+            chart.tooltip.label.hasClass('highcharts-label'),
+            'The flags tooltip should not be split'
+        );
+    });

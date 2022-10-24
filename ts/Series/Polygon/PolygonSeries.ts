@@ -13,9 +13,10 @@
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -31,7 +32,7 @@ const {
     merge
 } = U;
 
-import '../../Core/Legend.js';
+import '../../Core/Legend/Legend.js';
 
 /* *
  *
@@ -98,7 +99,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public getGraphPath(): SVGPath {
-        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
+        let graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
@@ -118,15 +119,16 @@ class PolygonSeries extends ScatterSeries {
 }
 
 interface PolygonSeries {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof PolygonPoint;
     type: string;
 }
 
 extend(PolygonSeries.prototype, {
     type: 'polygon',
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
-    setStackedPoints: noop as any // No stacking points on polygons (#5310)
+    setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 
 /* *

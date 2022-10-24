@@ -12,7 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type Options from '../Core/Options';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
@@ -20,7 +33,13 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-var theme: Highcharts.Options = {
+/* *
+ *
+ *  Theme
+ *
+ * */
+
+const theme: DeepPartial<Options> = {
     chart: {
         backgroundColor: 'window'
     },
@@ -218,5 +237,11 @@ var theme: Highcharts.Options = {
         trackBorderColor: 'windowText'
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default theme;

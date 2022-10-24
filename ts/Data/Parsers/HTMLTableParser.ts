@@ -1,14 +1,20 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *  Authors:
+ *  - Torstein Hønsi
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sophie Bremer
+ *
  * */
+
+'use strict';
 
 /* *
  *
@@ -17,9 +23,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 
-import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
@@ -33,9 +37,11 @@ const { merge } = U;
  * */
 
 /**
- * Handles parsing and transformation of an HTML table to a DataTable
+ * Handles parsing and transformation of an HTML table to a table.
+ *
+ * @private
  */
-class HTMLTableParser extends DataParser<DataParser.EventObject> {
+class HTMLTableParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -46,32 +52,11 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions
-    }
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-
-    /**
-     * Creates a HTMLTableParser instance from ClassJSON.
-     *
-     * @param {HTMLTableParser.ClassJSON} json
-     * Class JSON to convert to the parser instance.
-     *
-     * @return {HTMLTableParser}
-     * An instance of CSVDataParser.
-     */
-    public static fromJSON(json: HTMLTableParser.ClassJSON): HTMLTableParser {
-        return new HTMLTableParser(
-            json.options,
-            document.getElementById(json.tableElementID)
-        );
-    }
+    protected static readonly defaultOptions: (
+        HTMLTableParser.ClassJSONOptions
+    ) = {
+            ...DataParser.defaultOptions
+        };
 
     /* *
      *
@@ -105,9 +90,9 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         if (tableElement) {
             this.tableElement = tableElement;
             this.tableElementID = tableElement.id;
-        } else if (options?.tableHTML) {
+        } else if (options && options.tableHTML) {
             this.tableElement = options.tableHTML;
-            this.tableElementID = options?.tableHTML.id;
+            this.tableElementID = options.tableHTML.id;
         }
     }
 
@@ -117,11 +102,11 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
-    public tableElement?: HTMLElement
+    public tableElement?: HTMLElement;
     public tableElementID?: string;
 
     /* *
@@ -149,7 +134,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     ): void {
         const parser = this,
             converter = this.converter,
-            columns: DataTableRow.CellType[][] = [],
+            columns: Array<DataTable.Column> = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
@@ -162,7 +147,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit<DataParser.EventObject>({
+            parser.emit<DataParser.Event>({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -174,7 +159,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
 
-        this.emit<DataParser.EventObject>({
+        this.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -188,7 +173,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
             { startRow } = parseOptions;
 
         // Insert headers from the first row
-        if (firstRowAsNames) {
+        if (firstRowAsNames && rowsCount) {
             const items = rows[0].children,
                 itemsLength = items.length;
 
@@ -236,7 +221,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
                             columns[relativeColumnIndex] = [];
                         }
 
-                        const cellValue = converter.asGuessedType(item.innerHTML);
+                        let cellValue = converter.asGuessedType(item.innerHTML);
+                        if (cellValue instanceof Date) {
+                            cellValue = cellValue.getTime();
+                        }
                         columns[relativeColumnIndex][
                             rowIndex - startRow
                         ] = cellValue;
@@ -262,7 +250,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit<DataParser.EventObject>({
+        this.emit<DataParser.Event>({
             type: 'afterParse',
             columns,
             detail: eventDetail,
@@ -271,37 +259,13 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
-     *
-     * @param {DataTable} [dataTable]
-     * Optional DataTable to use as base for the parsed dataTable
+     * Handles converting the parsed data to a table.
      *
      * @return {DataTable}
-     * A DataTable from the parsed HTML table
+     * Table from the parsed HTML table
      */
-    public getTable(dataTable?: DataTable): DataTable {
-        return DataParser.getTableFromColumns(this.columns, this.headers, dataTable);
-    }
-
-    /**
-     * Converts the parser instance to ClassJSON.
-     *
-     * @return {HTMLTableParser.ClassJSON}
-     * ClassJSON from the parser instance.
-     */
-    public toJSON(): HTMLTableParser.ClassJSON {
-        const parser = this,
-            {
-                options,
-                tableElementID
-            } = parser,
-            json: HTMLTableParser.ClassJSON = {
-                $class: 'HTMLTableParser',
-                options,
-                tableElementID: tableElementID ? tableElementID : ''
-            };
-
-        return json;
+    public getTable(): DataTable {
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
 }
@@ -317,15 +281,7 @@ namespace HTMLTableParser {
     /**
      * The available options for the parser
      */
-    export type OptionsType = Partial<ParserOptions & DataParser.Options>
-
-    /**
-     * ClassJSON for HTMLTableParser
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        options: ClassJSONOptions;
-        tableElementID: string;
-    }
+    export type OptionsType = Partial<ParserOptions & DataParser.Options>;
 
     /**
      * Options for the parser compatible with ClassJSON
@@ -341,14 +297,6 @@ namespace HTMLTableParser {
     }
 
 }
-
-/* *
- *
- *  Register
- *
- * */
-
-DataJSON.addClass(HTMLTableParser);
 
 /* *
  *

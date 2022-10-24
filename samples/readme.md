@@ -56,7 +56,7 @@ that is available in the test environment.
 
 ```js
 // Instanciate
-var controller = new TestController(chart);
+const controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });
@@ -88,7 +88,7 @@ unit tests task. The chart and its container are shared between multiple tests
 and test-specific options get reverted after each test.
 
 The limitations of the underlying `Chart.update` function applies, so that
-callback functions are not supported as they can not be reverted. Additionally
+callback functions are not supported as they cannot be reverted. Additionally
 the `Chart.update` function is not wrapped in a template and therefor has to be
 avoided as well. If you need to test with callback functions or multiple
 updates, test templates are not for you.
@@ -152,3 +152,30 @@ TestTemplate.register('highmaps/geoseries', Highcharts.mapChart, {
 
 });
 ```
+
+## Demos
+
+Samples that are meant to appear on highcharts.com/demo have additional metadata requirements. These are set in the `demo.details` file. Below is an example.
+
+```
+---
+name: Basic area
+authors:
+  - Torstein Hønsi
+js_wrap: b
+alt_text: >-
+  Highcharts basic area chart JavaScript example graph compares cold war nuclear
+  weapon stockpile peaks over time.
+tags:
+  - Highcharts demo
+categories:
+  - Area charts:
+      priority: 1
+...
+```
+
+Use the `tags` property to set the product tag, and `categories` to set the categories it should belong to. Both should correspond with tags and categories set in `/samples/demo-config.js`.
+
+If you want the demo to appear higher (or lower) within the category you can also set a `priority`.
+
+If you want to commit the demo without it appearing on the website, the category can be set to `unlisted`.

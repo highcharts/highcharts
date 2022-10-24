@@ -10,7 +10,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
     // Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
         var series = this;
-        Highcharts.each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
@@ -20,7 +20,9 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
                 crispX = left + Math.round(width / 2) + 0.5,
                 highPlot = Math.floor(point.highPlot) + 0.5,
                 medianPlot = Math.floor(point.medianPlot) + 0.5,
-                lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
+                // Sneakily draw low marker even if 0
+                lowPlot = Math.floor(point.lowPlot) +
+                    0.5 - (point.low === 0 ? 1 : 0);
 
             if (point.isNull) {
                 return;
@@ -75,11 +77,7 @@ var chart = Highcharts.chart('container', {
         },
 
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', series ' + (series.index + 1) + ' of ' +
-                    series.chart.series.length + ' with ' + series.points.length +
-                    ' data points.';
-            }
+            descriptionFormat: '{seriesDescription}'
         },
 
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart

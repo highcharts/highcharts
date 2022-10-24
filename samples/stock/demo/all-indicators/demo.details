@@ -1,0 +1,11 @@
+---
+name: All technical indicators
+authors:
+  - Karol Kolodziej
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Flags and Technical indicators:
+      priority: 4
+...

@@ -7,8 +7,7 @@
  * This node script is used to assemble the content for all markdown files
  * in each sub-directory of this directory into a new html output file.
  */
-var path = require('path'),
-    replaceString = require('replace-string');
+var path = require('path');
 
 function generateHTML() {
     return new Promise(function (resolve, reject) {
@@ -18,7 +17,7 @@ function generateHTML() {
             semver = require('semver');
 
         var products = [{
-            header: 'Highcharts Basic',
+            header: 'Highcharts',
             name: 'highcharts',
             changelogId: 'hc-changelog',
             offset: ''
@@ -53,22 +52,6 @@ function generateHTML() {
 
         var htmlContent = '';
 
-        function addLinkToIssues(items) {
-            (items || []).forEach(item => {
-                if (typeof item.text === 'string') {
-                    var issues = item.text.match(/#[0-9]+/g);
-                    if (issues !== null) {
-                        issues.forEach(issue => {
-                            var issued = issue.substring(1),
-                                issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
-                                formatIssue = '[' + issue + '](' + issueLink + ')';
-                            item.text = replaceString(item.text, issue, formatIssue);
-                        });
-                    }
-                }
-            });
-        }
-
 
         function sortMarkdownFileContent(mdContent) {
             let write = 'New features';
@@ -100,15 +83,12 @@ function generateHTML() {
                 }
                 switch (write) {
                     case 'New features':
-                        addLinkToIssues(token.items);
                         changelog.features.push(token);
                         break;
                     case 'Upgrade notes':
-                        addLinkToIssues(token.items);
                         changelog.upgradeNotes.push(token);
                         break;
                     case 'Bug fixes':
-                        addLinkToIssues(token.items);
                         changelog.bugFixes.push(token);
                         break;
                     default:
@@ -135,7 +115,7 @@ function generateHTML() {
             return (
                 `<div id="${product.changelogId}">
                 <div class="changelog-header">
-                <h4 id="${product.name}">${product.header}</h4>
+                <h2 id="${product.name}">${product.header}</h2>
                 </div>
                 <div class="changelog-container">`);
         }
@@ -160,25 +140,28 @@ function generateHTML() {
                 const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
 
                 return (
-                    `<p class="release-header">
+                    `<h3 class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
-                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>    
-                    </p>
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
+                    </h3>
                     ${marked.parser(changelog.features)}`
                 );
             }
             return '';
         }
         function upgradeNotesHTMLStructure() {
+            const productName = changelog.header.name;
+            const id = productName.charAt(0).toUpperCase() + productName.slice(1);
+            const version = changelog.header.version.split('-').join('.');
             if (changelog.upgradeNotes.length > 0) {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><span> Upgrade notes </span></button>
+                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="upgrade-notes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
@@ -187,20 +170,20 @@ function generateHTML() {
             return '';
         }
         function bugFixesHTMLStructure() {
+            const productName = changelog.header.name;
+            const id = productName.charAt(0).toUpperCase() + productName.slice(1);
+            const version = changelog.header.version.split('-').join('.');
             if (changelog.bugFixes.length > 0) {
                 return (
-                    `<div
-                        id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
-                        class="card-header">
-                    <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><span> Bug fixes </span></button>
+                    `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"class="card-header">
+                    <h4 class="card-title" aria-label="Bug Fixes ${id} v${version}">
+                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="bug-fixes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.bugFixes)}
                     </div>
-
                     </div>`);
             }
             return '';
@@ -219,11 +202,10 @@ function generateHTML() {
             return '';
         }
         function bottomHTMLContent() {
-            return (`
-                </div>
-                </div>
-                </div>
-                </div>`);
+            return (`</div>
+                    </div>
+                    </div>
+                    </div>`);
         }
         function endProductHTMLStructure() {
             return ('</div> </div>');
@@ -275,6 +257,13 @@ function generateHTML() {
                 var content = fs.readFileSync(
                     path.join(__dirname, product.name, file), 'utf8'
                 );
+
+                if (content.indexOf('[Edit]') !== -1) {
+                    throw new Error(
+                        'Review links found inside the markdown. Generate again without --review.'
+                    );
+                }
+
                 sortMarkdownFileContent(content);
                 changelog.header.version = formatVersionNumber(file);
                 htmlContent += featureHTMLStructure();
@@ -290,9 +279,11 @@ function generateHTML() {
 // If called directly, run generateHTML now. Otherwise, it's called from
 // upload.js
 if (require.main === module) {
-    generateHTML().then(params => {
-        console.log(params.outputFile + ' was successfully created!');
-    });
+    generateHTML()
+        .then(params => {
+            console.log(params.outputFile + ' was successfully created!');
+        })
+        .catch(e => console.error(e));
 }
 
 module.exports = { generateHTML };

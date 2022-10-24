@@ -1392,8 +1392,9 @@ Highcharts.chart('container', {
         text: 'Sunburst with different size on some levels'
     },
     series: [{
-        type: "sunburst",
+        type: 'sunburst',
         data: data,
+        name: 'Root',
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {

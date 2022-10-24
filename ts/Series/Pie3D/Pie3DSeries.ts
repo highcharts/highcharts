@@ -91,7 +91,7 @@ class Pie3DSeries extends PieSeries {
         if (!this.chart.is3d()) {
             super.animate.apply(this, arguments);
         } else {
-            var animation = this.options.animation,
+            let animation = this.options.animation,
                 attribs: SVGAttributes,
                 center = this.center,
                 group = this.group,
@@ -149,19 +149,27 @@ class Pie3DSeries extends PieSeries {
      */
     public drawDataLabels(): void {
         if (this.chart.is3d()) {
-            var series = this,
+            const series = this,
                 chart = series.chart,
-                options3d = (chart.options.chart as any).options3d;
+                options3d = chart.options.chart.options3d as any;
 
             series.data.forEach(function (point): void {
-                var shapeArgs = point.shapeArgs,
+                const shapeArgs = point.shapeArgs,
                     r = (shapeArgs as any).r,
                     // #3240 issue with datalabels for 0 and null values
-                    a1 = ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
-                    b1 = ((shapeArgs as any).beta || options3d.beta) * deg2rad,
-                    a2 = ((shapeArgs as any).start + (shapeArgs as any).end) / 2,
+                    a1 = (
+                        ((shapeArgs as any).alpha || options3d.alpha) * deg2rad
+                    ),
+                    b1 = (
+                        ((shapeArgs as any).beta || options3d.beta) * deg2rad
+                    ),
+                    a2 = (
+                        ((shapeArgs as any).start + (shapeArgs as any).end) / 2
+                    ),
                     labelPosition = point.labelPosition,
-                    connectorPosition = (labelPosition as any).connectorPosition,
+                    connectorPosition = (
+                        (labelPosition as any).connectorPosition
+                    ),
                     yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
                     xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
@@ -184,7 +192,7 @@ class Pie3DSeries extends PieSeries {
      * @private
      */
     public pointAttribs(point: Pie3DPoint): SVGAttributes {
-        var attr = super.pointAttribs.apply(this, arguments),
+        const attr = super.pointAttribs.apply(this, arguments),
             options = this.options;
 
         if (this.chart.is3d() && !this.chart.styledMode) {
@@ -206,10 +214,10 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
-            options3d = (series.chart.options.chart as any).options3d,
+            options3d = series.chart.options.chart.options3d as any,
             alpha = options3d.alpha,
             beta = options3d.beta,
             z: number = seriesOptions.stacking ?
@@ -224,7 +232,7 @@ class Pie3DSeries extends PieSeries {
 
         series.data.forEach(function (point): void {
 
-            var shapeArgs = point.shapeArgs,
+            let shapeArgs = point.shapeArgs,
                 angle: number;
 
             point.shapeType = 'arc3d';
@@ -252,20 +260,41 @@ class Pie3DSeries extends PieSeries {
         });
     }
 
+    /**
+     * @private
+     */
+    public drawTracker(): void {
+        super.drawTracker.apply(this, arguments);
+
+        // Do not do this if the chart is not 3D
+        if (!this.chart.is3d()) {
+            return;
+        }
+
+        this.points.forEach(function (point): void {
+            if (point.graphic) {
+                ['out', 'inn', 'side1', 'side2'].forEach((face): void => {
+                    if (point.graphic) {
+                        point.graphic[face].element.point = point;
+                    }
+                });
+            }
+        });
+    }
     /* eslint-enable valid-jsdoc */
 
 }
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface Pie3DSeries {
     pointClass: typeof Pie3DPoint;
 }
-extend(Pie3DSeries, {
+extend(Pie3DSeries.prototype, {
     pointClass: Pie3DPoint
 });
 

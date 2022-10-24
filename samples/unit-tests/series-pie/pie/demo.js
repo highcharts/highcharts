@@ -14,7 +14,7 @@ QUnit.test('Pie borderColor null(#1828)', function (assert) {
         })
         .highcharts();
 
-    Highcharts.each(chart.series[0].points, function (point, i) {
+    chart.series[0].points.forEach((point, i) => {
         assert.equal(
             point.graphic.element.getAttribute('stroke'),
             point.graphic.element.getAttribute('fill'),
@@ -89,7 +89,7 @@ QUnit.test(
             series: [
                 {
                     data: [10, 10, 10]
-                    //data: [-10, -10, -10]
+                    // data: [-10, -10, -10]
                 }
             ]
         });
@@ -102,7 +102,7 @@ QUnit.test(
             'Graphic should be removed'
         );
 
-        //Issue #13101
+        // Issue #13101
         chart.series[0].points[0].select(false, false);
 
         // Issue #5526
@@ -117,7 +117,8 @@ QUnit.test(
                     innerSize: 40,
                     startAngle: -90,
                     endAngle: 90,
-                    center: ['50%', '75%']
+                    center: ['50%', '75%'],
+                    color: '#c0ffee'
                 }
             },
 
@@ -127,6 +128,13 @@ QUnit.test(
         });
 
         var graph = chart.series[0].graph;
+
+        // Issue #13646
+        assert.strictEqual(
+            chart.userOptions.plotOptions.pie.color,
+            '#c0ffee',
+            'The empty circle should be a user-specified color (#13646).'
+        );
 
         // Issue #13229
         assert.ok(
@@ -245,7 +253,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
 
     const point = chart.series[0].points[0];
 
-    Highcharts.fireEvent(point.legendItem.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.strictEqual(
         point.graphic.attr('visibility'),
         'hidden',
@@ -256,7 +264,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
         'Point graphic should be inside plot'
     );
 
-    Highcharts.fireEvent(point.legendItem.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.notStrictEqual(
         point.graphic.attr('visibility'),
         'hidden',
@@ -309,6 +317,44 @@ QUnit.test(
             styleAfter,
             styleBefore,
             'Must be the same style after updating twice.'
+        );
+    }
+);
+
+QUnit.test('Pie chart initialized through the stockChart constructor and splitted tooltip, (#14773).',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            series: [{
+                type: 'pie',
+                data: [3]
+            }]
+        });
+        chart.tooltip.refresh(chart.series[0].points[0]);
+        assert.ok(
+            true,
+            `Hovering over the pie chart initialized through the stockChart
+            constructor should not produce errors in the console.`
+        );
+
+        chart.addSeries({
+            data: [2, 3, 5, 6]
+        }, false);
+        chart.update({
+            navigator: {
+                enabled: false
+            },
+            tooltip: {
+                split: true
+            }
+        });
+        chart.tooltip.refresh(chart.series[0].points[0]);
+        chart.tooltip.refresh(chart.series[1].points[0]);
+        chart.tooltip.refresh(chart.series[0].points[0]);
+        assert.ok(
+            true,
+            `After hovering over two series where one of them should not have
+            a splitter tooltip, while tooltip split explicitly set to true,
+            there should be no errors in the console.`
         );
     }
 );

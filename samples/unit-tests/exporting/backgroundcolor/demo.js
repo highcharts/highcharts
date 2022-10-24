@@ -53,12 +53,12 @@ QUnit.test('Capture POST', function (assert) {
         }
     });
 
-    var originalPost = Highcharts.post;
+    var originalPost = Highcharts.HttpUtilities.post;
 
     try {
         var postData;
 
-        Highcharts.post = function (url, data) {
+        Highcharts.HttpUtilities.post = function (url, data) {
             postData = data;
         };
 
@@ -68,6 +68,7 @@ QUnit.test('Capture POST', function (assert) {
                 backgroundColor: '#ffeeff'
             }
         });
+
         assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
 
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is there');
@@ -84,6 +85,6 @@ QUnit.test('Capture POST', function (assert) {
             'Solid background is there'
         );
     } finally {
-        Highcharts.post = originalPost;
+        Highcharts.HttpUtilities.post = originalPost;
     }
 });

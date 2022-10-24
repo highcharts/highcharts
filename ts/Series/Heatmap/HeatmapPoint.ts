@@ -16,11 +16,11 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -34,6 +34,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    defined,
     extend,
     pick
 } = U;
@@ -79,15 +80,20 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = super.applyOptions.call(this, options, x) as any;
+        const point: HeatmapPoint = super.applyOptions.call(
+            this,
+            options,
+            x
+        ) as any;
 
-        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
+        point.formatPrefix = point.isNull || point.value === null ?
+            'null' : 'point';
 
         return point;
     }
 
     public getCellAttributes(): HeatmapPoint.CellAttributes {
-        var point = this,
+        const point = this,
             series = point.series,
             seriesOptions = series.options,
             xPad = (seriesOptions.colsize || 1) / 2,
@@ -101,51 +107,54 @@ class HeatmapPoint extends ScatterPoint {
             ),
             cellAttr: HeatmapPoint.CellAttributes = {
                 x1: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x - xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 x2: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x + xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 y1: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y - yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len),
 
                 y2: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y + yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len)
             };
 
+        const dimensions: [['width', 'x'], ['height', 'y']] =
+            [['width', 'x'], ['height', 'y']];
+
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
-        [['width', 'x'], ['height', 'y']].forEach(function (dimension): void {
+        dimensions.forEach(function (dimension): void {
             const prop = dimension[0],
                 direction = dimension[1];
 
@@ -159,20 +168,15 @@ class HeatmapPoint extends ScatterPoint {
                     markerOptions.lineWidth || 0,
                 plotPos = Math.abs(
                     cellAttr[start] + cellAttr[end]
-                ) / 2;
+                ) / 2,
+                widthOrHeight = markerOptions && markerOptions[prop];
 
+            if (defined(widthOrHeight) && widthOrHeight < side) {
+                const halfCellSize = widthOrHeight / 2 + borderWidth / 2;
 
-            if (
-                (markerOptions as any)[prop] &&
-                (markerOptions as any)[prop] < side
-            ) {
-                cellAttr[start] = plotPos - (
-                    (markerOptions as any)[prop] / 2) -
-                    (borderWidth / 2);
+                cellAttr[start] = plotPos - halfCellSize;
 
-                cellAttr[end] = plotPos + (
-                    (markerOptions as any)[prop] / 2) +
-                    (borderWidth / 2);
+                cellAttr[end] = plotPos + halfCellSize;
             }
 
             // Handle pointPadding
@@ -196,7 +200,7 @@ class HeatmapPoint extends ScatterPoint {
         if (!size) {
             return [];
         }
-        var rect = this.shapeArgs;
+        const rect = this.shapeArgs;
 
         return [
             'M',
@@ -232,17 +236,17 @@ class HeatmapPoint extends ScatterPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface HeatmapPoint {
-    dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    setState: typeof colorMapPointMixin.setState;
+interface HeatmapPoint extends ColorMapComposition.PointComposition {
+    // nothing to add
 }
 extend(HeatmapPoint.prototype, {
-    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    setState: colorMapPointMixin.setState
+    dataLabelOnNull: true,
+    moveToTopOnHover: true,
+    ttBelow: false
 });
 
 /* *

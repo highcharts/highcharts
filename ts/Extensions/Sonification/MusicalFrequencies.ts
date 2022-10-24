@@ -12,7 +12,13 @@
 
 'use strict';
 
-var frequencies: Array<number> = [
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const frequencies: Array<number> = [
     16.351597831287414, // C0
     17.323914436054505,
     18.354047994837977,
@@ -111,5 +117,11 @@ var frequencies: Array<number> = [
     3951.066410048992,
     4186.009044809578 // C8
 ];
+
+/* *
+ *
+ *  Default export
+ *
+ * */
 
 export default frequencies;

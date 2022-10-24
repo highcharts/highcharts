@@ -1,18 +1,18 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .highcharts-tooltip-box {
-	fill: black;
-	fill-opacity: 0.6;
-	stroke-width: 0;
+    fill: black;
+    fill-opacity: 0.6;
+    stroke-width: 0;
 }
 
 .highcharts-tooltip text {
-	fill: white;
-	text-shadow: 0 0 3px black;
+    fill: white;
+    text-shadow: 0 0 3px black;
 }

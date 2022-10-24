@@ -6,120 +6,70 @@
 
 'use strict';
 
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import Series from '../../Core/Series/Series.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationMockLabelOptionsObject {
-            x: (number|null);
-            y: (number|null);
-            point: AnnotationMockPoint;
-        }
-        class AnnotationMockPoint {
-            public static fromPoint(point: AnnotationPoint): AnnotationMockPoint;
-            public static pointToOptions(point: AnnotationPointType): AnnotationMockPointOptionsObject;
-            public static pointToPixels(point: AnnotationPointType, paneCoordinates?: boolean): PositionObject;
-            public constructor(
-                chart: AnnotationChart,
-                target: (AnnotationControllable|null),
-                options: (AnnotationMockPointOptionsObject|Function)
-            );
-            public command?: string;
-            public isInside: boolean;
-            public mock: true;
-            public options: (AnnotationMockPointOptionsObject|Function);
-            public plotX: number;
-            public plotY: number;
-            public series: AnnotationMockSeries;
-            public target: (AnnotationControllable|null);
-            public visible?: boolean;
-            public x: (number|null);
-            public y: (number|null);
-            public applyOptions(options: AnnotationMockPointOptionsObject): void;
-            public getLabelConfig(): AnnotationMockLabelOptionsObject;
-            public getOptions(): AnnotationMockPointOptionsObject;
-            public hasDynamicOptions(): boolean;
-            public isInsidePlot(): boolean;
-            public refresh(): void;
-            public refreshOptions(): void;
-            public rotate(cx: number, cy: number, radians: number): void;
-            public scale(cx: number, cy: number, sx: number, sy: number): void;
-            public setAxis(options: AnnotationMockPointOptionsObject, xOrY: ('x'|'y')): void;
-            public toAnchor(): Array<number>;
-            public translate(cx: (number|undefined), cy: (number|undefined), dx: number, dy: number): void
-        }
-        interface AnnotationMockPointOptionsObject {
-            command?: string;
-            series?: undefined;
-        }
-        interface AnnotationMockSeries {
-            chart: AnnotationChart;
-            getPlotBox: Series['getPlotBox'];
-            xAxis?: (Axis|null);
-            yAxis?: (Axis|null);
-            visible: boolean;
-        }
-        interface AnnotationPoint {
-            command?: undefined;
-            mock?: undefined;
-        }
-        type AnnotationPointType = (AnnotationMockPoint|AnnotationPoint);
+import type AnnotationChart from './AnnotationChart';
+import type {
+    AnnotationPoint,
+    AnnotationPointType
+} from './AnnotationSeries';
+import type Axis from '../../Core/Axis/Axis';
+import type Controllable from './Controllables/Controllable';
+import type MockPointOptions from './MockPointOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Series from '../../Core/Series/Series';
+
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { series: { prototype: seriesProto } } = SeriesRegistry;
+import U from '../../Core/Utilities.js';
+const {
+    defined,
+    fireEvent
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './AnnotationSeries' {
+    interface AnnotationPoint {
+        command?: string;
+        mock: undefined;
     }
 }
 
-/**
- * @private
- * @interface Highcharts.AnnotationMockLabelOptionsObject
- *//**
- * Point instance of the point.
- * @name Highcharts.AnnotationMockLabelOptionsObject#point
- * @type {Highcharts.AnnotationMockPoint}
- *//**
- * X value translated to x axis scale.
- * @name Highcharts.AnnotationMockLabelOptionsObject#x
- * @type {number|null}
- *//**
- * Y value translated to y axis scale.
- * @name Highcharts.AnnotationMockLabelOptionsObject#y
- * @type {number|null}
- */
+declare module './MockPointOptions' {
+    interface MockPointOptions {
+        command?: string;
+        series?: undefined;
+    }
+}
 
-/**
- * A mock series instance imitating a real series from a real point.
- * @private
- * @interface Highcharts.AnnotationMockSeries
- *//**
- * Whether a series is visible.
- * @name Highcharts.AnnotationMockSeries#visible
- * @type {boolean}
- *//**
- * A chart instance.
- * @name Highcharts.AnnotationMockSeries#chart
- * @type {Highcharts.Chart}
- *//**
- * @name Highcharts.AnnotationMockSeries#getPlotBox
- * @type {Function}
- */
+export interface MockLabelConfigObject {
+    x?: number;
+    y?: (number|null);
+    point: MockPoint;
+}
 
-/**
- * Indicates if this is a mock point for an annotation.
- * @name Highcharts.Point#mock
- * @type {boolean|undefined}
- */
+interface MockSeries {
+    chart: AnnotationChart;
+    getPlotBox: Series['getPlotBox'];
+    xAxis?: (Axis|null);
+    yAxis?: (Axis|null);
+    visible: boolean;
+}
 
-import U from '../../Core/Utilities.js';
-var defined = U.defined,
-    extend = U.extend,
-    fireEvent = U.fireEvent;
-
-import Axis from '../../Core/Axis/Axis.js';
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class. It is
@@ -145,6 +95,12 @@ import Axis from '../../Core/Axis/Axis.js';
  */
 class MockPoint {
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
     /**
      * Create a mock point from a real Highcharts point.
      *
@@ -156,7 +112,7 @@ class MockPoint {
      * @return {Highcharts.AnnotationMockPoint}
      * A mock point instance.
      */
-    public static fromPoint(point: Highcharts.AnnotationPoint): Highcharts.AnnotationMockPoint {
+    public static fromPoint(point: AnnotationPoint): MockPoint {
         return new MockPoint(point.series.chart, null, {
             x: point.x as any,
             y: point.y as any,
@@ -174,27 +130,28 @@ class MockPoint {
      * @param {Highcharts.AnnotationPointType} point
      *
      * @param {boolean} [paneCoordinates]
-     *        whether the pixel position should be relative
+     *        Whether the pixel position should be relative
      *
      * @return {Highcharts.PositionObject} pixel position
      */
     public static pointToPixels(
-        point: Highcharts.AnnotationPointType,
+        point: AnnotationPointType,
         paneCoordinates?: boolean
     ): PositionObject {
-        var series = point.series,
-            chart = series.chart,
-            x: number = point.plotX as any,
-            y: number = point.plotY as any,
-            plotBox: (Highcharts.SeriesPlotBoxObject|undefined);
+        const series = point.series,
+            chart = series.chart;
+
+        let x = point.plotX || 0,
+            y = point.plotY || 0,
+            plotBox: (Series.PlotBoxObject|undefined);
 
         if (chart.inverted) {
             if (point.mock) {
                 x = point.plotY;
                 y = point.plotX;
             } else {
-                x = chart.plotWidth - (point.plotY as any);
-                y = chart.plotHeight - (point.plotX as any);
+                x = chart.plotWidth - (point.plotY || 0);
+                y = chart.plotHeight - (point.plotX || 0);
             }
         }
 
@@ -222,8 +179,9 @@ class MockPoint {
      * A mock point's options.
      */
     public static pointToOptions(
-        point: Highcharts.AnnotationPointType
-    ): Highcharts.AnnotationMockPointOptionsObject {
+        point: AnnotationPointType
+    ): MockPointOptions {
+
         return {
             x: point.x as any,
             y: point.y as any,
@@ -232,10 +190,16 @@ class MockPoint {
         };
     }
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
-        chart: Highcharts.AnnotationChart,
-        target: (Highcharts.AnnotationControllable|null),
-        options: (Highcharts.AnnotationMockPointOptionsObject|Function)
+        chart: AnnotationChart,
+        target: (Controllable|null),
+        options: (MockPointOptions|Function)
     ) {
         /**
          * A mock series instance imitating a real series from a real point.
@@ -246,7 +210,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: Series.prototype.getPlotBox
+            getPlotBox: seriesProto.getPlotBox
         };
 
         /**
@@ -311,15 +275,17 @@ class MockPoint {
      * */
 
     public command?: string;
-    public isInside: boolean = void 0 as any;
-    public options: (Highcharts.AnnotationMockPointOptionsObject|Function);
+    public isInside?: boolean;
+    public negative?: boolean;
+    public options: (MockPointOptions|Function);
     public plotX: number = void 0 as any;
     public plotY: number = void 0 as any;
-    public series: Highcharts.AnnotationMockSeries;
-    public target: (Highcharts.AnnotationControllable|null);
+    public series: MockSeries;
+    public target: (Controllable|null);
+    public ttBelow?: boolean;
     public visible?: boolean;
-    public x: (number|null) = void 0 as any;
-    public y: (number|null) = void 0 as any;
+    public x?: number;
+    public y?: (number|null);
 
     /* *
      *
@@ -336,6 +302,47 @@ class MockPoint {
     public mock: true = true;
 
     /**
+     * Apply options for the point.
+     * @private
+     * @param {Highcharts.AnnotationMockPointOptionsObject} options
+     */
+    public applyOptions(options: MockPointOptions): void {
+        this.command = options.command;
+
+        this.setAxis(options, 'x');
+        this.setAxis(options, 'y');
+
+        this.refresh();
+    }
+
+    /**
+     * Returns a label config object - the same as
+     * Highcharts.Point.prototype.getLabelConfig
+     * @private
+     * @return {Highcharts.AnnotationMockLabelOptionsObject}
+     * The point's label config
+     */
+    public getLabelConfig(): MockLabelConfigObject {
+        return {
+            x: this.x,
+            y: this.y,
+            point: this
+        };
+    }
+
+    /**
+     * Get the point's options.
+     * @private
+     * @return {Highcharts.AnnotationMockPointOptionsObject}
+     * The mock point's options.
+     */
+    public getOptions(): MockPointOptions {
+        return this.hasDynamicOptions() ?
+            (this.options as Function)(this.target) :
+            this.options;
+    }
+
+    /**
      * Check if the point has dynamic options.
      * @private
      * @return {boolean}
@@ -346,95 +353,12 @@ class MockPoint {
     }
 
     /**
-     * Get the point's options.
-     * @private
-     * @return {Highcharts.AnnotationMockPointOptionsObject}
-     * The mock point's options.
-     */
-    public getOptions(): Highcharts.AnnotationMockPointOptionsObject {
-        return this.hasDynamicOptions() ?
-            (this.options as Function)(this.target) :
-            this.options;
-    }
-
-    /**
-     * Apply options for the point.
-     * @private
-     * @param {Highcharts.AnnotationMockPointOptionsObject} options
-     */
-    public applyOptions(options: Highcharts.AnnotationMockPointOptionsObject): void {
-        this.command = options.command;
-
-        this.setAxis(options, 'x');
-        this.setAxis(options, 'y');
-
-        this.refresh();
-    }
-
-    /**
-     * Set x or y axis.
-     * @private
-     * @param {Highcharts.AnnotationMockPointOptionsObject} options
-     * @param {string} xOrY
-     * 'x' or 'y' string literal
-     */
-    public setAxis(
-        options: Highcharts.AnnotationMockPointOptionsObject,
-        xOrY: ('x'|'y')
-    ): void {
-        var axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
-            axisOptions = options[axisName],
-            chart = this.series.chart;
-
-        this.series[axisName] =
-            axisOptions instanceof Axis ?
-                axisOptions :
-                defined(axisOptions) ?
-                    (
-                        chart[axisName][axisOptions as any] ||
-                        chart.get(axisOptions as any)
-                    ) as any :
-                    null;
-    }
-
-    /**
-     * Transform the mock point to an anchor (relative position on the chart).
-     * @private
-     * @return {Array<number>}
-     * A quadruple of numbers which denotes x, y, width and height of the box
-     **/
-    public toAnchor(): Array<number> {
-        var anchor = [this.plotX, this.plotY, 0, 0];
-
-        if (this.series.chart.inverted) {
-            anchor[0] = this.plotY;
-            anchor[1] = this.plotX;
-        }
-
-        return anchor;
-    }
-
-    /**
-     * Returns a label config object - the same as
-     * Highcharts.Point.prototype.getLabelConfig
-     * @private
-     * @return {Highcharts.AnnotationMockLabelOptionsObject} the point's label config
-     */
-    public getLabelConfig(): Highcharts.AnnotationMockLabelOptionsObject {
-        return {
-            x: this.x,
-            y: this.y,
-            point: this
-        };
-    }
-
-    /**
      * Check if the point is inside its pane.
      * @private
      * @return {boolean} A flag indicating whether the point is inside the pane.
      */
     public isInsidePlot(): boolean {
-        var plotX = this.plotX,
+        const plotX = this.plotX,
             plotY = this.plotY,
             xAxis = this.series.xAxis,
             yAxis = this.series.yAxis,
@@ -465,7 +389,7 @@ class MockPoint {
      * @private
      */
     public refresh(): void {
-        var series = this.series,
+        const series = this.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             options = this.getOptions();
@@ -474,7 +398,7 @@ class MockPoint {
             this.x = options.x;
             this.plotX = xAxis.toPixels(options.x, true);
         } else {
-            this.x = null;
+            this.x = void 0;
             this.plotX = options.x;
         }
 
@@ -487,6 +411,127 @@ class MockPoint {
         }
 
         this.isInside = this.isInsidePlot();
+    }
+
+    /**
+     * Refresh point options based on its plot coordinates.
+     * @private
+     */
+    public refreshOptions(): void {
+        const series = this.series,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis;
+
+        this.x = (this.options as any).x = xAxis ?
+            (this.options as any).x = xAxis.toValue(this.plotX, true) :
+            this.plotX;
+
+        this.y = (this.options as any).y = yAxis ?
+            yAxis.toValue(this.plotY, true) :
+            this.plotY;
+    }
+
+    /**
+     * Rotate the point.
+     * @private
+     * @param {number} cx origin x rotation
+     * @param {number} cy origin y rotation
+     * @param {number} radians
+     */
+    public rotate(cx: number, cy: number, radians: number): void {
+        if (!this.hasDynamicOptions()) {
+            const cos = Math.cos(radians),
+                sin = Math.sin(radians),
+                x = this.plotX - cx,
+                y = this.plotY - cy,
+                tx = x * cos - y * sin,
+                ty = x * sin + y * cos;
+
+            this.plotX = tx + cx;
+            this.plotY = ty + cy;
+
+            this.refreshOptions();
+        }
+    }
+
+    /**
+     * Scale the point.
+     *
+     * @private
+     *
+     * @param {number} cx
+     * Origin x transformation.
+     *
+     * @param {number} cy
+     * Origin y transformation.
+     *
+     * @param {number} sx
+     * Scale factor x.
+     *
+     * @param {number} sy
+     * Scale factor y.
+     */
+    public scale(
+        cx: number,
+        cy: number,
+        sx: number,
+        sy: number
+    ): void {
+        if (!this.hasDynamicOptions()) {
+            const x = this.plotX * sx,
+                y = this.plotY * sy,
+                tx = (1 - sx) * cx,
+                ty = (1 - sy) * cy;
+
+            this.plotX = tx + x;
+            this.plotY = ty + y;
+
+            this.refreshOptions();
+        }
+    }
+
+    /**
+     * Set x or y axis.
+     * @private
+     * @param {Highcharts.AnnotationMockPointOptionsObject} options
+     * @param {string} xOrY
+     * 'x' or 'y' string literal
+     */
+    public setAxis(
+        options: MockPointOptions,
+        xOrY: ('x'|'y')
+    ): void {
+        const axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
+            axisOptions = options[axisName],
+            chart = this.series.chart;
+
+        this.series[axisName] =
+            typeof axisOptions === 'object' ?
+                axisOptions :
+                defined(axisOptions) ?
+                    (
+                        chart[axisName][axisOptions] ||
+                        // @todo v--- (axisName)[axisOptions] ?
+                        chart.get(axisOptions as any)
+                    ) :
+                    null;
+    }
+
+    /**
+     * Transform the mock point to an anchor (relative position on the chart).
+     * @private
+     * @return {Array<number>}
+     * A quadruple of numbers which denotes x, y, width and height of the box
+     **/
+    public toAnchor(): Array<number> {
+        const anchor = [this.plotX, this.plotY, 0, 0];
+
+        if (this.series.chart.inverted) {
+            anchor[0] = this.plotY;
+            anchor[1] = this.plotX;
+        }
+
+        return anchor;
     }
 
     /**
@@ -520,88 +565,109 @@ class MockPoint {
         }
     }
 
-    /**
-     * Scale the point.
-     *
-     * @private
-     *
-     * @param {number} cx
-     * Origin x transformation.
-     *
-     * @param {number} cy
-     * Origin y transformation.
-     *
-     * @param {number} sx
-     * Scale factor x.
-     *
-     * @param {number} sy
-     * Scale factor y.
-     */
-    public scale(
-        cx: number,
-        cy: number,
-        sx: number,
-        sy: number
-    ): void {
-        if (!this.hasDynamicOptions()) {
-            var x = this.plotX * sx,
-                y = this.plotY * sy,
-                tx = (1 - sx) * cx,
-                ty = (1 - sy) * cy;
-
-            this.plotX = tx + x;
-            this.plotY = ty + y;
-
-            this.refreshOptions();
-        }
-    }
-
-    /**
-     * Rotate the point.
-     * @private
-     * @param {number} cx origin x rotation
-     * @param {number} cy origin y rotation
-     * @param {number} radians
-     */
-    public rotate(cx: number, cy: number, radians: number): void {
-        if (!this.hasDynamicOptions()) {
-            var cos = Math.cos(radians),
-                sin = Math.sin(radians),
-                x = this.plotX,
-                y = this.plotY,
-                tx,
-                ty;
-
-            x -= cx;
-            y -= cy;
-
-            tx = x * cos - y * sin;
-            ty = x * sin + y * cos;
-
-            this.plotX = tx + cx;
-            this.plotY = ty + cy;
-
-            this.refreshOptions();
-        }
-    }
-
-    /**
-     * Refresh point options based on its plot coordinates.
-     * @private
-     */
-    public refreshOptions(): void {
-        var series = this.series,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis;
-
-        this.x = (this.options as any).x = xAxis ?
-            (this.options as any).x = xAxis.toValue(this.plotX, true) :
-            this.plotX;
-
-        this.y = (this.options as any).y = yAxis ?
-            yAxis.toValue(this.plotY, true) :
-            this.plotY;
-    }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default MockPoint;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @private
+ * @interface Highcharts.AnnotationMockLabelOptionsObject
+ *//**
+ * Point instance of the point.
+ * @name Highcharts.AnnotationMockLabelOptionsObject#point
+ * @type {Highcharts.AnnotationMockPoint}
+ *//**
+ * X value translated to x axis scale.
+ * @name Highcharts.AnnotationMockLabelOptionsObject#x
+ * @type {number|null}
+ *//**
+ * Y value translated to y axis scale.
+ * @name Highcharts.AnnotationMockLabelOptionsObject#y
+ * @type {number|null}
+ */
+
+
+/**
+ * Object of shape point.
+ *
+ * @interface Highcharts.AnnotationMockPointOptionsObject
+ *//**
+ * The x position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.x
+ *//**
+ * The y position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.y
+ *//**
+ * This number defines which xAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the xAxis array. If the option is not configured or the axis
+ * is not found the point's x coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
+ *//**
+ * This number defines which yAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the yAxis array. If the option is not configured or the axis
+ * is not found the point's y coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
+ */
+
+/**
+ * Callback function that returns the annotation shape point.
+ *
+ * @callback Highcharts.AnnotationMockPointFunction
+ *
+ * @param  {Highcharts.Annotation} annotation
+ *         An annotation instance.
+ *
+ * @return {Highcharts.AnnotationMockPointOptionsObject}
+ *         Annotations shape point.
+ */
+
+/**
+ * A mock series instance imitating a real series from a real point.
+ * @private
+ * @interface Highcharts.AnnotationMockSeries
+ *//**
+ * Whether a series is visible.
+ * @name Highcharts.AnnotationMockSeries#visible
+ * @type {boolean}
+ *//**
+ * A chart instance.
+ * @name Highcharts.AnnotationMockSeries#chart
+ * @type {Highcharts.Chart}
+ *//**
+ * @name Highcharts.AnnotationMockSeries#getPlotBox
+ * @type {Function}
+ */
+
+/**
+ * Indicates if this is a mock point for an annotation.
+ * @name Highcharts.Point#mock
+ * @type {boolean|undefined}
+ */
+
+(''); // keeps doclets above in JS file

@@ -100,7 +100,7 @@ class TestUtilities {
      * requestAnimationFrame. Returns a clock object.
      *
      * @param lolexConfig
-     *        Config supplied to lolex.install
+     * Config supplied to lolex.install
      */
     private static lolexInstall (lolexConfig?: any): (LolexClock|undefined) {
         if (!lolex) {

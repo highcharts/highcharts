@@ -57,7 +57,7 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

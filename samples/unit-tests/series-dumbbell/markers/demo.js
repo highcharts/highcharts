@@ -43,8 +43,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     assert.deepEqual(
         chart.series[0].points.map(function (p) {
             return [
-                p.upperGraphic.attr('fill'),
-                p.lowerGraphic.attr('fill'),
+                p.graphics[1].attr('fill'),
+                p.graphics[0].attr('fill'),
                 p.connector.attr('stroke')
             ];
         }),
@@ -61,13 +61,13 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     chart.series[0].points[1].setState('hover');
 
     assert.strictEqual(
-        chart.series[0].points[1].upperGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[1].attr('fill'),
         '#ffff00',
         'The upper marker should have a correct color on hover.'
     );
 
     assert.strictEqual(
-        chart.series[0].points[1].lowerGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[0].attr('fill'),
         chart.series[0].lowColor,
         'The lower marker should have a correct color (lowColor) on hover.'
     );
@@ -75,13 +75,13 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     chart.series[0].points[1].setState('');
 
     assert.strictEqual(
-        chart.series[0].points[1].upperGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[1].attr('fill'),
         '#ffff00',
         'The upper marker should have a correct color without any state.'
     );
 
     assert.strictEqual(
-        chart.series[0].points[1].lowerGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[0].attr('fill'),
         chart.series[0].lowColor,
         'The lower marker should have a correct color (lowColor) without any state.'
     );
@@ -98,7 +98,7 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     chart.series[0].points[1].setState('');
 
     assert.strictEqual(
-        chart.series[0].points[1].upperGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[1].attr('fill'),
         chart.series[0].options.marker.fillColor,
         'After mouseOut (without any state), the upper marker should have a correct color.'
     );
@@ -129,13 +129,13 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
         [50, 60]
     ]);
 
-    Highcharts.each(chart.series[0].points, function (point) {
+    chart.series[0].points.forEach(point => {
         assert.ok(
-            point.lowerGraphic !== undefined,
+            point.graphics[0] !== undefined,
             'Bottom marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
-            point.upperGraphic !== undefined,
+            point.graphics[1] !== undefined,
             'Top marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
@@ -151,9 +151,9 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[1].upperGraphic.attr('fill'),
+        chart.series[0].points[1].graphics[1].attr('fill'),
         '#ff0000',
-        'After point.marker.fillColor update, the upperGraphic should have a correct color.'
+        'After point.marker.fillColor update, the graphics[1] should have a correct color.'
     );
 
     chart.series[0].update({
@@ -162,9 +162,9 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
 
     chart.series[0].points.forEach(function (point) {
         assert.strictEqual(
-            point.lowerGraphic.attr('fill'),
+            point.graphics[0].attr('fill'),
             '#000000',
-            'After series.lowColor update, all the lowerGraphics should have a correct color.'
+            'After series.lowColor update, all the graphics[0]s should have a correct color.'
         );
     });
 });

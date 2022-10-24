@@ -209,7 +209,10 @@ QUnit.test('X-Range', function (assert) {
         plotOptions: {
             series: {
                 dragDrop: {
-                    draggableX: true
+                    draggableX: true,
+                    dragHandle: {
+                        cursor: 'grab'
+                    }
                 }
             }
         },
@@ -285,6 +288,12 @@ QUnit.test('X-Range', function (assert) {
     }
 
     assert.ok(result, 'Drag handles should be in correct positions (#12872).');
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        'grab',
+        '#16470: DragHandle cursor should use general options.'
+    );
 });
 
 QUnit.test('Partial fill reversed', assert => {
@@ -393,51 +402,48 @@ QUnit.test('X-range data labels', function (assert) {
         }
     });
 
-    var y = chart.series[0].points[0].dataLabel.attr('y');
+    var visible = 'inherit';
+    var hidden = 'hidden';
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, y, y, y].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, visible, visible, visible],
         'Initial labels'
     );
 
     chart.xAxis[0].setExtremes(3.2, 3.5);
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [-9999, y, -9999, -9999].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [hidden, visible, hidden, hidden],
         'Shown and hidden labels'
     );
 
     chart.xAxis[0].setExtremes();
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, y, y, y].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, visible, visible, visible],
         'Reverted labels'
     );
 
     chart.xAxis[0].setExtremes(0, 0.5);
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, -9999, -9999, -9999].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, hidden, hidden, hidden],
         'Shown and hidden labels'
     );
 
@@ -452,9 +458,9 @@ QUnit.test('X-range data labels', function (assert) {
 
     assert.deepEqual(
         chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y') === -9999 ? 'hidden' : 'visible';
+            return p.dataLabel.attr('visibility');
         }),
-        ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
+        [hidden, hidden, hidden, hidden, visible],
         'Shown and hidden labels'
     );
 });

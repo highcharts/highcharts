@@ -12,7 +12,7 @@ The configuration of `packedbubble` differs little from other series types like 
 
 Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubble chart in its simplest form:
 
-    
+
     Highcharts.chart('container', {
         chart: {
             type: 'packedbubble'
@@ -29,7 +29,7 @@ In the above example, the series data for Packed Bubble takes a one-dimensional 
 
 Here is an example of how to set the data for a packed bubble with 3 series and different data formats:
 
-    
+
     Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',
@@ -40,10 +40,10 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
                 // name property is used for the datalabel
                 // value property is used for the volume of the bubble
                 value: 12,
-                name: 'Bert’'
+                name: 'Bert'
             }, {
                 value: 5,
-                name: 'John’'
+                name: 'John'
             }, {
                 value: 10,
                 name: 'Sandra'
@@ -82,7 +82,7 @@ Packed Bubble charts with a dataset of either many small or large values need so
 
 Here is an example of setting min and max size for bubbles:
 
-    
+
     Highcharts.chart('container', {
         chart: {
             type: 'packedbubble'

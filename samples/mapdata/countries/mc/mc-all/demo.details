@@ -1,5 +1,5 @@
 ---
- name: Monaco - Highmaps
- description: Highmaps demo
+ name: Monaco - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

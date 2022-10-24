@@ -5,12 +5,19 @@
 <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 <script src="https://code.highcharts.com/themes/high-contrast-light.js"></script>
 
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <p class="highcharts-description">
-        Pie chart demonstrating some accessibility features of Highcharts.
-        The chart shows which screen reader is used as the primary screen reader
-        by the respondents, with NVDA currently being the most popular one.
-        The JAWS screen reader is following closely behind.
-    </p>
-</figure>
+<div id="chart-wrap">
+    <label id="patterns-enabled-label">
+      <input type="checkbox" id="patterns-enabled" checked>
+      Enable color patterns
+    </label>
+
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+        <p class="highcharts-description">
+            Pie chart demonstrating some accessibility features of Highcharts.
+            The chart shows which screen reader is used as the primary screen reader
+            by the respondents, with NVDA currently being the most popular one.
+            The JAWS screen reader is following closely behind.
+        </p>
+    </figure>
+</div>

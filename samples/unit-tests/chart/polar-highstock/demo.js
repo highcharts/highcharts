@@ -1,5 +1,5 @@
 QUnit.test(
-    'Polar chart with correct clipPaths when using Highstock (#6057)',
+    'Polar chart with correct clipPaths when using Highcharts Stock (#6057)',
     function (assert) {
         var chart = Highcharts.chart('container', {
                 chart: {
@@ -18,6 +18,6 @@ QUnit.test(
             }),
             series = chart.series[0];
 
-        assert.strictEqual(series.clipBox, undefined, 'no Highstock clipping');
+        assert.strictEqual(series.clipBox, undefined, 'no Highcharts Stock clipping');
     }
 );

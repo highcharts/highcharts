@@ -8,7 +8,6 @@ const gulp = require('gulp');
  */
 const fileUpload = () => {
     const colors = require('colors');
-    const ProgressBar = require('../../progress-bar.js');
     const {
         uploadFiles
     } = require('../../upload.js');
@@ -26,20 +25,11 @@ const fileUpload = () => {
     }
 
     const getUploadConfig = () => {
-        const errors = [];
-        const bar = new ProgressBar({
-            error: '',
-            total: files.length,
-            message: '\n[:bar] - Uploading. Completed :count of :total.:error'
-        });
         const doTick = () => {
-            bar.tick();
+            process.stdout.write('.');
         };
         const onError = err => {
-            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
-            bar.tick({
-                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
-            });
+            process.stdout.write(`\n${err.message}. ${err.from} -> ${err.to}\n`);
         };
         const params = {
             batchSize,

@@ -7,5 +7,7 @@ requiresManualTesting: true
 tags:
   - Highcharts Maps demo
 categories:
-  - General
+  - General:
+      priority: 1
+use_png_thumbnail: true
 ...

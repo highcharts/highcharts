@@ -76,13 +76,10 @@ class BubblePoint extends ScatterPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface BubblePoint {
-    ttBelow: boolean;
-}
 extend(BubblePoint.prototype, {
     ttBelow: false
 });

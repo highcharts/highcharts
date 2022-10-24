@@ -1,0 +1,6 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#container {
+    width: 600px;
+    margin: 0 auto;
+}

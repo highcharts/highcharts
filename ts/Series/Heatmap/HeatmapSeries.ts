@@ -17,20 +17,19 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type ColorAxis from '../../Core/Axis/ColorAxis';
+import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
+
+import Color from '../../Core/Color/Color.js';
+import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -40,11 +39,7 @@ const {
     }
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const {
-    prototype: {
-        symbols
-    }
-} = SVGRenderer;
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -59,6 +54,13 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Series/Heatmap/HeatmapSeries */
+        ellipse: SymbolTypeRegistry['circle'];
+    }
+}
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -117,7 +119,16 @@ class HeatmapSeries extends ScatterSeries {
         animation: false,
 
         /**
-         * The border width for each heat map item.
+         * The border radius for each heatmap item. The border's color and
+         * width can be set in marker options.
+         *
+         * @see [lineColor](#plotOptions.heatmap.marker.lineColor)
+         * @see [lineWidth](#plotOptions.heatmap.marker.lineWidth)
+         */
+        borderRadius: 0,
+
+        /**
+         * The border width for each heatmap item.
          */
         borderWidth: 0,
 
@@ -184,15 +195,21 @@ class HeatmapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         dataLabels: {
-            formatter: function (): (number|null) { // #2945
-                return (this.point as HeatmapPoint).value;
+            formatter: function (): string { // #2945
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as HeatmapPoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
             inside: true,
             verticalAlign: 'middle',
             crop: false,
+            /**
+             * @ignore-option
+             */
             overflow: false as any,
             padding: 0 // #3837
         },
@@ -413,15 +430,20 @@ class HeatmapSeries extends ScatterSeries {
 
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        var seriesMarkerOptions = this.options.marker || {};
+        const seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
-                point.graphic &&
-                (point.graphic as any)[
-                    this.chart.styledMode ? 'css' : 'animate'
-                ](this.colorAttribs(point));
+                if (point.graphic) {
+                    (point.graphic as any)[
+                        this.chart.styledMode ? 'css' : 'animate'
+                    ](this.colorAttribs(point));
+
+                    if (point.value === null) { // #15708
+                        point.graphic.addClass('highcharts-null-point');
+                    }
+                }
             });
         }
     }
@@ -476,7 +498,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public init(): void {
-        var options;
+        let options;
 
         Series.prototype.init.apply(this, arguments as any);
 
@@ -487,10 +509,20 @@ class HeatmapSeries extends ScatterSeries {
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
-        extend(symbols, {
-            ellipse: symbols.circle,
-            rect: symbols.square
-        });
+        symbols.ellipse = symbols.circle;
+
+        // @todo
+        //
+        // Setting the border radius here is a workaround. It should be set in
+        // the shapeArgs or returned from `markerAttribs`. However,
+        // Series.drawPoints does not pick up markerAttribs to be passed over to
+        // `renderer.symbol`. Also, image symbols are not positioned by their
+        // top left corner like other symbols are. This should be refactored,
+        // then we could save ourselves some tests for .hasImage etc. And the
+        // evaluation of borderRadius would be moved to `markerAttribs`.
+        if (options.marker) {
+            (options.marker as any).r = options.borderRadius;
+        }
     }
 
     /**
@@ -500,7 +532,7 @@ class HeatmapSeries extends ScatterSeries {
         point: HeatmapPoint,
         state?: string
     ): SVGAttributes {
-        var pointMarkerOptions = point.marker || {},
+        let pointMarkerOptions = point.marker || {},
             seriesMarkerOptions = this.options.marker || {},
             seriesStateOptions: PointStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
@@ -515,10 +547,12 @@ class HeatmapSeries extends ScatterSeries {
             };
         }
 
-        // Setting width and height attributes on image does not affect
-        // on its dimensions.
+        // Setting width and height attributes on image does not affect on its
+        // dimensions.
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state] || {};
 
@@ -526,18 +560,20 @@ class HeatmapSeries extends ScatterSeries {
                 dimension
             ): void {
                 // Set new width and height basing on state options.
-                attribs[dimension[0]] = (
+                (attribs as any)[dimension[0]] = (
                     (pointStateOptions as any)[dimension[0]] ||
                     (seriesStateOptions as any)[dimension[0]] ||
-                    shapeArgs[dimension[0]]
+                    (shapeArgs as any)[dimension[0]]
                 ) + (
                     (pointStateOptions as any)[dimension[0] + 'Plus'] ||
                     (seriesStateOptions as any)[dimension[0] + 'Plus'] || 0
                 );
 
                 // Align marker by a new size.
-                attribs[dimension[1]] = shapeArgs[dimension[1]] +
-                    (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
+                (attribs as any)[dimension[1]] =
+                    (shapeArgs as any)[dimension[1]] +
+                    ((shapeArgs as any)[dimension[0]] -
+                    (attribs as any)[dimension[0]]) / 2;
             });
         }
 
@@ -551,7 +587,7 @@ class HeatmapSeries extends ScatterSeries {
         point?: HeatmapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var series = this,
+        let series = this,
             attr = Series.prototype.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
@@ -561,10 +597,12 @@ class HeatmapSeries extends ScatterSeries {
             brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
+                (point && point.options.borderColor) ||
                 seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
                 seriesPlotOptions.borderColor,
             borderWidth =
+                (point && point.options.borderWidth) ||
                 seriesOptions.borderWidth ||
                 heatmapPlotOptions.borderWidth ||
                 seriesPlotOptions.borderWidth ||
@@ -594,7 +632,7 @@ class HeatmapSeries extends ScatterSeries {
 
             attr.fill =
                 stateOptions.color ||
-                H.color(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(brightness || 0).get();
 
             attr.stroke = stateOptions.lineColor;
         }
@@ -606,7 +644,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public setClip(animation?: (boolean|AnimationOptions)): void {
-        var series = this,
+        const series = this,
             chart = series.chart;
 
         Series.prototype.setClip.apply(series, arguments);
@@ -614,7 +652,7 @@ class HeatmapSeries extends ScatterSeries {
             (series.markerGroup as any)
                 .clip(
                     (animation || series.clipBox) && series.sharedClipKey ?
-                        (chart as any)[series.sharedClipKey] :
+                        chart.sharedClips[series.sharedClipKey] :
                         chart.clipRect
                 );
         }
@@ -624,25 +662,24 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        var series = this,
+        const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || '',
+            symbol = options.marker && options.marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
-            options = series.options,
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
         series.generatePoints();
         series.points.forEach(function (point): void {
-            var pointAttr,
+            let pointAttr,
                 sizeDiff,
                 hasImage,
                 cellAttr = point.getCellAttributes(),
-                shapeArgs = {
-                    x: Math.min(cellAttr.x1, cellAttr.x2),
-                    y: Math.min(cellAttr.y1, cellAttr.y2),
-                    width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
-                    height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
-                };
+                shapeArgs: SVGAttributes = {};
+
+            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
+            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
+            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
+            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
 
             hasImage = point.hasImage =
                 (point.marker && point.marker.symbol || symbol || '')
@@ -670,7 +707,8 @@ class HeatmapSeries extends ScatterSeries {
                         shapeArgs.x,
                         shapeArgs.y,
                         shapeArgs.width,
-                        shapeArgs.height
+                        shapeArgs.height,
+                        { r: options.borderRadius }
                     )
                 })
             };
@@ -694,62 +732,51 @@ class HeatmapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface HeatmapSeries {
-    axisTypes: typeof colorMapSeriesMixin.axisTypes;
-    colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
-    colorKey: typeof colorMapSeriesMixin.colorKey;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
-    getSymbol: typeof Series.prototype.getSymbol;
-    parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
-    trackerGroups: typeof colorMapSeriesMixin.trackerGroups;
+    trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    getSymbol: typeof Series.prototype.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
+
+    axisTypes: ColorMapComposition.seriesMembers.axisTypes,
+
+    colorKey: ColorMapComposition.seriesMembers.colorKey,
+
+    directTouch: true,
+
+    getExtremesFromAll: true,
+
+    parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
+
+    pointArrayMap: ['y', 'value'],
+
+    pointClass: HeatmapPoint,
+
+    trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
      * @private
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    axisTypes: colorMapSeriesMixin.axisTypes,
-
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
-
-    directTouch: true,
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
     /**
      * @private
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getBox: noop as any,
-
-    getExtremesFromAll: true,
-
-    getSymbol: Series.prototype.getSymbol,
-
-    hasPointSpecificOptions: true,
-
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
-
-    pointArrayMap: ['y', 'value'],
-
-    pointClass: HeatmapPoint,
-
-    trackerGroups: colorMapSeriesMixin.trackerGroups
+    getSymbol: Series.prototype.getSymbol
 
 });
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

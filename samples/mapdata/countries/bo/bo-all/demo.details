@@ -1,5 +1,5 @@
 ---
- name: Bolivia - Highmaps
- description: Highmaps demo
+ name: Bolivia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

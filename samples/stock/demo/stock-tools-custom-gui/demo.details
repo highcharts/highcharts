@@ -1,10 +1,13 @@
 ---
 name: Stock chart with custom GUI
+requiresManualTesting: true
 authors:
   - Sebastian Bochan
 js_wrap: b
 tags:
   - Highcharts Stock demo
 categories:
-  - Various features
+  - Various features:
+      priority: 6
+use_png_thumbnail: true
 ...

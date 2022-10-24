@@ -1,3 +1,11 @@
+Highcharts.setOptions({
+    lang: {
+        // Pre-v9 legacy settings
+        rangeSelectorFrom: 'From',
+        rangeSelectorTo: 'To'
+    }
+});
+
 Highcharts.stockChart('container', {
 
     rangeSelector: {

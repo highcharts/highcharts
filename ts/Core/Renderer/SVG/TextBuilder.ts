@@ -8,24 +8,44 @@
  *
  * */
 
-import type {
-    DOMElementType
-} from '../DOMElementType';
+'use strict';
 
-import H from '../../Globals.js';
-import U from '../../Utilities.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    DOMElementType,
+    SVGDOMElement
+} from '../DOMElementType';
+import type SVGAttributes from './SVGAttributes';
+import type SVGElement from './SVGElement';
+import type SVGRenderer from './SVGRenderer';
+
 import AST from '../HTML/AST.js';
+import H from '../../Globals.js';
 const {
     doc,
-    SVG_NS
+    SVG_NS,
+    win
 } = H;
-
+import U from '../../Utilities.js';
 const {
     attr,
+    extend,
+    fireEvent,
     isString,
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * SVG Text Builder
@@ -35,7 +55,7 @@ const {
  */
 class TextBuilder {
 
-    public constructor(svgElement: Highcharts.SVGElement) {
+    public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
 
         this.renderer = svgElement.renderer;
@@ -44,7 +64,9 @@ class TextBuilder {
 
         this.textLineHeight = textStyles && textStyles.lineHeight;
         this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(textStyles && textStyles.textOverflow === 'ellipsis');
+        this.ellipsis = Boolean(
+            textStyles && textStyles.textOverflow === 'ellipsis'
+        );
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
@@ -52,8 +74,8 @@ class TextBuilder {
     public ellipsis: boolean;
     public fontSize: any;
     public noWrap: boolean;
-    public renderer: Highcharts.Renderer;
-    public svgElement: Highcharts.SVGElement;
+    public renderer: SVGRenderer;
+    public svgElement: SVGElement;
     public textLineHeight: any;
     public textOutline: any;
     public width?: number;
@@ -67,28 +89,26 @@ class TextBuilder {
      * @return {void}.
      */
     public buildSVG(): void {
-        const wrapper = this.svgElement;
-        var textNode = wrapper.element,
+        const wrapper = this.svgElement,
+            textNode = wrapper.element,
             renderer = wrapper.renderer,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
             childNodes = textNode.childNodes,
-            textCache,
-            i = childNodes.length,
-            tempParent = this.width && !wrapper.added && renderer.box;
-        const regexMatchBreaks = /<br.*?>/g;
+            tempParent = this.width && !wrapper.added && renderer.box,
+            regexMatchBreaks = /<br.*?>/g,
+            // The buildText code is quite heavy, so if we're not changing
+            // something that affects the text, skip it (#6113).
+            textCache = [
+                textStr,
+                this.ellipsis,
+                this.noWrap,
+                this.textLineHeight,
+                this.textOutline,
+                this.fontSize,
+                this.width
+            ].join(',');
 
-        // The buildText code is quite heavy, so if we're not changing something
-        // that affects the text, skip it (#6113).
-        textCache = [
-            textStr,
-            this.ellipsis,
-            this.noWrap,
-            this.textLineHeight,
-            this.textOutline,
-            this.fontSize,
-            this.width
-        ].join(',');
         if (textCache === wrapper.textCache) {
             return;
         }
@@ -96,7 +116,7 @@ class TextBuilder {
         delete wrapper.actualWidth;
 
         // Remove old text
-        while (i--) {
+        for (let i = childNodes.length; i--;) {
             textNode.removeChild(childNodes[i]);
         }
 
@@ -105,6 +125,7 @@ class TextBuilder {
             !hasMarkup &&
             !this.ellipsis &&
             !this.width &&
+            !wrapper.textPath &&
             (
                 textStr.indexOf(' ') === -1 ||
                 (this.noWrap && !regexMatchBreaks.test(textStr))
@@ -130,7 +151,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(ast.nodes);
 
-            ast.addToDOM(wrapper.element);
+            ast.addToDOM(textNode);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
@@ -167,25 +188,47 @@ class TextBuilder {
      *
      * @private
      *
-     * @return {void}
      */
     private modifyDOM(): void {
 
         const wrapper = this.svgElement;
         const x = attr(wrapper.element, 'x');
+        wrapper.firstLineMetrics = void 0;
+
+        // Remove empty tspans (including breaks) from the beginning because
+        // SVG's getBBox doesn't count empty lines. The use case is tooltip
+        // where the header is empty. By doing this in the DOM rather than in
+        // the AST, we can inspect the textContent directly and don't have to
+        // recurse down to look for valid content.
+        let firstChild: ChildNode|null;
+        while ((firstChild = wrapper.element.firstChild)) {
+            if (
+                /^[\s\u200B]*$/.test(firstChild.textContent || ' ')
+            ) {
+                wrapper.element.removeChild(firstChild);
+            } else {
+                break;
+            }
+        }
 
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
-            (br: SVGElement): void => {
+            (br: SVGDOMElement, i): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
+
+                    if (i === 0 && br.previousSibling.nodeType === 1) {
+                        wrapper.firstLineMetrics = wrapper.renderer
+                            .fontMetrics(void 0, br.previousSibling as any);
+                    }
+
                     attr(br, {
                         // Since the break is inserted in front of the next
                         // line, we need to use the next sibling for the line
                         // height
-                        dy: this.getLineHeight(br.nextSibling as any),
+                        dy: this.getLineHeight(br.nextSibling as any) as any,
                         x
-                    });
+                    } as unknown as SVGAttributes);
                 }
             }
         );
@@ -293,9 +336,12 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
+                    const br = doc.createElementNS(
+                        SVG_NS,
+                        'tspan'
+                    ) as SVGDOMElement;
                     br.textContent = '\u200B'; // zero-width space
-                    attr(br, { dy, x });
+                    attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
 
@@ -306,7 +352,7 @@ class TextBuilder {
         const modifyChildren = ((node: DOMElementType): void => {
             const childNodes = [].slice.call(node.childNodes);
             childNodes.forEach((childNode: ChildNode): void => {
-                if (childNode.nodeType === Node.TEXT_NODE) {
+                if (childNode.nodeType === win.Node.TEXT_NODE) {
                     modifyTextNode(childNode as Text, node);
                 } else {
                     // Reset word-wrap width readings after hard breaks
@@ -335,7 +381,9 @@ class TextBuilder {
         let fontSizeStyle;
 
         // If the node is a text node, use its parent
-        const element: DOMElementType|null = node.nodeType === Node.TEXT_NODE ?
+        const element: DOMElementType|null = (
+            node.nodeType === win.Node.TEXT_NODE
+        ) ?
             node.parentElement :
             node as DOMElementType;
 
@@ -363,41 +411,38 @@ class TextBuilder {
      *
      * @param {ASTNode[]} nodes The AST nodes
      *
-     * @return {void}
      */
     private modifyTree(
-        nodes: Highcharts.ASTNode[]
+        nodes: AST.Node[]
     ): void {
 
-        const modifyChild = (node: Highcharts.ASTNode, i: number): void => {
-            const tagName = node.tagName;
-            const styledMode = this.renderer.styledMode;
-            const attributes = node.attributes || {};
+        const modifyChild = (node: AST.Node, i: number): void => {
+            const { attributes = {}, children, style = {}, tagName } = node,
+                styledMode = this.renderer.styledMode;
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-strong';
                 } else {
-                    attributes.style = 'font-weight:bold;' + (attributes.style || '');
+                    style.fontWeight = 'bold';
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-emphasized';
                 } else {
-                    attributes.style = 'font-style:italic;' + (attributes.style || '');
+                    style.fontStyle = 'italic';
                 }
             }
 
-            // Modify attributes
-            if (isString(attributes.style)) {
-                attributes.style = attributes.style.replace(
-                    /(;| |^)color([ :])/,
-                    '$1fill$2'
-                );
+            // Modify styling
+            if (style && style.color) {
+                style.fill = style.color;
             }
 
-
+            // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
                 node.textContent = '\u200B'; // zero-width space
@@ -408,22 +453,35 @@ class TextBuilder {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }
+
+            // If an anchor has direct text node children, the text is unable to
+            // wrap because there is no `getSubStringLength` function on the
+            // element. Therefore we need to wrap the child text node or nodes
+            // in a tspan. #16173.
+            } else if (
+                tagName === 'a' &&
+                children &&
+                children.some((child): boolean => child.tagName === '#text')
+            ) {
+                node.children = [{ children, tagName: 'tspan' }];
             }
 
             if (tagName !== '#text' && tagName !== 'a') {
                 node.tagName = 'tspan';
             }
-            node.attributes = attributes;
+            extend(node, { attributes, style });
 
             // Recurse
-            if (node.children) {
-                node.children
+            if (children) {
+                children
                     .filter((c): boolean => c.tagName !== '#text')
                     .forEach(modifyChild);
             }
         };
 
         nodes.forEach(modifyChild);
+
+        fireEvent(this.svgElement, 'afterModifyTree', { nodes });
     }
 
     /*
@@ -445,7 +503,7 @@ class TextBuilder {
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 
-        // Word wrap can not be truncated to shorter than one word, ellipsis
+        // Word wrap cannot be truncated to shorter than one word, ellipsis
         // text can be completely blank.
         let minIndex = words ? 1 : 0;
         let maxIndex = (text || words || '').length;
@@ -460,7 +518,7 @@ class TextBuilder {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
-            var end = concatenatedEnd || charEnd;
+            const end = concatenatedEnd || charEnd;
             const parentNode = textNode.parentNode;
 
             if (parentNode && typeof lengths[end] === 'undefined') {
@@ -531,7 +589,10 @@ class TextBuilder {
             // If the new text length is one less than the original, we don't
             // need the ellipsis
             } else if (!(text && maxIndex === text.length - 1)) {
-                textNode.textContent = str || getString(text || words, currentIndex);
+                textNode.textContent = str || getString(
+                    text || words,
+                    currentIndex
+                );
             }
         }
 

@@ -29,6 +29,9 @@ QUnit.test(
                 {
                     type: 'column',
                     data: [2, 3, 5, 2, 5, 2]
+                }, {
+                    type: 'line',
+                    data: [1, 2, 3]
                 }
             ]
         });
@@ -64,6 +67,21 @@ QUnit.test(
             x,
             'The tooltip should move with its point'
         );
+
+        chart.tooltip.refresh(chart.series[1].points[0]);
+        const distanceBefore = chart.tooltip.now.x - chart.tooltip.now.anchorX;
+
+        chart.renderTo.style.transform = 'scale(1.5)';
+        chart.reflow();
+
+        chart.tooltip.refresh(chart.series[1].points[0]);
+        assert.strictEqual(
+            chart.tooltip.now.x - chart.tooltip.now.anchorX,
+            distanceBefore,
+            '#12031: Distance should be the same before and after scaling'
+        );
+
+        chart.renderTo.style.transform = '';
     }
 );
 // Highcharts v4.0.3, Issue #424

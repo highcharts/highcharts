@@ -36,9 +36,8 @@ function task() {
     const fs = require('fs');
     const fslib = require('./lib/fs');
     const log = require('./lib/log');
-    const mkdir = require('mkdirp');
     const path = require('path');
-    const sass = require('node-sass');
+    const sass = require('sass');
 
     return new Promise(resolve => {
 
@@ -64,14 +63,16 @@ function task() {
                     TARGET_DIRECTORY, sourcePath.replace('.scss', '.css')
                 );
 
-                mkdir.sync(path.dirname(targetPath));
+                fs.mkdirSync(path.dirname(targetPath), { recursive: true });
 
                 fs.writeFileSync(
                     targetPath,
-                    sass.renderSync({
-                        file: sourcePath,
-                        outputStyle: 'expanded'
-                    }).css
+                    sass.compile(
+                        sourcePath,
+                        {
+                            outputStyle: 'expanded'
+                        }
+                    ).css
                 );
             });
 

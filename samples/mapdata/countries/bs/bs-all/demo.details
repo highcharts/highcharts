@@ -1,5 +1,5 @@
 ---
- name: The Bahamas - Highmaps
- description: Highmaps demo
+ name: The Bahamas - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -256,6 +256,16 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         axes[2].x + axes[2].width,
         'Right outer linear axis horizontal placement'
     );
+
+    chart.yAxis[1].update({
+        lineColor: 'red'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[1].grid.axisLineExtra.attr('stroke'),
+        'red',
+        '#15664: axisLineExtra stroke should be updated'
+    );
 });
 
 /**
@@ -952,7 +962,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         return !axis.options.isInternal;
     });
 
-    Highcharts.each(axes, function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type || 'linear',
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,
@@ -1135,7 +1145,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 
     axes = chart.yAxis;
 
-    Highcharts.each(axes, function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type,
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,
@@ -1192,8 +1202,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 });
 
 QUnit.module('labels alignment', function () {
-    var each = Highcharts.each,
-        map = Highcharts.map,
+    var map = Highcharts.map,
         categories = ['Category 1', 'Category 2', 'Category 3'],
         optionsAxis = {
             showEmpty: true,
@@ -1294,8 +1303,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1312,8 +1321,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1336,8 +1345,8 @@ QUnit.module('labels alignment', function () {
             xAxis: optionsAxis,
             yAxis: optionsAxis
         });
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1354,8 +1363,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1599,7 +1608,11 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     // Set side to top
     axis.side = 0;
     // Several cases where there is no check if chart exists
-    axis.chart = {};
+    axis.chart = {
+        options: {
+            chart: {}
+        }
+    };
 
     /**
      * grid.borderWidth should default to 1
@@ -1833,6 +1846,24 @@ QUnit.test(
             chart.xAxis[0].tickPositions,
             chart.xAxis[1].tickPositions,
             'The secondary axis should have longer range ticks'
+        );
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2019, 7, 2),
+                    end: Date.UTC(2019, 11, 1)
+                }]
+            }]
+        }, true, true);
+        chart.setSize(400);
+
+        const axis = chart.xAxis[1];
+
+        assert.strictEqual(
+            axis.ticks[axis.tickPositions[0]].label.textStr,
+            '2019',
+            '#15692: Primary axis should show years'
         );
     }
 );
@@ -2113,3 +2144,26 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('slotWidth', assert => {
+    const chart = Highcharts.ganttChart("container", {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [
+                {
+                    start: Date.UTC(2017, 8, 1),
+                    end: Date.UTC(2017, 11, 4)
+                }
+            ]
+        }]
+    });
+
+    const axis = chart.xAxis[1];
+
+    assert.ok(
+        axis.ticks[axis.tickPositions[3]].slotWidth < 30,
+        '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
+    );
+});

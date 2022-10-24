@@ -1,5 +1,5 @@
 ---
- name: Suriname - Highmaps
- description: Highmaps demo
+ name: Suriname - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

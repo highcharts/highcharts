@@ -6,56 +6,49 @@
 
 'use strict';
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+import type { AnnotationPointType } from '../AnnotationSeries';
+import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+import type MockPointOptions from '../MockPointOptions';
+
+import Annotation from '../Annotation.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationPitchforkOptionsObject extends AnnotationInfinityLineOptionsObject {
-            typeOptions: AnnotationPitchforkTypeOptionsObject;
-        }
-        interface AnnotationPitchforkTypeOptionsObject extends AnnotationInfinityLineTypeOptionsObject {
-            innerBackground: AnnotationsShapeOptions;
-            outerBackground: AnnotationsShapeOptions;
-        }
-        interface AnnotationTypesRegistry {
-            pitchfork: typeof Pitchfork;
-        }
-    }
-}
-
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Pitchfork extends InfinityLine {
 
-    /**
+    /* *
      *
-     * Static Properties
+     *  Static Properties
      *
-     */
+     * */
+
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
     public static bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);
 
-
     /* *
      *
-     * Static Functions
+     *  Static Functions
      *
      * */
 
     private static outerLineEdgePoint(firstPointIndex: number): Function {
         return function (target: any): PositionObject {
-            var annotation: Pitchfork = target.annotation,
+            const annotation: Pitchfork = target.annotation,
                 points = annotation.points;
 
             return Pitchfork.findEdgePoint(
@@ -71,12 +64,15 @@ class Pitchfork extends InfinityLine {
     }
 
     public static findEdgePoint(
-        point: Highcharts.AnnotationPointType,
-        firstAnglePoint: Highcharts.AnnotationPointType,
-        secondAnglePoint?: Highcharts.AnnotationPointType
+        point: AnnotationPointType,
+        firstAnglePoint: AnnotationPointType,
+        secondAnglePoint?: AnnotationPointType
     ): PositionObject {
-        var angle = Math.atan2(
-                (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
+        const angle = Math.atan2(
+                (
+                    (secondAnglePoint as any).plotY -
+                    (firstAnglePoint.plotY as any)
+                ),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
             ),
             distance = 1e7;
@@ -88,28 +84,17 @@ class Pitchfork extends InfinityLine {
     }
 
     public static middleLineEdgePoint(target: Annotation): PositionObject {
-        var annotation: Pitchfork = target.annotation as any,
+        const annotation: Pitchfork = target.annotation as any,
             points = annotation.points;
 
         return InfinityLine.findEdgePoint(
             points[0],
             new MockPoint(
                 annotation.chart,
-                target,
+                target as any,
                 annotation.midPointOptions()
             )
         );
-    }
-
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationPitchforkOptionsObject) {
-        super(chart, options);
     }
 
     /* *
@@ -118,8 +103,8 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public midPointOptions(): Highcharts.AnnotationMockPointOptionsObject {
-        var points = this.points;
+    public midPointOptions(): MockPointOptions {
+        const points = this.points;
 
         return {
             x: ((points[1].x as any) + (points[2].x as any)) / 2,
@@ -141,7 +126,7 @@ class Pitchfork extends InfinityLine {
                 this.points[0],
                 Pitchfork.middleLineEdgePoint as any
             ]
-        }, false as any);
+        }, 0);
 
         this.initShape({
             type: 'path',
@@ -149,7 +134,7 @@ class Pitchfork extends InfinityLine {
                 this.points[1],
                 Pitchfork.topLineEdgePoint as any
             ]
-        }, false as any);
+        }, 1);
 
         this.initShape({
             type: 'path',
@@ -157,19 +142,19 @@ class Pitchfork extends InfinityLine {
                 this.points[2],
                 Pitchfork.bottomLineEdgePoint as any
             ]
-        }, false as any);
+        }, 2);
     }
 
     public addBackgrounds(): void {
-        var shapes = this.shapes,
-            typeOptions = this.options.typeOptions as Highcharts.AnnotationPitchforkTypeOptionsObject;
+        const shapes = this.shapes,
+            typeOptions = this.options.typeOptions as Pitchfork.TypeOptions;
 
-        var innerBackground = (this.initShape as any)(
+        const innerBackground = (this.initShape as any)(
             merge(typeOptions.innerBackground, {
                 type: 'path',
                 points: [
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                        var annotation = target.annotation,
+                    function (target: any): MockPointOptions {
+                        const annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
 
@@ -182,8 +167,8 @@ class Pitchfork extends InfinityLine {
                     },
                     shapes[1].points[1],
                     shapes[2].points[1],
-                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                        var annotation = target.annotation,
+                    function (target: any): MockPointOptions {
+                        const annotation = target.annotation,
                             points = annotation.points,
                             midPointOptions = annotation.midPointOptions();
 
@@ -195,10 +180,11 @@ class Pitchfork extends InfinityLine {
                         };
                     }
                 ]
-            })
+            }),
+            3
         );
 
-        var outerBackground = (this.initShape as any)(
+        const outerBackground = (this.initShape as any)(
             merge(typeOptions.outerBackground, {
                 type: 'path',
                 points: [
@@ -207,13 +193,20 @@ class Pitchfork extends InfinityLine {
                     shapes[2].points[1],
                     this.points[2]
                 ]
-            })
+            }),
+            4
         );
 
         typeOptions.innerBackground = innerBackground.options;
         typeOptions.outerBackground = outerBackground.options;
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface Pitchfork {
     defaultOptions: InfinityLine['defaultOptions'];
@@ -257,6 +250,40 @@ Pitchfork.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Pitchfork {
+    export interface Options extends InfinityLine.Options {
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends InfinityLine.TypeOptions {
+        innerBackground: ControllableShapeOptions;
+        outerBackground: ControllableShapeOptions;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './AnnotationType'{
+    interface AnnotationTypeRegistry {
+        pitchfork: typeof Pitchfork;
+    }
+}
+
 Annotation.types.pitchfork = Pitchfork;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pitchfork;

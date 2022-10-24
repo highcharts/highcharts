@@ -654,6 +654,27 @@ QUnit.test(
             'Zero,One,,Three',
             'Preserved names'
         );
+
+        chart.series[0].remove(false);
+        chart.xAxis[0].update({
+            type: 'category',
+            categories: ['A', 'B', 'C']
+        }, false);
+        chart.addSeries({
+            data: [4, 1, 9]
+        });
+        chart.update({
+            series: [{
+                data: [4, 1, 20]
+            }]
+        });
+        assert.strictEqual(
+            chart.series[0].points[2].x,
+            2,
+            `When the categories are explicitly enabled, updating the data, as
+            an array of only y values, should not change points' x values,
+            #17438`
+        );
     }
 );
 
@@ -757,7 +778,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Show last label on category axes by default in Highstock (#6104)',
+    'Show last label on category axes by default in Highcharts Stock (#6104)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
                 yAxis: [

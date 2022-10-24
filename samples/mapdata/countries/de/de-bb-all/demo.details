@@ -1,5 +1,5 @@
 ---
- name: Brandenburg - Highmaps
- description: Highmaps demo
+ name: Brandenburg - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

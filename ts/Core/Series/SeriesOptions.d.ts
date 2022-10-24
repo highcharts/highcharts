@@ -96,7 +96,7 @@ export interface SeriesOptions {
     colors?: Array<ColorType>;
     connectNulls?: boolean;
     crisp?: (boolean|number);
-    cursor?: (string|CursorValue);
+    cursor?: CursorValue;
     dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: SeriesDataSortingOptions;
@@ -123,6 +123,7 @@ export interface SeriesOptions {
     point?: SeriesPointOptions;
     pointPlacement?: (number|string);
     pointStart?: number;
+    relativeXValue?: boolean;
     pointValKey?: string;
     selected?: boolean;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
@@ -174,7 +175,7 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
     // nothing here yet
 }
 
-export interface SeriesStatesOptions<T extends { options: Record<string, any> }> extends StatesOptions {
+export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
     hover?: SeriesStateHoverOptions&StateGenericOptions<T>;
     inactive?: SeriesStateInactiveOptions&StateGenericOptions<T>;
     normal?: SeriesStateNormalOptions&StateGenericOptions<T>;
@@ -199,7 +200,7 @@ export interface SeriesZonesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

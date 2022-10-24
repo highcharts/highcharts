@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DEMAOptions,
     DEMAParamsOptions
@@ -15,19 +21,23 @@ import type {
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The DEMA series Type
@@ -39,10 +49,17 @@ const {
  * @augments Highcharts.Series
  */
 class DEMAIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/dema
      *         DEMA indicator
@@ -55,34 +72,29 @@ class DEMAIndicator extends EMAIndicator {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions)
+    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public EMApercent: number = void 0 as any;
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
 
-    public init(this: DEMAIndicator): void {
-        var args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getEMA(
-        this: DEMAIndicator,
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
         SMA: number,
@@ -102,14 +114,11 @@ class DEMAIndicator extends EMAIndicator {
         );
     }
 
-    public getValues<
-        TLinkedSeries extends LineSeries
-    >(
-        this: DEMAIndicator,
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             doubledPeriod: number = 2 * period,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
@@ -203,16 +212,27 @@ class DEMAIndicator extends EMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 
 /* *
@@ -223,18 +243,23 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 
 export default DEMAIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
- * A `DEMA` series. If the [type](#series.ema.type) option is not
+ * A `DEMA` series. If the [type](#series.dema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.ema
+ * @extends   series,plotOptions.dema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/dema
  * @apioption series.dema
  */

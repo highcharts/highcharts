@@ -479,6 +479,16 @@
             chart.yAxis[0].tickPositions.length + 1,
             'Should have the correct amount of ticks remaining after collapsing subtask before parent (#12012)'
         );
+
+        click(chart.yAxis[0].ticks['0'].label.element);
+        chart.xAxis[0].update({
+            min: today.getTime() + 2 * day
+        });
+        assert.strictEqual(
+            chart.pathfinder.connections.length,
+            1,
+            '#12691: The connector should not disappear when the task is partially visible'
+        );
     });
 
     QUnit.test('No series', function (assert) {
@@ -643,7 +653,7 @@
 
             assert.strictEqual(
                 chart.yAxis[0].grid.columns[0].ticks[3].label.visibility,
-                'visible',
+                'inherit',
                 'Tick marker with index 3 should be visible again.'
             );
         }

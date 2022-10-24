@@ -105,7 +105,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 drag: function (e) {
                                     var newZones = series.userOptions.zones;
 
-                                    newZones[this.userOptions.zoneIndex].value = chart.yAxis[0].toValue(e.chartY);
+                                    newZones[this.userOptions.zoneIndex].value =
+                                        chart.yAxis[0].toValue(e.chartY);
 
                                     chart.series[0].update({
                                         zones: newZones
@@ -129,14 +130,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         yAxis: [{
-            labels: {
-                align: 'left'
-            },
             height: '80%'
         }, {
-            labels: {
-                align: 'left'
-            },
             top: '80%',
             height: '20%',
             offset: 0
@@ -152,6 +147,24 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             name: 'AAPL Volume',
             data: volume,
             yAxis: 1
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minWidth: 600
+                },
+                chartOptions: {
+                    yAxis: [{
+                        labels: {
+                            align: 'left'
+                        }
+                    }, {
+                        labels: {
+                            align: 'left'
+                        }
+                    }]
+                }
+            }]
+        }
     });
 });

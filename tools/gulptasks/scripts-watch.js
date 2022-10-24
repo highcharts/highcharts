@@ -12,8 +12,7 @@ const gulp = require('gulp');
 
 const WATCH_GLOBS = [
     'js/**/*.js',
-    'ts/**/*.json',
-    'ts/**/*.ts'
+    'css/**/*.scss'
 ];
 
 /* *
@@ -28,7 +27,7 @@ const WATCH_GLOBS = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+async function task() {
 
     const argv = require('yargs').argv;
     const fsLib = require('./lib/fs');
@@ -43,52 +42,57 @@ function task() {
         }
     }
 
-    return new Promise(resolve => {
+    let jsHash;
+    let cssHash;
 
-        require('./scripts-js.js');
-        require('./scripts-ts.js');
+    gulp
+        .watch(WATCH_GLOBS, { queue: true }, done => {
 
-        let jsHash,
-            tsHash;
+            const buildTasks = [];
+            const newJsHash = fsLib.getDirectoryHash('js', true);
 
-        gulp
-            .watch(WATCH_GLOBS, done => {
-
-                const buildTasks = [];
-                const newJsHash = fsLib.getDirectoryHash('js', true);
-                const newTsHash = fsLib.getDirectoryHash('ts', true);
-
-                if (newTsHash !== tsHash) {
-                    tsHash = newTsHash;
-                    buildTasks.push('scripts-ts');
+            if (newJsHash !== jsHash || argv.force || argv.dts) {
+                jsHash = newJsHash;
+                buildTasks.push('scripts-js');
+                if (argv.dts) {
+                    buildTasks.task('jsdoc-dts')();
                 }
+            }
 
-                if (newJsHash !== jsHash) {
-                    jsHash = newJsHash;
-                    buildTasks.push('scripts-js');
-                }
+            const newCssHash = fsLib.getDirectoryHash('css', true);
 
-                if (buildTasks.length === 0) {
-                    logLib.success('No significant changes found.');
-                    done();
-                    return;
-                }
+            if (newCssHash !== cssHash || argv.force) {
+                cssHash = newCssHash;
+                buildTasks.push('scripts-css');
+            }
 
-                gulp.series(...buildTasks)(done);
-            })
-            .on('add', filePath => logLib.warn('Modified', filePath))
-            .on('change', filePath => logLib.warn('Modified', filePath))
-            .on('unlink', filePath => logLib.warn('Modified', filePath))
-            .on('error', logLib.failure);
+            if (buildTasks.length === 0) {
+                logLib.success('No significant changes found.');
+                done();
+                return;
+            }
 
-        logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
+            gulp.series(...buildTasks)(done);
+        })
+        .on('add', filePath => logLib.warn('Modified', filePath))
+        .on('change', filePath => logLib.warn('Modified', filePath))
+        .on('unlink', filePath => logLib.warn('Modified', filePath))
+        .on('error', logLib.failure);
 
-        processLib.isRunning('scripts-watch', true);
+    logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
 
-        resolve();
-    });
+    processLib.isRunning('scripts-watch', true);
+
+    if (argv.dts) {
+        await gulp.task('jsdoc-dts')();
+    }
+
+    return processLib
+        .exec('npx tsc --build ts --watch')
+        .then(() => void 0);
 }
 
+require('./scripts-css.js');
 require('./scripts-js.js');
 require('./scripts-ts.js');
 

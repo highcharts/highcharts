@@ -1,5 +1,5 @@
 ---
- name: Burundi, admin2 - Highmaps
- description: Highmaps demo
+ name: Burundi, admin2 - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,4 +1,4 @@
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {

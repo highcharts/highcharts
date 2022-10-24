@@ -6,7 +6,9 @@ authors:
   - Torstein Hønsi
   - Øystein Moseng
 skipTest: true
-tags: []
+tags:
+  - unlisted
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 8
 ...

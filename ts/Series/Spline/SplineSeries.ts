@@ -19,17 +19,22 @@
 import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Spline series type.
@@ -86,21 +91,13 @@ class SplineSeries extends LineSeries {
      *
      * @private
      * @function Highcharts.seriesTypes.spline#getPointSpline
-     *
-     * @param {Array<Highcharts.Point>}
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {number} i
-     *
-     * @return {Highcharts.SVGPathArray}
      */
     public getPointSpline(
         points: Array<SplinePoint>,
         point: SplinePoint,
         i: number
     ): SVGPath.CurveTo {
-        var
+        const
             // 1 means control points midway between points, 2 means 1/3
             // from the point, 3 is 1/4 etc
             smoothing = 1.5,
@@ -108,12 +105,12 @@ class SplineSeries extends LineSeries {
             plotX = point.plotX || 0,
             plotY = point.plotY || 0,
             lastPoint = points[i - 1],
-            nextPoint = points[i + 1],
-            leftContX: number | undefined,
+            nextPoint = points[i + 1];
+
+        let leftContX: number | undefined,
             leftContY: number | undefined,
             rightContX: number,
-            rightContY: number,
-            ret: SVGPath.CurveTo;
+            rightContY: number;
 
         /**
          * @private
@@ -128,11 +125,12 @@ class SplineSeries extends LineSeries {
 
         // Find control points
         if (doCurve(lastPoint) && doCurve(nextPoint)) {
-            var lastX = lastPoint.plotX || 0,
+            const lastX = lastPoint.plotX || 0,
                 lastY = lastPoint.plotY || 0,
                 nextX = nextPoint.plotX || 0,
-                nextY = nextPoint.plotY || 0,
-                correction = 0;
+                nextY = nextPoint.plotY || 0;
+
+            let correction = 0;
 
             leftContX = (smoothing * plotX + lastX) / denom;
             leftContY = (smoothing * plotY + lastY) / denom;
@@ -229,7 +227,7 @@ class SplineSeries extends LineSeries {
                 .add();
         }
         // */
-        ret = [
+        const ret: SVGPath.CurveTo = [
             'C',
             pick(lastPoint.rightContX, lastPoint.plotX, 0),
             pick(lastPoint.rightContY, lastPoint.plotY, 0),
@@ -241,6 +239,7 @@ class SplineSeries extends LineSeries {
 
         // reset for updating series later
         lastPoint.rightContX = lastPoint.rightContY = void 0;
+
         return ret;
     }
 
@@ -250,7 +249,7 @@ class SplineSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

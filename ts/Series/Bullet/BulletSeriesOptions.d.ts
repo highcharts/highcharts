@@ -14,7 +14,7 @@
  *
  * */
 
-import type BulletSeriesTargetOptions from './BulletSeriesTargetOptions';
+import type BulletTargetOptions from './BulletTargetOptions';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 
 /* *
@@ -24,7 +24,7 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
  * */
 
 export interface BulletSeriesOptions extends ColumnSeriesOptions {
-    targetOptions?: BulletSeriesTargetOptions;
+    targetOptions?: BulletTargetOptions;
 }
 
 /* *

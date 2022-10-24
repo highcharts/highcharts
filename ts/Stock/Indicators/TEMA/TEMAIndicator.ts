@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,13 +22,10 @@ import type {
 } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -32,17 +35,9 @@ const {
 
 /* *
  *
- *  Class Namespace
+ *  Class
  *
  * */
-namespace TEMAIndicator {
-    export interface EMALevelsObject {
-        level1: number;
-        level2: number;
-        level3: number;
-        prevLevel3: number;
-    }
-}
 
 /**
  * The TEMA series type.
@@ -55,10 +50,16 @@ namespace TEMAIndicator {
  */
 class TEMAIndicator extends EMAIndicator {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Triple exponential moving average (TEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/tema
      *         TEMA indicator
@@ -71,34 +72,29 @@ class TEMAIndicator extends EMAIndicator {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions)
+    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public EMApercent: number = void 0 as any;
     public data: Array<TEMAPoint> = void 0 as any;
     public options: TEMAOptions = void 0 as any;
     public points: Array<TEMAPoint> = void 0 as any;
 
-    public init(this: TEMAIndicator): void {
-        var args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getEMA(
-        this: TEMAIndicator,
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
         SMA: number,
@@ -123,7 +119,7 @@ class TEMAIndicator extends EMAIndicator {
         EMAlevels: TEMAIndicator.EMALevelsObject,
         i: number
     ): ([number, (number|null)]|undefined) {
-        var TEMAPoint: [number, number] = [
+        const TEMAPoint: [number, number] = [
             xVal[i - 3],
             correctFloat(
                 3 * EMAlevels.level1 -
@@ -134,14 +130,11 @@ class TEMAIndicator extends EMAIndicator {
         return TEMAPoint;
     }
 
-    public getValues<
-        TLinkedSeries extends LineSeries
-    >(
-        this: TEMAIndicator,
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: TEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             doubledPeriod = 2 * period,
             tripledPeriod = 3 * period,
             xVal: Array<number> = (series.xData as any),
@@ -274,16 +267,50 @@ class TEMAIndicator extends EMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace TEMAIndicator {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface EMALevelsObject {
+        level1: number;
+        level2: number;
+        level3: number;
+        prevLevel3: number;
+    }
+
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 /* *
@@ -294,19 +321,23 @@ SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 export default TEMAIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
- * A `TEMA` series. If the [type](#series.ema.type) option is not
+ * A `TEMA` series. If the [type](#series.tema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.ema
+ * @extends   series,plotOptions.tema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/tema
  * @apioption series.tema
  */

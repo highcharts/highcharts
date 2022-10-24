@@ -1,64 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['nz-au', 0],
-    ['nz-ma', 1],
-    ['nz-so', 2],
-    ['nz-wk', 3],
-    ['nz-wg', 4],
-    ['nz-4680', 5],
-    ['nz-6943', 6],
-    ['nz-6947', 7],
-    ['nz-ca', 8],
-    ['nz-ot', 9],
-    ['nz-mw', 10],
-    ['nz-gi', 11],
-    ['nz-hb', 12],
-    ['nz-bp', 13],
-    ['nz-3315', 14],
-    ['nz-3316', 15],
-    ['nz-no', 16],
-    ['nz-tk', 17],
-    ['nz-wc', 18]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/nz/nz-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/nz/nz-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['nz-au', 10], ['nz-ma', 11], ['nz-so', 12], ['nz-wk', 13],
+        ['nz-wg', 14], ['nz-4680', 15], ['nz-6943', 16], ['nz-6947', 17],
+        ['nz-ca', 18], ['nz-ot', 19], ['nz-mw', 20], ['nz-gi', 21],
+        ['nz-hb', 22], ['nz-bp', 23], ['nz-3315', 24], ['nz-3316', 25],
+        ['nz-no', 26], ['nz-tk', 27], ['nz-wc', 28]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nz/nz-all.js">New Zealand</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nz/nz-all.topo.json">New Zealand</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

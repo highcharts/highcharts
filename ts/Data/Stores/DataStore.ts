@@ -1,12 +1,15 @@
 /* *
  *
- *  Data module
- *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2020-2022 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
  *
  * */
 
@@ -19,11 +22,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataJSON from '../DataJSON';
+import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
 import DataParser from '../Parsers/DataParser.js';
-import DataTableRow from '../DataTableRow.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -40,10 +42,12 @@ const {
  * */
 
 /**
- * Abstract class providing an interface for managing a DataStore
+ * Abstract class providing an interface for managing a DataStore.
+ *
+ * @private
  */
-abstract class DataStore<TEventObject extends DataStore.EventObject>
-implements DataEventEmitter<TEventObject>, DataJSON.Class {
+abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
+
     /* *
      *
      *  Static Properties
@@ -59,7 +63,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Regular expression to extract the store name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataStore)?\s*\(/;
+    private static readonly nameRegExp = (
+        /^function\s+(\w*?)(?:DataStore)?\s*\(/
+    );
 
     /* *
      *
@@ -67,11 +73,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      *
      * */
 
-
     /**
-     * Adds a dataStore class to the registry. The store has to provide the
+     * Adds a store class to the registry. The store has to provide the
      * `DataStore.options` property and the `DataStore.load` method to
-     * modify the DataTable.
+     * modify the table.
      *
      * @param {DataStore} dataStore
      * Store class (aka class constructor) to register.
@@ -149,19 +154,19 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
 
     /**
-     * Constructor for the DataStore class.
+     * Constructor for the store class.
      *
      * @param {DataTable} table
-     * Optional DataTable to use in the DataStore.
+     * Optional table to use in the store.
      *
      * @param {DataStore.Metadata} metadata
-     * Optional metadata to use in the DataStore.
+     * Optional metadata to use in the store.
      */
     public constructor(
         table: DataTable = new DataTable(),
@@ -172,16 +177,16 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * The DataParser responsible for handling converting the provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser<DataParser.EventObject>;
+    public abstract readonly parser: DataParser<DataParser.Event>;
 
     /**
      * Metadata to describe the store and the content of columns.
@@ -189,7 +194,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public metadata: DataStore.Metadata;
 
     /**
-     * DataTable managed by this DataStore instance.
+     * Table managed by this DataStore instance.
      */
     public table: DataTable;
 
@@ -238,7 +243,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the store to all registered callbacks of this event.
      *
-     * @param {DataStore.EventObject} [e]
+     * @param {DataStore.Event} [e]
      * Event object containing additional event information.
      */
     public emit(e: TEventObject): void {
@@ -275,9 +280,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Retrieves the columns of the the dataTable,
      * applies column order from meta.
      *
-     * @param {boolean} [includeIdColumn]
-     * Whether to include the `id` column in the returned array.
-     *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state of the table.
      *
@@ -285,16 +287,11 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * An object with the properties `columnNames` and `columnValues`
      */
     protected getColumnsForExport(
-        includeIdColumn?: boolean,
         usePresentationOrder?: boolean
     ): DataStore.ColumnsForExportObject {
         const table = this.table,
             columnsRecord = table.getColumns(),
-            columnNames = (
-                includeIdColumn ?
-                    Object.keys(columnsRecord) :
-                    Object.keys(columnsRecord).slice(1)
-            );
+            columnNames = table.getColumnNames();
 
         const columnOrder = this.getColumnOrder(usePresentationOrder);
 
@@ -313,7 +310,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         return ({
             columnNames,
             columnValues: columnNames.map(
-                (name: string): DataTableRow.CellType[] => columnsRecord[name]
+                (name: string): DataTable.Column => columnsRecord[name]
             )
         });
     }
@@ -360,20 +357,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @return {DataStore.ClassJSON}
-     * Class JSON of this DataStore instance.
-     */
-    public toJSON(): DataStore.ClassJSON {
-        return {
-            $class: DataStore.getName(this.constructor),
-            metadata: merge(this.metadata),
-            table: this.table.toJSON()
-        };
-    }
-
-    /**
      * Method for retriving metadata from a single column.
      *
      * @param {string} name
@@ -397,17 +380,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 namespace DataStore {
 
     /**
-     * Interface of the class JSON to convert to class instances.
-     */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        metadata: DataStore.Metadata;
-    }
-
-    /**
      * The default event object for a datastore
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         readonly table: DataTable;
     }
 
@@ -416,7 +391,7 @@ namespace DataStore {
      */
     export interface ColumnsForExportObject {
         columnNames: Array<string>;
-        columnValues: Array<Array<DataTableRow.CellType>>;
+        columnValues: Array<DataTable.Column>;
         columnHeaderFormatter?: Function;
     }
 
@@ -424,10 +399,10 @@ namespace DataStore {
      * Metadata entry containing the name of the column
      * and a metadata object
      */
-    export interface MetaColumn extends DataJSON.JSONObject {
+    export interface MetaColumn extends JSON.Object {
         dataType?: string;
         // validator: Function;
-        defaultValue?: DataJSON.JSONPrimitive;
+        defaultValue?: JSON.Primitive;
         index?: number;
         title?: string;
     }
@@ -435,7 +410,7 @@ namespace DataStore {
     /**
      * Metadata
      */
-    export interface Metadata extends DataJSON.JSONObject {
+    export interface Metadata extends JSON.Object {
         columns: Record<string, MetaColumn>;
     }
 

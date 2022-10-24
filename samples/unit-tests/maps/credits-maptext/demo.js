@@ -1,5 +1,5 @@
 QUnit.test('Credits', function (assert) {
-    var chart = new Highcharts.Map({
+    var chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -30,7 +30,7 @@ QUnit.test('Credits', function (assert) {
         }
     });
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -56,7 +56,7 @@ QUnit.test('Credits', function (assert) {
         }
     });
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -77,7 +77,7 @@ QUnit.test('Credits', function (assert) {
 
     // Setting both default and inline - text only
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -99,7 +99,7 @@ QUnit.test('Credits', function (assert) {
 
     // Setting both default and overruling by inline
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },

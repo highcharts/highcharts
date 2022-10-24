@@ -8,16 +8,17 @@
  *
  * */
 
-import type CSSObject from '../CSSObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
-import H from '../../Globals.js';
-const {
-    isFirefox,
-    isMS,
-    isWebKit,
-    win
-} = H;
+
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
@@ -29,52 +30,66 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../SVG/SVGRendererLike' {
-    interface SVGElementLike {
-        /** @requires Core/Renderer/HTML/HTMLRenderer */
-        getTransformKey(): string;
+    interface SVGRendererLike {
         /** @requires Core/Renderer/HTML/HTMLRenderer */
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
 
-/**
- * Renderer placebo
- * @private
- */
-const HTMLRenderer = SVGRenderer;
-interface HTMLRenderer extends SVGRenderer {
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
-    getTransformKey(): string;
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
-    html(str: string, x: number, y: number): HTMLElement;
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+class HTMLRenderer extends SVGRenderer {
 
-    /**
-     * @private
-     * @function Highcharts.SVGRenderer#getTransformKey
+    /* *
      *
-     * @return {string}
-     */
-    getTransformKey: function (this: HTMLRenderer): string {
-        return isMS && !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        '';
-    },
+     *  Static Properties
+     *
+     * */
+
+    private static readonly composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /** @private */
+    public static compose<T extends typeof SVGRenderer>(
+        SVGRendererClass: T
+    ): (T&typeof HTMLRenderer) {
+
+        if (HTMLRenderer.composedClasses.indexOf(SVGRendererClass) === -1) {
+            HTMLRenderer.composedClasses.push(SVGRendererClass);
+
+            const htmlRendererProto = HTMLRenderer.prototype,
+                svgRendererProto = SVGRendererClass.prototype;
+
+            svgRendererProto.html = htmlRendererProto.html;
+        }
+
+        return SVGRendererClass as (T&typeof HTMLRenderer);
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
@@ -84,23 +99,23 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      * @function Highcharts.SVGRenderer#html
      *
      * @param {string} str
-     *        The text of (subset) HTML to draw.
+     * The text of (subset) HTML to draw.
      *
      * @param {number} x
-     *        The x position of the text's lower left corner.
+     * The x position of the text's lower left corner.
      *
      * @param {number} y
-     *        The y position of the text's lower left corner.
+     * The y position of the text's lower left corner.
      *
      * @return {Highcharts.HTMLDOMElement}
+     * HTML element.
      */
-    html: function (
-        this: HTMLRenderer,
+    public html(
         str: string,
         x: number,
         y: number
     ): HTMLElement {
-        var wrapper = this.createElement('span') as HTMLElement,
+        const wrapper = this.createElement('span') as HTMLElement,
             element = wrapper.element,
             renderer = wrapper.renderer,
             isSVG = renderer.isSVG,
@@ -118,7 +133,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         key: string,
                         elem: HTMLElement
                     ): void {
-                        var styleObject = gWrapper.div ?
+                        const styleObject = gWrapper.div ?
                             gWrapper.div.style :
                             style;
                         SVGElement.prototype[prop + 'Setter']
@@ -160,7 +175,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         ): void {
             if (key === 'align') {
                 // Do not overwrite the SVGElement.align method. Same as VML.
-                wrapper.alignValue = wrapper.textAlign = value;
+                wrapper.alignValue = wrapper.textAlign = value as any;
             } else {
                 wrapper[key as any] = value;
             }
@@ -203,12 +218,14 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
         // This is specific for HTML within SVG
         if (isSVG) {
-            wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
-
-                var htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
-                    container = renderer.box.parentNode,
-                    parentGroup,
+            wrapper.add = function (
+                svgGroupWrapper?: HTMLElement
+            ): HTMLElement {
+                const container = renderer.box.parentNode,
                     parents = [] as Array<HTMLElement>;
+
+                let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
+                    parentGroup;
 
                 this.parentGroup = svgGroupWrapper as any;
 
@@ -231,8 +248,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         // Ensure dynamically updating position when any parent
                         // is translated
                         parents.reverse().forEach(function (parentGroup): void {
-                            var htmlGroupStyle: CSSObject,
-                                cls = attr(parentGroup.element, 'class');
+                            const cls = attr(parentGroup.element, 'class');
 
                             /**
                              * Common translate setter for X and Y on the HTML
@@ -242,8 +258,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                              * @private
                              * @param {*} value
                              * @param {string} key
-                             * @return {void}
-                             */
+                                                     */
                             function translateSetter(
                                 value: any,
                                 key: string
@@ -274,8 +289,11 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                     display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
-                                    pointerEvents:
-                                        parentGroupStyles.pointerEvents // #5595
+                                    pointerEvents: (
+                                        // #5595
+                                        parentGroupStyles.pointerEvents
+                                    ),
+                                    visibility: parentGroup.visibility
 
                                 // the top group is appended to container
                                 },
@@ -283,7 +301,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                             );
 
                             // Shortcut
-                            htmlGroupStyle = (htmlGroup as any).style;
+                            const htmlGroupStyle = (htmlGroup as any).style;
 
                             // Set listeners to update the HTML div's position
                             // whenever the SVG group position is changed.
@@ -306,10 +324,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }(htmlGroup as any)),
                                 on: function (): HTMLElement {
                                     if (parents[0].div) { // #6418
-                                        wrapper.on.apply(
-                                            { element: parents[0].div },
-                                            arguments as any
-                                        );
+                                        wrapper.on.apply({
+                                            element: parents[0].div,
+                                            onEvents: parentGroup.onEvents
+                                        }, arguments);
                                     }
                                     return parentGroup;
                                 },
@@ -339,6 +357,12 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         }
         return wrapper;
     }
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HTMLRenderer;

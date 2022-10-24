@@ -1,258 +1,93 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['fo', 0],
-    ['um', 1],
-    ['us', 2],
-    ['jp', 3],
-    ['sc', 4],
-    ['in', 5],
-    ['fr', 6],
-    ['fm', 7],
-    ['cn', 8],
-    ['sw', 9],
-    ['sh', 10],
-    ['br', 11],
-    ['ec', 12],
-    ['au', 13],
-    ['ki', 14],
-    ['ph', 15],
-    ['mx', 16],
-    ['es', 17],
-    ['bu', 18],
-    ['mv', 19],
-    ['sp', 20],
-    ['gb', 21],
-    ['gr', 22],
-    ['as', 23],
-    ['dk', 24],
-    ['gl', 25],
-    ['gu', 26],
-    ['mp', 27],
-    ['pr', 28],
-    ['vi', 29],
-    ['ca', 30],
-    ['st', 31],
-    ['cv', 32],
-    ['dm', 33],
-    ['nl', 34],
-    ['ye', 35],
-    ['jm', 36],
-    ['ws', 37],
-    ['om', 38],
-    ['vc', 39],
-    ['tr', 40],
-    ['bd', 41],
-    ['sb', 42],
-    ['lc', 43],
-    ['nr', 44],
-    ['no', 45],
-    ['kn', 46],
-    ['bh', 47],
-    ['to', 48],
-    ['fi', 49],
-    ['id', 50],
-    ['mu', 51],
-    ['se', 52],
-    ['tt', 53],
-    ['my', 54],
-    ['bs', 55],
-    ['pw', 56],
-    ['tv', 57],
-    ['mh', 58],
-    ['cl', 59],
-    ['th', 60],
-    ['gd', 61],
-    ['ee', 62],
-    ['ag', 63],
-    ['tw', 64],
-    ['bb', 65],
-    ['it', 66],
-    ['mt', 67],
-    ['pg', 68],
-    ['vu', 69],
-    ['sg', 70],
-    ['cy', 71],
-    ['km', 72],
-    ['fj', 73],
-    ['ru', 74],
-    ['va', 75],
-    ['sm', 76],
-    ['kz', 77],
-    ['az', 78],
-    ['am', 79],
-    ['tj', 80],
-    ['ls', 81],
-    ['uz', 82],
-    ['pt', 83],
-    ['ma', 84],
-    ['co', 85],
-    ['tl', 86],
-    ['tz', 87],
-    ['kh', 88],
-    ['ar', 89],
-    ['sa', 90],
-    ['pk', 91],
-    ['ae', 92],
-    ['ke', 93],
-    ['pe', 94],
-    ['do', 95],
-    ['ht', 96],
-    ['ao', 97],
-    ['mz', 98],
-    ['pa', 99],
-    ['cr', 100],
-    ['ir', 101],
-    ['sv', 102],
-    ['gw', 103],
-    ['hr', 104],
-    ['bz', 105],
-    ['za', 106],
-    ['na', 107],
-    ['cf', 108],
-    ['sd', 109],
-    ['ly', 110],
-    ['cd', 111],
-    ['kw', 112],
-    ['de', 113],
-    ['ie', 114],
-    ['kp', 115],
-    ['kr', 116],
-    ['gy', 117],
-    ['hn', 118],
-    ['mm', 119],
-    ['ga', 120],
-    ['gq', 121],
-    ['ni', 122],
-    ['ug', 123],
-    ['mw', 124],
-    ['tm', 125],
-    ['sx', 126],
-    ['zm', 127],
-    ['nc', 128],
-    ['mr', 129],
-    ['dz', 130],
-    ['lt', 131],
-    ['et', 132],
-    ['er', 133],
-    ['gh', 134],
-    ['si', 135],
-    ['gt', 136],
-    ['ba', 137],
-    ['jo', 138],
-    ['sy', 139],
-    ['mc', 140],
-    ['al', 141],
-    ['uy', 142],
-    ['cnm', 143],
-    ['mn', 144],
-    ['rw', 145],
-    ['so', 146],
-    ['bo', 147],
-    ['cm', 148],
-    ['cg', 149],
-    ['eh', 150],
-    ['rs', 151],
-    ['me', 152],
-    ['bj', 153],
-    ['ng', 154],
-    ['tg', 155],
-    ['la', 156],
-    ['af', 157],
-    ['ua', 158],
-    ['sk', 159],
-    ['jk', 160],
-    ['bg', 161],
-    ['qa', 162],
-    ['li', 163],
-    ['at', 164],
-    ['sz', 165],
-    ['hu', 166],
-    ['ro', 167],
-    ['lu', 168],
-    ['ad', 169],
-    ['ci', 170],
-    ['lr', 171],
-    ['bn', 172],
-    ['be', 173],
-    ['iq', 174],
-    ['ge', 175],
-    ['gm', 176],
-    ['ch', 177],
-    ['td', 178],
-    ['kv', 179],
-    ['lb', 180],
-    ['dj', 181],
-    ['bi', 182],
-    ['sr', 183],
-    ['il', 184],
-    ['ml', 185],
-    ['sn', 186],
-    ['gn', 187],
-    ['zw', 188],
-    ['pl', 189],
-    ['mk', 190],
-    ['py', 191],
-    ['by', 192],
-    ['lv', 193],
-    ['bf', 194],
-    ['ne', 195],
-    ['tn', 196],
-    ['bt', 197],
-    ['md', 198],
-    ['ss', 199],
-    ['bw', 200],
-    ['nz', 201],
-    ['cu', 202],
-    ['ve', 203],
-    ['vn', 204],
-    ['sl', 205],
-    ['mg', 206],
-    ['is', 207],
-    ['eg', 208],
-    ['lk', 209],
-    ['cz', 210],
-    ['kg', 211],
-    ['np', 212]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/world-highres2'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world-highres2.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['fo', 10], ['um', 11], ['us', 12], ['jp', 13], ['sc', 14], ['in', 15],
+        ['fr', 16], ['fm', 17], ['cn', 18], ['sw', 19], ['sh', 20], ['br', 21],
+        ['ec', 22], ['au', 23], ['ki', 24], ['ph', 25], ['mx', 26], ['es', 27],
+        ['bu', 28], ['mv', 29], ['sp', 30], ['gb', 31], ['gr', 32], ['as', 33],
+        ['dk', 34], ['gl', 35], ['gu', 36], ['mp', 37], ['pr', 38], ['vi', 39],
+        ['ca', 40], ['st', 41], ['cv', 42], ['dm', 43], ['nl', 44], ['ye', 45],
+        ['jm', 46], ['ws', 47], ['om', 48], ['vc', 49], ['tr', 50], ['bd', 51],
+        ['sb', 52], ['lc', 53], ['nr', 54], ['no', 55], ['kn', 56], ['bh', 57],
+        ['to', 58], ['fi', 59], ['id', 60], ['mu', 61], ['se', 62], ['tt', 63],
+        ['my', 64], ['bs', 65], ['pw', 66], ['tv', 67], ['mh', 68], ['cl', 69],
+        ['th', 70], ['gd', 71], ['ee', 72], ['ag', 73], ['tw', 74], ['bb', 75],
+        ['it', 76], ['mt', 77], ['pg', 78], ['vu', 79], ['sg', 80], ['cy', 81],
+        ['km', 82], ['fj', 83], ['ru', 84], ['va', 85], ['sm', 86], ['kz', 87],
+        ['az', 88], ['am', 89], ['tj', 90], ['ls', 91], ['uz', 92], ['pt', 93],
+        ['ma', 94], ['co', 95], ['tl', 96], ['tz', 97], ['kh', 98], ['ar', 99],
+        ['sa', 100], ['pk', 101], ['ae', 102], ['ke', 103], ['pe', 104],
+        ['do', 105], ['ht', 106], ['ao', 107], ['mz', 108], ['pa', 109],
+        ['cr', 110], ['ir', 111], ['sv', 112], ['gw', 113], ['hr', 114],
+        ['bz', 115], ['za', 116], ['na', 117], ['cf', 118], ['sd', 119],
+        ['ly', 120], ['cd', 121], ['kw', 122], ['de', 123], ['ie', 124],
+        ['kp', 125], ['kr', 126], ['gy', 127], ['hn', 128], ['mm', 129],
+        ['ga', 130], ['gq', 131], ['ni', 132], ['ug', 133], ['mw', 134],
+        ['tm', 135], ['sx', 136], ['zm', 137], ['nc', 138], ['mr', 139],
+        ['dz', 140], ['lt', 141], ['et', 142], ['er', 143], ['gh', 144],
+        ['si', 145], ['gt', 146], ['ba', 147], ['jo', 148], ['sy', 149],
+        ['mc', 150], ['al', 151], ['uy', 152], ['cnm', 153], ['mn', 154],
+        ['rw', 155], ['so', 156], ['bo', 157], ['cm', 158], ['cg', 159],
+        ['eh', 160], ['rs', 161], ['me', 162], ['bj', 163], ['ng', 164],
+        ['tg', 165], ['la', 166], ['af', 167], ['ua', 168], ['sk', 169],
+        ['jk', 170], ['bg', 171], ['qa', 172], ['li', 173], ['at', 174],
+        ['sz', 175], ['hu', 176], ['ro', 177], ['lu', 178], ['ad', 179],
+        ['ci', 180], ['lr', 181], ['bn', 182], ['be', 183], ['iq', 184],
+        ['ge', 185], ['gm', 186], ['ch', 187], ['td', 188], ['kv', 189],
+        ['lb', 190], ['dj', 191], ['bi', 192], ['sr', 193], ['il', 194],
+        ['ml', 195], ['sn', 196], ['gn', 197], ['zw', 198], ['pl', 199],
+        ['mk', 200], ['py', 201], ['by', 202], ['lv', 203], ['bf', 204],
+        ['ne', 205], ['tn', 206], ['bt', 207], ['md', 208], ['ss', 209],
+        ['bw', 210], ['nz', 211], ['cu', 212], ['ve', 213], ['vn', 214],
+        ['sl', 215], ['mg', 216], ['is', 217], ['eg', 218], ['lk', 219],
+        ['cz', 220], ['kg', 221], ['np', 222]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-highres2.js">World, Miller projection, very high resolution</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-highres2.topo.json">World, very high resolution</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

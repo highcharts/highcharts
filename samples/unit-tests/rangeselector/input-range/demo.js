@@ -180,7 +180,7 @@ QUnit.test(
 );
 
 QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
-    Highcharts.StockChart({
+    Highcharts.stockChart({
         chart: {
             renderTo: 'container'
         },
@@ -211,7 +211,7 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
 QUnit.test(
     "Focusable inputs after setting chart's zIndex (#8899)",
     assert => {
-        var chart = Highcharts.StockChart({
+        var chart = Highcharts.stockChart({
                 chart: {
                     renderTo: 'container'
                 },
@@ -387,7 +387,17 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
         newMin,
         test = new TestController(chart);
 
-    test.triggerEvent('click', 400, 20, {}, true);
+    const chartOffset = Highcharts.offset(chart.container);
+    const minDateBoxOffset = Highcharts.offset(
+        chart.rangeSelector.minDateBox.element
+    );
+    test.triggerEvent(
+        'click',
+        minDateBoxOffset.left - chartOffset.left + 10,
+        minDateBoxOffset.top - chartOffset.top + 10,
+        {},
+        true
+    );
 
     document.activeElement.value = '2007-09-13';
 
@@ -396,7 +406,7 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
 
     newMin = chart.xAxis[0].min;
 
-    assert.strictEqual(min === newMin, false, 'Extremes are updated.');
+    assert.notStrictEqual(min, newMin, 'Extremes should be updated');
 });
 
 QUnit.test('#13205, #14544: Timezone issues', assert => {

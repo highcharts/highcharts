@@ -3,8 +3,7 @@ var today = new Date(),
     // Utility functions
     dateFormat = Highcharts.dateFormat,
     defined = Highcharts.defined,
-    isObject = Highcharts.isObject,
-    reduce = Highcharts.reduce;
+    isObject = Highcharts.isObject;
 
 // Set to 00:00:00:000 today
 today.setUTCHours(0);
@@ -142,7 +141,7 @@ Highcharts.ganttChart('container', {
                 value: options.owner || 'unassigned'
             }];
 
-            return reduce(lines, function (str, line) {
+            return lines.reduce(function (str, line) {
                 var s = '',
                     style = (
                         defined(line.style) ? line.style : 'font-size: 0.8em;'
@@ -166,5 +165,38 @@ Highcharts.ganttChart('container', {
         currentDateIndicator: true,
         min: today - 3 * day,
         max: today + 18 * day
+    },
+    accessibility: {
+        keyboardNavigation: {
+            seriesNavigation: {
+                mode: 'serialize'
+            }
+        },
+        point: {
+            descriptionFormatter: function (point) {
+                var completedValue = point.completed ?
+                        point.completed.amount || point.completed : null,
+                    completed = completedValue ?
+                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        '',
+                    dependency = point.dependency &&
+                        point.series.chart.get(point.dependency).name,
+                    dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+
+                return Highcharts.format(
+                    point.milestone ?
+                        '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}' :
+                        '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}',
+                    { point, completed, dependsOn }
+                );
+            }
+        }
+    },
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
     }
 });

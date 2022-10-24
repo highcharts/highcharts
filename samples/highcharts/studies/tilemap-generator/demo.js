@@ -174,8 +174,10 @@
             getTileDeviation = function (aCoords, bCoords) {
                 var a = grid[aCoords.row][aCoords.col],
                     b = grid[bCoords.row][bCoords.col],
-                    centerXDistance = (a.center.x - b.center.x) / tilesize.width,
-                    centerYDistance = (a.center.y - b.center.y) / tilesize.height,
+                    centerXDistance = (a.center.x - b.center.x) /
+                        tilesize.width,
+                    centerYDistance = (a.center.y - b.center.y) /
+                        tilesize.height,
                     actualXDistance = aCoords.col - bCoords.col,
                     actualYDistance = aCoords.row - bCoords.row,
                     idealEuclidean = centerXDistance * centerXDistance +
@@ -235,7 +237,8 @@
             if (areas[i].extremes.width * areas[i].extremes.height >
                 largestArea) {
                 largestIx = i;
-                largestArea = areas[i].extremes.width * areas[i].extremes.height;
+                largestArea = areas[i].extremes.width *
+                    areas[i].extremes.height;
             }
         }
         return largestIx;
@@ -799,12 +802,10 @@ function generateTileChart() {
         mapLen = Highcharts.maps[currentMapKey].features.length,
         outputData = function () {
             $('#outputData').val(JSON.stringify(
-                Highcharts.map(currentData, function (point) {
+                currentData.map(point => {
                     var filterProps = ['center', 'extremes', 'hc-middle-y',
                         'hc-middle-x', 'selected', 'color'];
-                    Highcharts.each(filterProps, function (prop) {
-                        delete point[prop];
-                    });
+                    filterProps.forEach(prop => delete point[prop]);
                     return point;
                 }), null,
                 $("#prettyprint").prop('checked') ? 2 : null
@@ -817,7 +818,7 @@ function generateTileChart() {
                 bChanged = false;
 
             // First change it in output data
-            Highcharts.each(currentData, function (point) {
+            currentData.forEach(point => {
                 if (!aChanged && point.x === a.x && point.y === a.y) {
                     point.x = b.x;
                     point.y = b.y;
@@ -888,10 +889,8 @@ function generateTileChart() {
 
     if (invert) {
         // Find max Y, since Y axis must be reversed
-        maxY = Highcharts.reduce(data, function (a, b) {
-            return Math.max(a && a.y || 0, b && b.y || 0);
-        });
-        Highcharts.each(data, function (point) {
+        maxY = data.reduce((a, b) => Math.max(a && a.y || 0, b && b.y || 0));
+        data.forEach(point => {
             var temp = point.x;
             point.x = maxY - point.y;
             point.y = temp;
@@ -1067,9 +1066,19 @@ $("#mapDropdown").change(function () {
             colorAxis: {
                 min: 0,
                 stops: [
-                    [0, '#EFEFFF'],
-                    [0.5, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                    [
+                        0,
+                        '#EFEFFF'
+                    ],
+                    [
+                        0.5,
+                        Highcharts.getOptions().colors[0]
+                    ],
+                    [
+                        1,
+                        Highcharts.color(Highcharts.getOptions().colors[0])
+                            .brighten(-0.5).get()
+                    ]
                 ]
             },
 

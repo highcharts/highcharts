@@ -18,10 +18,13 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type FormatUtilities from '../../Core/FormatUtilities';
+import type NodesComposition from '../NodesComposition';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -51,7 +54,7 @@ export interface SankeySeriesNodeOptions {
 }
 
 
-export interface SankeySeriesOptions extends ColumnSeriesOptions, Highcharts.NodesSeriesOptions {
+export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
     dataLabels?: SankeyDataLabelOptions;
     height?: number;
@@ -68,9 +71,9 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, Highcharts.Nod
     width?: number;
 }
 
-export interface SankeySeriesTooltipOptions extends Highcharts.TooltipOptions {
+export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
     nodeFormat?: string;
-    nodeFormatter?: Highcharts.FormatterCallbackFunction<SankeyPoint>;
+    nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
 }
 
 export default SankeySeriesOptions;

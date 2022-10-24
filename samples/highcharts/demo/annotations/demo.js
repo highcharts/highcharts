@@ -1903,7 +1903,18 @@ Highcharts.chart('container', {
     },
 
     accessibility: {
-        description: 'Image description: An annotated line graph illustrates the 8th stage of the 2017 Tour de France cycling race from the start point in Dole to the finish line at Station des Rousses. Altitude is plotted on the Y-axis at increments of 500m and distance is plotted on the X-axis in increments of 25 kilometers. The line graph is interactive, and the user can trace the altitude level at every 100-meter point along the stage. The graph is shaded below the data line to visualize the mountainous altitudes encountered on the 187.5-kilometre stage. The three largest climbs are highlighted at Col de la Joux, Côte de Viry and the final 11.7-kilometer, 6.4% gradient climb to Montée de la Combe de Laisia Les Molunes which peaks at 1200 meters above sea level. The stage passes through the villages of Arbois, Montrond, Bonlieu, Chassal and Saint-Claude along the route.'
+        description: 'This line chart uses the Highcharts Annotations feature to place labels at various points of interest. The labels are responsive and will be hidden to avoid overlap on small screens. Image description: An annotated line chart illustrates the 8th stage of the 2017 Tour de France cycling race from the start point in Dole to the finish line at Station des Rousses. Altitude is plotted on the Y-axis, and distance is plotted on the X-axis. The line graph is interactive, and the user can trace the altitude level along the stage. The graph is shaded below the data line to visualize the mountainous altitudes encountered on the 187.5-kilometre stage. The three largest climbs are highlighted at Col de la Joux, Côte de Viry and the final 11.7-kilometer, 6.4% gradient climb to Montée de la Combe de Laisia Les Molunes which peaks at 1200 meters above sea level. The stage passes through the villages of Arbois, Montrond, Bonlieu, Chassal and Saint-Claude along the route.',
+        landmarkVerbosity: 'one'
+    },
+
+    lang: {
+        accessibility: {
+            screenReaderSection: {
+                annotations: {
+                    descriptionNoPoints: '{annotationText}, at distance {annotation.options.point.x}km, elevation {annotation.options.point.y} meters.'
+                }
+            }
+        }
     },
 
     credits: {
@@ -1911,6 +1922,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
+        draggable: '',
         labelOptions: {
             backgroundColor: 'rgba(255,255,255,0.5)',
             verticalAlign: 'top',
@@ -1967,6 +1979,7 @@ Highcharts.chart('container', {
             text: 'Saint-Claude'
         }]
     }, {
+        draggable: '',
         labels: [{
             point: {
                 xAxis: 0,
@@ -1991,9 +2004,10 @@ Highcharts.chart('container', {
                 x: 176.4,
                 y: 1202
             },
-            text: 'Montée de la Combe<br>de Laisia Les Molunes'
+            text: 'Montée de la Combe <br>de Laisia Les Molunes'
         }]
     }, {
+        draggable: '',
         labelOptions: {
             shape: 'connector',
             align: 'right',
@@ -2011,7 +2025,7 @@ Highcharts.chart('container', {
                 x: 96.2,
                 y: 783
             },
-            text: '6.1 km climb<br>4.6% on avg.'
+            text: '6.1 km climb <br>4.6% on avg.'
         }, {
             point: {
                 xAxis: 0,
@@ -2019,7 +2033,7 @@ Highcharts.chart('container', {
                 x: 134.5,
                 y: 540
             },
-            text: '7.6 km climb<br>5.2% on avg.'
+            text: '7.6 km climb <br>5.2% on avg.'
         }, {
             point: {
                 xAxis: 0,
@@ -2027,7 +2041,7 @@ Highcharts.chart('container', {
                 x: 172.2,
                 y: 925
             },
-            text: '11.7 km climb<br>6.4% on avg.'
+            text: '11.7 km climb <br>6.4% on avg.'
         }]
     }],
 
@@ -2053,6 +2067,10 @@ Highcharts.chart('container', {
         },
         labels: {
             format: '{value} m'
+        },
+        accessibility: {
+            description: 'Elevation',
+            rangeDescription: 'Range: 0 to 1,553 meters'
         }
     },
 
@@ -2067,11 +2085,6 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        accessibility: {
-            keyboardNavigation: {
-                enabled: false
-            }
-        },
         data: elevationData,
         lineColor: Highcharts.getOptions().colors[1],
         color: Highcharts.getOptions().colors[2],

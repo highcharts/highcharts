@@ -68,6 +68,9 @@ QUnit.test('Series shadows', function (assert) {
     );
 
     chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
         series: [
             {
                 shadow: true,
@@ -79,7 +82,7 @@ QUnit.test('Series shadows', function (assert) {
     attributes = [
         'stroke="red"',
         'stroke-opacity="0.3"',
-        'transform="translate(5, 10)'
+        'transform="translate(10, 5)'
     ];
 
     chart.series[0].update({
@@ -95,5 +98,25 @@ QUnit.test('Series shadows', function (assert) {
     assert.ok(
         checkAttributes(chart.series[0].graph.shadows, attributes),
         'Shadows should be updated when old options defined as boolean and new as object (#12091).'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false,
+            type: 'pie'
+        },
+        series: [{
+            shadow: true
+        }]
+    });
+
+    chart.series[0].update();
+
+    assert.ok(
+        checkAttributes(
+            [chart.series[0].shadowGroup.element],
+            defaultAttributes
+        ),
+        'Shadow group should not be hidden after series update (#17288).'
     );
 });

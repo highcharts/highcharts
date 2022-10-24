@@ -107,6 +107,22 @@ QUnit.test('Indentation', function (assert) {
         tick3.x > tick2.x,
         'Child point level 2 (Node 3) farther right than parent (Node 1)'
     );
+
+    // #14904
+    const { fireEvent } = Highcharts;
+    var parentTick = ticks[tickPositions[0]].label.element,
+        childTickIconY = ticks[tickPositions[1]].treeGrid.labelIcon.attr('y');
+
+    // Click the parent node quickly twice (toggle drop-down)
+    fireEvent(parentTick, 'click');
+    fireEvent(parentTick, 'click');
+
+    assert.strictEqual(
+        childTickIconY,
+        0,
+        'Label icon should be shown after double clicking ' +
+        'parent in drop-down. (#14904)'
+    );
 });
 
 QUnit.test('Tree.getNode', function (assert) {
@@ -499,5 +515,12 @@ QUnit.test('series.data[].collapsed', assert => {
         axis.series[0].options.data[0].collapsed,
         false,
         'This point should be expanded #13838'
+    );
+
+    chart.series[0].setData([], true, true, false);
+    assert.notOk(
+        document.querySelector('.highcharts-label-icon'),
+        `After updating data,
+        the unnecessary label icons should be removed, 16673.`
     );
 });

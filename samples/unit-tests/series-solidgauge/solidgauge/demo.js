@@ -1,6 +1,6 @@
 QUnit.test('tooltip', function (assert) {
     assert.strictEqual(
-        Highcharts.seriesTypes.solidgauge.prototype.noSharedTooltip,
+        Highcharts.Series.types.solidgauge.prototype.noSharedTooltip,
         true,
         'noSharedTooltip: true. #5354'
     );
@@ -181,7 +181,7 @@ QUnit.test('Solid gauge: legend', function (assert) {
     });
 
     assert.strictEqual(
-        chart.legend.allItems[0].legendSymbol.element.getAttribute('fill'),
+        chart.legend.allItems[0].legendItem.symbol.element.getAttribute('fill'),
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
         'Series legend item: color taken from series'
     );
@@ -210,10 +210,22 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
 });
 
 QUnit.test('Solid gauge updates', function (assert) {
+    Highcharts.setOptions({
+        yAxis: {
+            labels: {
+                style: {
+                    color: 'red'
+                }
+            }
+        }
+    });
+
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'solidgauge'
             },
+
+            yAxis: [{}],
 
             series: [
                 {
@@ -223,6 +235,12 @@ QUnit.test('Solid gauge updates', function (assert) {
             ]
         }),
         point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        chart.yAxis[0].options.labels.style.color,
+        'red',
+        '#16112: Axis options set by setOptions should be picked up'
+    );
 
     chart.series[0].update({
         linecap: 'round',

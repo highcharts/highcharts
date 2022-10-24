@@ -1,63 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ao-na', 0],
-    ['ao-cb', 1],
-    ['ao-ln', 2],
-    ['ao-ls', 3],
-    ['ao-ml', 4],
-    ['ao-bo', 5],
-    ['ao-cn', 6],
-    ['ao-cs', 7],
-    ['ao-lu', 8],
-    ['ao-ui', 9],
-    ['ao-za', 10],
-    ['ao-bi', 11],
-    ['ao-bg', 12],
-    ['ao-cc', 13],
-    ['ao-cu', 14],
-    ['ao-hm', 15],
-    ['ao-hl', 16],
-    ['ao-mx', 17]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ao/ao-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ao/ao-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ao-na', 10], ['ao-cb', 11], ['ao-ln', 12], ['ao-ls', 13],
+        ['ao-ml', 14], ['ao-bo', 15], ['ao-cn', 16], ['ao-cs', 17],
+        ['ao-lu', 18], ['ao-ui', 19], ['ao-za', 20], ['ao-bi', 21],
+        ['ao-bg', 22], ['ao-cc', 23], ['ao-cu', 24], ['ao-hm', 25],
+        ['ao-hl', 26], ['ao-mx', 27]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ao/ao-all.js">Angola</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ao/ao-all.topo.json">Angola</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

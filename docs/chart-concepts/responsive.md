@@ -23,6 +23,6 @@ One of the most handy options is [chart.className](https://jsfiddle.net/gh/get/
 
 In general, the _responsive_ configuration lets you define size-dependent settings for all aspects of the chart. Typical use could be to [move the legend](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/responsive/legend/) or modify how much space [the axes take up](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/responsive/axis/). Responsiveness is also a great concept in charts with many graphical elements, like [stock charts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/responsive/).
 
-What what happens to the legend in this sample as you scale up or down the browser window size:
+Watch what happens to the legend in this sample as you scale up or down the browser window size:
 
 <iframe style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/responsive/legend allow="fullscreen"></iframe>

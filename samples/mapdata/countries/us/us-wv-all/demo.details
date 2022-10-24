@@ -1,5 +1,5 @@
 ---
- name: West Virginia - Highmaps
- description: Highmaps demo
+ name: West Virginia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,7 +1,7 @@
 Axes
 ====
 
-The x-axis and y-axis are shown by default in all charts but the [pie chart](https://highcharts.com/docs/chart-and-series-types/pie-chart). Here is a quick overview of the axis elements:
+The x-axis and y-axis are shown by default in all charts containing data series with a [cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system). Here is a quick overview of the axis elements:
 
 ![axis_description.png](axis_description.png)
 
@@ -14,15 +14,15 @@ The axis labels, tickmarks and gridlines are closely linked and all scale togeth
 
 Tick marks are the lines placed along an axis to show the units of measurement. The spacing between ticks are mainly decided by the [tickInterval](https://api.highcharts.com/highcharts/xAxis.tickInterval) and [tickPixelInterval](https://api.highcharts.com/highcharts/xAxis.tickPixelInterval) options. Labels and grid lines are laid out on the same positions as the tick marks. 
 
-The tickInterval option decides the interval of the tick marks in axis units. The tick interval defaults to null, which means it is computed to approximately follow the tickPixelInterval on linear and datetime axes.
+The `tickInterval` option decides the interval of the tick marks in axis units. The tick interval defaults to null, which means it is computed to approximately follow the `tickPixelInterval` on linear and datetime axes.
 
-On **categorized** axes, a null tickInterval will default to 1, one category.
+On **categorized** axes, a null `tickInterval` will default to 1, one category.
 
 Note that **datetime** axes are based on milliseconds, so for example an interval of one day is expressed as 24 * 3600 * 1000. 
 
-On **logarithmic** axes, the tickInterval is based on powers, so a tickInterval of 1 means one tick on each of 0.1, 1, 10, 100 etc. A tickInterval of 2 means a tick of 0.1, 10, 1000 etc. A tickInterval of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
+On **logarithmic** axes, the `tickInterval` is based on powers, so a `tickInterval` of 1 means one tick on each of 0.1, 1, 10, 100 etc. A `tickInterval` of 2 means a tick of 0.1, 10, 1000 etc. A `tickInterval` of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
-The "tickPixelInterval" sets an approximate pixel interval of the tick marks based on a pixel value (if "tickInterval" is null). It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
+The `tickPixelInterval` option sets an approximate pixel interval of the tick marks based on a pixel value (if `tickInterval` is null). This makes it work well with responsive layouts, ensuring a reasonable distance between ticks regardless of the chart size and axis length. It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
 
 ### Minor ticks
 
@@ -59,7 +59,7 @@ To enable or disable gridlines for either the x or y-axis, set the [gridLineWidt
     }
 
 
-Grid lines for the y-axis are enabled by default (gridLineWidth: 1), and disabled by default for the x-axis  (gridLineWidth: 0).
+Grid lines for the y-axis are enabled by default (`gridLineWidth: 1`), and disabled by default for the x-axis  (`gridLineWidth: 0`).
 
 Other options for grid lines can be found in the [API reference](https://api.highcharts.com/highcharts/xAxis) for the x and y-axis.
 
@@ -91,7 +91,15 @@ It is possible to have multiple axes and linking them with different data series
     }]
 
 
-Note that several axes are created using a list, so the first yAxis starts with index 0. And the "opposite: true" option puts the axis on the right side of the chart.
+Note that several axes are created using a list, so the first `yAxis` starts with index 0. And the `opposite: true` option puts the axis on the right side of the chart.
+
+### Align ticks
+
+When using multiple axes, it is usually desirable to align the ticks, to avoid multiple sets of grid lines to mess up the chart. The [chart.alignTicks](https://api.highcharts.com/highcharts/chart.alignTicks) option is `true` by default. The downside of alignment is that each axis is pre-determined to have the same tick amount as the others, so the fitting of ticks may not be optimal. An alternative is to turn off `alignTicks` and set `gridLineWidth` to 0.
+
+### Align thresholds
+
+Since v10, it is possible to align the [thresholds](https://api.highcharts.com/highcharts/series.line.threshold) of multiple axes through the [chart.alignThresholds](https://api.highcharts.com/highcharts/chart.alignThresholds) option. This is similar to `alignTicks` but goes one step further by also ensuring zero-levels or other kinds of thresholds are aligned.
 
 Axis title 
 -----------
@@ -172,7 +180,7 @@ Some useful functions are:
     // Get time in millis for your local time
     Date.parse("Month day, year");
 
-    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
+    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat) for usage)
     Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
 
 Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.

@@ -14,18 +14,17 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     colorAxis: [{
-        minColor: '#000fb0',
-        maxColor: '#e3e5ff',
+        maxColor: '#000fb0',
+        minColor: '#e3e5ff',
         labels: {
-            formatter: function () {
-                return Math.abs(this.value) + '%';
-            }
-        }
+            format: '{value}%'
+        },
+        reversed: true
     }, {
         minColor: '#ffece8',
         maxColor: '#8a1900',
         labels: {
-            format: "{value}%"
+            format: '{value}%'
         }
     }],
     title: {
@@ -35,7 +34,7 @@ Highcharts.chart('container', {
         text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
     },
     xAxis: [{
-        categories: categories,
+        categories,
         reversed: false,
         labels: {
             step: 1
@@ -49,39 +48,41 @@ Highcharts.chart('container', {
             step: 1
         }
     }],
-    yAxis: {
+    yAxis: [{
         title: {
             text: null
         },
         labels: {
-            formatter: function () {
-                return Math.abs(this.value) + '%';
-            }
-        }
-    },
-
-    plotOptions: {
-        series: {
-            stacking: 'normal'
-        }
-    },
+            format: '{value}%'
+        },
+        reversed: true,
+        width: '50%'
+    }, {
+        title: {
+            text: null
+        },
+        labels: {
+            format: '{value}%'
+        },
+        left: '50%',
+        offset: 0,
+        showFirstLabel: false,
+        width: '50%'
+    }],
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
-                'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
-        }
+        valueSuffix: '%'
     },
 
     series: [{
         name: 'Male',
         data: [
-            -2.2, -2.1, -2.2, -2.4,
-            -2.7, -3.0, -3.3, -3.2,
-            -2.9, -3.5, -4.4, -4.1,
-            -3.4, -2.7, -2.3, -2.2,
-            -1.6, -0.6, -0.3, -0.0,
-            -0.0
+            2.2, 2.1, 2.2, 2.4,
+            2.7, 3.0, 3.3, 3.2,
+            2.9, 3.5, 4.4, 4.1,
+            3.4, 2.7, 2.3, 2.2,
+            1.6, 0.6, 0.3, 0.0,
+            0.0
         ]
     }, {
         name: 'Female',
@@ -92,6 +93,7 @@ Highcharts.chart('container', {
             4.3, 4.0, 3.5, 2.9, 2.5,
             2.7, 2.2, 1.1, 0.6, 0.2,
             0.0
-        ]
+        ],
+        yAxis: 1
     }]
 });

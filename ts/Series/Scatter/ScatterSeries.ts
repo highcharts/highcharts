@@ -18,9 +18,12 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import ColumnSeries from '../Column/ColumnSeries.js';
-import LineSeries from '../Line/LineSeries.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    column: ColumnSeries,
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -40,6 +43,12 @@ const {
  * @private
  */
 class ScatterSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A scatter plot uses cartesian coordinates to display values for two
@@ -123,7 +132,7 @@ class ScatterSeries extends LineSeries {
          *
          * @type      {boolean}
          * @default   false
-         * @product   highcharts highstock
+         * @product   highcharts highstock highmaps
          * @apioption plotOptions.scatter.stickyTracking
          */
 
@@ -135,12 +144,14 @@ class ScatterSeries extends LineSeries {
          * series, in a scatter plot the series.name by default shows in the
          * headerFormat and point.x and point.y in the pointFormat.
          *
-         * @product highcharts highstock
+         * @product highcharts highstock highmaps
          */
         tooltip: {
-            headerFormat:
-            '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 10px"> {series.name}</span><br/>',
+            /**
+             * @product highcharts highstock
+             */
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '<span style="font-size: 10px"> {series.name}</span><br/>',
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
         }
 
@@ -171,7 +182,7 @@ class ScatterSeries extends LineSeries {
      * @private
      */
     public applyJitter(): void {
-        var series = this,
+        const series = this,
             jitter = this.options.jitter,
             len = this.points.length;
 
@@ -181,14 +192,14 @@ class ScatterSeries extends LineSeries {
          * @private
          */
         function unrandom(seed: number): number {
-            var rand = Math.sin(seed) * 10000;
+            const rand = Math.sin(seed) * 10000;
             return rand - Math.floor(rand);
         }
 
         if (jitter) {
             this.points.forEach(function (point, i): void {
                 ['x', 'y'].forEach(function (dim, j): void {
-                    var axis,
+                    let axis,
                         plotProp = 'plot' + dim.toUpperCase(),
                         min,
                         max,
@@ -226,20 +237,12 @@ class ScatterSeries extends LineSeries {
 
     /**
      * @private
-     * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     public drawGraph(): void {
-        if (
-            this.options.lineWidth ||
-            // In case we have a graph from before and we update the line
-            // width to 0 (#13816)
-            (
-                this.options.lineWidth === 0 &&
-                this.graph &&
-                this.graph.strokeWidth()
-            )
-        ) {
+        if (this.options.lineWidth) {
             super.drawGraph();
+        } else if (this.graph) {
+            this.graph = this.graph.destroy();
         }
     }
 
@@ -249,7 +252,7 @@ class ScatterSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -378,4 +381,4 @@ export default ScatterSeries;
  * @apioption series.scatter.data
  */
 
-''; // adds doclets above to transpilat
+''; // keeps doclets above in JS file

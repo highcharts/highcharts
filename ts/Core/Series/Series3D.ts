@@ -21,7 +21,7 @@
 import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -92,7 +92,7 @@ class Series3D extends Series {
      * @private
      */
     public translate3dPoints(): void {
-        var series = this,
+        let series = this,
             seriesOptions = series.options,
             chart = series.chart,
             zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),

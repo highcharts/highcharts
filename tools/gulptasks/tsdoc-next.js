@@ -25,7 +25,9 @@ const NEXT_TARGET = 'tree-next.json';
 function task() {
 
     const fs = require('fs');
-    const generator = require('highcharts-documentation-generators').TypeScript;
+    const generator = require(
+        '@highcharts/highcharts-documentation-generators'
+    ).TypeScript;
     const logLib = require('./lib/log');
 
     return Promise

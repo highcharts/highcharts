@@ -122,10 +122,10 @@ QUnit.test('#2049 - Flag series on grouped columns.', function (assert) {
         series,
         xOffset;
 
-    Highcharts.each([0, 1], function (i) {
+    [0, 1].forEach(i => {
         series = chart.series[i];
         xOffset = series.pointXOffset + series.barW / 2;
-        Highcharts.each(series.points, function (point, j) {
+        series.points.forEach((point, j) => {
             assert.strictEqual(
                 Math.round(point.plotX + xOffset),
                 Math.round(chart.series[i + 2].points[j].plotX),

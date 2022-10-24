@@ -7,6 +7,8 @@ resources:
   - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
 tags:
   - Highcharts Gantt demo
+use_png_thumbnail: true
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 2
 ...

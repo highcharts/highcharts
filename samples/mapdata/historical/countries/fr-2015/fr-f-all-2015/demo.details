@@ -1,5 +1,5 @@
 ---
- name: Centre (2015) - Highmaps
- description: Highmaps demo
+ name: Centre (2015) - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,73 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['pt-fa', 0],
-    ['pt-li', 1],
-    ['pt-av', 2],
-    ['pt-vc', 3],
-    ['pt-be', 4],
-    ['pt-ev', 5],
-    ['pt-se', 6],
-    ['pt-pa', 7],
-    ['pt-sa', 8],
-    ['pt-br', 9],
-    ['pt-le', 10],
-    ['pt-ba', 11],
-    ['pt-cb', 12],
-    ['pt-gu', 13],
-    ['pt-co', 14],
-    ['pt-po', 15],
-    ['pt-vi', 16],
-    ['pt-vr', 17],
-    ['pt-ma', 18],
-    ['pt-ac', 19]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/pt/pt-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/pt/pt-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['pt-fa', 10], ['pt-li', 11], ['pt-av', 12], ['pt-vc', 13],
+        ['pt-be', 14], ['pt-ev', 15], ['pt-se', 16], ['pt-pa', 17],
+        ['pt-sa', 18], ['pt-br', 19], ['pt-le', 20], ['pt-ba', 21],
+        ['pt-cb', 22], ['pt-gu', 23], ['pt-co', 24], ['pt-po', 25],
+        ['pt-vi', 26], ['pt-vr', 27], ['pt-ma', 28], ['pt-ac', 29]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pt/pt-all.js">Portugal</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pt/pt-all.topo.json">Portugal</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }, {
-        name: 'Separators',
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/pt/pt-all'], 'mapline'),
-        color: 'silver',
-        nullColor: 'silver',
-        showInLegend: false,
-        enableMouseTracking: false
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

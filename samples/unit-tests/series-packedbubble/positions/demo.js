@@ -102,3 +102,80 @@ QUnit.test('Bubble positions', function (assert) {
         'dataLabels are visible with allowOverlap set to true'
     );
 });
+
+QUnit.test('PackedBubble layout simulation', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble',
+            height: 600,
+            width: 600,
+            marginTop: 46,
+            marginBottom: 53
+        },
+        plotOptions: {
+            packedbubble: {
+                useSimulation: true,
+                minSize: '30%',
+                layoutAlgorithm: {
+                    enableSimulation: false
+                }
+            }
+        },
+        series: [{
+            data: [{
+                value: 7
+            }, {
+                value: 7
+            }]
+        }]
+    });
+
+    var temp = chart.series[0].data[0].temperature;
+
+    assert.strictEqual(
+        temp,
+        2.1283299490557193,
+        'Bubbles should not get stuck during simulation (#14439).'
+    );
+});
+
+QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble'
+        },
+        plotOptions: {
+            packedbubble: {
+                minSize: '20%',
+                maxSize: '100%',
+                zMin: 0,
+                zMax: 1000,
+                lineWidth: 10,
+                layoutAlgorithm: {
+                    splitSeries: true,
+                    enableSimulation: false
+                }
+            }
+        },
+        series: [{
+            value: 1
+
+        }, {
+            value: 2
+        }]
+    });
+
+    const bubbleOne = chart.series[0].parentNode,
+        bubbleTwo = chart.series[1].parentNode;
+
+    bubbleOne.onMouseOver();
+    bubbleTwo.onMouseOver();
+
+    const lineWidth = bubbleOne.graphic["stroke-width"];
+    assert.strictEqual(
+        lineWidth,
+        10,
+        "Linewidth should go back to 10 after de-hovering."
+    );
+});

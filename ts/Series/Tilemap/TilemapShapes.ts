@@ -45,20 +45,13 @@ const {
 /**
  * Utility func to get padding definition from tile size division
  * @private
- * @param {Highcharts.TilemapSeries} series
- * series
- * @param {Highcharts.number} xDiv
- * xDiv
- * @param {Highcharts.number} yDiv
- * yDiv
- * @return {Highcharts.TilemapPaddingObject}
  */
 function tilePaddingFromTileSize(
     series: TilemapSeries,
     xDiv: number,
     yDiv: number
 ): TilemapShapes.PaddingObject {
-    var options = series.options;
+    const options = series.options;
 
     return {
         xPad: (options.colsize || 1) / -xDiv,
@@ -125,7 +118,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            var hexagon = this.tileEdges;
+            const hexagon = this.tileEdges;
 
             return [
                 ['M', hexagon.x2 - size, hexagon.y1 + size],
@@ -138,7 +131,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             ];
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -150,52 +143,52 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x1 = clamp(
+                let x1 = clamp(
                         Math.floor(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x - xPad * 2,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 1 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     x2 = clamp(
                         Math.floor(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x - xPad,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 1 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     x3 = clamp(
                         Math.floor(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x + xPad,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 1 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     x4 = clamp(
                         Math.floor(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x + xPad * 2,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 1 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     y1 = clamp(
@@ -205,7 +198,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             1 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -216,7 +209,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             1 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -227,7 +220,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             1 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -304,7 +297,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             if (!size) {
                 return [];
             }
-            var diamond = this.tileEdges;
+            const diamond = this.tileEdges;
 
             return [
                 ['M', diamond.x2, diamond.y1 + size],
@@ -315,7 +308,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             ];
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -327,40 +320,40 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x1 = clamp(
+                let x1 = clamp(
                         Math.round(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x - xPad,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 0 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     x2 = clamp(
                         Math.round(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 0 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     x3 = clamp(
                         Math.round(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x + xPad,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 0 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     y1 = clamp(
@@ -370,7 +363,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             0 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -381,7 +374,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             0 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -392,7 +385,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             0 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -466,7 +459,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                 );
         },
         translate: function (this: TilemapSeries): void {
-            var series = this,
+            let series = this,
                 options = series.options,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -482,16 +475,16 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             series.points.forEach(function (point): void {
-                var x = clamp(
+                let x = clamp(
                         Math.round(
                             xAxis.len -
-                            (xAxis.translate(
+                            xAxis.translate(
                                 point.x,
                                 0 as any,
                                 1 as any,
                                 0 as any,
                                 0 as any
-                            ) as any)
+                            )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
                     y = clamp(
@@ -501,7 +494,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             1 as any,
                             0 as any,
                             0 as any
-                        ) as any),
+                        )),
                         -yAxis.len,
                         2 * yAxis.len
                     ),
@@ -538,13 +531,13 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                         clamp(
                             Math.floor(
                                 xAxis.len -
-                                (xAxis.translate(
+                                xAxis.translate(
                                     point.x + colsize,
                                     0 as any,
                                     1 as any,
                                     0 as any,
                                     0 as any
-                                ) as any)
+                                )
                             ), -xAxis.len, 2 * xAxis.len
                         ) - x
                     );
@@ -557,7 +550,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                                     1 as any,
                                     0 as any,
                                     0 as any
-                                ) as any
+                                )
                             ), -yAxis.len, 2 * yAxis.len
                         ) - y
                     );

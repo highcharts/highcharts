@@ -5,25 +5,66 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
             scrollablePlotArea: {
                 minWidth: 2000,
                 scrollPositionX: 1
-            }
-        }
+            },
+            inverted: true
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
+
+    assert.strictEqual(
+        chart.plotWidth,
+        chart.plotBox.width,
+        '#14448: plotBox.width should equal plotWidth'
+    );
+    assert.strictEqual(
+        chart.plotHeight,
+        chart.plotBox.height,
+        '#14448: plotBox.height should equal plotHeight'
+    );
 
     chart.setTitle({ text: 'New title' });
 
-    assert.equal(
-        chart.title.element.parentNode.parentNode.classList.contains(
-            'highcharts-fixed'
-        ),
-        true,
+    assert.ok(
+        chart.fixedRenderer.box.contains(chart.title.element),
         'Title should be outside the scrollable plot area (#11966)'
+    );
+
+    chart.update({
+        xAxis: {
+            lineWidth: 1
+        }
+    });
+
+    assert.ok(
+        chart.fixedRenderer.box.contains(chart.xAxis[0].axisGroup.element),
+        'X-axis should be outside the scrollable plot area (#8862)'
+    );
+
+    chart.series[0].update({
+        zones: [{
+            value: 0,
+            color: '#f7a35c'
+        }, {
+            value: 1.5,
+            color: '#7cb5ec'
+        }, {
+            color: '#90ed7d'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].clips[0].attr('width'),
+        chart.plotWidth,
+        `When the zones are applied, their' clip width should equal the chart's
+        plotWidth, #17481.`
     );
 });
 
 QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'column',
             scrollablePlotArea: {
                 minHeight: 400
             },
@@ -31,7 +72,7 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         },
         series: [
             {
-                data: [1]
+                data: [0, 1, 2, 3, 4]
             }
         ]
     });
@@ -42,6 +83,20 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         document.getElementsByClassName('highcharts-scrolling')[0]
             .clientHeight > 300,
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
+    );
+
+    document.getElementById('container').style.height = "190px";
+    chart.reflow();
+
+    document.getElementById('container').style.height = "400px";
+    chart.reflow();
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.notOk(
+        chart.tooltip.isHidden,
+        `After updating the scrollablePlotArea, the tooltip should be still
+        visible, #17352.`
     );
 });
 
@@ -101,3 +156,27 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('#12517: Reset zoom button', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minWidth: 2000
+            },
+            zoomType: 'x'
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([200, 200], [300, 200]);
+
+    const button = chart.resetZoomButton;
+
+    assert.ok(
+        button.translateX + button.width < chart.chartWidth,
+        'Reset zoom button should be within chart'
+    );
+});

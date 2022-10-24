@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Chart Chooser Treemap Monochrome
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

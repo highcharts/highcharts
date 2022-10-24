@@ -6,60 +6,41 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ControllableLabelOptions
+} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AnnotationElliottWaveLabelOptionsObject extends AnnotationsLabelOptions {
-            backgroundColor: ColorType;
-            borderWidth: number;
-            y: number;
-        }
-        interface AnnotationElliottWaveOptionsObject extends AnnotationCrookedLineOptionsObject {
-            labelOptions: AnnotationElliottWaveLabelOptionsObject;
-            typeOptions: AnnotationElliottWaveTypeOptionsObject;
-        }
-        interface AnnotationElliottWaveTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
-            labels: Array<string>;
-        }
-        interface AnnotationMockPointOptionsObject {
-            label?: AnnotationsLabelOptions;
-        }
-        interface AnnotationTypesRegistry {
-            elliottWave: typeof ElliottWave;
-        }
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationElliottWaveOptionsObject) {
-        super(chart, options);
-    }
 
     /* *
      *
      * Functions
      *
      * */
+
     public addLabels(): void {
-        this.getPointsOptions().forEach(function (
-            this: ElliottWave,
-            point: Highcharts.AnnotationMockPointOptionsObject,
-            i: number
-        ): void {
-            var typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,
+        this.getPointsOptions().forEach((point, i): void => {
+            const typeOptions = (
+                    this.options.typeOptions as ElliottWave.TypeOptions
+                ),
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],
@@ -70,9 +51,15 @@ class ElliottWave extends CrookedLine {
                 ), false as any);
 
             point.label = label.options;
-        }, this);
+        });
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface ElliottWave {
     defaultOptions: CrookedLine['defaultOptions'];
@@ -99,7 +86,7 @@ ElliottWave.prototype.defaultOptions = merge(
              */
 
             /**
-             * @ignore-options
+             * @ignore-option
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {
@@ -120,6 +107,45 @@ ElliottWave.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace ElliottWave {
+    export interface LabelOptions extends ControllableLabelOptions {
+        backgroundColor: ColorType;
+        borderWidth: number;
+        y: number;
+    }
+    export interface Options extends CrookedLine.Options {
+        labelOptions: LabelOptions;
+        typeOptions: TypeOptions;
+    }
+    export interface TypeOptions extends CrookedLine.TypeOptions {
+        labels: Array<string>;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './AnnotationType' {
+    interface AnnotationTypeRegistry {
+        elliottWave: typeof ElliottWave;
+    }
+}
+
 Annotation.types.elliottWave = ElliottWave;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ElliottWave;

@@ -1,5 +1,5 @@
 ---
- name: Bayern - Highmaps
- description: Highmaps demo
+ name: Bayern - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

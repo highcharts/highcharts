@@ -8,8 +8,18 @@
  *
  * */
 
-import type { AxisLike } from './Types';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AxisLike from './AxisLike';
+import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
+
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -19,104 +29,84 @@ const {
     splat
 } = U;
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
-        zAxis?: Array<ZAxis>;
-        addZAxis(options: Highcharts.AxisOptions): Axis;
-    }
-}
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module './Types' {
+declare module './AxisType' {
     interface AxisTypeRegistry {
         ZAxis: ZAxis;
     }
 }
 
-/* eslint-disable valid-jsdoc */
-
-/**
- * 3D chart with support of z coordinates.
- * @private
- * @class
- */
-class ZChart {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    public static compose(ChartClass: typeof Chart): void {
-
-        addEvent(ChartClass, 'afterGetAxes', ZChart.onAfterGetAxes);
-
-        const chartProto = ChartClass.prototype as ZChart;
-
-        chartProto.addZAxis = ZChart.wrapAddZAxis;
-        chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
-        chartProto.collectionsWithUpdate.push('zAxis');
-
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        zAxis?: Array<ZAxis>;
+        addZAxis(options: AxisOptions): Axis;
     }
-    /**
-     * Get the Z axis in addition to the default X and Y.
-     * @private
-     */
-    public static onAfterGetAxes(this: ZChart): void {
-        const chart = this;
-        const options = this.options;
-        const zAxisOptions = options.zAxis = splat(options.zAxis || {});
-
-        if (!chart.is3d()) {
-            return;
-        }
-        chart.zAxis = [];
-        zAxisOptions.forEach(function (
-            axisOptions: Highcharts.AxisOptions,
-            i: number
-        ): void {
-            axisOptions.index = i;
-            // Z-Axis is shown horizontally, so it's kind of a X-Axis
-            axisOptions.isX = true;
-            chart
-                .addZAxis(axisOptions)
-                .setScale();
-        });
-    }
-
-    /**
-     * @private
-     */
-    public static wrapAddZAxis(
-        this: Chart,
-        options: Highcharts.AxisOptions
-    ): Highcharts.Axis {
-        return new ZAxis(this, options);
-    }
-
 }
+
+declare module '../Options' {
+    interface Options {
+        zAxis?: (
+            DeepPartial<AxisOptions>|
+            Array<DeepPartial<AxisOptions>>
+        );
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedClasses: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
  */
-interface ZChart extends Chart {
-    // nothing to add to instances
+function chartAddZAxis(
+    this: Chart,
+    options: AxisOptions
+): Axis {
+    return new ZAxis(this, options);
 }
+
+/**
+ * Get the Z axis in addition to the default X and Y.
+ * @private
+ */
+function onChartAfterGetAxes(this: Chart): void {
+    const zAxisOptions = this.options.zAxis = splat(this.options.zAxis || {});
+
+    if (!this.is3d()) {
+        return;
+    }
+
+    this.zAxis = [];
+
+    zAxisOptions.forEach((axisOptions, i): void => {
+        axisOptions.index = i;
+        // Z-Axis is shown horizontally, so it's kind of a X-Axis
+        axisOptions.isX = true;
+        this.addZAxis(axisOptions).setScale();
+    });
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * 3D axis for z coordinates.
@@ -129,15 +119,33 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public static ZChartComposition = ZChart;
+    public static compose(
+        ChartClass: typeof Chart
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
+
+            const chartProto = ChartClass.prototype;
+
+            chartProto.addZAxis = chartAddZAxis;
+            chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
+            chartProto.collectionsWithUpdate.push('zAxis');
+        }
+    }
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
-    public constructor(chart: Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(
+        chart: Chart,
+        userOptions: AxisOptions
+    ) {
         super(chart, userOptions);
     }
 
@@ -158,48 +166,45 @@ class ZAxis extends Axis implements AxisLike {
      * */
 
     public getSeriesExtremes(): void {
-        const axis = this;
-        const chart = axis.chart;
+        const chart = this.chart;
 
-        axis.hasVisibleSeries = false;
+        this.hasVisibleSeries = false;
 
         // Reset properties in case we're redrawing (#3353)
-        axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = void 0;
+        this.dataMin = this.dataMax = this.ignoreMinPadding = (
+            this.ignoreMaxPadding = void 0
+        );
 
-        if (axis.stacking) {
-            axis.stacking.buildStacks();
+        if (this.stacking) {
+            this.stacking.buildStacks();
         }
 
         // loop through this axis' series
-        axis.series.forEach(function (series): void {
+        this.series.forEach((series): void => {
 
             if (
                 series.visible ||
-                !(
-                    chart.options.chart &&
-                    chart.options.chart.ignoreHiddenSeries
-                )
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
-                var seriesOptions = series.options,
-                    zData: Array<(number|null|undefined)>,
-                    threshold = seriesOptions.threshold;
+                let threshold = series.options.threshold;
 
-                axis.hasVisibleSeries = true;
+                this.hasVisibleSeries = true;
 
                 // Validate threshold in logarithmic axes
-                if (axis.positiveValuesOnly && (threshold as any) <= 0) {
+                if (this.positiveValuesOnly && (threshold as any) <= 0) {
                     threshold = void 0;
                 }
 
-                zData = series.zData as any;
+                const zData: Array<(number|null|undefined)> = series.zData as any;
+
                 if (zData.length) {
-                    axis.dataMin = Math.min(
-                        pick(axis.dataMin, zData[0] as any),
+                    this.dataMin = Math.min(
+                        pick(this.dataMin, zData[0] as any),
                         Math.min.apply(null, zData as any)
                     );
-                    axis.dataMax = Math.max(
-                        pick(axis.dataMax, zData[0] as any),
+                    this.dataMax = Math.max(
+                        pick(this.dataMax, zData[0] as any),
                         Math.max.apply(null, zData as any)
                     );
                 }
@@ -211,27 +216,25 @@ class ZAxis extends Axis implements AxisLike {
      * @private
      */
     public setAxisSize(): void {
-        const axis = this;
-        const chart = axis.chart;
+        const chart = this.chart;
 
         super.setAxisSize();
 
-        axis.width = axis.len = (
-            chart.options.chart &&
+        this.width = this.len = (
             chart.options.chart.options3d &&
             chart.options.chart.options3d.depth
         ) || 0;
-        axis.right = chart.chartWidth - axis.width - axis.left;
+        this.right = chart.chartWidth - this.width - this.left;
     }
 
     /**
      * @private
      */
-    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
 
-        userOptions = merge<Highcharts.AxisOptions>({
-            offset: 0 as any,
-            lineWidth: 0 as any
+        userOptions = merge<DeepPartial<AxisOptions>>({
+            offset: 0,
+            lineWidth: 0
         }, userOptions);
 
         // #14793, this used to be set on the prototype
@@ -243,5 +246,11 @@ class ZAxis extends Axis implements AxisLike {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ZAxis;

@@ -77,8 +77,9 @@ QUnit.test('TouchPointer events', function (assert) {
         backups = {};
 
     // Allow the wrapped event handler to be registered
-    if (Highcharts.unbindDocumentTouchEnd) {
-        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    if (Highcharts.Pointer.unbindDocumentTouchEnd) {
+        Highcharts.Pointer.unbindDocumentTouchEnd =
+            Highcharts.Pointer.unbindDocumentTouchEnd();
     }
 
     // Listen to internal functions
@@ -132,8 +133,9 @@ QUnit.test('TouchPointer events', function (assert) {
     });
 
     // Allow the original event handler to be re-registered
-    if (Highcharts.unbindDocumentTouchEnd) {
-        Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
+    if (Highcharts.Pointer.unbindDocumentTouchEnd) {
+        Highcharts.Pointer.unbindDocumentTouchEnd =
+            Highcharts.Pointer.unbindDocumentTouchEnd();
     }
 });
 
@@ -163,6 +165,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
             preventDefault: function () {},
             target: points[0].graphic.element
         });
+
+        chart.pointer.res = false;
 
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
@@ -233,6 +237,31 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         chart.tooltip.label.element.textContent.indexOf('Bananas'),
         -1,
         'The tooltip should show Bananas'
+    );
+    chart.update({
+        tooltip: {
+            followTouchMove: false
+        }
+    });
+    swipe();
+    assert.equal(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should not show Bananas after chart.update'
+    );
+    chart.update({
+        tooltip: {
+            followTouchMove: true
+        }
+    });
+    chart.tooltip.update({
+        followTouchMove: false
+    });
+    swipe();
+    assert.equal(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should not show Bananas after tooltip.update'
     );
 
     chart = Highcharts.chart('container', {

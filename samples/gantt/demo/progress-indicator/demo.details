@@ -7,5 +7,6 @@ compareTooltips: true
 tags:
   - Highcharts Gantt demo
 categories:
-  - Highcharts Gantt
+  - Highcharts Gantt:
+      priority: 6
 ...

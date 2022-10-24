@@ -23,9 +23,10 @@ import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
 } from './SeriesType';
+
 import H from '../Globals.js';
-import O from '../Options.js';
-const { defaultOptions } = O;
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
@@ -33,30 +34,6 @@ const {
     extendClass,
     merge
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal namespace
- * @private
- * @todo remove
- */
-declare global {
-    namespace Highcharts {
-        let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof Series>(
-            type: keyof SeriesTypeRegistry,
-            parent: (keyof SeriesTypeRegistry|undefined),
-            options: T['prototype']['options'],
-            props?: DeepPartial<T['prototype']>,
-            pointProps?: DeepPartial<T['prototype']['pointClass']['prototype']>
-        ): T;
-    }
-}
 
 /* *
  *
@@ -68,53 +45,24 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
     /** @internal */
     export let series: typeof Series;
 
-    export const seriesTypes = {} as SeriesTypeRegistry;
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    export const seriesTypes = H.seriesTypes;
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Internal function to initialize an individual series.
-     * @private
-     */
-    export function getSeries(
-        chart: Chart,
-        options: DeepPartial<SeriesTypeOptions> = {}
-    ): Series {
-        const optionsChart = chart.options.chart as Highcharts.ChartOptions,
-            type = (
-                options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType ||
-                ''
-            ),
-            SeriesClass: typeof Series = seriesTypes[type] as any;
-
-        // No such series type
-        if (!SeriesRegistry) {
-            error(17, true, chart as any, { missingModuleFor: type });
-        }
-
-        const series = new SeriesClass();
-
-        if (typeof series.init === 'function') {
-            series.init(chart, options);
-        }
-
-        return series;
-    }
 
     /**
      * Registers class pattern of a series.
@@ -123,22 +71,23 @@ namespace SeriesRegistry {
      */
     export function registerSeriesType(
         seriesType: string,
-        seriesClass: typeof Series
+        SeriesClass: typeof Series
     ): void {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
-            seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
+            seriesOptions = SeriesClass.defaultOptions,
+            seriesProto = SeriesClass.prototype;
 
-        if (!seriesClass.prototype.pointClass) {
-            seriesClass.prototype.pointClass = Point;
+        seriesProto.type = seriesType;
+
+        if (!seriesProto.pointClass) {
+            seriesProto.pointClass = Point;
         }
-
-        seriesClass.prototype.type = seriesType;
 
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
         }
 
-        seriesTypes[seriesType] = seriesClass;
+        seriesTypes[seriesType] = SeriesClass;
     }
 
     /**
@@ -194,28 +143,20 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto) as any;
+            seriesTypes[type].prototype.pointClass = extendClass(
+                Point,
+                pointProto
+            ) as any;
         }
 
         return seriesTypes[type] as unknown as T;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
-
-/* *
- *
- *  Export
+ *  Default Export
  *
  * */
 

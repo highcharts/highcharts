@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     ATROptions,
     ATRParamsOptions
@@ -15,19 +21,23 @@ import type {
 import type ATRPoint from './ATRPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 
 /**
@@ -39,7 +49,7 @@ function accumulateAverage(
     yVal: Array<Array<number>>,
     i: number
 ): void {
-    var xValue = xVal[i],
+    const xValue = xVal[i],
         yValue = yVal[i];
 
     points.push([xValue, yValue]);
@@ -52,7 +62,7 @@ function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
 ): number {
-    var pointY = currentPoint,
+    const pointY = currentPoint,
         prevY = prevPoint,
         HL = pointY[1] - pointY[2],
         HCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[1] - prevY[3]),
@@ -73,7 +83,7 @@ function populateAverage(
     period: number,
     prevATR: number
 ): Array<number> {
-    var x = xVal[i - 1],
+    let x = xVal[i - 1],
         TR = getTR(yVal[i - 1], yVal[i - 2]),
         y;
 
@@ -82,11 +92,9 @@ function populateAverage(
     return [x, y];
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -100,6 +108,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class ATRIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
@@ -115,8 +130,11 @@ class ATRIndicator extends SMAIndicator {
      * @optionparent plotOptions.atr
      */
     public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         }
     } as ATROptions);
 
@@ -140,7 +158,7 @@ class ATRIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        let period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -206,7 +224,7 @@ class ATRIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -234,6 +252,12 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  * */
 
 export default ATRIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `ATR` series. If the [type](#series.atr.type) option is not specified, it
