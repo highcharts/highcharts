@@ -983,8 +983,8 @@ namespace Chart3D {
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
 
         wrap(chartProto, 'isInsidePlot', wrapIsInsidePlot);
-        wrap(ChartClass, 'renderSeries', wrapRenderSeries);
-        wrap(ChartClass, 'setClassName', wrapSetClassName);
+        wrap(chartProto, 'renderSeries', wrapRenderSeries);
+        wrap(chartProto, 'setClassName', wrapSetClassName);
     }
 
     /**

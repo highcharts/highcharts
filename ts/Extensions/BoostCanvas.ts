@@ -261,9 +261,9 @@ const initCanvasBoost = function (): void {
                     boost.canvas.getContext('2d') as CanvasRenderingContext2D;
 
                 if (chart.inverted) {
-                    ['moveTo', 'lineTo', 'rect', 'arc'].forEach(function (
-                        fn: string
-                    ): void {
+                    (['moveTo', 'lineTo', 'rect', 'arc'] as const).forEach((
+                        fn
+                    ): void => {
                         wrap(ctx, fn, swapXY);
                     });
                 }
