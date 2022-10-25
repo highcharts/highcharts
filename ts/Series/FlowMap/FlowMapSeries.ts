@@ -36,6 +36,7 @@ const {
     defined,
     extend,
     merge,
+    pick,
     addEvent,
     arrayMax,
     arrayMin
@@ -386,13 +387,15 @@ class FlowMapSeries extends MapLineSeries {
         }
 
         const pointOptions = point.options,
-            // TODO: Which should override what?
-            markerEndOptions =
-                pointOptions.markerEnd || this.options.markerEnd,
+            markerEndOptions = pick(
+                pointOptions.markerEnd,
+                this.options.markerEnd
+            ),
             curveFactor = pointOptions.curveFactor || 0,
-            // TODO: Make it work the other way around.
-            growTowards =
-                pointOptions.growTowards || this.options.growTowards,
+            growTowards = pick(
+                pointOptions.growTowards,
+                this.options.growTowards
+            ),
             fromX = fromPoint.plotX || 0,
             fromY = fromPoint.plotY || 0;
 
