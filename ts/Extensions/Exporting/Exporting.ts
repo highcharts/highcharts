@@ -260,7 +260,6 @@ namespace Exporting {
     // These CSS properties are not inlined. Remember camelCase.
     const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
-        /^all$/, // #17557, Firefox
         /^(clipPath|cssText|d|height|width)$/, // Full words
         /^font$/, // more specific props are set
         /[lL]ogical(Width|Height)$/,
@@ -1486,10 +1485,21 @@ namespace Exporting {
                         node.nodeName
                     );
                     dummySVG.appendChild(dummy);
-                    // Copy, so we can remove the node
-                    defaultStyles[node.nodeName] = merge(
-                        win.getComputedStyle(dummy, null) as any
-                    );
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            typeof s[key] === 'string' &&
+                            !/^[0-9]+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
                     // Remove default fill, otherwise text disappears when
                     // exported
                     if (node.nodeName === 'text') {
@@ -1513,15 +1523,6 @@ namespace Exporting {
                 }
 
                 // Apply styles
-                /*
-                if (cssText) {
-                    styleAttr = node.getAttribute('style');
-                    node.setAttribute(
-                        'style',
-                        (styleAttr ? styleAttr + ';' : '') + cssText
-                    );
-                }
-                */
                 css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)
