@@ -235,27 +235,57 @@ class Tooltip {
         });
     }
 
-    public bodyFormatter(items: Array<Point>): Array<string> {
+    /**
+     * Format a single line of the tooltip and return it.
+     *
+     * @private
+     * @function Highcharts.Tooltip#bodyLineFormatter
+     */
+    public bodyLineFormatter(item: Point): string {
+        const tooltipOptions = (item as any).series.tooltipOptions;
+        return (
+            (tooltipOptions as any)[
+                ((item as any).point.formatPrefix || 'point') + 'Formatter'
+            ] ||
+            (item as any).point.tooltipFormatter
+        ).call(
+            (item as any).point,
+            tooltipOptions[
+                ((item as any).point.formatPrefix || 'point') + 'Format'
+            ] || ''
+        );
+    }
+
+    /**
+     * Build the body (lines) of the tooltip by iterating over the items and
+     * returning one entry for each item, abstracting this functionality allows
+     * to easily overwrite and extend it.
+     *
+     * @private
+     * @function Highcharts.Tooltip#bodyFormatter
+     */
+    public bodyFormatter(items: Array<Point>, tooltip: Tooltip): Array<string> {
         return items.map(function (item): string {
-            const tooltipOptions = (item as any).series.tooltipOptions;
+            return tooltip.bodyLineFormatter(item);
+        });
+    }
 
-            const ttLine = (
-                (tooltipOptions as any)[
-                    ((item as any).point.formatPrefix || 'point') + 'Formatter'
-                ] ||
-                (item as any).point.tooltipFormatter
-            ).call(
-                (item as any).point,
-                tooltipOptions[
-                    ((item as any).point.formatPrefix || 'point') + 'Format'
-                ] || ''
-            );
-
-            return (
-                (item as any).series.chart.styledMode &&
-                tooltipOptions.shared) ? (
-                    `<span class="${item.series.options.className}">${ttLine}`
-                ).replace('</span>', '</span></span>') : ttLine;
+    /**
+     * Build the lines of shared and styled tooltip, wrapping each item in an
+     * extra span as well as a className in order to make any chained
+     * CSS-selectors created by the user be reflected in the tooltips style.
+     *
+     * @private
+     * @function Highcharts.Tooltip#sharedBodyFormatter
+     *
+     * @param {Highcharts.Tooltip} tooltip
+     */
+    public styledSharedFormatter(items: Array<Point>, tooltip: Tooltip): Array<string> {
+        return items.map(function (item): string {
+            const ttLine = tooltip.bodyLineFormatter(item);
+            return item.series.options.className ?
+                `<span class="${item.series.options.className}">${ttLine}`
+                    .replace('</span>', '</span></span>') : ttLine;
         });
     }
 
@@ -306,7 +336,11 @@ class Tooltip {
         s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
 
         // build the values
-        s = s.concat(tooltip.bodyFormatter(items));
+        s = s.concat(
+            (tooltip.shared && tooltip.chart.styledMode) ?
+                tooltip.styledSharedFormatter(items, tooltip) :
+                tooltip.bodyFormatter(items, tooltip)
+        );
 
         // footer
         s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
