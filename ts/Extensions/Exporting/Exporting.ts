@@ -261,7 +261,7 @@ namespace Exporting {
     const composedClasses: Array<Function> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
-    const inlineBlacklist: Array<RegExp> = [
+    const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
         /^font$/, // more specific props are set
@@ -286,7 +286,7 @@ namespace Exporting {
         'y'
     ];
 
-    export const inlineWhitelist: Array<RegExp> = [];
+    export const inlineAllowlist: Array<RegExp> = [];
 
     const unstyledElements: Array<string> = [
         'clipPath',
@@ -1357,8 +1357,8 @@ namespace Exporting {
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const blacklist = inlineBlacklist,
-            whitelist = inlineWhitelist, // For IE
+        const denylist = inlineDenylist,
+            allowlist = inlineAllowlist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
 
@@ -1391,15 +1391,13 @@ namespace Exporting {
 
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
-                // cssText = '',
                 dummy: Element,
-                styleAttr,
-                blacklisted: (boolean|undefined),
-                whitelisted: (boolean|undefined),
+                denylisted: (boolean|undefined),
+                allowlisted: (boolean|undefined),
                 i: number;
 
             /**
-             * Check computed styles and whether they are in the white/blacklist
+             * Check computed styles and whether they are in the allow/denylist
              * for styles or atttributes.
              * @private
              * @param {string} val
@@ -1412,32 +1410,32 @@ namespace Exporting {
                 prop: string
             ): void {
 
-                // Check against whitelist & blacklist
-                blacklisted = whitelisted = false;
-                if (whitelist.length) {
-                    // Styled mode in IE has a whitelist instead.
-                    // Exclude all props not in this list.
-                    i = whitelist.length;
-                    while (i-- && !whitelisted) {
-                        whitelisted = whitelist[i].test(prop);
+                // Check against allowlist & denylist
+                denylisted = allowlisted = false;
+                if (allowlist.length) {
+                    // Styled mode in IE has a allowlist instead. Exclude all
+                    // props not in this list.
+                    i = allowlist.length;
+                    while (i-- && !allowlisted) {
+                        allowlisted = allowlist[i].test(prop);
                     }
-                    blacklisted = !whitelisted;
+                    denylisted = !allowlisted;
                 }
 
                 // Explicitly remove empty transforms
                 if (prop === 'transform' && val === 'none') {
-                    blacklisted = true;
+                    denylisted = true;
                 }
 
-                i = blacklist.length;
-                while (i-- && !blacklisted) {
-                    blacklisted = (
-                        blacklist[i].test(prop) ||
+                i = denylist.length;
+                while (i-- && !denylisted) {
+                    denylisted = (
+                        denylist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
 
-                if (!blacklisted) {
+                if (!denylisted) {
                     // If parent node has the same style, it gets inherited, no
                     // need to inline it. Top-level props should be diffed
                     // against parent (#7687).
