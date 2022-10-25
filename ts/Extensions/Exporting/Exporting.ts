@@ -269,8 +269,8 @@ namespace Exporting {
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
-        /^length$/ // #7700
-        // /^text (border|color|cursor|height|webkitBorder)/
+        /^length$/, // #7700
+        /^[0-9]+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
