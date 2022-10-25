@@ -266,6 +266,7 @@ namespace Exporting {
         /^(clipPath|cssText|d|height|width)$/, // Full words
         /^font$/, // more specific props are set
         /[lL]ogical(Width|Height)$/,
+        /^parentRule$/,
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
@@ -1456,7 +1457,7 @@ namespace Exporting {
                                 node.setAttribute(hyphenate(prop), val);
                             }
                         // Styles
-                        } else if (prop !== 'parentRule') {
+                        } else {
                             (filteredStyles as any)[prop] = val;
                         }
                     }
