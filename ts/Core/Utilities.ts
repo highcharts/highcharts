@@ -867,16 +867,16 @@ function relativeLength(
 function wrap<T, K extends FunctionNamesOf<T>>(
     obj: T,
     method: K,
-    func: Utilities.WrapProceedFunction<T[K]&Function>
+    func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
-    const proceed = obj[method] as T[K]&Function;
+    const proceed = obj[method] as T[K]&ArrowFunction;
 
-    obj[method] = function (this: T): unknown {
+    obj[method] = function (this: T): ReturnType<typeof func> {
         const outerArgs = arguments,
             scope = this;
 
         return func.apply(this, [
-            function (): unknown {
+            function (): ReturnType<typeof proceed> {
                 return proceed.apply(
                     scope,
                     arguments.length ? arguments : outerArgs
@@ -2062,8 +2062,8 @@ namespace Utilities {
         top: number;
         width: number;
     }
-    export interface WrapProceedFunction<T extends Function> {
-        (proceed: T, ...args: Array<any>): any;
+    export interface WrapProceedFunction<T extends ArrowFunction> {
+        (proceed: T, ...args: Array<any>): ReturnType<T>;
     }
 }
 

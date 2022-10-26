@@ -28,6 +28,8 @@ declare global {
 
     type AnyRecord = Record<string, any>;
 
+    type ArrowFunction = (...args: any) => any;
+
     type DeepPartial<T> = {
         [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
     };
