@@ -11,10 +11,9 @@ const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
 // Highcharts plugin that synchronizes axes and tooltips between charts
 (() => {
 
-    // On loading the last chart, find the union extremes of all charts and
-    // update each
-    Highcharts.addEvent(Highcharts.Chart, 'load', () => {
-
+    // When zoomed out, make sure all chart axes' extremes are set to the union
+    // of aligned axes.
+    const alignToUnionDataExtremes = () => {
         if (
             // When the last chart is loaded
             Highcharts.charts.length ===
@@ -40,7 +39,11 @@ const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
                 chart.yAxis[0].setExtremes(extremes.yMin, extremes.yMax);
             });
         }
-    });
+    };
+
+    // On loading the last chart, find the union extremes of all charts and
+    // update each
+    Highcharts.addEvent(Highcharts.Chart, 'load', alignToUnionDataExtremes);
 
     // When the extremes of either axis is are changed, cascade to the
     // corresponding axis of the other charts.
@@ -64,6 +67,7 @@ const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
         if (!btn.classList.contains('initialized')) {
             btn.addEventListener('click', () => {
                 Highcharts.charts.forEach(chart => chart.zoomOut());
+                alignToUnionDataExtremes();
                 btn.classList.remove('visible');
             });
         }
@@ -154,7 +158,8 @@ Highcharts.chart('container2', {
     },
     series: [{
         data: africa,
-        name: 'Africa'
+        name: 'Africa',
+        pointStart: Date.UTC(2005, 0, 1)
     }]
 });
 
