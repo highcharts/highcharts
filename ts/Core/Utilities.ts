@@ -872,18 +872,19 @@ function wrap<T, K extends FunctionNamesOf<T>>(
     const proceed = obj[method] as T[K]&Function;
 
     obj[method] = function (this: T): unknown {
-        const originalArguments = arguments,
+        const outerArgs = arguments,
             scope = this;
 
         return func.apply(this, [
             function (): unknown {
                 return proceed.apply(
                     scope,
-                    arguments.length ? arguments : originalArguments
+                    arguments.length ? arguments : outerArgs
                 );
-            } as T[K]&Function,
-            ...[].slice.call(arguments)
-        ]);
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
     } as T[K];
 }
 
