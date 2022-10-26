@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -15,17 +21,20 @@ import type {
     NATRParamsOptions
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        atr: ATRIndicator
-    }
-} = SeriesRegistry;
+    atr: ATRIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The NATR series type.
  *
@@ -35,8 +44,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class NATRIndicator extends ATRIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -111,17 +126,13 @@ class NATRIndicator extends ATRIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
+
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
-    requiredIndicators: Array<string>;
 }
-
-extend(NATRIndicator.prototype, {
-    requiredIndicators: ['atr']
-});
 
 /* *
  *
@@ -145,6 +156,12 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
 
 export default NATRIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `NATR` series. If the [type](#series.natr.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
@@ -154,6 +171,7 @@ export default NATRIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @requires  stock/indicators/natr
  * @apioption series.natr
  */

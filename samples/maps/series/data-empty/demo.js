@@ -1,12 +1,19 @@
-// Initiate the chart
-Highcharts.mapChart('container', {
+(async () => {
 
-    title: {
-        text: 'Empty map'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-    series: [{
-        mapData: Highcharts.maps['custom/world'],
-        name: 'World map'
-    }]
-});
+    // Initialize the chart
+    Highcharts.mapChart('container', {
+
+        title: {
+            text: 'Empty map'
+        },
+
+        series: [{
+            mapData: topology,
+            name: 'World map'
+        }]
+    });
+})();

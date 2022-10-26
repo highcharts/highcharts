@@ -19,12 +19,14 @@
 import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
+import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -95,6 +97,7 @@ class AreaSeries extends LineSeries {
      * @optionparent plotOptions.area
      */
     public static defaultOptions: AreaSeriesOptions = merge(LineSeries.defaultOptions, {
+
         /**
          * @see [fillColor](#plotOptions.area.fillColor)
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
@@ -117,7 +120,7 @@ class AreaSeries extends LineSeries {
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
          *         Gradient
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product   highcharts highstock
          * @apioption plotOptions.area.fillColor
          */
@@ -156,7 +159,7 @@ class AreaSeries extends LineSeries {
          * @sample {highcharts} highcharts/plotoptions/area-linecolor/
          *         Dark gray line
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product   highcharts highstock
          * @apioption plotOptions.area.lineColor
          */
@@ -172,7 +175,7 @@ class AreaSeries extends LineSeries {
          * @sample {highcharts} highcharts/css/series-negative-color/
          *         Negative color in styled mode
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     3.0
          * @product   highcharts
          * @apioption plotOptions.area.negativeFillColor
@@ -277,10 +280,12 @@ class AreaSeries extends LineSeries {
         });
 
         props.forEach(function (prop: Array<string>): void {
-            let areaKey = prop[0],
-                area = (series as any)[areaKey],
-                verb = area ? 'animate' : 'attr',
+            const areaKey = prop[0],
                 attribs: SVGAttributes = {};
+
+            let area = (series as any)[areaKey];
+
+            const verb = area ? 'animate' : 'attr';
 
             // Create or update the area
             if (area) { // update
@@ -319,31 +324,22 @@ class AreaSeries extends LineSeries {
      * @private
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
-        let getGraphPath = LineSeries.prototype.getGraphPath,
-            graphPath: SVGPath,
+        const getGraphPath = LineSeries.prototype.getGraphPath,
             options = this.options,
             stacking = options.stacking,
-            yAxis = this.yAxis as StackingAxis.Composition,
-            topPath: SVGPath,
-            bottomPath,
+            yAxis = this.yAxis as StackingAxis,
             bottomPoints: Array<AreaPoint> = [],
             graphPoints: Array<AreaPoint> = [],
             seriesIndex = this.index,
-            i,
-            areaPath: SVGPath,
-            plotX: (number|undefined),
             stacks = yAxis.stacking.stacks[this.stackKey as any],
             threshold = options.threshold,
             translatedThreshold = Math.round( // #10909
-                yAxis.getThreshold(options.threshold as any) as any
+                yAxis.getThreshold(options.threshold as any)
             ),
-            isNull,
-            yBottom,
             connectNulls = pick( // #10574
                 options.connectNulls,
                 stacking === 'percent'
             ),
-
             // To display null points in underlying stacked series, this
             // series graph must be broken, and the area also fall down to
             // fill the gap left by the null point. #2069
@@ -352,12 +348,13 @@ class AreaSeries extends LineSeries {
                 otherI: number,
                 side: string
             ): void {
-                let point = points[i],
+                const point = points[i],
                     stackedValues = stacking &&
                         stacks[point.x as any].points[seriesIndex as any],
                     nullVal = (point as any)[side + 'Null'] || 0,
-                    cliffVal = (point as any)[side + 'Cliff'] || 0,
-                    top,
+                    cliffVal = (point as any)[side + 'Cliff'] || 0;
+
+                let top,
                     bottom,
                     isNull = true;
 
@@ -372,10 +369,10 @@ class AreaSeries extends LineSeries {
 
                 } else if (
                     !stacking &&
-                points[otherI] &&
-                points[otherI].isNull
+                    points[otherI] &&
+                    points[otherI].isNull
                 ) {
-                    top = bottom = threshold;
+                    top = bottom = threshold as any;
                 }
 
                 // Add to the top and bottom line of the area
@@ -398,6 +395,10 @@ class AreaSeries extends LineSeries {
                 }
             };
 
+        let plotX: (number|undefined),
+            isNull,
+            yBottom;
+
         // Find what points to use
         points = points || this.points;
 
@@ -406,7 +407,7 @@ class AreaSeries extends LineSeries {
             points = this.getStackPoints(points);
         }
 
-        for (i = 0; i < points.length; i++) {
+        for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
 
             // Reset after series.update of stacking property (#12033)
             if (!stacking) {
@@ -416,7 +417,9 @@ class AreaSeries extends LineSeries {
 
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking ? pick(points[i].yBottom, translatedThreshold) : translatedThreshold;
+            yBottom = stacking ?
+                pick(points[i].yBottom, translatedThreshold) :
+                translatedThreshold;
 
             if (!isNull || connectNulls) {
 
@@ -440,21 +443,21 @@ class AreaSeries extends LineSeries {
             }
         }
 
-        topPath = getGraphPath.call(this, graphPoints, true, true);
+        const topPath = getGraphPath.call(this, graphPoints, true, true);
 
         (bottomPoints as any).reversed = true;
-        bottomPath = getGraphPath.call(this, bottomPoints, true, true);
+        const bottomPath = getGraphPath.call(this, bottomPoints, true, true);
         const firstBottomPoint = bottomPath[0];
         if (firstBottomPoint && firstBottomPoint[0] === 'M') {
             bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
         }
 
-        areaPath = topPath.concat(bottomPath);
+        const areaPath: SVGPath = topPath.concat(bottomPath);
         if (areaPath.length) {
             areaPath.push(['Z']);
         }
         // TODO: don't set leftCliff and rightCliff when connectNulls?
-        graphPath = getGraphPath
+        const graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);
         areaPath.xMap = topPath.xMap;
         this.areaPath = areaPath;
@@ -475,7 +478,7 @@ class AreaSeries extends LineSeries {
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,
-            yAxis: StackingAxis.Composition = this.yAxis as any,
+            yAxis: StackingAxis = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
             pointMap: Record<string, AreaPoint> = {},
             yAxisSeries = yAxis.series,
@@ -499,7 +502,7 @@ class AreaSeries extends LineSeries {
 
             // Sort the keys (#1651)
             objectEach(stack, function (
-                stackX: Highcharts.StackItem,
+                stackX: StackItem,
                 x: string
             ): void {
                 // nulled after switching between
@@ -525,14 +528,15 @@ class AreaSeries extends LineSeries {
                     // Find left and right cliff. -1 goes left, 1 goes
                     // right.
                     [-1, 1].forEach(function (direction: number): void {
-                        let nullName = direction === 1 ?
+                        const nullName = direction === 1 ?
                                 'rightNull' :
                                 'leftNull',
                             cliffName = direction === 1 ?
                                 'rightCliff' :
                                 'leftCliff',
-                            cliff = 0,
                             otherStack = stack[keys[idx + direction]];
+
+                        let cliff = 0;
 
                         // If there is a stack next to this one,
                         // to the left or to the right...
@@ -544,26 +548,24 @@ class AreaSeries extends LineSeries {
                                 const si = yAxisSeries[i].index;
                                 stackPoint = otherStack.points[si];
                                 if (!stackPoint) {
-                                    // If the next point in this series
-                                    // is missing, mark the point
-                                    // with point.leftNull or
-                                    // point.rightNull = true.
+                                    // If the next point in this series is
+                                    // missing, mark the point with
+                                    // point.leftNull or point.rightNull = true.
                                     if (si === series.index) {
                                         (pointMap[x] as any)[nullName] = true;
 
-                                        // If there are missing points in
-                                        // the next stack in any of the
-                                        // series below this one, we need
-                                        // to substract the missing values
-                                        // and add a hiatus to the left or
-                                        // right.
-                                    } else if (
-                                        visibleSeries[i]
-                                    ) {
-                                        stackedValues =
-                                            stack[x].points[si];
+                                    // If there are missing points in the next
+                                    // stack in any of the series below this
+                                    // one, we need to substract the missing
+                                    // values and add a hiatus to the left or
+                                    // right.
+                                    } else if (visibleSeries[i]) {
+                                        stackedValues = stack[x].points[si];
                                         if (stackedValues) {
-                                            cliff -= stackedValues[1] - stackedValues[0];
+                                            cliff -= (
+                                                stackedValues[1] -
+                                                stackedValues[0]
+                                            );
                                         }
                                     }
                                 }
@@ -598,7 +600,7 @@ class AreaSeries extends LineSeries {
                     y = pick(y, 0);
                     y = yAxis.translate(// #6272
                         y, 0 as any, 1 as any, 0 as any, 1 as any
-                    ) as any;
+                    );
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272
@@ -622,19 +624,17 @@ class AreaSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface AreaSeries {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-
     singleStacks: false,
-
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-
+    drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
 /* *

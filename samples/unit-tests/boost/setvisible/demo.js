@@ -20,26 +20,27 @@ QUnit.test('Boosted series show/hide', function (assert) {
         ]
     });
 
-    var s = chart.series[0];
+    const s = chart.series[0],
+        blankPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
     assert.strictEqual(
-        s.renderTarget.attr('href').length,
-        0,
+        s.boost.target.attr('href'),
+        blankPixel,
         'Empty image for the initially hidden series'
     );
 
     s.show();
 
-    assert.strictEqual(
-        s.renderTarget.attr('href').indexOf('data:image/png;base64,'),
-        0,
+    assert.notStrictEqual(
+        s.boost.target.attr('href'),
+        blankPixel,
         'Painted image for the visible series'
     );
 
     s.hide();
     assert.strictEqual(
-        s.renderTarget.attr('href').length,
-        0,
+        s.boost.target.attr('href'),
+        blankPixel,
         'Empty image for the dynamically hidden series'
     );
 });

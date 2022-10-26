@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Grid.js';
+import H from '../../Core/Globals.js';
+import GridTheme from '../../Extensions/Themes/Grid.js';
+H.theme = GridTheme.options;
+GridTheme.apply();

@@ -1,5 +1,5 @@
 ---
- name: Palau - Highmaps
- description: Highmaps demo
+ name: Palau - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

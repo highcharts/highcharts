@@ -25,6 +25,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *
  * */
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        allowShadow?: boolean;
+    }
+}
+
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
     barX: number;
@@ -33,12 +39,6 @@ export class ColumnPoint extends Point {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-}
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        allowShadow?: boolean;
-    }
 }
 
 /* *

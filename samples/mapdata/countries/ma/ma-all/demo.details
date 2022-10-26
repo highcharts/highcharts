@@ -1,5 +1,5 @@
 ---
- name: Morocco - Highmaps
- description: Highmaps demo
+ name: Morocco - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

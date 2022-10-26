@@ -311,8 +311,8 @@ QUnit.test(
         chart.series[1].points[0].onMouseOver();
 
         assert.strictEqual(
-            chart.series[1].tt.text.element.tagName,
-            'text',
+            chart.tooltip.label.element.tagName,
+            'g',
             'We have a flag tooltip'
         );
     }

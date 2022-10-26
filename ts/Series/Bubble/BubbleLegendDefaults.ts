@@ -19,7 +19,8 @@
  * */
 
 import type BubbleLegendItem from './BubbleLegendItem';
-import Palette from '../../Core/Color/Palette.js';
+
+import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *

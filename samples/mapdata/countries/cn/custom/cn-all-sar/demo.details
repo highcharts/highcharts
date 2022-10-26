@@ -1,5 +1,5 @@
 ---
- name: China with Hong Kong and Macau - Highmaps
- description: Highmaps demo
+ name: China with Hong Kong and Macau - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

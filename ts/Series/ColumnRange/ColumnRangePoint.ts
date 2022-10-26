@@ -18,13 +18,15 @@
 
 import type ColumnRangePointOptions from './ColumnRangePointOptions.js';
 import type ColumnRangeSeries from './ColumnRangeSeries.js';
-import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: {
             prototype: {
-                pointClass: ColumnPoint
+                pointClass: {
+                    prototype: columnProto
+                }
             }
         },
         arearange: {
@@ -47,11 +49,22 @@ const {
  * */
 
 class ColumnRangePoint extends AreaRangePoint {
-    public series: ColumnRangeSeries = void 0 as any;
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public options: ColumnRangePointOptions = void 0 as any;
-    public barX: typeof ColumnPoint.prototype['barX'] = void 0 as any;
-    public pointWidth: typeof ColumnPoint.prototype['pointWidth'] = void 0 as any;
-    public shapeType: typeof ColumnPoint.prototype['shapeType'] = void 0 as any;
+
+    public series: ColumnRangeSeries = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public isValid(): boolean {
         return isNumber(this.low);
@@ -60,17 +73,24 @@ class ColumnRangePoint extends AreaRangePoint {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 
+interface ColumnRangePoint {
+    barX: typeof columnProto.barX;
+    pointWidth: typeof columnProto.pointWidth;
+    shapeType: typeof columnProto.shapeType;
+
+}
 extend(ColumnRangePoint.prototype, {
-    setState: ColumnPoint.prototype.setState
+    setState: columnProto.setState
 });
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
+
 export default ColumnRangePoint;

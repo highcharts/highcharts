@@ -200,7 +200,7 @@ export interface SeriesZonesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

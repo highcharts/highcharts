@@ -6,16 +6,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { AnnotationEventObject } from '../EventEmitter';
+import type Controllable from '../Controllables/Controllable';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -28,17 +42,13 @@ function getSecondCoordinate(
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class Tunnel extends CrookedLine {
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -77,7 +87,7 @@ class Tunnel extends CrookedLine {
             typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.heightControlPoint
@@ -97,37 +107,43 @@ class Tunnel extends CrookedLine {
 
     public addLine(): void {
         const line = this.initShape(
-            merge(this.options.typeOptions.line, {
-                type: 'path',
-                points: [
-                    this.points[0],
-                    this.points[1],
-                    function (target: any): MockPointOptions {
-                        const pointOptions = MockPoint.pointToOptions(
-                            target.annotation.points[2]
-                        );
+            merge(
+                this.options.typeOptions.line,
+                {
+                    type: 'path',
+                    points: [
+                        this.points[0],
+                        this.points[1],
+                        function (target: any): MockPointOptions {
+                            const pointOptions = MockPoint.pointToOptions(
+                                target.annotation.points[2]
+                            );
 
-                        pointOptions.command = 'M';
+                            pointOptions.command = 'M';
 
-                        return pointOptions;
-                    },
-                    this.points[3]
-                ] as any
-            }),
-            false as any
+                            return pointOptions;
+                        },
+                        this.points[3]
+                    ]
+                }
+            ),
+            0
         );
 
         this.options.typeOptions.line = line.options;
     }
 
     public addBackground(): void {
-        const background = (this.initShape as any)(merge(
-            this.options.typeOptions.background,
-            {
-                type: 'path',
-                points: this.points.slice() as any
-            }
-        ));
+        const background = this.initShape(
+            merge(
+                this.options.typeOptions.background,
+                {
+                    type: 'path',
+                    points: this.points.slice()
+                }
+            ),
+            1
+        );
 
         this.options.typeOptions.background = background.options;
     }
@@ -135,9 +151,12 @@ class Tunnel extends CrookedLine {
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {boolean} [end] - whether to translate start or end side
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {boolean} [end]
+     * whether to translate start or end side
      */
     public translateSide(dx: number, dy: number, end?: boolean): void {
         const topIndex = Number(end),
@@ -150,20 +169,26 @@ class Tunnel extends CrookedLine {
     /**
      * Translate height of the tunnel.
      * @private
-     * @param {number} dh - the amount of height translation
+     * @param {number} dh
+     * the amount of height translation
      */
     public translateHeight(dh: number): void {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
 
-        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+        this.options.typeOptions.height = (this.points[3].y as any) -
+            (this.points[0].y as any);
+        this.userOptions.typeOptions.height = this.options.typeOptions.height;
     }
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Tunnel {
     defaultOptions: CrookedLine['defaultOptions'];
 }
@@ -181,8 +206,6 @@ Tunnel.prototype.defaultOptions = merge(
      */
     {
         typeOptions: {
-            xAxis: 0,
-            yAxis: 0,
             /**
              * Background options.
              *
@@ -212,8 +235,8 @@ Tunnel.prototype.defaultOptions = merge(
              */
             heightControlPoint: {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
-                    target: Highcharts.AnnotationControllable
+                    this: ControlPoint,
+                    target: Controllable
                 ): PositionObject {
                     const startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),
@@ -228,7 +251,7 @@ Tunnel.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: Tunnel,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: Tunnel
                     ): void {
                         if (
@@ -259,7 +282,7 @@ Tunnel.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Tunnel,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Tunnel
                 ): void {
                     if (
@@ -276,7 +299,7 @@ Tunnel.prototype.defaultOptions = merge(
                         target.translateSide(
                             translation.x,
                             translation.y,
-                            this.index as any
+                            !!this.index
                         );
 
                         target.redraw(false);
@@ -287,13 +310,19 @@ Tunnel.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Tunnel {
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         height: number;
-        heightControlPoint: Highcharts.AnnotationControlPointOptionsObject;
+        heightControlPoint: ControlPointOptionsObject;
     }
 }
 
@@ -302,16 +331,19 @@ namespace Tunnel {
  *  Registry
  *
  * */
-Annotation.types.tunnel = Tunnel;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;
     }
 }
 
+Annotation.types.tunnel = Tunnel;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Tunnel;

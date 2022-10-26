@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/HighContrastDark.js';
+import H from '../../Core/Globals.js';
+import HighContrastDarkTheme from '../../Extensions/Themes/HighContrastDark.js';
+H.theme = HighContrastDarkTheme.options;
+HighContrastDarkTheme.apply();

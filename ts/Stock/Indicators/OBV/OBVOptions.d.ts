@@ -28,7 +28,6 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
 export interface OBVOptions extends SMAOptions {
     marker?: PointMarkerOptions;
     params?: OBVParamsOptions;
-    tooltip?: TooltipOptions;
 }
 
 export interface OBVParamsOptions extends SMAParamsOptions {

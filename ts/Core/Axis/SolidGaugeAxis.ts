@@ -17,7 +17,7 @@
  * */
 
 import type SolidGaugePoint from '../../Series/SolidGauge/SolidGaugePoint';
-import type ColorAxis from './ColorAxis';
+import type ColorAxis from './Color/ColorAxis';
 import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
 import type RadialAxis from './RadialAxis';

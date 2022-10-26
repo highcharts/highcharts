@@ -35,7 +35,7 @@ const {
 } = H;
 import Axis from '../Core/Axis/Axis.js';
 import AxisDefaults from '../Core/Axis/AxisDefaults.js';
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -251,7 +251,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: palette.neutralColor20,
+            lineColor: Palette.neutralColor20,
 
             /**
              * Dash style of the control line.
@@ -299,7 +299,7 @@ class AxisResizer {
              */
             y: 0
         }
-    }
+    };
 
     public constructor(axis: Axis) {
         this.init(axis);

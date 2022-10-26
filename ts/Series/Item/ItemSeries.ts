@@ -18,6 +18,7 @@
  *
  * */
 
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -245,7 +246,7 @@ class ItemSeries extends PieSeries {
 
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
-                graphics: Record<string, SVGElement>,
+                graphics: Array<SVGElement>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
                 symbol: SymbolKey = (
@@ -263,7 +264,7 @@ class ItemSeries extends PieSeries {
                 width: number,
                 height: number;
 
-            point.graphics = graphics = point.graphics || {};
+            point.graphics = graphics = point.graphics || [];
 
             if (!series.chart.styledMode) {
                 pointAttr = series.pointAttribs(
@@ -279,7 +280,7 @@ class ItemSeries extends PieSeries {
                         .add(series.group);
                 }
 
-                for (let val = 0; val < (point.y as any); val++) {
+                for (let val = 0; val < (point.y || 0); val++) {
 
                     // Semi-circle
                     if (series.center && series.slots) {
@@ -316,37 +317,36 @@ class ItemSeries extends PieSeries {
                         attr.r = r;
                     }
 
-
                     if (graphics[val]) {
                         graphics[val].animate(attr);
                     } else {
+                        if (pointAttr) {
+                            extend(attr, pointAttr);
+                        }
+
                         graphics[val] = renderer
                             .symbol(
                                 symbol,
-                                null as any,
-                                null as any,
-                                null as any,
-                                null as any,
+                                void 0,
+                                void 0,
+                                void 0,
+                                void 0,
                                 {
                                     backgroundSize: 'within'
                                 }
                             )
-                            .attr(extend(attr, pointAttr as any))
+                            .attr(attr)
                             .add(point.graphic);
                     }
                     graphics[val].isActive = true;
 
-
                     i++;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
+            graphics.forEach((graphic, i): void => {
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    delete graphics[key];
+                    graphics.splice(i, 1);
                 } else {
                     graphic.isActive = false;
                 }
@@ -417,10 +417,11 @@ class ItemSeries extends PieSeries {
             rowsOption = this.options.rows,
             // How many rows (arcs) should be used
             rowFraction = (diameter - innerSize) / diameter,
-            isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
+            isCircle: boolean = fullAngle % (2 * Math.PI) === 0,
+            total = this.total || 0;
 
         // Increase the itemSize until we find the best fit
-        while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
+        while (itemCount > total + (rows && isCircle ? rows.length : 0)) {
 
             finalItemCount = itemCount;
 
@@ -486,8 +487,7 @@ class ItemSeries extends PieSeries {
          * @private
          * @param {Highcharts.ItemRowContainerObject} item
          * Wrapped object with angle and row
-         * @return {void}
-         */
+             */
         function cutOffRow(item: ItemSeries.RowContainerObject): void {
             if (overshoot > 0) {
                 item.row.colCount--;
@@ -546,7 +546,11 @@ class ItemSeries extends PieSeries {
     public translate(_positions?: Array<number>): void {
 
         // Initialize chart without setting data, #13379.
-        if (this.total === 0) {
+        if (
+            this.total === 0 && // check if that is a (semi-)circle
+            isNumber(this.options.startAngle) &&
+            isNumber(this.options.endAngle)
+        ) {
             this.center = this.getCenter();
         }
         if (!this.slots) {
@@ -570,7 +574,7 @@ class ItemSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -588,7 +592,7 @@ extend(ItemSeries.prototype, {
  * */
 
 namespace ItemSeries {
-    export interface GeometryObject extends Highcharts.GeometryObject {
+    export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
     export interface RowContainerObject {
@@ -682,7 +686,7 @@ export default ItemSeries;
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
- * @excludes  sliced
+ * @exclude   sliced
  * @product   highcharts
  * @apioption series.item.data
  */

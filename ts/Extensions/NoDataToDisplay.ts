@@ -21,7 +21,7 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/DefaultOptions.js';
 const { getOptions } = D;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -181,7 +181,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: palette.neutralColor60
+        color: Palette.neutralColor60
     }
 
 };

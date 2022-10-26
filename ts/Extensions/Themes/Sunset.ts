@@ -15,32 +15,74 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Options from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import H from '../../Core/Globals.js';
+
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
 
-H.theme = {
-    colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+/* *
+ *
+ *  Theme
+ *
+ * */
 
-    colorAxis: {
-        maxColor: '#60042E',
-        minColor: '#FDD089'
-    },
+namespace SunsetTheme {
 
-    plotOptions: {
-        map: {
-            nullColor: '#fefefc'
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const options: DeepPartial<Options> = {
+        colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
+
+        colorAxis: {
+            maxColor: '#60042E',
+            minColor: '#FDD089'
+        },
+
+        plotOptions: {
+            map: {
+                nullColor: '#fefefc'
+            }
+        } as SeriesTypePlotOptions,
+
+        navigator: {
+            series: {
+                color: '#FF7F79',
+                lineColor: '#A0446E'
+            }
         }
-    } as SeriesTypePlotOptions,
+    };
 
-    navigator: {
-        series: {
-            color: '#FF7F79',
-            lineColor: '#A0446E'
-        }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Apply the theme.
+     */
+    export function apply(): void {
+        setOptions(options);
     }
-};
 
-// Apply the theme
-setOptions(H.theme);
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SunsetTheme;

@@ -1,4 +1,4 @@
-Highcharts.getJSON('https://raw.githubusercontent.com/mekhatria/demo_highcharts/master/AAPL.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json', function (data) {
 
     for (var i = 0; i < data.length; i++) {
 

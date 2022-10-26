@@ -1,0 +1,12 @@
+---
+name: Hollow Candlestick
+authors:
+  - Karol Kolodziej
+js_wrap: b
+new_until: 2021-11-01
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 13
+...

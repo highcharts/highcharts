@@ -1,69 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['no-tr-1943', 0],
-    ['no-tr-1941', 1],
-    ['no-tr-1902', 2],
-    ['no-tr-1936', 3],
-    ['no-tr-1940', 4],
-    ['no-tr-1938', 5],
-    ['no-tr-1917', 6],
-    ['no-tr-1926', 7],
-    ['no-tr-1923', 8],
-    ['no-tr-1931', 9],
-    ['no-tr-1925', 10],
-    ['no-tr-1927', 11],
-    ['no-tr-1929', 12],
-    ['no-tr-1942', 13],
-    ['no-tr-1903', 14],
-    ['no-tr-1924', 15],
-    ['no-tr-1939', 16],
-    ['no-tr-1919', 17],
-    ['no-tr-1913', 18],
-    ['no-tr-1911', 19],
-    ['no-tr-1920', 20],
-    ['no-tr-1922', 21],
-    ['no-tr-1928', 22],
-    ['no-tr-1933', 23]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/no-2019/no-tr-all-2019'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/no-2019/no-tr-all-2019.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['no-tr-1943', 10], ['no-tr-1941', 11], ['no-tr-1902', 12],
+        ['no-tr-1936', 13], ['no-tr-1940', 14], ['no-tr-1938', 15],
+        ['no-tr-1917', 16], ['no-tr-1926', 17], ['no-tr-1923', 18],
+        ['no-tr-1931', 19], ['no-tr-1925', 20], ['no-tr-1927', 21],
+        ['no-tr-1929', 22], ['no-tr-1942', 23], ['no-tr-1903', 24],
+        ['no-tr-1924', 25], ['no-tr-1939', 26], ['no-tr-1919', 27],
+        ['no-tr-1913', 28], ['no-tr-1911', 29], ['no-tr-1920', 30],
+        ['no-tr-1922', 31], ['no-tr-1928', 32], ['no-tr-1933', 33]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-tr-all-2019.js">Troms (2019)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-tr-all-2019.topo.json">Troms (2019)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

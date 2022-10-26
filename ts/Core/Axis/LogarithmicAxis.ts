@@ -16,7 +16,8 @@
  *
  * */
 
-import Axis from './Axis.js';
+import type Axis from './Axis';
+
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -70,7 +71,7 @@ namespace LogarithmicAxis {
      *
      * */
 
-    const composedClasses: Array<typeof Axis> = [];
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -116,7 +117,9 @@ namespace LogarithmicAxis {
             axis.logarithmic = void 0;
         } else {
             if (!logarithmic) {
-                logarithmic = axis.logarithmic = new Additions(axis as Composition);
+                logarithmic = axis.logarithmic = new Additions(
+                    axis as Composition
+                );
             }
         }
     }
@@ -276,11 +279,7 @@ namespace LogarithmicAxis {
                         tickPixelIntervalOption / (totalPixelLength || 1)
                 );
 
-                interval = normalizeTickInterval(
-                    interval,
-                    void 0,
-                    getMagnitude(interval)
-                );
+                interval = normalizeTickInterval(interval);
 
                 positions = axis.getLinearTickPositions(
                     interval,

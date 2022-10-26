@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     ChaikinOptions,
     ChaikinParamsOptions
@@ -16,15 +22,11 @@ import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import AD from '../AD/ADIndicator.js'; // For historic reasons, AD is built into Chaikin
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import '../AD/ADIndicator.js'; // For historic reasons, AD i built into Chaikin
 const {
-    seriesTypes: {
-        ad: AD,
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -49,10 +51,16 @@ const {
  * @augments Highcharts.Series
  */
 class ChaikinIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Chaikin Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
+     * be set and should be loaded after the `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/chaikin
      *         Chaikin Oscillator
@@ -64,7 +72,6 @@ class ChaikinIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
      */
@@ -104,10 +111,9 @@ class ChaikinIndicator extends EMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<ChaikinPoint> = void 0 as any;
-
     public options: ChaikinOptions = void 0 as any;
-
     public points: Array<ChaikinPoint> = void 0 as any;
 
     /* *
@@ -115,20 +121,6 @@ class ChaikinIndicator extends EMAIndicator {
      *  Functions
      *
      * */
-    init(this: ChaikinIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -213,15 +205,15 @@ class ChaikinIndicator extends EMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
+
 interface ChaikinIndicator {
     nameBase: string;
     nameComponents: Array<string>;
     pointClass: typeof ChaikinPoint;
 }
-
 extend(ChaikinIndicator.prototype, {
     nameBase: 'Chaikin Osc',
     nameComponents: ['periods']
@@ -232,6 +224,7 @@ extend(ChaikinIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
@@ -246,6 +239,12 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  * */
 export default ChaikinIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -257,7 +256,6 @@ export default ChaikinIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/chaikin
  * @apioption series.chaikin
  */

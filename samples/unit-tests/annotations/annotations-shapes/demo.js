@@ -54,8 +54,8 @@ QUnit.test('Drawing path based on points', function (assert) {
         ]
     });
 
-    var roundPath = function (dArray) {
-            return Highcharts.map(dArray, function (value) {
+    var roundPath = dArray => {
+            dArray.map(value => {
                 var number = Math.round(value);
                 return Highcharts.isNumber(number) ? number : value;
             });

@@ -8,11 +8,15 @@
  *
  * */
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from '../AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AlignObject from '../AlignObject';
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
@@ -31,26 +35,25 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
-import A from '../../Animation/AnimationUtilities.js';
-import AST from '../HTML/AST.js';
 
+import A from '../../Animation/AnimationUtilities.js';
 const {
     animate,
     animObject,
     stop
 } = A;
+import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    hasTouch,
     noop,
     svg,
     SVG_NS,
     win
 } = H;
-import palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -69,6 +72,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -87,6 +91,11 @@ declare module '../CSSObject' {
         stroke?: ColorString;
         strokeWidth?: (number|string);
     }
+}
+
+interface TextPathObject {
+    path: SVGElement;
+    undo: Function;
 }
 
 /* *
@@ -188,10 +197,11 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     // @todo public textWidth?: number;
-    public textPathWrapper?: SVGElement;
+    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
+    public visibility?: 'hidden'|'inherit'|'visible';
     // @todo public width?: number;
     public x?: number;
     public y?: number;
@@ -241,7 +251,6 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public _defaultSetter(
         value: string,
@@ -277,7 +286,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // Mark as inverted
-        this.parentInverted = parent && (parent as any).inverted;
+        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -433,7 +442,8 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            alignTo === 'scrollablePlotBox' ?
+                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -544,11 +554,15 @@ class SVGElement implements SVGElementLike {
                 }
             }, deferTime);
         } else {
-            this.attr(params, void 0, complete);
+            this.attr(params, void 0, complete || animOptions.complete);
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
+                    animOptions.step.call(
+                        this,
+                        val,
+                        { prop: prop, pos: 1, elem: this }
+                    );
                 }
             }, this);
         }
@@ -600,10 +614,6 @@ class SVGElement implements SVGElementLike {
 
             this.fakeTS = true; // Fake text shadow
 
-            // In order to get the right y position of the clone,
-            // copy over the y setter
-            this.ySetter = this.xSetter;
-
             // Since the stroke is applied on center of the actual outline, we
             // need to double it to get the correct stroke-width outside the
             // glyphs.
@@ -617,7 +627,10 @@ class SVGElement implements SVGElementLike {
             // Remove shadows from previous runs.
             this.removeTextOutline();
 
-            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            const outline = doc.createElementNS(
+                SVG_NS,
+                'tspan'
+            ) as DOMElementType;
             attr(outline, {
                 'class': 'highcharts-text-outline',
                 fill: color,
@@ -628,16 +641,29 @@ class SVGElement implements SVGElementLike {
 
             // For each of the tspans and text nodes, create a copy in the
             // outline.
+            const parentElem = elem.querySelector('textPath') || elem;
             [].forEach.call(
-                elem.childNodes,
+                parentElem.childNodes,
                 (childNode: ChildNode): void => {
                     const clone = childNode.cloneNode(true);
-                    if ((clone as any).removeAttribute) {
+                    if ((clone as DOMElementType).removeAttribute) {
                         ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
-                            (prop): void => (clone as any).removeAttribute(prop)
+                            (prop): void => (clone as DOMElementType)
+                                .removeAttribute(prop)
                         );
                     }
                     outline.appendChild(clone);
+                }
+            );
+
+            // Collect the sum of dy from all children, included nested ones
+            let totalHeight = 0;
+            [].forEach.call(
+                parentElem.querySelectorAll('text tspan'),
+                (element): void => {
+                    totalHeight += Number(
+                        (element as DOMElementType).getAttribute('dy')
+                    );
                 }
             );
 
@@ -646,17 +672,15 @@ class SVGElement implements SVGElementLike {
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
 
-            // Copy x and y if not null
-            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
-                const value = elem.getAttribute(key);
-                if (value) {
-                    br.setAttribute(key, value);
-                }
+            // Reset the position for the following text
+            attr(br, {
+                x: Number(elem.getAttribute('x')),
+                dy: -totalHeight
             });
 
             // Insert the outline
             outline.appendChild(br);
-            elem.insertBefore(outline, elem.firstChild);
+            parentElem.insertBefore(outline, parentElem.firstChild);
 
         }
     }
@@ -808,7 +832,8 @@ class SVGElement implements SVGElementLike {
                     if (
                         !this.styledMode &&
                         this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)
+                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
+                            .test(key)
                     ) {
                         this.updateShadows(key, val, setter);
                     }
@@ -1053,28 +1078,21 @@ class SVGElement implements SVGElementLike {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element,
-            // These CSS properties are interpreted internally by the SVG
-            // renderer, but are not supported by SVG and should not be added to
-            // the DOM. In styled mode, no CSS should find its way to the DOM
-            // whatsoever (#6173, #6474).
-            svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
+            elem = this.element;
 
         let textWidth,
-            serializedCss = '',
-            hyphenate: Function,
             hasNew = !oldStyles;
 
         // convert legacy
-        if (styles && styles.color) {
+        if (styles.color) {
             styles.fill = styles.color;
         }
 
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
-            objectEach(styles, function (style, n): void {
-                if (oldStyles && oldStyles[n] !== style) {
-                    (newStyles as any)[n] = style;
+            objectEach(styles, function (value, n: keyof CSSObject): void {
+                if (oldStyles && oldStyles[n] !== value) {
+                    (newStyles as any)[n] = value;
                     hasNew = true;
                 }
             });
@@ -1090,18 +1108,16 @@ class SVGElement implements SVGElementLike {
             }
 
             // Get the text width from style
-            if (styles) {
-                // Previously set, unset it (#8234)
-                if (styles.width === null || styles.width as any === 'auto') {
-                    delete this.textWidth;
+            // Previously set, unset it (#8234)
+            if (styles.width === null || styles.width as any === 'auto') {
+                delete this.textWidth;
 
-                // Apply new
-                } else if (
-                    elem.nodeName.toLowerCase() === 'text' &&
-                    styles.width
-                ) {
-                    textWidth = this.textWidth = pInt(styles.width);
-                }
+            // Apply new
+            } else if (
+                elem.nodeName.toLowerCase() === 'text' &&
+                styles.width
+            ) {
+                textWidth = this.textWidth = pInt(styles.width);
             }
 
             // store object
@@ -1111,37 +1127,36 @@ class SVGElement implements SVGElementLike {
                 delete styles.width;
             }
 
-            // Serialize and set style attribute
-            if (elem.namespaceURI === this.SVG_NS) { // #7633
-                hyphenate = function (a: string, b: string): string {
-                    return '-' + b.toLowerCase();
-                };
-                objectEach(styles, function (style, n): void {
-                    if (svgPseudoProps.indexOf(n) === -1) {
-                        serializedCss +=
-                        n.replace(/([A-Z])/g, hyphenate as any) + ':' +
-                        style + ';';
-                    }
-                });
-                if (serializedCss) {
-                    attr(elem, 'style', serializedCss); // #1881
-                }
-            } else {
-                css(elem, styles);
-            }
+            const stylesToApply = merge(styles);
+            if (elem.namespaceURI === this.SVG_NS) {
 
+                // These CSS properties are interpreted internally by the SVG
+                // renderer, but are not supported by SVG and should not be
+                // added to the DOM. In styled mode, no CSS should find its way
+                // to the DOM whatsoever (#6173, #6474).
+                (
+                    ['textOutline', 'textOverflow', 'width'] as
+                    ('textOutline'|'textOverflow'|'width')[]
+                ).forEach(
+                    (key): boolean|undefined => (
+                        stylesToApply &&
+                        delete stylesToApply[key]
+                    )
+                );
+            }
+            css(elem, stylesToApply);
 
             if (this.added) {
 
                 // Rebuild text after added. Cache mechanisms in the buildText
                 // will prevent building if there are no significant changes.
                 if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this as any);
+                    this.renderer.buildText(this);
                 }
 
                 // Apply text outline after added
-                if (styles && styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline as any);
+                if (styles.textOutline) {
+                    this.applyTextOutline(styles.textOutline);
                 }
             }
         }
@@ -1219,8 +1234,9 @@ class SVGElement implements SVGElementLike {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el: SVGDOMElement): void {
-                    if ((el.getAttribute('clip-path') as any).indexOf(clipPath.element.id) > -1
-                    ) {
+                    if ((el.getAttribute('clip-path') as any).indexOf(
+                        clipPath.element.id
+                    ) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
@@ -1286,7 +1302,6 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#destroyShadows
      *
-     * @return {void}
      */
     public destroyShadows(): void {
         (this.shadows || []).forEach(function (
@@ -1295,49 +1310,6 @@ class SVGElement implements SVGElementLike {
             this.safeRemoveChild(shadow);
         }, this);
         this.shadows = void 0;
-    }
-
-    /**
-     * @private
-     */
-    public destroyTextPath(
-        elem: SVGDOMElement,
-        path: SVGElement
-    ): void {
-        const textElement = elem.getElementsByTagName('text')[0];
-        let childNodes: NodeListOf<ChildNode>;
-
-        if (textElement) {
-            // Remove textPath attributes
-            textElement.removeAttribute('dx');
-            textElement.removeAttribute('dy');
-
-            // Remove ID's:
-            path.element.setAttribute('id', '');
-            // Check if textElement includes textPath,
-            if (
-                this.textPathWrapper &&
-                textElement.getElementsByTagName('textPath').length
-            ) {
-                // Move nodes to <text>
-                childNodes = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s and text nodes to the <textPath> node
-                while (childNodes.length) {
-                    textElement.appendChild(childNodes[0]);
-                }
-                // Remove <textPath> from the DOM
-                textElement.removeChild(this.textPathWrapper.element);
-            }
-        } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
-            // Remove textPath attributes from elem
-            // to get correct text-outline position
-            elem.removeAttribute('dx');
-            elem.removeAttribute('dy');
-        }
-        if (this.textPathWrapper) {
-            // Set textPathWrapper to undefined and destroy it
-            this.textPathWrapper = this.textPathWrapper.destroy();
-        }
     }
 
     /**
@@ -1401,7 +1373,7 @@ class SVGElement implements SVGElementLike {
             duration: pick(duration, 150),
             complete: function (): void {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({ y: -9999 }).hide();
+                elemWrapper.hide();
             }
         });
     }
@@ -1452,12 +1424,17 @@ class SVGElement implements SVGElementLike {
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
-            renderer = wrapper.renderer,
-            element = wrapper.element,
-            styles = wrapper.styles,
-            textStr = wrapper.textStr,
-            cache = renderer.cache,
-            cacheKeys = renderer.cacheKeys,
+            {
+                alignValue,
+                element,
+                renderer,
+                styles,
+                textStr
+            } = wrapper,
+            {
+                cache,
+                cacheKeys
+            } = renderer,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             rotation = pick(rot, wrapper.rotation, 0),
             fontSize = renderer.styledMode ? (
@@ -1467,7 +1444,7 @@ class SVGElement implements SVGElementLike {
                 styles && styles.fontSize
             );
 
-        let bBox: any, // = wrapper.bBox,
+        let bBox: BBoxObject|undefined,
             width,
             height,
             toggleTextShadowShim,
@@ -1492,6 +1469,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
+                alignValue,
                 styles && styles.textOverflow, // #5968
                 styles && styles.fontWeight // #12163
             ].join(',');
@@ -1534,9 +1512,12 @@ class SVGElement implements SVGElementLike {
                         // width and height in case of rotation (below)
                         extend({} as any, (element as any).getBBox()) : {
 
-                            // Legacy IE in export mode
+                            // HTML elements with `exporting.allowHTML` and
+                            // legacy IE in export mode
                             width: (element as any).offsetWidth,
-                            height: (element as any).offsetHeight
+                            height: (element as any).offsetHeight,
+                            x: 0,
+                            y: 0
                         };
 
                     // #3842
@@ -1551,7 +1532,7 @@ class SVGElement implements SVGElementLike {
                 // other condition is for Opera that returns a width of
                 // -Infinity on hidden elements.
                 if (!bBox || bBox.width < 0) {
-                    bBox = { width: 0, height: 0 } as any;
+                    bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
 
@@ -1582,8 +1563,7 @@ class SVGElement implements SVGElementLike {
                             '11px,17': 14,
                             '13px,20': 16
                         } as Record<string, number>)[
-                            (styles as any) &&
-                            (styles as any).fontSize + ',' + Math.round(height)
+                            `${fontSize || ''},${Math.round(height)}`
                         ] ||
                         height
                     );
@@ -1591,17 +1571,48 @@ class SVGElement implements SVGElementLike {
 
                 // Adjust for rotated text
                 if (rotation) {
-                    const rad = rotation * deg2rad;
-                    bBox.width = Math.abs(height * Math.sin(rad)) +
-                        Math.abs(width * Math.cos(rad));
-                    bBox.height = Math.abs(height * Math.cos(rad)) +
-                        Math.abs(width * Math.sin(rad));
+
+                    const baseline = Number(
+                            element.getAttribute('y') || 0
+                        ) - bBox.y,
+                        alignFactor = ({
+                            'right': 1,
+                            'center': 0.5
+                        } as Record<string, number>)[alignValue || 0] || 0,
+                        rad = rotation * deg2rad,
+                        rad90 = (rotation - 90) * deg2rad,
+                        wCosRad = width * Math.cos(rad),
+                        wSinRad = width * Math.sin(rad),
+                        cosRad90 = Math.cos(rad90),
+                        sinRad90 = Math.sin(rad90),
+
+                        // Find the starting point on the left side baseline of
+                        // the text
+                        pX = bBox.x + alignFactor * (width - wCosRad),
+                        pY = bBox.y + baseline - alignFactor * wSinRad,
+
+                        // Find all corners
+                        aX = pX + baseline * cosRad90,
+                        bX = aX + wCosRad,
+                        cX = bX - height * cosRad90,
+                        dX = cX - wCosRad,
+
+                        aY = pY + baseline * sinRad90,
+                        bY = aY + wSinRad,
+                        cY = bY - height * sinRad90,
+                        dY = cY - wSinRad;
+
+                    // Deduct the bounding box from the corners
+                    bBox.x = Math.min(aX, bX, cX, dX);
+                    bBox.y = Math.min(aY, bY, cY, dY);
+                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
                 }
             }
 
             // Cache it. When loading a chart in a hidden iframe in Firefox and
             // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
-            if (cacheKey && bBox.height > 0) {
+            if (cacheKey && (textStr === '' || bBox.height > 0)) {
 
                 // Rotate (#4681)
                 while (cacheKeys.length > 250) {
@@ -1660,22 +1671,11 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#hide
      *
-     * @param {boolean} [hideByTranslation=false]
-     *        The flag to determine if element should be hidden by moving out
-     *        of the viewport. Used for example for dataLabels.
-     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public hide(hideByTranslation?: boolean): this {
-
-        if (hideByTranslation) {
-            this.attr({ y: -9999 });
-        } else {
-            this.attr({ visibility: 'hidden' });
-        }
-
-        return this;
+    public hide(): this {
+        return this.attr({ visibility: 'hidden' });
     }
 
     /**
@@ -1891,30 +1891,29 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * Set a text path for a `text` or `label` element, allowing the text to
+     * flow along a path.
+     *
+     * In order to unset the path for an existing element, call `setTextPath`
+     * with `{ enabled: false }` as the second argument.
+     *
+     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+     *
      * @function Highcharts.SVGElement#setTextPath
-     * @param {Highcharts.SVGElement} path
-     * Path to follow.
+     *
+     * @param {Highcharts.SVGElement|undefined} path
+     *        Path to follow. If undefined, it allows changing options for the
+     *        existing path.
+     *
      * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     * Options.
-     * @return {Highcharts.SVGElement}
-     * Returns the SVGElement for chaining.
+     *        Options.
+     *
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public setTextPath(
-        path: SVGElement,
+        path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
-        const elem = this.element,
-            textNode = this.text ? this.text.element : elem,
-            attribsMap = {
-                textAnchor: 'text-anchor'
-            };
-
-        let adder = false,
-            textPathElement: DOMElementType,
-            textPathId,
-            textPathWrapper: SVGElement = this.textPathWrapper as any,
-            firstTime = !textPathWrapper;
 
         // Defaults
         textPathOptions = merge(true, {
@@ -1926,138 +1925,83 @@ class SVGElement implements SVGElementLike {
             }
         }, textPathOptions);
 
-        const attrs = AST.filterUserAttributes(textPathOptions.attributes);
+        const url = this.renderer.url,
+            textWrapper = this.text || this,
+            textPath = textWrapper.textPath,
+            { attributes, enabled } = textPathOptions;
 
-        if (path && textPathOptions && textPathOptions.enabled) {
-            // In case of fixed width for a text, string is rebuilt
-            // (e.g. ellipsis is applied), so we need to rebuild textPath too
-            if (
-                textPathWrapper &&
-                textPathWrapper.element.parentNode === null
-            ) {
-                // When buildText functionality was triggered again
-                // and deletes textPathWrapper parentNode
-                firstTime = true;
-                textPathWrapper = textPathWrapper.destroy() as any;
-            } else if (textPathWrapper) {
-                // Case after drillup when spans were added into
-                // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(textPathWrapper.parentGroup);
-            }
-            // label() has padding, text() doesn't
-            if (this.options && this.options.padding) {
-                attrs.dx = -this.options.padding;
-            }
+        path = path || (textPath && textPath.path);
 
-            if (!textPathWrapper) {
-                // Create <textPath>, defer the DOM adder
-                this.textPathWrapper = textPathWrapper =
-                    this.renderer.createElement('textPath') as any;
-                adder = true;
-            }
+        // Remove previously added event
+        if (textPath) {
+            textPath.undo();
+        }
 
-            textPathElement = textPathWrapper.element;
+        if (path && enabled) {
+            const undo = addEvent(textWrapper, 'afterModifyTree', (
+                e: AnyRecord
+            ): void => {
 
-            // Set ID for the path
-            textPathId = path.element.getAttribute('id');
-            if (!textPathId) {
-                path.element.setAttribute('id', textPathId = uniqueKey());
-            }
+                if (path && enabled) {
 
-            // Change DOM structure, by placing <textPath> tag in <text>
-            if (firstTime) {
-
-                // Adjust the position
-                textNode.setAttribute('y', 0); // Firefox
-                if (isNumber(attrs.dx)) {
-                    textNode.setAttribute('x', -attrs.dx);
-                }
-
-                // Move all <tspan>'s and text nodes to the <textPath> node. Do
-                // not move other elements like <title> or <path>
-                const childNodes = [].slice.call(textNode.childNodes);
-                for (let i = 0; i < childNodes.length; i++) {
-                    const childNode: any = childNodes[i];
-                    if (
-                        childNode.nodeType === Node.TEXT_NODE ||
-                        childNode.nodeName === 'tspan'
-                    ) {
-                        textPathElement.appendChild(childNode);
+                    // Set ID for the path
+                    let textPathId = path.attr('id');
+                    if (!textPathId) {
+                        path.attr('id', textPathId = uniqueKey());
                     }
+
+                    // Set attributes for the <text>
+                    const textAttribs: SVGAttributes = {
+                        // dx/dy options must by set on <text> (parent), the
+                        // rest should be set on <textPath>
+                        x: 0,
+                        y: 0
+                    };
+
+                    if (defined(attributes.dx)) {
+                        textAttribs.dx = attributes.dx;
+                        delete attributes.dx;
+                    }
+                    if (defined(attributes.dy)) {
+                        textAttribs.dy = attributes.dy;
+                        delete attributes.dy;
+                    }
+                    textWrapper.attr(textAttribs);
+
+
+                    // Handle label properties
+                    this.attr({ transform: '' });
+                    if (this.box) {
+                        this.box = this.box.destroy();
+                    }
+
+                    // Wrap the nodes in a textPath
+                    const children = e.nodes.slice(0);
+                    e.nodes.length = 0;
+                    e.nodes[0] = {
+                        tagName: 'textPath',
+                        attributes: extend(attributes, {
+                            'text-anchor': attributes.textAnchor,
+                            href: `${url}#${textPathId}`
+                        }),
+                        children
+                    };
                 }
-            }
-
-            // Add <textPath> to the DOM
-            if (adder && textPathWrapper) {
-                textPathWrapper.add({ element: textNode } as any);
-            }
-
-            // Set basic options:
-            // Use `setAttributeNS` because Safari needs this..
-            textPathElement.setAttributeNS(
-                'http://www.w3.org/1999/xlink',
-                'href',
-                this.renderer.url + '#' + textPathId
-            );
-
-            // Presentation attributes:
-
-            // dx/dy options must by set on <text> (parent),
-            // the rest should be set on <textPath>
-            if (defined(attrs.dy)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dy', attrs.dy);
-                delete attrs.dy;
-            }
-            if (defined(attrs.dx)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dx', attrs.dx);
-                delete attrs.dx;
-            }
-
-            // Additional attributes
-            objectEach(attrs, function (val, key): void {
-                textPathElement.setAttribute(
-                    (attribsMap as any)[key] || key,
-                    val as any
-                );
             });
 
-            // Remove translation, text that follows path does not need that
-            elem.removeAttribute('transform');
+            // Set the reference
+            textWrapper.textPath = { path, undo };
 
-            // Remove shadows and text outlines
-            this.removeTextOutline.call(textPathWrapper);
+        } else {
+            textWrapper.attr({ dx: 0, dy: 0 });
+            delete textWrapper.textPath;
+        }
 
-            // Remove background and border for label(), see #10545
-            // Alternatively, we can disable setting background rects in
-            // series.drawDataLabels()
-            if (this.text && !this.renderer.styledMode) {
-                this.attr({
-                    fill: 'none',
-                    'stroke-width': 0
-                });
-            }
+        if (this.added) {
 
-            // Disable some functions
-            this.updateTransform = noop;
-            this.applyTextOutline = noop;
-
-        } else if (textPathWrapper) {
-            // Reset to prototype
-            delete (this as any).updateTransform;
-            delete (this as any).applyTextOutline;
-
-            // Restore DOM structure:
-            this.destroyTextPath(elem as any, path);
-
-            // Bring attributes back
-            this.updateTransform();
-
-            // Set textOutline back for text()
-            if (this.options && this.options.rotation) {
-                this.applyTextOutline(this.options.style.textOutline);
-            }
+            // Rebuild text after added
+            textWrapper.textCache = '';
+            this.renderer.buildText(textWrapper);
         }
 
         return this;
@@ -2100,7 +2044,7 @@ class SVGElement implements SVGElementLike {
             element = this.element,
             oldShadowOptions = this.oldShadowOptions,
             defaultShadowOptions: ShadowOptionsObject = {
-                color: palette.neutralColor100,
+                color: Palette.neutralColor100,
                 offsetX: this.parentInverted ? -1 : 1,
                 offsetY: this.parentInverted ? -1 : 1,
                 opacity: 0.15,
@@ -2154,7 +2098,7 @@ class SVGElement implements SVGElementLike {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        palette.neutralColor100
+                        Palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
@@ -2197,7 +2141,7 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#show
      *
-     * @param {boolean} [inherit=false]
+     * @param {boolean} [inherit=true]
      *        Set the visibility attribute to `inherit` rather than `visible`.
      *        The difference is that an element with `visibility="visible"`
      *        will be visible even if the parent is hidden.
@@ -2205,7 +2149,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public show(inherit?: boolean): this {
+    public show(inherit: boolean = true): this {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
         );
@@ -2412,12 +2356,13 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#translate
      *
      * @param {number} x
-     *        The x value.
+     * The x value.
      *
      * @param {number} y
-     *        The y value.
+     * The y value.
      *
      * @return {Highcharts.SVGElement}
+     * Translated element.
      */
     public translate(
         x: number,
@@ -2527,7 +2472,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length) {
+        if (transform.length && !(wrapper.text || wrapper).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }
@@ -2542,30 +2487,25 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public visibilitySetter(
-        value: string,
-        key: string,
+        value: 'hidden'|'inherit'|'visible',
+        key: 'visibility',
         element: SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as AnyRecord)[key] !== value) { // #6747
+        } else if (this[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as AnyRecord)[key] = value;
+        this[key] = value;
     }
 
     /**
      * @private
      * @function Highcharts.SVGElement#xGetter
-     *
-     * @param {string} key
-     *
-     * @return {number|string|null}
      */
     public xGetter(key: string): (number|string|null) {
         if (this.element.nodeName === 'circle') {
@@ -2581,9 +2521,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#zIndexSetter
-     * @param {number} [value]
-     * @param {string} [key]
-     * @return {boolean}
      */
     public zIndexSetter(
         value?: number,
@@ -2680,9 +2617,12 @@ class SVGElement implements SVGElementLike {
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface SVGElement extends SVGElementLike {
     // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
@@ -2721,6 +2661,12 @@ SVGElement.prototype.verticalAlignSetter = function (
     this.doTransform = true;
 };
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace SVGElement {
 
     export interface ElementSetterFunction<T> {
@@ -2736,6 +2682,12 @@ namespace SVGElement {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGElement;
 
@@ -2854,6 +2806,12 @@ export default SVGElement;
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
+ * @name Highcharts.SVGAttributes#dx
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dy
+ * @type {number|undefined}
+ *//**
  * @name Highcharts.SVGAttributes#fill
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
@@ -2909,4 +2867,4 @@ export default SVGElement;
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
-''; // detach doclets above
+''; // keeps doclets above in JS file

@@ -52,7 +52,9 @@ class GanttPoint extends XRangePoint {
     /**
      * @private
      */
-    public static setGanttPointAliases(options: (GanttPoint|GanttPointOptions)): void {
+    public static setGanttPointAliases(
+        options: (GanttPoint|GanttPointOptions)
+    ): void {
         /**
          * Add a value to options if the value exists.
          * @private
@@ -107,7 +109,7 @@ class GanttPoint extends XRangePoint {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param {object} options
+     * @param {Object} options
      *        The point options
      *
      * @param {number} x

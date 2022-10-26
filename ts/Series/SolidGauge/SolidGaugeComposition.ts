@@ -88,7 +88,9 @@ symbols.arc = function (
                 y1 = outerArcStart[2],
                 x2 = innerArcStart[1],
                 y2 = innerArcStart[2],
-                roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                roundStart: SVGPath.Arc = [
+                    'A', smallR, smallR, 0, 1, 1, x1, y1
+                ],
                 roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
 
             // Replace the line segment and the last close segment

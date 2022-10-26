@@ -1,75 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['dk', 0],
-    ['de', 1],
-    ['fr', 2],
-    ['ie', 3],
-    ['hr', 4],
-    ['gb', 5],
-    ['ee', 6],
-    ['cy', 7],
-    ['fi', 8],
-    ['gr', 9],
-    ['se', 10],
-    ['nl', 11],
-    ['es', 12],
-    ['lt', 13],
-    ['it', 14],
-    ['mt', 15],
-    ['nc', 16],
-    ['pl', 17],
-    ['sk', 18],
-    ['hu', 19],
-    ['lu', 20],
-    ['si', 21],
-    ['be', 22],
-    ['cnm', 23],
-    ['bg', 24],
-    ['ro', 25],
-    ['lv', 26],
-    ['at', 27],
-    ['cz', 28],
-    ['pt', 29]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/european-union'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/european-union.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['dk', 10], ['de', 11], ['fr', 12], ['ie', 13], ['hr', 14], ['gb', 15],
+        ['ee', 16], ['cy', 17], ['fi', 18], ['gr', 19], ['se', 20], ['nl', 21],
+        ['es', 22], ['lt', 23], ['it', 24], ['mt', 25], ['nc', 26], ['pl', 27],
+        ['sk', 28], ['hu', 29], ['lu', 30], ['si', 31], ['be', 32], ['cnm', 33],
+        ['bg', 34], ['ro', 35], ['lv', 36], ['at', 37], ['cz', 38], ['pt', 39]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/european-union.topo.json">European Union</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

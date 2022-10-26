@@ -1,5 +1,5 @@
 ---
- name: Nordrhein-Westfalen - Highmaps
- description: Highmaps demo
+ name: Nordrhein-Westfalen - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,4 +1,2 @@
 # Distribution map
-This demo visualizes the breeding and the wintering range of the Rusty Blackbird on an interactive map chart. Notice the irregularity of the data; this is possible thanks to how Highmaps allow you to layer any data on top of any map using a custom map process.
-#### Tip
-Learn more about how to create custom maps [here](https://www.highcharts.com/docs/maps/custom-maps).
+This demo visualizes the provinces Roman Empire which did not follow the current national borders. The irregularity of the data is possible thanks to how Highcharts Maps allow you to layer any data on top of any map.

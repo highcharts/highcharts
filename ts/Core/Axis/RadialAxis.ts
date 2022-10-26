@@ -19,8 +19,8 @@
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
-import type PlotBandOptions from './PlotBandOptions';
-import type PlotLineOptions from './PlotLineOptions';
+import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -30,6 +30,8 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
+import D from '../DefaultOptions.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
 import U from '../Utilities.js';
@@ -69,7 +71,7 @@ declare module '../Chart/ChartLike'{
     }
 }
 
-declare module './PlotBandOptions' {
+declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
@@ -78,7 +80,7 @@ declare module './PlotBandOptions' {
     }
 }
 
-declare module './PlotLineOptions' {
+declare module './PlotLineOrBand/PlotLineOptions' {
     interface PlotLineOptions {
         chartX?: number;
         chartY?: number;
@@ -180,7 +182,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<(typeof Axis|typeof Tick)> = [];
+    const composedClasses: Array<Function> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -400,8 +402,6 @@ namespace RadialAxis {
      * anti-collision.
      *
      * @private
-     *
-     * @return {Highcharts.ChartLabelCollectorFunction}
      */
     function createLabelCollector(
         this: AxisComposition
@@ -499,17 +499,12 @@ namespace RadialAxis {
      * getPlotLinePath method.
      *
      * @private
-     *
      * @param {number} _lineWidth
      * Line width is not used.
-     *
      * @param {number} [radius]
      * Radius of radial path.
-     *
      * @param {number} [innerRadius]
      * Inner radius of radial path.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getLinePath(
         this: AxisComposition,
@@ -557,7 +552,11 @@ namespace RadialAxis {
         } else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                [
+                    'M',
+                    this.center[0] + chart.plotLeft,
+                    this.center[1] + chart.plotTop
+                ],
                 ['L', end.x, end.y]
             ];
         }
@@ -585,17 +584,6 @@ namespace RadialAxis {
      * Find the path for plot bands along the radial axis.
      *
      * @private
-     *
-     * @param {number} from
-     * From value.
-     *
-     * @param {number} to
-     * To value.
-     *
-     * @param {Highcharts.AxisPlotBandsOptions} options
-     * Band options.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -605,7 +593,9 @@ namespace RadialAxis {
     ): Path {
 
         const chart = this.chart,
-            radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+            radiusToPixels = (
+                radius: number|string|undefined
+            ): (number|undefined) => {
                 if (typeof radius === 'string') {
                     let r = parseInt(radius, 10);
                     if (percentRegex.test(radius)) {
@@ -867,21 +857,17 @@ namespace RadialAxis {
      * distance from center.
      *
      * @private
-     *
      * @param {number} value
      * Point value.
-     *
      * @param {number} [length]
      * Distance from center.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function getPosition(
         this: AxisComposition,
         value: number,
         length?: number
     ): PositionObject {
-        const translatedVal = this.translate(value) as any;
+        const translatedVal = this.translate(value);
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -890,7 +876,8 @@ namespace RadialAxis {
             // fall out of the visible range near the center of a pane
             pick(this.isCircular ?
                 length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2) - this.offset
+                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            ) - this.offset
         );
     }
 
@@ -1090,7 +1077,8 @@ namespace RadialAxis {
 
             // Apply the stack labels for yAxis in case of inverted chart
             if (inverted && coll === 'yAxis') {
-                this.defaultPolarOptions.stackLabels = AxisDefaults.defaultYAxisOptions.stackLabels;
+                this.defaultPolarOptions.stackLabels = AxisDefaults
+                    .defaultYAxisOptions.stackLabels;
                 this.defaultPolarOptions.reversedStacks = true;
             }
         }
@@ -1098,7 +1086,7 @@ namespace RadialAxis {
         // Disable certain features on angular and polar axes
         if (angular || polar) {
             this.isRadial = true;
-            (chartOptions.chart as any).zoomType = null as any;
+            (chartOptions.chart as any).zooming.type = null as any;
 
             if (!this.labelCollector) {
                 this.labelCollector = this.createLabelCollector();
@@ -1151,7 +1139,7 @@ namespace RadialAxis {
             labelOptions = axis.options.labels as any,
             angle = (
                 (
-                    (axis.translate(this.pos) as any) + axis.startAngleRad +
+                    axis.translate(this.pos) + axis.startAngleRad +
                     Math.PI / 2
                 ) / Math.PI * 180
             ) % 360,
@@ -1320,14 +1308,10 @@ namespace RadialAxis {
      * to final chart coordinates.
      *
      * @private
-     *
      * @param {number} angle
      * Translation angle.
-     *
      * @param {number} radius
      * Translation radius.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function postTranslate(
         this: AxisComposition,
@@ -1448,6 +1432,7 @@ namespace RadialAxis {
         const options = this.options = merge<Options>(
             (this.constructor as typeof Axis).defaultOptions,
             this.defaultPolarOptions,
+            (defaultOptions as any)[this.coll], // #16112
             userOptions
         );
 

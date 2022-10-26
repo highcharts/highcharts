@@ -11,6 +11,8 @@ const gulp = require('gulp');
  * */
 
 /**
+ * Builds files of `/ts` folder into `/js` folder.
+ *
  * @return {Promise}
  * Promise to keep
  */
@@ -26,7 +28,12 @@ function scriptsTS() {
         Promise
             .resolve()
             .then(() => fsLib.deleteDirectory('js', true))
-            .then(() => processLib.exec('npx tsc --project ts'))
+            .then(() => fsLib.copyAllFiles('ts', 'js', true, (
+                function (sourcePath) {
+                    return sourcePath.endsWith('.d.ts');
+                }
+            )))
+            .then(() => processLib.exec('npx tsc --build ts'))
             .then(function (output) {
                 processLib.isRunning('scripts-ts', false);
                 resolve(output);

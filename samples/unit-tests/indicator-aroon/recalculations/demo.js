@@ -45,13 +45,14 @@ QUnit.test('Test Aroon calculations on data updates.', function (assert) {
         ]
     });
 
-    function toFastAroonWithRound(arr) {
-        return Highcharts.map(arr, function (point) {
-            return [
-                parseFloat(point[0].toFixed(4)),
-                parseFloat(point[1].toFixed(4))
-            ];
-        });
+    function toAroonWithRound(arr) {
+        return arr.map(
+            point =>
+                [
+                    parseFloat(point[0].toFixed(4)),
+                    parseFloat(point[1].toFixed(4))
+                ]
+        );
     }
 
     assert.strictEqual(
@@ -120,7 +121,7 @@ QUnit.test('Test Aroon calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        toFastAroonWithRound(chart.series[1].yData),
+        toAroonWithRound(chart.series[1].yData),
         [
             [100.0, 28.5714],
             [92.8571, 21.4286],
@@ -153,7 +154,7 @@ QUnit.test('Test Aroon calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        toFastAroonWithRound(chart.series[1].yData),
+        toAroonWithRound(chart.series[1].yData),
         [
             [100.0, 28.5714],
             [92.8571, 21.4286],

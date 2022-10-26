@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,22 +22,23 @@ import type {
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
 
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
-const {
-    getArrayExtremes
-} = ReduceArrayMixin;
+import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Williams %R series type.
@@ -72,7 +79,7 @@ class WilliamsRIndicator extends SMAIndicator {
              */
             period: 14
         }
-    } as WilliamsROptions)
+    } as WilliamsROptions);
 
     public data: Array<WilliamsRPoint> = void 0 as any;
     public options: WilliamsROptions = void 0 as any;
@@ -115,7 +122,7 @@ class WilliamsRIndicator extends SMAIndicator {
         // with (+1)
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 1);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
 
             LL = extremes[0];
             HH = extremes[1];
@@ -138,6 +145,12 @@ class WilliamsRIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface WilliamsRIndicator {
     nameBase: string;
     pointClass: typeof WilliamsRPoint;
@@ -145,6 +158,12 @@ interface WilliamsRIndicator {
 extend(WilliamsRIndicator.prototype, {
     nameBase: 'Williams %R'
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -161,6 +180,12 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  * */
 
 export default WilliamsRIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Williams %R Oscillator` series. If the [type](#series.williamsr.type)

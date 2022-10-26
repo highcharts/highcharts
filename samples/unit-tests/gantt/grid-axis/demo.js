@@ -962,7 +962,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         return !axis.options.isInternal;
     });
 
-    Highcharts.each(axes, function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type || 'linear',
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,
@@ -1145,7 +1145,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 
     axes = chart.yAxis;
 
-    Highcharts.each(axes, function (axis) {
+    axes.forEach(axis => {
         var axisType = axis.options.type,
             tickPositions = axis.tickPositions,
             ticks = axis.ticks,
@@ -1202,8 +1202,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 });
 
 QUnit.module('labels alignment', function () {
-    var each = Highcharts.each,
-        map = Highcharts.map,
+    var map = Highcharts.map,
         categories = ['Category 1', 'Category 2', 'Category 3'],
         optionsAxis = {
             showEmpty: true,
@@ -1304,8 +1303,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1322,8 +1321,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1346,8 +1345,8 @@ QUnit.module('labels alignment', function () {
             xAxis: optionsAxis,
             yAxis: optionsAxis
         });
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });
@@ -1364,8 +1363,8 @@ QUnit.module('labels alignment', function () {
             yAxis: optionsAxis
         });
 
-        each(chart.axes, function (axis) {
-            each(axis.tickPositions, function (pos) {
+        chart.axes.forEach(axis => {
+            axis.tickPositions.forEach(pos => {
                 testTickPosition(axis, pos);
             });
         });

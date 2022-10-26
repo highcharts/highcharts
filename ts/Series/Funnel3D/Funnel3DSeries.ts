@@ -29,7 +29,7 @@ import Funnel3DComposition from './Funnel3DComposition.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -55,7 +55,8 @@ const {
 /**
  * The funnel3d series type.
  *
- * @constructor seriesTypes.funnel3d
+ * @class
+ * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
  * @requires highcharts-3d
  * @requires modules/cylinder
@@ -460,7 +461,7 @@ class Funnel3DSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

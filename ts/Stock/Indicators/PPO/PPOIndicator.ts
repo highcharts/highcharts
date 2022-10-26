@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,13 +22,10 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -47,10 +50,17 @@ const {
  * @augments Highcharts.Series
  */
 class PPOIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample {highstock} stock/indicators/ppo
      *         Percentage Price Oscillator
@@ -62,7 +72,6 @@ class PPOIndicator extends EMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
@@ -86,10 +95,10 @@ class PPOIndicator extends EMAIndicator {
     } as PPOOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<PPOPoint> = void 0 as any;
     public options: PPOOptions = void 0 as any;
@@ -100,21 +109,6 @@ class PPOIndicator extends EMAIndicator {
      *  Functions
      *
      * */
-
-    public init(this: PPOIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -188,10 +182,10 @@ class PPOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface PPOIndicator {
     nameBase: string;
@@ -226,6 +220,12 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
 
 export default PPOIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -237,7 +237,6 @@ export default PPOIndicator;
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/ppo
  * @apioption series.ppo
  */

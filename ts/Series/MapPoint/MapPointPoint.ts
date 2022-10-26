@@ -18,6 +18,8 @@
 
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
+import type { MapBounds } from '../../Maps/MapViewOptions';
+import type ScatterPoint from './../Scatter/ScatterPoint';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -25,7 +27,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { isNumber } = U;
 
 /* *
  *
@@ -53,26 +55,26 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
     /* eslint-disable valid-jsdoc */
 
-    public applyOptions(
-        options: (Highcharts.MapLatLonObject&MapPointPointOptions),
-        x?: number
-    ): MapPointPoint {
-        const mergedOptions = (
-            typeof options.lat !== 'undefined' &&
-            typeof options.lon !== 'undefined' ?
-                merge(
-                    options, this.series.chart.fromLatLonToPoint(options)
-                ) :
-                options
-        );
-
-        return (
-            super.applyOptions.call(this, mergedOptions, x) as any
+    public isValid(): boolean {
+        return Boolean(
+            this.options.geometry ||
+            (isNumber(this.x) && isNumber(this.y)) ||
+            (isNumber(this.options.lon) && isNumber(this.options.lat))
         );
     }
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface MapPointPoint extends ScatterPoint {
+    bounds?: MapBounds;
 }
 
 /* *

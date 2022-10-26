@@ -12,7 +12,14 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -22,16 +29,10 @@ import type {
     WordcloudSeriesOptions,
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
+
+import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import PolygonMixin from '../../Mixins/Polygon.js';
-const {
-    getBoundingBoxFromPolygon,
-    getPolygon,
-    isPolygonsColliding,
-    rotate2DToOrigin,
-    rotate2DToPoint
-} = PolygonMixin;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -42,7 +43,6 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    find,
     isArray,
     isNumber,
     isObject,
@@ -50,6 +50,30 @@ const {
 } = U;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudUtils from './WordcloudUtils.js';
+const {
+    archimedeanSpiral,
+    extendPlayingField,
+    getBoundingBoxFromPolygon,
+    getPlayingField,
+    getPolygon,
+    getRandomPosition,
+    getRotation,
+    getScale,
+    getSpiral,
+    intersectionTesting,
+    isPolygonsColliding,
+    rectangularSpiral,
+    rotate2DToOrigin,
+    rotate2DToPoint,
+    squareSpiral,
+    updateFieldBoundaries
+} = WordcloudUtils;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -70,13 +94,12 @@ class WordcloudSeries extends ColumnSeries {
      * A word cloud is a visualization of a set of words, where the size and
      * placement of a word is determined by how it is weighted.
      *
-     * @sample highcharts/demo/wordcloud
-     *         Word Cloud chart
+     * @sample highcharts/demo/wordcloud Word Cloud chart
      *
      * @extends      plotOptions.column
      * @excluding    allAreas, boostThreshold, clip, colorAxis, compare,
-     *               compareBase, crisp, cropTreshold, dataGrouping, dataLabels,
-     *               depth, dragDrop, edgeColor, findNearestPointBy,
+     *               compareBase, crisp, cropThreshold, dataGrouping,
+     *               dataLabels, depth, dragDrop, edgeColor, findNearestPointBy,
      *               getExtremesFromAll, grouping, groupPadding, groupZPadding,
      *               joinBy, maxPointWidth, minPointLength, navigatorOptions,
      *               negativeColor, pointInterval, pointIntervalUnit,
@@ -89,9 +112,7 @@ class WordcloudSeries extends ColumnSeries {
      * @requires     modules/wordcloud
      * @optionparent plotOptions.wordcloud
      */
-
-    public static defaultOptions: WordcloudSeriesOptions =
-    merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: WordcloudSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * If there is no space for a word on the playing field, then this
          * option will allow the playing field to be extended to fit the word.
@@ -100,7 +121,7 @@ class WordcloudSeries extends ColumnSeries {
          * NB! This option is currently not decided to be published in the API,
          * and is therefore marked as private.
          *
-         * @private
+         * @ignore-option
          */
         allowExtendPlayingField: true,
         animation: {
@@ -108,8 +129,12 @@ class WordcloudSeries extends ColumnSeries {
             duration: 500
         },
         borderWidth: 0,
+        /**
+         * @ignore-option
+         */
         clip: false, // Something goes wrong with clip. // @todo fix this
         colorByPoint: true,
+        cropThreshold: Infinity,
         /**
          * A threshold determining the minimum font size that can be applied to
          * a word.
@@ -130,7 +155,7 @@ class WordcloudSeries extends ColumnSeries {
          * cloud. Read more about it in our
          * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
          *
-         * @validvalue: ["center", "random"]
+         * @validvalue ["center", "random"]
          */
         placementStrategy: 'center',
         /**
@@ -163,7 +188,7 @@ class WordcloudSeries extends ColumnSeries {
          * algorithms for use in word cloud. Read more about it in our
          * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
          *
-         * @validvalue: ["archimedean", "rectangular", "square"]
+         * @validvalue ["archimedean", "rectangular", "square"]
          */
         spiral: 'rectangular',
         /**
@@ -332,8 +357,8 @@ class WordcloudSeries extends ColumnSeries {
         });
 
         // Calculate the playing field.
-        field = WordcloudUtils.getPlayingField(xAxis.len, yAxis.len, data);
-        spiral = WordcloudUtils.getSpiral(series.spirals[options.spiral as any], {
+        field = getPlayingField(xAxis.len, yAxis.len, data);
+        spiral = getSpiral(series.spirals[options.spiral as any], {
             field: field
         });
         // Draw all the points.
@@ -378,7 +403,7 @@ class WordcloudSeries extends ColumnSeries {
                     placement.rotation as any
                 ),
                 rectangle = getBoundingBoxFromPolygon(polygon),
-                delta: PositionObject = WordcloudUtils.intersectionTesting(point, {
+                delta: PositionObject = intersectionTesting(point, {
                     rectangle: rectangle,
                     polygon: polygon,
                     field: field,
@@ -391,10 +416,10 @@ class WordcloudSeries extends ColumnSeries {
             // If there is no space for the word, extend the playing field.
             if (!delta && allowExtendPlayingField) {
                 // Extend the playing field to fit the word.
-                field = WordcloudUtils.extendPlayingField(field, rectangle);
+                field = extendPlayingField(field, rectangle);
 
                 // Run intersection testing one more time to place the word.
-                delta = WordcloudUtils.intersectionTesting(point, {
+                delta = intersectionTesting(point, {
                     rectangle: rectangle,
                     polygon: polygon,
                     field: field,
@@ -412,7 +437,7 @@ class WordcloudSeries extends ColumnSeries {
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;
                 rectangle.bottom += delta.y;
-                field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
+                field = updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
                 point.isInside = true; // #15447
@@ -437,7 +462,7 @@ class WordcloudSeries extends ColumnSeries {
                 }
             }
 
-            point.draw({
+            DPU.draw(point, {
                 animatableAttribs: animate as any,
                 attribs: attr,
                 css: css,
@@ -452,7 +477,7 @@ class WordcloudSeries extends ColumnSeries {
         testElement = testElement.destroy() as any;
 
         // Scale the series group to fit within the plotArea.
-        scale = WordcloudUtils.getScale(xAxis.len, yAxis.len, field);
+        scale = getScale(xAxis.len, yAxis.len, field);
         series.group.attr({
             scaleX: scale,
             scaleY: scale
@@ -505,7 +530,7 @@ interface WordcloudSeries {
 }
 
 extend(WordcloudSeries.prototype, {
-    animate: Series.prototype.animate,
+    animate: noop,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
@@ -523,9 +548,9 @@ extend(WordcloudSeries.prototype, {
                 r = options.rotation;
 
             return {
-                x: WordcloudUtils.getRandomPosition(field.width) - (field.width / 2),
-                y: WordcloudUtils.getRandomPosition(field.height) - (field.height / 2),
-                rotation: WordcloudUtils.getRotation(r.orientations, point.index, r.from, r.to)
+                x: getRandomPosition(field.width) - (field.width / 2),
+                y: getRandomPosition(field.height) - (field.height / 2),
+                rotation: getRotation(r.orientations, point.index, r.from, r.to)
             };
         },
         center: function (
@@ -537,7 +562,7 @@ extend(WordcloudSeries.prototype, {
             return {
                 x: 0,
                 y: 0,
-                rotation: WordcloudUtils.getRotation(r.orientations, point.index, r.from, r.to)
+                rotation: getRotation(r.orientations, point.index, r.from, r.to)
             };
         }
     },
@@ -546,13 +571,13 @@ extend(WordcloudSeries.prototype, {
     // collision with either another word or the borders. To implement a custom
     // spiral, look at the function archimedeanSpiral for example.
     spirals: {
-        'archimedean': WordcloudUtils.archimedeanSpiral,
-        'rectangular': WordcloudUtils.rectangularSpiral,
-        'square': WordcloudUtils.squareSpiral
+        'archimedean': archimedeanSpiral,
+        'rectangular': rectangularSpiral,
+        'square': squareSpiral
     },
     utils: {
-        extendPlayingField: WordcloudUtils.extendPlayingField,
-        getRotation: WordcloudUtils.getRotation,
+        extendPlayingField: extendPlayingField,
+        getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
@@ -579,7 +604,7 @@ SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
  * */
 
 namespace WordcloudSeries {
-    export interface WordcloudFieldObject extends Highcharts.PolygonBoxObject, SizeObject {
+    export interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
         ratioX: number;
         ratioY: number;
     }
@@ -610,8 +635,8 @@ namespace WordcloudSeries {
     export interface WordcloudTestOptionsObject {
         field: WordcloudFieldObject;
         placed: Array<WordcloudPoint>;
-        polygon: Highcharts.PolygonObject;
-        rectangle: Highcharts.PolygonBoxObject;
+        polygon: WordcloudUtils.PolygonObject;
+        rectangle: PolygonBoxObject;
         rotation: (boolean|number);
         spiral: WordcloudSpiralFunction;
     }
@@ -681,7 +706,7 @@ export default WordcloudSeries;
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.name
+ * @apioption series.wordcloud.data.name
  */
 
 /**
@@ -691,7 +716,7 @@ export default WordcloudSeries;
  * @type      {number}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.sunburst.data.weight
+ * @apioption series.wordcloud.data.weight
  */
 
 ''; // detach doclets above

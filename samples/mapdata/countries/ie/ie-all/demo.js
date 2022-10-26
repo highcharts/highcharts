@@ -1,80 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ie-5551', 0],
-    ['ie-1510', 1],
-    ['ie-mo', 2],
-    ['ie-ky', 3],
-    ['ie-dl', 4],
-    ['ie-491', 5],
-    ['ie-ce', 6],
-    ['ie-7034', 7],
-    ['ie-7035', 8],
-    ['ie-ld', 9],
-    ['ie-cn', 10],
-    ['ie-2363', 11],
-    ['ie-mn', 12],
-    ['ie-gy', 13],
-    ['ie-ck', 14],
-    ['ie-wd', 15],
-    ['ie-7033', 16],
-    ['ie-1528', 17],
-    ['ie-dn', 18],
-    ['ie-lh', 19],
-    ['ie-mh', 20],
-    ['ie-oy', 21],
-    ['ie-wh', 22],
-    ['ie-wx', 23],
-    ['ie-cw', 24],
-    ['ie-ww', 25],
-    ['ie-ke', 26],
-    ['ie-kk', 27],
-    ['ie-ls', 28],
-    ['ie-ty', 29],
-    ['ie-1533', 30],
-    ['ie-lk', 31],
-    ['ie-rn', 32],
-    ['ie-so', 33],
-    ['ie-lm', 34]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ie/ie-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ie/ie-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ie-5551', 10], ['ie-1510', 11], ['ie-mo', 12], ['ie-ky', 13],
+        ['ie-dl', 14], ['ie-491', 15], ['ie-ce', 16], ['ie-7034', 17],
+        ['ie-7035', 18], ['ie-ld', 19], ['ie-cn', 20], ['ie-2363', 21],
+        ['ie-mn', 22], ['ie-gy', 23], ['ie-ck', 24], ['ie-wd', 25],
+        ['ie-7033', 26], ['ie-1528', 27], ['ie-dn', 28], ['ie-lh', 29],
+        ['ie-mh', 30], ['ie-oy', 31], ['ie-wh', 32], ['ie-wx', 33],
+        ['ie-cw', 34], ['ie-ww', 35], ['ie-ke', 36], ['ie-kk', 37],
+        ['ie-ls', 38], ['ie-ty', 39], ['ie-1533', 40], ['ie-lk', 41],
+        ['ie-rn', 42], ['ie-so', 43], ['ie-lm', 44]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ie/ie-all.js">Ireland</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ie/ie-all.topo.json">Ireland</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -78,10 +78,9 @@ class GanttChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.GanttChart#event:init
-     * @fires Highcharts.GanttChart#event:afterInit
+     * @emits Highcharts.GanttChart#event:init
+     * @emits Highcharts.GanttChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -175,7 +174,8 @@ class GanttChart extends Chart {
 
                     // Set default type treegrid, but only if 'categories' is
                     // undefined
-                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                    type: yAxisOptions.categories ?
+                        yAxisOptions.type : 'treegrid'
                 } as YAxisOptions,
                 yAxisOptions // user options
             );

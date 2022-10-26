@@ -56,7 +56,12 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+    public static readonly emptyBBox: BBoxObject = {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0
+    };
 
     /**
      * For labels, these CSS properties are applied to the `text` node directly.
@@ -73,7 +78,7 @@ class SVGLabel extends SVGElement {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -110,7 +115,9 @@ class SVGLabel extends SVGElement {
             this.addClass('highcharts-' + className);
         }
 
-        this.text = renderer.text('', 0, 0, useHTML).attr({ zIndex: 1 });
+        // Create the text element. An undefined text content prevents redundant
+        // box calculation (#16121)
+        this.text = renderer.text(void 0, 0, 0, useHTML).attr({ zIndex: 1 });
 
         // Validate the shape argument
         let hasBGImage;
@@ -218,7 +225,10 @@ class SVGLabel extends SVGElement {
             this.text.css(textStyles);
 
             const isWidth = 'width' in textStyles,
-                isFontStyle = ('fontSize' in textStyles || 'fontWeight' in textStyles);
+                isFontStyle = (
+                    'fontSize' in textStyles ||
+                    'fontWeight' in textStyles
+                );
 
             // Update existing text, box (#9400, #12163)
             if (isFontStyle) {
@@ -284,55 +294,13 @@ class SVGLabel extends SVGElement {
     private getCrispAdjust(): number {
         return this.renderer.styledMode && this.box ?
             this.box.strokeWidth() % 2 / 2 :
-            (this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0) % 2 / 2;
+            (
+                this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0
+            ) % 2 / 2;
     }
 
     public heightSetter(value: number): void {
         this.heightSetting = value;
-    }
-
-    // Event handling. In case of useHTML, we need to make sure that events
-    // are captured on the span as well, and that mouseenter/mouseleave
-    // between the SVG group and the HTML span are not treated as real
-    // enter/leave events. #13310.
-    public on(
-        eventType: string,
-        handler: Function
-    ): this {
-        const label = this;
-        const text = label.text;
-        const span: SVGElement|undefined =
-            text && text.element.tagName === 'SPAN' ? text : void 0;
-
-        let selectiveHandler: Function|undefined;
-
-        if (span) {
-            selectiveHandler = function (e: MouseEvent): void {
-                if (
-                    (
-                        eventType === 'mouseenter' ||
-                        eventType === 'mouseleave'
-                    ) &&
-                    e.relatedTarget instanceof Element &&
-                    (
-                        // #14110
-                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
-                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
-                    )
-                ) {
-                    return;
-                }
-                handler.call(label.element, e);
-            };
-            span.on(eventType, selectiveHandler);
-        }
-        SVGElement.prototype.on.call(
-            label,
-            eventType,
-            selectiveHandler || handler
-        );
-
-        return label;
     }
 
     /*
@@ -427,7 +395,8 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        const style = this.text.element.style,
+        const text = this.text,
+            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
@@ -438,8 +407,8 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.widthSetting) ||
                     !isNumber(this.heightSetting) ||
                     this.textAlign
-                ) && defined(this.text.textStr)) ?
-                    this.text.getBBox() :
+                ) && defined(text.textStr)) ?
+                    text.getBBox() :
                     SVGLabel.emptyBBox
             );
 
@@ -450,7 +419,7 @@ class SVGLabel extends SVGElement {
 
         const metrics = this.renderer.fontMetrics(
             style && style.fontSize,
-            this.text
+            text
         );
 
         // Update the label-scoped y offset. Math.min because of inline
@@ -468,7 +437,7 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        if (this.needsBox) {
+        if (this.needsBox && !text.textPath) {
 
             // Create the border box if it is not already present
             if (!this.box) {
@@ -478,8 +447,14 @@ class SVGLabel extends SVGElement {
                     this.renderer.rect();
 
                 box.addClass( // Don't use label className for buttons
-                    (this.className === 'button' ? '' : 'highcharts-label-box') +
-                    (this.className ? ' highcharts-' + this.className + '-box' : '')
+                    (
+                        this.className === 'button' ?
+                            '' : 'highcharts-label-box'
+                    ) +
+                    (
+                        this.className ?
+                            ' highcharts-' + this.className + '-box' : ''
+                    )
                 );
 
                 box.add(this);
@@ -487,7 +462,9 @@ class SVGLabel extends SVGElement {
 
             crispAdjust = this.getCrispAdjust();
             attribs.x = crispAdjust;
-            attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
+            attribs.y = (
+                (this.baseline ? -this.baselineOffset : 0) + crispAdjust
+            );
 
             // Apply the box attributes
             attribs.width = Math.round(this.width);
@@ -504,40 +481,43 @@ class SVGLabel extends SVGElement {
      */
     public updateTextPadding(): void {
         const text = this.text;
+        if (!text.textPath) {
 
-        this.updateBoxSize();
+            this.updateBoxSize();
 
-        // Determine y based on the baseline
-        const textY = this.baseline ? 0 : this.baselineOffset;
+            // Determine y based on the baseline
+            const textY = this.baseline ? 0 : this.baselineOffset;
 
-        let textX = pick(this.paddingLeft, this.padding);
+            let textX = pick(this.paddingLeft, this.padding);
 
-        // compensate for alignment
-        if (
-            defined(this.widthSetting) &&
-            this.bBox &&
-            (this.textAlign === 'center' || this.textAlign === 'right')
-        ) {
-            textX += { center: 0.5, right: 1 }[this.textAlign as ('center'|'right')] *
-                (this.widthSetting - this.bBox.width);
-        }
-
-        // update if anything changed
-        if (textX !== text.x || textY !== text.y) {
-            text.attr('x', textX);
-            // #8159 - prevent misplaced data labels in treemap
-            // (useHTML: true)
-            if (text.hasBoxWidthChanged) {
-                this.bBox = text.getBBox(true);
+            // compensate for alignment
+            if (
+                defined(this.widthSetting) &&
+                this.bBox &&
+                (this.textAlign === 'center' || this.textAlign === 'right')
+            ) {
+                textX += { center: 0.5, right: 1 }[
+                    this.textAlign as ('center'|'right')
+                ] * (this.widthSetting - this.bBox.width);
             }
-            if (typeof textY !== 'undefined') {
-                text.attr('y', textY);
-            }
-        }
 
-        // record current values
-        text.x = textX;
-        text.y = textY;
+            // update if anything changed
+            if (textX !== text.x || textY !== text.y) {
+                text.attr('x', textX);
+                // #8159 - prevent misplaced data labels in treemap
+                // (useHTML: true)
+                if (text.hasBoxWidthChanged) {
+                    this.bBox = text.getBBox(true);
+                }
+                if (typeof textY !== 'undefined') {
+                    text.attr('y', textY);
+                }
+            }
+
+            // record current values
+            text.x = textX;
+            text.y = textY;
+        }
     }
 
     public widthSetter(value: (number|string)): void {
@@ -549,7 +529,11 @@ class SVGLabel extends SVGElement {
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         const paddingRight = pick(this.paddingRight, padding);
-        return (this.widthSetting || this.bBox.width || 0) + paddingLeft + paddingRight;
+        return (
+            (this.widthSetting || this.bBox.width || 0) +
+            paddingLeft +
+            paddingRight
+        );
     }
 
     public xSetter(value: number): void {
@@ -569,5 +553,11 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGLabel;

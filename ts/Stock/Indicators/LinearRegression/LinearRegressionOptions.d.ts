@@ -26,7 +26,6 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
 
 export interface LinearRegressionOptions extends SMAOptions {
     params?: LinearRegressionParamsOptions;
-    tooltip?: TooltipOptions;
 }
 
 export interface LinearRegressionParamsOptions extends SMAParamsOptions {

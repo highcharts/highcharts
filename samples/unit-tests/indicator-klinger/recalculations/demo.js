@@ -187,11 +187,9 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         series = chart.series;
 
     function klingerWithRound(arr, index) {
-        return Highcharts.map(arr, function (point) {
-            return point[index] ?
-                parseFloat(point[index].toFixed(0)) :
-                point[index];
-        });
+        return arr.map(point =>
+            (point[index] ? parseFloat(point[index].toFixed(0)) : point[index])
+        );
     }
 
     // Klinger Oscilator needs at least 56 points to calculate the default period: 55.

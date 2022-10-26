@@ -1,5 +1,5 @@
 ---
- name: United States of America, congressional districts (113th) - Highmaps
- description: Highmaps demo
+ name: United States of America, congressional districts (113th) - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

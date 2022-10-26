@@ -32,11 +32,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     });
 
     function toFastStochasticWithRound(arr, index) {
-        return Highcharts.map(arr, function (point) {
-            return point[index] ?
-                parseFloat(point[index].toFixed(5)) :
-                point[index];
-        });
+        return arr.map(point =>
+            (point[index] ? parseFloat(point[index].toFixed(5)) : point[index])
+        );
     }
 
     assert.strictEqual(

@@ -21,12 +21,11 @@ import type {
 import type EMAPoint from './EMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -51,18 +50,23 @@ const {
  */
 class EMAIndicator extends SMAIndicator {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
      *
      * @sample stock/indicators/ema
-     *         Exponential moving average indicator
+     * Exponential moving average indicator
      *
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
@@ -207,7 +211,7 @@ class EMAIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -236,6 +240,12 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
 
 export default EMAIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `EMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
@@ -245,7 +255,6 @@ export default EMAIndicator;
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 

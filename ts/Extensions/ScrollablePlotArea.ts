@@ -46,6 +46,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    defined,
     merge,
     pick
 } = U;
@@ -106,7 +107,9 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -126,8 +129,10 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 0,
                 scrollableMinHeight - this.chartHeight
             );
-            if (scrollablePixelsY) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+            if (defined(scrollablePixelsY)) {
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
@@ -328,7 +333,9 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
+                zIndex: (
+                    chartOptions.style && chartOptions.style.zIndex || 0
+                ) + 2,
                 top: 0
             },
             null as any,
@@ -360,7 +367,7 @@ Chart.prototype.applyFixed = function (): void {
             .add();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
-        addEvent(this, 'afterDrilldown', this.moveFixedElements);
+        addEvent(this, 'afterApplyDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {
@@ -493,7 +500,7 @@ addEvent(Series, 'show', function (): void {
  *         Scrollable plot area
  * @sample highcharts/chart/scrollable-plotarea-vertical
  *         Vertically scrollable plot area
- * @sample {gantt} highcharts/chart/scrollable-plotarea-vertical
+ * @sample {gantt} gantt/chart/scrollable-plotarea-vertical
  *         Gantt chart with vertically scrollable plot area
  *
  * @since     6.1.0
@@ -506,6 +513,7 @@ addEvent(Series, 'show', function (): void {
  * area will become scrollable.
  *
  * @type      {number}
+ * @since     7.1.2
  * @apioption chart.scrollablePlotArea.minHeight
  */
 
@@ -514,6 +522,7 @@ addEvent(Series, 'show', function (): void {
  * area will become scrollable.
  *
  * @type      {number}
+ * @since     6.1.0
  * @apioption chart.scrollablePlotArea.minWidth
  */
 
@@ -523,6 +532,7 @@ addEvent(Series, 'show', function (): void {
  * Typically we would use 1 if the chart has right aligned Y axes.
  *
  * @type      {number}
+ * @since     6.1.0
  * @apioption chart.scrollablePlotArea.scrollPositionX
  */
 
@@ -531,6 +541,7 @@ addEvent(Series, 'show', function (): void {
  * 1, where 0 aligns the plot area to the top and 1 aligns it to the bottom.
  *
  * @type      {number}
+ * @since     7.1.2
  * @apioption chart.scrollablePlotArea.scrollPositionY
  */
 

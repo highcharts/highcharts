@@ -21,8 +21,9 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
+import type StackItem from './Stacking/StackItem';
 
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 
 /* *
  *
@@ -231,7 +232,7 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          * @sample {highstock} stock/xaxis/crosshairs-xy/
-         *         Crosshair on both axes
+         *         Crosshair on both axes, with y axis label
          * @sample {highmaps} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          *
@@ -480,7 +481,7 @@ namespace AxisDefaults {
          * same axis.
          *
          * For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#.dateFormat).
+         * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * Defaults to:
          * ```js
@@ -575,9 +576,9 @@ namespace AxisDefaults {
          * In Highcharts Stock, `endOnTick` is always `false` when the navigator
          * is enabled, to prevent jumpy scrolling.
          *
-         * @sample {highcharts} highcharts/chart/reflow-true/
-         *         True by default
          * @sample {highcharts} highcharts/yaxis/endontick/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick-false/
          *         False
          * @sample {highstock} stock/demo/basic-line/
          *         True by default
@@ -1120,8 +1121,6 @@ namespace AxisDefaults {
          *         Y axis max on logarithmic axis
          * @sample {highstock} stock/xaxis/min-max/
          *         Fixed min and max on X axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @type      {number|null}
          * @apioption xAxis.max
@@ -1179,8 +1178,6 @@ namespace AxisDefaults {
          *         -50 with startOnTick true by default
          * @sample {highstock} stock/xaxis/min-max/
          *         Set min and max on X axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @type      {number|null}
          * @apioption xAxis.min
@@ -1340,8 +1337,6 @@ namespace AxisDefaults {
          *         Minimum range of 5
          * @sample {highstock} stock/xaxis/minrange/
          *         Max zoom of 6 months overrides user selections
-         * @sample {highmaps} maps/axis/minrange/
-         *         Minimum range of 1000
          *
          * @type      {number}
          * @apioption xAxis.minRange
@@ -1547,7 +1542,9 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
          *
-         * @product   highcharts highstock gantt
+         * @type    {boolean}
+         * @default undefined
+         * @product highcharts highstock gantt
          */
         showLastLabel: true,
 
@@ -2359,11 +2356,11 @@ namespace AxisDefaults {
          * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
+         * @sample {highcharts} highcharts/demo/gauge-solid/
+         *         Gauge with stops
+         *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
-         *
-         * @sample {highcharts} highcharts/demo/gauge-solid/
-         *         True by default
          *
          * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
@@ -2393,9 +2390,9 @@ namespace AxisDefaults {
          * @see [type](#chart.panning.type)
          *
          *
-         * @sample {highcharts} highcharts/chart/reflow-true/
-         *         True by default
          * @sample {highcharts} highcharts/yaxis/endontick/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick-false/
          *         False
          * @sample {highstock} stock/demo/basic-line/
          *         True by default
@@ -2472,6 +2469,18 @@ namespace AxisDefaults {
          */
         tickPixelInterval: 72,
 
+        /**
+         * Whether to show the last tick label.
+         *
+         * @productdesc {highcharts|gantt}
+         * Defaults to `true` on cartesian charts, and `false` on polar charts.
+         *
+         * @productdesc {highstock}
+         * Defaults to `true` for categorized yAxis and `false` for other types
+         * of yAxis.
+         *
+         * @default undefined
+         */
         showLastLabel: true,
 
         /**
@@ -2527,8 +2536,6 @@ namespace AxisDefaults {
              *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
-             * @default    {highcharts|highmaps} right
-             * @default    {highstock} left
              * @apioption  yAxis.labels.align
              */
 
@@ -2559,8 +2566,6 @@ namespace AxisDefaults {
          *         Y axis max on logarithmic axis
          * @sample {highstock} stock/yaxis/min-max/
          *         Fixed min and max on Y axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @apioption yAxis.max
          */
@@ -2572,8 +2577,6 @@ namespace AxisDefaults {
          *         -50 with startOnTick true by default
          * @sample {highstock} stock/yaxis/min-max/
          *         Fixed min and max on Y axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @apioption yAxis.min
          */
@@ -2619,6 +2622,29 @@ namespace AxisDefaults {
          * @product   highstock
          * @apioption yAxis.scrollbar.margin
          */
+
+        /* eslint-disable highcharts/doclet-apioption-last */
+        /**
+         * Defines the position of the scrollbar. By default, it is positioned
+         * on the opposite of the main axis (right side of the chart).
+         * However, in the case of RTL languages could be set to `false`
+         * which positions the scrollbar on the left.
+         *
+         * Works only for vertical axes.
+         * This means yAxis in a non-inverted chart and xAxis in the inverted.
+         *
+         * @sample stock/yaxis/scrollbar-opposite/
+         *         A scrollbar not on the opposite side
+         *
+         * @type      {boolean}
+         * @default   true
+         * @since 9.3.0
+         *
+         * @apioption yAxis.scrollbar.opposite
+         * @apioption xAxis.scrollbar.opposite
+         *
+         */
+        /* eslint-enable highcharts/doclet-apioption-last */
 
         /**
          * Whether to show the scrollbar when it is fully zoomed out at max
@@ -3030,10 +3056,10 @@ namespace AxisDefaults {
              * @since   2.1.5
              * @product highcharts
              */
-            formatter: function (this: Highcharts.StackItemObject): string {
+            formatter: function (this: StackItem): string {
                 const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total, -1);
+                return numberFormatter(this.total || 0, -1);
             },
 
             /**

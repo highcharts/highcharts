@@ -1,5 +1,5 @@
 ---
- name: Kyrgyzstan - Highmaps
- description: Highmaps demo
+ name: Kyrgyzstan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

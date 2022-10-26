@@ -1,1 +1,8 @@
-@import 'https://code.highcharts.com/css/themes/sand-signika.css';
+@import "https://code.highcharts.com/css/themes/sand-signika.css";
+
+#container {
+    height: 400px;
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}

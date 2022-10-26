@@ -8,6 +8,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ATRIndicatorType from '../ATR/ATRIndicator';
 import type ColorType from '../../../Core/Color/ColorType';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -24,16 +31,16 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import palette from '../../../Core/Color/Palette.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        atr: ATRIndicator,
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    atr: ATRIndicator,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import StockChart from '../../../Core/Chart/StockChart.js';
 const {
+    addEvent,
     correctFloat,
     isArray,
     extend,
@@ -41,7 +48,12 @@ const {
     objectEach
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
@@ -54,8 +66,6 @@ function createPointObj(
         x: mainSeries.xData[index]
     } as any;
 }
-
-/* eslint-enable require-jsdoc */
 
 /* *
  *
@@ -73,6 +83,13 @@ function createPointObj(
  * @augments Highcharts.Series
  */
 class SupertrendIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Supertrend indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` and
@@ -119,7 +136,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: palette.positiveColor,
+        risingTrendColor: Palette.positiveColor,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -128,7 +145,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: palette.negativeColor,
+        fallingTrendColor: Palette.negativeColor,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -147,7 +164,7 @@ class SupertrendIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.neutralColor80,
+                lineColor: Palette.neutralColor80,
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -172,6 +189,7 @@ class SupertrendIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<SupertrendPoint> = void 0 as any;
 
     public linkedParent: SupertrendLinkedParentObject = void 0 as any;
@@ -185,21 +203,37 @@ class SupertrendIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
     public init(): void {
         let options: SupertrendOptions,
             parentOptions: SeriesOptions;
 
         SMAIndicator.prototype.init.apply(this, arguments);
+        const indicator = this;
 
-        options = this.options;
-        parentOptions = this.linkedParent.options;
+        // Only after series are linked add some additional logic/properties.
+        const unbinder = addEvent(
+            StockChart,
+            'afterLinkSeries',
+            function (): void {
+                // Protection for a case where the indicator is being updated,
+                // for a brief moment the indicator is deleted.
+                if (indicator.options) {
+                    const options = indicator.options;
+                    parentOptions = indicator.linkedParent.options;
 
-        // Indicator cropThreshold has to be equal linked series one
-        // reduced by period due to points comparison in drawGraph method
-        // (#9787)
-        options.cropThreshold = (
-            (parentOptions.cropThreshold as any) -
-            ((options.params as any).period - 1)
+                    // Indicator cropThreshold has to be equal linked series one
+                    // reduced by period due to points comparison in drawGraph
+                    // (#9787)
+                    options.cropThreshold = (
+                        (parentOptions.cropThreshold as any) -
+                        ((options.params as any).period - 1)
+                    );
+                }
+                unbinder();
+            }, {
+                order: 1
+            }
         );
     }
 
@@ -616,20 +650,19 @@ class SupertrendIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
+
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
-    requiredIndicators: Array<string>;
     pointClass: typeof SupertrendPoint;
 }
 
 extend(SupertrendIndicator.prototype, {
     nameBase: 'Supertrend',
-    nameComponents: ['multiplier', 'period'],
-    requiredIndicators: ['atr']
+    nameComponents: ['multiplier', 'period']
 });
 
 /* *
@@ -637,6 +670,7 @@ extend(SupertrendIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
@@ -652,6 +686,12 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  * */
 
 export default SupertrendIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Supertrend indicator` series. If the [type](#series.supertrend.type)

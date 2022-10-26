@@ -6,7 +6,7 @@ The values on a [choropleth](https://en.wikipedia.org/wiki/Choropleth_map) geo m
 Scalar axis
 -----------
 
-A scalar color axis is represented by a gradient. The colors either range between the [minColor](https://api.highcharts.com/highmaps/colorAxis.minColor) and the [maxColor](https://api.highcharts.com/highmaps/colorAxis.maxColor), or for more fine grained control the colors can be defined in [stops](https://api.highcharts.com/highmaps/colorAxis.stops). Often times, the color axis needs to be adjusted to get the right color spread for the data. In addition to stops, consider using a logarithmic [axis type](https://api.highcharts.com/highmaps/colorAxis.type), or setting [min](https://api.highcharts.com/highmaps#colorAxis.min) and [max](https://api.highcharts.com/highmaps/colorAxis.max) to avoid the colors being determined by outliers.
+A scalar color axis is represented by a gradient. The colors either range between the [minColor](https://api.highcharts.com/highmaps/colorAxis.minColor) and the [maxColor](https://api.highcharts.com/highmaps/colorAxis.maxColor), or for more fine grained control the colors can be defined in [stops](https://api.highcharts.com/highmaps/colorAxis.stops). Often times, the color axis needs to be adjusted to get the right color spread for the data. In addition to stops, consider using a logarithmic [axis type](https://api.highcharts.com/highmaps/colorAxis.type), or setting [min](https://api.highcharts.com/highmaps/colorAxis.min) and [max](https://api.highcharts.com/highmaps/colorAxis.max) to avoid the colors being determined by outliers.
 
 Data classes
 ------------

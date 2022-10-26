@@ -26,25 +26,18 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare class LinePoint extends Point {
-    options: LinePointOptions;
-    series: LineSeries;
-}
-
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
-        category?: string;
+        category?: (number|string);
         clientX?: number;
         dist?: number;
         distX?: number;
         hasImage?: boolean;
-        index?: number;
+        index: number;
         isInside?: boolean;
         low?: number;
         negative?: boolean;
         options: PointOptions;
-        plotX?: number;
-        plotY?: number;
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;
@@ -52,9 +45,14 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
+declare class LinePoint extends Point {
+    options: LinePointOptions;
+    series: LineSeries;
+}
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

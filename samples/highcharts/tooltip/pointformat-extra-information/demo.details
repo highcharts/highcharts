@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Karol Kolodziej
+ compareTooltips: true
+ js_wrap: b
+...

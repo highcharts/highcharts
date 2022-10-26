@@ -12,19 +12,19 @@ const path = require('path');
  * */
 
 const INTERNAL_TARGET = path.join('build', 'api-internals');
-
+/*
 const INTERNAL_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-internals'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'typedoc', 'theme-internals'
 );
-
+ */
 const NEXT_TARGET = path.join('build', 'api-next');
-
+/*
 const NEXT_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-next'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'typedoc', 'theme-next'
 );
-
+ */
 /* *
  *
  *  Tasks
@@ -41,13 +41,13 @@ function task() {
     const processLib = require('./lib/process');
 
     const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
-    const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
+    // const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
 
     const command = (
         'cd ts && npx typedoc' +
         ` --json "${path.join('..', target, 'tree.json')}"` +
-        ` --out "${path.join('..', target)}"` +
-        ` --theme "${path.join('..', theme)}"`
+        ` --out "${path.join('..', target)}"`
+        // + ` --theme "${path.join('..', theme)}"`
     );
 
     return processLib
@@ -57,7 +57,9 @@ function task() {
         ));
 
     /*
-    const generators = require('highcharts-documentation-generators');
+    const generators = require(
+        '@highcharts/highcharts-documentation-generators'
+    );
     const log = require('./lib/log');
 
     return new Promise(resolve => {

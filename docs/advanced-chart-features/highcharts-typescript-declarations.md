@@ -264,7 +264,7 @@ your code:
 
 ```ts
 // ...
-declare module 'highcharts' {
+declare module 'highcharts/highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }
@@ -277,7 +277,7 @@ Finally the source code of the example would look like this:
 ```ts
 import * as Highcharts from 'highcharts';
 
-declare module 'highcharts' {
+declare module 'highcharts/highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }

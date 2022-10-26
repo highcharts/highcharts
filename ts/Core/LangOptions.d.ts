@@ -13,8 +13,12 @@
  *  Declarations
  *
  * */
-export interface LangOptions {
 
+/**
+ * Helper interface for `lang` options.
+ */
+export interface LangOptions {
+    // add properties with the `declare module` pattern
 }
 
 
@@ -23,4 +27,5 @@ export interface LangOptions {
  *  Default Export
  *
  * */
+
 export default LangOptions;

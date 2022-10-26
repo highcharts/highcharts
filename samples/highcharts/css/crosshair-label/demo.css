@@ -1,14 +1,16 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-crosshair-label {
-	stroke-width: 1px;
-	stroke: gray;
+    stroke-width: 1px;
+    stroke: gray;
 }
+
 .highcharts-crosshair-label text {
-	fill: black;
+    fill: black;
 }

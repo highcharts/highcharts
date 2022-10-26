@@ -13,7 +13,7 @@ const path = require('path');
 
 const LINT_FOLDER = path.join('test', 'typescript-lint');
 
-const TEST_FOLDER = path.join('test', 'typescript');
+const TEST_FOLDER = path.join('test', 'typescript-dts');
 
 /* *
  *
@@ -41,7 +41,7 @@ function task() {
 
         promises.push(
             processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --onlyTestTsNext')
+                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --localTs ../../node_modules/typescript/lib')
         );
 
         promises.push(

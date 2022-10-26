@@ -1,5 +1,5 @@
 ---
- name: Hauts-de-France - Highmaps
- description: Highmaps demo
+ name: Hauts-de-France - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

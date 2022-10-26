@@ -4,6 +4,28 @@ Highcharts.ganttChart('container', {
         text: 'Left Axis as Table'
     },
 
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
+                yAxisDescriptionSingular: 'The chart has a tabular Y axis showing a data table row for each point.'
+            }
+        }
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                return Highcharts.format(
+                    point.milestone ?
+                        '{point.name}, milestone for {point.assignee} at {point.x:%Y-%m-%d}.' :
+                        '{point.name}, assigned to {point.assignee} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
+                    { point }
+                );
+            }
+        }
+    },
+
     xAxis: {
         tickPixelInterval: 70
     },
@@ -82,6 +104,7 @@ Highcharts.ganttChart('container', {
             end: Date.UTC(2017, 10, 25, 16),
             name: 'Prototype done',
             assignee: 'Richards',
+            milestone: true,
             y: 2
         }, {
             start: Date.UTC(2017, 10, 27, 8),

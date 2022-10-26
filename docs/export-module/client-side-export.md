@@ -39,3 +39,24 @@ Internet Explorer 9 and older will attempt to fall back to export server in all 
 Decision flowchart of the module (click for large version):
 
 [![Offline export decision flowchart](https://assets.highcharts.com/images/client-side-export-flow.svg)](https://assets.highcharts.com/images/client-side-export-flow.svg)
+
+
+### Export local PDF in a language containing non-Latin characters or Unicode Characters/UTF-8
+
+As described in the [jsPDF docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8), the 14 standard fonts in PDF are limited to the ASCII-codepage. Therefore, in order to support for example Chinese text in the exported PDF, one or more TTF font files have to be passed on to the exporting module.
+
+TTF font files are available from several resources online. A good resource is Google Fonts, and the [Noto](https://fonts.google.com/?query=noto) set of fonts that support a variety of different languages. Given the volume of languages and glyphs, there is no single font files that covers all languages.
+
+For the sake of our feature demo, we are loading font files from our own website:
+
+```
+exporting: {
+    pdfFont: {
+        normal: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Regular.ttf',
+        bold: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Bold.ttf',
+        bolditalic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-BoldItalic.ttf',
+        italic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Italic.ttf'
+    }
+}
+```
+[View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-pdffont/)

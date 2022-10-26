@@ -6,7 +6,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AnnotationChart from '../AnnotationChart';
+import type {
+    AnnotationDraggableValue,
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
+import type { AnnotationEventObject } from '../EventEmitter';
 import type Axis from '../../../Core/Axis/Axis';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type FormatUtilities from '../../../Core/FormatUtilities';
@@ -14,354 +32,379 @@ import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
+    defined,
     extend,
     isNumber,
     merge,
     pick
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-class Measure extends Annotation {
+/* *
+ *
+ *
+ *  Functions
+ *
+ * */
 
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
+/**
+ * @private
+ */
+function average(
+    this: Measure
+): (''|number) {
+    let average: (''|number) = '';
 
-    public static calculations = {
-        /**
-         * Set starting points
-         * @private
-         */
-        init: function (this: Measure): void {
-            const options = this.options.typeOptions,
-                chart = this.chart,
-                getPointPos = Measure.calculations.getPointPos,
-                inverted = chart.inverted,
-                xAxis = chart.xAxis[options.xAxis],
-                yAxis = chart.yAxis[options.yAxis],
-                bck = options.background,
-                width: number = inverted ? bck.height : bck.width as any,
-                height: number = inverted ? bck.width : bck.height as any,
-                selectType = options.selectType,
-                top = inverted ? xAxis.left : yAxis.top, // #13664
-                left = inverted ? yAxis.top : xAxis.left; // #13664
+    if (this.max !== '' && this.min !== '') {
+        average = (this.max + this.min) / 2;
+    }
 
-            this.startXMin = options.point.x;
-            this.startYMin = options.point.y;
+    return average;
+}
 
-            if (isNumber(width)) {
-                this.startXMax = this.startXMin + width;
+/**
+ * @private
+ */
+function bins(
+    this: Measure
+): (''|number) {
+    const series = this.chart.series,
+        ext = getExtremes(
+            this.xAxisMin,
+            this.xAxisMax,
+            this.yAxisMin,
+            this.yAxisMax
+        );
+
+    let bins: (''|number) = 0,
+        isCalculated = false; // to avoid Infinity in formatter
+
+    series.forEach((serie): void => {
+        if (
+            serie.visible &&
+            serie.options.id !== 'highcharts-navigator-series'
+        ) {
+            serie.points.forEach((point): void => {
+                if (
+                    !point.isNull &&
+                    (point.x as any) > ext.xAxisMin &&
+                    (point.x as any) <= ext.xAxisMax &&
+                    (point.y as any) > ext.yAxisMin &&
+                    (point.y as any) <= ext.yAxisMax
+                ) {
+                    (bins as any)++;
+                    isCalculated = true;
+                }
+            });
+        }
+    });
+
+    if (!isCalculated) {
+        bins = '';
+    }
+
+    return bins;
+}
+
+/**
+ * Default formatter of label's content
+ * @private
+ */
+function defaultFormatter(
+    this: Measure
+): string {
+    return 'Min: ' + this.min +
+        '<br>Max: ' + this.max +
+        '<br>Average: ' + this.average +
+        '<br>Bins: ' + this.bins;
+}
+
+/**
+ * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
+ * when chart is inverted
+ * @private
+ */
+function getExtremes(
+    xAxisMin: number,
+    xAxisMax: number,
+    yAxisMin: number,
+    yAxisMax: number
+): Record<string, number> {
+    return {
+        xAxisMin: Math.min(xAxisMax, xAxisMin),
+        xAxisMax: Math.max(xAxisMax, xAxisMin),
+        yAxisMin: Math.min(yAxisMax, yAxisMin),
+        yAxisMax: Math.max(yAxisMax, yAxisMin)
+    };
+}
+
+/**
+ * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
+ * Calculations of measure values (min, max, average, bins).
+ * @private
+ * @param {Highcharts.Axis} axis
+ *        X or y axis reference
+ * @param {number} value
+ *        Point's value (x or y)
+ * @param {number} offset
+ *        Amount of pixels
+ */
+function getPointPos(
+    axis: Axis,
+    value: number,
+    offset: number
+): number {
+    return axis.toValue(axis.toPixels(value) + offset);
+}
+
+/**
+ * Set starting points
+ * @private
+ */
+function init(
+    this: Measure
+): void {
+    const options = this.options.typeOptions,
+        chart = this.chart,
+        inverted = chart.inverted,
+        xAxis = chart.xAxis[options.xAxis],
+        yAxis = chart.yAxis[options.yAxis],
+        bck = options.background,
+        width: number = inverted ? bck.height : bck.width as any,
+        height: number = inverted ? bck.width : bck.height as any,
+        selectType = options.selectType,
+        top = inverted ? xAxis.left : yAxis.top, // #13664
+        left = inverted ? yAxis.top : xAxis.left; // #13664
+
+    this.startXMin = options.point.x;
+    this.startYMin = options.point.y;
+
+    if (isNumber(width)) {
+        this.startXMax = this.startXMin + width;
+    } else {
+        this.startXMax = getPointPos(
+            xAxis,
+            this.startXMin,
+            parseFloat(width)
+        );
+    }
+
+    if (isNumber(height)) {
+        this.startYMax = this.startYMin - height;
+    } else {
+        this.startYMax = getPointPos(
+            yAxis,
+            this.startYMin,
+            parseFloat(height)
+        );
+    }
+
+    // x / y selection type
+    if (selectType === 'x') {
+        this.startYMin = yAxis.toValue(top);
+        this.startYMax = yAxis.toValue(top + yAxis.len);
+    } else if (selectType === 'y') {
+        this.startXMin = xAxis.toValue(left);
+        this.startXMax = xAxis.toValue(left + xAxis.len);
+    }
+
+}
+
+/**
+ * @private
+ */
+function max(
+    this: Measure
+): (''|number) {
+    const series = this.chart.series,
+        ext = getExtremes(
+            this.xAxisMin,
+            this.xAxisMax,
+            this.yAxisMin,
+            this.yAxisMax
+        );
+
+    let max: (''|number) = -Infinity,
+        isCalculated = false; // to avoid Infinity in formatter
+
+    series.forEach((serie): void => {
+        if (
+            serie.visible &&
+            serie.options.id !== 'highcharts-navigator-series'
+        ) {
+            serie.points.forEach((point): void => {
+                if (
+                    !point.isNull &&
+                    (point.y as any) > max &&
+                    (point.x as any) > ext.xAxisMin &&
+                    (point.x as any) <= ext.xAxisMax &&
+                    (point.y as any) > ext.yAxisMin &&
+                    (point.y as any) <= ext.yAxisMax
+                ) {
+                    max = point.y as any;
+                    isCalculated = true;
+                }
+            });
+        }
+    });
+
+    if (!isCalculated) {
+        max = '';
+    }
+
+    return max;
+}
+
+/**
+ * Definitions of calculations (min, max, average, bins)
+ * @private
+ */
+function min(
+    this: Measure
+): (''|number) {
+    const series = this.chart.series,
+        ext = getExtremes(
+            this.xAxisMin,
+            this.xAxisMax,
+            this.yAxisMin,
+            this.yAxisMax
+        );
+
+    let min: (''|number) = Infinity,
+        isCalculated = false; // to avoid Infinity in formatter
+
+    series.forEach((serie): void => {
+        if (
+            serie.visible &&
+            serie.options.id !== 'highcharts-navigator-series'
+        ) {
+            serie.points.forEach((point: Point): void => {
+                if (
+                    !point.isNull &&
+                    (point.y as any) < min &&
+                    (point.x as any) > ext.xAxisMin &&
+                    (point.x as any) <= ext.xAxisMax &&
+                    (point.y as any) > ext.yAxisMin &&
+                    (point.y as any) <= ext.yAxisMax
+                ) {
+                    min = point.y as any;
+                    isCalculated = true;
+                }
+            });
+        }
+    });
+
+    if (!isCalculated) {
+        min = '';
+    }
+
+    return min;
+}
+
+/**
+ * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
+ * Calculations of measure values (min, max, average, bins).
+ * @private
+ * @param {boolean} [resize]
+ *        Flag if shape is resized.
+ */
+function recalculate(
+    this: Measure,
+    resize?: boolean
+): void {
+    const options = this.options.typeOptions,
+        xAxis = this.chart.xAxis[options.xAxis as any],
+        yAxis = this.chart.yAxis[options.yAxis as any],
+        offsetX = this.offsetX,
+        offsetY = this.offsetY;
+
+    this.xAxisMin = getPointPos(xAxis, this.startXMin, offsetX);
+    this.xAxisMax = getPointPos(xAxis, this.startXMax, offsetX);
+    this.yAxisMin = getPointPos(yAxis, this.startYMin, offsetY);
+    this.yAxisMax = getPointPos(yAxis, this.startYMax, offsetY);
+
+    this.min = min.call(this);
+    this.max = max.call(this);
+    this.average = average.call(this);
+    this.bins = bins.call(this);
+
+    if (resize) {
+        this.resize(0, 0);
+    }
+
+}
+
+/**
+ * Update position of start points
+ * (startXMin, startXMax, startYMin, startYMax)
+ * @private
+ * @param {boolean} redraw
+ *        Flag if shape is redraw
+ * @param {boolean} resize
+ *        Flag if shape is resized
+ * @param {number} cpIndex
+ *        Index of controlPoint
+ */
+function updateStartPoints(
+    this: Measure,
+    redraw: boolean,
+    resize: boolean,
+    cpIndex: number,
+    dx: number,
+    dy: number
+): void {
+    const options = this.options.typeOptions,
+        selectType = options.selectType,
+        xAxis = this.chart.xAxis[options.xAxis as any],
+        yAxis = this.chart.yAxis[options.yAxis as any],
+        startXMin = this.startXMin,
+        startXMax = this.startXMax,
+        startYMin = this.startYMin,
+        startYMax = this.startYMax,
+        offsetX = this.offsetX,
+        offsetY = this.offsetY;
+
+    if (resize) {
+        if (selectType === 'x') {
+            if (cpIndex === 0) {
+                this.startXMin = getPointPos(xAxis, startXMin, dx);
             } else {
-                this.startXMax = getPointPos(
-                    xAxis,
-                    this.startXMin,
-                    parseFloat(width)
-                );
+                this.startXMax = getPointPos(xAxis, startXMax, dx);
             }
-
-            if (isNumber(height)) {
-                this.startYMax = this.startYMin - height;
+        } else if (selectType === 'y') {
+            if (cpIndex === 0) {
+                this.startYMin = getPointPos(yAxis, startYMin, dy);
             } else {
-                this.startYMax = getPointPos(
-                    yAxis,
-                    this.startYMin,
-                    parseFloat(height)
-                );
+                this.startYMax = getPointPos(yAxis, startYMax, dy);
             }
-
-            // x / y selection type
-            if (selectType === 'x') {
-                this.startYMin = yAxis.toValue(top);
-                this.startYMax = yAxis.toValue(top + yAxis.len);
-            } else if (selectType === 'y') {
-                this.startXMin = xAxis.toValue(left);
-                this.startXMax = xAxis.toValue(left + xAxis.len);
-            }
-
-        },
-        /**
-         * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
-         * Calculations of measure values (min, max, average, bins).
-         * @private
-         * @param {boolean} [resize]
-         * Flag if shape is resized.
-         */
-        recalculate: function (this: Measure, resize?: boolean): void {
-            const calc = Measure.calculations,
-                options = this.options.typeOptions,
-                xAxis = this.chart.xAxis[options.xAxis as any],
-                yAxis = this.chart.yAxis[options.yAxis as any],
-                getPointPos = Measure.calculations.getPointPos,
-                offsetX = this.offsetX,
-                offsetY = this.offsetY;
-
-            this.xAxisMin = getPointPos(xAxis, this.startXMin, offsetX);
-            this.xAxisMax = getPointPos(xAxis, this.startXMax, offsetX);
-            this.yAxisMin = getPointPos(yAxis, this.startYMin, offsetY);
-            this.yAxisMax = getPointPos(yAxis, this.startYMax, offsetY);
-
-            this.min = calc.min.call(this);
-            this.max = calc.max.call(this);
-            this.average = calc.average.call(this);
-            this.bins = calc.bins.call(this);
-
-            if (resize) {
-                this.resize(0, 0);
-            }
-
-        },
-        /**
-         * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
-         * Calculations of measure values (min, max, average, bins).
-         * @private
-         * @param {Highcharts.Axis} axis
-         * X or y axis reference
-         * @param {number} value
-         * Point's value (x or y)
-         * @param {number} offset
-         * Amount of pixels
-         */
-        getPointPos: function (
-            axis: Axis,
-            value: number,
-            offset: number
-        ): number {
-            return axis.toValue(axis.toPixels(value) + offset);
-        },
-        /**
-         * Update position of start points
-         * (startXMin, startXMax, startYMin, startYMax)
-         * @private
-         * @param {boolean} redraw
-         * Flag if shape is redraw
-         * @param {boolean} resize
-         * Flag if shape is resized
-         * @param {number} cpIndex
-         * Index of controlPoint
-         */
-        updateStartPoints: function (
-            this: Measure,
-            redraw: boolean,
-            resize: boolean,
-            cpIndex: number,
-            dx: number,
-            dy: number
-        ): void {
-            const options = this.options.typeOptions,
-                selectType = options.selectType,
-                xAxis = this.chart.xAxis[options.xAxis as any],
-                yAxis = this.chart.yAxis[options.yAxis as any],
-                getPointPos = Measure.calculations.getPointPos,
-                startXMin = this.startXMin,
-                startXMax = this.startXMax,
-                startYMin = this.startYMin,
-                startYMax = this.startYMax,
-                offsetX = this.offsetX,
-                offsetY = this.offsetY;
-
-            if (resize) {
-                if (selectType === 'x') {
-                    if (cpIndex === 0) {
-                        this.startXMin = getPointPos(xAxis, startXMin, dx);
-                    } else {
-                        this.startXMax = getPointPos(xAxis, startXMax, dx);
-                    }
-                } else if (selectType === 'y') {
-                    if (cpIndex === 0) {
-                        this.startYMin = getPointPos(yAxis, startYMin, dy);
-                    } else {
-                        this.startYMax = getPointPos(yAxis, startYMax, dy);
-                    }
-                } else {
-                    this.startXMax = getPointPos(xAxis, startXMax, dx);
-                    this.startYMax = getPointPos(yAxis, startYMax, dy);
-                }
-            }
-
-            if (redraw) {
-                this.startXMin = getPointPos(xAxis, startXMin, offsetX);
-                this.startXMax = getPointPos(xAxis, startXMax, offsetX);
-                this.startYMin = getPointPos(yAxis, startYMin, offsetY);
-                this.startYMax = getPointPos(yAxis, startYMax, offsetY);
-
-                this.offsetX = 0;
-                this.offsetY = 0;
-            }
-        },
-        /**
-         * Default formatter of label's content
-         * @private
-         */
-        defaultFormatter: function (this: Measure): string {
-            return 'Min: ' + this.min +
-                '<br>Max: ' + this.max +
-                '<br>Average: ' + this.average +
-                '<br>Bins: ' + this.bins;
-        },
-        /**
-         * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
-         * when chart is inverted
-         * @private
-         */
-        getExtremes: function (
-            xAxisMin: number,
-            xAxisMax: number,
-            yAxisMin: number,
-            yAxisMax: number
-        ): Record<string, number> {
-            return {
-                xAxisMin: Math.min(xAxisMax, xAxisMin),
-                xAxisMax: Math.max(xAxisMax, xAxisMin),
-                yAxisMin: Math.min(yAxisMax, yAxisMin),
-                yAxisMax: Math.max(yAxisMax, yAxisMin)
-            };
-        },
-        /**
-         * Definitions of calculations (min, max, average, bins)
-         * @private
-         */
-        min: function (this: Measure): (''|number) {
-            let min: (''|number) = Infinity,
-                series = this.chart.series,
-                ext = Measure.calculations.getExtremes(
-                    this.xAxisMin,
-                    this.xAxisMax,
-                    this.yAxisMin,
-                    this.yAxisMax
-                ),
-                isCalculated = false; // to avoid Infinity in formatter
-
-            series.forEach(function (serie): void {
-                if (
-                    serie.visible &&
-                    serie.options.id !== 'highcharts-navigator-series'
-                ) {
-                    serie.points.forEach(function (point: Point): void {
-                        if (
-                            !point.isNull &&
-                            (point.y as any) < min &&
-                            (point.x as any) > ext.xAxisMin &&
-                            (point.x as any) <= ext.xAxisMax &&
-                            (point.y as any) > ext.yAxisMin &&
-                            (point.y as any) <= ext.yAxisMax
-                        ) {
-                            min = point.y as any;
-                            isCalculated = true;
-                        }
-                    });
-                }
-            });
-
-            if (!isCalculated) {
-                min = '';
-            }
-
-            return min;
-        },
-        max: function (this: Measure): (''|number) {
-            let max: (''|number) = -Infinity,
-                series = this.chart.series,
-                ext = Measure.calculations.getExtremes(
-                    this.xAxisMin,
-                    this.xAxisMax,
-                    this.yAxisMin,
-                    this.yAxisMax
-                ),
-                isCalculated = false; // to avoid Infinity in formatter
-
-            series.forEach(function (serie): void {
-                if (
-                    serie.visible &&
-                    serie.options.id !== 'highcharts-navigator-series'
-                ) {
-                    serie.points.forEach(function (point: Point): void {
-                        if (
-                            !point.isNull &&
-                            (point.y as any) > max &&
-                            (point.x as any) > ext.xAxisMin &&
-                            (point.x as any) <= ext.xAxisMax &&
-                            (point.y as any) > ext.yAxisMin &&
-                            (point.y as any) <= ext.yAxisMax
-                        ) {
-                            max = point.y as any;
-                            isCalculated = true;
-                        }
-                    });
-                }
-            });
-
-            if (!isCalculated) {
-                max = '';
-            }
-
-            return max;
-        },
-        average: function (this: Measure): (''|number) {
-            let average: (''|number) = '';
-
-            if (this.max !== '' && this.min !== '') {
-                average = (this.max + this.min) / 2;
-            }
-
-            return average;
-        },
-        bins: function (this: Measure): (''|number) {
-            let bins: (''|number) = 0,
-                series = this.chart.series,
-                ext = Measure.calculations.getExtremes(
-                    this.xAxisMin,
-                    this.xAxisMax,
-                    this.yAxisMin,
-                    this.yAxisMax
-                ),
-                isCalculated = false; // to avoid Infinity in formatter
-
-            series.forEach(function (serie): void {
-                if (
-                    serie.visible &&
-                    serie.options.id !== 'highcharts-navigator-series'
-                ) {
-                    serie.points.forEach(function (point: Point): void {
-                        if (
-                            !point.isNull &&
-                            (point.x as any) > ext.xAxisMin &&
-                            (point.x as any) <= ext.xAxisMax &&
-                            (point.y as any) > ext.yAxisMin &&
-                            (point.y as any) <= ext.yAxisMax
-                        ) {
-                            (bins as any)++;
-                            isCalculated = true;
-                        }
-                    });
-                }
-            });
-
-            if (!isCalculated) {
-                bins = '';
-            }
-
-            return bins;
+        } else {
+            this.startXMax = getPointPos(xAxis, startXMax, dx);
+            this.startYMax = getPointPos(yAxis, startYMax, dy);
         }
     }
 
-    /* *
-     *
-     *  Constructors
-     *
-     * */
+    if (redraw) {
+        this.startXMin = getPointPos(xAxis, startXMin, offsetX);
+        this.startXMax = getPointPos(xAxis, startXMax, offsetX);
+        this.startYMin = getPointPos(yAxis, startYMin, offsetY);
+        this.startYMax = getPointPos(yAxis, startYMax, offsetY);
 
-    public constructor(
-        chart: Highcharts.AnnotationChart,
-        userOptions: Measure.MeasureOptions
-    ) {
-        super(chart, userOptions);
+        this.offsetX = 0;
+        this.offsetY = 0;
     }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Measure extends Annotation {
 
     /* *
      *
@@ -374,18 +417,23 @@ class Measure extends Annotation {
      * @private
      */
     public init(
-        annotationOrChart: (Annotation|Highcharts.AnnotationChart),
+        annotationOrChart: (Annotation|AnnotationChart),
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
+        Annotation.prototype.init.call(
+            this,
+            annotationOrChart,
+            userOptions,
+            index
+        );
 
         this.offsetX = 0;
         this.offsetY = 0;
         this.resizeX = 0;
         this.resizeY = 0;
 
-        Measure.calculations.init.call(this);
+        init.call(this);
         this.addValues();
         this.addShapes();
     }
@@ -402,7 +450,6 @@ class Measure extends Annotation {
     /**
      * Get measure points configuration objects.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
@@ -411,7 +458,6 @@ class Measure extends Annotation {
     /**
      * Get points configuration objects for shapes.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -448,12 +494,24 @@ class Measure extends Annotation {
     }
 
     public addControlPoints(): void {
-        let selectType = this.options.typeOptions.selectType,
-            controlPoint;
+        const inverted = this.chart.inverted,
+            options = this.options.controlPointOptions,
+            selectType = this.options.typeOptions.selectType;
 
-        controlPoint = new ControlPoint(
+        if (!defined(
+            this.userOptions.controlPointOptions &&
+            this.userOptions.controlPointOptions.style.cursor
+        )) {
+            if (selectType === 'x') {
+                options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
+            } else if (selectType === 'y') {
+                options.style.cursor = inverted ? 'ew-resize' : 'ns-resize';
+            }
+        }
+
+        let controlPoint = new ControlPoint(
             this.chart,
-            this,
+            this as any,
             this.options.controlPointOptions,
             0
         );
@@ -464,7 +522,7 @@ class Measure extends Annotation {
         if (selectType !== 'xy') {
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 this.options.controlPointOptions,
                 1
             );
@@ -484,18 +542,20 @@ class Measure extends Annotation {
             formatter = typeOptions.label.formatter;
 
         // set xAxisMin, xAxisMax, yAxisMin, yAxisMax
-        Measure.calculations.recalculate.call(this, resize);
+        recalculate.call(this, resize);
 
         if (!typeOptions.label.enabled) {
             return;
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
-                        Measure.calculations.defaultFormatter.call(this);
+            (this.labels[0] as any).text = (
+                (formatter && formatter.call(this)) ||
+                defaultFormatter.call(this)
+            );
 
         } else {
-            this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
+            this.initLabel(extend<Partial<ControllableLabelOptions>>({
                 shape: 'rect',
                 backgroundColor: 'none',
                 color: 'black',
@@ -520,8 +580,10 @@ class Measure extends Annotation {
                         yAxis: pick(typeOptions.yAxis, options.yAxis)
                     };
                 } as any,
-                text: (formatter && formatter.call(this)) ||
-                    Measure.calculations.defaultFormatter.call(this)
+                text: (
+                    (formatter && formatter.call(this)) ||
+                    defaultFormatter.call(this)
+                )
             }, typeOptions.label as any), void 0 as any);
         }
     }
@@ -546,10 +608,16 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-            type: 'path',
-            points: this.shapePointsOptions()
-        }, this.options.typeOptions.background), false as any);
+        this.initShape(
+            extend<Partial<ControllableShapeOptions>>(
+                {
+                    type: 'path',
+                    points: this.shapePointsOptions()
+                },
+                this.options.typeOptions.background
+            ),
+            2
+        );
     }
 
     /**
@@ -557,20 +625,21 @@ class Measure extends Annotation {
      * @private
      */
     public addCrosshairs(): void {
-        let chart = this.chart,
+        const chart = this.chart,
             options = this.options.typeOptions,
             point = this.options.typeOptions.point,
             xAxis = chart.xAxis[options.xAxis],
             yAxis = chart.yAxis[options.yAxis],
             inverted = chart.inverted,
-            xAxisMin = xAxis.toPixels(this.xAxisMin),
-            xAxisMax = xAxis.toPixels(this.xAxisMax),
-            yAxisMin = yAxis.toPixels(this.yAxisMin),
-            yAxisMax = yAxis.toPixels(this.yAxisMax),
             defaultOptions = {
                 point: point,
                 type: 'path'
-            },
+            };
+
+        let xAxisMin = xAxis.toPixels(this.xAxisMin),
+            xAxisMax = xAxis.toPixels(this.xAxisMax),
+            yAxisMin = yAxis.toPixels(this.yAxisMin),
+            yAxisMax = yAxis.toPixels(this.yAxisMax),
             pathH: SVGPath = [],
             pathV: SVGPath = [],
             crosshairOptionsX,
@@ -624,18 +693,26 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathH
-            }, crosshairOptionsX), false as any);
+            this.initShape(
+                extend<Partial<ControllableShapeOptions>>(
+                    { d: pathH },
+                    crosshairOptionsX
+                ),
+                0
+            );
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathV
-            }, crosshairOptionsY), false as any);
+            this.initShape(
+                extend<Partial<ControllableShapeOptions>>(
+                    { d: pathV },
+                    crosshairOptionsY
+                ),
+                1
+            );
 
         }
     }
 
-    public onDrag(e: Highcharts.AnnotationEventObject): void {
+    public onDrag(e: AnnotationEventObject): void {
         const translation = this.mouseMoveToTranslation(e),
             selectType = this.options.typeOptions.selectType,
             x = selectType === 'y' ? 0 : translation.x,
@@ -654,16 +731,20 @@ class Measure extends Annotation {
      * Translate start or end ("left" or "right") side of the measure.
      * Update start points (startXMin, startXMax, startYMin, startYMax)
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {number} cpIndex - index of control point
-     * @param {Highcharts.AnnotationDraggableValue} selectType - x / y / xy
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {number} cpIndex
+     * index of control point
+     * @param {Highcharts.AnnotationDraggableValue} selectType
+     * x / y / xy
      */
     public resize(
         dx: number,
         dy: number,
         cpIndex?: number,
-        selectType?: Highcharts.AnnotationDraggableValue
+        selectType?: AnnotationDraggableValue
     ): void {
 
         // background shape
@@ -691,8 +772,7 @@ class Measure extends Annotation {
             bckShape.translatePoint(0, dy, 3);
         }
 
-        Measure.calculations.updateStartPoints
-            .call(this, false, true, cpIndex as any, dx, dy);
+        updateStartPoints.call(this, false, true, cpIndex as any, dx, dy);
 
         this.options.typeOptions.background.height = Math.abs(
             this.startYMax - this.startYMin
@@ -707,8 +787,10 @@ class Measure extends Annotation {
      * Redraw event which render elements and update start points if needed.
      * @private
      * @param {boolean} animation
-     * @param {boolean} [resize] - flag if resized
-     * @param {boolean} [setStartPoints] - update position of start points
+     * @param {boolean} [resize]
+     * flag if resized
+     * @param {boolean} [setStartPoints]
+     * update position of start points
      */
     public redraw(
         animation: boolean,
@@ -723,7 +805,11 @@ class Measure extends Annotation {
         }
 
         if (setStartPoints) {
-            (Measure.calculations.updateStartPoints.call as any)(this, true, false as any);
+            (updateStartPoints.call as any)(
+                this,
+                true,
+                false as any
+            );
         }
 
         // #11174 - clipBox was not recalculate during resize / redraw
@@ -737,21 +823,27 @@ class Measure extends Annotation {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
-            controlPoint.redraw();
-        });
+        this.controlPoints.forEach((controlPoint): void =>
+            controlPoint.redraw()
+        );
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
-            item.translate(dx, dy);
-        });
+        this.shapes.forEach((item): void =>
+            item.translate(dx, dy)
+        );
 
         this.options.typeOptions.point.x = this.startXMin;
         this.options.typeOptions.point.y = this.startYMin;
     }
 
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface Measure {
     average: (''|number);
@@ -868,7 +960,8 @@ Measure.prototype.defaultOptions = merge(
                 zIndex: 6,
                 /**
                  * The dash or dot style of the crosshair's line. For possible
-                 * values, see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 * values, see
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type      {Highcharts.DashStyleValue}
                  * @default   Dash
@@ -951,7 +1044,7 @@ Measure.prototype.defaultOptions = merge(
                  *
                  * </table>
                  *
-                 * @type      {function}
+                 * @type {Function}
                  *
                  */
                 formatter: void 0
@@ -959,10 +1052,10 @@ Measure.prototype.defaultOptions = merge(
         },
         controlPointOptions: {
             positioner: function (
-                this: Highcharts.AnnotationControllable,
+                this: Controllable,
                 target: Measure
             ): PositionObject {
-                let cpIndex = this.index,
+                const cpIndex = this.index,
                     chart = target.chart,
                     options = target.options,
                     typeOptions = options.typeOptions,
@@ -971,14 +1064,15 @@ Measure.prototype.defaultOptions = merge(
                     inverted = chart.inverted,
                     xAxis = chart.xAxis[typeOptions.xAxis],
                     yAxis = chart.yAxis[typeOptions.yAxis],
-                    targetX = target.xAxisMax,
-                    targetY = target.yAxisMax,
-                    ext = Measure.calculations.getExtremes(
+                    ext = getExtremes(
                         target.xAxisMin,
                         target.xAxisMax,
                         target.yAxisMin,
                         target.yAxisMax
-                    ),
+                    );
+
+                let targetX = target.xAxisMax,
+                    targetY = target.yAxisMax,
                     x, y;
 
                 if (selectType === 'x') {
@@ -1016,7 +1110,7 @@ Measure.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Measure,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Measure
                 ): void {
                     const translation = this.mouseMoveToTranslation(e),
@@ -1041,8 +1135,14 @@ Measure.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Measure {
-    export interface MeasureOptions extends Highcharts.AnnotationsOptions {
+    export interface MeasureOptions extends AnnotationOptions {
         typeOptions: MeasureTypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {
@@ -1056,12 +1156,12 @@ namespace Measure {
         formatter?: FormatUtilities.FormatterCallback<Measure>;
         style: CSSObject;
     }
-    export interface MeasureTypeOptions extends Highcharts.AnnotationsTypeOptions {
-        background: Highcharts.AnnotationsShapeOptions;
+    export interface MeasureTypeOptions extends AnnotationTypeOptions {
+        background: ControllableShapeOptions;
         crosshairX: MeasureTypeCrosshairOptions;
         crosshairY: MeasureTypeCrosshairOptions;
         label: MeasureTypeLabelOptions;
-        selectType: Highcharts.AnnotationDraggableValue;
+        selectType: AnnotationDraggableValue;
         xAxis: number;
         yAxis: number;
     }
@@ -1072,16 +1172,19 @@ namespace Measure {
  *  Registry
  *
  * */
-Annotation.types.measure = Measure as any;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         measure: typeof Measure;
     }
 }
 
+Annotation.types.measure = Measure as any;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Measure;
