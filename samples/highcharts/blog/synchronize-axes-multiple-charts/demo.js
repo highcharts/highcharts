@@ -110,7 +110,8 @@ Highcharts.setOptions({
     yAxis: {
         title: {
             text: null
-        }
+        },
+        tickAmount: 4
     },
     xAxis: {
         type: 'datetime'
@@ -159,7 +160,7 @@ Highcharts.chart('container2', {
     series: [{
         data: africa,
         name: 'Africa',
-        pointStart: Date.UTC(2005, 0, 1)
+        pointStart: Date.UTC(2010, 0, 1)
     }]
 });
 
