@@ -31,7 +31,10 @@ import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type LineSeries from './Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type Pointer from '../Core/Pointer';
-import type PointerEvent from '../Core/PointerEvent';
+import type {
+    GetSelectionMarkerAttrsEvent,
+    PointerEvent
+} from '../Core/PointerEvent';
 import type Series from '../Core/Series/Series';
 import type SplineSeries from './Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -420,7 +423,7 @@ function onPointerGetSelectionBox(this: Pointer, event: any): void {
  */
 function onPointerGetSelectionMarkerAttrs(
     this: Pointer,
-    event: any
+    event: GetSelectionMarkerAttrsEvent&globalThis.PointerEvent
 ): void {
     const chart = this.chart;
 
@@ -435,10 +438,10 @@ function onPointerGetSelectionMarkerAttrs(
             fullCircle = Math.PI * 2,
             startAngleRad = chart.hoverPane.axis.startAngleRad,
             endAngleRad = chart.hoverPane.axis.endAngleRad,
-            linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0];
+            linearAxis = chart.inverted ? chart.xAxis[0] : chart.yAxis[0],
+            attrs: SVGAttributes = {};
 
-        let attrs: SVGAttributes = {},
-            shapeType = 'arc';
+        let shapeType: 'arc'|'path'|'rect' = 'arc';
 
         attrs.x = center[0] + chart.plotLeft;
         attrs.y = center[1] + chart.plotTop;

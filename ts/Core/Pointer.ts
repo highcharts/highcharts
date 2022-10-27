@@ -22,7 +22,10 @@ import type { DOMElementType } from './Renderer/DOMElementType';
 import type NodesComposition from '../Series/NodesComposition';
 import type Options from './Options';
 import type Point from './Series/Point';
-import type PointerEvent from './PointerEvent';
+import type {
+    GetSelectionMarkerAttrsEvent,
+    PointerEvent
+} from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
 
@@ -266,13 +269,13 @@ class Pointer {
      * Calculate attrs for selection marker.
      * @private
      * @function Highcharts.Pointer#getSelectionMarkerAttrs
-     * @emits afterGetSelectionMarkerAttrs
+     * @emits getSelectionMarkerAttrs
      */
     public getSelectionMarkerAttrs(chartX: number, chartY: number): {
         attrs: SVGAttributes
         shapeType: 'rect' | 'arc' | 'path'
     } {
-        const e = {
+        const e: GetSelectionMarkerAttrsEvent = {
             args: { chartX, chartY },
             attrs: {} as SVGAttributes,
             shapeType: 'rect' as 'rect' | 'arc' | 'path'
@@ -282,17 +285,17 @@ class Pointer {
             this,
             'getSelectionMarkerAttrs',
             e,
-            (e: any): void => {
-                const zoomHor = this.zoomHor,
-                    zoomVert = this.zoomVert,
-                    mouseDownX = (this.mouseDownX || 0),
-                    mouseDownY = (this.mouseDownY || 0),
-                    chart = this.chart;
+            (e: GetSelectionMarkerAttrsEvent): void => {
+                const {
+                        chart,
+                        mouseDownX = 0,
+                        mouseDownY = 0,
+                        zoomHor,
+                        zoomVert
+                    } = this,
+                    attrs = e.attrs;
 
-                let attrs: SVGAttributes = {},
-                    shapeType: 'rect' | 'arc' | 'path' = 'rect',
-                    size;
-
+                let size;
 
                 attrs.x = chart.plotLeft;
                 attrs.y = chart.plotTop;
@@ -312,16 +315,10 @@ class Pointer {
                     attrs.height = Math.abs(size);
                     attrs.y = (size > 0 ? 0 : size) + mouseDownY;
                 }
-
-                e.attrs = attrs;
-                e.shapeType = shapeType;
             }
         );
 
-        return {
-            attrs: e.attrs,
-            shapeType: e.shapeType
-        };
+        return e;
     }
 
     /**
@@ -333,8 +330,6 @@ class Pointer {
     public drag(e: PointerEvent): void {
         const chart = this.chart,
             chartOptions = chart.options.chart,
-            zoomHor = this.zoomHor,
-            zoomVert = this.zoomVert,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -351,7 +346,6 @@ class Pointer {
         let chartX = e.chartX,
             chartY = e.chartY,
             clickedInside,
-            size,
             selectionMarker = this.selectionMarker;
 
         // If the device supports both touch and mouse (like IE11), and we are
@@ -457,7 +451,7 @@ class Pointer {
      * Get selection box to calculate extremes
      * @private
      * @function Highcharts.Pointer#getSelectionBox
-     * @emits afterGetSelectionBox
+     * @emits getSelectionBox
      */
     public getSelectionBox(marker: SVGElement): Partial<BBoxObject> {
         const e = {
@@ -470,16 +464,12 @@ class Pointer {
             'getSelectionBox',
             e,
             (e: any): void => {
-                let x = marker.attr ? +marker.attr('x') : marker.x,
-                    y = marker.attr ? +marker.attr('y') : marker.y,
-                    width = marker.attr ?
-                        marker.attr('width') :
-                        marker.width,
-                    height = marker.attr ?
-                        marker.attr('height') :
-                        marker.height;
-
-                e.result = { x, y, width, height };
+                e.result = {
+                    x: marker.attr ? +marker.attr('x') : marker.x,
+                    y: marker.attr ? +marker.attr('y') : marker.y,
+                    width: marker.attr ? marker.attr('width') : marker.width,
+                    height: marker.attr ? marker.attr('height') : marker.height
+                };
             }
         );
 
