@@ -955,25 +955,11 @@ class Point {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
                 (series.chart.tooltip as any).styledModeFormat(pointFormat);
-
-            if (series.options.className) {
-                pointFormat =
-                `<span class="${series.options.className}">${
-                    pointFormat
-                        .replace(
-                            /(class=".*)"/,
-                            '$1 highcharts-point"'
-                        )
-                        .replace(
-                            '</span>',
-                            '</span></span>'
-                        )
-                }`;
-            }
         }
 
         // Loop over the point array map and replace unformatted values with
@@ -981,6 +967,7 @@ class Point {
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
+
                 pointFormat = pointFormat.replace(
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
