@@ -18,7 +18,9 @@
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import FlowMapPoint from './FlowMapPoint.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 const {
     series: {
         prototype: {
@@ -30,6 +32,7 @@ const {
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
+import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
 const {
@@ -306,6 +309,21 @@ class FlowMapSeries extends MapLineSeries {
 
         return (weight - smallestWeight) * (maxWeightLimit - minWeightLimit) /
             ((greatestWeight - smallestWeight) || 1) + minWeightLimit;
+    }
+
+    public pointAttribs(
+        point: FlowMapPoint,
+        state: StatesOptionsKey
+    ): SVGAttributes {
+        const attrs =
+            MapSeries.prototype.pointAttribs.call(this, point, state);
+
+        attrs.fill = point.options.fillColor || this.options.fillColor;
+        attrs['fill-opacity'] = point.options.fillOpacity;
+
+        attrs.opacity = (point.options as any).opacity;
+
+        return attrs;
     }
 
     /**

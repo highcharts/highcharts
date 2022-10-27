@@ -52,17 +52,17 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
-    public options: FlowMapPointOptions = void 0 as any;
-
-    public series: FlowMapSeries = void 0 as any;
-
     public oldFromPoint?: Point;
 
     public oldToPoint?: Point;
 
-    public removeEventForToPoint: Function = void 0 as any;
+    public options: FlowMapPointOptions = void 0 as any;
 
     public removeEventForFromPoint: Function = void 0 as any;
+
+    public removeEventForToPoint: Function = void 0 as any;
+
+    public series: FlowMapSeries = void 0 as any;
 
     /* *
      *
@@ -85,8 +85,8 @@ class FlowMapPoint extends MapLinePoint {
     public applyOptions(
         options: (FlowMapPointOptions|PointShortOptions),
         x?: number
-    ): any {
-        const point = super.applyOptions.call(this, options, x);
+    ): FlowMapPoint {
+        const point = super.applyOptions.call(this, options, x) as any;
 
         // Flowmap point doesn't need `value`, but if it's not there, the point
         // is treated as a null point. So we just set `value: 0`.

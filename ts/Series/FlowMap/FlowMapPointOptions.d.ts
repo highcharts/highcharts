@@ -16,6 +16,7 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
 import type MapLinePointOptions from '../MapLine/MapLinePointOptions';
 
 /* *
@@ -26,6 +27,8 @@ import type MapLinePointOptions from '../MapLine/MapLinePointOptions';
 
 export interface FlowMapPointOptions extends MapLinePointOptions {
     curveFactor?: number;
+    fillColor?: ColorType;
+    fillOpacity: number;
     from?: string;
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
