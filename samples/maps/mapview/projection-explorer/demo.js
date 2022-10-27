@@ -149,7 +149,12 @@
 
                 plotOptions: {
                     series: {
-                        animationLimit: 500
+                        animationLimit: 500,
+                        states: {
+                            inactive: {
+                                opacity: 1
+                            }
+                        }
                     },
                     mapline: {
                         enableMouseTracking: false

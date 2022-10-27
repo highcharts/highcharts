@@ -31,7 +31,7 @@ import type {
 } from './Popup/Popup';
 
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;

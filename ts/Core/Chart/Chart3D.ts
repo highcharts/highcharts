@@ -28,16 +28,14 @@ import Axis from '../Axis/Axis.js';
 import Chart from './Chart.js';
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
+import D from '../Defaults.js';
+const { defaultOptions: genericDefaultOptions } = D;
 import Fx from '../Animation/Fx.js';
 import Math3D from '../Math3D.js';
 const {
     perspective,
     shapeArea3D
 } = Math3D;
-import D from '../DefaultOptions.js';
-const {
-    defaultOptions: genericDefaultOptions
-} = D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {

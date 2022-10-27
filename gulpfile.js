@@ -71,7 +71,6 @@ Gulp.registry(new GulpForwardReference());
     'reset-visual-references',
     'tsdoc',
     'tsdoc-debug',
-    'tsdoc-next',
     'tsdoc-watch',
     'update',
     'unsorted/build-modules',

@@ -1,0 +1,32 @@
+@import "https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
+
+.highcharts-figure {
+    margin: 0;
+}
+
+#play-controls {
+    max-width: 1000px;
+    margin: 1em auto;
+}
+
+#container {
+    height: 900px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+#play-pause-button {
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border: 1px solid silver;
+    border-radius: 3px;
+    background: #f8f8f8;
+}
+
+#play-range {
+    transform: translateY(2.5px);
+    width: calc(100% - 50px);
+    background: #f8f8f8;
+}

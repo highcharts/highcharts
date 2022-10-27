@@ -13,6 +13,7 @@ globals:
     MSFT: true
     ohlcdata: true
     QUnit: true
+    RGBColor: true
     temperatures: true          # pointinterval-pointstart demo
     TestController: true
     TestTemplate: true

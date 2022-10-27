@@ -1,10 +1,11 @@
 Treegraph chart
 ===
-A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: <ul>
-<li>genealogy trees</li>
-<li>directories in computer science</li>
-<li>decision trees</li>
-</ul>
+A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: 
+
+* genealogy trees
+* directories in computer science
+* decision trees
+
 Our tree representation is an oriented rooted tree. This means that the direction of the connections matter, and there is one node in each set of data that does not have a parent (is the root of the tree). In contrast to treemap and sunburst, this series type does not require the `value` property, because each point position is based solely on its relation to other nodes in the tree.
 
 In order to use this series type, you need to load the `modules/treemap.js` and `modules/treegraph.js` modules.

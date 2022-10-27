@@ -116,8 +116,8 @@ function addForm(
     this.addButton(
         bottomRow,
         isInit ?
-            (lang.addButton || 'add') :
-            (lang.saveButton || 'save'),
+            (lang.addButton || 'Add') :
+            (lang.saveButton || 'Save'),
         isInit ? 'add' : 'save',
         popupDiv,
         callback
@@ -167,7 +167,7 @@ function addToolbar(
     // add buttons
     let button = this.addButton(
         popupDiv,
-        lang.removeButton || 'remove',
+        lang.removeButton || 'Remove',
         'remove',
         popupDiv,
         callback
@@ -179,7 +179,7 @@ function addToolbar(
 
     button = this.addButton(
         popupDiv,
-        lang.editButton || 'edit',
+        lang.editButton || 'Edit',
         'edit',
         popupDiv,
         (): void => {

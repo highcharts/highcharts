@@ -157,8 +157,8 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     });
 
     it('Ellipse should keep its shape after popup edit.', () => {
-        cy.contains('edit').click();
-        cy.contains('save').click();
+        cy.contains('Edit').click();
+        cy.contains('Save').click();
         cy.chart().then(chart => {
 
             const ellipse = chart.annotations[0].shapes[0];

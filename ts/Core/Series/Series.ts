@@ -31,7 +31,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -41,8 +41,7 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -55,8 +54,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import DO from '../DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -2627,9 +2626,8 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
-            points = series.points,
             chart = series.chart,
             options = series.options,
             seriesMarkerOptions = options.marker,
@@ -4219,7 +4217,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'shadowGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
@@ -4430,7 +4429,7 @@ class Series {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point): void {
+            for (const point of this.points) {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
@@ -4445,7 +4444,7 @@ class Series {
                         chart.legend.destroyItem(point);
                     }
                 }
-            }, this);
+            }
         }
 
         series.initialType = initialType;
@@ -4757,7 +4756,6 @@ class Series {
     ): void {
         const series = this,
             chart = series.chart,
-            legendItem = series.legendItem,
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
@@ -4792,7 +4790,7 @@ class Series {
         }
 
 
-        if (legendItem) {
+        if (series.legendItem) {
             chart.legend.colorizeItem(series, vis);
         }
 

@@ -149,8 +149,6 @@ class Tooltip {
 
     public hideTimer?: number;
 
-    public inContact?: boolean;
-
     public isHidden: boolean = true;
 
     public isSticky: boolean = false;
@@ -453,31 +451,9 @@ class Tooltip {
             pointerEvents = (
                 options.style.pointerEvents ||
                 (
-                    !this.followPointer &&
-                    options.stickOnContact ? 'auto' : 'none'
+                    this.shouldStickOnContact() ? 'auto' : 'none'
                 )
-            ),
-            onMouseEnter = function (): void {
-                tooltip.inContact = true;
-            },
-            onMouseLeave = function (e: MouseEvent): void {
-                const series = tooltip.chart.hoverSeries;
-
-                // #14143, #13310: tooltip.options.useHTML
-                tooltip.inContact = tooltip.shouldStickOnContact() &&
-                    tooltip.chart.pointer.inClass(
-                        e.relatedTarget as any,
-                        'highcharts-tooltip'
-                    );
-
-                if (
-                    !tooltip.inContact &&
-                    series &&
-                    series.onMouseOut
-                ) {
-                    series.onMouseOut();
-                }
-            };
+            );
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
 
@@ -517,9 +493,6 @@ class Tooltip {
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
-
-                addEvent(container, 'mouseenter', onMouseEnter);
-                addEvent(container, 'mouseleave', onMouseLeave);
 
                 H.doc.body.appendChild(container);
 
@@ -605,8 +578,6 @@ class Tooltip {
             }
 
             this.label
-                .on('mouseenter', onMouseEnter)
-                .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
         }
@@ -955,15 +926,16 @@ class Tooltip {
         );
     }
 
-    public shouldStickOnContact(): boolean {
-        return !!(!this.followPointer && this.options.stickOnContact);
-    }
-
-    /**
-     * Returns true, if the pointer is in contact with the tooltip tracker.
-     */
-    public isStickyOnContact(): boolean {
-        return !!(this.shouldStickOnContact() && this.inContact);
+    public shouldStickOnContact(pointerEvent?: PointerEvent): boolean {
+        return !!(
+            !this.followPointer &&
+            this.options.stickOnContact &&
+            (
+                !pointerEvent || this.chart.pointer.inClass(
+                    pointerEvent.target as any, 'highcharts-tooltip'
+                )
+            )
+        );
     }
 
     /**
@@ -1641,10 +1613,7 @@ class Tooltip {
     private drawTracker(): void {
         const tooltip = this;
 
-        if (
-            tooltip.followPointer ||
-            !tooltip.options.stickOnContact
-        ) {
+        if (!this.shouldStickOnContact()) {
             if (tooltip.tracker) {
                 tooltip.tracker.destroy();
             }

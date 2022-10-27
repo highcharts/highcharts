@@ -50,7 +50,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
@@ -1857,7 +1857,8 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
-            const hasExtemesChanged = axis.min !== (axis.old && axis.old.min) ||
+            const hasExtremesChanged = axis.min !==
+                (axis.old && axis.old.min) ||
                 axis.max !== (axis.old && axis.old.max);
 
             // First process all series assigned to that axis.
@@ -1867,13 +1868,13 @@ class Axis {
                     series.forceCropping &&
                     series.forceCropping()
                 );
-                series.processData(hasExtemesChanged);
+                series.processData(hasExtremesChanged);
             });
 
-            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // Then apply grouping if needed. The hasExtremesChanged helps to
             // decide if the data grouping should be skipped in the further
             // calculations #16319.
-            fireEvent(this, 'postProcessData', { hasExtemesChanged });
+            fireEvent(this, 'postProcessData', { hasExtremesChanged });
         }
 
         // set the translation factor used in translate function
@@ -2961,12 +2962,11 @@ class Axis {
 
         let newTickInterval = tickInterval,
             rotation: (number|undefined),
-            step: number,
             bestScore = Number.MAX_VALUE,
             autoRotation: (Array<number>|undefined);
 
         if (horiz) {
-            if (!labelOptions.staggerLines && !labelOptions.step) {
+            if (!labelOptions.staggerLines) {
                 if (isNumber(rotationOption)) {
                     autoRotation = [rotationOption];
                 } else if (slotSize < labelOptions.autoRotationLimit) {
@@ -2975,14 +2975,14 @@ class Axis {
             }
 
             if (autoRotation) {
+                let step,
+                    score;
 
-                // Loop over the given autoRotation options, and determine
-                // which gives the best score. The best score is that with
-                // the lowest number of steps and a rotation closest
-                // to horizontal.
-                autoRotation.forEach(function (rot: number): void {
-                    let score;
 
+                // Loop over the given autoRotation options, and determine which
+                // gives the best score. The best score is that with the lowest
+                // number of steps and a rotation closest to horizontal.
+                for (const rot of autoRotation) {
                     if (
                         rot === rotationOption ||
                         (rot && rot >= -90 && rot <= 90)
@@ -3000,10 +3000,10 @@ class Axis {
                             newTickInterval = step;
                         }
                     }
-                });
+                }
             }
 
-        } else if (!labelOptions.step) { // #4411
+        } else { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
@@ -3013,7 +3013,7 @@ class Axis {
             isNumber(rotationOption) ? rotationOption : 0
         );
 
-        return newTickInterval;
+        return labelOptions.step ? tickInterval : newTickInterval;
     }
 
     /**
@@ -4553,6 +4553,10 @@ export default Axis;
  * @name Highcharts.AxisLabelsFormatterContextObject#chart
  * @type {Highcharts.Chart}
  *//**
+ * Default formatting of date/time labels.
+ * @name Highcharts.AxisLabelsFormatterContextObject#dateTimeLabelFormat
+ * @type {string|undefined}
+ *//**
  * Whether the label belongs to the first tick on the axis.
  * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
  * @type {boolean}
@@ -4571,7 +4575,7 @@ export default Axis;
  * dates will be formatted as strings, and numbers with language-specific comma
  * separators, thousands separators and numeric symbols like `k` or `M`.
  * @name Highcharts.AxisLabelsFormatterContextObject#text
- * @type {string}
+ * @type {string|undefined}
  *//**
  * The Tick instance.
  * @name Highcharts.AxisLabelsFormatterContextObject#tick

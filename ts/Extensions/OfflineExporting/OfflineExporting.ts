@@ -30,7 +30,7 @@ import type Options from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
@@ -619,11 +619,11 @@ namespace OfflineExporting {
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // If we are on IE and in styled mode, add an allowlist to the renderer
         // for inline styles that we want to pass through. There are so many
-        // styles by default in IE that we don't want to blacklist them all.
-        if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
-            Exporting.inlineWhitelist.push(
+        // styles by default in IE that we don't want to denylist them all.
+        if (H.isMS && chart.styledMode && !Exporting.inlineAllowlist.length) {
+            Exporting.inlineAllowlist.push(
                 /^blockSize/,
                 /^border/,
                 /^caretColor/,

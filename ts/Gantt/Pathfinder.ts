@@ -24,15 +24,30 @@ import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    defined,
+    error,
+    extend,
+    merge,
+    pick,
+    splat
+} = U;
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
@@ -196,26 +211,10 @@ declare global {
 
 ''; // detach doclets above
 
-import D from '../Core/DefaultOptions.js';
-const { defaultOptions } = D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    error,
-    extend,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
-const deg2rad = H.deg2rad,
-    max = Math.max,
+const max = Math.max,
     min = Math.min;
 
 /*
