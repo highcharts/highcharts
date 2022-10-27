@@ -76,6 +76,8 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    public description?: string;
+
     public fromNode: OrganizationPoint = void 0 as any;
 
     public image?: OrganizationSeriesNodeOptions['image'];
@@ -90,6 +92,8 @@ class OrganizationPoint extends SankeyPointClass {
 
     public series: OrganizationSeries = void 0 as any;
 
+    public title?: string;
+
     public toNode: OrganizationPoint = void 0 as any;
 
     /* *
@@ -97,8 +101,6 @@ class OrganizationPoint extends SankeyPointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * All nodes in an org chart are equal width.
@@ -163,7 +165,6 @@ class OrganizationPoint extends SankeyPointClass {
         }
 
     }
-    /* eslint-enable valid-jsdoc */
 
 }
 

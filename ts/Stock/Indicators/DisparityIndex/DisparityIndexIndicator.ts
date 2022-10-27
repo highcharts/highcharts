@@ -27,10 +27,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

@@ -31,7 +31,7 @@ import type {
     PointShortOptions,
     PointStateHoverOptions
 } from './PointOptions';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
@@ -41,8 +41,7 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -55,8 +54,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import DO from '../DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -1889,26 +1888,6 @@ class Series {
                     )
                 );
 
-                /**
-                 * Highcharts Stock only. If a point object is created by data
-                 * grouping, it doesn't reflect actual points in the raw
-                 * data. In this case, the `dataGroup` property holds
-                 * information that points back to the raw data.
-                 *
-                 * - `dataGroup.start` is the index of the first raw data
-                 *   point in the group.
-                 *
-                 * - `dataGroup.length` is the amount of points in the
-                 *   group.
-                 *
-                 * @product highstock
-                 *
-                 * @name Highcharts.Point#dataGroup
-                 * @type {Highcharts.DataGroupingInfoObject|undefined}
-                 *
-                 * @sample stock/members/point-datagroup
-                 *         Click to inspect raw data points
-                 */
                 point.dataGroup = (series.groupMap as any)[
                     groupCropStartIndex + i
                 ];
@@ -2647,9 +2626,8 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
-            points = series.points,
             chart = series.chart,
             options = series.options,
             seriesMarkerOptions = options.marker,
@@ -3753,7 +3731,7 @@ class Series {
             }
             if (tree[sideB]) {
                 // compare distance to current best to splitting point to
-                // decide wether to check side B or not
+                // decide whether to check side B or not
                 if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
                     nPoint2 = _search(
                         search,
@@ -4239,7 +4217,8 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup'
+                'transformGroup',
+                'shadowGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
@@ -4450,7 +4429,7 @@ class Series {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point): void {
+            for (const point of this.points) {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
@@ -4465,7 +4444,7 @@ class Series {
                         chart.legend.destroyItem(point);
                     }
                 }
-            }, this);
+            }
         }
 
         series.initialType = initialType;
@@ -4777,7 +4756,6 @@ class Series {
     ): void {
         const series = this,
             chart = series.chart,
-            legendItem = series.legendItem,
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
@@ -4812,7 +4790,7 @@ class Series {
         }
 
 
-        if (legendItem) {
+        if (series.legendItem) {
             chart.legend.colorizeItem(series, vis);
         }
 

@@ -15,20 +15,23 @@
  * Imports
  *
  * */
+
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
  *
- * Declaration
+ *  Declarations
  *
  * */
+
 export interface VariwidePointOptions extends ColumnPointOptions {
     // Nothing here
 }
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default VariwidePointOptions;

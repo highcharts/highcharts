@@ -349,8 +349,8 @@ QUnit.test(
             '#15117: pointStart/pointInterval should work with turboed 2d array data'
         );
 
-        const map = Highcharts.seriesTypes.line.prototype.pointArrayMap;
-        Highcharts.seriesTypes.line.prototype.pointArrayMap = ['y'];
+        const map = Highcharts.Series.types.line.prototype.pointArrayMap;
+        Highcharts.Series.types.line.prototype.pointArrayMap = ['y'];
 
         chart.series[0].setData([[2], [4], [6]], true, false, false);
 
@@ -365,7 +365,7 @@ QUnit.test(
             '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
         );
 
-        Highcharts.seriesTypes.line.prototype.pointArrayMap = map;
+        Highcharts.Series.types.line.prototype.pointArrayMap = map;
     }
 );
 

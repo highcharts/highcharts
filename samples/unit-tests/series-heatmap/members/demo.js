@@ -202,7 +202,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
             }]
         }),
         point = chart.series[0].points[0],
-        setState = Highcharts.seriesTypes.heatmap.prototype
+        setState = Highcharts.Series.types.heatmap.prototype
             .pointClass.prototype.setState;
 
     setState.call(point, '');

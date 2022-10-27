@@ -634,7 +634,7 @@ if (seriesTypes.boxplot) {
             }
         },
         median: {
-            // Median can not be dragged individually, just move the whole
+            // Median cannot be dragged individually, just move the whole
             // point for this.
             axis: 'y',
             move: true
@@ -872,7 +872,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[0] &&
+                    point.graphics[0].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -899,7 +903,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.upperGraphic && point.upperGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[1] &&
+                    point.graphics[1].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,

@@ -242,7 +242,14 @@ class MapBubbleSeries extends BubbleSeries {
          * @apioption plotOptions.mapbubble.zThreshold
          */
 
+        /**
+         * @default 500
+         */
         animationLimit: 500,
+
+        /**
+         * @type {string|Array<string>}
+         */
         joinBy: 'hc-key',
         tooltip: {
             pointFormat: '{point.name}: {point.z}'

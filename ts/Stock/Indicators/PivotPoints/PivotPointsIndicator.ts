@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -17,13 +23,12 @@ import type {
 } from './PivotPointsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -48,6 +53,13 @@ const {
  * @augments Highcharts.Series
  */
 class PivotPointsIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Pivot points indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after `stock/indicators/indicators.js` file.
@@ -89,11 +101,11 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     } as PivotPointsOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<PivotPointsPoint> = void 0 as any;
     public options: PivotPointsOptions = void 0 as any;
@@ -101,11 +113,11 @@ class PivotPointsIndicator extends SMAIndicator {
     public endPoint: number = void 0 as any;
     public plotEndPoint: number = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public toYData(
         point: PivotPointsPoint
@@ -254,7 +266,7 @@ class PivotPointsIndicator extends SMAIndicator {
                         }
                     }
                     SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
-                        .apply(indicator, arguments);
+                        .call(indicator);
                 }
             );
         }
@@ -405,6 +417,12 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;
@@ -433,6 +451,13 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  * */
 
 export default PivotPointsIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A pivot points indicator. If the [type](#series.pivotpoints.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

@@ -46,6 +46,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import type TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,
@@ -70,13 +71,15 @@ class TreemapPoint extends ScatterPoint {
 
     public name: string = void 0 as any;
 
-    public node: TreemapSeries.NodeObject = void 0 as any;
+    public node: TreemapNode = void 0 as any;
 
     public options: TreemapPointOptions = void 0 as any;
 
     public parent?: string;
 
     public series: TreemapSeries = void 0 as any;
+
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = 'rect';
 
     public sortIndex?: number;
 
@@ -140,7 +143,7 @@ class TreemapPoint extends ScatterPoint {
     }
 
     public shouldDraw(): boolean {
-        return DPU.shouldDraw(this);
+        return isNumber(this.plotY) && this.y !== null;
     }
 
     /* eslint-enable valid-jsdoc */

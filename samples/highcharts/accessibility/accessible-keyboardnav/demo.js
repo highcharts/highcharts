@@ -3,6 +3,10 @@ Highcharts.chart('container', {
         text: 'Navigate chart with keyboard'
     },
 
+    exporting: {
+        showTable: true
+    },
+
     tooltip: {
         enabled: false
     },

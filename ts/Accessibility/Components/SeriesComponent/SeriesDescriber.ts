@@ -20,6 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
@@ -64,7 +65,7 @@ const {
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/accessibility */
-        hasDummyGraphic?: boolean;
+        hasMockGraphic?: boolean;
     }
 }
 
@@ -103,11 +104,11 @@ function findFirstPointWithGraphic(
 
 
 /**
- * Whether or not we should add a dummy point element in
+ * Whether or not we should add a mock point element in
  * order to describe a point that has no graphic.
  * @private
  */
-function shouldAddDummyPoint(point: Point): boolean {
+function shouldAddMockPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const series = point.series,
@@ -125,29 +126,29 @@ function shouldAddDummyPoint(point: Point): boolean {
 /**
  * @private
  */
-function makeDummyElement(
+function makeMockElement(
     point: Point,
     pos: PositionObject
 ): SVGElement {
     const renderer = point.series.chart.renderer,
-        dummy = renderer.rect(pos.x, pos.y, 1, 1);
+        mock = renderer.rect(pos.x, pos.y, 1, 1);
 
-    dummy.attr({
-        'class': 'highcharts-a11y-dummy-point',
+    mock.attr({
+        'class': 'highcharts-a11y-mock-point',
         fill: 'none',
         opacity: 0,
         'fill-opacity': 0,
         'stroke-opacity': 0
     });
 
-    return dummy;
+    return mock;
 }
 
 
 /**
  * @private
  */
-function addDummyPointElement(
+function addMockPointElement(
     point: Accessibility.PointComposition
 ): (DOMElementType|undefined) {
     const series = point.series,
@@ -156,28 +157,28 @@ function addDummyPointElement(
         parentGroup = firstGraphic ?
             firstGraphic.parentGroup :
             series.graph || series.group,
-        dummyPos = firstPointWithGraphic ? {
+        mockPos = firstPointWithGraphic ? {
             x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
             y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
         } : {
             x: pick(point.plotX, 0),
             y: pick(point.plotY, 0)
         },
-        dummyElement = makeDummyElement(point, dummyPos);
+        mockElement = makeMockElement(point, mockPos);
 
     if (parentGroup && parentGroup.element) {
-        point.graphic = dummyElement;
-        point.hasDummyGraphic = true;
+        point.graphic = mockElement;
+        point.hasMockGraphic = true;
 
-        dummyElement.add(parentGroup);
+        mockElement.add(parentGroup);
 
         // Move to correct pos in DOM
         parentGroup.element.insertBefore(
-            dummyElement.element,
+            mockElement.element,
             firstGraphic ? firstGraphic.element : null
         );
 
-        return dummyElement.element;
+        return mockElement.element;
     }
 }
 
@@ -456,7 +457,7 @@ function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(
-        point as Highcharts.AnnotationPoint
+        point as AnnotationPoint
     );
     const context = { point, annotations };
 
@@ -565,7 +566,7 @@ function describePointsInSeries(
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach((point): void => {
             const pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint(point) && addDummyPointElement(point),
+                    shouldAddMockPoint(point) && addMockPointElement(point),
                 pointA11yDisabled = (
                     point.options &&
                     point.options.accessibility &&
@@ -701,7 +702,7 @@ function describeSeries(
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
         // in order for AT to read them out in an understandable order.
-        // Due to z-index issues we can not do this for 3D charts.
+        // Due to z-index issues we cannot do this for 3D charts.
         if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }

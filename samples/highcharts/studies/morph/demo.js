@@ -1,26 +1,54 @@
 // Morph an SVG element into a different type of element
 Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
+    // Return the point that is closest to an imaginary point directly above the
+    // shape. To avoid rotation when morphing.
+    const alignToTopPoint = (points, bBox) => {
+        // Find the point that is closest to an imaginary point directly above
+        // the bBox.
+        const topPoint = {
+            x: bBox.x + bBox.width / 2,
+            y: bBox.y - 100
+        };
+        let closestIdx;
+        let closestDist = Infinity;
+        for (let i = 0; i < points.length; i++) {
+            const dist = Math.pow(points[i].x - topPoint.x, 2) +
+                Math.pow(points[i].y - topPoint.y, 2);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestIdx = i;
+            }
+        }
+        // Remove the points before the top point
+        const head = points.splice(0, closestIdx);
+        // And apply them at the end
+        points.push(...head);
+    };
+
     const getPath = shape => {
         const totalLength = shape.element.getTotalLength();
         const count = 100;
-        const step = totalLength / count;
         const points = [];
         for (let i = 0; i < count; i++) {
-            points.push(shape.element.getPointAtLength(i * step));
+            points.push(
+                shape.element.getPointAtLength(i * totalLength / count)
+            );
         }
-        const path = points.reduce((path, point) => {
-            path.push(path.length === 0 ? 'M' : 'L');
-            path.push(point.x, point.y);
-            return path;
-        }, []);
-        return path.concat('z');
+        alignToTopPoint(points, shape.element.getBBox());
+        const path = points.map((point, i) => ([
+            i === 0 ? 'M' : 'L',
+            point.x,
+            point.y
+        ]));
+        path.push(['Z']);
+        return path;
     };
 
     const newShape = this.renderer[shapeType](shapeArgs)
         .attr({
             fill: 'none'
         })
-        .add();
+        .add(this.parentGroup);
 
     const attribs = {
         fill: this.element.getAttribute('fill'),
@@ -29,15 +57,14 @@ Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
     };
     const interrim = this.renderer.path(getPath(this))
         .attr(attribs)
-        .add();
+        .add(this.parentGroup);
 
     this.element.remove();
-    this.element = interrim.element;
-    this.d = interrim.d; // For animation
 
-    this.animate({
+    interrim.animate({
         d: getPath(newShape)
     }, {
+        duration: 1000,
         complete: () => {
             newShape.attr(attribs);
             this.element = newShape.element;
@@ -50,6 +77,62 @@ Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
     // Chainable
     return this;
 };
+
+
+(function (H) {
+    const { addEvent, Chart, Point, Series, seriesTypes, wrap } = H;
+
+    const getSleepKey = point => [
+        'point',
+        point.series.name || point.series.index,
+        point.x
+    ].join(',');
+
+    addEvent(Chart, 'afterGetContainer', e => {
+        e.target.renderer.sleeping = {};
+    });
+
+    wrap(Point.prototype, 'destroy', function () {
+        this.series.chart.renderer.sleeping[
+            getSleepKey(this)
+        ] = this.graphic;
+        delete this.graphic;
+    });
+
+    const beforeDrawPoints = function (proceed) {
+        const sleeping = this.chart.renderer.sleeping;
+
+        this.points.forEach(point => {
+            const key = getSleepKey(point),
+                zombie = sleeping[key];
+
+            if (zombie) {
+                point.graphic = zombie.add(this.group);
+
+                zombie.attr = attribs => {
+                    zombie.morph(point.shapeType, attribs);
+                    delete zombie.attr;
+                };
+            }
+            delete sleeping[key];
+
+            point.hasNewShapeType = () => false;
+        });
+
+        proceed.call(this);
+    };
+    wrap(seriesTypes.pie.prototype, 'drawPoints', beforeDrawPoints);
+    wrap(Series.prototype, 'drawPoints', beforeDrawPoints);
+
+    addEvent(Chart, 'redraw', e => {
+        const sleeping = e.target.renderer.sleeping;
+        Object.keys(sleeping).forEach(key => {
+            sleeping[key].destroy();
+            delete sleeping[key];
+        });
+
+    });
+}(Highcharts));
 
 
 const ren = new Highcharts.Renderer(
@@ -139,3 +222,19 @@ document.getElementById('arc').addEventListener('click', () => {
             fill: 'rgba(0,128,128,0.3)'
         });
 });
+
+const chart = Highcharts.chart('chart-container', {
+    title: {
+        text: 'Morphed chart'
+    },
+    colors: ['#cad2c5', '#84a98c', '#52796f', '#354f52'],
+    series: [{
+        type: 'column',
+        data: [1, 3, 2, 4],
+        colorByPoint: true
+    }]
+});
+
+setTimeout(() => {
+    chart.series[0].update({ type: 'pie' });
+}, 1234);

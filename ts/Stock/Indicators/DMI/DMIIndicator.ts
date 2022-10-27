@@ -29,10 +29,8 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -348,6 +346,12 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof DMIPoint>;
@@ -386,6 +390,12 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  * */
 
 export default DMIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Directional Movement Index (DMI) indicator series.

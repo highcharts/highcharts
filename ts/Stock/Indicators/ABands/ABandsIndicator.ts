@@ -25,10 +25,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -36,7 +34,12 @@ const {
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
  * @private
  */
@@ -61,7 +64,11 @@ function getPointLB(low: number, base: number): number {
     return low * (correctFloat(1 - 2 * base));
 }
 
-/* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The ABands series type

@@ -21,6 +21,7 @@
 
 
 import type Accessibility from '../Accessibility';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
@@ -259,14 +260,16 @@ class InfoRegionsComponent extends AccessibilityComponent {
         });
 
         this.addEvent(chart, 'afterViewData', function (
-            tableDiv: HTMLDOMElement
+            e: { element: HTMLDOMElement, wasHidden: boolean }
         ): void {
-            component.dataTableDiv = tableDiv;
-
-            // Use small delay to give browsers & AT time to register new table
-            setTimeout(function (): void {
-                component.focusDataTable();
-            }, 300);
+            if (e.wasHidden) {
+                component.dataTableDiv = e.element;
+                // Use a small delay to give browsers & AT time to
+                // register the new table.
+                setTimeout(function (): void {
+                    component.focusDataTable();
+                }, 300);
+            }
         });
 
         this.announcer = new Announcer(chart, 'assertive');
@@ -498,7 +501,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsList = getAnnotationsInfoHTML(
-                chart as Highcharts.AnnotationChart
+                chart as AnnotationChart
             ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',

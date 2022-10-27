@@ -1,0 +1,11 @@
+---
+name: Bar race
+authors:
+  - Sebastian Wedzel and Gøran Slettemark
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Column and bar charts:
+      priority: 3
+...

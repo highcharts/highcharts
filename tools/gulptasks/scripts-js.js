@@ -28,6 +28,7 @@ function task() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
+    const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
@@ -49,6 +50,12 @@ function task() {
 
         BuildScripts
             .fnFirstBuild()
+            .then(() => fsLib.copyAllFiles(
+                'js/',
+                'code/es-modules/',
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
+            ))
             .then(() => logLib.success('Created code'))
             .then(function (output) {
                 processLib.isRunning('scripts-js', false);

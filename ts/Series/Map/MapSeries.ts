@@ -133,6 +133,8 @@ class MapSeries extends ScatterSeries {
      * @excluding    marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
+     *
+     * @private
      */
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
@@ -144,6 +146,8 @@ class MapSeries extends ScatterSeries {
          *         US map with world map backdrop
          *
          * @since 10.0.0
+         *
+         * @private
          */
         affectsMapView: true,
 
@@ -394,10 +398,6 @@ class MapSeries extends ScatterSeries {
                  * @apioption plotOptions.series.states.select.color
                  */
                 color: Palette.neutralColor20
-            },
-
-            inactive: {
-                opacity: 1
             }
         }
     } as MapSeriesOptions);
@@ -964,6 +964,14 @@ class MapSeries extends ScatterSeries {
             isNumber(seriesStrokeWidth)
         ) {
             pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
+        }
+
+        // Invisible map points means that the data value is removed from the
+        // map, but not the map area shape itself. Instead it is rendered like a
+        // null point. To fully remove a map area, it should be removed from the
+        // mapData.
+        if (!point.visible) {
+            attr.fill = this.options.nullColor;
         }
 
         (attr as any)['stroke-width'] = pick(

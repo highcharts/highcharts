@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -26,11 +32,9 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import ColorString from '../../../Core/Color/ColorString';
 const {
@@ -40,17 +44,23 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
         resetZones?: boolean;
     }
 }
 
-/**
+/* *
  *
- * Class
+ *  Class
  *
- */
+ * */
 
 /**
  * The MACD series type.
@@ -62,6 +72,13 @@ declare module '../../../Core/Series/SeriesLike' {
  * @augments Highcharts.Series
  */
 class MACDIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -167,11 +184,11 @@ class MACDIndicator extends SMAIndicator {
         minPointLength: 0
     } as MACDOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<MACDPoint> = void 0 as any;
     public options: MACDOptions = void 0 as any;
@@ -182,11 +199,11 @@ class MACDIndicator extends SMAIndicator {
     public macdZones: MACDZonesOptions = void 0 as any;
     public signalZones: MACDZonesOptions = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -505,6 +522,12 @@ class MACDIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype.crispCol;
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
@@ -549,6 +572,12 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  * */
 
 export default MACDIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `MACD` series. If the [type](#series.macd.type) option is not
