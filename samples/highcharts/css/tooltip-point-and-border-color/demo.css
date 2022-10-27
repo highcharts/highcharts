@@ -13,13 +13,13 @@
 }
 
 .oranges {
-    fill: gold;
-    stroke: gold;
+    fill: yellow;
+    stroke: yellow;
 }
 
 .apples .highcharts-point {
-    fill: limegreen;
-    stroke: limegreen;
+    fill: lightgreen;
+    stroke: lightgreen;
 }
 
 .oranges .highcharts-point {
@@ -33,8 +33,8 @@
 }
 
 .highcharts-tooltip .apples {
-    fill: limegreen;
-    stroke: limegreen;
+    fill: lightgreen;
+    stroke: lightgreen;
 }
 
 .highcharts-tooltip .oranges {
