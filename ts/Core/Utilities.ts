@@ -2063,7 +2063,7 @@ namespace Utilities {
         width: number;
     }
     export interface WrapProceedFunction<T extends ArrowFunction> {
-        (proceed: T, ...args: Array<any>): ReturnType<T>;
+        (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
 
