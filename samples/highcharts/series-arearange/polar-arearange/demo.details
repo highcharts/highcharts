@@ -1,5 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Polar arearange
  authors:
    - Torstein Hønsi
+ js_wrap: b
 ...
