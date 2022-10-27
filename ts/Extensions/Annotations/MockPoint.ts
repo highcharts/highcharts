@@ -365,7 +365,8 @@ class MockPoint {
             e = {
                 x: plotX,
                 y: plotY,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options: {}
             };
 
         if (xAxis) {

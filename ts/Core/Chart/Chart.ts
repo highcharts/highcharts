@@ -742,12 +742,14 @@ class Chart {
             e = {
                 x,
                 y,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options
             };
 
         if (!options.ignoreX) {
             const xAxis = (
-                series && (inverted ? series.yAxis : series.xAxis)
+                series &&
+                (inverted && !this.polar ? series.yAxis : series.xAxis)
             ) || {
                 pos: plotLeft,
                 len: Infinity
@@ -772,6 +774,8 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
+                options.axis && !options.axis.isXAxis && options.axis
+            ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
                 pos: plotTop,
@@ -3582,9 +3586,7 @@ class Chart {
      */
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
-            pointer = chart.pointer,
-            mouseDownPos = chart.inverted ?
-                pointer.mouseDownX : pointer.mouseDownY;
+            pointer = chart.pointer;
 
         let displayButton = false,
             hasZoomed;
@@ -3601,29 +3603,24 @@ class Chart {
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    axisStartPos = chart.inverted ? axis.left : axis.top,
-                    axisEndPos = chart.inverted ?
-                        axisStartPos + axis.width : axisStartPos + axis.height,
                     isXAxis = axis.isXAxis;
 
-                let isWithinPane = false;
-
-                // Check if zoomed area is within the pane (#1289).
-                // In case of multiple panes only one pane should be zoomed.
-                if (
-                    (
-                        !isXAxis &&
-                        (mouseDownPos as any) >= axisStartPos &&
-                        (mouseDownPos as any) <= axisEndPos
-                    ) ||
-                    isXAxis ||
-                    !defined(mouseDownPos)
-                ) {
-                    isWithinPane = true;
-                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                if (
+                    pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
+                    (
+                        defined(pointer.mouseDownX) &&
+                        defined(pointer.mouseDownY) &&
+                        chart.isInsidePlot(
+                            pointer.mouseDownX - chart.plotLeft,
+                            pointer.mouseDownY - chart.plotTop,
+                            { axis }
+                        )
+                    ) || !defined(
+                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
+                    )
+                ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;
@@ -4027,6 +4024,7 @@ namespace Chart {
     );
 
     export interface IsInsideOptionsObject {
+        axis?: Axis;
         ignoreX?: boolean;
         ignoreY?: boolean;
         inverted?: boolean;
@@ -4180,6 +4178,9 @@ export default Chart;
 
 /**
  * @interface Highcharts.ChartIsInsideOptionsObject
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#axis
+ * @type {Highcharts.Axis|undefined}
  *//**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
  * @type {boolean|undefined}
