@@ -822,7 +822,7 @@ class ColumnSeries extends Series {
                 if (graphic) {
                     graphic.addClass(point.getClassName(), true);
 
-                    graphic.attr({
+                    graphic[verb]({
                         visibility: point.visible ? 'inherit' : 'hidden'
                     });
                 }

@@ -226,7 +226,10 @@ class TreegraphSeries extends TreemapSeries {
                     );
                     point.linkToParent = link;
                 } else {
-                    point.linkToParent.update(pointOptions, false);
+                    point.linkToParent.update(
+                        { collapsed: pointOptions.collapsed },
+                        false
+                    );
                 }
                 point.linkToParent.index = links.push(point.linkToParent) - 1;
             } else {
@@ -542,7 +545,7 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     public drawPoints(): void {
-        super.drawPoints.apply(this, arguments);
+        TreemapSeries.prototype.drawPoints.apply(this, arguments);
         ColumnSeries.prototype.drawPoints.call(this, this.links);
 
     }
@@ -577,16 +580,25 @@ class TreegraphSeries extends TreemapSeries {
                 y - height / 2);
 
         point.shapeType = 'path';
-        point.plotX = nodeX;
-        point.plotY = nodeY;
-        point.shapeArgs = {
-            d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
-            x: nodeX,
-            y: nodeY,
-            width,
-            height,
-            cursor: !point.node.isLeaf ? 'pointer' : 'default'
-        };
+        if (!point.visible && point.linkToParent) {
+            const parentNode = point.linkToParent.fromNode;
+            if (parentNode) {
+                point.shapeArgs = parentNode.shapeArgs;
+                point.plotX = parentNode.plotX;
+                point.plotY = parentNode.plotY;
+            }
+        } else {
+            point.plotX = nodeX;
+            point.plotY = nodeY;
+            point.shapeArgs = {
+                d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
+                x: nodeX,
+                y: nodeY,
+                width,
+                height,
+                cursor: !point.node.isLeaf ? 'pointer' : 'default'
+            };
+        }
 
         // Set the anchor position for tooltip.
         point.tooltipPos = chart.inverted ?
