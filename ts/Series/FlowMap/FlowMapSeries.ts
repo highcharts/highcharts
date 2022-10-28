@@ -114,7 +114,7 @@ class FlowMapSeries extends MapLineSeries {
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          * @type    {number}
-         * @default 20
+         * @default 25
          * @product highcharts
          * @apioption series.flowmap.minWeight
          */
@@ -148,12 +148,36 @@ class FlowMapSeries extends MapLineSeries {
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
         },
 
-        // @TODO: add API description
+        // @TODO: Fix the series level options are not shown in the Doclets.
+
+        // @TODO: Verify the API descriptions below.
+
+        /**
+         * The weight of the link determines how thick it will be compared to
+         * other weights.
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type    {number}
+         * @default void 0
+         * @product highcharts
+         * @apioption series.flowmap.weight
+         */
         weight: void 0,
+
+        /**
+         * The arrow type and size properties.
+         *
+         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type    {number}
+         * @default {enabled: true, height: '40%', width: '40%'
+        }
+         * @product highcharts
+         * @apioption series.flowmap.markerEnd
+         */
         markerEnd: {
             enabled: true,
-            height: 10,
-            width: 5
+            height: '40%',
+            width: '40%'
         }
 
     } as FlowMapSeriesOptions);
@@ -630,7 +654,7 @@ export default FlowMapSeries;
  * A `flowmap` series. If the [type](#series.flowmap.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.flowmap
+ * @extends   series.plotOptions.flowmap
  * @excluding allAreas, allowPointSelect, boostBlending, boostThreshold,
  * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
  * negativeColor, onPoint, shadow, showCheckbox
@@ -718,17 +742,17 @@ export default FlowMapSeries;
  */
 
 /**
- * The pixel height of the marker-end symbol.
+ * The width of the marker-end symbol in pixels or percentage.
  *
- * @type      {number}
+ * @type      {number | string}
  * @product   highmaps
  * @apioption series.flowmap.data.markerEnd.height
  */
 
 /**
- * The pixel width of the marker-end symbol.
+ * The width of the marker-end symbol in pixels or percentage.
  *
- * @type      {number}
+ * @type      {number | string}
  * @product   highmaps
  * @apioption series.flowmap.data.markerEnd.width
  */
