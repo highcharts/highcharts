@@ -209,4 +209,13 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.get('.highcharts-indicator-list li:first')
             .should('contain.text', 'Acceleration Bands');
     });
+
+    it('Stock-tools should work after update, #17741.', () => {
+        cy.get('.highcharts-toggle-toolbar')
+            .click();
+        cy.get('.highcharts-toggle-toolbar')
+            .click();
+        cy.openIndicators();
+        cy.get('.highcharts-popup').should('be.visible');
+    });
 });
