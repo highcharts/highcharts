@@ -68,6 +68,25 @@ const getBBox = geometry => {
     topology.objects.default.geometries.find(g => g.id === 'FR').arcs
         .splice(2, 1);
 
+    // Centers
+    const cn = topology.objects.default.geometries.find(g => g.id === 'CN');
+    cn.properties['hc-middle-x'] = 0.65;
+
+    const fr = topology.objects.default.geometries.find(g => g.id === 'FR');
+    fr.properties['hc-middle-x'] = 0.53;
+
+    const ind = topology.objects.default.geometries.find(g => g.id === 'IN');
+    ind.properties['hc-middle-y'] = 0.6;
+
+    const uk = topology.objects.default.geometries.find(g => g.id === 'GB');
+    uk.properties['hc-middle-x'] = 0.71;
+    uk.properties['hc-middle-y'] = 0.055;
+
+    const ru = topology.objects.default.geometries.find(g => g.id === 'RU');
+    ru.properties['hc-middle-x'] = 0.65;
+    ru.properties['hc-middle-y'] = 0.4;
+
+
     const geoJSON = topo2geo(topology);
 
     const insets = [];
@@ -110,7 +129,7 @@ const getBBox = geometry => {
     });
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json'
     ).then(response => response.json());
 
     Highcharts.mapChart('container', {
@@ -155,36 +174,38 @@ const getBBox = geometry => {
             type: 'logarithmic'
         },
 
-        series: [{
-            data: data,
-            mapData: topology,
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+        series: [
+            /*
+            {
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
             }
-        }
-        /*
-        {
-            name: 'Countries',
-            color: '#E0E0E0',
-            enableMouseTracking: false
-        }, {
-            type: 'mapbubble',
-            name: 'Population 2016',
-            joinBy: ['iso-a3', 'code3'],
-            data: data,
-            minSize: 4,
-            maxSize: '12%',
-            tooltip: {
-                pointFormat: '{point.properties.hc-a2}: {point.z} thousands'
+            */
+            {
+                name: 'Countries',
+                color: '#E0E0E0',
+                enableMouseTracking: false
+            }, {
+                type: 'mapbubble',
+                name: 'Population 2016',
+                joinBy: ['iso-a3', 'code3'],
+                data: data,
+                minSize: 4,
+                maxSize: '12%',
+                tooltip: {
+                    pointFormat: '{point.properties.name} ({point.properties.hc-a2}): {point.z} thousands'
+                }
             }
-        }
-        */]
+        ]
     });
 })();
