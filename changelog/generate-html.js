@@ -261,7 +261,8 @@ function generateHTML() {
 
                 if (content.indexOf('[Edit]') !== -1) {
                     throw new Error(
-                        'Review links found inside the markdown. Generate again without --review.'
+                        'Review links found inside the markdown. Generate again without --review.\n' +
+                        path.join(__dirname, product.name, file)
                     );
                 }
 
