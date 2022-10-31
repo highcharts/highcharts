@@ -58,6 +58,7 @@
     "eslint-plugin-jsdoc": "^39.3.6",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-security": "^1.5.0",
+    "fs-extra": "^10.1.0",
     "gifencoder": "^2.0.1",
     "glob": "^8.0.3",
     "google-closure-compiler": "20200504.0.0",
