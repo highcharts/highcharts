@@ -29,12 +29,9 @@ const {
         }
     },
     seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
-        dumbbell: {
+        scatter: {
             prototype: {
-                pointClass: DumbbellPoint
+                pointClass: ScatterPoint
             }
         }
     }
@@ -51,7 +48,7 @@ const {
  *
  * */
 
-class LollipopPoint extends DumbbellPoint {
+class LollipopPoint extends ScatterPoint {
 
     /* *
      *
@@ -62,6 +59,13 @@ class LollipopPoint extends DumbbellPoint {
     public options: LollipopPointOptions = void 0 as any;
 
     public series: LollipopSeries = void 0 as any;
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
+    public low: number = void 0 as any;
 
     /* *
      *
@@ -90,11 +94,9 @@ class LollipopPoint extends DumbbellPoint {
  * */
 
 interface LollipopPoint {
-    pointSetState: typeof areaProto.pointClass.prototype.setState;
 }
 
 extend(LollipopPoint.prototype, {
-    pointSetState: areaProto.pointClass.prototype.setState,
     // Does not work with the inherited `isvalid`
     isValid: pointProto.isValid
 });
