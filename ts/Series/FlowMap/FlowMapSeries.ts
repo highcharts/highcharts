@@ -148,19 +148,14 @@ class FlowMapSeries extends MapLineSeries {
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
         },
 
-        // @TODO: Fix the series level options are not shown in the Doclets.
-
-        // @TODO: Verify the API descriptions below.
-
         /**
          * The weight of the link determines how thick it will be compared to
          * other weights.
          *
-         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type    {number}
-         * @default void 0
-         * @product highcharts
-         * @apioption series.flowmap.weight
+         * @declare     Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type        {number}
+         * @product     highcharts
+         * @apioption   series.flowmap.weight
          */
         weight: void 0,
 
@@ -654,7 +649,7 @@ export default FlowMapSeries;
  * A `flowmap` series. If the [type](#series.flowmap.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series.plotOptions.flowmap
+ * @extends   series,plotOptions.flowmap
  * @excluding allAreas, allowPointSelect, boostBlending, boostThreshold,
  * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
  * negativeColor, onPoint, shadow, showCheckbox
@@ -766,6 +761,18 @@ export default FlowMapSeries;
  * @type      {number}
  * @product   highmaps
  * @apioption series.flowmap.data.weight
+ */
+
+/**
+ * The weight of the link determines how thick it will be compared to
+ * other weights.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.weight
  */
 
 ''; // adds doclets above to transpiled file
