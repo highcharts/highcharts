@@ -21,7 +21,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import PU from '../PathUtilities.js';
-const { curvedPath } = PU;
+const { getLinkPath } = PU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -328,7 +328,7 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     public translateLink(link: TreegraphLink): void {
-        const fromNode = link.fromNode,
+        let fromNode = link.fromNode,
             toNode = link.toNode,
             linkWidth = this.options.link.lineWidth,
             crisp = (Math.round(linkWidth) % 2) / 2,
@@ -368,43 +368,20 @@ class TreegraphSeries extends TreemapSeries {
             const xMiddle = Math.floor((x2 + x1) / 2) + crisp;
             link.plotX = xMiddle;
             link.plotY = y2;
-            if (type === 'straight') {
-                link.shapeArgs = {
-                    d: [
-                        ['M', x1, y1],
-                        ['L', x1 + width * (inverted ? -1 : 1), y2],
-                        ['L', x2, y2]
-                    ]
-                };
-            } else if (type === 'curved') {
-                link.shapeArgs = {
-                    d: [
-                        ['M', x1, y1],
-                        [
-                            'C',
-                            x1 + offset,
-                            y1,
-                            x1 - offset + width * (inverted ? -1 : 1),
-                            y2,
-                            x1 + width * (inverted ? -1 : 1),
-                            y2
-                        ],
-                        ['L', x2, y2]
-                    ]
-                };
-            } else {
-                link.shapeArgs = {
-                    d: curvedPath(
-                        [
-                            ['M', x1, y1],
-                            ['L', x1 + width * (inverted ? -0.5 : 0.5), y1],
-                            ['L', x1 + width * (inverted ? -0.5 : 0.5), y2],
-                            ['L', x2, y2]
-                        ],
-                        this.options.link.radius
-                    )
-                };
-            }
+
+            link.shapeArgs = {
+                d: getLinkPath[type]({
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    width,
+                    offset,
+                    inverted,
+                    parentVisible: toNode.visible,
+                    radius: this.options.link.radius
+                })
+            };
 
             link.dlBox = {
                 x: (x1 + x2) / 2,
@@ -583,7 +560,13 @@ class TreegraphSeries extends TreemapSeries {
         if (!point.visible && point.linkToParent) {
             const parentNode = point.linkToParent.fromNode;
             if (parentNode) {
-                point.shapeArgs = parentNode.shapeArgs;
+                const parentShapeArgs = parentNode.shapeArgs || {},
+                    { x = 0, y = 0, width = 0, height = 0 } = parentShapeArgs;
+                extend(point.shapeArgs, {
+                    d: symbols[symbol || 'circle'](x, y, width, height),
+                    x: parentShapeArgs.x,
+                    y: parentShapeArgs.y
+                });
                 point.plotX = parentNode.plotX;
                 point.plotY = parentNode.plotY;
             }

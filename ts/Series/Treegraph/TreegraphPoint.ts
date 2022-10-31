@@ -81,6 +81,13 @@ class TreegraphPoint extends TreemapPoint {
 
     public draw(): void {
         super.draw.apply(this, arguments);
+        // run animation of hiding/showing of the point.
+        let graphic = this.graphic;
+        if (graphic) {
+            graphic.animate({
+                visibility: this.visible ? 'inherit' : 'hidden'
+            });
+        }
         this.renderCollapseButton();
     }
 
@@ -164,10 +171,6 @@ class TreegraphPoint extends TreemapPoint {
         this.collapsed = pick(state, !this.collapsed);
         fireEvent(this.series, 'toggleCollapse');
         this.series.redraw();
-    }
-
-    public shouldDraw(): boolean {
-        return super.shouldDraw() && this.visible;
     }
 
     public destroy(): void {
