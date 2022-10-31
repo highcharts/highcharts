@@ -18,8 +18,8 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import DO from '../../Core/DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;

@@ -26,7 +26,7 @@ const SOURCE_GLOBS = [
     'js/Core/Chart/MapChart.js',
     'js/Core/Chart/StockChart.js',
     'js/Core/Color/Color.js',
-    'js/Core/DefaultOptions.js',
+    'js/Core/Defaults.js',
     'js/Core/HttpUtilities.js',
     'js/Core/Legend/Legend.js',
     'js/Core/Renderer/HTML/AST.js',

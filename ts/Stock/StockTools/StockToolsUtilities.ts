@@ -31,7 +31,7 @@ import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { getOptions } = D;
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const {

@@ -32,8 +32,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
-import DO from '../../Core/DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     hasTouch,

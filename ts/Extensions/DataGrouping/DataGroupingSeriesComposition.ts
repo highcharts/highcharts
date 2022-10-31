@@ -35,7 +35,7 @@ import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
-import DO from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -778,7 +778,7 @@ function onAfterSetOptions(
         seriesSpecific = DataGroupingDefaults.seriesSpecific;
 
     let defaultOptions: DataGroupingOptions =
-            (DO.defaultOptions.plotOptions as any)[type].dataGrouping;
+            (D.defaultOptions.plotOptions as any)[type].dataGrouping;
 
     if (plotOptions && (seriesSpecific[type] || baseOptions)) { // #1284
         const rangeSelector = this.chart.rangeSelector;

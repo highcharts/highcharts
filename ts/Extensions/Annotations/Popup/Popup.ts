@@ -24,10 +24,10 @@ import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
+import D from '../../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import D from '../../../Core/DefaultOptions.js';
-const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';

@@ -988,7 +988,7 @@ class SVGRenderer implements SVGRendererLike {
         return wrapper.attr(attribs);
     }
 
-    public arc(attribs: SVGAttributes): SVGElement;
+    public arc(attribs?: SVGAttributes): SVGElement;
     public arc(
         x?: number,
         y?: number,
@@ -1453,11 +1453,20 @@ class SVGRenderer implements SVGRendererLike {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 img[key + 'Setter'] = function (value: any, key: string): void {
-                    let imgSize = this['img' + key];
-
                     this[key] = value;
-                    if (defined(imgSize)) {
 
+                    const {
+                        alignByTranslate,
+                        element,
+                        width,
+                        height,
+                        imgwidth,
+                        imgheight
+                    } = this;
+
+                    let imgSize = this['img' + key];
+                    if (defined(imgSize)) {
+                        let scale = 1;
                         // Scale and center the image within its container.
                         // The name `backgroundSize` is taken from the CSS spec,
                         // but the value `within` is made up. Other possible
@@ -1466,24 +1475,31 @@ class SVGRenderer implements SVGRendererLike {
                         if (
                             options &&
                             options.backgroundSize === 'within' &&
-                            this.width &&
-                            this.height
+                            width &&
+                            height
                         ) {
-                            imgSize = Math.round(imgSize * Math.min(
-                                this.width / this.imgwidth,
-                                this.height / this.imgheight
-                            ));
+                            scale = Math.min(
+                                width / imgwidth,
+                                height / imgheight
+                            );
+
+                            imgSize = Math.round(imgSize * scale);
+
+                            // Update both width and height to keep the ratio
+                            // correct (#17315)
+                            attr(element, {
+                                width: Math.round(imgwidth * scale),
+                                height: Math.round(imgheight * scale)
+                            });
+                        } else if (element) {
+                            element.setAttribute(key, imgSize);
                         }
 
-                        if (this.element) {
-                            this.element.setAttribute(key, imgSize);
-                        }
-                        if (!this.alignByTranslate) {
-                            const translate = ((this[key] || 0) - imgSize) / 2;
-                            const attribs = key === 'width' ?
-                                { translateX: translate } :
-                                { translateY: translate };
-                            this.attr(attribs);
+                        if (!alignByTranslate) {
+                            this.translate(
+                                ((width || 0) - (imgSize * scale)) / 2,
+                                ((height || 0) - (imgSize * scale)) / 2
+                            );
                         }
                     }
                 };

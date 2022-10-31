@@ -41,8 +41,7 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -55,8 +54,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import DO from '../DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
