@@ -41,17 +41,36 @@ interface PathParams {
 }
 
 function getDefaultPath(pathParams: PathParams): SVGPath {
-    const { x1, y1, x2, y2, width = 0, inverted = false, radius } = pathParams;
+    const {
+        x1,
+        y1,
+        x2,
+        y2,
+        width = 0,
+        inverted = false,
+        radius,
+        parentVisible
+    } = pathParams;
+    const path: SVGPath = [
+        ['M', x1, y1],
+        ['L', x1, y1],
+        ['C', x1, y1, x1, y2, x1, y2],
+        ['L', x1, y2],
+        ['C', x1, y1, x1, y2, x1, y2],
+        ['L', x1, y2]
+    ];
 
-    return applyRadius(
-        [
-            ['M', x1, y1],
-            ['L', x1 + width * (inverted ? -0.5 : 0.5), y1],
-            ['L', x1 + width * (inverted ? -0.5 : 0.5), y2],
-            ['L', x2, y2]
-        ],
-        radius
-    );
+    return parentVisible ?
+        applyRadius(
+            [
+                ['M', x1, y1],
+                ['L', x1 + width * (inverted ? -0.5 : 0.5), y1],
+                ['L', x1 + width * (inverted ? -0.5 : 0.5), y2],
+                ['L', x2, y2]
+            ],
+            radius
+        ) :
+        path;
 }
 function getStraightPath(pathParams: PathParams): SVGPath {
     const {
