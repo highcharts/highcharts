@@ -1,18 +1,25 @@
 /* eslint-disable no-use-before-define */
 
-import DataSeriesComposition from '../../../../code/es-modules/Data/DataSeriesComposition.js';
-import DataTable from '../../../../code/es-modules/Data/DataTable.js';
+// import DataSeriesComposition from '../../../../code/es-modules/Data/DataSeriesComposition.js';
+// DataSeriesComposition.compose(Highcharts.Series.types.line);
+// DataSeriesComposition.compose(Highcharts.Series.types.column);
+// DataSeriesComposition.compose(Highcharts.Series.types.pie);
+// DataSeriesComposition.compose(Highcharts.Series.types.scatter);
 
-DataSeriesComposition.compose(Highcharts.Series.types.line);
-DataSeriesComposition.compose(Highcharts.Series.types.column);
-DataSeriesComposition.compose(Highcharts.Series.types.pie);
-DataSeriesComposition.compose(Highcharts.Series.types.scatter);
+import SeriesTable from '../../../../code/es-modules/Core/Series/SeriesTable.js';
+SeriesTable.compose(Highcharts.Series.types.column);
+SeriesTable.compose(Highcharts.Series.types.line);
+SeriesTable.compose(Highcharts.Series.types.pie);
+SeriesTable.compose(Highcharts.Series.types.scatter);
+
+import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 const benchmarks = document.getElementById('benchmarks');
 const benchmarkSeries = 'scatter';
 const benchmarkSize = 1e5;
 const chart = Highcharts.chart('chart', {
     debug: true,
+    boost: false,
     chart: {
         width: 600
     },
@@ -71,31 +78,26 @@ function addSeries(e) {
         chart.series[0].remove();
     }
 
-    const series = chart.addSeries({
-            type: e.target.innerText.toLowerCase()
-        }),
-        table = new DataTable({
+    chart.addSeries({
+        type: e.target.innerText.toLowerCase(),
+        table: {
             y: [
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
                 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
             ]
-        });
-
-    series.datas.setTable(table, true, true);
+        }
+    });
 
     window.setTimeout(() => {
         table.setRow([101]);
-        series.redraw();
     }, 2000);
 
     window.setTimeout(() => {
         table.deleteRows(0, 1);
-        series.redraw();
     }, 4000);
 
     window.setTimeout(() => {
         table.deleteRows(16, 1);
-        series.redraw();
     }, 6000);
 }
 
@@ -116,22 +118,21 @@ function benchmark(e) {
             data: [[0, 0], [benchmarkSize, benchmarkSize]]
         });
         e.target.innerText = 'Benchmarking';
-        benchmarking = window.setTimeout(benchmarkSetData, 1000);
+        benchmarking = window.setTimeout(benchmarkData, 1000);
     }
 }
 
-function benchmarkSetData(vs) {
+function benchmarkData(vs) {
     if (chart.series[0]) {
         chart.series[0].remove();
     }
 
-    const series = chart.addSeries({
-        type: benchmarkSeries
-    });
-
     timestamp(true);
 
-    series.setData(data, true);
+    chart.addSeries({
+        type: benchmarkSeries,
+        data
+    });
 
     const result = timestamp();
 
@@ -141,7 +142,7 @@ function benchmarkSetData(vs) {
 
     if (benchmarking) {
         benchmarking = window.setTimeout(
-            benchmarkSetTable,
+            benchmarkTable,
             2000,
             vs ? 0 : result
         );
@@ -150,18 +151,17 @@ function benchmarkSetData(vs) {
     return result;
 }
 
-function benchmarkSetTable(vs) {
+function benchmarkTable(vs) {
     if (chart.series[0]) {
         chart.series[0].remove();
     }
 
-    const series = chart.addSeries({
-        type: benchmarkSeries
-    });
-
     timestamp(true);
 
-    series.datas.setTable(table, true);
+    chart.addSeries({
+        type: benchmarkSeries,
+        table: table.getColumns(void 0, true)
+    });
 
     const result = timestamp();
 
@@ -171,7 +171,7 @@ function benchmarkSetTable(vs) {
 
     if (benchmarking) {
         benchmarking = window.setTimeout(
-            benchmarkSetData,
+            benchmarkData,
             2000,
             vs ? 0 : result
         );

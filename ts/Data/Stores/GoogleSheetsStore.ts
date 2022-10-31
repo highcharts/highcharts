@@ -22,9 +22,9 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
@@ -44,7 +44,7 @@ const { merge } = U;
 /**
  * @private
  */
-class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
+class GoogleSheetsStore extends DataStore {
 
     /* *
      *
@@ -112,11 +112,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
      *
      * */
 
-    /**
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     */
-    private fetchSheet(eventDetail?: DataEventEmitter.EventDetail): void {
+    private fetchSheet(): DataPromise<this> {
         const store = this,
             {
                 enablePolling,
@@ -134,70 +130,51 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         // If already loaded, clear the current table
         store.table.deleteColumns();
 
-        store.emit({
-            type: 'load',
-            detail: eventDetail,
-            table: store.table,
-            url
-        });
-
-        ajax({
-            url: url,
-            dataType: 'json',
-            success: function (json): void {
-                store.parser.parse(json);
-                store.table.setColumns(store.parser.getTable().getColumns());
-
-                // Polling
-                if (enablePolling) {
-                    setTimeout(
-                        function (): void {
-                            store.fetchSheet();
-                        },
-                        dataRefreshRate * 1000
+        return new DataPromise((resolve, reject): void => {
+            ajax({
+                url: url,
+                dataType: 'json',
+                success: (json): void => {
+                    store.parser.parse(json);
+                    store.table.setColumns(
+                        store.parser.getTable().getColumns()
                     );
+
+                    // Polling
+                    if (enablePolling) {
+                        setTimeout(
+                            function (): void {
+                                store.fetchSheet();
+                            },
+                            dataRefreshRate * 1000
+                        );
+                    }
+
+                    resolve(store);
+                },
+                error: (
+                    xhr: XMLHttpRequest,
+                    error: (string|Error)
+                ): void => {
+                    /* *
+                    * TODO:
+                    * handle error
+                    * ...
+                    *
+                    * */
+                    // console.error(error);
+                    reject(error);
                 }
-
-                store.emit({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table: store.table,
-                    url
-                });
-            },
-            error: function (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void {
-                /* *
-                 * TODO:
-                 * catch error
-                 * ...
-                 *
-                 * */
-                // console.log(text);
-
-                store.emit({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table: store.table,
-                    xhr
-                });
-            }
+            });
         });
-
-        // return true;
     }
 
-    /**
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(): DataPromise<this> {
         if (this.options.googleSpreadsheetKey) {
-            this.fetchSheet(eventDetail);
+            return this.fetchSheet();
         }
+
+        return DataPromise.reject(new Error('Google Spreadsheet Key missing.'));
     }
 
     /* *
@@ -208,22 +185,21 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
      * requires oAuth2 auth
      *
      * */
+
+    public save(): DataPromise<this> {
+        return DataPromise.reject(new Error('Not implemented'));
+    }
+
+
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace GoogleSheetsStore {
-
-    export type Event = (ErrorEvent|LoadEvent);
-
-    export interface ErrorEvent extends DataStore.Event {
-        readonly type: 'loadError';
-        readonly error: (string|Error);
-        readonly xhr: XMLHttpRequest;
-    }
-
-    export interface LoadEvent extends DataStore.Event {
-        readonly type: ('load'|'afterLoad');
-        readonly url: string;
-    }
 
     export interface Options extends JSON.Object {
         googleSpreadsheetKey: string;
@@ -241,13 +217,13 @@ namespace GoogleSheetsStore {
  *
  * */
 
-DataStore.addStore(GoogleSheetsStore);
-
 declare module './StoreType' {
     interface StoreTypeRegistry {
         Google: typeof GoogleSheetsStore;
     }
 }
+
+DataStore.addStore(GoogleSheetsStore);
 
 /* *
  *

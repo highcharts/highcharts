@@ -19,8 +19,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -130,9 +128,6 @@ class SortModifier extends DataModifier {
      * @param {Highcharts.DataTableCellType} cellValue
      * Changed cell value.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
@@ -140,8 +135,7 @@ class SortModifier extends DataModifier {
         table: T,
         columnName: string,
         rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        cellValue: DataTable.CellType
     ): T {
         const modifier = this,
             {
@@ -162,7 +156,7 @@ class SortModifier extends DataModifier {
                         .getColumn(orderInColumn)
                 );
             } else {
-                modifier.modifyTable(table, eventDetail);
+                modifier.modifyTable(table);
             }
         }
 
@@ -182,17 +176,13 @@ class SortModifier extends DataModifier {
      * @param {number} [rowIndex=0]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyColumns<T extends DataTable>(
         table: T,
         columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
 
         const modifier = this,
@@ -218,7 +208,7 @@ class SortModifier extends DataModifier {
                         .getColumn(orderInColumn)
                 );
             } else {
-                modifier.modifyTable(table, eventDetail);
+                modifier.modifyTable(table);
             }
         }
 
@@ -239,17 +229,13 @@ class SortModifier extends DataModifier {
      * @param {number} [rowIndex]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyRows<T extends DataTable>(
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
 
         const modifier = this,
@@ -273,7 +259,7 @@ class SortModifier extends DataModifier {
                     .getColumn(orderInColumn)
             );
         } else {
-            modifier.modifyTable(table, eventDetail);
+            modifier.modifyTable(table);
         }
 
         return table;
@@ -285,19 +271,11 @@ class SortModifier extends DataModifier {
      * @param {DataTable} table
      * Table to sort in.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
+    public modifyTable<T extends DataTable>(table: T): T {
         const modifier = this;
-
-        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const columnNames = table.getColumnNames(),
             rowCount = table.getRowCount(),
@@ -341,8 +319,6 @@ class SortModifier extends DataModifier {
             modified.setRows(rows, 0);
         }
 
-        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
-
         return table;
     }
 
@@ -355,8 +331,7 @@ class SortModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace SortModifier {
 

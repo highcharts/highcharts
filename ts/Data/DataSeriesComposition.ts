@@ -65,7 +65,7 @@ function wrapSeriesGeneratePoints(
     proceed: DataSeriesComposition['generatePoints']
 ): void {
     if (this.hasGroupedData) {
-        return proceed.call(this);
+        return proceed();
     }
 
     const PointClass = this.pointClass,
@@ -361,91 +361,9 @@ class DataSeriesAdditions {
             anySeries.xData = column;
         }
 
-        this.syncOff();
-
         this.table = table;
 
-        if (redraw) {
-            this.syncOn();
-        }
-
         this.processTable(redraw, oldData && animation);
-    }
-
-    /**
-     * Stops synchronisation of table changes with series.
-     * @private
-     */
-    public syncOff(): void {
-        const unlisteners = this.unlisteners;
-
-        for (let i = 0, iEnd = unlisteners.length; i < iEnd; ++i) {
-            unlisteners[i]();
-        }
-
-        unlisteners.length = 0;
-    }
-
-    /**
-     * Activates synchronization of table changes with series.
-     * @private
-     */
-    public syncOn(): void {
-        if (this.unlisteners.length) {
-            return;
-        }
-
-        const series = this.series,
-            table = this.table,
-            anySeries: AnyRecord = series,
-            onChange = (e: DataTable.Event): void => {
-                if (e.type === 'afterDeleteColumns') {
-                    // deletion affects all points
-                    this.setTable(table, true);
-                    return;
-                }
-                if (e.type === 'afterDeleteRows') {
-                    if (
-                        e.rowIndex > 0 &&
-                        e.rowIndex + e.rowCount < series.points.length
-                    ) {
-                        // deletion affects trailing points
-                        this.setTable(table, true);
-                        return;
-                    }
-                    for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
-                        i < iEnd;
-                        ++i
-                    ) {
-                        series.removePoint(i, false);
-                    }
-                }
-                if (this.indexAsX) {
-                    if (e.type === 'afterSetCell') {
-                        anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
-                        for (
-                            let i = e.rowIndex,
-                                iEnd = i + e.rowCount;
-                            i < iEnd;
-                            ++i
-                        ) {
-                            anySeries.xData[i] = series.autoIncrement();
-                        }
-                    }
-                }
-
-                this.processTable(true);
-            };
-
-        this.unlisteners.push(
-            table.on('afterDeleteColumns', onChange),
-            table.on('afterDeleteRows', onChange),
-            table.on('afterSetCell', onChange),
-            table.on('afterSetRows', onChange)
-        );
     }
 
 }

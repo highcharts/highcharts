@@ -19,7 +19,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
 import DataModifier from './DataModifier.js';
@@ -100,19 +99,13 @@ class GroupModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        table: T
     ): T {
         const modifier = this;
-
-        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const byGroups: Array<string> = [],
             tableGroups: Array<DataTable> = [],
@@ -129,7 +122,7 @@ class GroupModifier extends DataModifier {
                 invalidValues,
                 validValues
             } = modifier.options,
-            modified = table.modified = table.clone(true, eventDetail);
+            modified = table.modified = table.clone(true);
 
         let value: DataTable.CellType,
             valueIndex: number;
@@ -173,8 +166,6 @@ class GroupModifier extends DataModifier {
             value: valueGroups
         });
 
-        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
-
         return table;
     }
 
@@ -182,13 +173,12 @@ class GroupModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace GroupModifier {
 

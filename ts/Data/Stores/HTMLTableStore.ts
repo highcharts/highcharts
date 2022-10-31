@@ -22,9 +22,9 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
@@ -43,7 +43,7 @@ const {
  *
  * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
+class HTMLTableStore extends DataStore {
 
     /* *
      *
@@ -99,10 +99,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
+    public export?: string;
 
     /**
      * Options for the HTMLTable datastore
@@ -153,50 +155,33 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(): DataPromise<this> {
         const store = this;
 
-        store.fetchTable();
+        return new DataPromise((resolve): void => {
+            store.fetchTable();
 
-        // If already loaded, clear the current rows
-        store.table.deleteColumns();
+            // If already loaded, clear the current rows
+            store.table.deleteColumns();
 
-        store.emit({
-            type: 'load',
-            detail: eventDetail,
-            table: store.table,
-            tableElement: store.tableElement
-        });
+            if (!store.tableElement) {
+                throw new Error(
+                    'HTML table not provided, or element with ID not found'
+                );
+            }
 
-        if (!store.tableElement) {
-            store.emit({
-                type: 'loadError',
-                detail: eventDetail,
-                error: 'HTML table not provided, or element with ID not found',
-                table: store.table
-            });
-            return;
-        }
+            store.parser.parse(merge(
+                { tableHTML: store.tableElement },
+                store.options
+            ));
 
-        store.parser.parse(
-            merge({ tableHTML: store.tableElement }, store.options),
-            eventDetail
-        );
+            store.table.setColumns(store.parser.getTable().getColumns());
 
-        store.table.setColumns(store.parser.getTable().getColumns());
-
-        store.emit({
-            type: 'afterLoad',
-            detail: eventDetail,
-            table: store.table,
-            tableElement: store.tableElement
+            resolve(store);
         });
     }
 
@@ -454,17 +439,13 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
      * Options that override default or existing export options.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {string}
      * HTML from the current dataTable.
      *
      */
     public save(
-        htmlExportOptions: HTMLTableStore.ExportOptions,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): string {
+        htmlExportOptions?: HTMLTableStore.ExportOptions
+    ): DataPromise<this> {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -476,40 +457,38 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(
-            merge(exportOptions, htmlExportOptions)
-        );
+        return new DataPromise((resolve): void => {
+            delete this.export;
+            this.export = this.getHTMLTableForExport(
+                merge(exportOptions, htmlExportOptions)
+            );
+        });
     }
 
 }
 
-
 /**
  *
- *  Namespace
+ *  Class Namespace
  *
  */
 
 /**
- * Types for class-specific options and events
+ * Types for class-specific options
  */
 namespace HTMLTableStore {
 
     /**
-     * Type for event object fired from HTMLTableDataStore
-     */
-    export type Event = (ErrorEvent|LoadEvent);
-
-    /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
+    export type OptionsType =
+        Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>;
 
     /**
      * Options for exporting the store as an HTML table
      */
     export interface ExportOptions extends JSON.Object {
-        decimalPoint?: string | null;
+        decimalPoint?: (string|null);
         exportIDColumn?: boolean;
         tableCaption?: string;
         useLocalDecimalPoint?: boolean;
@@ -519,26 +498,10 @@ namespace HTMLTableStore {
     }
 
     /**
-     * Provided event object on errors within HTMLTableDataStore
-     */
-    export interface ErrorEvent extends DataStore.Event {
-        type: 'loadError';
-        error: (string | Error);
-    }
-
-    /**
-     * Provided event object on load events within HTMLTableDataStore
-     */
-    export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
-        tableElement?: (HTMLElement | null);
-    }
-
-    /**
      * Internal options for the HTMLTableDataStore class
      */
     export interface Options {
-        table: (string | HTMLElement);
+        table: (string|HTMLElement);
     }
 
 }
@@ -549,13 +512,13 @@ namespace HTMLTableStore {
  *
  * */
 
-DataStore.addStore(HTMLTableStore);
-
 declare module './StoreType' {
     interface StoreTypeRegistry {
         HTMLTable: typeof HTMLTableStore;
     }
 }
+
+DataStore.addStore(HTMLTableStore);
 
 /* *
  *

@@ -158,12 +158,13 @@ test('CSVStore from URL', function (assert) {
 
     const doneLoading = assert.async(3);
 
-    datastore.on('afterLoad', (e) => {
-        assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
+    datastore.addEventListener('afterLoad', (e) => {
+        const table = e.detail.table
+        assert.ok(table.getRowCount() > 1, 'Datastore got rows')
 
         // Check that the store is updated
         // with the new dataset when polling
-        states[pollNumber] = e.table.clone();
+        states[pollNumber] = table.clone();
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(
@@ -200,19 +201,19 @@ test('CSVStore from URL', function (assert) {
         }
 
         assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
-        assert.ok(e.csv, 'AfterLoad event has CSV attached')
+        assert.ok(e.detail.csv, 'AfterLoad event has CSV attached')
 
         doneLoading()
         ;
     });
 
-    datastore.on('load', (e) => {
-        assert.deepEqual(e.table, datastore.table, 'DataTable from event is same as DataTable from datastore')
+    datastore.addEventListener('load', (e) => {
+        assert.deepEqual(e.detail.table, datastore.table, 'DataTable from event is same as DataTable from datastore')
     });
 
-    datastore.on('loadError', (e) => {
+    datastore.addEventListener('loadError', (e) => {
         // In case of an error do a log and finish the test
-        console.warn(e.error);
+        console.warn(e.detail.error);
         doneLoading();
     });
 
@@ -232,11 +233,11 @@ test('CSVStore error', function(assert){
 
     const afterError = assert.async();
 
-    datastore.on('load', (e) =>{
+    datastore.addEventListener('load', (e) =>{
         // console.log('Attempting to load');
     })
 
-    datastore.on('loadError', (e)=>{
+    datastore.addEventListener('loadError', (e)=>{
         assert.ok(true);
         afterError();
     })

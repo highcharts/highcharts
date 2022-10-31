@@ -19,14 +19,10 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -39,7 +35,7 @@ const {
  *
  * @private
  */
-class ChainModifier extends DataModifier<ChainModifier.Event> {
+class ChainModifier extends DataModifier {
 
     /* *
      *
@@ -108,47 +104,16 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      *
      * @param {DataModifier} modifier
      * Configured modifier to add.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
      */
-    public add(
-        modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): void {
-        this.emit({
-            type: 'addModifier',
-            detail: eventDetail,
-            modifier
-        });
-
+    public add(modifier: DataModifier): void {
         this.modifiers.push(modifier);
-
-        this.emit({
-            type: 'addModifier',
-            detail: eventDetail,
-            modifier
-        });
     }
 
     /**
      * Clears all modifiers from the chain.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
      */
-    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
-        this.emit({
-            type: 'clearChain',
-            detail: eventDetail
-        });
-
+    public clear(): void {
         this.modifiers.length = 0;
-
-        this.emit({
-            type: 'afterClearChain',
-            detail: eventDetail
-        });
     }
 
     /**
@@ -179,8 +144,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         table: T,
         columnName: string,
         rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        cellValue: DataTable.CellType
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -196,8 +160,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
                     clone,
                     columnName,
                     rowIndex,
-                    cellValue,
-                    eventDetail
+                    cellValue
                 );
                 clone = clone.modified;
             }
@@ -223,17 +186,13 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {number} [rowIndex=0]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyColumns<T extends DataTable>(
         table: T,
         columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -248,8 +207,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
                 modifiers[i].modifyColumns(
                     clone,
                     columns,
-                    rowIndex,
-                    eventDetail
+                    rowIndex
                 );
                 clone = clone.modified;
             }
@@ -275,17 +233,13 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {number} [rowIndex]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyRows<T extends DataTable>(
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -300,8 +254,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
                 modifiers[i].modifyRows(
                     clone,
                     rows,
-                    rowIndex,
-                    eventDetail
+                    rowIndex
                 );
                 clone = clone.modified;
             }
@@ -320,22 +273,14 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {DataTable}
      * Table as a reference.
      *
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
+    public modifyTable<T extends DataTable>(table: T): T {
         const chain = this;
-
-        chain.emit({ type: 'modify', detail: eventDetail, table });
 
         const modifiers = (
             chain.options.reverse ?
@@ -358,8 +303,6 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
 
         table.modified = modified;
 
-        chain.emit({ type: 'afterModify', detail: eventDetail, table });
-
         return table;
     }
 
@@ -372,67 +315,24 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public remove(
-        modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    public remove(modifier: DataModifier): void {
         const modifiers = this.modifiers;
 
-        this.emit({
-            type: 'removeModifier',
-            detail: eventDetail,
-            modifier
-        });
-
         modifiers.splice(modifiers.indexOf(modifier), 1);
-
-        this.emit({
-            type: 'afterRemoveModifier',
-            detail: eventDetail,
-            modifier
-        });
     }
 
 }
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace ChainModifier {
-
-    /**
-     * Event object
-     */
-    export interface ChainEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'clearChain'|'afterClearChain'|
-            DataModifier.Event['type']
-        );
-        readonly table?: DataTable;
-    }
-
-    /**
-     * Event information.
-     */
-    export type Event = (ChainEvent|ModifierEvent);
-
-    /**
-     * Event information for modifier operations.
-     */
-    export interface ModifierEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'addModifier'|'afterAddModifier'|
-            'removeModifier'|'afterRemoveModifier'
-        );
-        readonly modifier: DataModifier;
-    }
 
     /**
      * Options to configure the modifier.

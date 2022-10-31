@@ -21,16 +21,15 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataPromise from '../DataPromise';
 import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
+import DataEventTarget from '../DataEventTarget.js';
 import DataParser from '../Parsers/DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    fireEvent,
     merge,
     pick
 } = U;
@@ -46,7 +45,7 @@ const {
  *
  * @private
  */
-abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataStore extends DataEventTarget {
 
     /* *
      *
@@ -172,6 +171,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
         table: DataTable = new DataTable(),
         metadata: DataStore.Metadata = { columns: {} }
     ) {
+        super();
         this.table = table;
         this.metadata = metadata;
     }
@@ -186,7 +186,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * The DataParser responsible for handling converting the provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser<DataParser.Event>;
+    public abstract readonly parser: DataParser;
 
     /**
      * Metadata to describe the store and the content of columns.
@@ -238,16 +238,6 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
         while (typeof (columnName = columnNames.pop()) === 'string') {
             store.describeColumn(columnName, columns[columnName]);
         }
-    }
-
-    /**
-     * Emits an event on the store to all registered callbacks of this event.
-     *
-     * @param {DataStore.Event} [e]
-     * Event object containing additional event information.
-     */
-    public emit(e: TEventObject): void {
-        fireEvent(this, e.type, e);
     }
 
     /**
@@ -315,32 +305,9 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
         });
     }
 
-    /**
-     * The default load method, which fires the `afterLoad` event
-     * @emits DataStore#afterLoad
-     */
-    public load(): void {
-        fireEvent(this, 'afterLoad', { table: this.table });
-    }
+    public abstract load(): DataPromise<this>;
 
-    /**
-     * Registers a callback for a specific store event.
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.EventCallback} callback
-     * Function to register for the store callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the store event.
-     */
-    public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
+    public abstract save(): DataPromise<this>;
 
     /**
      * Sets the index and order of columns.
@@ -382,8 +349,10 @@ namespace DataStore {
     /**
      * The default event object for a datastore
      */
-    export interface Event extends DataEventEmitter.Event {
-        readonly table: DataTable;
+    export interface Event extends CustomEvent {
+        detail: {
+            readonly table: DataTable;
+        };
     }
 
     /**

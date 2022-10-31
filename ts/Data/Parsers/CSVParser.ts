@@ -22,8 +22,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
@@ -37,7 +35,7 @@ const { merge } = U;
  *
  * @private
  */
-class CSVParser extends DataParser<DataParser.Event> {
+class CSVParser extends DataParser {
 
     /* *
      *
@@ -98,16 +96,10 @@ class CSVParser extends DataParser<DataParser.Event> {
      * @param {CSVParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      */
-    public parse(
-        options: CSVParser.OptionsType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    public parse(options: CSVParser.OptionsType): void {
         const parser = this,
             dataTypes = parser.dataTypes,
             converter = parser.converter,
@@ -129,13 +121,6 @@ class CSVParser extends DataParser<DataParser.Event> {
             column;
 
         parser.columns = [];
-
-        parser.emit<DataParser.Event>({
-            type: 'parse',
-            columns: parser.columns,
-            detail: eventDetail,
-            headers: parser.headers
-        });
 
         if (csv && beforeParse) {
             csv = beforeParse(csv);
@@ -212,13 +197,6 @@ class CSVParser extends DataParser<DataParser.Event> {
                 }
             }
         }
-
-        parser.emit<DataParser.Event>({
-            type: 'afterParse',
-            columns: parser.columns,
-            detail: eventDetail,
-            headers: parser.headers
-        });
     }
 
     /**

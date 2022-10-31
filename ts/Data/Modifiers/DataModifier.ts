@@ -20,18 +20,13 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type DataTable from '../DataTable';
 import type JSON from '../../Core/JSON';
 import type ModifierType from './ModifierType';
 
 import DataPromise from '../DataPromise.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+const { merge } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -46,8 +41,7 @@ const {
  *
  * @private
  */
-abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<(TEvent|DataModifier.Event)> {
+abstract class DataModifier {
 
     /* *
      *
@@ -190,10 +184,23 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
-        const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
+        const modifier = this as DataModifier;
+        const times: {
+            startTime: number;
+            endTime: number;
+        } = {
+            startTime: 0,
+            endTime: 0
+        };
         const execute = (): void => {
+            times.startTime = window.performance.now();
             modifier.modifyTable(dataTable);
-            modifier.emit({ type: 'afterBenchmarkIteration' });
+            times.endTime = window.performance.now();
+            if (results.length === iterations) {
+                results.push(times.endTime - times.startTime);
+            } else { // Run again
+                execute();
+            }
         };
 
         const defaultOptions = {
@@ -205,48 +212,10 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
             options
         );
 
-        modifier.on('afterBenchmarkIteration', (): void => {
-            if (results.length === iterations) {
-                modifier.emit({ type: 'afterBenchmark', results });
-                return;
-            }
-
-            // Run again
-            execute();
-        });
-
-        const times: {
-            startTime: number;
-            endTime: number;
-        } = {
-            startTime: 0,
-            endTime: 0
-        };
-
-        // Add timers
-        modifier.on('modify', (): void => {
-            times.startTime = window.performance.now();
-        });
-
-        modifier.on('afterModify', (): void => {
-            times.endTime = window.performance.now();
-            results.push(times.endTime - times.startTime);
-        });
-
         // Initial run
         execute();
 
         return results;
-    }
-
-    /**
-     * Emits an event on the modifier to all registered callbacks of this event.
-     *
-     * @param {DataEventEmitter.Event} [e]
-     * Event object containing additonal event information.
-     */
-    public emit(e: (TEvent|DataModifier.Event)): void {
-        fireEvent(this, e.type, e);
     }
 
     /**
@@ -255,31 +224,21 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Promise<Highcharts.DataTable>}
      * Table with `modified` property as a reference.
      */
-    public modify<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<T> {
+    public modify<T extends DataTable>(table: T): DataPromise<T> {
         const modifier = this;
-        return new DataPromise((resolve, reject): void => {
+
+        return new DataPromise((resolve): void => {
+
             if (table.modified === table) {
-                table.modified = table.clone(false, eventDetail);
+                table.modified = table.clone(false);
             }
-            try {
-                resolve(modifier.modifyTable(table, eventDetail));
-            } catch (e) {
-                modifier.emit({
-                    type: 'error',
-                    detail: eventDetail,
-                    table
-                });
-                reject(e);
-            }
+
+            modifier.modifyTable(table);
+
+            resolve(table);
         });
     }
 
@@ -299,9 +258,6 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {Highcharts.DataTableCellType} cellValue
      * Changed cell value.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
@@ -309,8 +265,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         table: T,
         columnName: string,
         rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        cellValue: DataTable.CellType
     ): T {
         return this.modifyTable(table);
     }
@@ -328,17 +283,13 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {number} [rowIndex=0]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyColumns<T extends DataTable>(
         table: T,
         columns: DataTable.ColumnCollection,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
         return this.modifyTable(table);
     }
@@ -356,17 +307,13 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {number} [rowIndex]
      * Index of the first changed row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
     public modifyRows<T extends DataTable>(
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number
     ): T {
         return this.modifyTable(table);
     }
@@ -378,47 +325,21 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Table with `modified` property as a reference.
      */
-    public abstract modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T;
-
-    /**
-     * Registers a callback for a specific modifier event.
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.EventCallback} callback
-     * Function to register for an modifier callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the modifier event.
-     */
-    public on(
-        type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
+    public abstract modifyTable<T extends DataTable>(table: T): T;
 
 }
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace DataModifier {
 
@@ -433,44 +354,10 @@ namespace DataModifier {
     }
 
     /**
-     * Benchmark event with additional event information.
-     */
-    export interface BenchmarkEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'afterBenchmark'|
-            'afterBenchmarkIteration'
-        );
-        readonly results?: Array<number>;
-    }
-
-    /**
      * Benchmark options.
      */
     export interface BenchmarkOptions {
         iterations: number;
-    }
-
-    /**
-     * Error event with additional event information.
-     */
-    export interface ErrorEvent extends DataEventEmitter.Event {
-        readonly type: 'error';
-        readonly table: DataTable;
-    }
-
-    /**
-     * Event information.
-     */
-    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
-
-    /**
-     * Modify event with additional event information.
-     */
-    export interface ModifyEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'modify'|'afterModify'
-        );
-        readonly table: DataTable;
     }
 
     /**

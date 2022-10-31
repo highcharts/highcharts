@@ -281,7 +281,7 @@ QUnit.test('DataTable Events', function (assert) {
             'setRows', 'afterSetRows'
         ];
         while (eventsToRegister.length) {
-            table.on(eventsToRegister.shift(), registerEvent);
+            table.addEventListener(eventsToRegister.shift(), registerEvent);
         }
     }
 
@@ -627,8 +627,7 @@ QUnit.test('DataTable.setColumns', function (assert) {
 });
 
 QUnit.test('DataTable.setModifier', function (assert) {
-    const done = assert.async(),
-        modifier = new SortModifier({
+    const modifier = new SortModifier({
             direction: 'asc',
             orderByColumn: 'y',
             orderInColumn: 'x'
@@ -647,39 +646,27 @@ QUnit.test('DataTable.setModifier', function (assert) {
         'Modified table should contain unsorted columns.'
     );
 
-    table
-        .setModifier(modifier)
-        .then((table) => {
-            assert.deepEqual(
-                table.modified.getColumns(),
-                {
-                    x: [2, 0, 1],
-                    y: [3, 1, 2] 
-                },
-                'Modified table should contain sorted columns.'
-            );
-            return table;
-        })
-        .then((table) => {
-            delete modifier.options.orderInColumn;
-            modifier.options.direction = 'desc';
-            return table.setModifier(modifier);
-        })
-        .then((table) => {
-            assert.deepEqual(
-                table.modified.getColumns(),
-                {
-                    x: [0, 2, 1],
-                    y: [3, 2, 1] 
-                },
-                'Modified table should contain sorted columns.'
-            )
-            return table;
-        })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
+    table.setModifier(modifier)
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [2, 0, 1],
+            y: [3, 1, 2] 
+        },
+        'Modified table should contain sorted columns.'
+    );
+
+    delete modifier.options.orderInColumn;
+    modifier.options.direction = 'desc';
+    table.setModifier(modifier);
+
+    assert.deepEqual(
+        table.modified.getColumns(),
+        {
+            x: [0, 2, 1],
+            y: [3, 2, 1] 
+        },
+        'Modified table should contain sorted columns.'
+    );
 });

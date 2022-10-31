@@ -20,17 +20,12 @@
  *
  * */
 
-import type DataEventEmitter from './DataEventEmitter';
 import type DataModifier from './Modifiers/DataModifier';
 import type JSON from '../Core/JSON';
 
-import DataPromise from './DataPromise.js';
+import DataEventTarget from './DataEventTarget.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    uniqueKey
-} = U;
+const { uniqueKey } = U;
 
 /* *
  *
@@ -51,7 +46,7 @@ const {
  * @param {string} [id]
  * DataTable identifier.
  */
-class DataTable implements DataEventEmitter<DataTable.Event> {
+class DataTable extends DataEventTarget {
 
     /* *
      *
@@ -142,6 +137,8 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columns: DataTable.ColumnCollection = {},
         id?: string
     ) {
+        super();
+
         /**
          * Whether the ID was automatic generated or given.
          *
@@ -228,9 +225,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {boolean} [skipColumns]
      * Whether to clone columns or not.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTable}
      * Clone of this data table.
      *
@@ -238,14 +232,15 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @emits #afterCloneTable
      */
     public clone(
-        skipColumns?: boolean,
-        eventDetail?: DataEventEmitter.EventDetail
+        skipColumns?: boolean
     ): DataTable {
         const table = this,
             aliasMap = table.aliasMap,
             aliases = Object.keys(table.aliasMap);
 
-        table.emit({ type: 'cloneTable', detail: eventDetail });
+        table.dispatchEvent({
+            type: 'cloneTable'
+        });
 
         const tableClone: DataTable = new DataTable(
             (skipColumns ? {} : table.columns),
@@ -268,9 +263,8 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             }
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'afterCloneTable',
-            detail: eventDetail,
             tableClone
         });
 
@@ -317,9 +311,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * Names (no alias) of columns to delete. If no array is provided, all
      * columns will be deleted.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Highcharts.DataTableColumnCollection|undefined}
      * Returns the deleted columns, if found.
      *
@@ -327,8 +318,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @emits #afterDeleteColumns
      */
     public deleteColumns(
-        columnNames?: Array<string>,
-        eventDetail?: DataEventEmitter.EventDetail
+        columnNames?: Array<string>
     ): (DataTable.ColumnCollection|undefined) {
         const table = this,
             columns = table.columns,
@@ -340,10 +330,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columnNames = (columnNames || Object.keys(columns));
 
         if (columnNames.length) {
-            table.emit({
+
+            table.dispatchEvent({
                 type: 'deleteColumns',
-                columnNames,
-                detail: eventDetail
+                columnNames
             });
 
             for (
@@ -368,14 +358,13 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             }
 
             if (modifier) {
-                modifier.modifyColumns(table, modifiedColumns, 0, eventDetail);
+                modifier.modifyColumns(table, modifiedColumns, 0);
             }
 
-            table.emit({
+            table.dispatchEvent({
                 type: 'afterDeleteColumns',
                 columns: deletedColumns,
-                columnNames,
-                detail: eventDetail
+                columnNames
             });
 
             return deletedColumns;
@@ -394,9 +383,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {number} [rowCount=1]
      * Number of rows to delete.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Array<Highcharts.DataTableRow>}
      * Returns the deleted rows, if found.
      *
@@ -405,17 +391,15 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      */
     public deleteRows(
         rowIndex?: number,
-        rowCount: number = 1,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowCount: number = 1
     ): Array<DataTable.Row> {
         const table = this,
             deletedRows: Array<DataTable.Row> = [],
             modifiedRows: Array<DataTable.Row> = [],
             modifier = table.modifier;
 
-        table.emit({
+        table.dispatchEvent({
             type: 'deleteRows',
-            detail: eventDetail,
             rowCount,
             rowIndex: (rowIndex || 0)
         });
@@ -457,45 +441,18 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             modifier.modifyRows(
                 table,
                 modifiedRows,
-                (rowIndex || 0),
-                eventDetail
+                (rowIndex || 0)
             );
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'afterDeleteRows',
-            detail: eventDetail,
             rowCount,
             rowIndex: (rowIndex || 0),
             rows: deletedRows
         });
 
         return deletedRows;
-    }
-
-    /**
-     * Emits an event on this table to all registered callbacks of the given
-     * event.
-     * @private
-     *
-     * @param {DataTable.Event} e
-     * Event object with event information.
-     */
-    public emit(e: DataTable.Event): void {
-        const frame = this;
-
-        switch (e.type) {
-            case 'afterDeleteColumns':
-            case 'afterDeleteRows':
-            case 'afterSetCell':
-            case 'afterSetColumns':
-            case 'afterSetRows':
-                frame.versionTag = uniqueKey();
-                break;
-            default:
-        }
-
-        fireEvent(frame, e.type, e);
     }
 
     /**
@@ -1145,27 +1102,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
     }
 
     /**
-     * Registers a callback for a specific event.
-     *
-     * @function Highcharts.DataTable#on
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {Highcharts.EventCallbackFunction<Highcharts.DataTable>} callback
-     * Function to register for an event callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the event.
-     */
-    public on(
-        type: DataTable.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTable.Event>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
-
-    /**
      * Renames a column of cell values.
      *
      * @function Highcharts.DataTable#renameColumn
@@ -1220,17 +1156,13 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to set.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits #setCell
      * @emits #afterSetCell
      */
     public setCell(
         columnNameOrAlias: string,
         rowIndex: number,
-        cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        cellValue: DataTable.CellType
     ): void {
         const table = this,
             columns = table.columns,
@@ -1247,11 +1179,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             return;
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'setCell',
             cellValue,
             columnName: columnNameOrAlias,
-            detail: eventDetail,
             rowIndex
         });
 
@@ -1269,11 +1200,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             modifier.modifyCell(table, columnNameOrAlias, rowIndex, cellValue);
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'afterSetCell',
             cellValue,
             columnName: columnNameOrAlias,
-            detail: eventDetail,
             rowIndex
         });
     }
@@ -1292,19 +1222,15 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {number} [rowIndex=0]
      * Index of the first row to change. (Default: 0)
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits #setColumns
      * @emits #afterSetColumns
      */
     public setColumn(
         columnNameOrAlias: string,
         column: DataTable.Column = [],
-        rowIndex: number = 0,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number = 0
     ): void {
-        this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
+        this.setColumns({ [columnNameOrAlias]: column }, rowIndex);
     }
 
     /**
@@ -1347,16 +1273,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {number} [rowIndex]
      * Index of the first row to change. Keep undefined to reset.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits #setColumns
      * @emits #afterSetColumns
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
-        rowIndex?: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex?: number
     ): void {
         const table = this,
             tableColumns = table.columns,
@@ -1365,11 +1287,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 
-        table.emit({
+        table.dispatchEvent({
             type: 'setColumns',
             columns,
             columnNames,
-            detail: eventDetail,
             rowIndex
         });
 
@@ -1425,11 +1346,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             tableModifier.modifyColumns(table, columns, (rowIndex || 0));
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'afterSetColumns',
             columns,
             columnNames,
-            detail: eventDetail,
             rowIndex
         });
     }
@@ -1441,9 +1361,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {Highcharts.DataModifier} [modifier]
      * Modifier to set, or `undefined` to unset.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {Promise<Highcharts.DataTable>}
      * Resolves to this table if successfull, or rejects on failure.
      *
@@ -1451,16 +1368,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @emits #afterSetModifier
      */
     public setModifier(
-        modifier?: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataPromise<this> {
+        modifier?: DataModifier
+    ): void {
         const table = this;
 
-        let promise: DataPromise<this>;
-
-        table.emit({
+        table.dispatchEvent({
             type: 'setModifier',
-            detail: eventDetail,
             modifier,
             modified: table.modified
         });
@@ -1468,34 +1381,16 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         table.modifier = modifier;
 
         if (modifier) {
-            promise = modifier.modify(table);
+            modifier.modifyTable(table);
         } else {
-            promise = DataPromise
-                .resolve(table)
-                .then((table): this => {
-                    table.modified = table;
-                    return table;
-                });
+            table.modified = table;
         }
 
-        return promise
-            .then((table): this => {
-                table.emit({
-                    type: 'afterSetModifier',
-                    detail: eventDetail,
-                    modifier,
-                    modified: table.modified
-                });
-                return table;
-            })['catch']((error): this => {
-                table.emit({
-                    type: 'setModifierError',
-                    error,
-                    modifier,
-                    modified: table.modified
-                });
-                throw error;
-            });
+        table.dispatchEvent({
+            type: 'afterSetModifier',
+            modifier,
+            modified: table.modified
+        });
     }
 
     /**
@@ -1513,18 +1408,14 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {number} [rowIndex]
      * Index of the row to set. Leave `undefind` to add as a new row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
     public setRow(
         row: (DataTable.Row|DataTable.RowObject),
-        rowIndex?: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex?: number
     ): void {
-        this.setRows([row], rowIndex, eventDetail);
+        this.setRows([row], rowIndex);
     }
 
     /**
@@ -1540,16 +1431,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @param {number} [rowIndex]
      * Index of the first row to set. Leave `undefind` to add as new rows.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits #setRows
      * @emits #afterSetRows
      */
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
-        rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.EventDetail
+        rowIndex: number = this.rowCount
     ): void {
         const table = this,
             aliasMap = table.aliasMap,
@@ -1558,9 +1445,8 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             modifier = table.modifier,
             rowCount = rows.length;
 
-        table.emit({
+        table.dispatchEvent({
             type: 'setRows',
-            detail: eventDetail,
             rowCount,
             rowIndex,
             rows
@@ -1613,9 +1499,8 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             modifier.modifyRows(table, rows, rowIndex);
         }
 
-        table.emit({
+        table.dispatchEvent({
             type: 'afterSetRows',
-            detail: eventDetail,
             rowCount,
             rowIndex,
             rows
@@ -1630,7 +1515,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
  *
  * */
 
-interface DataTable extends DataEventEmitter<DataTable.Event> {
+interface DataTable {
     // nothing here yet
 }
 
@@ -1641,36 +1526,14 @@ interface DataTable extends DataEventEmitter<DataTable.Event> {
  * */
 
 /**
- * Additionally it provides necessary types for events and JSON conversion.
+ * Additionally it provides necessary types for JSON conversion.
  */
 namespace DataTable {
-
-    /**
-     * Event object for cell-related events.
-     */
-    export interface CellEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'setCell'|'afterSetCell'
-        );
-        readonly cellValue: CellType;
-        readonly columnName: string;
-        readonly rowIndex: number;
-    }
 
     /**
      * Possible value types for a table cell.
      */
     export type CellType = (DataTable|JSON.Primitive);
-
-    /**
-     * Event object for clone-related events.
-     */
-    export interface CloneEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'cloneTable'|'afterCloneTable'
-        );
-        readonly tableClone?: DataTable;
-    }
 
     /**
      * Array of table cells in vertical expansion.
@@ -1688,38 +1551,6 @@ namespace DataTable {
     }
 
     /**
-     * Event object for column-related events.
-     */
-    export interface ColumnEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'deleteColumns'|'afterDeleteColumns'|
-            'setColumns'|'afterSetColumns'
-        );
-        readonly columns?: Readonly<ColumnCollection>;
-        readonly columnNames: Array<string>;
-        readonly rowIndex?: number;
-    }
-
-    /**
-     * All information objects of DataTable events.
-     */
-    export type Event = (
-        CellEvent|
-        CloneEvent|
-        ColumnEvent|
-        SetModifierEvent|
-        RowEvent
-    );
-
-    /**
-     * Event object for modifier-related events.
-     */
-    export interface ModifierEvent extends DataEventEmitter.Event {
-        readonly type: ('setModifier'|'afterSetModifier');
-        readonly modifier: (DataModifier|undefined);
-    }
-
-    /**
      * Array of table cells in horizontal expansion. Index of the array is the
      * index of the column names.
      */
@@ -1728,36 +1559,10 @@ namespace DataTable {
     }
 
     /**
-     * Event object for row-related events.
-     */
-    export interface RowEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'deleteRows'|'afterDeleteRows'|
-            'setRows'|'afterSetRows'
-        );
-        readonly rowCount: number;
-        readonly rowIndex: number;
-        readonly rows?: ReadonlyArray<(Readonly<Row>|Readonly<RowObject>)>;
-    }
-
-    /**
      * Object of row values, where the keys are the column names.
      */
     export interface RowObject extends Record<string, CellType> {
         [column: string]: CellType;
-    }
-
-    /**
-    * Event object for the setModifier events.
-    */
-    export interface SetModifierEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'setModifier'|'afterSetModifier'|
-            'setModifierError'
-        );
-        readonly error?: unknown;
-        readonly modifier?: DataModifier;
-        readonly modified?: DataTable;
     }
 
 }
@@ -1797,13 +1602,6 @@ export default DataTable;
  *//**
  * @name Highcharts.DataTableColumnCollection#[key:string]
  * @type {Highcharts.DataTableColumn}
- */
-
-/**
- * Custom information for an event.
- * @private
- * @typedef Highcharts.DataTableEventDetail
- * @type {Record<string,(boolean|number|string|null|undefined)>}
  */
 
 /**

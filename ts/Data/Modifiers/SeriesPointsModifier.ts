@@ -20,8 +20,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -93,30 +91,20 @@ class SeriesPointsModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
+    public modifyTable<T extends DataTable>(table: T): T {
         const modifier = this;
-
-        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const aliasMap = modifier.options.aliasMap || {},
             aliases = Object.keys(aliasMap),
-            modified = table.modified = table.clone(false, eventDetail);
+            modified = table.modified = table.clone(false);
 
         for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
             alias = aliases[i];
             modified.renameColumn(aliasMap[alias], alias);
         }
-
-        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 
         return table;
     }
@@ -130,8 +118,7 @@ class SeriesPointsModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace SeriesPointsModifier {
 
@@ -141,6 +128,7 @@ namespace SeriesPointsModifier {
     export interface Options extends DataModifier.Options {
         aliasMap?: Record<string, string>;
     }
+
 }
 
 /* *

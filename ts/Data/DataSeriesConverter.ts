@@ -21,7 +21,6 @@
  *
  * */
 
-import type DataEventEmitter from './DataEventEmitter';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -180,14 +179,8 @@ class DataSeriesConverter {
      *
      * @param {Array<LineSeries>} allSeries
      * Array of series options to store in the converter.
-     *
-     * @param {DataEventEmitter.EventDetail} eventDetail
-     * Custom information for pending events.
      */
-    updateTable(
-        allSeries: Array<LineSeries>,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    updateTable(allSeries: Array<LineSeries>): void {
         const table = this.table;
 
         let columns: DataTable.RowObject,
@@ -293,9 +286,9 @@ class DataSeriesConverter {
 
                     if (!rowIndex) {
                         columns.id = id;
-                        table.setRows([columns], void 0, eventDetail);
+                        table.setRows([columns], void 0);
                     } else if (columns[y]) {
-                        table.setCell(y, rowIndex, columns[y], eventDetail);
+                        table.setCell(y, rowIndex, columns[y]);
                     }
                 }
             }

@@ -19,7 +19,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
 import DataModifier from './DataModifier.js';
@@ -98,19 +97,11 @@ class RangeModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @return {DataTable}
      * Table with `modified` property as a reference.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): T {
+    public modifyTable<T extends DataTable>(table: T): T {
         const modifier = this;
-
-        modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const {
             ranges,
@@ -184,8 +175,6 @@ class RangeModifier extends DataModifier {
             modified.setRows(rows);
         }
 
-        modifier.emit({ type: 'afterModify', detail: eventDetail, table });
-
         return table;
     }
 
@@ -198,8 +187,7 @@ class RangeModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier options, and JSON conversion.
  */
 namespace RangeModifier {
 

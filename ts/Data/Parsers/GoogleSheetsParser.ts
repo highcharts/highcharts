@@ -22,7 +22,6 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type DataValueType from '../DataValueType';
 
 import DataParser from './DataParser.js';
@@ -55,7 +54,7 @@ type JSONType = ReturnType<JSON['parse']>;
  *
  * @private
  */
-class GoogleSheetsParser extends DataParser<DataParser.Event> {
+class GoogleSheetsParser extends DataParser {
 
     /* *
      *
@@ -214,16 +213,12 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
      * @param {GoogleSheetsParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits GoogleSheetsParser#parse
      * @emits GoogleSheetsParser#afterParse
      */
 
     public parse(
-        jsonProp: JSONType,
-        eventDetail?: DataEventEmitter.EventDetail
+        jsonProp: JSONType
     ): (boolean|undefined) {
         const parser = this,
             parserOptions = merge(true, parser.options, { json: jsonProp }),
@@ -239,13 +234,6 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
         }
         parser.headers = [];
         parser.columns = [];
-
-        parser.emit<DataParser.Event>({
-            type: 'parse',
-            columns: parser.columns,
-            detail: eventDetail,
-            headers: parser.headers
-        });
 
         parser.columns = parser.getSheetColumns(json);
 
@@ -267,13 +255,6 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
                 }
             }
         }
-
-        parser.emit<DataParser.Event>({
-            type: 'afterParse',
-            columns: parser.columns,
-            detail: eventDetail,
-            headers: parser.headers
-        });
     }
 
     /**

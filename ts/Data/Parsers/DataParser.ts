@@ -22,16 +22,9 @@
  * */
 
 import type DataConverter from '../DataConverter';
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    uniqueKey
-} = U;
 
 /* *
  *
@@ -44,7 +37,7 @@ const {
  *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataParser {
 
     /* *
      *
@@ -118,35 +111,6 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
     public abstract getTable(): DataTable;
 
     /**
-     * Emits an event on the DataParser instance.
-     *
-     * @param {DataParser.Event} [e]
-     * Event object containing additional event data
-     */
-    public emit<T extends DataEventEmitter.Event>(e: T): void {
-        fireEvent(this, e.type, e);
-    }
-
-    /**
-     * Registers a callback for a specific parser event.
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.EventCallback} callback
-     * Function to register for an modifier callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the modifier event.
-     */
-    public on<TEvent extends DataEventEmitter.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
-
-    /**
      * Initiates the data parsing. Should emit `parseError` on failure.
      *
      * @param {DataParser.Options} options
@@ -167,20 +131,9 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
  * */
 
 /**
- * Additionally provided types for events and conversion.
+ * Additionally provided types for conversion.
  */
 namespace DataParser {
-
-    /**
-     * The basic event object for a DataParser instance.
-     * Valid types are `parse`, `afterParse`, and `parseError`
-     */
-    export interface Event extends DataEventEmitter.Event {
-        readonly type: ('parse' | 'afterParse' | 'parseError');
-        readonly columns: Array<DataTable.Column>;
-        readonly error?: (string | Error);
-        readonly headers: string[];
-    }
 
     /**
      * The shared options for all DataParser instances

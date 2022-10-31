@@ -22,10 +22,10 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
 import type JSON from '../../Core/JSON';
 
 import CSVParser from '../Parsers/CSVParser.js';
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import HU from '../../Core/HttpUtilities.js';
@@ -49,7 +49,7 @@ const {
  *
  * @private
  */
-class CSVStore extends DataStore<CSVStore.Event> {
+class CSVStore extends DataStore {
 
     /* *
      *
@@ -113,10 +113,21 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
+    public export?: string;
+    /**
+     * The URL to fetch if the source is external
+     */
+    private liveDataURL?: string;
+
+    /**
+     * The current timeout ID if polling is enabled
+     */
+    private liveDataTimeout?: number;
 
     /**
      * Options related to the handling of the CSV datastore,
@@ -134,15 +145,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
      */
     private parserOptions: CSVParser.OptionsType;
 
-    /**
-     * The URL to fetch if the source is external
-     */
-    private liveDataURL?: string;
-
-    /**
-     * The current timeout ID if polling is enabled
-     */
-    private liveDataTimeout?: number;
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Handles polling of live data
@@ -166,17 +173,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits CSVDataStore#load
      * @emits CSVDataStore#afterLoad
      * @emits CSVDataStore#loadError
      */
-    private fetchCSV(
-        initialFetch?: boolean,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): void {
+    private fetchCSV(initialFetch?: boolean): DataPromise<this> {
         const store = this,
             maxRetries = 3,
             { csvURL } = store.options;
@@ -189,56 +190,43 @@ class CSVStore extends DataStore<CSVStore.Event> {
             store.liveDataURL = csvURL;
         }
 
-        store.emit({ type: 'load', detail: eventDetail, table: store.table });
+        return new DataPromise((resolve, reject): void => {
+            ajax({
+                url: store.liveDataURL || '',
+                dataType: 'text',
+                success: function (csv): void {
+                    csv = `${csv}`;
 
-        ajax({
-            url: store.liveDataURL || '',
-            dataType: 'text',
-            success: function (csv): void {
-                csv = `${csv}`;
+                    store.parser.parse({ csv });
 
-                store.parser.parse({ csv });
+                    // On inital fetch we need to set the columns
+                    store.table.setColumns(
+                        store.parser.getTable().getColumns()
+                    );
 
-                // On inital fetch we need to set the columns
-                store.table.setColumns(store.parser.getTable().getColumns());
+                    if (store.liveDataURL) {
+                        store.poll();
+                    }
 
-                if (store.liveDataURL) {
-                    store.poll();
+                    resolve(store);
+                },
+                error: function (xhr, error): void {
+                    if (++currentRetries < maxRetries) {
+                        store.poll();
+                    }
+                    reject(error);
                 }
-
-                store.emit({
-                    type: 'afterLoad',
-                    csv,
-                    detail: eventDetail,
-                    table: store.table
-                });
-
-            },
-            error: function (xhr, error): void {
-                if (++currentRetries < maxRetries) {
-                    store.poll();
-                }
-                store.emit({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table: store.table,
-                    xhr
-                });
-            }
+            });
         });
     }
 
     /**
      * Initiates the loading of the CSV source to the store
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
      * @emits CSVParser#load
      * @emits CSVParser#afterLoad
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(): DataPromise<this> {
         const store = this,
             parser = store.parser,
             table = store.table,
@@ -250,32 +238,34 @@ class CSVStore extends DataStore<CSVStore.Event> {
         if (csv) {
             // If already loaded, clear the current rows
             table.deleteRows();
-            store.emit({
+            store.dispatchEvent({
                 type: 'load',
                 csv,
-                detail: eventDetail,
                 table
             });
             parser.parse({ csv });
             table.setColumns(parser.getTable().getColumns());
-            store.emit({
+            store.dispatchEvent({
                 type: 'afterLoad',
                 csv,
-                detail: eventDetail,
                 table
             });
-        } else if (csvURL) {
-            store.fetchCSV(true, eventDetail);
-        } else {
-            store.emit(
-                {
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error: 'Unable to load: no CSV string or URL was provided',
-                    table
-                }
-            );
+            return DataPromise.resolve(store);
         }
+
+        if (csvURL) {
+            return store.fetchCSV(true);
+        }
+
+        store.dispatchEvent({
+            type: 'loadError',
+            error: 'Unable to load: no CSV string or URL was provided',
+            table
+        });
+
+        return DataPromise.reject(new Error(
+            'Unable to load: no CSV string or URL was provided'
+        ));
     }
 
     /**
@@ -382,7 +372,9 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * CSV from the store's current table.
      *
      */
-    public save(csvExportOptions?: Partial<CSVStore.ExportOptions>): string {
+    public save(
+        csvExportOptions?: Partial<CSVStore.ExportOptions>
+    ): DataPromise<this> {
         const exportOptions = CSVStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -392,7 +384,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
             }
         });
 
-        return this.getCSVForExport(merge(exportOptions, csvExportOptions));
+        return new DataPromise((resolve): void => {
+            delete this.export;
+            this.export = this.getCSVForExport(
+                merge(exportOptions, csvExportOptions)
+            );
+            resolve();
+        });
     }
 
 }
@@ -404,42 +402,20 @@ class CSVStore extends DataStore<CSVStore.Event> {
  */
 
 /**
- * Types for class-specific options and events
+ * Types for class-specific options
  */
 namespace CSVStore {
 
     /**
-     * Event objects fired from CSVDataStore events
-     */
-    export type Event = (ErrorEvent | LoadEvent);
-
-    /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>;
+    export type OptionsType = Partial<(CSVStore.Options&CSVParser.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?
      */
     export interface DataBeforeParseCallbackFunction {
         (csv: string): string;
-    }
-
-    /**
-     * The event object that is provided on errors within CSVDataStore
-     */
-    export interface ErrorEvent extends DataStore.Event {
-        type: ('loadError');
-        error: (string | Error);
-        xhr?: XMLHttpRequest;
-    }
-
-    /**
-     * The event object that is provided on load events within CSVDataStore
-     */
-    export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
-        csv?: string;
     }
 
     /**
@@ -471,14 +447,13 @@ namespace CSVStore {
  *
  * */
 
-DataStore.addStore(CSVStore);
-
 declare module './StoreType' {
     interface StoreTypeRegistry {
         CSVStore: typeof CSVStore;
     }
 }
 
+DataStore.addStore(CSVStore);
 
 /* *
  *
