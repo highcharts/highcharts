@@ -634,10 +634,8 @@ class ArcDiagramSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
-                this,
-                arguments
-            );
+            const { opacity, ...attrs } = ColumnSeries.prototype.pointAttribs
+                .apply(this, arguments);
             return attrs;
         }
         return super.pointAttribs.apply(this, arguments);
