@@ -407,7 +407,7 @@ namespace DataLabel {
                 visibility: shouldHide ? 'hidden' : 'inherit'
             });
         } else {
-            if (!visible && (!enabledDataSorting || justify)) {
+            if (shouldHide) {
                 dataLabel.hide();
                 dataLabel.placed = false; // don't animate back in
             } else {

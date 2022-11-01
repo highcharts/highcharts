@@ -208,7 +208,6 @@ interface KDPointSearchObject {
  */
 class Series {
 
-
     /* *
      *
      *  Static Properties

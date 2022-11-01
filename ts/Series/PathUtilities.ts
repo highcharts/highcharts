@@ -188,7 +188,7 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
     return d;
 }
 const PathUtilities = {
-    curvedPath: applyRadius,
+    applyRadius,
     getLinkPath
 };
 

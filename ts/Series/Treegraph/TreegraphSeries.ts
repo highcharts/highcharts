@@ -330,7 +330,7 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     public translateLink(link: TreegraphLink): void {
-        let fromNode = link.fromNode,
+        const fromNode = link.fromNode,
             toNode = link.toNode,
             linkWidth = this.options.link.lineWidth,
             crisp = (Math.round(linkWidth) % 2) / 2,
