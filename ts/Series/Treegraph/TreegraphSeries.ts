@@ -566,8 +566,8 @@ class TreegraphSeries extends TreemapSeries {
                     { x = 0, y = 0, width = 0, height = 0 } = parentShapeArgs;
                 extend(point.shapeArgs, {
                     d: symbols[symbol || 'circle'](x, y, width, height),
-                    x: parentShapeArgs.x,
-                    y: parentShapeArgs.y
+                    x,
+                    y
                 });
                 point.plotX = parentNode.plotX;
                 point.plotY = parentNode.plotY;

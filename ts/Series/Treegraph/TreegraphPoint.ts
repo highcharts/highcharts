@@ -100,7 +100,7 @@ class TreegraphPoint extends TreemapPoint {
             btnOptions = merge(
                 series.options.collapseButton,
                 levelOptions.collapseButton,
-                point.series.options.collapseButton
+                point.options.collapseButton
             ) as CollapseButtonOptions,
             { width, height, shape, style } = btnOptions,
             padding = 2,
