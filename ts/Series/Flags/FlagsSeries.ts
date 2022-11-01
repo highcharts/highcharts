@@ -320,7 +320,7 @@ class FlagsSeries extends ColumnSeries {
         }
 
         // Can be a mix of SVG and HTML and we need events for both (#6303)
-        if (options.useHTML) {
+        if (options.useHTML && series.markerGroup) {
             wrap(series.markerGroup, 'on', function (
                 this: FlagsSeries,
                 proceed

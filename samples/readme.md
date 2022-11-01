@@ -6,7 +6,6 @@ tests and unit tests. See the [highcharts-utils](https://github.com/highcharts/h
 repo on how to set up the _Sample viewer_.
 
 
-
 Tests
 -----
 

@@ -1,7 +1,5 @@
 /*
  * To do
- * - Bubble placement on insets
- * - Bubble placement on France and Russia
  * - Create the TopoJSON map and put in in the map collection
  * - Use it in samples where it makes sense
  */
@@ -86,7 +84,6 @@ const getBBox = geometry => {
     ru.properties['hc-middle-x'] = 0.65;
     ru.properties['hc-middle-y'] = 0.4;
 
-
     const geoJSON = topo2geo(topology);
 
     const insets = [];
@@ -125,12 +122,32 @@ const getBBox = geometry => {
                 },
                 geoBounds
             });
+
+            const g = topology.objects.default.geometries
+                .find(g => g.id === code);
+            if (g) {
+                delete g.properties['hc-middle-x'];
+                delete g.properties['hc-middle-y'];
+                //g.properties.lon = lon;
+                //g.properties.lat = lat;
+            }
         }
+
+
     });
 
     const data = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json'
     ).then(response => response.json());
+
+    /*
+    toBeMoved.forEach(code => {
+        const p = data.find(p => p.code === code);
+        if (p) {
+            p.color = 'orange';
+        }
+    });
+    */
 
     Highcharts.mapChart('container', {
         chart: {
