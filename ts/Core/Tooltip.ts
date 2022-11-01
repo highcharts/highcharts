@@ -1135,7 +1135,6 @@ class Tooltip {
                         });
 
                     } else if (currentSeries.options.className) {
-
                         this.chart.series.forEach(
                             function (s): void {
                                 label.removeClass(
