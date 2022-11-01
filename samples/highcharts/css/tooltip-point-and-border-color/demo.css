@@ -27,7 +27,7 @@
     stroke: orange;
 }
 
-.oranges .bloodOrange {
+.oranges .blood-orange {
     fill: red;
     stroke: red;
 }
@@ -42,7 +42,7 @@
     stroke: orange;
 }
 
-.highcharts-tooltip .bloodOrange {
+.highcharts-tooltip .blood-orange {
     fill: red;
     stroke: red;
 }

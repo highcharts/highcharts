@@ -12,8 +12,8 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'line',
-        name: 'Apples',
-        className: 'apples',
+        //name: 'Apples',
+        //className: 'apples',
         data: [
             0,
             -1,
@@ -28,7 +28,7 @@ Highcharts.chart('container', {
             1,
             3,
             {
-                className: 'bloodOrange',
+                className: 'blood-orange',
                 y: 4
             },
             6,
