@@ -118,6 +118,8 @@ class TreegraphSeries extends TreemapSeries {
 
     public links: Array<TreegraphLink> = [];
 
+    public forceDLCalculation = true;
+
     public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
 
     /* *

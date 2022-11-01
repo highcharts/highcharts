@@ -261,7 +261,8 @@ namespace DataLabel {
                     )
                 );
 
-        if (visible && defined(plotX) && defined(plotY)) {
+        const forceCalculation = series.forceDLCalculation;
+        if ((forceCalculation || visible) && defined(plotX) && defined(plotY)) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -400,11 +401,18 @@ namespace DataLabel {
             dataLabel.placed = false;
         }
         // Show or hide based on the final aligned position
-        if (!visible && (!enabledDataSorting || justify)) {
-            dataLabel.hide();
-            dataLabel.placed = false; // don't animate back in
+        const shouldHide = !visible && (!enabledDataSorting || justify);
+        if (forceCalculation) {
+            dataLabel.animate({
+                visibility: shouldHide ? 'hidden' : 'inherit'
+            });
         } else {
-            dataLabel.show();
+            if (!visible && (!enabledDataSorting || justify)) {
+                dataLabel.hide();
+                dataLabel.placed = false; // don't animate back in
+            } else {
+                dataLabel.show();
+            }
         }
     }
 

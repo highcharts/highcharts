@@ -208,6 +208,7 @@ interface KDPointSearchObject {
  */
 class Series {
 
+
     /* *
      *
      *  Static Properties
@@ -255,6 +256,8 @@ class Series {
     public _i: number = void 0 as any;
 
     public animationTimeout?: number;
+
+    public forceDLCalculation?: boolean;
 
     public area?: SVGElement;
 
