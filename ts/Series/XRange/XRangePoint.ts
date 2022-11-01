@@ -47,15 +47,16 @@ const {
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import XRangeSeries from './XRangeSeries.js';
-export interface BBoxObjectWithCenter extends BBoxObject {
-    centerX?: number;
-}
 
 /* *
  *
  *  Declarations
  *
  * */
+
+interface BBoxObjectWithCenter extends BBoxObject {
+    centerX?: number;
+}
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
