@@ -310,6 +310,13 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
                     type: 'Point',
                     coordinates: [0, 80]
                 }
+            }, {
+                name: 'B',
+                id: 'B',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [90, 0]
+                }
             }],
             color: '#313f77'
         }]
@@ -371,6 +378,27 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         chart.mapView.projection.options.rotation,
         oldRotation,
         'Rotation should be activated (#16722).'
+    );
+
+    assert.strictEqual(
+        chart.get('B').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels behind the horizon on an Ortho map should be hidden (#17907)'
+    );
+    assert.notStrictEqual(
+        chart.get('A').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels on the near side should not be hidden'
+    );
+    assert.strictEqual(
+        chart.get('B').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics behind the horizon on an Ortho map should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.get('A').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics on the near side should not be hidden'
     );
 
 });

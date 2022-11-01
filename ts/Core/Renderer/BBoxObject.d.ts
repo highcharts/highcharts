@@ -24,11 +24,20 @@ import type SizeObject from './SizeObject';
  * */
 
 export interface BBoxObject extends PositionObject, SizeObject {
-    // @todo: create custom type with centerX type.
     height: number;
     width: number;
     x: number;
     y: number;
+}
+
+/* *
+ *
+ *  Declatations
+ *
+ * */
+
+export interface BBoxObjectWithCenter extends BBoxObject {
+    centerX?: number;
 }
 
 /* *
