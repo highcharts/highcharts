@@ -270,14 +270,8 @@ class XRangeSeries extends ColumnSeries {
         return pointIndex;
     }
 
-    public alignDataLabel(
-        point: XRangePoint,
-        dataLabel: SVGElement,
-        options: DataLabelOptions,
-        alignTo: BBoxObject,
-        isNew?: boolean | undefined
-    ): void {
-        let oldPlotX = point.plotX;
+    public alignDataLabel(point: XRangePoint): void {
+        const oldPlotX = point.plotX;
         point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
         super.alignDataLabel.apply(this, arguments);
         point.plotX = oldPlotX;

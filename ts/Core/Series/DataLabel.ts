@@ -17,7 +17,7 @@
  * */
 
 import type AlignObject from '../Renderer/AlignObject';
-import type { BBoxObject } from '../Renderer/BBoxObject';
+import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
