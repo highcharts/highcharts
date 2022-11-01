@@ -32,16 +32,6 @@ export interface BBoxObject extends PositionObject, SizeObject {
 
 /* *
  *
- *  Declatations
- *
- * */
-
-export interface BBoxObjectWithCenter extends BBoxObject {
-    centerX?: number;
-}
-
-/* *
- *
  *  Default Export
  *
  * */
