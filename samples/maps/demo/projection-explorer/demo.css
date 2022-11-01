@@ -19,13 +19,17 @@
     font-size: 1.5rem !important;
 }
 
-.loading {
+.main .mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.main .loading {
     margin-top: 10em;
     text-align: center;
     color: gray;
 }
 
-.btn-group {
+.main .btn-group {
     flex-wrap: wrap;
 }
 
