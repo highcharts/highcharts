@@ -142,6 +142,10 @@ const TreegraphSeriesDefaults = {
          */
         enabled: true,
         /**
+         * The line width of the button in pixels
+         */
+        lineWidth: 1,
+        /**
          * Offset of the button in the x direction.
          */
         x: 0,
@@ -152,25 +156,24 @@ const TreegraphSeriesDefaults = {
         /**
          * Height of the button.
          */
-        height: 10,
+        height: 15,
         /**
          * Width of the button.
          */
-        width: 10,
+        width: 15,
         /**
          * The symbol of the collapse button.
          */
-        shape: 'circle'
+        shape: 'circle',
         /**
          * CSS styles for the collapse button.
          *
          * In styled mode, the collapse button style is given in the
          * `.highcharts-collapse-button` class.
-         *
-         *
-         * @type      {Highcharts.CSSObject}
-         * @apioption series.treegraph.collapseButton.style
          */
+        style: {
+            cursor: 'pointer'
+        }
     },
     /**
      * @extends plotOptions.series.tooltip

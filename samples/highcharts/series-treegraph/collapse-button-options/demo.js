@@ -15,7 +15,8 @@ Highcharts.chart('container', {
             },
             type: 'treegraph',
             keys: ['id', 'parent'],
-            data: [['A'], ['B', 'A'], ['C', 'B'], ['E', 'B'], ['D', 'A']]
+            data: [['A'], ['B', 'A'], ['C', 'B'], ['E', 'B'], ['D', 'A']],
+            colorByPoint: true
         }
     ]
 });

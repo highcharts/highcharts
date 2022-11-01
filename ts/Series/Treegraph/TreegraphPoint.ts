@@ -114,19 +114,24 @@ class TreegraphPoint extends TreemapPoint {
             if (!point.node.children.length || !btnOptions.enabled) {
                 return;
             }
-            const { x, y } = this.getCollapseBtnPosition(btnOptions);
+            const { x, y } = this.getCollapseBtnPosition(btnOptions),
+                fill = (
+                    btnOptions.fillColor ||
+                    point.color ||
+                    Palette.neutralColor20
+                );
             point.collapseButton = chart.renderer
                 .label(point.collapsed ? '+' : '-', x, y, shape)
                 .attr({
                     height: height - 2 * padding,
                     width: width - 2 * padding,
                     padding: padding,
-                    fill: Palette.neutralColor20,
+                    fill,
                     rotation: chart.inverted ? 90 : 0,
                     rotationOriginX: width / 2,
                     rotationOriginY: height / 2,
-                    stroke: Palette.neutralColor80,
-                    'stroke-width': 1,
+                    stroke: btnOptions.lineColor || Palette.backgroundColor,
+                    'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
                     zIndex: 1
@@ -134,13 +139,20 @@ class TreegraphPoint extends TreemapPoint {
                 .addClass('highcharts-tracker')
                 .addClass('highcharts-collapse-button')
                 .removeClass('highcharts-no-tooltip')
-                .css(style || {})
+                .css(merge(
+                    {
+                        color: typeof fill === 'string' ?
+                            chart.renderer.getContrast(fill) :
+                            Palette.neutralColor80
+                    },
+                    style
+                ))
                 .add(parentGroup);
 
             (point.collapseButton.element as any).point = point;
 
             if (btnOptions.onlyOnHover && !point.collapsed) {
-                point.collapseButton.hide();
+                point.collapseButton.attr({ opacity: 0 });
             }
         } else {
             if (!point.node.children.length || !btnOptions.enabled) {
@@ -153,16 +165,17 @@ class TreegraphPoint extends TreemapPoint {
                         text: point.collapsed ? '+' : '-',
                         rotation: chart.inverted ? 90 : 0,
                         rotationOriginX: width / 2,
-                        rotationOriginY: height / 2,
-                        visibility:
-                            point.visible &&
-                            (!btnOptions.onlyOnHover ||
-                                point.state === 'hover' ||
-                                point.collapsed) ?
-                                'inherit' :
-                                'hidden'
+                        rotationOriginY: height / 2
                     })
-                    .animate({ x, y });
+                    .animate({
+                        x,
+                        y,
+                        opacity: point.visible && (
+                            !btnOptions.onlyOnHover ||
+                            point.state === 'hover' ||
+                            point.collapsed
+                        ) ? 1 : 0
+                    });
             }
         }
     }
@@ -212,13 +225,18 @@ addEvent(TreegraphPoint, 'mouseOut', function (): void {
     const btn = this.collapseButton,
         btnOptions = this.collapseButtonOptions;
     if (btn && btnOptions && btnOptions.onlyOnHover && !this.collapsed) {
-        btn.hide();
+        btn.animate({ opacity: 0 });
     }
 });
 
 addEvent(TreegraphPoint, 'mouseOver', function (): void {
     if (this.collapseButton) {
-        this.collapseButton.show();
+        this.collapseButton.animate(
+            { opacity: 1 },
+            this.series.options.states &&
+            this.series.options.states.hover &&
+            this.series.options.states.hover.animation
+        );
     }
 });
 
