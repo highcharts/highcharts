@@ -17,7 +17,7 @@
  * */
 
 import type AlignObject from '../Renderer/AlignObject';
-import type BBoxObject from '../Renderer/BBoxObject';
+import type { BBoxObject, BBoxObjectWithCenter } from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
@@ -63,7 +63,7 @@ declare module './PointLike' {
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
         distributeBox?: R.BoxObject;
-        dlBox?: BBoxObject;
+        dlBox?: BBoxObjectWithCenter;
         dlOptions?: DataLabelOptions;
         /** @deprecated */
         positionIndex?: unknown;
@@ -195,7 +195,7 @@ namespace DataLabel {
             inverted = this.isCartesian && chart.inverted,
             enabledDataSorting = this.enabledDataSorting,
             plotX = pick(
-                point.dlBox && (point.dlBox as any).centerX,
+                point.dlBox && point.dlBox.centerX,
                 point.plotX
             ),
             plotY = point.plotY,
@@ -236,6 +236,7 @@ namespace DataLabel {
             visible =
                 this.visible &&
                 point.visible !== false &&
+                defined(plotX) &&
                 (
                     point.series.forceDL ||
                     (enabledDataSorting && !justify) ||
@@ -386,12 +387,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ?
-                        chart.plotWidth - (point.plotY as any) :
-                        point.plotX,
-                    anchorY: inverted ?
-                        chart.plotHeight - (point.plotX as any) :
-                        point.plotY
+                    anchorX: inverted ? chart.plotWidth - plotY : plotX,
+                    anchorY: inverted ? chart.plotHeight - plotX : plotY
                 });
             }
         }
