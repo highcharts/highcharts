@@ -181,11 +181,7 @@ QUnit.test('Option chart border and background update', function (assert) {
         '#ffffff',
         'Chart background is updated'
     );
-    assert.strictEqual(
-        chart.chartBackground.element.getAttribute('stroke'),
-        null,
-        'Chart border is removed'
-    );
+
     assert.strictEqual(
         chart.chartBackground.element.getAttribute('rx'),
         '0',
