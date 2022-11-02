@@ -115,7 +115,9 @@
         legend: {
             valueDecimals: 0
         },
-
+        mapView: {
+            padding: 10
+        },
         series: [{
             data: data,
             name: "Random data",
