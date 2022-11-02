@@ -739,7 +739,7 @@ const navigation: NavigationOptions = {
          *
          * @type      boolean
          * @default   false
-         * @since     next
+         * @since 10.3.0
          * @apioption navigation.buttonOptions.useHTML
          */
 

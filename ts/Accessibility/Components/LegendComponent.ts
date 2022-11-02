@@ -482,12 +482,8 @@ class LegendComponent extends AccessibilityComponent {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: KeyboardNavigationHandler,
-                        keyCode: number
+                        this: KeyboardNavigationHandler
                     ): number {
-                        if (H.isFirefox && keyCode === keys.space) { // #15520
-                            return this.response.success;
-                        }
                         return component.onKbdClick(this);
                     }
                 ],

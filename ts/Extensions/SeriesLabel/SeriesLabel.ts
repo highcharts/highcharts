@@ -51,7 +51,7 @@ const { animObject } = A;
 import Chart from '../../Core/Chart/Chart.js';
 import FU from '../../Core/FormatUtilities.js';
 const { format } = FU;
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../../Core/Series/Series.js';
 import SeriesLabelDefaults from './SeriesLabelDefaults.js';

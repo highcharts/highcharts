@@ -973,6 +973,8 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highcharts} highcharts/chart/zoomtype-xy/
      *         Xy
+     * @sample {highcharts} highcharts/chart/zoomtype-polar/
+     *         Zoom on polar chart
      * @sample {highstock} stock/demo/basic-line/
      *         None by default
      * @sample {highstock} stock/chart/zoomtype-x/

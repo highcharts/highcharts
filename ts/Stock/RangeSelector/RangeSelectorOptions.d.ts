@@ -31,15 +31,12 @@ import type Time from '../../Core/Time';
  *
  * */
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         rangeSelectorFrom?: string;
         rangeSelectorTo?: string;
         rangeSelectorZoom?: string;
     }
-}
-
-declare module '../../Core/Options'{
     interface Options {
         rangeSelector?: DeepPartial<RangeSelectorOptions>;
     }

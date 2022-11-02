@@ -35,6 +35,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Error bars on a column series
  * @sample highcharts/series-errorbar/on-scatter/
  *         Error bars on a scatter series
+ * @sample highcharts/series-errorbar/datalabels/
+ *         Error bars with data labels
  *
  * @extends      plotOptions.boxplot
  * @excluding    boostBlending, boostThreshold

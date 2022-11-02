@@ -17,7 +17,7 @@
  * */
 
 import type MapNavigationOptions from './MapNavigationOptions';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 import U from '../Core/Utilities.js';
 const { extend } = U;
 

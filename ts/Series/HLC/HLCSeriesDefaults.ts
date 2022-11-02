@@ -88,7 +88,10 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
         'Close: {point.close}<br/>'
     },
 
-    threshold: null as any,
+    /**
+     * @type {number|null}
+     */
+    threshold: null,
 
     states: {
 

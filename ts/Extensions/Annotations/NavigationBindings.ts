@@ -31,7 +31,7 @@ import type {
 } from './Popup/Popup';
 
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
@@ -467,12 +467,15 @@ class NavigationBindings {
         this.chart = chart;
         this.options = options;
         this.eventsToUnbind = [];
-        this.container = this.chart.container
-            .querySelectorAll('.' + this.options.bindingsClassName);
+        this.container =
+            this.chart.container.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
 
         if (!this.container.length) {
-            this.container = doc
-                .querySelectorAll('.' + this.options.bindingsClassName);
+            this.container = doc.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
         }
     }
 
@@ -486,7 +489,7 @@ class NavigationBindings {
     public boundClassNames: Record<string, NavigationBindingsOptions> =
         void 0 as any;
     public chart: AnnotationChart;
-    public container: NodeListOf<HTMLDOMElement>;
+    public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);

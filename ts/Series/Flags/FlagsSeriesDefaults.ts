@@ -135,7 +135,10 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
         pointFormat: '{point.text}'
     },
 
-    threshold: null as any,
+    /**
+     * @type {number|null}
+     */
+    threshold: null,
 
     /**
      * The text to display on each flag. This can be defined on series
