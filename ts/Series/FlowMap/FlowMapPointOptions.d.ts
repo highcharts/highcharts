@@ -38,7 +38,7 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
     weight?: number;
 }
 
-interface MarkerEndOptions {
+export interface MarkerEndOptions {
     markerType?: string,
     enabled?: boolean,
     width: number | string,
