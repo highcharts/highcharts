@@ -193,8 +193,29 @@ function checkClearPoint(
     // of the graphs.
     for (i = 0; i < chart.series.length; i += 1) {
         serie = chart.series[i];
-        points = serie.interpolatedPoints;
+        points = serie.interpolatedPoints && [...serie.interpolatedPoints];
+
         if (serie.visible && points) {
+
+            // Avoid the sides of the plot area
+            const stepY = chart.plotHeight / 10;
+            for (
+                let chartY = chart.plotTop;
+                chartY <= chart.plotTop + chart.plotHeight;
+                chartY += stepY
+            ) {
+                points.unshift({
+                    chartX: chart.plotLeft,
+                    chartY
+                } as any);
+
+                points.push({
+                    chartX: chart.plotLeft + chart.plotWidth,
+                    chartY
+                } as any);
+            }
+
+
             for (j = 1; j < points.length; j += 1) {
 
                 if (
