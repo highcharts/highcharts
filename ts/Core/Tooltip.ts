@@ -428,6 +428,37 @@ class Tooltip {
     }
 
     /**
+     * Get the CSS class names for the tooltip's label. Styles the label
+     * by colorIndex or user-defined CSS.
+     *
+     * @function Highcharts.Tooltip#getClassName
+     *
+     * @return {string}
+     *         The class names.
+     */
+    public getClassName(point: Point): string {
+        const options = this.options,
+            currentPoint = point,
+            currentSeries = point.series;
+        return (
+            'highcharts-label highcharts-tooltip highcharts-color-' +
+            pick(
+                currentPoint.colorIndex,
+                currentSeries.colorIndex
+            ) +
+            `${
+                (
+                    currentSeries.options &&
+                    currentSeries.options.className
+                ) ?
+                    ' ' + currentSeries.options.className :
+                    ''
+            }`
+        );
+    }
+
+
+    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
@@ -453,6 +484,7 @@ class Tooltip {
                     this.shouldStickOnContact() ? 'auto' : 'none'
                 )
             );
+
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
 
@@ -580,7 +612,6 @@ class Tooltip {
                 .attr({ zIndex: 8 })
                 .add();
         }
-
         return this.label;
     }
 
@@ -1115,13 +1146,9 @@ class Tooltip {
                     });
 
                     // Set the stroke color of the box to reflect the point
-                    label.removeClass(/highcharts-color-[\d]+/g)
+                    label.removeClass(/.*/g)
                         .addClass(
-                            'highcharts-color-' +
-                            pick(
-                                point.colorIndex,
-                                currentSeries.colorIndex
-                            )
+                            tooltip.getClassName(point)
                         );
 
                     if (!styledMode) {
@@ -1133,19 +1160,6 @@ class Tooltip {
                                 Palette.neutralColor60
                             )
                         });
-
-                    } else if (currentSeries.options.className) {
-                        this.chart.series.forEach(
-                            function (s): void {
-                                label.removeClass(
-                                    s.options.className as string
-                                );
-                            }
-                        );
-
-                        label.addClass(
-                            currentSeries.options.className as string
-                        );
                     }
 
                     tooltip.updatePosition({
