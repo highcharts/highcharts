@@ -37,6 +37,12 @@ Highcharts.chart("container", {
             lineWidth: 1,
             marker: {
                 enabled: false
+            },
+            label: {
+                style: {
+                    fontSize: '16px',
+                    opacity: 0.6
+                }
             }
         }
     },
