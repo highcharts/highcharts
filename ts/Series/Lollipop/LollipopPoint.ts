@@ -33,13 +33,19 @@ const {
             prototype: {
                 pointClass: ScatterPoint
             }
+        },
+        dumbbell: {
+            prototype: {
+                pointClass: DumbbellPoint
+            }
         }
     }
 } = SeriesRegistry;
+
 import U from '../../Core/Utilities.js';
 const {
-    isObject,
-    extend
+    extend,
+    isObject
 } = U;
 
 /* *
@@ -84,7 +90,6 @@ class LollipopPoint extends ScatterPoint {
         }
         return pointProto.init.apply(this, arguments);
     }
-
 }
 
 /* *
@@ -94,11 +99,18 @@ class LollipopPoint extends ScatterPoint {
  * */
 
 interface LollipopPoint {
+    destroy: typeof DumbbellPoint.prototype['destroy'],
+    isValid: typeof pointProto['isValid'],
+    pointSetState: typeof ScatterPoint.prototype['setState'],
+    setState: typeof DumbbellPoint.prototype['setState']
 }
 
 extend(LollipopPoint.prototype, {
+    destroy: DumbbellPoint.prototype.destroy,
     // Does not work with the inherited `isvalid`
-    isValid: pointProto.isValid
+    isValid: pointProto.isValid,
+    pointSetState: ScatterPoint.prototype.setState,
+    setState: DumbbellPoint.prototype.setState
 });
 
 /* *
