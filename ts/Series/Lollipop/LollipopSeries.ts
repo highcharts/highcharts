@@ -44,6 +44,18 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        connectorWidthPlus?: number;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -108,6 +120,15 @@ class LollipopSeries extends ScatterSeries {
                     halo: false
                 }
             },
+            /** @ignore-option */
+            stickyTracking: false,
+            /** @ignore-option */
+            trackByArea: false,
+            /** @ignore-option */
+            fillColor: 'none',
+            /** @ignore-option */
+            lineWidth: 0,
+            crisp: false,
             dataLabels: {
                 align: void 0,
                 verticalAlign: void 0,
