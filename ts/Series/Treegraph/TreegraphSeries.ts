@@ -491,13 +491,7 @@ class TreegraphSeries extends TreemapSeries {
             levelOptions.marker,
             point.options.marker
         );
-        const borderRadius = pick(
-                stateOptions.borderRadius,
-                options.borderRadius,
-                levelOptions.borderRadius,
-                series.options.borderRadius
-            ),
-            linkColor = pick(
+        const linkColor = pick(
                 stateOptions.link && stateOptions.link.color,
                 options.link && options.link.color,
                 levelOptions.link && levelOptions.link.color,
@@ -515,10 +509,6 @@ class TreegraphSeries extends TreemapSeries {
             attribs.stroke = linkColor;
             attribs['stroke-width'] = linkLineWidth;
             delete attribs.fill;
-        } else {
-            if (borderRadius) {
-                attribs.r = borderRadius;
-            }
         }
         return attribs;
     }
@@ -556,7 +546,12 @@ class TreegraphSeries extends TreemapSeries {
                 x - width / 2),
             nodeY = node.y = (!reversed ?
                 plotSizeY - y - height / 2 :
-                y - height / 2);
+                y - height / 2),
+            borderRadius = pick(
+                point.options.borderRadius,
+                level.borderRadius,
+                this.options.borderRadius
+            );
 
         point.shapeType = 'path';
         if (!point.visible && point.linkToParent) {
@@ -576,7 +571,13 @@ class TreegraphSeries extends TreemapSeries {
             point.plotX = nodeX;
             point.plotY = nodeY;
             point.shapeArgs = {
-                d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
+                d: symbols[symbol || 'circle'](
+                    nodeX,
+                    nodeY,
+                    width,
+                    height,
+                    borderRadius ? { r: borderRadius } : void 0
+                ),
                 x: nodeX,
                 y: nodeY,
                 width,

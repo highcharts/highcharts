@@ -17,7 +17,9 @@ Highcharts.chart('container', {
             },
             marker: {
                 width: '12%',
-                symbol: 'rect'
+                symbol: 'rect',
+                lineWidth: 1,
+                lineColor: 'white'
             },
             levels: [{
                 level: 6,
@@ -36,6 +38,7 @@ Highcharts.chart('container', {
                 }
             }],
             type: 'treegraph',
+            borderRadius: 5,
             keys: ['parent', 'id', 'level'],
             clip: false,
             data: [
