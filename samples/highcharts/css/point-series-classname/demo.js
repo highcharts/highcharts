@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         styledMode: true
     },
@@ -12,8 +12,8 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'line',
-        //name: 'Apples',
-        //className: 'apples',
+        name: 'Apples',
+        className: 'apples',
         data: [
             0,
             -1,
@@ -34,4 +34,17 @@ Highcharts.chart('container', {
             6,
             7]
     }]
+});
+
+
+document.getElementById('regular').addEventListener('click', () => {
+    chart.tooltip.update({ shared: false, split: false });
+});
+
+document.getElementById('shared').addEventListener('click', () => {
+    chart.tooltip.update({ shared: true, split: false });
+});
+
+document.getElementById('split').addEventListener('click', () => {
+    chart.tooltip.update({ shared: false, split: true });
 });

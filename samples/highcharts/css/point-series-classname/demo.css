@@ -1,10 +1,13 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
-#container {
-    height: 400px;
+#outer {
     max-width: 800px;
     min-width: 320px;
     margin: 0 auto;
+}
+
+#container {
+    height: 400px;
 }
 
 .apples {
