@@ -7,7 +7,7 @@ Highcharts.chart("container", {
         type: "areaspline"
     },
     title: {
-        text: "Msis atmospheric composition by height"
+        text: "MSIS atmospheric composition by height"
     },
     subtitle: {
         text:
@@ -23,16 +23,19 @@ Highcharts.chart("container", {
         title: {
             text: "Volume fraction"
         },
-        max: 100
+        labels: {
+            format: '{value} %'
+        }
     },
     tooltip: {
         shared: true,
         headerFormat: null,
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.y}<br/>'
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.y}<br/>',
+        valueSuffix: ' %'
     },
     plotOptions: {
         areaspline: {
-            stacking: "normal",
+            stacking: "percent",
             lineColor: "#666666",
             pointInterval: 100,
             lineWidth: 1,
