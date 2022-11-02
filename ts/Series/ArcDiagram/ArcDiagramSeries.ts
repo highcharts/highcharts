@@ -195,6 +195,7 @@ class ArcDiagramSeries extends SankeySeries {
         marker: {
             symbol: 'circle',
             fillOpacity: 1,
+            lineWidth: 0,
             states: {}
         }
     } as ArcDiagramSeriesOptions);
