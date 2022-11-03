@@ -2,6 +2,8 @@
 // Bring in other forms of Highcharts
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
 import DataGrid from '../../../../code/es-modules/DataGrid/DataGrid.js';
+import GoogleStore from '../../../../code/es-modules/Data/Stores/GoogleSheetsStore.js';
+import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 const {PluginHandler, Dashboard: dashboard} = Dashboard;
@@ -9,18 +11,16 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 
+const csvData = document.getElementById('csv').innerText;
 
-const headers = ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Potatoes'];
-const columns = (() => {
-    const makeRandomRows = () => (new Array(60)).fill('').map(() => (10 * Math.random()).toFixed(2));
-    const cols = {};
-    for (let i = 0; i < headers.length; ++i) {
-        cols[headers[i]] = makeRandomRows();
-    }
-    return cols;
-})();
+const store = new CSVStore(void 0, {
+    csv: csvData,
+    firstRowAsNames: true
+});
 
-// let dashboard =  new Dashboard('container', {
+store.load();
+
+// let dashboard =  new dashboard('container', {
  new dashboard('container', {
     editMode: {
         enabled: false
@@ -57,7 +57,7 @@ const columns = (() => {
         chartOptions: {
             series: [{
                 name: 'Series from options',
-                data: [1, 2, 1, 4]
+                data: store.table.modified.getRows()
             }],
             chart: {
                 animation: false,
@@ -81,9 +81,13 @@ const columns = (() => {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
             series: [{
                 name: 'Series from options',
-                data: [1, 2, 1, 4]
+                data: store.table.modified.getRows()
+
             }],
             chart: {
                 animation: false,
@@ -93,15 +97,22 @@ const columns = (() => {
     }, {
         cell: 'dashboard-col-2',
         type: 'html',
+        elements: [{
+
+            tagName: 'div',
+            id: 'datagrid'
+        }
+        ],
         dimensions: {
             // width: '100%'
         },
         events: {
-            afterRender: function () {
+            mount: function () {
                 // call action
-            const container = document.querySelector('#dashboard-col-2');
-                new DataGrid(container,{
-                    dataTable: new DataTable(columns)
+            const container = document.querySelector('#datagrid');
+                new DataGrid(container, {
+                    dataTable: store.table.modified
+                    // columnHeaders: ['Apples', 'Plums', 'Bananas', 'Pears', 'Oranges', 'Potatoes'],
                 });
             }
         }
