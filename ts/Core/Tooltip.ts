@@ -1146,10 +1146,7 @@ class Tooltip {
                     });
 
                     // Set the stroke color of the box to reflect the point
-                    label.removeClass(/.*/g)
-                        .addClass(
-                            tooltip.getClassName(point)
-                        );
+                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({
