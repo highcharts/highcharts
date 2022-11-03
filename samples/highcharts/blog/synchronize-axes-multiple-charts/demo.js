@@ -11,34 +11,59 @@ const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
 // Highcharts plugin that synchronizes axes and tooltips between charts
 (() => {
 
+    const shouldAxesSync = (axis1, axis2) => (
+        axis1.options.custom &&
+        axis1.options.custom.syncGroup &&
+        axis1.options.custom.syncGroup === (
+            axis2.options.custom &&
+            axis2.options.custom.syncGroup
+        )
+    );
+
     // When zoomed out, make sure all chart axes' extremes are set to the union
     // of aligned axes.
-    const alignToUnionDataExtremes = () => {
-        if (
-            // When the last chart is loaded
-            Highcharts.charts.length ===
-            document.querySelectorAll('.chart').length
-        ) {
-            const extremes = Highcharts.charts.reduce((extremes, chart) => {
-                extremes.xMin = Math.min(extremes.xMin, chart.xAxis[0].dataMin);
-                extremes.xMax = Math.max(extremes.xMax, chart.xAxis[0].dataMax);
-                extremes.yMin = Math.min(extremes.yMin, chart.yAxis[0].dataMin);
-                extremes.yMax = Math.max(extremes.yMax, chart.yAxis[0].dataMax);
+    const alignToUnionDataExtremes = function (e) {
+        const extremes = Highcharts.charts.reduce((extremes, chart) => {
 
-                return extremes;
+            if (this.xAxis && shouldAxesSync(chart.xAxis[0], this.xAxis[0])) {
+                extremes.xMin = Math.min(
+                    extremes.xMin,
+                    chart.xAxis[0].dataMin
+                );
+                extremes.xMax = Math.max(
+                    extremes.xMax,
+                    chart.xAxis[0].dataMax
+                );
+            }
 
-            }, {
-                xMin: Infinity,
-                xMax: -Infinity,
-                yMin: Infinity,
-                yMax: -Infinity
-            });
+            if (this.yAxis && shouldAxesSync(chart.yAxis[0], this.yAxis[0])) {
+                extremes.yMin = Math.min(
+                    extremes.yMin,
+                    chart.yAxis[0].dataMin
+                );
+                extremes.yMax = Math.max(
+                    extremes.yMax,
+                    chart.yAxis[0].dataMax
+                );
+            }
 
-            Highcharts.charts.forEach(chart => {
+            return extremes;
+
+        }, {
+            xMin: Infinity,
+            xMax: -Infinity,
+            yMin: Infinity,
+            yMax: -Infinity
+        });
+
+        Highcharts.charts.forEach(chart => {
+            if (this.xAxis && shouldAxesSync(chart.xAxis[0], this.xAxis[0])) {
                 chart.xAxis[0].setExtremes(extremes.xMin, extremes.xMax);
+            }
+            if (this.yAxis && shouldAxesSync(chart.yAxis[0], this.yAxis[0])) {
                 chart.yAxis[0].setExtremes(extremes.yMin, extremes.yMax);
-            });
-        }
+            }
+        });
     };
 
     // On loading the last chart, find the union extremes of all charts and
@@ -52,8 +77,9 @@ const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
         if (e.trigger === 'zoom') {
             Highcharts.charts.forEach(chart => {
                 if (chart !== axis.chart) {
-                    if (chart[e.target.coll][0].setExtremes) {
-                        chart[e.target.coll][0].setExtremes(e.min, e.max);
+                    const otherAxis = chart[e.target.coll][0];
+                    if (shouldAxesSync(axis, otherAxis)) {
+                        otherAxis.setExtremes(e.min, e.max);
                     }
                 }
             });
@@ -140,12 +166,20 @@ Highcharts.setOptions({
     }
 });
 
-Highcharts.chart('container1', {
+Highcharts.chart('container-world', {
+    chart: {
+        zoomType: 'x'
+    },
     title: {
         text: 'Polio (Pol3) immunization coverage among 1-year-olds (%) '
     },
     subtitle: {
         text: 'Source: https://apps.who.int/gho/data/'
+    },
+    xAxis: {
+        custom: {
+            syncGroup: 'x-wide'
+        }
     },
     series: [{
         data: global,
@@ -153,7 +187,33 @@ Highcharts.chart('container1', {
     }]
 });
 
-Highcharts.chart('container2', {
+Highcharts.chart('container-south-east-asia', {
+    chart: {
+        zoomType: 'x'
+    },
+    title: {
+        text: 'South-East Asia'
+    },
+    xAxis: {
+        custom: {
+            syncGroup: 'x-wide'
+        }
+    },
+    series: [{
+        data: seAsia,
+        name: 'South-East Asia'
+    }]
+});
+
+Highcharts.chart('container-africa', {
+    chart: {
+        zoomType: 'y'
+    },
+    yAxis: {
+        custom: {
+            syncGroup: 'y'
+        }
+    },
     title: {
         text: 'Africa'
     },
@@ -164,22 +224,20 @@ Highcharts.chart('container2', {
     }]
 });
 
-Highcharts.chart('container3', {
+Highcharts.chart('container-europe', {
+    chart: {
+        zoomType: 'y'
+    },
+    yAxis: {
+        custom: {
+            syncGroup: 'y'
+        }
+    },
     title: {
         text: 'Europe'
     },
     series: [{
         data: europe,
         name: 'Europe'
-    }]
-});
-
-Highcharts.chart('container4', {
-    title: {
-        text: 'South-East Asia'
-    },
-    series: [{
-        data: seAsia,
-        name: 'South-East Asia'
     }]
 });
