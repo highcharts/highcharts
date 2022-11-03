@@ -84,36 +84,29 @@
 
         colorAxis: {
             dataClasses: [{
-                to: 60,
+                to: 75.0,
                 color: "#92D14F"
             },
             {
-                from: 80,
-                to: 100,
-                color: "#63C786"
-            },
-            {
-                from: 100,
-                to: 120,
+                from: 75.1,
+                to: 100.0,
                 color: "#06AFED"
             },
             {
-                from: 120,
-                to: 140,
-                color: "#4581E0"
+                from: 100.1,
+                to: 125.0,
+                color: "#fa7645"
             },
             {
-                from: 140,
-                color: "#e04581"
-            }]
+                from: 125.0,
+                color: "#f03762"
+            }
+            ]
         },
 
         tooltip: {
-            useHTML: true,
-            headerFormat: '<table><tr><th colspan="2">{point.key}</th></tr>',
-            pointFormat: "<tr><td>Electricity prices: </td>" +
-        '<td style="text-align: right"><b>{point.value} EUR</b></td></tr>',
-            footerFormat: "</table>"
+            headerFormat: '<b>{point.key}</b><br>',
+            pointFormat: 'Electricity prices: {point.value:.2f} EUR'
         },
 
         legend: {
@@ -124,23 +117,16 @@
         },
         series: [{
             data: data,
-            name: "Random data",
+            name: "Electricity price",
             dataLabels: {
                 enabled: true,
                 style: {
-                    textOutline: 0
+                    textOutline: '3px contrast'
                 },
                 // format: '{point.name}',
-                formatter: function () {
-                    // return this.point['hc-key']
-                    if (this.point.value === null) {
-                        return null;
-                    }
-                    return this.point.value + "€";
-
-                }
+                format: '{point.value:.2f}€',
+                nullFormat: ''
             }
         }]
     });
-    console.log(Highcharts.charts[0].series[0].points[0].setVisible);
 })();
