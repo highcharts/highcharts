@@ -436,24 +436,46 @@ class Tooltip {
      * @return {string}
      *         The class names.
      */
-    public getClassName(point: Point): string {
+    public getClassName(
+        point: Point,
+        isSplit?: boolean,
+        isHeader?: boolean
+    ): string {
         const options = this.options,
-            currentPoint = point,
-            currentSeries = point.series;
+            currentSeries = point.series,
+            seriesOptions = currentSeries.options;
+
         return (
-            'highcharts-label highcharts-tooltip highcharts-color-' +
-            pick(
-                currentPoint.colorIndex,
-                currentSeries.colorIndex
-            ) +
-            `${
-                (
-                    currentSeries.options &&
-                    currentSeries.options.className
-                ) ?
-                    ' ' + currentSeries.options.className :
+            (
+                options && options.className ?
+                    ' ' + options.className :
                     ''
-            }`
+            ) +
+                ' highcharts-label ' +
+                    (
+                        isSplit ?
+                            `${
+                                (
+                                    isHeader ?
+                                        'highcharts-tooltip-header ' :
+                                        ''
+                                ) +
+                                'highcharts-tooltip-box'
+                            }` : 'highcharts-tooltip'
+                    ) +
+                    ' highcharts-color-' +
+                    pick(
+                        point.colorIndex,
+                        currentSeries.colorIndex
+                    ) +
+                    `${
+                        (
+                            seriesOptions &&
+                            seriesOptions.className
+                        ) ?
+                            ' ' + seriesOptions.className :
+                            ''
+                    }`
         );
     }
 
@@ -471,13 +493,6 @@ class Tooltip {
             styledMode = this.chart.styledMode,
             options = this.options,
             doSplit = this.split && this.allowShared,
-            className = (
-                'tooltip' + (
-                    defined(options.className) ?
-                        ' ' + options.className :
-                        ''
-                )
-            ),
             pointerEvents = (
                 options.style.pointerEvents ||
                 (
@@ -549,7 +564,7 @@ class Tooltip {
 
             // Create the label
             if (doSplit) {
-                this.label = renderer.g(className);
+                this.label = renderer.g('tooltip');
             } else {
                 this.label = renderer
                     .label(
@@ -561,7 +576,7 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        className
+                        'tooltip'
                     )
                     .attr({
                         padding: options.padding,
@@ -1363,6 +1378,7 @@ class Tooltip {
             const colorClass = 'highcharts-color-' + pick(
                 point.colorIndex, series.colorIndex, 'none'
             );
+
             if (!tt) {
 
                 const attribs: SVGAttributes = {
@@ -1374,7 +1390,6 @@ class Tooltip {
                     attribs.fill = options.backgroundColor;
                     attribs['stroke-width'] = options.borderWidth;
                 }
-
                 tt = ren
                     .label(
                         '',
@@ -1386,9 +1401,7 @@ class Tooltip {
                         options.useHTML
                     )
                     .addClass(
-                        (isHeader ? 'highcharts-tooltip-header ' : '') +
-                        'highcharts-tooltip-box ' +
-                        colorClass
+                        Tooltip.prototype.getClassName(point, true, isHeader)
                     )
                     .attr(attribs)
                     .add(tooltipLabel);
