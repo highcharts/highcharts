@@ -84,24 +84,28 @@
 
         colorAxis: {
             dataClasses: [{
-                to: 75.0,
+                to: 60,
                 color: "#92D14F"
             },
             {
-                from: 75.1,
-                to: 100.0,
+                from: 80,
+                to: 100,
+                color: "#63C786"
+            },
+            {
+                from: 100,
+                to: 120,
                 color: "#06AFED"
             },
             {
-                from: 100.1,
-                to: 125.0,
-                color: "#fa7645"
+                from: 120,
+                to: 140,
+                color: "#4581E0"
             },
             {
-                from: 125.0,
-                color: "#f03762"
-            }
-            ]
+                from: 140,
+                color: "#e04581"
+            }]
         },
 
         tooltip: {
