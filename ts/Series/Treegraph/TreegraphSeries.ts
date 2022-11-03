@@ -560,7 +560,13 @@ class TreegraphSeries extends TreemapSeries {
                 const parentShapeArgs = parentNode.shapeArgs || {},
                     { x = 0, y = 0, width = 0, height = 0 } = parentShapeArgs;
                 extend(point.shapeArgs, {
-                    d: symbols[symbol || 'circle'](x, y, width, height),
+                    d: symbols[symbol || 'circle'](
+                        x,
+                        y,
+                        width,
+                        height,
+                        borderRadius ? { r: borderRadius } : void 0
+                    ),
                     x,
                     y
                 });
