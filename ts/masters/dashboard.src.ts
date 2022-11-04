@@ -1,6 +1,6 @@
 /**
  * @license "Highsoft Dashboard" v@product.version@ (@product.date@)
-gt * @modules highsoft/dashboard
+ * @modules highsoft/dashboard
  * @requires window
  *
  * Highsoft Dashboard
