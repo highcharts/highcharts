@@ -463,13 +463,15 @@ class Tooltip {
                             }` : 'highcharts-tooltip'
                     ) +
                     (
-                        !isHeader ?
-                            ' highcharts-color-' +
-                            pick(
-                                point.colorIndex,
-                                currentSeries.colorIndex
-                            ) :
-                            ''
+                        ' highcharts-color-' +
+                            (
+                                isHeader ?
+                                    'none' :
+                                    pick(
+                                        point.colorIndex,
+                                        currentSeries.colorIndex
+                                    )
+                            )
                     ) +
                     `${
                         (
