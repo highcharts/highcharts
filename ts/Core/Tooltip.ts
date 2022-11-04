@@ -444,7 +444,6 @@ class Tooltip {
         const options = this.options,
             currentSeries = point.series,
             seriesOptions = currentSeries.options;
-
         return (
             (
                 options && options.className ?
@@ -463,10 +462,14 @@ class Tooltip {
                                 'highcharts-tooltip-box'
                             }` : 'highcharts-tooltip'
                     ) +
-                    ' highcharts-color-' +
-                    pick(
-                        point.colorIndex,
-                        currentSeries.colorIndex
+                    (
+                        !isHeader ?
+                            ' highcharts-color-' +
+                            pick(
+                                point.colorIndex,
+                                currentSeries.colorIndex
+                            ) :
+                            ''
                     ) +
                     `${
                         (
