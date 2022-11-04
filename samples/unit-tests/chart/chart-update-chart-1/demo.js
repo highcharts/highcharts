@@ -273,8 +273,8 @@ QUnit.test('Option chart.inverted update', function (assert) {
     assert.strictEqual(chart.xAxis[0].side, 3, 'X axis on left');
 
     assert.strictEqual(
-        chart.series[0].group.inverted,
-        true,
+        chart.series[0].group.rotation,
+        90,
         'Series is inverted (#5938)'
     );
 

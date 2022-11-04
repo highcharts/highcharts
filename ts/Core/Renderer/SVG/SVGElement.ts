@@ -152,13 +152,12 @@ class SVGElement implements SVGElementLike {
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
     // @todo public height?: number;
-    public inverted?: boolean;
+    public inverted: undefined;
     public matrix?: Array<number>;
     public oldShadowOptions?: ShadowOptionsObject;
     public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     // @todo public options?: AnyRecord;
-    public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
     public placed?: boolean;
@@ -283,9 +282,6 @@ class SVGElement implements SVGElementLike {
         if (parent) {
             this.parentGroup = parent;
         }
-
-        // Mark as inverted
-        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -2020,12 +2016,16 @@ class SVGElement implements SVGElementLike {
         cutOff?: boolean
     ): this {
         const shadows = [],
-            element = this.element,
-            oldShadowOptions = this.oldShadowOptions,
+            {
+                element,
+                oldShadowOptions,
+                parentGroup
+            } = this,
+            parentInverted = parentGroup && parentGroup.rotation === 90,
             defaultShadowOptions: ShadowOptionsObject = {
                 color: Palette.neutralColor100,
-                offsetX: this.parentInverted ? -1 : 1,
-                offsetY: this.parentInverted ? -1 : 1,
+                offsetX: parentInverted ? -1 : 1,
+                offsetY: parentInverted ? -1 : 1,
                 opacity: 0.15,
                 width: 3
             };
@@ -2068,7 +2068,7 @@ class SVGElement implements SVGElementLike {
 
         } else if (!this.shadows) {
             shadowElementOpacity = options.opacity / options.width;
-            transform = this.parentInverted ?
+            transform = parentInverted ?
                 `translate(${options.offsetY}, ${options.offsetX})` :
                 `translate(${options.offsetX}, ${options.offsetY})`;
             for (i = 1; i <= options.width; i++) {
