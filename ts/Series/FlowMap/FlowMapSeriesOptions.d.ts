@@ -9,6 +9,7 @@
  * */
 
 import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
+import type { MarkerEndOptions } from './FlowMapPointOptions';
 
 /* *
  *
@@ -28,13 +29,6 @@ interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     maxWeight: number;
     minWeight: number;
     weight?: number;
-}
-
-interface MarkerEndOptions {
-    markerType?: string;
-    enabled?: boolean;
-    width: number | string;
-    height: number | string;
 }
 
 /* *

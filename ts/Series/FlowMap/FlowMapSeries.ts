@@ -16,6 +16,7 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
+import type { MarkerEndOptions } from './FlowMapPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import FlowMapPoint from './FlowMapPoint.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -614,14 +615,6 @@ class FlowMapSeries extends MapLineSeries {
 
 interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
-}
-
-// TODO: This is a  triplicate of MarkerEndOptions in FlowMapPointOptions
-interface MarkerEndOptions {
-    markerType?: string,
-    enabled?: boolean,
-    width: number | string,
-    height: number | string,
 }
 
 extend(FlowMapSeries.prototype, {
