@@ -3389,11 +3389,6 @@ class Series {
             series.animate(true);
         }
 
-        // SVGRenderer needs to know this before drawing elements (#1089,
-        // #1795)
-        group.inverted = pick(series.invertible, series.isCartesian) ?
-            inverted : false;
-
         // Draw the graph if any
         if ((series as any).drawGraph) {
             (series as any).drawGraph();
