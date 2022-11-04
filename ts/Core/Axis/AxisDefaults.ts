@@ -1056,7 +1056,11 @@ namespace AxisDefaults {
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '11px'
+                fontSize: '11px',
+                /** @internal */
+                textDecoration: 'none',
+                /** @internal */
+                fontWeight: 'normal'
             }
         },
 
