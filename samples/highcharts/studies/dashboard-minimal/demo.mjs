@@ -1,15 +1,10 @@
 
 // Bring in other forms of Highcharts
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
-import DataGrid from '../../../../code/es-modules/DataGrid/DataGrid.js';
-import GoogleStore from '../../../../code/es-modules/Data/Stores/GoogleSheetsStore.js';
-import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
-const {PluginHandler, Dashboard: dashboard} = Dashboard;
+const { CSVStore, PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
-
 
 const csvData = document.getElementById('csv').innerText;
 
@@ -20,8 +15,8 @@ const store = new CSVStore(void 0, {
 
 store.load();
 
-// let dashboard =  new dashboard('container', {
- new dashboard('container', {
+ new Dashboard.Dashboard('container', {
+    store: store,
     editMode: {
         enabled: false
     },
@@ -51,16 +46,21 @@ store.load();
     },
     components: [
         {
+        store,
+        syncEvents: [
+            'visibility',
+            'selection',
+            'tooltip'
+        ],
         cell: 'dashboard-col-0',
         isResizable: true,
         type: 'Highcharts',
+        tableAxisMap: {
+            Food: 'x',
+            'Vitamin A': 'value'
+        },
         chartOptions: {
-            series: [{
-                name: 'Series from options',
-                data: store.table.modified.getRows()
-            }],
             chart: {
-                animation: false,
                 type: 'pie'
             }
         },
@@ -79,16 +79,21 @@ store.load();
         }
     }, {
         cell: 'dashboard-col-1',
+        store,
+        syncEvents: [
+            'visibility',
+            'tooltip',
+            'selection'
+        ],
         type: 'Highcharts',
+        tableAxisMap: {
+            Food: 'x',
+            'Vitamin A': 'y'
+        },
         chartOptions: {
             xAxis: {
                 type: 'category'
             },
-            series: [{
-                name: 'Series from options',
-                data: store.table.modified.getRows()
-
-            }],
             chart: {
                 animation: false,
                 type: 'column'
@@ -97,22 +102,25 @@ store.load();
     }, {
         cell: 'dashboard-col-2',
         type: 'html',
+        syncEvents: [
+            'visibility',
+            'selection',
+            'tooltip'
+        ],
         elements: [{
-
             tagName: 'div',
             id: 'datagrid'
-        }
-        ],
+        }],
         dimensions: {
             // width: '100%'
         },
         events: {
             mount: function () {
                 // call action
-            const container = document.querySelector('#datagrid');
-                new DataGrid(container, {
+                const container = document.querySelector('#datagrid');
+                const datagrid = new Dashboard.DataGrid(container, {
+                    editable: false,
                     dataTable: store.table.modified
-                    // columnHeaders: ['Apples', 'Plums', 'Bananas', 'Pears', 'Oranges', 'Potatoes'],
                 });
             }
         }

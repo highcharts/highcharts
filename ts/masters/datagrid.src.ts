@@ -7,6 +7,41 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from '../Core/Globals.js';
-import '../DataGrid/DataGrid.js';
-export default Highcharts;
+import DataGrid from '../DataGrid/DataGrid.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare global {
+    interface Window {
+        DataGrid: typeof DG;
+    }
+    let DataGrid: typeof DG;
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+const DG = {
+    // ...Globals,
+    _modules: (typeof _modules === 'undefined' ? {} : _modules),
+    DataGrid
+};
+
+/* *
+ *
+ *  Classic Exports
+ *
+ * */
+
+if (!window.DataGrid) {
+    window.DataGrid = DG;
+}
+
+export default DG;

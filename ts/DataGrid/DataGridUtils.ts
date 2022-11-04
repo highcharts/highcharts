@@ -15,7 +15,7 @@
 
 import type DataTable from '../Data/DataTable';
 
-export default {
+const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
         return (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') ?
             '' + cell :
@@ -35,3 +35,5 @@ export default {
         return div;
     }
 };
+
+export default DataGridUtils;
