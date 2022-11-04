@@ -15,11 +15,17 @@
 
 import type DataTable from '../Data/DataTable';
 
-export default {
+const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
-        return (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') ?
-            '' + cell :
-            '';
+        return (
+            (
+                typeof cell === 'string' ||
+                typeof cell === 'number' ||
+                typeof cell === 'boolean'
+            ) ?
+                '' + cell :
+                ''
+        );
     },
     emptyHTMLElement(element: HTMLElement): void {
         while (element.firstChild) {
@@ -35,3 +41,5 @@ export default {
         return div;
     }
 };
+
+export default DataGridUtils;
