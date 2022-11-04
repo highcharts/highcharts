@@ -3283,6 +3283,7 @@ class Series {
         const chart = this.chart,
             inverted = (
                 chart.inverted &&
+                !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
                 (name === 'markers' || name === 'series')
