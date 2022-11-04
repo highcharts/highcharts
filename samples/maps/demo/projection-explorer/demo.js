@@ -233,6 +233,10 @@
 
         if (projection.name === 'LambertConformalConic') {
             smallChart = Highcharts.mapChart('small-world-container', {
+                chart: {
+                    backgroundColor: 'transparent'
+                },
+
                 title: {
                     text: undefined
                 },

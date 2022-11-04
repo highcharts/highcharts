@@ -161,7 +161,7 @@ class LineSeries extends Series {
 
                 attribs = {
                     'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
+                    'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph
                     'fill': (series.fillGraph && series.color) || 'none'
                 };

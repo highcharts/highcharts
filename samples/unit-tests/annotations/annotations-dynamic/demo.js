@@ -202,17 +202,17 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
     });
 
     assert.strictEqual(
-        fib.shapes[0].graphic.stroke,
+        fib.shapes[0].graphic.attr('stroke'),
         'blue',
         '#15424: First line should be blue (lineColors[0])'
     );
     assert.strictEqual(
-        fib.shapes[3].graphic.stroke,
+        fib.shapes[3].graphic.attr('stroke'),
         'red',
         '#15424: Third line should be red (lineColors[2])'
     );
     assert.strictEqual(
-        fib.shapes[5].graphic.stroke,
+        fib.shapes[5].graphic.attr('stroke'),
         'blue',
         '#15424: Fourth line should be blue (lineColor)'
     );

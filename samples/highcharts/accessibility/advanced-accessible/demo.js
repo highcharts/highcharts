@@ -111,7 +111,8 @@ var chart = Highcharts.chart('container', {
     },
 
     tooltip: {
-        shared: true
+        shared: true,
+        stickOnContact: true
     },
 
     plotOptions: {
