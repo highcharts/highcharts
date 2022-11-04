@@ -1,6 +1,6 @@
 (async () => {
     const topology = await fetch(
-        "https://code.highcharts.com/mapdata/custom/europe.topo.json"
+        'https://code.highcharts.com/mapdata/custom/europe.topo.json'
     ).then(response => response.json());
 
     // Prepare demo data. The data is joined to map using value of 'hc-key'
