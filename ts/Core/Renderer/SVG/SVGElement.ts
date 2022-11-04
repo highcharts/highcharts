@@ -1724,26 +1724,6 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Invert a group, rotate and flip. This is used internally on inverted
-     * charts, where the points and graphs are drawn as if not inverted, then
-     * the series group elements are inverted.
-     *
-     * @function Highcharts.SVGElement#invert
-     *
-     * @param {boolean} inverted
-     *        Whether to invert or not. An inverted shape can be un-inverted by
-     *        setting it to false.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Return the SVGElement for chaining.
-     */
-    public invert(inverted: boolean): this {
-        this.inverted = inverted;
-        this.updateTransform();
-        return this;
-    }
-
-    /**
      * Add an event listener. This is a simple setter that replaces the
      * previous event of the same type added by this function, as opposed to
      * the {@link Highcharts#addEvent} function.
@@ -2402,23 +2382,15 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(): void {
-        const wrapper = this,
-            scaleX = wrapper.scaleX,
-            scaleY = wrapper.scaleY,
-            inverted = wrapper.inverted,
-            rotation = wrapper.rotation,
-            matrix = wrapper.matrix,
-            element = wrapper.element;
-
-        let translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0;
-
-        // Flipping affects translate as adjustment for flipping around the
-        // group's axis
-        if (inverted) {
-            translateX += wrapper.width;
-            translateY += wrapper.height;
-        }
+        const {
+            element,
+            matrix,
+            rotation = 0,
+            scaleX,
+            scaleY,
+            translateX = 0,
+            translateY = 0
+        } = this;
 
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
@@ -2432,10 +2404,8 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        // apply rotation
-        if (inverted) {
-            transform.push('rotate(90) scale(-1,1)');
-        } else if (rotation) { // text rotation
+        // Apply rotation
+        if (rotation) { // text rotation or inverted chart
             transform.push(
                 'rotate(' + rotation + ' ' +
                 pick(this.rotationOriginX, element.getAttribute('x'), 0) +
@@ -2451,7 +2421,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !(wrapper.text || wrapper).textPath) {
+        if (transform.length && !(this.text || this).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }

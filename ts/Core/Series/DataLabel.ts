@@ -82,7 +82,6 @@ declare module './PointOptions' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointLabels?: boolean;
-        /** @deprecated */
         dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
         alignDataLabel(

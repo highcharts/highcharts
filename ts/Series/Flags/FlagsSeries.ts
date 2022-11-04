@@ -469,12 +469,7 @@ extend(FlagsSeries.prototype, {
      * Inherit the initialization from base Series.
      * @private
      */
-    init: Series.prototype.init,
-    /**
-     * Don't invert the flag marker group (#4960).
-     * @private
-     */
-    invertGroups: noop
+    init: Series.prototype.init
 });
 
 /* *
