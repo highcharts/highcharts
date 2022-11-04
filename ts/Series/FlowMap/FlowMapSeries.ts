@@ -174,7 +174,17 @@ class FlowMapSeries extends MapLineSeries {
             enabled: true,
             height: '40%',
             width: '40%'
-        }
+        },
+
+        /**
+         * The opacity of the color fill for all links.
+         *
+         * @type      {number}
+         * @default   {0.5}
+         * @product   highmaps
+         * @apioption series.flowmap.fillOpacity
+         */
+        fillOpacity: 0.5
 
     } as FlowMapSeriesOptions);
 
@@ -769,7 +779,15 @@ export default FlowMapSeries;
  */
 
 /**
- * The opacity of the link.
+ * The opacity of an individual link.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.opacity
+ */
+
+/**
+ * The opacity of the link color fill.
  *
  * @type      {number}
  * @product   highmaps
@@ -777,11 +795,48 @@ export default FlowMapSeries;
  */
 
 /**
- * The opacity of the link.
+ * The opacity of the all the links.
+ *
  *
  * @type      {number}
  * @product   highmaps
- * @apioption series.flowmap.data.opacity
+ * @apioption series.flowmap.opacity
+ */
+
+/**
+ * The stroke color of an individual link
+ *
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.data.color
+ */
+
+/**
+ * The stroke color of all the links
+ *
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.color
+ */
+
+/**
+ * The fill color of all the links
+ *
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.fillColor
+ */
+
+/**
+ * The fill color of an individual link
+ *
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.data.fillColor
  */
 
 /**
