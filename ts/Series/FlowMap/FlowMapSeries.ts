@@ -331,6 +331,10 @@ class FlowMapSeries extends MapLineSeries {
             ((greatestWeight - smallestWeight) || 1) + minWeightLimit;
     }
 
+    /**
+     * Get point attributes.
+     * @private
+     */
     public pointAttribs(
         point: FlowMapPoint,
         state: StatesOptionsKey
@@ -338,10 +342,18 @@ class FlowMapSeries extends MapLineSeries {
         const attrs =
             MapSeries.prototype.pointAttribs.call(this, point, state);
 
-        attrs.fill = point.options.fillColor || this.options.fillColor;
-        attrs['fill-opacity'] = point.options.fillOpacity;
+        attrs.fill = pick(
+            point.options.fillColor,
+            this.options.fillColor === 'none' ? null : this.options.fillColor,
+            this.color
+        );
 
-        attrs.opacity = (point.options as any).opacity;
+        attrs['fill-opacity'] = pick(
+            point.options.fillOpacity,
+            this.options.fillOpacity
+        );
+
+        attrs.opacity = point.options.opacity;
 
         return attrs;
     }
@@ -761,6 +773,22 @@ export default FlowMapSeries;
  * @type      {number}
  * @product   highmaps
  * @apioption series.flowmap.data.weight
+ */
+
+/**
+ * The opacity of the link.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.fillOpacity
+ */
+
+/**
+ * The opacity of the link.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.opacity
  */
 
 /**
