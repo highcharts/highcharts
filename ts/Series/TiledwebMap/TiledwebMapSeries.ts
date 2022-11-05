@@ -81,7 +81,6 @@ class TiledwebMapSeries extends MapSeries {
      */
 
     public drawPoints(): any {
-
         if (!this.tiles) {
             this.tiles = {};
         }
@@ -90,18 +89,16 @@ class TiledwebMapSeries extends MapSeries {
         }
 
         const {
-            chart,
-            tiles,
-            transformGroups
-        } = this;
-
-        const mapView: any = chart.mapView,
+                chart,
+                tiles,
+                transformGroups
+            } = this,
+            mapView: any = chart.mapView,
             { zoom } = mapView,
             zoomCeil = Math.ceil(zoom);
 
         if (!transformGroups[zoomCeil]) {
-            transformGroups[zoomCeil] =
-            chart.renderer.g().add(this.group);
+            transformGroups[zoomCeil] = chart.renderer.g().add(this.group);
         }
         const origin = mapView.lonLatToPixels({
             lon: -180,
@@ -115,6 +112,7 @@ class TiledwebMapSeries extends MapSeries {
         const lon2tile = (lon: any, zoom: any): any => Math.floor(
             (lon + 180) / 360 * Math.pow(2, zoom)
         );
+
         const lat2tile = (lat: any, zoom: any): any => Math.floor(
             (
                 1 - Math.log(
@@ -131,87 +129,47 @@ class TiledwebMapSeries extends MapSeries {
             const n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
             return (
                 180 /
-                Math.PI * Math.atan(
-                    0.5 * (Math.exp(n) - Math.exp(-n))
-                )
+                Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
             );
         };
 
+        const addTile = (x: number, y: number, zoom: any): void => {
+            if (!tiles[`${zoom},${x},${y}`]) {
+                tiles[`${zoom},${x},${y}`] = chart.renderer.image(
+                    `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`,
+                    x * 256,
+                    y * 256
+                )
+                    .attr({
+                        zIndex: 2
+                    })
+                    .add(transformGroups[zoomCeil]);
+            }
+            tiles[`${zoom},${x},${y}`].isActive = true;
+        };
+
         const topLeft = mapView.pixelsToLonLat({
-            x: 0,
-            y: 0
-        });
-
-        let x = lon2tile(topLeft.lon, zoom) - 1,
-            pos;
-
-        while (x++) {
-
-            const lon = tile2lon(x, zoom);
-            pos = mapView.lonLatToPixels({
-                lon,
-                lat: 0
+                x: 0,
+                y: 0
+            }),
+            bottomRight = mapView.pixelsToLonLat({
+                x: chart.plotWidth,
+                y: chart.plotHeight
             });
 
-            if (pos.x > chart.plotLeft + chart.plotWidth) {
-                break;
-            }
+        let xStart = lon2tile(topLeft.lon, zoom),
+            xEnd = lon2tile(bottomRight.lon, zoom),
+            yStart = lat2tile(topLeft.lat, zoom),
+            yEnd = lat2tile(bottomRight.lat, zoom),
+            pos;
 
-            let y: number | boolean = lat2tile(topLeft.lat, zoom) - 1;
-
-            // TO DO: Should allow 0
-            while (y++) {
-
-                const lat = tile2lat(y, zoom);
-                pos = mapView.lonLatToPixels({
-                    lon,
-                    lat
-                });
-
-                if (
-                    !pos ||
-                    pos.y > chart.plotTop + chart.plotHeight
-                ) {
-                    break;
-                }
-
-                // OSM
-                const src = (
-                    `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`
-                    // `https://a.tile.opentopomap.org/${zoom}/${tileX}/${tileY}.png`
-                );
-
-                // WMS Tile service
-                /*
-                const topLeft = chart.mapView.lonLatToProjectedUnits({
-                        lon,
-                        lat
-                    }),
-                    bottomRight = chart.mapView.lonLatToProjectedUnits({
-                        lon: tile2lon(x + 1, zoom),
-                        lat: tile2lat(y + 1, zoom)
-                    }),
-                    bbox = [
-                        topLeft.x, bottomRight.y, bottomRight.x, topLeft.y
-                    ].map(n => 100000 * n).join(','),
-                    src = 'https://opencache.statkart.no/gatekeeper/gk/gk.open?service=WMS&request=GetMap&layers=topo4&styles=&format=image%2Fpng&transparent=false&version=1.0&height=256&width=256&srs=EPSG%3A3857&bbox=' + bbox;
-                */
-
-                if (!tiles[`${zoom},${x},${y}`]) {
-                    tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                        src,
-                        x * 256,
-                        y * 256
-                    )
-                        .attr({
-                            zIndex: 2
-                        })
-                        .add(transformGroups[zoomCeil]);
-                }
-                tiles[`${zoom},${x},${y}`].isActive = true;
+        for (let x = xStart; x <= xEnd; x++) {
+            for (let y = yStart; y <= yEnd; y++) {
+                addTile(x, y, zoom);
             }
         }
 
+        // Destroy old and unused
         Object.keys(tiles).forEach((key): any => {
             if (tiles[key].isActive) {
                 tiles[key].isActive = false;
