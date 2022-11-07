@@ -194,10 +194,7 @@ namespace DataLabel {
             chart = this.chart,
             inverted = this.isCartesian && chart.inverted,
             enabledDataSorting = this.enabledDataSorting,
-            plotX = pick(
-                point.dlBox && (point.dlBox as any).centerX,
-                point.plotX
-            ),
+            plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation,
             align = options.align,
@@ -236,6 +233,7 @@ namespace DataLabel {
             visible =
                 this.visible &&
                 point.visible !== false &&
+                defined(plotX) &&
                 (
                     point.series.forceDL ||
                     (enabledDataSorting && !justify) ||
@@ -386,12 +384,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ?
-                        chart.plotWidth - (point.plotY as any) :
-                        point.plotX,
-                    anchorY: inverted ?
-                        chart.plotHeight - (point.plotX as any) :
-                        point.plotY
+                    anchorX: inverted ? chart.plotWidth - plotY : plotX,
+                    anchorY: inverted ? chart.plotHeight - plotX : plotY
                 });
             }
         }

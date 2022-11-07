@@ -122,7 +122,7 @@ QUnit.test('General marker tests', function (assert) {
     );
 
     assert.strictEqual(
-        point.graphic.stroke,
+        point.graphic.attr('stroke'),
         'red',
         "Marker's lineWidth color should set correctly through point.marker."
     );

@@ -1,12 +1,23 @@
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/datagrid
+ * @requires window
  *
- * (c) 2009-2020 Torstein Honsi
+ * Highsoft DataGrid
+ *
+ * (c) 2010-2022 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import DataGrid from '../DataGrid/DataGrid.js';
 
 /* *
@@ -29,7 +40,7 @@ declare global {
  * */
 
 const DG = {
-    // ...Globals,
+    win: window,
     _modules: (typeof _modules === 'undefined' ? {} : _modules),
     DataGrid
 };
@@ -40,8 +51,8 @@ const DG = {
  *
  * */
 
-if (!window.DataGrid) {
-    window.DataGrid = DG;
+if (!DG.win.DataGrid) {
+    DG.win.DataGrid = DG;
 }
 
 export default DG;

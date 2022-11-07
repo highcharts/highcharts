@@ -151,7 +151,6 @@ class SVGElement implements SVGElementLike {
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
-    public hasStroke?: boolean;
     // @todo public height?: number;
     public inverted?: boolean;
     public matrix?: Array<number>;
@@ -2156,9 +2155,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * WebKit and Batik have problems with a stroke-width of zero, so in this
-     * case we remove the stroke attribute altogether. #1270, #1369, #3065,
-     * #3072.
+     * Set the stroke-width and record it on the SVGElement
      *
      * @private
      * @function Highcharts.SVGElement#strokeSetter
@@ -2166,32 +2163,14 @@ class SVGElement implements SVGElementLike {
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
-    public strokeSetter(
-        value: (number|string|ColorType),
-        key: string,
+    public 'stroke-widthSetter'(
+        value: (number|string),
+        key: 'stroke-width',
         element: SVGDOMElement
     ): void {
-        (this as AnyRecord)[key] = value;
-        // Only apply the stroke attribute if the stroke width is defined and
-        // larger than 0
-        if (this.stroke && this['stroke-width']) {
-            // Use prototype as instance may be overridden
-            SVGElement.prototype.fillSetter.call(
-                this,
-                this.stroke,
-                'stroke',
-                element
-            );
-
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-            element.removeAttribute('stroke');
-            this.hasStroke = false;
-        } else if (this.renderer.styledMode && this['stroke-width']) {
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        }
+        // Record it for quick access in getter
+        this[key] = value;
+        element.setAttribute(key, value);
     }
 
     /**
@@ -2643,7 +2622,7 @@ interface SVGElement extends SVGElementLike {
 }
 
 // Some shared setters and getters
-SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter;
+SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.matrixSetter =
 SVGElement.prototype.rotationOriginXSetter =
