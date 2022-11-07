@@ -351,10 +351,11 @@ class FlowMapSeries extends MapLineSeries {
         state: StatesOptionsKey
     ): SVGAttributes {
         const attrs =
-            MapSeries.prototype.pointAttribs.call(this, point, state);
+                MapSeries.prototype.pointAttribs.call(this, point, state);
 
         attrs.fill = pick(
             point.options.fillColor,
+            point.options.color,
             this.options.fillColor === 'none' ? null : this.options.fillColor,
             this.color
         );
@@ -801,24 +802,6 @@ export default FlowMapSeries;
  * @type      {number}
  * @product   highmaps
  * @apioption series.flowmap.opacity
- */
-
-/**
- * The stroke color of an individual link
- *
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.flowmap.data.color
- */
-
-/**
- * The stroke color of all the links
- *
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.flowmap.color
  */
 
 /**
