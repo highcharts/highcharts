@@ -442,46 +442,19 @@ class Tooltip {
         isHeader?: boolean
     ): string {
         const options = this.options,
-            currentSeries = point.series,
-            seriesOptions = currentSeries.options;
-        return (
-            (
-                options && options.className ?
-                    ' ' + options.className :
-                    ''
-            ) +
-                ' highcharts-label ' +
-                    (
-                        isSplit ?
-                            `${
-                                (
-                                    isHeader ?
-                                        'highcharts-tooltip-header ' :
-                                        ''
-                                ) +
-                                'highcharts-tooltip-box'
-                            }` : 'highcharts-tooltip'
-                    ) +
-                    (
-                        ' highcharts-color-' +
-                            (
-                                isHeader ?
-                                    'none' :
-                                    pick(
-                                        point.colorIndex,
-                                        currentSeries.colorIndex
-                                    )
-                            )
-                    ) +
-                    `${
-                        (
-                            seriesOptions &&
-                            seriesOptions.className
-                        ) ?
-                            ' ' + seriesOptions.className :
-                            ''
-                    }`
-        );
+            series = point.series,
+            seriesOptions = series.options;
+
+        return [
+            options.className,
+            'highcharts-label',
+            isHeader && 'highcharts-tooltip-header',
+            isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
+            !isHeader && 'highcharts-tooltip-' + pick(
+                point.colorIndex, series.colorIndex
+            ),
+            (seriesOptions && seriesOptions.className)
+        ].filter(isString).join(' ');
     }
 
 
@@ -1380,9 +1353,6 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
-            const colorClass = 'highcharts-color-' + pick(
-                point.colorIndex, series.colorIndex, 'none'
-            );
 
             if (!tt) {
 
@@ -1406,7 +1376,7 @@ class Tooltip {
                         options.useHTML
                     )
                     .addClass(
-                        Tooltip.prototype.getClassName(point, true, isHeader)
+                        tooltip.getClassName(point, true, isHeader)
                     )
                     .attr(attribs)
                     .add(tooltipLabel);
