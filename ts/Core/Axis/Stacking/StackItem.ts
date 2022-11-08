@@ -278,11 +278,6 @@ class StackItem {
 
             // Align the label to the box
             label.align(this.alignOptions, null as any, stackBox);
-            // Take into account the scrollable plot area #12133
-            if (chart.scrollablePlotBox) {
-                label.alignAttr.y += chart.plotBox.height -
-                    chart.scrollablePlotBox.height;
-            }
 
             // Check if label is inside the plotArea #12294
             if (chart.isInsidePlot(
@@ -347,14 +342,15 @@ class StackItem {
             axisPos = axis.height + (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
             neg = (stackItem.isNegative && !reversed) ||
-                (!stackItem.isNegative && reversed); // #4056
+                (!stackItem.isNegative && reversed), // #4056
+            height = chart.plotBox.height || axis.height; // #12133
 
         return { // this is the box for the complete stack
             x: inverted ?
                 (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
                 x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
-                axis.height - x - xWidth :
+                height - x - xWidth :
                 (neg ?
                     (axisPos - y - h) :
                     axisPos - y
