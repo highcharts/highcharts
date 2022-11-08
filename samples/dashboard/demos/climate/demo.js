@@ -1,5 +1,31 @@
+function ajaxAll(requests, callback) {
+    let callbackCountDown = requests.length;
+
+    for (const request of requests) {
+        Highcharts.ajax({
+            data: request.data,
+            dataType: request.dataType,
+            headers: request.headers,
+            type: request.type,
+            url: request.url,
+            success: (result) => {
+                request.success = result;
+                if (--callbackCountDown === 0) {
+                    callback(undefined, requests);
+                }
+            },
+            error: (error) => {
+                request.error = error;
+                if (--callbackCountDown === 0) {
+                    callback(error, requests);
+                }
+            }
+        });
+    }
+}
+
 function createDashboard(worldMapJSON) {
-    const dashboard = new Dashboard.Dashboard('container', {
+    var dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
@@ -165,8 +191,35 @@ function createDashboard(worldMapJSON) {
     });
     console.log(dashboard);
 }
-Highcharts.ajax({
-    error: () => createDashboard({}),
-    success: createDashboard,
-    url: 'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
-});
+
+ajaxAll(
+    [{
+        dataType: 'json',
+        url: 'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
+    }, {
+        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/climate-2010.csv'
+    }],
+    (error, requests) => {
+        if (error) {
+            window.alert(error.toString());
+        }
+
+        const climateSourceStore = new Dashboard.CSVStore(
+            undefined,
+            { csv: requests[1].success }
+        );
+        climateSourceStore.load();
+
+        const googlePool = {};
+
+        for (const row of climateSourceStore.table.getRowObjects()) {
+            googlePool[row.Time] = new Dashboard.GoogleSheetsStore({
+                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA',
+                googleSpreadsheetKey: row.Spreadsheet
+            });
+            googlePool[row.Time].load();
+        }
+
+        console.log(googlePool);
+    }
+);
