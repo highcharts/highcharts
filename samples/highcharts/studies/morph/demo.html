@@ -1,11 +1,23 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 
-<button id="circle">Circle</button>
-<button id="column">Column</button>
-<button id="bar">Bar</button>
-<button id="arc">Arc</button>
-<button id="marker">Marker</button>
+
+<div id="chart-container"></div>
+
+<div id="button-group-types" class="btn-group">
+    <button class="btn btn-outline-secondary" data-type="column">Column</button>
+    <button class="btn btn-outline-secondary" data-type="pie">Pie</button>
+    <button class="btn btn-outline-secondary" data-type="scatter">Scatter</button>
+</div>
 
 <hr>
-<div id="chart-container"></div>
+<div id="container"></div>
+
+<div class="btn-group">
+    <button id="circle" class="btn btn-outline-secondary">Circle</button>
+    <button id="column" class="btn btn-outline-secondary">Column</button>
+    <button id="bar" class="btn btn-outline-secondary">Bar</button>
+    <button id="arc" class="btn btn-outline-secondary">Arc</button>
+    <button id="marker" class="btn btn-outline-secondary">Marker</button>
+</div>
+

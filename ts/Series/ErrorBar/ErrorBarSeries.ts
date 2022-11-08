@@ -29,6 +29,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     merge,
     extend
 } = U;
@@ -106,6 +107,12 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 
 }
+
+addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
+    this.points.forEach((point): void => {
+        point.plotLow = point.plotY;
+    });
+}, { order: 0 });
 
 
 /* *

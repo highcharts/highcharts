@@ -794,7 +794,7 @@ QUnit.test('Pointer.getHoverData', function (assert) {
 
     // Allow scatter series in shared tooltip
     scatterSeries.remove();
-    Highcharts.seriesTypes.scatter.prototype.noSharedTooltip = false;
+    Highcharts.Series.types.scatter.prototype.noSharedTooltip = false;
     scatterSeries = chart.addSeries({
         type: 'scatter',
         data: [5, 2, 8, 1, 5]
@@ -842,7 +842,7 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     );
 
     // Reset, avoid breaking tests downstream
-    Highcharts.seriesTypes.scatter.prototype.noSharedTooltip = true;
+    Highcharts.Series.types.scatter.prototype.noSharedTooltip = true;
 
     // Combination chart
     series = chart.addSeries({

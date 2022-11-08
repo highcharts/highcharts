@@ -1,5 +1,5 @@
 QUnit.test('directTouch', function (assert) {
-    var bubbleSeries = Highcharts.seriesTypes.bubble;
+    var bubbleSeries = Highcharts.Series.types.bubble;
     assert.strictEqual(
         bubbleSeries.prototype.directTouch,
         true,

@@ -121,6 +121,9 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      */
     lineWidth: 1,
 
+    /**
+     * @type {number|null}
+     */
     threshold: null,
 
     tooltip: {
@@ -660,19 +663,22 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
                 }
             }
         });
-
-        // Postprocess plotHigh
-        if (this.chart.polar) {
-            this.points.forEach((point): void => {
-                this.highToXY(point);
-                point.tooltipPos = [
-                    ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
-                    ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
-                ];
-            });
-        }
     }
 }, { order: 0 });
+
+addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
+    // Postprocess after the PolarComposition's afterTranslate
+    if (this.chart.polar) {
+        this.points.forEach((point): void => {
+            this.highToXY(point);
+            point.plotLow = point.plotY;
+            point.tooltipPos = [
+                ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
+                ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
+            ];
+        });
+    }
+}, { order: 3 });
 
 /* *
  *

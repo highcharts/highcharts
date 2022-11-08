@@ -32,7 +32,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';

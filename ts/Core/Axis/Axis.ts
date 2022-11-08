@@ -50,7 +50,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
@@ -2962,12 +2962,11 @@ class Axis {
 
         let newTickInterval = tickInterval,
             rotation: (number|undefined),
-            step: number,
             bestScore = Number.MAX_VALUE,
             autoRotation: (Array<number>|undefined);
 
         if (horiz) {
-            if (!labelOptions.staggerLines && !labelOptions.step) {
+            if (!labelOptions.staggerLines) {
                 if (isNumber(rotationOption)) {
                     autoRotation = [rotationOption];
                 } else if (slotSize < labelOptions.autoRotationLimit) {
@@ -2976,14 +2975,14 @@ class Axis {
             }
 
             if (autoRotation) {
+                let step,
+                    score;
 
-                // Loop over the given autoRotation options, and determine
-                // which gives the best score. The best score is that with
-                // the lowest number of steps and a rotation closest
-                // to horizontal.
-                autoRotation.forEach(function (rot: number): void {
-                    let score;
 
+                // Loop over the given autoRotation options, and determine which
+                // gives the best score. The best score is that with the lowest
+                // number of steps and a rotation closest to horizontal.
+                for (const rot of autoRotation) {
                     if (
                         rot === rotationOption ||
                         (rot && rot >= -90 && rot <= 90)
@@ -3001,10 +3000,10 @@ class Axis {
                             newTickInterval = step;
                         }
                     }
-                });
+                }
             }
 
-        } else if (!labelOptions.step) { // #4411
+        } else { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
@@ -3014,7 +3013,7 @@ class Axis {
             isNumber(rotationOption) ? rotationOption : 0
         );
 
-        return newTickInterval;
+        return labelOptions.step ? tickInterval : newTickInterval;
     }
 
     /**

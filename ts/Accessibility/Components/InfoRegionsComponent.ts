@@ -260,14 +260,16 @@ class InfoRegionsComponent extends AccessibilityComponent {
         });
 
         this.addEvent(chart, 'afterViewData', function (
-            tableDiv: HTMLDOMElement
+            e: { element: HTMLDOMElement, wasHidden: boolean }
         ): void {
-            component.dataTableDiv = tableDiv;
-
-            // Use small delay to give browsers & AT time to register new table
-            setTimeout(function (): void {
-                component.focusDataTable();
-            }, 300);
+            if (e.wasHidden) {
+                component.dataTableDiv = e.element;
+                // Use a small delay to give browsers & AT time to
+                // register the new table.
+                setTimeout(function (): void {
+                    component.focusDataTable();
+                }, 300);
+            }
         });
 
         this.announcer = new Announcer(chart, 'assertive');

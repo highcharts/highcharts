@@ -16,21 +16,15 @@
  *
  * */
 
-import type Chart from '../Chart/Chart';
 import type Series from './Series.js';
-import type SeriesOptions from './SeriesOptions';
-import type {
-    SeriesTypeOptions,
-    SeriesTypeRegistry
-} from './SeriesType';
+import type { SeriesTypeRegistry } from './SeriesType';
 
 import H from '../Globals.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
-    error,
     extendClass,
     merge
 } = U;

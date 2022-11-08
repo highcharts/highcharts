@@ -44,7 +44,7 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
         '#15922: useHTML dataLabel should be visible'
     );
     assert.strictEqual(
-        point.graphic.stroke,
+        point.graphic.attr('stroke'),
         'red',
         '#15922: Point borderColor should work'
     );

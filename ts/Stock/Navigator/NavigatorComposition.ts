@@ -22,11 +22,11 @@ import type Navigator from './Navigator';
 import type Scrollbar from '../Scrollbar/Scrollbar';
 import type Series from '../../Core/Series/Series';
 
-import DO from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     defaultOptions,
     setOptions
-} = DO;
+} = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';

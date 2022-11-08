@@ -34,17 +34,16 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
-import F from '../Core/FormatUtilities.js';
-const { format } = F;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import Point from '../Core/Series/Point.js';
@@ -108,7 +107,7 @@ declare module '../Core/Options'{
     }
 }
 
-declare module '../Core/LangOptions' {
+declare module '../Core/Options' {
     interface LangOptions {
         drillUpText?: string;
     }
@@ -521,12 +520,12 @@ defaultOptions.drilldown = {
      *   object. See
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
-     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
+     * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @since   3.0.8
      * @product highcharts highmaps
      */
     animation: {
-        /** @internal */
+        /** @ignore-option */
         duration: 500
     },
 

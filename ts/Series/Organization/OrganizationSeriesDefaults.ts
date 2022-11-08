@@ -86,7 +86,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
 
     /**
      * Link Styling options
-     * @since next
+     * @since 10.3.0
      * @product highcharts
      */
     link: {
@@ -97,7 +97,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
          *
          * @default 0.5
          * @type {number}
-         * @since next
+         * @since 10.3.0
          * @product highcharts
          * @apioption series.organization.link.offset
          */

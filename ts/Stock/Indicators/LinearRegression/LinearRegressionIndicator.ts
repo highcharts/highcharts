@@ -73,8 +73,9 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregression
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
-        SMAIndicator.defaultOptions, {
+    public static defaultOptions: LinearRegressionOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             params: {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
@@ -128,7 +129,8 @@ class LinearRegressionIndicator extends SMAIndicator {
             tooltip: {
                 valueDecimals: 4
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionOptions
+    );
 
     /* *
      *
