@@ -98,16 +98,38 @@ class FlowMapSeries extends MapLineSeries {
         },
 
         /**
-         * Minimum flow map links weight. It will automatically
-         * size between the minWeight and maxWeight.
+         * The opacity of the color fill for all links.
+         *
+         * @type      {number}
+         * @default   {0.5}
+         * @product   highmaps
+         * @apioption series.flowmap.fillOpacity
+         */
+        fillOpacity: 0.5,
+
+        /**
+         *
+         * @extends series.mappoint.keys
+         * @default ['from', 'to', 'weight']
+         * @private
+         */
+        keys: ['from', 'to', 'weight'],
+
+        /**
+         * The arrow type and size properties.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          * @type    {number}
-         * @default 5
+         * @default {enabled: true, height: '40%', width: '40%'
+        }
          * @product highcharts
-         * @apioption series.flowmap.minWeight
+         * @apioption series.flowmap.markerEnd
          */
-        minWeight: 5,
+        markerEnd: {
+            enabled: true,
+            height: '40%',
+            width: '40%'
+        },
 
         /**
          * Maximum flow map links weight. It will automatically
@@ -122,12 +144,16 @@ class FlowMapSeries extends MapLineSeries {
         maxWeight: 25,
 
         /**
+         * Minimum flow map links weight. It will automatically
+         * size between the minWeight and maxWeight.
          *
-         * @extends series.mappoint.keys
-         * @default ['from', 'to', 'weight']
-         * @private
+         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
+         * @type    {number}
+         * @default 5
+         * @product highcharts
+         * @apioption series.flowmap.minWeight
          */
-        keys: ['from', 'to', 'weight'],
+        minWeight: 5,
 
         tooltip: {
             /**
@@ -158,33 +184,7 @@ class FlowMapSeries extends MapLineSeries {
          * @product     highcharts
          * @apioption   series.flowmap.weight
          */
-        weight: void 0,
-
-        /**
-         * The arrow type and size properties.
-         *
-         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type    {number}
-         * @default {enabled: true, height: '40%', width: '40%'
-        }
-         * @product highcharts
-         * @apioption series.flowmap.markerEnd
-         */
-        markerEnd: {
-            enabled: true,
-            height: '40%',
-            width: '40%'
-        },
-
-        /**
-         * The opacity of the color fill for all links.
-         *
-         * @type      {number}
-         * @default   {0.5}
-         * @product   highmaps
-         * @apioption series.flowmap.fillOpacity
-         */
-        fillOpacity: 0.5
+        weight: void 0
 
     } as FlowMapSeriesOptions);
 
@@ -722,6 +722,23 @@ export default FlowMapSeries;
  */
 
 /**
+ * The fill color of an individual link
+ *
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.data.fillColor
+ */
+
+/**
+ * The opacity of the link color fill.
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @apioption series.flowmap.data.fillOpacity
+ */
+
+/**
  * If set to `true`, the line will grow towards its end.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
@@ -769,17 +786,6 @@ export default FlowMapSeries;
  */
 
 /**
- * The weight of the link.
- *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
- *         Example ship route
- *
- * @type      {number}
- * @product   highmaps
- * @apioption series.flowmap.data.weight
- */
-
-/**
  * The opacity of an individual link.
  *
  * @type      {number}
@@ -788,20 +794,14 @@ export default FlowMapSeries;
  */
 
 /**
- * The opacity of the link color fill.
+ * The weight of the link.
+ *
+ * @sample {highmaps} maps/demo/flowmap-ship-route/
+ *         Example ship route
  *
  * @type      {number}
  * @product   highmaps
- * @apioption series.flowmap.data.fillOpacity
- */
-
-/**
- * The opacity of the all the links.
- *
- *
- * @type      {number}
- * @product   highmaps
- * @apioption series.flowmap.opacity
+ * @apioption series.flowmap.data.weight
  */
 
 /**
@@ -814,12 +814,12 @@ export default FlowMapSeries;
  */
 
 /**
- * The fill color of an individual link
+ * The opacity of the all the links.
  *
  *
- * @type      {string}
+ * @type      {number}
  * @product   highmaps
- * @apioption series.flowmap.data.fillColor
+ * @apioption series.flowmap.opacity
  */
 
 /**
