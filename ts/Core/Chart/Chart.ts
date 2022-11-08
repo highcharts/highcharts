@@ -349,6 +349,7 @@ class Chart {
     public pointCount: number = void 0 as any;
     public pointer: Pointer = void 0 as any;
     public reflowTimeout?: number;
+    public resizeObserver?: ResizeObserver;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
     public series: Array<Series> = void 0 as any;
@@ -362,7 +363,6 @@ class Chart {
     public time: Time = void 0 as any;
     public title?: SVGElement;
     public titleOffset: Array<number> = void 0 as any;
-    public unbindReflow?: Function;
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
@@ -1815,35 +1815,18 @@ class Chart {
     public setReflow(reflow?: boolean): void {
         const chart = this;
 
-        if (reflow !== false && !this.unbindReflow) {
-            this.unbindReflow = addEvent(win, 'resize', function (
-                e: Event
-            ): void {
-                // a removed event listener still runs in Edge and IE if the
-                // listener was removed while the event runs, so check if the
-                // chart is not destroyed (#11609)
-                if (chart.options) {
-                    chart.reflow(e);
+        if (chart && reflow !== false && typeof ResizeObserver === 'function') {
+            chart.resizeObserver = new ResizeObserver((): void => {
+                if (chart.options && chart.hasLoaded) {
+                    chart.reflow();
                 }
             });
-            addEvent(this, 'destroy', this.unbindReflow);
 
-        } else if (reflow === false && this.unbindReflow) {
-
-            // Unbind and unset
-            this.unbindReflow = this.unbindReflow();
-        }
-
-        // The following will add listeners to re-fit the chart before and after
-        // printing (#2284). However it only works in WebKit. Should have worked
-        // in Firefox, but not supported in IE.
-        /*
-        if (win.matchMedia) {
-            win.matchMedia('print').addListener(function reflow() {
-                chart.reflow();
+            setTimeout((): void => {
+                chart.resizeObserver &&
+                    chart.resizeObserver.observe(chart.renderTo);
             });
         }
-        //*/
     }
 
     /**
