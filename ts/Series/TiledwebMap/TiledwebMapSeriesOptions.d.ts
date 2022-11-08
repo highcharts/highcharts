@@ -22,7 +22,7 @@ import type MapSeriesOptions from '../Map/MapSeriesOptions';
  *
  * */
 
-interface TiledwebMapSeriesOptions extends MapSeriesOptions {
+interface TiledWebMapSeriesOptions extends MapSeriesOptions {
 
 }
 
@@ -32,4 +32,4 @@ interface TiledwebMapSeriesOptions extends MapSeriesOptions {
  *
  * */
 
-export default TiledwebMapSeriesOptions;
+export default TiledWebMapSeriesOptions;

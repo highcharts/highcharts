@@ -15,7 +15,7 @@
  *
  * */
 
-import type TiledwebMapSeriesOptions from './TiledwebMapSeriesOptions';
+import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -52,7 +52,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-class TiledwebMapSeries extends MapSeries {
+class TiledWebMapSeries extends MapSeries {
 
     /* *
      *
@@ -62,7 +62,7 @@ class TiledwebMapSeries extends MapSeries {
 
     // public static compose = MapBubbleSeries.compose;
 
-    public static defaultOptions: TiledwebMapSeriesOptions = MapSeries.defaultOptions;
+    public static defaultOptions: TiledWebMapSeriesOptions = MapSeries.defaultOptions;
 
     /* *
      *
@@ -70,7 +70,7 @@ class TiledwebMapSeries extends MapSeries {
      *
      * */
 
-    public options: TiledwebMapSeriesOptions = void 0 as any;
+    public options: TiledWebMapSeriesOptions = void 0 as any;
     tiles: any;
 
 
@@ -187,7 +187,7 @@ class TiledwebMapSeries extends MapSeries {
  *
  * */
 
-interface TiledwebMapSeries {
+interface TiledWebMapSeries {
     // type: string;
 }
 
@@ -198,11 +198,11 @@ interface TiledwebMapSeries {
  * */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        tiledwebmap: typeof TiledwebMapSeries;
+        tiledwebmap: typeof TiledWebMapSeries;
     }
 }
 
-SeriesRegistry.registerSeriesType('tiledwebmap', TiledwebMapSeries);
+SeriesRegistry.registerSeriesType('tiledwebmap', TiledWebMapSeries);
 
 /* *
  *
@@ -210,7 +210,7 @@ SeriesRegistry.registerSeriesType('tiledwebmap', TiledwebMapSeries);
  *
  * */
 
-export default TiledwebMapSeries;
+export default TiledWebMapSeries;
 
 /* *
  *

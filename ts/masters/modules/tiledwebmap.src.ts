@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/TiledwebMap/TiledwebMapSeries.js';
+import '../../Series/TiledWebMap/TiledWebMapSeries.js';
