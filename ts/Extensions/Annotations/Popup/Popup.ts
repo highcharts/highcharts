@@ -406,6 +406,13 @@ class Popup {
      */
     public closePopup(): void {
         this.container.style.display = 'none';
+
+        if (this.formType === 'indicators') {
+            const indicatorsButton =
+                document.querySelectorAll('.highcharts-indicators')[0];
+
+            indicatorsButton.classList.remove('highcharts-active');
+        }
     }
 
     /**
