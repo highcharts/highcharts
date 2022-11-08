@@ -67,6 +67,7 @@
             }]
         }, {
             type: 'flowmap',
+            linkedTo: ':previous',
             keys: [
                 'from', 'to', 'curveFactor', 'weight', 'growTowards',
                 'markerEnd'

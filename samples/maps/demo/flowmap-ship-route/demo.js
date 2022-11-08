@@ -83,6 +83,7 @@
             }]
         }, {
             type: 'flowmap',
+            linkedTo: ':previous',
             name: 'Ship Routes',
             data: [{
                 from: 'Houston',

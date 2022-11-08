@@ -61,6 +61,7 @@
             }]
         }, {
             type: 'flowmap',
+            linkedTo: ':previous',
             markerEnd: {
                 symbol: 'circle',
                 r: 8

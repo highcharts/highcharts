@@ -814,6 +814,19 @@ export default FlowMapSeries;
  */
 
 /**
+ * The [id](#series.id) of another series to link to. Additionally,
+ * the value can be ":previous" to link to the previous series. When
+ * two series are linked, only the first one appears in the legend.
+ * Toggling the visibility of this also toggles the linked series,
+ * which is necessary for operations such as zoom or updates on the
+ * flowmap series.
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.linkedTo
+ */
+
+/**
  * The opacity of the all the links.
  *
  *
