@@ -2172,11 +2172,9 @@ class SVGElement implements SVGElementLike {
         element: SVGDOMElement
     ): void {
         (this as AnyRecord)[key] = value;
-        // Only apply the stroke attribute if the stroke width is not 0
-        if (
-            this.stroke &&
-            (this['stroke-width'] || this['stroke-width'] !== 0)
-        ) {
+        // Only apply the stroke attribute if the stroke width is defined and
+        // larger than 0
+        if (this.stroke && this['stroke-width']) {
             // Use prototype as instance may be overridden
             SVGElement.prototype.fillSetter.call(
                 this,
@@ -2184,10 +2182,8 @@ class SVGElement implements SVGElementLike {
                 'stroke',
                 element
             );
-            // Do not set property if undefined ,#17734
-            if (defined(this['stroke-width'])) {
-                element.setAttribute('stroke-width', this['stroke-width']);
-            }
+
+            element.setAttribute('stroke-width', this['stroke-width']);
             this.hasStroke = true;
         } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
             element.removeAttribute('stroke');
