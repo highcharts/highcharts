@@ -14,6 +14,7 @@
  *
  * */
 
+import type ColumnPointType from '../Column/ColumnPoint';
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -22,15 +23,12 @@ import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PictorialUtilities from './PictorialUtilities.js';
 
+const ColumnPoint: typeof ColumnPointType =
+    SeriesRegistry.seriesTypes.column.prototype.pointClass;
+
 const {
     defined
 } = U;
-
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 
 const {
     rescalePatternFill,
@@ -43,7 +41,7 @@ const {
  *
  * */
 
-class PictorialPoint extends ColumnSeries.prototype.pointClass {
+class PictorialPoint extends ColumnPoint {
 
     /* *
      *
