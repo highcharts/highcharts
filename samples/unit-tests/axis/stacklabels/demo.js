@@ -503,7 +503,7 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
     );
 
     assert.strictEqual(
-        stackLabel.label.stroke,
+        stackLabel.label.attr('stroke'),
         stackLabel.options.borderColor,
         'This stack-label stroke atribute should be same as ' +
             'set in options #13330'

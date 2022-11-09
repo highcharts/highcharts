@@ -86,7 +86,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     var connector = series.points[0].connector,
         connectorWidth = connector.strokeWidth(),
-        connectorColor = connector.stroke;
+        connectorColor = connector.attr('stroke');
 
     assert.strictEqual(
         connectorWidth,

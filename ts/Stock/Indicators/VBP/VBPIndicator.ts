@@ -41,8 +41,12 @@ const {
     noop
 } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
-const columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
+const {
+    column: {
+        prototype: columnProto
+    },
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
@@ -354,11 +358,11 @@ class VBPIndicator extends SMAIndicator {
 
         if ((indicator.options.volumeDivision as any).enabled) {
             indicator.posNegVolume(true, true);
-            columnPrototype.drawPoints.apply(indicator, arguments);
+            columnProto.drawPoints.apply(indicator, arguments);
             indicator.posNegVolume(false, false);
         }
 
-        columnPrototype.drawPoints.apply(indicator, arguments);
+        columnProto.drawPoints.apply(indicator, arguments);
     }
 
     // Function responsible for dividing volume into positive and negative
@@ -451,7 +455,7 @@ class VBPIndicator extends SMAIndicator {
             barX: number,
             barY: number;
 
-        columnPrototype.translate.apply(indicator);
+        columnProto.translate.apply(indicator);
         indicatorPoints = indicator.points;
 
         // Do translate operation when points exist
@@ -854,8 +858,8 @@ extend(VBPIndicator.prototype, {
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
-    getColumnMetrics: columnPrototype.getColumnMetrics,
-    crispCol: columnPrototype.crispCol
+    getColumnMetrics: columnProto.getColumnMetrics,
+    crispCol: columnProto.crispCol
 });
 
 /* *

@@ -24,10 +24,11 @@ import type {
 } from './LinearRegressionOptions';
 import type LinearRegressionPoint from './LinearRegressionPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type SMAIndicatorType from '../SMA/SMAIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAIndicator: typeof SMAIndicatorType = SeriesRegistry.seriesTypes.sma;
+const {
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -72,8 +73,9 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregression
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
-        SMAIndicator.defaultOptions, {
+    public static defaultOptions: LinearRegressionOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             params: {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
@@ -127,7 +129,8 @@ class LinearRegressionIndicator extends SMAIndicator {
             tooltip: {
                 valueDecimals: 4
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionOptions
+    );
 
     /* *
      *

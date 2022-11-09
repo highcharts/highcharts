@@ -207,6 +207,9 @@ class HeatmapSeries extends ScatterSeries {
             inside: true,
             verticalAlign: 'middle',
             crop: false,
+            /**
+             * @ignore-option
+             */
             overflow: false as any,
             padding: 0 // #3837
         },

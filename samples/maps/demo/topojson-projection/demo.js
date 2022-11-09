@@ -1092,7 +1092,8 @@ Highcharts.getJSON(
                 nullColor: 'rgba(0, 0, 0, 0.05)',
                 accessibility: {
                     enabled: false
-                }
+                },
+                enableMouseTracking: false
             }, {
                 data,
                 joinBy: 'name',

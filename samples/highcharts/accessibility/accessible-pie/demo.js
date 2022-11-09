@@ -31,7 +31,11 @@ var chart = Highcharts.chart('container', {
 
     tooltip: {
         valueSuffix: '%',
-        borderColor: '#8ae'
+        borderColor: '#8ae',
+        shape: 'rect',
+        backgroundColor: 'rgba(255, 255, 255, 0.94)',
+        followPointer: false,
+        stickOnContact: true
     },
 
     plotOptions: {

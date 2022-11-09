@@ -21,6 +21,7 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
@@ -29,6 +30,7 @@ import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
+        map: MapSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -40,7 +42,7 @@ const {
     merge
 } = U;
 
-import '../../Core/DefaultOptions.js';
+import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *
@@ -106,6 +108,8 @@ class MapPointSeries extends ScatterSeries {
 
     public points: Array<MapPointPoint> = void 0 as any;
 
+    public clearBounds = MapSeries.prototype.clearBounds;
+
     /* *
      *
      *  Functions
@@ -167,12 +171,25 @@ class MapPointSeries extends ScatterSeries {
 
         // Create map based translation
         if (mapView) {
-            const { hasCoordinates } = mapView.projection;
+            const mainSvgTransform = mapView.getSVGTransform(),
+                { hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
+                const svgTransform = (
+                    isNumber(p.insetIndex) &&
+                    mapView.insets[p.insetIndex].getSVGTransform()
+                ) || mainSvgTransform;
 
-                const xy = this.projectPoint(p.options);
+                const xy = (
+                    this.projectPoint(p.options) ||
+                    (
+                        p.properties &&
+                        this.projectPoint(p.properties)
+                    )
+                );
+
+                let didBounds;
                 if (xy) {
                     x = xy.x;
                     y = xy.y;
@@ -181,16 +198,28 @@ class MapPointSeries extends ScatterSeries {
                 } else if (p.bounds) {
                     x = p.bounds.midX;
                     y = p.bounds.midY;
+                    if (svgTransform && isNumber(x) && isNumber(y)) {
+                        p.plotX = x * svgTransform.scaleX +
+                            svgTransform.translateX;
+                        p.plotY = y * svgTransform.scaleY +
+                            svgTransform.translateY;
+                        didBounds = true;
+                    }
                 }
 
                 if (isNumber(x) && isNumber(y)) {
 
                     // Establish plotX and plotY
-                    const plotCoords = mapView.projectedUnitsToPixels({ x, y });
-                    p.plotX = plotCoords.x;
-                    p.plotY = hasCoordinates ?
-                        plotCoords.y :
-                        this.chart.plotHeight - plotCoords.y;
+                    if (!didBounds) {
+                        const plotCoords = mapView.projectedUnitsToPixels(
+                            { x, y }
+                        );
+
+                        p.plotX = plotCoords.x;
+                        p.plotY = hasCoordinates ?
+                            plotCoords.y :
+                            this.chart.plotHeight - plotCoords.y;
+                    }
 
                 } else {
                     p.y = p.plotX = p.plotY = void 0;

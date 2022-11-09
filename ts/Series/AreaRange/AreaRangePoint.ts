@@ -90,25 +90,21 @@ class AreaRangePoint extends AreaPoint {
      */
     public low: number = void 0 as any;
 
-    public lowerGraphic?: SVGElement;
-
     public options: AreaRangePointOptions = void 0 as any;
 
     public origProps?: Partial<AreaRangePoint>;
 
-    public plotHigh: number = void 0 as any;
+    public plotHigh?: number;
 
-    public plotLow: number = void 0 as any;
+    public plotLow?: number;
 
-    public plotHighX: number = void 0 as any;
+    public plotHighX?: number;
 
-    public plotLowX: number = void 0 as any;
+    public plotLowX?: number;
 
     public plotX: number = void 0 as any;
 
     public series: AreaRangeSeries = void 0 as any;
-
-    public upperGraphic?: SVGElement;
 
     /* *
      *
@@ -141,10 +137,10 @@ class AreaRangePoint extends AreaPoint {
         }
 
         // Change state also for the top marker
-        this.graphic = this.upperGraphic;
+        this.graphic = this.graphics && this.graphics[1];
         this.plotY = this.plotHigh;
 
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotHighX)) {
             this.plotX = this.plotHighX;
         }
 
@@ -155,9 +151,9 @@ class AreaRangePoint extends AreaPoint {
 
         // Now restore defaults
         this.plotY = this.plotLow;
-        this.graphic = this.lowerGraphic;
+        this.graphic = this.graphics && this.graphics[0];
 
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotLowX)) {
             this.plotX = this.plotLowX;
         }
 
@@ -179,22 +175,22 @@ class AreaRangePoint extends AreaPoint {
 
         // Bottom halo
         this.plotY = this.plotLow;
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotLowX)) {
             this.plotX = this.plotLowX;
         }
 
         if (this.isInside) {
-            path = areaProto.haloPath.apply(this, arguments as any);
+            path = areaProto.haloPath.apply(this, arguments);
         }
 
         // Top halo
         this.plotY = this.plotHigh;
-        if (isPolar) {
+        if (isPolar && isNumber(this.plotHighX)) {
             this.plotX = this.plotHighX;
         }
         if (this.isTopInside) {
             path = path.concat(
-                areaProto.haloPath.apply(this, arguments as any)
+                areaProto.haloPath.apply(this, arguments)
             );
         }
 

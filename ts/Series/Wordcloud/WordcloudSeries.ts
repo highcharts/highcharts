@@ -129,6 +129,9 @@ class WordcloudSeries extends ColumnSeries {
             duration: 500
         },
         borderWidth: 0,
+        /**
+         * @ignore-option
+         */
         clip: false, // Something goes wrong with clip. // @todo fix this
         colorByPoint: true,
         cropThreshold: Infinity,
@@ -492,7 +495,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Series.PlotBoxObject {
+    public getPlotBox(): Series.PlotBoxTransform {
         const series = this,
             chart = series.chart,
             inverted = chart.inverted,

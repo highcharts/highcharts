@@ -1,5 +1,5 @@
 QUnit.module('Color axis for series types', function () {
-    Object.keys(Highcharts.seriesTypes)
+    Object.keys(Highcharts.Series.types)
         .sort()
         .forEach(function (type) {
             if (
@@ -16,6 +16,7 @@ QUnit.module('Color axis for series types', function () {
                     'sunburst',
                     'sankey',
                     'dependencywheel',
+                    'treegraph',
                     'arcdiagram',
                     'venn',
                     'wordcloud'

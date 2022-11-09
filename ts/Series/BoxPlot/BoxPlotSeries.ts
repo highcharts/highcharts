@@ -75,11 +75,14 @@ class BoxPlotSeries extends ColumnSeries {
 
     public static defaultOptions: BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
-        threshold: null as any,
+        /**
+         * @type {number|null}
+         */
+        threshold: null,
 
         tooltip: {
             pointFormat:
-                '<span style="color:{point.color}">\u25CF</span> <b> ' +
+                '<span style="color:{point.color}">\u25CF</span> <b>' +
                 '{series.name}</b><br/>' +
                 'Maximum: {point.high}<br/>' +
                 'Upper quartile: {point.q3}<br/>' +

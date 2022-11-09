@@ -9,12 +9,10 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import '../Core/Math3D.js';
 import SVGRenderer3D from '../Core/Renderer/SVG/SVGRenderer3D.js';
 import Chart3D from '../Core/Chart/Chart3D.js';
 import ZAxis from '../Core/Axis/ZAxis.js';
-import Axis3D from '../Core/Axis/Axis3D.js';
-import '../Core/Axis/Tick3D.js';
+import Axis3DComposition from '../Core/Axis/Axis3DComposition.js';
 import '../Core/Series/Series3D.js';
 import Area3DSeries from '../Series/Area3D/Area3DSeries.js';
 import '../Series/Column3D/Column3DComposition.js';
@@ -25,5 +23,5 @@ const G: AnyRecord = Highcharts;
 SVGRenderer3D.compose(G.SVGRenderer);
 Chart3D.compose(G.Chart, G.Fx);
 ZAxis.compose(G.Chart);
-Axis3D.compose(G.Axis);
+Axis3DComposition.compose(G.Axis, G.Tick);
 Area3DSeries.compose(G.seriesTypes.area);

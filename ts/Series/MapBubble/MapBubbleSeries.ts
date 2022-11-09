@@ -246,6 +246,10 @@ class MapBubbleSeries extends BubbleSeries {
          * @default 500
          */
         animationLimit: 500,
+
+        /**
+         * @type {string|Array<string>}
+         */
         joinBy: 'hc-key',
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
@@ -263,6 +267,8 @@ class MapBubbleSeries extends BubbleSeries {
     public options: MapBubbleSeriesOptions = void 0 as any;
 
     public points: Array<MapBubblePoint> = void 0 as any;
+
+    public clearBounds = mapProto.clearBounds;
 
     public searchPoint(
         e: PointerEvent,

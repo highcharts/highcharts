@@ -66,6 +66,7 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
+    defined,
     isNumber,
     isObject,
     merge,
@@ -398,10 +399,6 @@ class MapSeries extends ScatterSeries {
                  * @apioption plotOptions.series.states.select.color
                  */
                 color: Palette.neutralColor20
-            },
-
-            inactive: {
-                opacity: 1
             }
         }
     } as MapSeriesOptions);
@@ -970,13 +967,19 @@ class MapSeries extends ScatterSeries {
             pointStrokeWidth = seriesStrokeWidth / mapView.getScale();
         }
 
-        (attr as any)['stroke-width'] = pick(
-            pointStrokeWidth,
-            // By default set the stroke-width on the group element and let all
-            // point graphics inherit. That way we don't have to iterate over
-            // all points to update the stroke-width on zooming.
-            'inherit'
-        );
+        // Invisible map points means that the data value is removed from the
+        // map, but not the map area shape itself. Instead it is rendered like a
+        // null point. To fully remove a map area, it should be removed from the
+        // mapData.
+        if (!point.visible) {
+            attr.fill = this.options.nullColor;
+        }
+
+        if (defined(pointStrokeWidth)) {
+            attr['stroke-width'] = pointStrokeWidth;
+        } else {
+            delete attr['stroke-width'];
+        }
 
         return attr;
     }

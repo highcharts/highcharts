@@ -31,7 +31,6 @@ import type {
 import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
@@ -46,7 +45,7 @@ const {
     doc,
     win
 } = H;
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     getOptions,
     setOptions
@@ -135,6 +134,7 @@ interface ExportDataSeries {
     chart: Chart;
     options: SeriesOptions;
     pointArrayMap?: Array<string>;
+    index: Number;
 }
 
 /* *
@@ -491,7 +491,8 @@ function chartGetDataRows(
                 chart: series.chart,
                 autoIncrement: series.autoIncrement,
                 options: series.options,
-                pointArrayMap: series.pointArrayMap
+                pointArrayMap: series.pointArrayMap,
+                index: series.index
             };
 
             // Export directly from options.data because we need the uncropped
@@ -522,6 +523,24 @@ function chartGetDataRows(
                 );
                 key = mockPoint.x as any;
 
+                if (defined(rows[key]) &&
+                    rows[key].seriesIndices.includes(mockSeries.index)
+                ) {
+                    // find keys, which belong to actual series
+                    const keysFromActualSeries =
+                        Object.keys(rows).filter((i: string): void =>
+                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                                key
+                        ),
+                        // find all properties, which start with actual key
+                        existingKeys = keysFromActualSeries
+                            .filter((propertyName: string): boolean =>
+                                propertyName.indexOf(String(key)) === 0
+                            );
+
+                    key = key.toString() + ',' + existingKeys.length;
+                }
+
                 const name = series.data[pIdx] && series.data[pIdx].name;
 
                 j = 0;
@@ -551,6 +570,13 @@ function chartGetDataRows(
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
+
+                if (!defined(rows[key].seriesIndices)) {
+                    rows[key].seriesIndices = [];
+                }
+                rows[key].seriesIndices = [
+                    ...rows[key].seriesIndices, mockSeries.index
+                ];
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
@@ -977,7 +1003,8 @@ function chartToggleDataTable(
     show = pick(show, !this.isDataTableVisible);
 
     // Create the div
-    if (show && !this.dataTableDiv) {
+    const createContainer = show && !this.dataTableDiv;
+    if (createContainer) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
         // Insert after the chart container
@@ -989,15 +1016,20 @@ function chartToggleDataTable(
 
     // Toggle the visibility
     if (this.dataTableDiv) {
+        const style = this.dataTableDiv.style,
+            oldDisplay = style.display;
 
-        this.dataTableDiv.style.display = show ? 'block' : 'none';
+        style.display = show ? 'block' : 'none';
 
         // Generate the data table
         if (show) {
             this.dataTableDiv.innerHTML = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
-            fireEvent(this, 'afterViewData', this.dataTableDiv);
+            fireEvent(this, 'afterViewData', {
+                element: this.dataTableDiv,
+                wasHidden: createContainer || oldDisplay !== style.display
+            });
         }
     }
 

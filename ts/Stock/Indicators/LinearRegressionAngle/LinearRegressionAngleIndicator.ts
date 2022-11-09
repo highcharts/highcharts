@@ -22,12 +22,11 @@ import type {
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
-import type LinearRegressionIndicatorType from
-    '../LinearRegression/LinearRegressionIndicator';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const LinearRegressionIndicator: typeof LinearRegressionIndicatorType =
-    SeriesRegistry.seriesTypes.linearRegression;
+const {
+    linearRegression: LinearRegressionIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -71,13 +70,15 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
-        LinearRegressionIndicator.defaultOptions, {
+    public static defaultOptions: LinearRegressionOptions = merge(
+        LinearRegressionIndicator.defaultOptions,
+        {
             tooltip: { // add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionOptions
+    );
 
     /* *
      *

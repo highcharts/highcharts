@@ -514,7 +514,7 @@ Meteogram.prototype.getChartOptions = function () {
                 },
                 style: {
                     fontSize: '8px',
-                    color: 'gray'
+                    color: '#666'
                 }
             },
             tooltip: {
