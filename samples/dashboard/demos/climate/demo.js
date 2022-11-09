@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 function ajaxAll(requests, callback) {
     let callbackCountDown = requests.length;
 
@@ -213,10 +215,13 @@ ajaxAll(
         const googlePool = {};
 
         for (const row of climateSourceStore.table.getRowObjects()) {
-            googlePool[row.Time] = new Dashboard.GoogleSheetsStore({
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA',
-                googleSpreadsheetKey: row.Spreadsheet
-            });
+            googlePool[row.Time] = new Dashboard.GoogleSheetsStore(
+                undefined,
+                {
+                    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA',
+                    googleSpreadsheetKey: row.Spreadsheet.match(/\w{44,}/gu)[0]
+                }
+            );
             googlePool[row.Time].load();
         }
 
