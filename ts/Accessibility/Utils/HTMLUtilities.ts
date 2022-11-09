@@ -38,7 +38,7 @@ const { css } = U;
  *
  * */
 
-const simulatedEventTarget = new EventTarget();
+const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
 
 
 /* *
