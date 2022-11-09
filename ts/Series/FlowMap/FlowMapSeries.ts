@@ -448,9 +448,9 @@ class FlowMapSeries extends MapLineSeries {
         }
 
         const pointOptions = point.options,
-            markerEndOptions = pick(
-                pointOptions.markerEnd,
-                this.options.markerEnd
+            markerEndOptions = merge(
+                this.options.markerEnd,
+                pointOptions.markerEnd
             ),
             curveFactor = pointOptions.curveFactor || 0,
             growTowards = pick(
@@ -811,6 +811,19 @@ export default FlowMapSeries;
  * @type      {string}
  * @product   highmaps
  * @apioption series.flowmap.fillColor
+ */
+
+/**
+ * The [id](#series.id) of another series to link to. Additionally,
+ * the value can be ":previous" to link to the previous series. When
+ * two series are linked, only the first one appears in the legend.
+ * Toggling the visibility of this also toggles the linked series,
+ * which is necessary for operations such as zoom or updates on the
+ * flowmap series.
+ *
+ * @type      {string}
+ * @product   highmaps
+ * @apioption series.flowmap.linkedTo
  */
 
 /**
