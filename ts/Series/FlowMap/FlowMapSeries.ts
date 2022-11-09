@@ -448,9 +448,9 @@ class FlowMapSeries extends MapLineSeries {
         }
 
         const pointOptions = point.options,
-            markerEndOptions = pick(
-                pointOptions.markerEnd,
-                this.options.markerEnd
+            markerEndOptions = merge(
+                this.options.markerEnd,
+                pointOptions.markerEnd
             ),
             curveFactor = pointOptions.curveFactor || 0,
             growTowards = pick(
