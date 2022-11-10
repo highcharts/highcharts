@@ -1357,7 +1357,7 @@ class Pointer {
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
-            transform: Series.PlotBoxObject = {} as any,
+            transform: Series.PlotBoxTransform = {} as any,
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1916,7 +1916,10 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#scaleGroups
      */
-    public scaleGroups(attribs?: Series.PlotBoxObject, clip?: boolean): void {
+    public scaleGroups(
+        attribs?: Series.PlotBoxTransform,
+        clip?: boolean
+    ): void {
 
         const chart = this.chart;
 

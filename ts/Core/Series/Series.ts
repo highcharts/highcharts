@@ -3202,60 +3202,6 @@ class Series {
     }
 
     /**
-     * Initialize and perform group inversion on series.group and
-     * series.markerGroup.
-     *
-     * @private
-     * @function Highcharts.Series#invertGroups
-     */
-    public invertGroups(inverted?: boolean): void {
-        const series = this,
-            chart = series.chart;
-
-        /**
-         * @private
-         */
-        function setInvert(): void {
-            ['group', 'markerGroup'].forEach(function (
-                groupName: string
-            ): void {
-                if ((series as any)[groupName]) {
-
-                    // VML/HTML needs explicit attributes for flipping
-                    if (chart.renderer.isVML) {
-                        (series as any)[groupName].attr({
-                            width: series.yAxis.len,
-                            height: series.xAxis.len
-                        });
-                    }
-
-                    (series as any)[groupName].width = series.yAxis.len;
-                    (series as any)[groupName].height = series.xAxis.len;
-                    // If inverted polar, don't invert series group
-                    (series as any)[groupName].invert(
-                        series.isRadialSeries ? false : inverted
-                    );
-                }
-            });
-        }
-
-        // Pie, go away (#1736)
-        if (!series.xAxis) {
-            return;
-        }
-
-        // A fixed size is needed for inversion to work
-        series.eventsToUnbind.push(addEvent(chart, 'resize', setInvert));
-
-        // Do it now
-        (setInvert as any)();
-
-        // On subsequent render and redraw, just do setInvert without
-        // setting up events again
-        series.invertGroups = setInvert;
-    }
-
-    /**
      * General abstraction for creating plot groups like series.group,
      * series.dataLabelsGroup and series.markerGroup. On subsequent calls,
      * the group will only be adjusted to the updated plot size.
@@ -3319,7 +3265,7 @@ class Series {
 
         // Place it on first and subsequent (redraw) calls
         group.attr(attrs)[isNew ? 'attr' : 'animate'](
-            this.getPlotBox()
+            this.getPlotBox(name)
         );
 
         return group;
@@ -3330,20 +3276,36 @@ class Series {
      *
      * @function Highcharts.Series#getPlotBox
      */
-    public getPlotBox(): Series.PlotBoxObject {
-        const chart = this.chart;
-        let xAxis = this.xAxis,
-            yAxis = this.yAxis;
+    public getPlotBox(name?: string): Series.PlotBoxTransform {
+        let horAxis = this.xAxis,
+            vertAxis = this.yAxis;
+
+        const chart = this.chart,
+            inverted = (
+                chart.inverted &&
+                !chart.polar &&
+                horAxis &&
+                this.invertible !== false &&
+                (name === 'markers' || name === 'series')
+            );
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
-            xAxis = yAxis;
-            yAxis = this.xAxis;
+            horAxis = vertAxis;
+            vertAxis = this.xAxis;
         }
+
         return {
-            translateX: xAxis ? xAxis.left : chart.plotLeft,
-            translateY: yAxis ? yAxis.top : chart.plotTop,
-            scaleX: 1, // #1623
+            translateX: horAxis ? horAxis.left : chart.plotLeft,
+            translateY: vertAxis ? vertAxis.top : chart.plotTop,
+            rotation: inverted ? 90 : 0,
+            rotationOriginX: inverted ?
+                (horAxis.len - vertAxis.len) / 2 :
+                0,
+            rotationOriginY: inverted ?
+                (horAxis.len + vertAxis.len) / 2 :
+                0,
+            scaleX: inverted ? -1 : 1, // #1623
             scaleY: 1
         };
     }
@@ -3427,11 +3389,6 @@ class Series {
             series.animate(true);
         }
 
-        // SVGRenderer needs to know this before drawing elements (#1089,
-        // #1795)
-        group.inverted = pick(series.invertible, series.isCartesian) ?
-            inverted : false;
-
         // Draw the graph if any
         if ((series as any).drawGraph) {
             (series as any).drawGraph();
@@ -3461,9 +3418,6 @@ class Series {
         ) {
             series.drawTracker();
         }
-
-        // Handle inverted series and tracker groups
-        series.invertGroups(inverted);
 
         // Run the animation
         if (series.animate && animDuration) {
@@ -3501,31 +3455,11 @@ class Series {
      * @function Highcharts.Series#redraw
      */
     public redraw(): void {
-        const series = this,
-            chart = series.chart,
-            // cache it here as it is set to false in render, but used after
-            wasDirty = series.isDirty || series.isDirtyData,
-            group = series.group,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis;
+        // Cache it here as it is set to false in render, but used after
+        const wasDirty = this.isDirty || this.isDirtyData;
 
-        // reposition on resize
-        if (group) {
-            if (chart.inverted) {
-                group.attr({
-                    width: chart.plotWidth,
-                    height: chart.plotHeight
-                });
-            }
-
-            group.animate({
-                translateX: pick(xAxis && xAxis.left, chart.plotLeft),
-                translateY: pick(yAxis && yAxis.top, chart.plotTop)
-            });
-        }
-
-        series.translate();
-        series.render();
+        this.translate();
+        this.render();
         if (wasDirty) { // #3868, #3945
             delete this.kdTree;
         }
@@ -4966,7 +4900,7 @@ namespace Series {
         yData: (Array<(number|null)>|Array<Array<(number|null)>>);
     }
 
-    export interface PlotBoxObject {
+    export interface PlotBoxTransform extends SVGAttributes {
         scaleX: number;
         scaleY: number;
         translateX: number;
