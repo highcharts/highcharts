@@ -365,7 +365,9 @@ class FlowMapSeries extends MapLineSeries {
             this.options.fillOpacity
         );
 
-        attrs.opacity = point.options.opacity;
+        if (point.options.opacity) {
+            attrs.opacity = point.options.opacity;
+        }
 
         return attrs;
     }
