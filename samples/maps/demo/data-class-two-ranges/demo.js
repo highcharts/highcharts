@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/spreadsheets/d/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs/pubhtml
+    // https://docs.google.com/spreadsheets/d/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs',

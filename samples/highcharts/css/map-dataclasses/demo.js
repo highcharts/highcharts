@@ -54,7 +54,7 @@ function drawChart(data) {
 }
 
 // Load the data from a Google Spreadsheet
-// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78&output=html
+// https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
 Highcharts.data({
     googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
     googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
