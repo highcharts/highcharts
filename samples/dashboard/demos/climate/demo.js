@@ -197,9 +197,9 @@ function createDashboard(worldMapJSON) {
 ajaxAll(
     [{
         dataType: 'json',
-        url: 'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
+        url: '/samples/mapdata/custom/world-continents.geo.json'
     }, {
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/climate-2010.csv'
+        url: '/samples/data/climate-2010.csv'
     }],
     (error, requests) => {
         if (error) {
@@ -218,10 +218,11 @@ ajaxAll(
             googlePool[row.Time] = new Dashboard.GoogleSheetsStore(
                 undefined,
                 {
-                    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA',
-                    googleSpreadsheetKey: row.Spreadsheet.match(/\w{44,}/gu)[0]
+                    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+                    googleSpreadsheetKey: row.Spreadsheet.match(/[\w-]{33,44}/gu)[0]
                 }
             );
+            googlePool[row.Time].on('loadError', (e) => console.error(e));
             googlePool[row.Time].load();
         }
 
