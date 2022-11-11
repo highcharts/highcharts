@@ -41,7 +41,6 @@ QUnit.test(
             'Tooltip with correct classes should exist'
         );
 
-        controller.moveTo(0, 0);
         chart.update({
             tooltip: {
                 shared: true
@@ -61,7 +60,6 @@ QUnit.test(
             'Tooltip with correct classes should exist'
         );
 
-        controller.moveTo(0, 0);
         chart.update({
             tooltip: {
                 split: true
