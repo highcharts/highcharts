@@ -40,7 +40,7 @@ const {
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-const { getElement } = HTMLUtilities;
+const { getElement, simulatedEventTarget } = HTMLUtilities;
 
 /* *
  *
@@ -133,7 +133,8 @@ class KeyboardNavigation {
             (e: FocusEvent): void => this.onFocus(e));
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+            ep.addEvent(doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent))
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -298,10 +299,13 @@ class KeyboardNavigation {
      * indicator.
      * @private
      */
-    private onMouseUp(): void {
+    private onMouseUp(e: MouseEvent): void {
         delete this.isClickingChart;
 
-        if (!this.keyboardReset) {
+        if (
+            !this.keyboardReset &&
+            e.relatedTarget !== simulatedEventTarget
+        ) {
             const chart = this.chart;
 
             if (!this.pointerIsOverChart) {

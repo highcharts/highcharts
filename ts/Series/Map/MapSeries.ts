@@ -66,6 +66,7 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
+    defined,
     isNumber,
     isObject,
     merge,
@@ -974,13 +975,11 @@ class MapSeries extends ScatterSeries {
             attr.fill = this.options.nullColor;
         }
 
-        (attr as any)['stroke-width'] = pick(
-            pointStrokeWidth,
-            // By default set the stroke-width on the group element and let all
-            // point graphics inherit. That way we don't have to iterate over
-            // all points to update the stroke-width on zooming.
-            'inherit'
-        );
+        if (defined(pointStrokeWidth)) {
+            attr['stroke-width'] = pointStrokeWidth;
+        } else {
+            delete attr['stroke-width'];
+        }
 
         return attr;
     }
