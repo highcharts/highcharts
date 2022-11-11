@@ -46,7 +46,7 @@ class EditMode {
                 icon: EditGlobals.iconsURL + 'close.svg'
             }
         }
-    }
+    };
 
     /* *
     *
@@ -148,7 +148,8 @@ class EditMode {
         // Show context menu.
         if (editMode.tools.contextMenu) {
             if (!editMode.tools.contextMenu.isVisible) {
-                editMode.tools.contextMenu.updatePosition(editMode.tools.contextButtonElement);
+                editMode.tools.contextMenu
+                    .updatePosition(editMode.tools.contextButtonElement);
             }
 
             editMode.tools.contextMenu.setVisible(
@@ -213,28 +214,52 @@ class EditMode {
 
         if (editMode.cellToolbar) {
             // Stop context detection when mouse on cell toolbar.
-            addEvent(editMode.cellToolbar.container, 'mouseenter', function (): void {
-                editMode.stopContextDetection();
-            });
+            addEvent(
+                editMode.cellToolbar.container,
+                'mouseenter',
+                function (): void {
+                    editMode.stopContextDetection();
+                }
+            );
 
-            addEvent(editMode.cellToolbar.container, 'mouseleave', function (): void {
-                editMode.isContextDetectionActive = true;
-            });
+            addEvent(
+                editMode.cellToolbar.container,
+                'mouseleave',
+                function (): void {
+                    editMode.isContextDetectionActive = true;
+                }
+            );
         }
 
         if (editMode.rowToolbar) {
             // Stop context detection when mouse on row toolbar.
-            addEvent(editMode.rowToolbar.container, 'mouseenter', function (): void {
-                editMode.stopContextDetection();
-            });
+            addEvent(
+                editMode.rowToolbar.container,
+                'mouseenter',
+                function (): void {
+                    editMode.stopContextDetection();
+                }
+            );
 
-            addEvent(editMode.rowToolbar.container, 'mouseleave', function (): void {
-                editMode.isContextDetectionActive = true;
-            });
+            addEvent(
+                editMode.rowToolbar.container,
+                'mouseleave',
+                function (): void {
+                    editMode.isContextDetectionActive = true;
+                }
+            );
         }
 
-        addEvent(dashboard.layoutsWrapper, 'mousemove', editMode.onDetectContext.bind(editMode));
-        addEvent(dashboard.layoutsWrapper, 'click', editMode.onContextConfirm.bind(editMode));
+        addEvent(
+            dashboard.layoutsWrapper,
+            'mousemove',
+            editMode.onDetectContext.bind(editMode)
+        );
+        addEvent(
+            dashboard.layoutsWrapper,
+            'click',
+            editMode.onContextConfirm.bind(editMode)
+        );
         addEvent(dashboard.layoutsWrapper, 'mouseleave', (): void => {
             editMode.hideContextPointer();
         });
@@ -269,21 +294,29 @@ class EditMode {
                 }
             });
 
-            addEvent(row.container, 'mousemove', function (e: PointerEvent): void {
-                if (dragDrop.isActive && e.target === row.container) {
-                    dragDrop.mouseRowContext = row;
+            addEvent(
+                row.container,
+                'mousemove',
+                function (e: PointerEvent): void {
+                    if (dragDrop.isActive && e.target === row.container) {
+                        dragDrop.mouseRowContext = row;
+                    }
                 }
-            });
+            );
 
-            addEvent(row.container, 'mouseleave', function (e: PointerEvent): void {
-                if (dragDrop.isActive && dragDrop.mouseRowContext === row) {
-                    dragDrop.mouseRowContext = void 0;
-                }
+            addEvent(
+                row.container,
+                'mouseleave',
+                function (e: PointerEvent): void {
+                    if (dragDrop.isActive && dragDrop.mouseRowContext === row) {
+                        dragDrop.mouseRowContext = void 0;
+                    }
 
-                if (editMode.isContextDetectionActive) {
-                    editMode.mouseRowContext = void 0;
+                    if (editMode.isContextDetectionActive) {
+                        editMode.mouseRowContext = void 0;
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -299,21 +332,37 @@ class EditMode {
             if (editMode.dragDrop || editMode.resizer) {
                 const dragDrop = editMode.dragDrop;
 
-                addEvent(cell.container, 'mouseenter', function (e: PointerEvent): void {
-                    if (editMode.isContextDetectionActive) {
-                        editMode.mouseCellContext = cell;
+                addEvent(
+                    cell.container,
+                    'mouseenter',
+                    function (e: PointerEvent): void {
+                        if (editMode.isContextDetectionActive) {
+                            editMode.mouseCellContext = cell;
+                        }
                     }
-                });
+                );
 
-                addEvent(cell.container, 'mousemove', function (e: PointerEvent): void {
-                    if (dragDrop && dragDrop.isActive && e.target === cell.container) {
-                        dragDrop.mouseCellContext = cell;
-                        dragDrop.mouseRowContext = void 0;
+                addEvent(
+                    cell.container,
+                    'mousemove',
+                    function (e: PointerEvent): void {
+                        if (
+                            dragDrop &&
+                            dragDrop.isActive &&
+                            e.target === cell.container
+                        ) {
+                            dragDrop.mouseCellContext = cell;
+                            dragDrop.mouseRowContext = void 0;
+                        }
                     }
-                });
+                );
 
                 addEvent(cell.container, 'mouseleave', function (): void {
-                    if (dragDrop && dragDrop.isActive && dragDrop.mouseCellContext === cell) {
+                    if (
+                        dragDrop &&
+                        dragDrop.isActive &&
+                        dragDrop.mouseCellContext === cell
+                    ) {
                         dragDrop.mouseCellContext = void 0;
                     }
 
@@ -412,7 +461,10 @@ class EditMode {
         for (let i = 0, iEnd = toolbarsToHide.length; i < iEnd; ++i) {
             switch (toolbarsToHide[i]) {
                 case 'cell': {
-                    if (editMode.cellToolbar && editMode.cellToolbar.isVisible) {
+                    if (
+                        editMode.cellToolbar &&
+                        editMode.cellToolbar.isVisible
+                    ) {
                         editMode.cellToolbar.hide();
                     }
                     break;
@@ -538,7 +590,8 @@ class EditMode {
         const rwdBreakingPoints = this.dashboard.options.respoBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
-        const rwdIcons = (options && options.tools && options.tools.rwdIcons) || {};
+        const rwdIcons =
+            (options && options.tools && options.tools.rwdIcons) || {};
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
@@ -549,7 +602,8 @@ class EditMode {
                         icon: (rwdIcons as any)[key] || '',
                         value: key,
                         callback: (): void => {
-                            this.dashboard.layoutsWrapper.style.width = rwdBreakingPoints[key] + 'px';
+                            this.dashboard.layoutsWrapper.style.width =
+                                rwdBreakingPoints[key] + 'px';
                             this.rwdMode = key;
 
                             // reflow elements
@@ -594,7 +648,8 @@ class EditMode {
                 rowContext;
 
             if (editMode.mouseCellContext) {
-                cellContext = ContextDetection.getContext(editMode.mouseCellContext, e, offset).cell;
+                cellContext = ContextDetection
+                    .getContext(editMode.mouseCellContext, e, offset).cell;
             } else if (editMode.mouseRowContext) {
                 rowContext = editMode.mouseRowContext;
                 cellContext = rowContext.layout.parentCell;
@@ -603,10 +658,17 @@ class EditMode {
             this.potentialCellContext = cellContext;
 
             if (cellContext) {
-                const cellContextOffsets = GUIElement.getOffsets(cellContext, editMode.dashboard.container);
-                const { width, height } = GUIElement.getDimFromOffsets(cellContextOffsets);
+                const cellContextOffsets = GUIElement
+                    .getOffsets(cellContext, editMode.dashboard.container);
+                const { width, height } = GUIElement
+                    .getDimFromOffsets(cellContextOffsets);
 
-                editMode.showContextPointer(cellContextOffsets.left, cellContextOffsets.top, width, height);
+                editMode.showContextPointer(
+                    cellContextOffsets.left,
+                    cellContextOffsets.top,
+                    width,
+                    height
+                );
             }
         }
     }
@@ -622,7 +684,10 @@ class EditMode {
             this.potentialCellContext &&
             this.editCellContext !== this.potentialCellContext
         ) {
-            this.setEditCellContext(this.potentialCellContext, this.editCellContext);
+            this.setEditCellContext(
+                this.potentialCellContext,
+                this.editCellContext
+            );
         }
     }
 
@@ -698,7 +763,9 @@ class EditMode {
     ): void {
         const editMode = this,
             cnt = editMode.editOverlay,
-            isSet = cnt.classList.contains(EditGlobals.classNames.editOverlayActive);
+            isSet = cnt.classList.contains(
+                EditGlobals.classNames.editOverlayActive
+            );
 
         if (!remove && !isSet) {
             cnt.classList.add(EditGlobals.classNames.editOverlayActive);

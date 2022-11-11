@@ -20,7 +20,7 @@ class MenuItem {
     public static defaultOptions: MenuItem.Options = {
         id: '',
         type: 'text'
-    }
+    };
 
     /* *
     *

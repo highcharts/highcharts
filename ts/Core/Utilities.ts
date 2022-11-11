@@ -209,7 +209,9 @@ function merge<T>(): T {
         args = arguments,
         copyDepth = 0,
         ret = {} as T;
-    const copyDepthError = new Error('Recursive copy depth > 100'), // describtive error stack
+
+    // describtive error stack:
+    const copyDepthError = new Error('Recursive copy depth > 100'),
         doCopy = (copy: any, original: any): any => {
             // An object is replacing a primitive
             if (typeof copy !== 'object') {

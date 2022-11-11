@@ -29,7 +29,7 @@ class Menu {
             text: '',
             className: EditGlobals.classNames.menuVerticalSeparator
         }
-    }
+    };
 
     /* *
     *
@@ -98,8 +98,10 @@ class Menu {
 
         for (let i = 0, iEnd = optionsItems.length; i < iEnd; ++i) {
             itemConfig = optionsItems[i];
-            itemSchema = typeof itemConfig === 'string' ? itemsSchemas[itemConfig] :
-                itemConfig.id ? itemsSchemas[itemConfig.id] : {};
+            itemSchema =
+                typeof itemConfig === 'string' ? itemsSchemas[itemConfig] :
+                    itemConfig.id ? itemsSchemas[itemConfig.id] :
+                        {};
 
             options = typeof itemConfig === 'string' ?
                 merge(itemSchema, { id: itemConfig }) :

@@ -28,7 +28,7 @@ class Sidebar {
         className: 'test',
         dragIcon: EditGlobals.iconsURL + '/drag.svg',
         closeIcon: EditGlobals.iconsURL + '/close.svg'
-    }
+    };
 
     public static tabs: Array<Sidebar.TabOptions> = [{
     // {
@@ -49,7 +49,7 @@ class Sidebar {
         items: {
             cell: ['']
         }
-    }]
+    }];
 
     public static predefinedWidth: Array<Sidebar.PredefinedWidth> = [{
         name: 'auto',
@@ -67,7 +67,7 @@ class Sidebar {
         name: '1/6',
         value: '16.666',
         icon: ''
-    }]
+    }];
 
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
@@ -75,7 +75,10 @@ class Sidebar {
             onDrop: function (): void {}
         }, {
             text: 'chart',
-            onDrop: function (sidebar: Sidebar, dropContext: Cell|Row): Cell | void {
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell|Row
+            ): Cell | void {
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
                         type: 'chart',
@@ -108,6 +111,7 @@ class Sidebar {
                         elements: [{
                             tagName: 'img',
                             attributes: {
+                                /* eslint-disable max-len */
                                 src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX//' +
                                 '/93dY2j7Llkmp+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9Pj3/' +
                                 'fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89Lk+et/g988Unc1SHBAW' +
@@ -140,6 +144,7 @@ class Sidebar {
                                 '7jPf3W9nbKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5pDgbN4P' +
                                 'zsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg3PAfRD' +
                                 'WjQM3VeT0AAAAASUVORK5CYII='
+                                /* eslint-enable max-len */
                             }
                         }]
                     });
@@ -157,7 +162,8 @@ class Sidebar {
         items: {
             cell: ['addComponent']
         }
-    }]
+    }];
+
     // {
     //     type: 'layout',
     //     icon: '',
@@ -166,15 +172,15 @@ class Sidebar {
     //     }
     // }
 
-    public static items: Record<string, MenuItem.Options> =
-    merge(Menu.items, {
+    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         componentSettings: {
             id: 'componentSettings',
             type: 'componentSettings',
             text: 'Settings',
             events: {
                 update: function (): void {
-                    ((this as MenuItem).menu.parent as Sidebar).getComponentEditableOptions();
+                    ((this as MenuItem).menu.parent as Sidebar)
+                        .getComponentEditableOptions();
                 }
             }
         },
@@ -183,7 +189,11 @@ class Sidebar {
             type: 'input',
             text: 'Cell width',
             events: {
-                click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
+                click: function (
+                    this: MenuItem,
+                    input: HTMLDOMElement,
+                    e: any
+                ): void {
                     const inputValue = +(input as any).value,
                         cell = this.menu.parent.context;
 
@@ -200,11 +210,14 @@ class Sidebar {
                         cell.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT' &&
-                        (item.innerElement as any).value !== cell.container.offsetWidth
+                        (item.innerElement as any).value !==
+                            cell.container.offsetWidth
                     ) {
-                        const sidebar = ((this as MenuItem).menu.parent as Sidebar);
+                        const sidebar =
+                            ((this as MenuItem).menu.parent as Sidebar);
 
-                        (item.innerElement as any).value = sidebar.getCellWidth(cell);
+                        (item.innerElement as any).value =
+                            sidebar.getCellWidth(cell);
 
                         sidebar.getWidthGridOptions();
                     }
@@ -221,7 +234,11 @@ class Sidebar {
             type: 'input',
             text: 'Row height',
             events: {
-                click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
+                click: function (
+                    this: MenuItem,
+                    input: HTMLDOMElement,
+                    e: any
+                ): void {
                     const inputValue = +(input as any).value,
                         row = this.menu.parent.context;
 
@@ -238,9 +255,11 @@ class Sidebar {
                         row.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT' &&
-                        (item.innerElement as any).value !== row.container.offsetHeight
+                        (item.innerElement as any).value !==
+                            row.container.offsetHeight
                     ) {
-                        (item.innerElement as any).value = row.container.offsetHeight;
+                        (item.innerElement as any).value =
+                            row.container.offsetHeight;
                     }
                 },
                 onCellResize: function (this: MenuItem, e: any): void {
@@ -250,16 +269,16 @@ class Sidebar {
                 }
             }
         }
-    })
+    });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> =
-    merge({}, {
+    public static itemsGeneralOptions: Record<string, MenuItem.Options> = merge({}, {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
             events: {
                 update: function (): void {
-                    ((this as MenuItem).menu.parent as Sidebar).getLayoutOptions();
+                    ((this as MenuItem).menu.parent as Sidebar)
+                        .getLayoutOptions();
                 }
             }
         },
@@ -272,7 +291,7 @@ class Sidebar {
                 }
             }
         }
-    })
+    });
 
     /* *
     *
@@ -421,7 +440,9 @@ class Sidebar {
             if (isRowCell) {
                 buttonsContainer = createElement(
                     'div', {
-                        className: EditGlobals.classNames.editSidebarTabBtnWrapper
+                        className: (
+                            EditGlobals.classNames.editSidebarTabBtnWrapper
+                        )
                     }, {}, contentContainer
                 );
 
@@ -443,18 +464,30 @@ class Sidebar {
                                 sidebar.activeTab &&
                                 sidebar.activeTab.content.activeItems &&
                                 sidebar.activeTab.content.activeItems[0] &&
-                                sidebar.activeTab.content.activeItems[0].innerElement
+                                sidebar.activeTab.content.activeItems[0]
+                                    .innerElement
                             ) {
                                 let value = (
-                                    sidebar.activeTab.content.activeItems[0].innerElement as any
+                                    sidebar.activeTab.content.activeItems[0]
+                                        .innerElement as any
                                 ).value;
 
-                                if (sidebar.context.getType() === Globals.guiElementType.cell) {
+                                if (
+                                    sidebar.context.getType() ===
+                                    Globals.guiElementType.cell
+                                ) {
                                     const ctxCell = sidebar.context as Cell;
 
-                                    value = value === 'auto' ? value : value + '%';
+                                    value = (
+                                        value === 'auto' ?
+                                            value :
+                                            value + '%'
+                                    );
                                     ctxCell.setSize(value);
-                                    ctxCell.updateSize(value, sidebar.editMode.rwdMode);
+                                    ctxCell.updateSize(
+                                        value,
+                                        sidebar.editMode.rwdMode
+                                    );
                                 }
                             }
                         }
@@ -494,10 +527,11 @@ class Sidebar {
             let item;
 
             if (sidebar.activeTab) {
-                for (let i = 0, iEnd = sidebar.activeTab.content.activeItems.length; i < iEnd; ++i) {
-                    item = sidebar.activeTab.content.activeItems[i];
-
-                    if (item.options.events && item.options.events.onCellResize) {
+                for (item of sidebar.activeTab.content.activeItems) {
+                    if (
+                        item.options.events &&
+                        item.options.events.onCellResize
+                    ) {
                         item.options.events.onCellResize.apply(item, arguments);
                     }
                 }
@@ -612,9 +646,10 @@ class Sidebar {
         const layoutWrapper = editMode.dashboard.layoutsWrapper;
 
         if (sidebar) {
-            return (
-                GUIElement.getOffsets(sidebar.context as Cell, layoutWrapper).left
-            ) < ((layoutWrapper.offsetWidth / 2) - 10); // 10 = snap
+            return GUIElement.getOffsets(
+                sidebar.context as Cell,
+                layoutWrapper
+            ).left < ((layoutWrapper.offsetWidth / 2) - 10); // 10 = snap
         }
 
         return false;
@@ -641,9 +676,12 @@ class Sidebar {
         sidebar.context = void 0;
 
         // Styles.
-        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarShow);
-        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarRight);
-        sidebar.container.classList.remove(EditGlobals.classNames.editSidebarRightShow);
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarShow);
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarRight);
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarRightShow);
         editMode.dashboard.container.style.paddingLeft = '';
 
         // Remove edit overlay if active.
@@ -653,7 +691,10 @@ class Sidebar {
 
         if (editMode.editCellContext) {
             if (showToolbars) {
-                editMode.showToolbars(['cell', 'row'], editMode.editCellContext);
+                editMode.showToolbars(
+                    ['cell', 'row'],
+                    editMode.editCellContext
+                );
                 editMode.editCellContext.row.setHighlight();
             }
 
@@ -678,7 +719,10 @@ class Sidebar {
         sidebar.closeButton = EditRenderer.renderButton(
             sidebar.container,
             {
-                className: EditGlobals.classNames.sidebarNavButton + ' ' + EditGlobals.classNames.sidebarCloseButton,
+                className: (
+                    EditGlobals.classNames.sidebarNavButton + ' ' +
+                    EditGlobals.classNames.sidebarCloseButton
+                ),
                 callback: (): void => {
                     sidebar.hide();
                 },
@@ -792,16 +836,21 @@ class Sidebar {
             );
 
             // Drag drop new component.
-            (gridElement.onmousedown as any) = function (e: PointerEvent): void {
+            (gridElement.onmousedown as any) = (e: PointerEvent): void => {
                 if (sidebar.editMode.dragDrop) {
                     sidebar.hide(false, false);
-                    sidebar.editMode.dragDrop.onDragStart(e, void 0, (dropContext: Cell|Row): void => {
-                        const newCell = components[i].onDrop(sidebar, dropContext);
+                    sidebar.editMode.dragDrop.onDragStart(
+                        e,
+                        void 0,
+                        (dropContext: Cell|Row): void => {
+                            const newCell =
+                                components[i].onDrop(sidebar, dropContext);
 
-                        if (newCell) {
-                            sidebar.editMode.setEditCellContext(newCell);
+                            if (newCell) {
+                                sidebar.editMode.setEditCellContext(newCell);
+                            }
                         }
-                    });
+                    );
                 }
             };
             gridElement.innerHTML = components[i].text;
@@ -857,8 +906,14 @@ class Sidebar {
             dragDrop = sidebar.editMode.dragDrop;
 
         if (dragDrop) {
-            const row = dropContext.getType() === 'cell' ? (dropContext as Cell).row : (dropContext as Row),
-                newCell = row.addCell({ id: GUIElement.createElementId('col') });
+            const row = (
+                    dropContext.getType() === 'cell' ?
+                        (dropContext as Cell).row :
+                        (dropContext as Row)
+                ),
+                newCell = row.addCell({
+                    id: GUIElement.createElementId('col')
+                });
 
             dragDrop.onCellDragEnd(newCell);
             const component = Bindings.addComponent(merge(componentOptions, {
@@ -893,7 +948,8 @@ class Sidebar {
     private getWidthGridOptions(): void {
         const sidebar = this;
         const activeTab = sidebar.activeTab;
-        const activeTabContainer = activeTab && activeTab.content && activeTab.content.container;
+        const activeTabContainer =
+            activeTab && activeTab.content && activeTab.content.container;
         const predefinedWidth = Sidebar.predefinedWidth;
         const item = activeTab && activeTab.content.activeItems[0];
 
@@ -919,7 +975,8 @@ class Sidebar {
                     textContent: predefinedWidth[i].name,
                     onclick: function (): void {
                         if (item) {
-                            (item.innerElement as any).value = predefinedWidth[i].value;
+                            (item.innerElement as any).value =
+                                predefinedWidth[i].value;
                         }
                     }
                 },

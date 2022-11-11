@@ -13,11 +13,13 @@ const {
 } = U;
 
 class RowEditToolbar extends EditToolbar {
+
     /* *
-    *
-    *  Static Properties
-    *
-    * */
+     *
+     *  Static Properties
+     *
+     * */
+
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
@@ -28,10 +30,9 @@ class RowEditToolbar extends EditToolbar {
             itemsClassName: EditGlobals.classNames.editToolbarItem,
             items: ['drag', 'settings', 'destroy']
         }
-    }
+    };
 
-    public static items: Record<string, MenuItem.Options> =
-    merge(Menu.items, {
+    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         drag: {
             id: 'drag',
             type: 'icon',
@@ -84,7 +85,7 @@ class RowEditToolbar extends EditToolbar {
                 }
             }
         }
-    })
+    });
 
     /* *
     *
@@ -144,7 +145,10 @@ class RowEditToolbar extends EditToolbar {
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            const rowOffsets = GUIElement.getOffsets(row, toolbar.editMode.dashboard.container);
+            const rowOffsets = GUIElement.getOffsets(
+                row,
+                toolbar.editMode.dashboard.container
+            );
             const rowWidth = rowOffsets.right - rowOffsets.left;
 
             // Temp - activate all items.

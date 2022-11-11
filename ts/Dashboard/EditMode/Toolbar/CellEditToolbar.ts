@@ -29,18 +29,18 @@ class CellEditToolbar extends EditToolbar {
             itemsClassName: EditGlobals.classNames.editToolbarItem,
             items: ['drag', 'settings', 'destroy']
         }
-    }
+    };
 
-    public static items: Record<string, MenuItem.Options> =
-    merge(Menu.items, {
+    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         drag: {
             id: 'drag',
             type: 'icon',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
                 onmousedown: function (this: MenuItem, e: any): void {
-                    const cellEditToolbar = (this.menu.parent as CellEditToolbar),
-                        dragDrop = cellEditToolbar.editMode.dragDrop;
+                    const cellEditToolbar =
+                        (this.menu.parent as CellEditToolbar);
+                    const dragDrop = cellEditToolbar.editMode.dragDrop;
 
                     if (dragDrop && cellEditToolbar.cell) {
                         dragDrop.onDragStart(e, cellEditToolbar.cell);
@@ -86,7 +86,7 @@ class CellEditToolbar extends EditToolbar {
                 }
             }
         }
-    })
+    });
 
     /* *
     *
@@ -134,7 +134,10 @@ class CellEditToolbar extends EditToolbar {
             toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
-            const cellOffsets = GUIElement.getOffsets(cell, toolbar.editMode.dashboard.container);
+            const cellOffsets = GUIElement.getOffsets(
+                cell,
+                toolbar.editMode.dashboard.container
+            );
 
             x = cellOffsets.right;
             y = cellOffsets.top;
@@ -194,7 +197,11 @@ class CellEditToolbar extends EditToolbar {
 
             // Call cellResize dashboard event.
             if (row && row.cells && row.cells.length) {
-                fireEvent(toolbar.editMode.dashboard, 'cellResize', { cell: row.cells[0] });
+                fireEvent(
+                    toolbar.editMode.dashboard,
+                    'cellResize',
+                    { cell: row.cells[0] }
+                );
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
             }
         }
