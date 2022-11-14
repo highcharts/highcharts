@@ -31,17 +31,18 @@ function rescalePatternFill(
     height: number,
     borderWidth = 1
 ): void {
-    const fill = element && element.attr('fill') as string;
-    const match = fill && fill.match(/url\(([^)]+)\)/);
+    const fill = element && element.attr('fill') as string,
+        match = fill && fill.match(/url\(([^)]+)\)/);
+
     if (match) {
         const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
         if (patternPath) {
             const bBox = patternPath.getBBox();
-            let scaleX = 1 / (bBox.width + borderWidth);
-            let scaleY = stackHeight / height / bBox.height;
-            let aspectRatio = bBox.width / bBox.height;
-            let pointAspectRatio = width / stackHeight;
-            let x = -bBox.width / 2;
+            let scaleX = 1 / (bBox.width + borderWidth),
+                scaleY = stackHeight / height / bBox.height,
+                aspectRatio = bBox.width / bBox.height,
+                pointAspectRatio = width / stackHeight,
+                x = -bBox.width / 2;
 
             if (aspectRatio < pointAspectRatio) {
                 scaleX = scaleX * aspectRatio / pointAspectRatio;
@@ -68,8 +69,8 @@ function getStackMetrics(
         height: number,
         y: number
     } {
-    let height = yAxis.len;
-    let y = 0;
+    let height = yAxis.len,
+        y = 0;
 
     if (shape && defined(shape.max)) {
         y = yAxis.toPixels(shape.max, true);
