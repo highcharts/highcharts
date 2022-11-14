@@ -232,10 +232,14 @@ Chart.prototype.setUpScrolling = function (): void {
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
+    let lastHoverPoint: typeof this.hoverPoint;
     addEvent(this.scrollingContainer, 'scroll', (): void => {
         if (this.pointer) {
             delete this.pointer.chartPosition;
-            this.pointer.runPointActions(void 0, void 0, true);
+            if (this.hoverPoint) {
+                lastHoverPoint = this.hoverPoint;
+            }
+            this.pointer.runPointActions(void 0, lastHoverPoint, true);
         }
     });
 
