@@ -627,66 +627,41 @@ QUnit.test(
 );
 
 QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', assert => {
-    const chart = Highcharts.chart('container', {
-        yAxis: {
-            stackLabels: {
-                enabled: true
-            }
-        },
-        plotOptions: {
-            series: {
-                stacking: 'normal',
-                dataLabels: {
-                    enabled: true,
-                    inside: false
-                }
-            }
-        },
-        series: [{
-            data: [0, 99, 454, 297, 409]
-        }, {
-            data: [51, 150, 155, 106, 97]
-        }, {
-            data: [19, 107, 184, 138, 150]
-        }]
-    });
-    // #12133, scrollable plot area data labels misplacement
-    ['column', 'bar'].forEach(type => {
-        chart.update({
+    [
+        'column',
+        'bar'
+    ].forEach(type => {
+        const chart = Highcharts.chart('container', {
             chart: {
-                type,
-                scrollablePlotArea: {
-                    minHeight: 600
+                type
+            },
+            yAxis: {
+                stackLabels: {
+                    enabled: true
                 }
-            }
+            },
+            plotOptions: {
+                [type]: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        inside: false
+                    }
+                }
+            },
+            series: [{
+                data: [0, 99, 454, 297, 409]
+            }, {
+                data: [51, 150, 155, 106, 97]
+            }, {
+                data: [19, 107, 184, 138, 150]
+            }]
         });
 
-        const stack = chart.yAxis[0].stacking.stacks[`${type},,,`],
-            points = chart.series[0].points,
-            pointBox = points[0].graphic.element.getBoundingClientRect(),
-            labelBox = stack[0].label.element.getBoundingClientRect();
-
+        const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
         assert.ok(
             Object.values(stack).every(item => item.label.visibility !== 'hidden'),
-            `All stackLabels should be visible in ${type} chart.`
+            `${type}: All stackLabels should be visible`
         );
-        // Due to the possible browser differences using assert.close
-        if (type === 'bar') {
-            assert.close(
-                labelBox.y + labelBox.height / 2,
-                pointBox.y + pointBox.height / 2,
-                2,
-                'The position of stack label should be correct in bar chart.'
-            );
-        } else {
-            assert.close(
-                labelBox.x + labelBox.width / 2,
-                pointBox.x + pointBox.width / 2,
-                2,
-                'The position of stack label should be correct in column chart.'
-            );
-        }
-
-
     });
 });
