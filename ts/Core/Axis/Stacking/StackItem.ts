@@ -278,11 +278,6 @@ class StackItem {
 
             // Align the label to the box
             label.align(this.alignOptions, null as any, stackBox);
-            // Take into account the scrollable plot area #12133
-            if (chart.scrollablePlotBox) {
-                label.alignAttr.y += chart.plotBox.height -
-                    chart.scrollablePlotBox.height;
-            }
 
             // Check if label is inside the plotArea #12294
             if (chart.isInsidePlot(
