@@ -430,9 +430,12 @@ class FlowMapSeries extends MapLineSeries {
             point.y = point.plotY = 1;
             point.x = point.plotX = 1;
 
-            if (!point.color) {
-                point.color = fromPoint.color;
-            }
+            // When updating point from null to normal value, set a real color
+            // (don't keep nullColor)
+            point.color = pick(
+                point.options.color,
+                point.series.color
+            );
         });
 
         // Draw the points

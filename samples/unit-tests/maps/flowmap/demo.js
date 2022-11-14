@@ -165,6 +165,12 @@
         );
 
         assert.strictEqual(
+            series.group.attr('opacity'),
+            1,
+            `The series group should have opacity 1 by default.`
+        );
+
+        assert.strictEqual(
             series.points[1].graphic.attr('opacity'),
             1,
             `The point's graphic should have opacity 1 by default.`
@@ -192,9 +198,9 @@
         );
 
         assert.strictEqual(
-            series.points[1].graphic.attr('opacity'),
+            series.group.attr('opacity'),
             series.options.opacity,
-            `The point's opacity from series options should be correct.`
+            `The series group opacity should be correct.`
         );
 
         assert.strictEqual(
@@ -205,11 +211,11 @@
 
         // Point options
 
-        // assert.notStrictEqual(
-        //     series.points[1].color,
-        //     series.options.nullColor,
-        //     `The not-null point should have a correct color in options.`
-        // );
+        assert.notStrictEqual(
+            series.points[1].color,
+            series.options.nullColor,
+            `The not-null point should have a correct color in options.`
+        );
 
         assert.strictEqual(
             series.points[1].graphic.attr('stroke'),
@@ -217,44 +223,39 @@
             `The point's stroke color should be correct.`
         );
 
-        // series.points[1].setVisible(false);
-
-        // // assert.strictEqual(
-        // //     series.points[1].graphic.attr('visibility'),
-        // //     'hidden',
-        // //     'Flowmap point graphic should be hidden.'
-        // // );
-
-        // series.points[1].setVisible(true);
-
-        // assert.strictEqual(
-        //     series.points[1].graphic.attr('visibility'),
-        //     'visible',
-        //     'Flowmap point graphic should be hidden.'
-        // );
-
         series.points[1].update({
+            color: '#000000', // stroke
             fillColor: '#ff0000',
             fillOpacity: 0.6,
             opacity: 0.7
         });
 
         assert.strictEqual(
+            series.points[1].graphic.attr('stroke'),
+            series.points[1].color,
+            `After update, the point's stroke color (from point options)
+            should be correct.`
+        );
+
+        assert.strictEqual(
             series.points[1].graphic.attr('fill'),
             series.points[1].options.fillColor,
-            `The point's fill from point options should be correct.`
+            `After update, the point's fill from point options should be
+            correct.`
         );
 
         assert.strictEqual(
             series.points[1].graphic.attr('fill-opacity'),
             series.points[1].options.fillOpacity,
-            `The point's fill-opacity from point options should be correct.`
+            `After update, the point's fill-opacity from point options should
+            be correct.`
         );
 
         assert.strictEqual(
             series.points[1].graphic.attr('opacity'),
             series.points[1].options.opacity,
-            `The point's opacity from point options should be correct.`
+            `After update, the point's opacity from point options should be
+            correct.`
         );
 
         // End of style attribs tests
