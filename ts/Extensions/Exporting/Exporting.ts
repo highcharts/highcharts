@@ -37,7 +37,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions, setOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
@@ -105,7 +105,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         contextButtonTitle?: string;
         exitFullscreen?: string;
@@ -116,9 +116,6 @@ declare module '../../Core/LangOptions' {
         printChart?: string;
         viewFullscreen?: string;
     }
-}
-
-declare module '../../Core/Options' {
     interface Options {
         exporting?: ExportingOptions;
         navigation?: NavigationOptions;
@@ -1488,10 +1485,21 @@ namespace Exporting {
                         node.nodeName
                     );
                     dummySVG.appendChild(dummy);
-                    // Copy, so we can remove the node
-                    defaultStyles[node.nodeName] = merge(
-                        win.getComputedStyle(dummy, null) as any
-                    );
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            typeof s[key] === 'string' &&
+                            !/^[0-9]+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
                     // Remove default fill, otherwise text disappears when
                     // exported
                     if (node.nodeName === 'text') {
@@ -1515,15 +1523,6 @@ namespace Exporting {
                 }
 
                 // Apply styles
-                /*
-                if (cssText) {
-                    styleAttr = node.getAttribute('style');
-                    node.setAttribute(
-                        'style',
-                        (styleAttr ? styleAttr + ';' : '') + cssText
-                    );
-                }
-                */
                 css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)

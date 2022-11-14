@@ -26,7 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {

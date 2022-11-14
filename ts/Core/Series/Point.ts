@@ -39,7 +39,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../FormatUtilities.js';
 const { format } = F;
@@ -369,10 +369,7 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = pick(
-            point.isValid && !point.isValid(),
-            point.x === null || !isNumber(point.y)
-        ); // #3571, check for NaN
+        point.isNull = this.isValid && !this.isValid();
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
@@ -757,9 +754,13 @@ class Point {
     }
 
     /**
+     * Determine if point is valid.
      * @private
+     * @function Highcharts.Point#isValid
      */
-    public isValid?(): boolean;
+    public isValid(): boolean {
+        return this.x !== null && isNumber(this.y);
+    }
 
     /**
      * Transform number or array configs into objects. Also called for object
@@ -954,6 +955,7 @@ class Point {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
@@ -965,6 +967,7 @@ class Point {
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
+
                 pointFormat = pointFormat.replace(
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix

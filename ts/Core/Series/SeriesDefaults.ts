@@ -17,7 +17,11 @@
  * */
 
 import type Point from './Point';
-import type SeriesOptions from './SeriesOptions';
+import type Series from './Series';
+import type {
+    PlotOptionsOf,
+    SeriesOptions
+} from './SeriesOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -32,7 +36,7 @@ import { Palette } from '../Color/Palettes.js';
  *
  * @optionparent plotOptions.series
  */
-const seriesDefaults: SeriesOptions = {
+const seriesDefaults: PlotOptionsOf<Series> = {
     // base series options
 
     /**
@@ -194,7 +198,10 @@ const seriesDefaults: SeriesOptions = {
     /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
-     * element.
+     * element. Changes to the series' color will also be reflected in a
+     * chart's legend and tooltip.
+     *
+     * @sample {highcharts} highcharts/css/point-series-classname
      *
      * @type      {string}
      * @since     5.0.0
@@ -252,9 +259,11 @@ const seriesDefaults: SeriesOptions = {
      */
 
     /**
-     * Styled mode only. A specific color index to use for the series, so
-     * its graphic representations are given the class name
-     * `highcharts-color-{n}`.
+     * Styled mode only. A specific color index to use for the series, so its
+     * graphic representations are given the class name `highcharts-color-{n}`.
+     *
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0

@@ -75,7 +75,7 @@ const candlestick = function () {
                 enabled: false
             },
             tooltip: {
-                enabled: false,
+                enabled: true,
                 valueDecimals: 2
             },
             navigator: {
@@ -141,7 +141,7 @@ const candlestick = function () {
             }],
             plotOptions: {
                 series: {
-                    enableMouseTracking: false
+                    enableMouseTracking: true
                 }
             },
             series: [{

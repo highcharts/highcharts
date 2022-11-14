@@ -143,7 +143,7 @@ class MockPoint {
 
         let x = point.plotX || 0,
             y = point.plotY || 0,
-            plotBox: (Series.PlotBoxObject|undefined);
+            plotBox: (Series.PlotBoxTransform|undefined);
 
         if (chart.inverted) {
             if (point.mock) {
@@ -365,7 +365,8 @@ class MockPoint {
             e = {
                 x: plotX,
                 y: plotY,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options: {}
             };
 
         if (xAxis) {

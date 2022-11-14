@@ -25,7 +25,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type EventCallback from '../../Core/EventCallback';
 import type GradientColor from '../../Core/Color/GradientColor';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -37,6 +37,8 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
+import D from '../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     deg2rad,
@@ -45,8 +47,6 @@ const {
     svg,
     win
 } = H;
-import D from '../../Core/DefaultOptions.js';
-const { getOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../../Core/Pointer.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';

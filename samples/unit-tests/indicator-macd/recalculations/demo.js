@@ -507,13 +507,13 @@ QUnit.test('After changing the MACD params all points should calculate properly,
         from the colour array.`
     );
     assert.strictEqual(
-        chart.series[1].graphsignal.stroke,
+        chart.series[1].graphsignal.attr('stroke'),
         Highcharts.getOptions().colors[2],
         `When colour is not specified, each element (signalLine) should get it
         from the colour array.`
     );
     assert.strictEqual(
-        chart.series[1].graphmacd.stroke,
+        chart.series[1].graphmacd.attr('stroke'),
         Highcharts.getOptions().colors[3],
         `When colour is not specified, each element (macdLine) should get it
         from the colour array.`

@@ -46,30 +46,6 @@ declare module './GlobalsLike' {
     }
 }
 
-declare module './Chart/ChartOptions'{
-    interface ChartOptions {
-    }
-}
-
-declare module './LangOptions'{
-    export interface LangOptions {
-        decimalPoint: string;
-        invalidDate?: string;
-        loading: string;
-        months: Array<string>;
-        numericSymbolMagnitude?: number;
-        numericSymbols: Array<string>;
-        resetZoom: string;
-        resetZoomTitle: string;
-        shortMonths: Array<string>;
-        shortWeekdays?: Array<string>;
-        thousandsSep: string;
-        weekdays: Array<string>;
-        zoomIn?: string;
-        zoomOut?: string;
-    }
-}
-
 /* *
  *
  *  API Options

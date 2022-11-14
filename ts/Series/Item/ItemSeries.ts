@@ -27,7 +27,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

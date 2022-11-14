@@ -342,14 +342,15 @@ class StackItem {
             axisPos = axis.height + (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
             neg = (stackItem.isNegative && !reversed) ||
-                (!stackItem.isNegative && reversed); // #4056
+                (!stackItem.isNegative && reversed), // #4056
+            height = chart.plotBox.height || axis.height; // #12133
 
         return { // this is the box for the complete stack
             x: inverted ?
                 (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
                 x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
-                axis.height - x - xWidth :
+                height - x - xWidth :
                 (neg ?
                     (axisPos - y - h) :
                     axisPos - y
