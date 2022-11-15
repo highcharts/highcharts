@@ -4,16 +4,22 @@ import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
 
 namespace Sync {
-    export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning'
+    export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning';
 
     export type EmitterConfig = [SyncEmitter['id'], SyncEmitter['func']];
-    export type HandlerConfig = [SyncHandler['id'], SyncHandler['presentationStateTrigger'], SyncHandler['func']];
+    export type HandlerConfig = [
+        SyncHandler['id'],
+        SyncHandler['presentationStateTrigger'],
+        SyncHandler['func']
+    ];
     export interface OptionsEntry {
         emitter: EmitterConfig;
         handler: HandlerConfig;
     }
 
-    export type OptionsRecord = Record<SyncEmitter['id'] | SyncHandler['id'], OptionsEntry>
+    export type OptionsRecord = (
+        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+    );
 }
 /* *
  *
@@ -85,7 +91,10 @@ class Sync {
         Object.keys(syncConfig)
             .forEach((id): void => {
                 if (syncEvents.indexOf(id as Sync.EventType) > -1) {
-                    const { emitter: emitterConfig, handler: handlerConfig } = syncConfig[id];
+                    const {
+                        emitter: emitterConfig,
+                        handler: handlerConfig
+                    } = syncConfig[id];
                     // Avoid registering the same handler multiple times
                     // i.e. panning and selection uses the same handler
                     const handler = new SyncHandler(...handlerConfig);

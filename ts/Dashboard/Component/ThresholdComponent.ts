@@ -34,7 +34,11 @@ class ThresholdComponent extends Component {
         this.options = options as ThresholdComponent.ComponentOptions;
 
         this.type = 'threshold';
-        this.sync = new Component.Sync(this, this.options.syncEvents, this.options.syncHandlers);
+        this.sync = new Component.Sync(
+            this,
+            this.options.syncEvents,
+            this.options.syncHandlers
+        );
     }
 
     public render(): this {
@@ -199,8 +203,11 @@ namespace ThresholdComponent {
 
                     // Iterate over collections like series, xAxis or yAxis and
                     // map the items by index.
-                    for (let i = 0; i < Math.max(val.length, curr[key].length); i++) {
-
+                    for (
+                        let i = 0;
+                        i < Math.max(val.length, curr[key].length);
+                        i++
+                    ) {
                         if (curr[key][i]) {
                             if (val[i] === void 0) {
                                 ret[key][i] = curr[key][i];

@@ -40,11 +40,19 @@ export default class SyncHandler {
         const { activeGroup } = component;
         const { func } = this;
         if (activeGroup) {
-            this.callback = activeGroup.getSharedState().on(this.presentationStateTrigger, function (e): void {
-                if (component.id !== (e.detail ? e.detail.sender : void 0)) {
-                    func.call(component, e);
-                }
-            });
+            this.callback = activeGroup
+                .getSharedState()
+                .on(
+                    this.presentationStateTrigger,
+                    function (e): void {
+                        if (
+                            component.id !==
+                            (e.detail ? e.detail.sender : void 0)
+                        ) {
+                            func.call(component, e);
+                        }
+                    }
+                );
         }
     }
 
