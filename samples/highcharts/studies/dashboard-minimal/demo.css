@@ -2,7 +2,7 @@
 @import "https://code.highcharts.com/css/datagrid.css";
 
 #datagrid {
-    height: 402px;
-    width: 800px;
+    height: 180px;
+    width: 100%;
     margin: 0 auto;
 }

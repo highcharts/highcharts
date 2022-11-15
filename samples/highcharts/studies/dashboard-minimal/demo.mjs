@@ -113,6 +113,7 @@ store.load();
         }],
         dimensions: {
             // width: '100%'
+        height:'100%'
         },
         events: {
             mount: function () {
