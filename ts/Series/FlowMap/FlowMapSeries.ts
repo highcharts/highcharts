@@ -109,7 +109,7 @@ class FlowMapSeries extends MapLineSeries {
 
         /**
          *
-         * @extends series.mappoint.keys
+         * @extends series.flowmap.keys
          * @default ['from', 'to', 'weight']
          * @private
          */
