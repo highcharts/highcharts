@@ -1038,6 +1038,7 @@ class Tooltip {
         const tooltip = this,
             chart = this.chart,
             options = tooltip.options,
+            pointer = chart.pointer,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
@@ -1070,7 +1071,7 @@ class Tooltip {
 
         // shared tooltip, array is sent over
         if (shared && tooltip.allowShared) {
-            chart.pointer.applyInactiveState(points);
+            pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
             points.forEach(function (item: Point): void {
@@ -1109,7 +1110,7 @@ class Tooltip {
                 let checkX = x;
                 let checkY = y;
 
-                if (mouseEvent && chart.pointer.isDirectTouch) {
+                if (mouseEvent && pointer.isDirectTouch) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
@@ -1119,7 +1120,7 @@ class Tooltip {
                     chart.polar ||
                     currentSeries.options.clip === false ||
                     points.some((p): boolean => // #16004
-                        chart.pointer.isDirectTouch || // ##17929
+                        pointer.isDirectTouch || // ##17929
                             p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
@@ -1129,7 +1130,7 @@ class Tooltip {
                     // (#6659)
                     if (!options.style.width || styledMode) {
                         label.css({
-                            width: this.chart.spacingBox.width + 'px'
+                            width: chart.spacingBox.width + 'px'
                         });
                     }
 
