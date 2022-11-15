@@ -955,6 +955,7 @@ class Point {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
@@ -966,6 +967,7 @@ class Point {
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
+
                 pointFormat = pointFormat.replace(
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
@@ -1413,7 +1415,7 @@ class Point {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // opacity also for their labels
-                if (isNumber(opacity)) {
+                if (series.options.inactiveOtherPoints && isNumber(opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {

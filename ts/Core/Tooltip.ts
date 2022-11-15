@@ -428,6 +428,37 @@ class Tooltip {
     }
 
     /**
+     * Get the CSS class names for the tooltip's label. Styles the label
+     * by colorIndex or user-defined CSS.
+     *
+     * @function Highcharts.Tooltip#getClassName
+     *
+     * @return {string}
+     *         The class names.
+     */
+    public getClassName(
+        point: Point,
+        isSplit?: boolean,
+        isHeader?: boolean
+    ): string {
+        const options = this.options,
+            series = point.series,
+            seriesOptions = series.options;
+
+        return [
+            options.className,
+            'highcharts-label',
+            isHeader && 'highcharts-tooltip-header',
+            isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
+            !isHeader && 'highcharts-tooltip-' + pick(
+                point.colorIndex, series.colorIndex
+            ),
+            (seriesOptions && seriesOptions.className)
+        ].filter(isString).join(' ');
+    }
+
+
+    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
@@ -436,24 +467,17 @@ class Tooltip {
      * Tooltip label
      */
     public getLabel(): SVGElement { // getLabel
-
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
             doSplit = this.split && this.allowShared,
-            className = (
-                'tooltip' + (
-                    defined(options.className) ?
-                        ' ' + options.className :
-                        ''
-                )
-            ),
             pointerEvents = (
                 options.style.pointerEvents ||
                 (
                     this.shouldStickOnContact() ? 'auto' : 'none'
                 )
             );
+
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
 
@@ -518,7 +542,7 @@ class Tooltip {
 
             // Create the label
             if (doSplit) {
-                this.label = renderer.g(className);
+                this.label = renderer.g('tooltip');
             } else {
                 this.label = renderer
                     .label(
@@ -530,7 +554,7 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        className
+                        'tooltip'
                     )
                     .attr({
                         padding: options.padding,
@@ -581,7 +605,6 @@ class Tooltip {
                 .attr({ zIndex: 8 })
                 .add();
         }
-
         return this.label;
     }
 
@@ -1116,14 +1139,7 @@ class Tooltip {
                     });
 
                     // Set the stroke color of the box to reflect the point
-                    label.removeClass(/highcharts-color-[\d]+/g)
-                        .addClass(
-                            'highcharts-color-' +
-                            pick(
-                                point.colorIndex,
-                                currentSeries.colorIndex
-                            )
-                        );
+                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({
@@ -1337,9 +1353,7 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
-            const colorClass = 'highcharts-color-' + pick(
-                point.colorIndex, series.colorIndex, 'none'
-            );
+
             if (!tt) {
 
                 const attribs: SVGAttributes = {
@@ -1351,7 +1365,6 @@ class Tooltip {
                     attribs.fill = options.backgroundColor;
                     attribs['stroke-width'] = options.borderWidth;
                 }
-
                 tt = ren
                     .label(
                         '',
@@ -1363,9 +1376,7 @@ class Tooltip {
                         options.useHTML
                     )
                     .addClass(
-                        (isHeader ? 'highcharts-tooltip-header ' : '') +
-                        'highcharts-tooltip-box ' +
-                        colorClass
+                        tooltip.getClassName(point, true, isHeader)
                     )
                     .attr(attribs)
                     .add(tooltipLabel);
@@ -1689,7 +1700,9 @@ class Tooltip {
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
-                'class="highcharts-color-{$1.colorIndex}"'
+                'class="highcharts-color-{$1.colorIndex} ' +
+                '{series.options.className} ' +
+                '{point.options.className}"'
             );
     }
 
