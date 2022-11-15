@@ -32,8 +32,6 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
     from?: string;
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
-    maxWeight: number;
-    minWeight: number;
     opacity?: number;
     to?: string;
     weight?: number;
