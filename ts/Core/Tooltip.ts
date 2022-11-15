@@ -1119,7 +1119,8 @@ class Tooltip {
                     chart.polar ||
                     currentSeries.options.clip === false ||
                     points.some((p): boolean => // #16004
-                        p.series.shouldShowTooltip(checkX, checkY)
+                        chart.pointer.isDirectTouch ||
+                            p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
                     const label = tooltip.getLabel();
