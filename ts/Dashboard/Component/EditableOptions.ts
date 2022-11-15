@@ -7,13 +7,18 @@ const {
 
 namespace EditableOptions {
     export type BindingsType = Record<'keyMap' | 'typeMap', Record<string, string>>;
-    export type recursive<T> = Record<string, T>;
 
-    export type getTypesType = { type?: string; value?: string; children?: recursive<getTypesType> }
-    export type getOptionsType = recursive<getTypesType>;
+    export interface getTypesType {
+        type?: string;
+        value?: string;
+        children?: Record<string, getTypesType>
+    }
+
+    export type getOptionsType = Record<string, getTypesType>;
 }
 
 class EditableOptions {
+
     public static defaultBindings: EditableOptions.BindingsType = {
         keyMap: {
             color: 'colorPicker',
@@ -27,14 +32,14 @@ class EditableOptions {
             'number': 'input',
             'boolean': 'toggle'
         }
-    }
+    };
 
     // Bindings of basic types to "editor components"
     public static defaultTypeMap: Record<string, string> = {
         'string': 'text',
         'number': 'input',
         'boolean': 'toggle'
-    }
+    };
 
     public component: Component;
     public bindings?: EditableOptions.BindingsType;
@@ -48,23 +53,36 @@ class EditableOptions {
 
     public getEditableOptions(): (EditableOptions.getOptionsType | undefined) {
         const { options } = this.component;
-        const { keyMap, typeMap } = merge(EditableOptions.defaultBindings, this.bindings);
+        const { keyMap, typeMap } =
+            merge(EditableOptions.defaultBindings, this.bindings);
 
-        function getType(nodeName: string, branch: Record<string, any>): EditableOptions.getTypesType | undefined {
+        function getType(
+            nodeName: string,
+            branch: Record<string, any>
+        ): EditableOptions.getTypesType | undefined {
             const node = branch[nodeName];
 
             if (keyMap[nodeName]) {
-                return { type: keyMap[nodeName], value: node ? JSON.stringify(node) : void 0 };
+                return {
+                    type: keyMap[nodeName],
+                    value: node ? JSON.stringify(node) : void 0
+                };
             }
 
             const type = typeof node;
             if (typeMap[type]) {
-                return { type: typeMap[type], value: node ? JSON.stringify(node) : void 0 };
+                return {
+                    type: typeMap[type],
+                    value: node ? JSON.stringify(node) : void 0
+                };
             }
 
             if (type === 'object') {
                 if (Array.isArray(node)) {
-                    return { type: 'array', value: node ? JSON.stringify(node) : void 0 };
+                    return {
+                        type: 'array',
+                        value: node ? JSON.stringify(node) : void 0
+                    };
                 }
                 // dive deeper
                 const childNodes = Object.keys(node).reduce(

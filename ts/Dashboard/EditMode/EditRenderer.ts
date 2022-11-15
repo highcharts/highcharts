@@ -187,7 +187,10 @@ class EditRenderer {
                     onclick: options.callback,
                     id: options.id || '',
                     name: options.name || '',
-                    value: (options.value && options.value.replace(/\"/g, '')) || ''
+                    value: (
+                        options.value && options.value.replace(/\"/g, '') ||
+                        ''
+                    )
                 }, {
 
                 },
@@ -256,7 +259,10 @@ class EditRenderer {
         if (parentElement) {
             button = createElement(
                 'button', {
-                    className: EditGlobals.classNames.button + ' ' + (options.className || ''),
+                    className: (
+                        EditGlobals.classNames.button + ' ' +
+                        (options.className || '')
+                    ),
                     onclick: options.callback,
                     textContent: options.value
                 }, options.style || {},
@@ -264,7 +270,8 @@ class EditRenderer {
             );
 
             if (options.icon) {
-                (button.style as any)['background-image'] = 'url(' + options.icon + ')';
+                (button.style as any)['background-image'] =
+                    'url(' + options.icon + ')';
             }
         }
 

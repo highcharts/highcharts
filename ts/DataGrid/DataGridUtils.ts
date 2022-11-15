@@ -19,9 +19,9 @@ const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
         return typeof cell === 'string' ||
             typeof cell === 'number' ||
-            typeof cell === 'boolean'
-            ? '' + cell
-            : '';
+            typeof cell === 'boolean' ?
+            '' + cell :
+            '';
     },
     emptyHTMLElement(element: HTMLElement): void {
         while (element.firstChild) {

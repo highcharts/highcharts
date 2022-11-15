@@ -80,7 +80,10 @@ function onUnregister(
     Object
         .keys(HighchartsSyncHandlers)
         .forEach((handler): void => {
-            if (Sync.defaultHandlers[handler] === HighchartsSyncHandlers[handler]) {
+            if (
+                Sync.defaultHandlers[handler] ===
+                HighchartsSyncHandlers[handler]
+            ) {
                 delete Sync.defaultHandlers[handler];
             }
         });

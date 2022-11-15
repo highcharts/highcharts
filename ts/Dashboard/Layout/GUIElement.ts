@@ -32,14 +32,17 @@ abstract class GUIElement {
         const offset = { left: 0, top: 0, right: 0, bottom: 0 };
 
         if (guiElement.container) {
-            const guiElementClientRect = guiElement.container.getBoundingClientRect();
+            const guiElementClientRect =
+                guiElement.container.getBoundingClientRect();
             const referenceClientRect = referenceElement ?
                 referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
 
             offset.left = guiElementClientRect.left - referenceClientRect.left;
             offset.top = guiElementClientRect.top - referenceClientRect.top;
-            offset.right = guiElementClientRect.right - referenceClientRect.left;
-            offset.bottom = guiElementClientRect.bottom - referenceClientRect.top;
+            offset.right =
+                guiElementClientRect.right - referenceClientRect.left;
+            offset.bottom =
+                guiElementClientRect.bottom - referenceClientRect.top;
         }
 
         return offset;
@@ -59,14 +62,17 @@ abstract class GUIElement {
     public static createElementId(
         elementType: string // col, row, layout
     ): string {
-        return Globals.classNamePrefix + elementType + '-' + uniqueKey().slice(11);
+        return (
+            Globals.classNamePrefix + elementType + '-' +
+            uniqueKey().slice(11)
+        );
     }
 
     // Get width in percentages (0% - 100%).
     public static getPercentageWidth(
         width: string // supported formats '50%' or '1/2'
     ): string | undefined {
-        const fractionRegEx = new RegExp('^([0-9]{1})[\-\/\.]([0-9]{1,2})$');
+        const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/u;
 
         let result;
 
@@ -200,6 +206,7 @@ abstract class GUIElement {
     /**
      * Return the GUIElement instance type.
      * @return {GUIElement.GUIElementType|undefined}
+     * The GUIElement instance type
      */
     public getType(): GUIElement.GUIElementType|undefined {
         return this.type;
@@ -209,10 +216,17 @@ abstract class GUIElement {
         setVisible: boolean = true,
         displayStyle?: string
     ): void {
-        const visibilityChanged = this.isVisible && !setVisible || !this.isVisible && setVisible;
+        const visibilityChanged = (
+            this.isVisible && !setVisible ||
+            !this.isVisible && setVisible
+        );
 
         if (this.container && visibilityChanged) {
-            this.container.style.display = setVisible ? (displayStyle || 'block') : 'none';
+            this.container.style.display = (
+                setVisible ?
+                    (displayStyle || 'block') :
+                    'none'
+            );
             this.isVisible = setVisible;
         }
     }

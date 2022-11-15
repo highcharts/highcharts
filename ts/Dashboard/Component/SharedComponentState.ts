@@ -214,7 +214,8 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
                 this.hiddenRowIndexes.push(rowIndex);
             }
             if (this.hiddenRowIndexes.indexOf(rowIndex) > -1 && !hidden) {
-                this.hiddenRowIndexes.splice(this.hiddenRowIndexes.indexOf(rowIndex), 1);
+                this.hiddenRowIndexes
+                    .splice(this.hiddenRowIndexes.indexOf(rowIndex), 1);
             }
         });
 
@@ -228,7 +229,10 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
         return this.hiddenRowIndexes;
     }
 
-    public setHoverPoint(point: SharedComponentState.PresentationHoverPointType | undefined, eventDetail?: {}): void {
+    public setHoverPoint(
+        point?: SharedComponentState.PresentationHoverPointType,
+        eventDetail?: {}
+    ): void {
         this.hoverPoint = point;
         this.emit({
             type: 'afterHoverPointChange',
@@ -237,7 +241,8 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
         });
     }
 
-    public getHoverPoint(): SharedComponentState.PresentationHoverPointType | undefined {
+    public getHoverPoint():
+    (SharedComponentState.PresentationHoverPointType|undefined) {
         return this.hoverPoint;
     }
 
@@ -348,19 +353,22 @@ namespace SharedComponentState {
     export type ColumnOrderEventType = (
         'columnOrderChange'|'afterColumnOrderChange'
     );
+
     export type ColumnVisibilityEventType = (
         'columnVisibilityChange' | 'afterColumnVisibilityChange'
-    )
+    );
 
     export type HoverPointEventType = (
         'hoverPointChange' | 'afterHoverPointChange'
-    )
+    );
 
     export type selectionEventType = (
         'selectionChange' | 'afterSelectionChange'
-    )
+    );
 
-    export type eventTypes = (selectionEventType | HoverPointEventType | ColumnVisibilityEventType)
+    export type eventTypes = (
+        selectionEventType | HoverPointEventType | ColumnVisibilityEventType
+    );
 
     /**
      * Function to sort an array of column names.
@@ -429,7 +437,10 @@ namespace SharedComponentState {
  *
  * */
 
-Serializable.registerClassPrototype('Dashboard.SharedComponentState', SharedComponentState.prototype);
+Serializable.registerClassPrototype(
+    'Dashboard.SharedComponentState',
+    SharedComponentState.prototype
+);
 
 /* *
  *

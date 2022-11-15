@@ -23,10 +23,9 @@ class EditContextMenu extends Menu {
         itemsClassName: EditGlobals.classNames.contextMenuItem,
         icon: EditGlobals.iconsURL + 'menu.svg',
         items: ['saveLocal', 'verticalSeparator', 'editMode']
-    }
+    };
 
-    public static items: Record<string, MenuItem.Options> =
-    merge(Menu.items, {
+    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         editMode: {
             id: 'editMode',
             type: 'toggle',
@@ -45,7 +44,7 @@ class EditContextMenu extends Menu {
                 click: function (): void {}
             }
         }
-    })
+    });
 
     /* *
     *
@@ -107,8 +106,10 @@ class EditContextMenu extends Menu {
         addEvent(document, 'click', (event): void => {
             if (
                 event.target !== this.container &&
-                event.target !== contextMenu.editMode.tools.contextButtonElement &&
-                !event.target.classList.contains(EditGlobals.classNames.toggleSlider) &&
+                event.target !==
+                    contextMenu.editMode.tools.contextButtonElement &&
+                !event.target.classList
+                    .contains(EditGlobals.classNames.toggleSlider) &&
                 event.target.tagName !== 'INPUT' &&
                 this.isVisible
             ) {
@@ -145,7 +146,11 @@ class EditContextMenu extends Menu {
     ): void {
         const contextMenu = this,
             width = contextMenu.options.width || 0,
-            left = ctxButton ? ctxButton.offsetLeft - width + ctxButton.offsetWidth : x,
+            left = (
+                ctxButton ?
+                    ctxButton.offsetLeft - width + ctxButton.offsetWidth :
+                    x
+            ),
             top = ctxButton ? ctxButton.offsetTop + ctxButton.offsetHeight : y;
 
         if (left && top) {

@@ -61,10 +61,12 @@ function fromJSON(
         modifierJSON = jsonModifiers[i];
         switch (modifierJSON.$class) {
             case GroupModifierHelper.$class:
-                modifier = GroupModifierHelper.fromJSON(modifierJSON as GroupModifierHelper.JSON);
+                modifier = GroupModifierHelper
+                    .fromJSON(modifierJSON as GroupModifierHelper.JSON);
                 break;
             case InvertModifierHelper.$class:
-                modifier = InvertModifierHelper.fromJSON(modifierJSON as InvertModifierHelper.JSON);
+                modifier = InvertModifierHelper
+                    .fromJSON(modifierJSON as InvertModifierHelper.JSON);
                 break;
             default:
                 modifier = Serializable.fromJSON(modifierJSON) as DataModifier;

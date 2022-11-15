@@ -268,7 +268,10 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         if (respoOptions) {
             if (cntWidth <= respoOptions.small) {
                 size = Globals.respoBreakpoints.small;
-            } else if (cntWidth > respoOptions.small && cntWidth <= respoOptions.medium) {
+            } else if (
+                cntWidth > respoOptions.small &&
+                cntWidth <= respoOptions.medium
+            ) {
                 size = Globals.respoBreakpoints.medium;
             }
         }
@@ -448,6 +451,7 @@ namespace Dashboard {
      * Import layouts from the local storage
      *
      * @return {Dashboard.Dashboard|undefined}
+     * The Dashboard
      */
     export function importLocal(): (Dashboard|undefined) {
         const dashboardJSON = localStorage.getItem(
@@ -457,7 +461,8 @@ namespace Dashboard {
 
         if (dashboardJSON) {
             try {
-                return Serializable.fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
+                return Serializable
+                    .fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
             } catch (e) {
                 // nothing to do
             }

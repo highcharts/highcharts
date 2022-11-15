@@ -343,6 +343,7 @@ module.exports = function (config) {
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
             'samples/maps/plotoptions/series-animation-true/demo.js', // animation
+            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',

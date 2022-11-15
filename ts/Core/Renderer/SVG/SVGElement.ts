@@ -152,13 +152,12 @@ class SVGElement implements SVGElementLike {
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
     // @todo public height?: number;
-    public inverted?: boolean;
+    public inverted: undefined;
     public matrix?: Array<number>;
     public oldShadowOptions?: ShadowOptionsObject;
     public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     // @todo public options?: AnyRecord;
-    public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
     public placed?: boolean;
@@ -283,9 +282,6 @@ class SVGElement implements SVGElementLike {
         if (parent) {
             this.parentGroup = parent;
         }
-
-        // Mark as inverted
-        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -1724,26 +1720,6 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Invert a group, rotate and flip. This is used internally on inverted
-     * charts, where the points and graphs are drawn as if not inverted, then
-     * the series group elements are inverted.
-     *
-     * @function Highcharts.SVGElement#invert
-     *
-     * @param {boolean} inverted
-     *        Whether to invert or not. An inverted shape can be un-inverted by
-     *        setting it to false.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Return the SVGElement for chaining.
-     */
-    public invert(inverted: boolean): this {
-        this.inverted = inverted;
-        this.updateTransform();
-        return this;
-    }
-
-    /**
      * Add an event listener. This is a simple setter that replaces the
      * previous event of the same type added by this function, as opposed to
      * the {@link Highcharts#addEvent} function.
@@ -2040,12 +2016,16 @@ class SVGElement implements SVGElementLike {
         cutOff?: boolean
     ): this {
         const shadows = [],
-            element = this.element,
-            oldShadowOptions = this.oldShadowOptions,
+            {
+                element,
+                oldShadowOptions,
+                parentGroup
+            } = this,
+            parentInverted = parentGroup && parentGroup.rotation === 90,
             defaultShadowOptions: ShadowOptionsObject = {
                 color: Palette.neutralColor100,
-                offsetX: this.parentInverted ? -1 : 1,
-                offsetY: this.parentInverted ? -1 : 1,
+                offsetX: parentInverted ? -1 : 1,
+                offsetY: parentInverted ? -1 : 1,
                 opacity: 0.15,
                 width: 3
             };
@@ -2088,7 +2068,7 @@ class SVGElement implements SVGElementLike {
 
         } else if (!this.shadows) {
             shadowElementOpacity = options.opacity / options.width;
-            transform = this.parentInverted ?
+            transform = parentInverted ?
                 `translate(${options.offsetY}, ${options.offsetX})` :
                 `translate(${options.offsetX}, ${options.offsetY})`;
             for (i = 1; i <= options.width; i++) {
@@ -2402,23 +2382,15 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(): void {
-        const wrapper = this,
-            scaleX = wrapper.scaleX,
-            scaleY = wrapper.scaleY,
-            inverted = wrapper.inverted,
-            rotation = wrapper.rotation,
-            matrix = wrapper.matrix,
-            element = wrapper.element;
-
-        let translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0;
-
-        // Flipping affects translate as adjustment for flipping around the
-        // group's axis
-        if (inverted) {
-            translateX += wrapper.width;
-            translateY += wrapper.height;
-        }
+        const {
+            element,
+            matrix,
+            rotation = 0,
+            scaleX,
+            scaleY,
+            translateX = 0,
+            translateY = 0
+        } = this;
 
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
@@ -2432,10 +2404,8 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        // apply rotation
-        if (inverted) {
-            transform.push('rotate(90) scale(-1,1)');
-        } else if (rotation) { // text rotation
+        // Apply rotation
+        if (rotation) { // text rotation or inverted chart
             transform.push(
                 'rotate(' + rotation + ' ' +
                 pick(this.rotationOriginX, element.getAttribute('x'), 0) +
@@ -2451,7 +2421,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !(wrapper.text || wrapper).textPath) {
+        if (transform.length && !(this.text || this).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }

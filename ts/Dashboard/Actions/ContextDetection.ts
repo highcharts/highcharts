@@ -39,16 +39,19 @@ class ContextDetection {
         side: string
     ): number {
         // Array of overlapped levels.
-        const overlappedLevels = mouseContext.getOverlappingLevels(side, offset / 2);
+        const overlappedLevels =
+            mouseContext.getOverlappingLevels(side, offset / 2);
 
         // Divide offset to level sections (eg 3 nested layouts -
         // cell edge will have 3 sections each 1/3 offset width).
         const divOffset = offset / overlappedLevels.length;
 
         // Overlapped nested layout level.
-        const lastOverlappedLevel = overlappedLevels[overlappedLevels.length - 1];
+        const lastOverlappedLevel =
+            overlappedLevels[overlappedLevels.length - 1];
 
-        let level = mouseContext.row.layout.level - Math.floor(sideOffset / divOffset);
+        let level =
+            mouseContext.row.layout.level - Math.floor(sideOffset / divOffset);
         level = level < lastOverlappedLevel ? lastOverlappedLevel : (
             level > mouseContext.row.layout.level ?
                 mouseContext.row.layout.level : level
@@ -66,7 +69,8 @@ class ContextDetection {
 
         // get cell offsets, width, height
         const mouseCellContextOffsets = GUIElement.getOffsets(mouseCellContext);
-        const { width, height } = GUIElement.getDimFromOffsets(mouseCellContextOffsets);
+        const { width, height } =
+            GUIElement.getDimFromOffsets(mouseCellContextOffsets);
 
         // Correct offset when element to small.
         if (width < 2 * offset) {
@@ -78,11 +82,17 @@ class ContextDetection {
         const topSideY = e.clientY - mouseCellContextOffsets.top;
 
         // get cell side - right, left, top, bottom
-        const sideY = topSideY >= -offset && topSideY <= offset ? 'top' :
-            (topSideY - height >= -offset && topSideY - height <= offset ? 'bottom' : '');
+        const sideY =
+            topSideY >= -offset && topSideY <= offset ? 'top' :
+                topSideY - height >= -offset && topSideY - height <= offset ?
+                    'bottom' :
+                    '';
 
-        const sideX = leftSideX >= -offset && leftSideX <= offset ? 'left' :
-            (leftSideX - width >= -offset && leftSideX - width <= offset ? 'right' : '');
+        const sideX =
+            leftSideX >= -offset && leftSideX <= offset ? 'left' :
+                leftSideX - width >= -offset && leftSideX - width <= offset ?
+                    'right' :
+                    '';
 
         const side = sideX ? sideX : sideY; // X is prioritized.
 

@@ -18,8 +18,17 @@ import DataStore from '../../Data/Stores/DataStore.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
-AST.allowedTags = [...AST.allowedTags, 'option', 'select', 'label', 'input', 'textarea'];
-AST.allowedAttributes = [...AST.allowedAttributes, 'for', 'value', 'checked', 'src', 'name', 'selected'];
+AST.allowedTags = [
+    ...AST.allowedTags,
+    'option',
+    'select',
+    'label',
+    'input',
+    'textarea'
+];
+AST.allowedAttributes = [
+    ...AST.allowedAttributes,
+    'for', 'value', 'checked', 'src', 'name', 'selected'];
 AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
@@ -49,7 +58,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
-        const elements = json.elements ? json.elements.map((el): AST.Node => JSON.parse(el)) : [];
+        const elements = (
+            json.elements ?
+                json.elements.map((el): AST.Node => JSON.parse(el)) :
+                []
+        );
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HTMLComponent(
@@ -101,7 +114,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.innerElements = [];
         this.elements = [];
         this.scaleElements = this.options.scaleElements;
-        this.sync = new Component.Sync(this, this.options.syncEvents, this.options.syncHandlers);
+        this.sync = new Component.Sync(
+            this,
+            this.options.syncEvents,
+            this.options.syncHandlers
+        );
 
         this.on('tableChanged', (e): void => {
             if ('detail' in e && e.detail && e.detail.sender !== this.id) {
@@ -147,12 +164,14 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public autoScale(): void {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = 'column';
+
         this.contentElement.childNodes.forEach((element): void => {
             if (element && element instanceof HTMLElement) {
                 element.style.width = 'auto';
                 element.style.maxWidth = '100%';
                 element.style.maxHeight = '100%';
-                element.style.flexBasis = 'auto'; // (100 / this.innerElements.length) + '%';
+                element.style.flexBasis = 'auto';
+                // or (100 / this.innerElements.length) + '%';
                 element.style.overflow = 'auto';
             }
         });
@@ -167,7 +186,9 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public scaleText(): void {
         this.contentElement.childNodes.forEach((element): void => {
             if (element instanceof HTMLElement) {
-                element.style.fontSize = Math.max(Math.min(element.clientWidth / (1 * 10), 200), 20) + 'px';
+                element.style.fontSize = Math.max(
+                    Math.min(element.clientWidth / (1 * 10), 200), 20
+                ) + 'px';
             }
         });
     }
@@ -175,6 +196,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
+        this.contentElement.style.overflow = 'auto';
         this.emit({ type: 'afterRender' });
         return this;
     }

@@ -16,22 +16,31 @@ interface ComponentGroup {
 class ComponentGroup {
     private static componentGroups: Record<ComponentGroup['id'], ComponentGroup> = {};
 
-    public static getComponentGroup(groupID: ComponentGroup['id']): ComponentGroup | undefined {
+    public static getComponentGroup(
+        groupID: ComponentGroup['id']
+    ): ComponentGroup | undefined {
         if (this.componentGroups[groupID]) {
             return this.componentGroups[groupID];
         }
     }
 
-    public static addComponentGroup(group: ComponentGroup): void {
+    public static addComponentGroup(
+        group: ComponentGroup
+    ): void {
         const { id } = group;
         if (!this.componentGroups[id]) {
             this.componentGroups[id] = group;
         }
     }
 
-    public static getGroupsFromComponent(componentID: componentID): ComponentGroup[] {
+    public static getGroupsFromComponent(
+        componentID: componentID
+    ): ComponentGroup[] {
         const groups = Object.keys(this.componentGroups);
-        return groups.reduce((arr: ComponentGroup[], groupKey): ComponentGroup[] => {
+        return groups.reduce((
+            arr: ComponentGroup[],
+            groupKey
+        ): ComponentGroup[] => {
             const group = this.getComponentGroup(groupKey);
             if (group && group.components.indexOf(componentID) > -1) {
                 arr.push(group);
