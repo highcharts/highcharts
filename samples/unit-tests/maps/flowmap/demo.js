@@ -26,14 +26,6 @@
             }, {
                 type: 'flowmap',
                 linkedTo: ':previous',
-                // keys: [
-                //     'from',
-                //     'to',
-                //     'weight',
-                //     'curveFactor',
-                //     'growTowards',
-                //     'markerEnd'
-                // ],
                 data: [{
                     from: 'A',
                     to: 'B',
@@ -109,7 +101,56 @@
             `The point with a weight defined on a series level should be drawn.`
         );
 
+        // Test markerEnd
+
+        assert.strictEqual(
+            series.points[1].shapeArgs.d.length,
+            8,
+            `MarkerEnd should be enabled by default (path length is 7).`
+        );
+
+        let arrowWidth = 5;
+
+        series.points[0].update({
+            curveFactor: 0, // make arrow straight to simplify y comparison
+            markerEnd: {
+                width: arrowWidth
+            }
+        });
+
+        assert.strictEqual(
+            series.points[0].shapeArgs.d[1][2],
+            series.points[0].shapeArgs.d[2][2] - arrowWidth,
+            `The markerEnd arrow width should be ${arrowWidth}.`
+        );
+
+        const previousArrowWidth = arrowWidth,
+            previousArrowVertexY = series.points[0].shapeArgs.d[2][2];
+
+        arrowWidth = 20;
+
+        series.points[0].update({
+            markerEnd: {
+                width: arrowWidth
+            }
+        });
+
+        assert.strictEqual(
+            series.points[0].shapeArgs.d[1][2],
+            series.points[0].shapeArgs.d[2][2] - arrowWidth,
+            `The markerEnd arrow width should be ${arrowWidth}.`
+        );
+
+        assert.strictEqual(
+            series.points[0].shapeArgs.d[2][2],
+            previousArrowVertexY + arrowWidth - previousArrowWidth,
+            `The markerEnd arrow width should increase by
+            ${arrowWidth - previousArrowWidth}.`
+        );
+
         // Test style attribs
+
+        // Series options
 
         assert.strictEqual(
             series.points[1].graphic.attr('fill'),
@@ -117,17 +158,64 @@
             `The point with a weight defined on a series level should be drawn.`
         );
 
-        // assert.strictEqual(
-        //     series.points[1].graphic.attr('fillOpacity'),
-        //     series.options.fillOpacity,
-        //     `The point with a weight defined on a series level should be drawn.`
-        // );
+        assert.strictEqual(
+            series.points[1].graphic.attr('fill-opacity'),
+            series.options.fillOpacity,
+            `The point's graphic should have a correct fill-opacity.`
+        );
 
-        // assert.notStrictEqual(
-        //     series.points[1].color,
-        //     series.options.nullColor,
-        //     `The not-null point should have a correct color in options.`
-        // );
+        assert.strictEqual(
+            series.group.attr('opacity'),
+            1,
+            `The series group should have opacity 1 by default.`
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('opacity'),
+            1,
+            `The point's graphic should have opacity 1 by default.`
+        );
+
+        series.update({
+            fillColor: '#0000ff',
+            fillOpacity: 0.6,
+            opacity: 0.7,
+            markerEnd: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('fill'),
+            series.options.fillColor,
+            `The point's fill from series options should be correct.`
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('fill-opacity'),
+            series.options.fillOpacity,
+            `The point's fill-opacity from series options should be correct.`
+        );
+
+        assert.strictEqual(
+            series.group.attr('opacity'),
+            series.options.opacity,
+            `The series group opacity should be correct.`
+        );
+
+        assert.strictEqual(
+            series.points[1].shapeArgs.d.length,
+            5,
+            `MarkerEnd should be disabled (shape's path length should be 5).`
+        );
+
+        // Point options
+
+        assert.notStrictEqual(
+            series.points[1].color,
+            series.options.nullColor,
+            `The not-null point should have a correct color in options.`
+        );
 
         assert.strictEqual(
             series.points[1].graphic.attr('stroke'),
@@ -135,13 +223,42 @@
             `The point's stroke color should be correct.`
         );
 
-        // series.points[1].setVisible(false);
+        series.points[1].update({
+            color: '#000000', // stroke
+            fillColor: '#ff0000',
+            fillOpacity: 0.6,
+            opacity: 0.7
+        });
 
-        // // assert.strictEqual(
-        // //     addedPoint.graphic.attr('visibility'),
-        // //     'hidden',
-        // //     'Flowmap point graphic should be hidden.'
-        // // );
+        assert.strictEqual(
+            series.points[1].graphic.attr('stroke'),
+            series.points[1].color,
+            `After update, the point's stroke color (from point options)
+            should be correct.`
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('fill'),
+            series.points[1].options.fillColor,
+            `After update, the point's fill from point options should be
+            correct.`
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('fill-opacity'),
+            series.points[1].options.fillOpacity,
+            `After update, the point's fill-opacity from point options should
+            be correct.`
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.attr('opacity'),
+            series.points[1].options.opacity,
+            `After update, the point's opacity from point options should be
+            correct.`
+        );
+
+        // End of style attribs tests
 
         const pointToRemove = series.points[1];
 
@@ -165,6 +282,25 @@
             chart.series.length,
             2,
             `After series.remove(), there should be only two series.`
+        );
+
+        chart.addSeries({
+            type: 'flowmap',
+            linkedTo: ':previous',
+            weight: 1,
+            data: [{
+                from: 'A',
+                to: 'B'
+            }, {
+                from: 'B',
+                to: 'C'
+            }]
+        });
+
+        assert.ok(
+            chart.series[2].points[1].graphic,
+            true,
+            'After adding the flowmap series, the flowmap point should exist.'
         );
 
     });
