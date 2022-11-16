@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/BubbleBlendColors';
+import '../../Extensions/BubbleBlendColors.js';

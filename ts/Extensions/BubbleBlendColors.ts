@@ -15,7 +15,13 @@
  *
  * */
 
-import BubbleSeries from '../Series/Bubble/BubbleSeries';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js'
+const {
+    seriesTypes: {
+        bubble: BubbleSeries
+    }
+} = SeriesRegistry;
+
 import U from '../Core/Utilities.js';
 const {
     merge,
