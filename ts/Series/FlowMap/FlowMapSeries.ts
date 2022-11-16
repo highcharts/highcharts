@@ -81,18 +81,12 @@ class FlowMapSeries extends MapLineSeries {
      * is drawing a link between two mappoints.
      *
      * @extends      plotOptions.mapline
+     * @excluding    dataLabels
      * @product      highmaps
      * @requires     modules/flowmap
      * @optionparent plotOptions.flowmap
      */
     public static defaultOptions: FlowMapSeriesOptions = merge(MapLineSeries.defaultOptions, {
-        /**
-         * Always disabled, excluded from API.
-         *
-         * @declare Highcharts.SeriesFlowMapSeriesDataLabelsOptionsObject
-         *
-         * @private
-         */
         dataLabels: {
             enabled: false
         },
@@ -101,17 +95,16 @@ class FlowMapSeries extends MapLineSeries {
          * The opacity of the color fill for all links.
          *
          * @type      {number}
-         * @default   {0.5}
-         * @product   highmaps
-         * @apioption series.flowmap.fillOpacity
+         * @default   0.5
          */
         fillOpacity: 0.5,
 
         /**
+         * An array specifying which option maps to which key in the data point
+         * array. This makes it convenient to work with unstructured data
+         * arrays from different sources.
          *
-         * @extends series.flowmap.keys
          * @default ['from', 'to', 'weight']
-         * @private
          */
         keys: ['from', 'to', 'weight'],
 
@@ -119,15 +112,29 @@ class FlowMapSeries extends MapLineSeries {
          * The arrow type and size properties.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type    {number}
-         * @default {enabled: true, height: '40%', width: '40%'
-        }
-         * @product highcharts
-         * @apioption series.flowmap.markerEnd
+         * @since   next
          */
         markerEnd: {
+            /**
+             * Whether a flowmap point should end with a symbol or not.
+             *
+             * @since next
+             * @type  {boolean}
+             */
             enabled: true,
+            /**
+             * Height of a flowmap point's symbol.
+             *
+             * @since next
+             * @type  {number|string}
+             */
             height: '40%',
+            /**
+             * Width of a flowmap point's symbol.
+             *
+             * @since next
+             * @type  {number|string}
+             */
             width: '40%'
         },
 
@@ -135,11 +142,7 @@ class FlowMapSeries extends MapLineSeries {
          * Maximum flow map links weight. It will automatically
          * size between the minWeight and maxWeight.
          *
-         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type    {number}
-         * @default 25
-         * @product highcharts
-         * @apioption series.flowmap.minWeight
+         * @since   next
          */
         maxWeight: 25,
 
@@ -148,30 +151,23 @@ class FlowMapSeries extends MapLineSeries {
          * size between the minWeight and maxWeight.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type    {number}
-         * @default 5
-         * @product highcharts
-         * @apioption series.flowmap.minWeight
+         * @since   next
          */
         minWeight: 5,
 
         tooltip: {
             /**
-             * A callback for defining the format for in the chart's
-             * tooltip for flowmap links.
+             * The HTML of the tooltip header line. Variables are enclosed by
+             * curly brackets. Available variables are point.key, series.name,
+             * series.color and other members from the point and series
+             * objects. The point.key variable contains the category name, x
+             * value or datetime string depending on the type of axis. For
+             * datetime axes, the point.key date format can be set using
+             * tooltip.xDateFormat.
              *
-             * @type      {Highcharts.FormatterCallbackFunction}
-             * @since     recent
-             * @apioption plotOptions.flowmap.tooltip
+             * TODO: check why it's not generated in API
              */
-
-            /**
-             * Whether the tooltip should follow the pointer or stay fixed on
-             * the item.
-             */
-
-            headerFormat:
-            '<span style="font-size: 10px">{series.name}</span><br/>',
+            headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
         },
 
@@ -179,10 +175,8 @@ class FlowMapSeries extends MapLineSeries {
          * The weight of the link determines how thick it will be compared to
          * other weights.
          *
-         * @declare     Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @type        {number}
-         * @product     highcharts
-         * @apioption   series.flowmap.weight
+         * @type    {number}
+         * @since   next
          */
         weight: void 0
 
@@ -710,7 +704,6 @@ export default FlowMapSeries;
  *
  * @type      {Array<number|null|*>}
  * @excluding labelrank, outgoing
- * @product   highmaps
  * @apioption series.flowmap.data
  */
 
@@ -722,7 +715,6 @@ export default FlowMapSeries;
  *         Example ship route
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.data.curveFactor
  */
 
@@ -731,7 +723,6 @@ export default FlowMapSeries;
  *
  *
  * @type      {string}
- * @product   highmaps
  * @apioption series.flowmap.data.fillColor
  */
 
@@ -739,7 +730,6 @@ export default FlowMapSeries;
  * The opacity of the link color fill.
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.data.fillOpacity
  */
 
@@ -750,7 +740,6 @@ export default FlowMapSeries;
  *         Example ship route
  *
  * @type      {boolean}
- * @product   highmaps
  * @apioption series.flowmap.data.growTowards
  */
 
@@ -762,7 +751,6 @@ export default FlowMapSeries;
  *         Example ship route
  *
  * @type      {*|null}
- * @product   highmaps
  * @apioption series.flowmap.data.markerEnd
  */
 
@@ -770,23 +758,20 @@ export default FlowMapSeries;
  * Enable or disable the marker-end on the series.
  *
  * @type      {boolean}
- * @product   highmaps
  * @apioption series.flowmap.data.markerEnd.enabled
  */
 
 /**
  * The width of the marker-end symbol in pixels or percentage.
  *
- * @type      {number | string}
- * @product   highmaps
+ * @type      {number|string}
  * @apioption series.flowmap.data.markerEnd.height
  */
 
 /**
  * The width of the marker-end symbol in pixels or percentage.
  *
- * @type      {number | string}
- * @product   highmaps
+ * @type      {number|string}
  * @apioption series.flowmap.data.markerEnd.width
  */
 
@@ -794,7 +779,6 @@ export default FlowMapSeries;
  * The opacity of an individual link.
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.data.opacity
  */
 
@@ -805,7 +789,6 @@ export default FlowMapSeries;
  *         Example ship route
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.data.weight
  */
 
@@ -814,7 +797,6 @@ export default FlowMapSeries;
  *
  *
  * @type      {string}
- * @product   highmaps
  * @apioption series.flowmap.fillColor
  */
 
@@ -827,7 +809,6 @@ export default FlowMapSeries;
  * flowmap series.
  *
  * @type      {string}
- * @product   highmaps
  * @apioption series.flowmap.linkedTo
  */
 
@@ -836,7 +817,6 @@ export default FlowMapSeries;
  *
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.opacity
  */
 
@@ -848,7 +828,6 @@ export default FlowMapSeries;
  *         Example ship route
  *
  * @type      {number}
- * @product   highmaps
  * @apioption series.flowmap.weight
  */
 
