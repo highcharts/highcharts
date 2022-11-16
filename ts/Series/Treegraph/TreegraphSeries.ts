@@ -510,7 +510,7 @@ class TreegraphSeries extends TreemapSeries {
             attribs['stroke-width'] = linkLineWidth;
             delete attribs.fill;
         }
-        if (!point.visible && point.linkToParent) {
+        if (!point.visible) {
             attribs.opacity = 0;
         }
         return attribs;
@@ -562,6 +562,9 @@ class TreegraphSeries extends TreemapSeries {
             if (parentNode) {
                 const parentShapeArgs = parentNode.shapeArgs || {},
                     { x = 0, y = 0, width = 0, height = 0 } = parentShapeArgs;
+                if (!point.shapeArgs) {
+                    point.shapeArgs = {};
+                }
                 extend(point.shapeArgs, {
                     d: symbols[symbol || 'circle'](
                         x,
