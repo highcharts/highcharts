@@ -510,6 +510,9 @@ class TreegraphSeries extends TreemapSeries {
             attribs['stroke-width'] = linkLineWidth;
             delete attribs.fill;
         }
+        if (!point.visible && point.linkToParent) {
+            attribs.opacity = 0;
+        }
         return attribs;
     }
 
