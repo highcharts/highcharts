@@ -150,10 +150,11 @@ namespace WaterfallAxis {
             // Render each waterfall stack total
             objectEach(waterfallStacks, function (type): void {
                 objectEach(type, function (
-                    stackItem: StacksItemObject
+                    stackItem: StacksItemObject,
+                    key: string
                 ): void {
                     dummyStackItem.total = stackItem.stackTotal;
-
+                    dummyStackItem.x = +key;
                     if (stackItem.label) {
                         dummyStackItem.label = stackItem.label;
                     }
