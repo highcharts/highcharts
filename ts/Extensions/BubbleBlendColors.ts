@@ -15,7 +15,7 @@
  *
  * */
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js'
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries
