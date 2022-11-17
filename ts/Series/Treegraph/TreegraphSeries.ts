@@ -688,7 +688,7 @@ export default TreegraphSeries;
  * @sample highcharts/series-treegraph/level-options
  *          Treegraph chart with level options applied
  *
- * @excluding layoutStartingDirection, layoutAlgorithm, colorVariation
+ * @excluding layoutStartingDirection, layoutAlgorithm
  * @apioption series.treegraph.levels
  */
 
