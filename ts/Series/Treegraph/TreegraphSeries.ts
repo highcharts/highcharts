@@ -327,6 +327,10 @@ class TreegraphSeries extends TreemapSeries {
                 this.translateLink(point.linkToParent);
             }
         });
+
+        if (!options.colorByPoint) {
+            series.setColorRecursive(series.tree);
+        }
     }
 
     public translateLink(link: TreegraphLink): void {
