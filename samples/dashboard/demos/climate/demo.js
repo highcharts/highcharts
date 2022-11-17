@@ -72,8 +72,8 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
-function createDashboard(worldMapJSON) {
-    var dashboard = new Dashboard.Dashboard('container', {
+function buildDashboard() {
+    const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
@@ -176,11 +176,10 @@ function createDashboard(worldMapJSON) {
             chartOptions: {
                 series: [{
                     type: 'map',
-                    name: 'World Map',
-                    mapData: Highcharts.geojson(worldMapJSON)
+                    name: 'World Map'
                 }],
                 chart: {
-                    map: worldMapJSON,
+                    map: 'custom/world',
                     type: 'line'
                 },
                 title: {
@@ -271,22 +270,23 @@ async function main() {
         )
     );
 
-    for (const row of storePool.climateSources.table.getRowObjects()) {
-        storePool[row['Store Name']] = await loadStoreAsync(
-            new Dashboard.GoogleSheetsStore(
-                undefined,
-                {
-                    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                    googleSpreadsheetKey: row['Store Link'].match(/[\w-]{44}/gu)[0]
-                }
-            )
+    const promises = [];
+
+    for (const row of storePool.Sources.table.getRowObjects()) {
+        storePool[row['Store Name']] = new Dashboard.GoogleSheetsStore(
+            undefined,
+            {
+                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+                googleSpreadsheetKey: row['Store Link'].match(/[\w-]{44}/gu)[0]
+            }
         );
+        promises.push(loadStoreAsync(storePool[row['Store Name']]));
     }
 
-    console.log(storePool);
+    return Promise
+        .all(promises)
+        .then(() => console.log(storePool))
+        .then(() => buildDashboard());
 }
 
-main().catch((e) => {
-    console.error(e);
-    window.alert(JSON.stringify(e));
-});
+main().catch(e => console.error(e));
