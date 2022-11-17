@@ -10,6 +10,7 @@
  *
  * */
 
+import type DataGridComponent from '../../Extensions/DashboardPlugin/DataGridComponent';
 import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
 import type HTMLComponent from './HTMLComponent';
 import type KPIComponent from './KPIComponent';
@@ -28,6 +29,7 @@ import type ThresholdComponent from './ThresholdComponent';
 // ComponentTypeRegistry[keyof ComponentTypeRegistry];
 
 export type ComponentTypes =
+    DataGridComponent.ComponentType |
     HighchartsComponent.ComponentType |
     HTMLComponent.ComponentType |
     KPIComponent.ComponentType |
