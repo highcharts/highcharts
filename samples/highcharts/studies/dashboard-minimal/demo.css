@@ -1,0 +1,8 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+@import "https://code.highcharts.com/css/datagrid.css";
+
+#datagrid {
+    height: 180px;
+    width: 100%;
+    margin: 0 auto;
+}

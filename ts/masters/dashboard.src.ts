@@ -30,6 +30,7 @@ import PluginHandler from '../Dashboard/PluginHandler.js';
 import RangeModifier from '../Data/Modifiers/RangeModifier.js';
 import Sync from '../Dashboard/Component/Sync/Sync.js';
 import Utilities from '../Dashboard/Utilities.js';
+import DataGrid from '../DataGrid/DataGrid.js';
 
 /* *
  *
@@ -57,6 +58,7 @@ const D = {
     _modules: (typeof _modules === 'undefined' ? {} : _modules),
     CSVStore,
     Dashboard,
+    DataGrid,
     DataPromise,
     DataTable,
     GoogleSheetsStore,

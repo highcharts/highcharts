@@ -17,15 +17,11 @@ import type DataTable from '../Data/DataTable';
 
 const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
-        return (
-            (
-                typeof cell === 'string' ||
-                typeof cell === 'number' ||
-                typeof cell === 'boolean'
-            ) ?
-                '' + cell :
-                ''
-        );
+        return typeof cell === 'string' ||
+            typeof cell === 'number' ||
+            typeof cell === 'boolean' ?
+            '' + cell :
+            '';
     },
     emptyHTMLElement(element: HTMLElement): void {
         while (element.firstChild) {
