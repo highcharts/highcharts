@@ -570,17 +570,6 @@ class Axis {
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
         this.options = merge(
-            (this.chart.options.chart.style && 
-            this.chart.options.chart.style.fontSize) ?
-                merge(
-                    AxisDefaults.defaultXAxisOptions,
-                    {
-                        labels: {
-                            style: {
-                                fontSize: this.chart.options.chart.style.fontSize
-                            }
-                        }
-                }) :
             AxisDefaults.defaultXAxisOptions,
             (this.coll === 'yAxis') && AxisDefaults.defaultYAxisOptions,
             [

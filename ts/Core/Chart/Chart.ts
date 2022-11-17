@@ -1188,21 +1188,17 @@ class Chart {
         const chart = this;
 
         // Default style
-        const style = (
-            name === 'title' ||
-            name === 'subtitle' ||
-            name === 'caption'
-        ) ? {
-                color: Palette.neutralColor80,
-                fontSize: (
-                    this.options.chart.style &&
-                    this.options.chart.style.fontSize
-                ) ?
-                    this.options.chart.style.fontSize :
-                    (this.options.isStock ? '16px' : '18px') // #2944
-            } : {
-                color: Palette.neutralColor60
-            };
+        const style = (name === 'title') ? {
+            color: Palette.neutralColor80,
+            fontSize: (
+                this.options.chart.style &&
+                this.options.chart.style.fontSize
+            ) ?
+                this.options.chart.style.fontSize :
+                (this.options.isStock ? '16px' : '18px') // #2944
+        } : {
+            color: Palette.neutralColor60
+        };
 
         // Merge default options with explicit options
         const options = this.options[name] = merge(
