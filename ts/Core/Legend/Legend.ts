@@ -292,17 +292,7 @@ class Legend {
         this.options = options;
 
         if (!this.chart.styledMode) {
-            this.itemStyle = (
-                this.chart.options.chart.style &&
-                this.chart.options.chart.style.fontSize
-            ) ?
-                merge(
-                    options.itemStyle,
-                    {
-                        fontSize: this.chart.options.chart.style.fontSize
-                    }
-                ) :
-                options.itemStyle;
+            this.itemStyle = options.itemStyle;
 
             this.itemHiddenStyle = merge(
                 this.itemStyle,
