@@ -181,7 +181,11 @@ function copyFiles() {
         } = folder;
         getFilesInFolder(from, true)
             .filter(path => (
-                !(path.startsWith('es-modules') && path.endsWith('.d.ts')) &&
+                (
+                    path.startsWith('es-modules/masters') ||
+                    !path.startsWith('es-modules') ||
+                    !path.endsWith('.d.ts')
+                ) &&
                 path !== 'package.json'
             ))
             .forEach(filename => {
