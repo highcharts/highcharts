@@ -61,9 +61,9 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
 
     /**
      * Regular expression to extract the store type (group 1) from the
-     * stringified class type.
+     * stringified class constructor.
      */
-    private static readonly nameRegExp = (
+    private static readonly typeRegExp = (
         /^function\s+(\w*?)(?:DataStore)?\s*\(/
     );
 
@@ -134,7 +134,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      */
     private static getType(dataStore: (NewableFunction|StoreType)): string {
         return (
-            dataStore.toString().match(DataStore.nameRegExp) ||
+            dataStore.toString().match(DataStore.typeRegExp) ||
             ['', '']
         )[1];
     }
