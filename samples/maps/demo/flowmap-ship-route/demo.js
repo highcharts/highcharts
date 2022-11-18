@@ -33,7 +33,8 @@
                 }
                 return '<b>' + this.point.id + '</b>' + (
                     this.point.lat ?
-                        '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : ''
+                        '<br>Lat: ' + this.point.lat + ' Lon: ' +
+                            this.point.lon : ''
                 );
             }
         },
@@ -85,23 +86,22 @@
             type: 'flowmap',
             linkedTo: ':previous',
             name: 'Ship Routes',
+            growTowards: true,
+            markerEnd: {
+                enabled: true,
+                height: 10,
+                width: 5
+            },
             data: [{
                 from: 'Houston',
                 to: 'Miami',
                 weight: 5,
-                curveFactor: -0.5,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 10,
-                    width: 5
-                }
+                curveFactor: -0.5
             }, {
                 from: 'Miami',
                 to: 'Algeciras',
                 weight: 22,
                 curveFactor: -0.15,
-                growTowards: true,
                 markerEnd: {
                     enabled: true,
                     height: 30,
@@ -111,41 +111,22 @@
                 from: 'Algeciras',
                 to: 'Malta',
                 weight: 2,
-                curveFactor: 0.3,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 10,
-                    width: 5
-                }
+                curveFactor: 0.3
             }, {
                 from: 'Malta',
                 to: 'Beirut',
                 weight: 4,
-                curveFactor: -0.4,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 10,
-                    width: 5
-                }
+                curveFactor: -0.4
             }, {
                 from: 'Beirut',
                 to: 'Jeddah',
                 weight: 4,
-                curveFactor: -0.4,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 10,
-                    width: 5
-                }
+                curveFactor: -0.4
             }, {
                 from: 'Jeddah',
                 to: 'Singapore',
                 weight: 10,
                 curveFactor: -0.4,
-                growTowards: true,
                 markerEnd: {
                     enabled: true,
                     height: 20,
@@ -154,19 +135,12 @@
             }, {
                 from: 'Singapore',
                 to: 'Vung Tao',
-                weight: 3,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 10,
-                    width: 5
-                }
+                weight: 3
             }, {
                 from: 'Vung Tao',
                 to: 'Hong Kong',
                 weight: 3,
                 curveFactor: -0.4,
-                growTowards: true,
                 markerEnd: {
                     enabled: true,
                     height: 15,

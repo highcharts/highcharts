@@ -74,42 +74,34 @@
             ],
             data: [
                 ['Warszawa', 'Oslo', 0, 5, true, {
-                    enabled: true,
                     height: 15,
                     width: 10
                 }],
                 ['Warszawa', 'Dublin', -0.5, 5, true, {
-                    enabled: true,
                     height: 30,
                     width: 20
                 }],
                 ['Warszawa', 'Helsinki', 0, 5, true, {
-                    enabled: true,
                     height: 15,
                     width: 20
                 }],
                 ['Warszawa', 'Paris', -0.3, 10, true, {
-                    enabled: true,
                     height: 20,
                     width: 10.3
                 }],
                 ['Warszawa', 'Madrid', 0.1, 7, true, {
-                    enabled: true,
                     height: 20,
                     width: 10.3
                 }],
                 ['Warszawa', 'Budapest', 0.1, 3, true, {
-                    enabled: true,
                     height: 20,
                     width: 10.3
                 }],
                 ['Warszawa', 'Sofia', 1, 6, true, {
-                    enabled: true,
                     height: 20,
                     width: 10.3
                 }],
                 ['Warszawa', 'Roma', -0.3, 6, true, {
-                    enabled: true,
                     height: 20,
                     width: 10.3
                 }]

@@ -63,17 +63,16 @@
             type: 'flowmap',
             linkedTo: ':previous',
             markerEnd: {
-                symbol: 'circle',
-                r: 8
+                height: 15,
+                width: 8
             },
+            growTowards: true,
             data: [{
                 from: 'London',
                 to: 'Suez',
                 curveFactor: -1.5,
                 weight: 7,
-                growTowards: true,
                 markerEnd: {
-                    enabled: true,
                     height: 10,
                     width: 5
                 }
@@ -81,21 +80,13 @@
                 from: 'Suez',
                 to: 'Bombay',
                 curveFactor: 0.4,
-                weight: 13,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 15,
-                    width: 8
-                }
+                weight: 13
             }, {
                 from: 'Bombay',
                 to: 'Calcutta',
                 curveFactor: -0.4,
                 weight: 3,
-                growTowards: true,
                 markerEnd: {
-                    enabled: true,
                     height: 10,
                     width: 5
                 }
@@ -103,21 +94,13 @@
                 from: 'Calcutta',
                 to: 'Hong Kong',
                 curveFactor: 0.4,
-                weight: 13,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 15,
-                    width: 8
-                }
+                weight: 13
             }, {
                 from: 'Hong Kong',
                 to: 'Yokohama',
                 curveFactor: 0.4,
                 weight: 6,
-                growTowards: true,
                 markerEnd: {
-                    enabled: true,
                     height: 10,
                     width: 5
                 }
@@ -126,9 +109,7 @@
                 to: 'San Francisco',
                 curveFactor: -0.55,
                 weight: 22,
-                growTowards: true,
                 markerEnd: {
-                    enabled: true,
                     height: 30,
                     width: 10
                 }
@@ -136,24 +117,12 @@
                 from: 'San Francisco',
                 to: 'New York',
                 curveFactor: -0.7,
-                weight: 7,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 15,
-                    width: 8
-                }
+                weight: 7
             }, {
                 from: 'New York',
                 to: 'London',
                 curveFactor: 0.4,
-                weight: 9,
-                growTowards: true,
-                markerEnd: {
-                    enabled: true,
-                    height: 15,
-                    width: 8
-                }
+                weight: 9
             }]
         }]
     });
