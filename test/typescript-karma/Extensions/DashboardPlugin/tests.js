@@ -3,11 +3,17 @@ import PluginHandler from '/base/code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
 import HighchartsPlugin from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import DataGrid from '/base/js/DataGrid/DataGrid.js';
+import DataGridComponent from '/base/code/es-modules/Extensions/DashboardPlugin/DataGridComponent.js';
+import DataGridPlugin from '/base/code/es-modules/Extensions/DashboardPlugin/DataGridPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-const { test, only, skip } = QUnit;
+DataGridPlugin.custom.connectDataGrid(DataGrid);
+PluginHandler.addPlugin(DataGridPlugin);
+
+const { test } = QUnit;
 
 test('Both components should work', (assert) => {
 
@@ -106,3 +112,9 @@ test('HighchartsComponent constructors', function (assert) {
     })
 });
 
+test('DataGridComponent constructors', function (assert) {
+    console.log(DataGridComponent);
+    const component = new DataGridComponent({});
+    // Test that the constructor creates a component.
+    assert.ok(component, `Able to create a DataGridComponent.`);
+});
