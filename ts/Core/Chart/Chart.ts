@@ -1188,14 +1188,9 @@ class Chart {
         const chart = this;
 
         // Default style
-        const style = (name === 'title') ? {
+        const style = name === 'title' ? {
             color: Palette.neutralColor80,
-            fontSize: (
-                this.options.chart.style &&
-                this.options.chart.style.fontSize
-            ) ?
-                this.options.chart.style.fontSize :
-                (this.options.isStock ? '16px' : '18px') // #2944
+            fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
             color: Palette.neutralColor60
         };
