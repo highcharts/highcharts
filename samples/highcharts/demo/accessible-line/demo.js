@@ -37,7 +37,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        stickOnContact: true
     },
 
     plotOptions: {

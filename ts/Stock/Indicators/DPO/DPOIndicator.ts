@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DPOOptions,
     DPOParamsOptions
@@ -15,12 +21,11 @@ import type {
 import type DPOPoint from './DPOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -29,7 +34,12 @@ const {
     pick
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 
 /**
@@ -68,6 +78,13 @@ function accumulatePoints(
  * @augments Highcharts.Series
  */
 class DPOIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Detrended Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`.
@@ -101,10 +118,10 @@ class DPOIndicator extends SMAIndicator {
     } as DPOOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public options: DPOOptions = void 0 as any;
     public data: Array<DPOPoint> = void 0 as any;
@@ -115,10 +132,6 @@ class DPOIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-
-    /**
-     * @lends Highcharts.Series#
-     */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -185,10 +198,10 @@ class DPOIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface DPOIndicator {
     nameBase: string;
@@ -219,6 +232,12 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  * */
 
 export default DPOIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Detrended Price Oscillator. If the [type](#series.dpo.type) option is not

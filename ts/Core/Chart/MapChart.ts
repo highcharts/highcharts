@@ -20,8 +20,9 @@ import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type MapView from '../../Maps/MapView';
 import type Options from '../Options';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Chart from './Chart.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';

@@ -18,6 +18,7 @@
  *
  * */
 
+import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type AxisOptions from '../Core/Axis/AxisOptions';
 import type AxisType from '../Core/Axis/AxisType';
 import type ChartOptions from '../Core/Chart/ChartOptions';
@@ -31,7 +32,7 @@ import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -42,6 +43,8 @@ const {
     defined,
     erase,
     extend,
+    isArray,
+    isNumber,
     merge,
     pick,
     splat,
@@ -127,7 +130,7 @@ const defaultXAxisOptions = {
 /**
  * @optionparent chart
  */
-const defaultParallelOptions: ChartOptions = {
+const defaultParallelOptions: DeepPartial<ChartOptions> = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
      * coordinates plot (||-coords) by default all required yAxes are generated
@@ -177,7 +180,7 @@ const defaultParallelOptions: ChartOptions = {
      *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops
+     *            minColor, scrollbar, stackLabels, stops,
      * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
@@ -395,9 +398,19 @@ addEvent(Series, 'afterTranslate', function (): void {
                     point.plotX = chart.yAxis[i].left - chart.plotLeft;
                 }
                 point.clientX = point.plotX;
-
                 point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
+                    .translate(point.y, false, true, void 0, true);
+
+                // Range series (#15752)
+                if (isNumber((point as AreaRangePoint).high)) {
+                    point.plotHigh = chart.yAxis[i].translate(
+                        (point as AreaRangePoint).high,
+                        false,
+                        true,
+                        void 0,
+                        true
+                    );
+                }
 
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
@@ -678,18 +691,23 @@ namespace ParallelAxis {
         }
 
         if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
-            const index = parallelCoordinates.position,
-                currentPoints: Array<Point> = [];
+            const index = parallelCoordinates.position;
+            let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
                 if (
+                    series.yData &&
                     series.visible &&
-                    defined((series.yData as any)[index as any])
+                    isNumber(index)
                 ) {
-                    // We need to use push() beacause of null points
-                    currentPoints.push((series.yData as any)[index as any]);
+                    const y = series.yData[index];
+
+                    // Take into account range series points as well (#15752)
+                    currentPoints.push.apply(currentPoints, splat(y));
                 }
             });
+
+            currentPoints = currentPoints.filter(isNumber);
 
             axis.dataMin = arrayMin(currentPoints);
             axis.dataMax = arrayMax(currentPoints);
@@ -704,7 +722,6 @@ namespace ParallelAxis {
      */
     function onInit(this: Axis): void {
         const axis = this;
-
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(
                 axis as ParallelAxis

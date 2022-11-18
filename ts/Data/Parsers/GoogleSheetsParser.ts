@@ -38,6 +38,14 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+type JSONType = ReturnType<JSON['parse']>;
+
+/* *
+ *
  *  Class
  *
  * */
@@ -108,7 +116,7 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
      *
      * */
 
-    private getSheetColumns(json: Highcharts.JSONType): Array<Array<DataValueType>> {
+    private getSheetColumns(json: JSONType): Array<Array<DataValueType>> {
         const parser = this,
             {
                 startColumn,
@@ -214,7 +222,7 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
      */
 
     public parse(
-        jsonProp: Highcharts.JSONType,
+        jsonProp: JSONType,
         eventDetail?: DataEventEmitter.EventDetail
     ): (boolean|undefined) {
         const parser = this,
@@ -297,8 +305,9 @@ namespace GoogleSheetsParser {
      * Options for the parser compatible with ClassJSON
      */
     export interface ClassJSONOptions extends DataParser.Options {
-        json: Highcharts.JSONType;
+        json: JSONType;
     }
+
 }
 
 /* *

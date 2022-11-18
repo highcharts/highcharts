@@ -72,6 +72,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -90,6 +91,11 @@ declare module '../CSSObject' {
         stroke?: ColorString;
         strokeWidth?: (number|string);
     }
+}
+
+interface TextPathObject {
+    path: SVGElement;
+    undo: Function;
 }
 
 /* *
@@ -145,15 +151,13 @@ class SVGElement implements SVGElementLike {
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
-    public hasStroke?: boolean;
     // @todo public height?: number;
-    public inverted?: boolean;
+    public inverted: undefined;
     public matrix?: Array<number>;
     public oldShadowOptions?: ShadowOptionsObject;
     public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     // @todo public options?: AnyRecord;
-    public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
     public placed?: boolean;
@@ -191,7 +195,7 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     // @todo public textWidth?: number;
-    public textPathWrapper?: SVGElement;
+    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     // @todo public translateX?: number;
     // @todo public translateY?: number;
@@ -278,9 +282,6 @@ class SVGElement implements SVGElementLike {
         if (parent) {
             this.parentGroup = parent;
         }
-
-        // Mark as inverted
-        this.parentInverted = parent && (parent as any).inverted;
 
         // Build formatted text
         if (
@@ -608,10 +609,6 @@ class SVGElement implements SVGElementLike {
 
             this.fakeTS = true; // Fake text shadow
 
-            // In order to get the right y position of the clone,
-            // copy over the y setter
-            this.ySetter = this.xSetter;
-
             // Since the stroke is applied on center of the actual outline, we
             // need to double it to get the correct stroke-width outside the
             // glyphs.
@@ -639,16 +636,29 @@ class SVGElement implements SVGElementLike {
 
             // For each of the tspans and text nodes, create a copy in the
             // outline.
+            const parentElem = elem.querySelector('textPath') || elem;
             [].forEach.call(
-                elem.childNodes,
+                parentElem.childNodes,
                 (childNode: ChildNode): void => {
                     const clone = childNode.cloneNode(true);
-                    if ((clone as any).removeAttribute) {
+                    if ((clone as DOMElementType).removeAttribute) {
                         ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
-                            (prop): void => (clone as any).removeAttribute(prop)
+                            (prop): void => (clone as DOMElementType)
+                                .removeAttribute(prop)
                         );
                     }
                     outline.appendChild(clone);
+                }
+            );
+
+            // Collect the sum of dy from all children, included nested ones
+            let totalHeight = 0;
+            [].forEach.call(
+                parentElem.querySelectorAll('text tspan'),
+                (element): void => {
+                    totalHeight += Number(
+                        (element as DOMElementType).getAttribute('dy')
+                    );
                 }
             );
 
@@ -657,17 +667,15 @@ class SVGElement implements SVGElementLike {
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
 
-            // Copy x and y if not null
-            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
-                const value = elem.getAttribute(key);
-                if (value) {
-                    br.setAttribute(key, value);
-                }
+            // Reset the position for the following text
+            attr(br, {
+                x: Number(elem.getAttribute('x')),
+                dy: -totalHeight
             });
 
             // Insert the outline
             outline.appendChild(br);
-            elem.insertBefore(outline, elem.firstChild);
+            parentElem.insertBefore(outline, parentElem.firstChild);
 
         }
     }
@@ -1301,49 +1309,6 @@ class SVGElement implements SVGElementLike {
 
     /**
      * @private
-     */
-    public destroyTextPath(
-        elem: SVGDOMElement,
-        path: SVGElement
-    ): void {
-        const textElement = elem.getElementsByTagName('text')[0];
-        let childNodes: NodeListOf<ChildNode>;
-
-        if (textElement) {
-            // Remove textPath attributes
-            textElement.removeAttribute('dx');
-            textElement.removeAttribute('dy');
-
-            // Remove ID's:
-            path.element.setAttribute('id', '');
-            // Check if textElement includes textPath,
-            if (
-                this.textPathWrapper &&
-                textElement.getElementsByTagName('textPath').length
-            ) {
-                // Move nodes to <text>
-                childNodes = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s and text nodes to the <textPath> node
-                while (childNodes.length) {
-                    textElement.appendChild(childNodes[0]);
-                }
-                // Remove <textPath> from the DOM
-                textElement.removeChild(this.textPathWrapper.element);
-            }
-        } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
-            // Remove textPath attributes from elem
-            // to get correct text-outline position
-            elem.removeAttribute('dx');
-            elem.removeAttribute('dy');
-        }
-        if (this.textPathWrapper) {
-            // Set textPathWrapper to undefined and destroy it
-            this.textPathWrapper = this.textPathWrapper.destroy();
-        }
-    }
-
-    /**
-     * @private
      * @function Highcharts.SVGElement#dSettter
      * @param {number|string|Highcharts.SVGPathArray} value
      * @param {string} key
@@ -1542,9 +1507,12 @@ class SVGElement implements SVGElementLike {
                         // width and height in case of rotation (below)
                         extend({} as any, (element as any).getBBox()) : {
 
-                            // Legacy IE in export mode
+                            // HTML elements with `exporting.allowHTML` and
+                            // legacy IE in export mode
                             width: (element as any).offsetWidth,
-                            height: (element as any).offsetHeight
+                            height: (element as any).offsetHeight,
+                            x: 0,
+                            y: 0
                         };
 
                     // #3842
@@ -1752,26 +1720,6 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Invert a group, rotate and flip. This is used internally on inverted
-     * charts, where the points and graphs are drawn as if not inverted, then
-     * the series group elements are inverted.
-     *
-     * @function Highcharts.SVGElement#invert
-     *
-     * @param {boolean} inverted
-     *        Whether to invert or not. An inverted shape can be un-inverted by
-     *        setting it to false.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Return the SVGElement for chaining.
-     */
-    public invert(inverted: boolean): this {
-        this.inverted = inverted;
-        this.updateTransform();
-        return this;
-    }
-
-    /**
      * Add an event listener. This is a simple setter that replaces the
      * previous event of the same type added by this function, as opposed to
      * the {@link Highcharts#addEvent} function.
@@ -1918,30 +1866,29 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * Set a text path for a `text` or `label` element, allowing the text to
+     * flow along a path.
+     *
+     * In order to unset the path for an existing element, call `setTextPath`
+     * with `{ enabled: false }` as the second argument.
+     *
+     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+     *
      * @function Highcharts.SVGElement#setTextPath
-     * @param {Highcharts.SVGElement} path
-     * Path to follow.
+     *
+     * @param {Highcharts.SVGElement|undefined} path
+     *        Path to follow. If undefined, it allows changing options for the
+     *        existing path.
+     *
      * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     * Options.
-     * @return {Highcharts.SVGElement}
-     * Returns the SVGElement for chaining.
+     *        Options.
+     *
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public setTextPath(
-        path: SVGElement,
+        path: SVGElement|undefined,
         textPathOptions: AnyRecord
     ): this {
-        const elem = this.element,
-            textNode = this.text ? this.text.element : elem,
-            attribsMap = {
-                textAnchor: 'text-anchor'
-            };
-
-        let adder = false,
-            textPathElement: DOMElementType,
-            textPathId,
-            textPathWrapper: SVGElement = this.textPathWrapper as any,
-            firstTime = !textPathWrapper;
 
         // Defaults
         textPathOptions = merge(true, {
@@ -1953,138 +1900,83 @@ class SVGElement implements SVGElementLike {
             }
         }, textPathOptions);
 
-        const attrs = AST.filterUserAttributes(textPathOptions.attributes);
+        const url = this.renderer.url,
+            textWrapper = this.text || this,
+            textPath = textWrapper.textPath,
+            { attributes, enabled } = textPathOptions;
 
-        if (path && textPathOptions && textPathOptions.enabled) {
-            // In case of fixed width for a text, string is rebuilt
-            // (e.g. ellipsis is applied), so we need to rebuild textPath too
-            if (
-                textPathWrapper &&
-                textPathWrapper.element.parentNode === null
-            ) {
-                // When buildText functionality was triggered again
-                // and deletes textPathWrapper parentNode
-                firstTime = true;
-                textPathWrapper = textPathWrapper.destroy() as any;
-            } else if (textPathWrapper) {
-                // Case after drillup when spans were added into
-                // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(textPathWrapper.parentGroup);
-            }
-            // label() has padding, text() doesn't
-            if (this.options && this.options.padding) {
-                attrs.dx = -this.options.padding;
-            }
+        path = path || (textPath && textPath.path);
 
-            if (!textPathWrapper) {
-                // Create <textPath>, defer the DOM adder
-                this.textPathWrapper = textPathWrapper =
-                    this.renderer.createElement('textPath') as any;
-                adder = true;
-            }
+        // Remove previously added event
+        if (textPath) {
+            textPath.undo();
+        }
 
-            textPathElement = textPathWrapper.element;
+        if (path && enabled) {
+            const undo = addEvent(textWrapper, 'afterModifyTree', (
+                e: AnyRecord
+            ): void => {
 
-            // Set ID for the path
-            textPathId = path.element.getAttribute('id');
-            if (!textPathId) {
-                path.element.setAttribute('id', textPathId = uniqueKey());
-            }
+                if (path && enabled) {
 
-            // Change DOM structure, by placing <textPath> tag in <text>
-            if (firstTime) {
-
-                // Adjust the position
-                textNode.setAttribute('y', 0); // Firefox
-                if (isNumber(attrs.dx)) {
-                    textNode.setAttribute('x', -attrs.dx);
-                }
-
-                // Move all <tspan>'s and text nodes to the <textPath> node. Do
-                // not move other elements like <title> or <path>
-                const childNodes = [].slice.call(textNode.childNodes);
-                for (let i = 0; i < childNodes.length; i++) {
-                    const childNode: any = childNodes[i];
-                    if (
-                        childNode.nodeType === win.Node.TEXT_NODE ||
-                        childNode.nodeName === 'tspan'
-                    ) {
-                        textPathElement.appendChild(childNode);
+                    // Set ID for the path
+                    let textPathId = path.attr('id');
+                    if (!textPathId) {
+                        path.attr('id', textPathId = uniqueKey());
                     }
+
+                    // Set attributes for the <text>
+                    const textAttribs: SVGAttributes = {
+                        // dx/dy options must by set on <text> (parent), the
+                        // rest should be set on <textPath>
+                        x: 0,
+                        y: 0
+                    };
+
+                    if (defined(attributes.dx)) {
+                        textAttribs.dx = attributes.dx;
+                        delete attributes.dx;
+                    }
+                    if (defined(attributes.dy)) {
+                        textAttribs.dy = attributes.dy;
+                        delete attributes.dy;
+                    }
+                    textWrapper.attr(textAttribs);
+
+
+                    // Handle label properties
+                    this.attr({ transform: '' });
+                    if (this.box) {
+                        this.box = this.box.destroy();
+                    }
+
+                    // Wrap the nodes in a textPath
+                    const children = e.nodes.slice(0);
+                    e.nodes.length = 0;
+                    e.nodes[0] = {
+                        tagName: 'textPath',
+                        attributes: extend(attributes, {
+                            'text-anchor': attributes.textAnchor,
+                            href: `${url}#${textPathId}`
+                        }),
+                        children
+                    };
                 }
-            }
-
-            // Add <textPath> to the DOM
-            if (adder && textPathWrapper) {
-                textPathWrapper.add({ element: textNode } as any);
-            }
-
-            // Set basic options:
-            // Use `setAttributeNS` because Safari needs this..
-            textPathElement.setAttributeNS(
-                'http://www.w3.org/1999/xlink',
-                'href',
-                this.renderer.url + '#' + textPathId
-            );
-
-            // Presentation attributes:
-
-            // dx/dy options must by set on <text> (parent),
-            // the rest should be set on <textPath>
-            if (defined(attrs.dy)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dy', attrs.dy);
-                delete attrs.dy;
-            }
-            if (defined(attrs.dx)) {
-                (textPathElement.parentNode as any)
-                    .setAttribute('dx', attrs.dx);
-                delete attrs.dx;
-            }
-
-            // Additional attributes
-            objectEach(attrs, function (val, key): void {
-                textPathElement.setAttribute(
-                    (attribsMap as any)[key] || key,
-                    val as any
-                );
             });
 
-            // Remove translation, text that follows path does not need that
-            elem.removeAttribute('transform');
+            // Set the reference
+            textWrapper.textPath = { path, undo };
 
-            // Remove shadows and text outlines
-            this.removeTextOutline.call(textPathWrapper);
+        } else {
+            textWrapper.attr({ dx: 0, dy: 0 });
+            delete textWrapper.textPath;
+        }
 
-            // Remove background and border for label(), see #10545
-            // Alternatively, we can disable setting background rects in
-            // series.drawDataLabels()
-            if (this.text && !this.renderer.styledMode) {
-                this.attr({
-                    fill: 'none',
-                    'stroke-width': 0
-                });
-            }
+        if (this.added) {
 
-            // Disable some functions
-            this.updateTransform = noop;
-            this.applyTextOutline = noop;
-
-        } else if (textPathWrapper) {
-            // Reset to prototype
-            delete (this as any).updateTransform;
-            delete (this as any).applyTextOutline;
-
-            // Restore DOM structure:
-            this.destroyTextPath(elem as any, path);
-
-            // Bring attributes back
-            this.updateTransform();
-
-            // Set textOutline back for text()
-            if (this.options && this.options.rotation) {
-                this.applyTextOutline(this.options.style.textOutline);
-            }
+            // Rebuild text after added
+            textWrapper.textCache = '';
+            this.renderer.buildText(textWrapper);
         }
 
         return this;
@@ -2124,12 +2016,16 @@ class SVGElement implements SVGElementLike {
         cutOff?: boolean
     ): this {
         const shadows = [],
-            element = this.element,
-            oldShadowOptions = this.oldShadowOptions,
+            {
+                element,
+                oldShadowOptions,
+                parentGroup
+            } = this,
+            parentInverted = parentGroup && parentGroup.rotation === 90,
             defaultShadowOptions: ShadowOptionsObject = {
                 color: Palette.neutralColor100,
-                offsetX: this.parentInverted ? -1 : 1,
-                offsetY: this.parentInverted ? -1 : 1,
+                offsetX: parentInverted ? -1 : 1,
+                offsetY: parentInverted ? -1 : 1,
                 opacity: 0.15,
                 width: 3
             };
@@ -2172,7 +2068,7 @@ class SVGElement implements SVGElementLike {
 
         } else if (!this.shadows) {
             shadowElementOpacity = options.opacity / options.width;
-            transform = this.parentInverted ?
+            transform = parentInverted ?
                 `translate(${options.offsetY}, ${options.offsetX})` :
                 `translate(${options.offsetX}, ${options.offsetY})`;
             for (i = 1; i <= options.width; i++) {
@@ -2239,9 +2135,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * WebKit and Batik have problems with a stroke-width of zero, so in this
-     * case we remove the stroke attribute altogether. #1270, #1369, #3065,
-     * #3072.
+     * Set the stroke-width and record it on the SVGElement
      *
      * @private
      * @function Highcharts.SVGElement#strokeSetter
@@ -2249,32 +2143,14 @@ class SVGElement implements SVGElementLike {
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
-    public strokeSetter(
-        value: (number|string|ColorType),
-        key: string,
+    public 'stroke-widthSetter'(
+        value: (number|string),
+        key: 'stroke-width',
         element: SVGDOMElement
     ): void {
-        (this as AnyRecord)[key] = value;
-        // Only apply the stroke attribute if the stroke width is defined and
-        // larger than 0
-        if (this.stroke && this['stroke-width']) {
-            // Use prototype as instance may be overridden
-            SVGElement.prototype.fillSetter.call(
-                this,
-                this.stroke,
-                'stroke',
-                element
-            );
-
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-            element.removeAttribute('stroke');
-            this.hasStroke = false;
-        } else if (this.renderer.styledMode && this['stroke-width']) {
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        }
+        // Record it for quick access in getter
+        this[key] = value;
+        element.setAttribute(key, value);
     }
 
     /**
@@ -2506,23 +2382,15 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(): void {
-        const wrapper = this,
-            scaleX = wrapper.scaleX,
-            scaleY = wrapper.scaleY,
-            inverted = wrapper.inverted,
-            rotation = wrapper.rotation,
-            matrix = wrapper.matrix,
-            element = wrapper.element;
-
-        let translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0;
-
-        // Flipping affects translate as adjustment for flipping around the
-        // group's axis
-        if (inverted) {
-            translateX += wrapper.width;
-            translateY += wrapper.height;
-        }
+        const {
+            element,
+            matrix,
+            rotation = 0,
+            scaleX,
+            scaleY,
+            translateX = 0,
+            translateY = 0
+        } = this;
 
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
@@ -2536,10 +2404,8 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        // apply rotation
-        if (inverted) {
-            transform.push('rotate(90) scale(-1,1)');
-        } else if (rotation) { // text rotation
+        // Apply rotation
+        if (rotation) { // text rotation or inverted chart
             transform.push(
                 'rotate(' + rotation + ' ' +
                 pick(this.rotationOriginX, element.getAttribute('x'), 0) +
@@ -2555,7 +2421,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length) {
+        if (transform.length && !(this.text || this).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }
@@ -2726,7 +2592,7 @@ interface SVGElement extends SVGElementLike {
 }
 
 // Some shared setters and getters
-SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter;
+SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.matrixSetter =
 SVGElement.prototype.rotationOriginXSetter =
@@ -2888,6 +2754,12 @@ export default SVGElement;
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dx
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#dy
+ * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#fill
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}

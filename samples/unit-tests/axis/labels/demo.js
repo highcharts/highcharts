@@ -314,6 +314,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
                     'Wierd Apricots'
                 ],
                 labels: {
+                    autoRotation: false,
                     step: 1
                 }
             },
@@ -365,6 +366,24 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         box1 = xAxis.ticks[xAxis.tickPositions[1]].label.getBBox(true);
 
     assert.equal(box0.x + box0.width <= box1.x, true, 'No overlap');
+
+
+    chart.update({
+        chart: {
+            width: 250
+        },
+        xAxis: {
+            labels: {
+                autoRotation: [-45]
+            }
+        }
+    });
+
+    assert.deepEqual(
+        xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
+        [-45, -45, -45, -45, -45, -45, -45, -45, -45],
+        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+    );
 });
 
 QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
@@ -2103,4 +2122,42 @@ QUnit.test(
             -1,
             'label.formatter should take precedence over label.format'
         );
-    });
+    }
+);
+
+
+QUnit.test(
+    'xAxis labels.y offset',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                labels: {
+                    format: 'test<br>test<br>'
+                },
+                opposite: true
+            },
+
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        const defaultY = chart.xAxis[0].ticks[1].label.attr('y');
+
+        chart.xAxis[0].update({
+            labels: {
+                y: 0
+            }
+        });
+
+        assert.deepEqual(
+            chart.xAxis[0].ticks[1].label.attr('y'),
+            // +3px because of a "bug" in default positioning
+            // If you read this comment and you are not sure if you can remove
+            // this +3px, then yes, you can.
+            defaultY + 3,
+            `labels.y=0 for opposite xAxis should align label the same way as
+            labels.y=undefined (#12206)`
+        );
+    }
+);

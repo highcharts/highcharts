@@ -12,6 +12,7 @@
             this.series = series;
             this.x = options[0];
             this.y = options[1];
+            this.options = options;
             return this;
         },
         pointAttr: {}

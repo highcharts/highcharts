@@ -20,7 +20,7 @@
 
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RangeSelector from '../../Extensions/RangeSelector';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type WordcloudPoint from './WordcloudPoint';
 import type WordcloudSeries from './WordcloudSeries';
 
@@ -183,7 +183,7 @@ function isPolygonsOverlappingOnAxis(
 }
 
 /**
- * Checks wether two convex polygons are colliding by using the Separating
+ * Checks whether two convex polygons are colliding by using the Separating
  * Axis Theorem.
  *
  * @private

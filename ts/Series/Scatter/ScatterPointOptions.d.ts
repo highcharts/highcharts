@@ -26,4 +26,10 @@ export interface ScatterPointOptions extends LinePointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ScatterPointOptions;

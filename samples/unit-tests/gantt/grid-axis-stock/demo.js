@@ -528,7 +528,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     var chart,
-        types = Highcharts.seriesTypes,
+        types = Highcharts.Series.types,
         // No grids for pies!
         ignoreTypes = ['pie'],
         ignore,

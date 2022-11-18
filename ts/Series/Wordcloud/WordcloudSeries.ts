@@ -30,6 +30,7 @@ import type {
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
 
+import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
@@ -111,7 +112,6 @@ class WordcloudSeries extends ColumnSeries {
      * @requires     modules/wordcloud
      * @optionparent plotOptions.wordcloud
      */
-
     public static defaultOptions: WordcloudSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * If there is no space for a word on the playing field, then this
@@ -121,7 +121,7 @@ class WordcloudSeries extends ColumnSeries {
          * NB! This option is currently not decided to be published in the API,
          * and is therefore marked as private.
          *
-         * @private
+         * @ignore-option
          */
         allowExtendPlayingField: true,
         animation: {
@@ -129,6 +129,9 @@ class WordcloudSeries extends ColumnSeries {
             duration: 500
         },
         borderWidth: 0,
+        /**
+         * @ignore-option
+         */
         clip: false, // Something goes wrong with clip. // @todo fix this
         colorByPoint: true,
         cropThreshold: Infinity,
@@ -459,7 +462,7 @@ class WordcloudSeries extends ColumnSeries {
                 }
             }
 
-            point.draw({
+            DPU.draw(point, {
                 animatableAttribs: animate as any,
                 attribs: attr,
                 css: css,
@@ -492,7 +495,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Series.PlotBoxObject {
+    public getPlotBox(): Series.PlotBoxTransform {
         const series = this,
             chart = series.chart,
             inverted = chart.inverted,

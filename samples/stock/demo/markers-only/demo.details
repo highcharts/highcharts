@@ -8,4 +8,5 @@ tags:
 categories:
   - Chart types:
       priority: 0
+use_png_thumbnail: true
 ...

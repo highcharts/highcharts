@@ -35,10 +35,11 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import Point from '../Core/Series/Point.js';
@@ -626,6 +627,8 @@ const clusterDefaultOptions = {
              * @sample maps/marker-clusters/europe/
              *         Format tooltip for clusters using tooltip.formatter
              *
+             * @type      {string}
+             * @default   Clustered points: {point.clusterPointsAmount}
              * @apioption tooltip.clusterFormat
              */
             clusterFormat: '<span>Clustered points: ' +
@@ -1573,8 +1576,6 @@ Scatter.prototype.markerClusterAlgorithms = {
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
         let series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
             pointMaxDistance = options.processedDistance ||
                 clusterDefaultOptions.layoutAlgorithm.gridSize,
             group: (Record<string, Highcharts.MarkerClusterSplitDataArray>) = {},
@@ -2099,8 +2100,6 @@ Scatter.prototype.generatePoints = function (): void {
     const series = this,
         chart = series.chart,
         mapView = chart.mapView,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
         xData = series.xData,
         yData = series.yData,
         clusterOptions = series.options.cluster,

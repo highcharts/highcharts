@@ -21,10 +21,14 @@
 
 
 import type Accessibility from '../Accessibility';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type {
+    ScreenReaderFormatterCallbackFunction
+} from '../Options/A11yOptions';
 
 import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -255,14 +259,16 @@ class InfoRegionsComponent extends AccessibilityComponent {
         });
 
         this.addEvent(chart, 'afterViewData', function (
-            tableDiv: HTMLDOMElement
+            e: { element: HTMLDOMElement, wasHidden: boolean }
         ): void {
-            component.dataTableDiv = tableDiv;
-
-            // Use small delay to give browsers & AT time to register new table
-            setTimeout(function (): void {
-                component.focusDataTable();
-            }, 300);
+            if (e.wasHidden) {
+                component.dataTableDiv = e.element;
+                // Use a small delay to give browsers & AT time to
+                // register the new table.
+                setTimeout(function (): void {
+                    component.focusDataTable();
+                }, 300);
+            }
         });
 
         this.announcer = new Announcer(chart, 'assertive');
@@ -282,7 +288,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
+                        ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
                     return formatter ? formatter(chart) :
@@ -494,7 +500,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsList = getAnnotationsInfoHTML(
-                chart as Highcharts.AnnotationChart
+                chart as AnnotationChart
             ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',

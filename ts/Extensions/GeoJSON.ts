@@ -25,10 +25,6 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
-import MU from '../Maps/MapUtilities.js';
-const {
-    pointInPolygon
-} = MU;
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -596,8 +592,12 @@ function geojson(
             }
         }
         if (pointOptions) {
-            const name = properties && (properties.name || properties.NAME);
+            const name = properties && (properties.name || properties.NAME),
+                lon = properties && properties.lon,
+                lat = properties && properties.lat;
             mapData.push(extend(pointOptions, {
+                lat: typeof lat === 'number' ? lat : void 0,
+                lon: typeof lon === 'number' ? lon : void 0,
                 name: typeof name === 'string' ? name : void 0,
 
                 /**

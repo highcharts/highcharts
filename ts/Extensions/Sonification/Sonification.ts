@@ -16,7 +16,13 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type { Options } from '../../Core/Options';
-import D from '../../Core/DefaultOptions.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
 const {

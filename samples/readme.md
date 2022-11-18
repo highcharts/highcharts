@@ -6,7 +6,6 @@ tests and unit tests. See the [highcharts-utils](https://github.com/highcharts/h
 repo on how to set up the _Sample viewer_.
 
 
-
 Tests
 -----
 
@@ -56,7 +55,7 @@ that is available in the test environment.
 
 ```js
 // Instanciate
-var controller = new TestController(chart);
+const controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });
@@ -88,7 +87,7 @@ unit tests task. The chart and its container are shared between multiple tests
 and test-specific options get reverted after each test.
 
 The limitations of the underlying `Chart.update` function applies, so that
-callback functions are not supported as they can not be reverted. Additionally
+callback functions are not supported as they cannot be reverted. Additionally
 the `Chart.update` function is not wrapped in a template and therefor has to be
 avoided as well. If you need to test with callback functions or multiple
 updates, test templates are not for you.
