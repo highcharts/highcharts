@@ -116,8 +116,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.scaleElements = this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
-            this.options.syncEvents,
-            this.options.syncHandlers
+            this.syncEvents as any, // TODO: any-cast
+            this.syncHandlers
         );
 
         this.on('tableChanged', (e): void => {

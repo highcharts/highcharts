@@ -80,8 +80,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             display: 'flex',
             'flex-direction': 'column'
         },
-        syncEvents: [],
-        syncHandlers: Sync.defaultHandlers,
+        sync: Sync.defaultHandlers,
         editableOptions: [
             'id',
             'store',
@@ -110,6 +109,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
+    protected syncHandlers: Sync.OptionsRecord;
+    protected syncEvents;
+
     public presentationModifier?: DataModifier;
     public presentationTable?: DataTable;
 
@@ -118,13 +120,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
-     * Timeouts for calls to `Component.resizeTo()`
-     */
+   * Timeouts for calls to `Component.resizeTo()`
+   */
     protected resizeTimeouts: number[] = [];
 
     /**
-     * Timeouts for resizing the content. I.e. `chart.setSize()`
-     */
+   * Timeouts for resizing the content. I.e. `chart.setSize()`
+   */
     protected innerResizeTimeouts: number[] = [];
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -139,7 +141,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             if (!el) {
                 throw new Error(
                     'Could not find element with id: ' +
-                    this.options.parentElement
+          this.options.parentElement
                 );
             }
             this.parentElement = el;
@@ -160,7 +162,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.store = this.options.store;
         this.hasLoaded = false;
         this.editableOptions =
-            new EditableOptions(this, options.editableOptionsBindings);
+      new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
@@ -169,6 +171,28 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width: null,
             height: null
         };
+
+        this.syncEvents = Object.keys(this.options.sync);
+        this.syncHandlers = Object.keys(this.options.sync)
+            .reduce(
+                (
+                    carry: Sync.OptionsRecord,
+                    handlerName
+                ): Sync.OptionsRecord => {
+                    if (handlerName) {
+                        const handler = this.options.sync[handlerName];
+
+                        if (handler && typeof handler === 'object') {
+                            carry[handlerName] = handler;
+                        }
+                        if (handler && typeof handler === 'boolean') {
+                            carry[handlerName] =
+                  Sync.defaultHandlers[handlerName];
+                        }
+                    }
+
+                    return carry;
+                }, {});
 
         this.element = createElement('div', {
             className: this.options.className
@@ -184,7 +208,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     // Setup listeners on cell/other things up the chain
     private attachCellListeneres(): void {
-        // remove old listeners
+    // remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -207,7 +231,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                         const { row } = e;
                         if (row && this.parentCell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.parentCell) === void 0;
+                row.getCellIndex(this.parentCell) === void 0;
                             if (hasLeftTheRow) {
                                 if (this.parentCell) {
                                     this.setCell(this.parentCell);
@@ -355,40 +379,40 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     private getContentHeight(): number {
         const parentHeight =
-            this.dimensions.height || Number(getStyle(this.element, 'height'));
+      this.dimensions.height || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;
         const captionHeight = this.captionElement ?
             this.captionElement.clientHeight +
-            getMargins(this.captionElement).y :
+      getMargins(this.captionElement).y :
             0;
 
         return parentHeight - titleHeight - captionHeight;
     }
 
     /**
-     * Resize the component
-     * @param {number|string|null} [width]
-     * The width to set the component to.
-     * Can be pixels, a percentage string or null.
-     * Null will unset the style
-     * @param {number|string|null} [height]
-     * The height to set the component to.
-     * Can be pixels, a percentage string or null.
-     * Null will unset the style
-     */
+   * Resize the component
+   * @param {number|string|null} [width]
+   * The width to set the component to.
+   * Can be pixels, a percentage string or null.
+   * Null will unset the style
+   * @param {number|string|null} [height]
+   * The height to set the component to.
+   * Can be pixels, a percentage string or null.
+   * Null will unset the style
+   */
     public resize(
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        // if (!this.resizeTimeout) {
-        //     this.resizeTimeout = requestAnimationFrame(() => {
+    // if (!this.resizeTimeout) {
+    //     this.resizeTimeout = requestAnimationFrame(() => {
 
         if (height) {
             // Get offset for border, padding
             const pad =
-                getPaddings(this.element).y + getMargins(this.element).y;
+        getPaddings(this.element).y + getMargins(this.element).y;
 
             this.dimensions.height = relativeLength(
                 height, Number(getStyle(this.parentElement, 'height'))
@@ -398,7 +422,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
         if (width) {
             const pad =
-                getPaddings(this.element).x + getMargins(this.element).x;
+        getPaddings(this.element).x + getMargins(this.element).x;
             this.dimensions.width = relativeLength(
                 width, Number(getStyle(this.parentElement, 'width'))
             ) - pad;
@@ -419,10 +443,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width,
             height
         });
-        //         cancelAnimationFrame(this.resizeTimeout)
-        //         this.resizeTimeout = 0;
-        //     });
-        // }
+    //         cancelAnimationFrame(this.resizeTimeout)
+    //         this.resizeTimeout = 0;
+    //     });
+    // }
     }
 
     public resizeTo(element: HTMLElement): void {
@@ -447,15 +471,15 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles updating via options
-     * @param {Partial<Component.ComponentOptions>} newOptions
-     * The options to apply
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * Handles updating via options
+   * @param {Partial<Component.ComponentOptions>} newOptions
+   * The options to apply
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public update(newOptions: Partial<Component.ComponentOptions>): this {
-        // Update options
+    // Update options
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
             options: newOptions
@@ -466,7 +490,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const titleElement =
-            Component.createTextElement('h1', 'title', titleOptions);
+      Component.createTextElement('h1', 'title', titleOptions);
         if (titleElement) {
             this.titleElement = titleElement;
         }
@@ -474,18 +498,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const captionElement =
-            Component.createTextElement('div', 'caption', captionOptions);
+      Component.createTextElement('div', 'caption', captionOptions);
         if (captionElement) {
             this.captionElement = captionElement;
         }
     }
 
     /**
-     * Handles setting things up on initial render
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * Handles setting things up on initial render
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public load(): this {
 
         // Set up the store on inital load if it has not been done
@@ -541,11 +565,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo make this call load on initial render
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * @todo make this call load on initial render
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public render(): this {
         if (!this.hasLoaded) {
             this.load();
@@ -556,12 +580,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo redraw should (usually) call render
-     * @return {this}
-     * The component for chaining
-     */
+   * @todo redraw should (usually) call render
+   * @return {this}
+   * The component for chaining
+   */
     public redraw(): this {
-        // Do a redraw
+    // Do a redraw
         const e = {
             component: this
         };
@@ -570,9 +594,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo Should perhaps also remove the component from the registry
-     * or set an `isactive` flag to false
-     */
+   * @todo Should perhaps also remove the component from the registry
+   * or set an `isactive` flag to false
+   */
     public destroy(): void {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -622,18 +646,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         if (
             typeof message === 'object' &&
-            typeof message.callback === 'function'
+      typeof message.callback === 'function'
         ) {
             message.callback.apply(this);
         }
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @return {Component.JSON}
-     * Class JSON of this Component instance.
-     */
+   * Converts the class instance to a class JSON.
+   *
+   * @return {Component.JSON}
+   * Class JSON of this Component instance.
+   */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
@@ -670,29 +694,29 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 namespace Component {
 
     /* *
-     *
-     *  Declarations
-     *
-     * */
+   *
+   *  Declarations
+   *
+   * */
 
     export interface JSON extends Serializable.JSON<string> {
-        // store?: DataStore.ClassJSON;
+    // store?: DataStore.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
     /**
-     * The basic events
-     */
+   * The basic events
+   */
     export type EventTypes =
-        ResizeEvent |
-        UpdateEvent |
-        TableChangedEvent |
-        LoadEvent |
-        RenderEvent |
-        RedrawEvent |
-        JSONEvent |
-        MessageEvent |
-        PresentationModifierEvent;
+    ResizeEvent |
+    UpdateEvent |
+    TableChangedEvent |
+    LoadEvent |
+    RenderEvent |
+    RedrawEvent |
+    JSONEvent |
+    MessageEvent |
+    PresentationModifierEvent;
 
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
@@ -719,7 +743,7 @@ namespace Component {
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>;
     export type PresentationModifierEvent =
-        Component.Event<'afterPresentationModifier', { table: DataTable }>;
+    Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
 
     export type Event<
@@ -729,6 +753,8 @@ namespace Component {
             target?: Component;
             detail?: DataEventEmitter.EventDetail;
         } & EventRecord;
+
+    export type SyncOptions = Record<string, boolean | Sync.OptionsEntry>;
 
     export interface ComponentOptions extends EditableOptions {
         parentCell?: Cell;
@@ -741,13 +767,14 @@ namespace Component {
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
-        syncEvents: Sync.EventType[];
-        syncHandlers: Sync.OptionsRecord;
+        // syncEvents: Sync.EventType[];
+        // syncHandlers: Sync.OptionsRecord;
+        sync: SyncOptions;
     }
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
-        // store?: DataStore.ClassJSON; // store id
+    // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
         dimensions?: { width: number; height: number };
@@ -782,38 +809,41 @@ namespace Component {
     };
 
     /* *
-     *
-     *  Constants
-     *
-     * */
+   *
+   *  Constants
+   *
+   * */
 
     /**
-     *
-     * Record of component instances
-     *
-     */
+   *
+   * Record of component instances
+   *
+   */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
     /**
-     * Regular expression to extract the  name (group 1) from the
-     * stringified class type.
-     */
+   * Regular expression to extract the  name (group 1) from the
+   * stringified class type.
+   */
     const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
 
     /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
+   *
+   * Record of component classes
+   * @todo
+   *
+   */
     export const registry: Record<string, Class<Component>> = {};
 
     /* *
-     *
-     *  Functions
-     *
-     * */
+   *
+   *  Functions
+   *
+   * */
 
+    /**
+     *
+     */
     export function addComponent<T extends Class<Component>>(
         componentClass: T
     ): boolean {
@@ -821,7 +851,7 @@ namespace Component {
 
         if (
             typeof name === 'undefined' ||
-            registry[name]
+      registry[name]
         ) {
             return false;
         }
@@ -831,80 +861,95 @@ namespace Component {
         return true;
     }
 
+    /**
+     *
+     */
     export function getAllComponentNames(): Array<string> {
         return Object.keys(Component.registry);
     }
 
+    /**
+     *
+     */
     export function getAllComponents(): Record<string, Class<Component>> {
         return merge(Component.registry);
     }
 
     /**
-     * Extracts the name from a given component class.
-     *
-     * @param {DataStore} component
-     * Component class to extract the name from.
-     *
-     * @return {string}
-     * Component name, if the extraction was successful, otherwise an empty
-     * string.
-     */
+   * Extracts the name from a given component class.
+   *
+   * @param {DataStore} component
+   * Component class to extract the name from.
+   *
+   * @return {string}
+   * Component name, if the extraction was successful, otherwise an empty
+   * string.
+   */
     export function getName(
         component: (NewableFunction | ComponentType)
     ): string {
         return (
             component.toString().match(nameRegExp) ||
-            ['', '']
+      ['', '']
         )[1];
     }
 
     /**
-     * Adds a component instance to the registry
-     * @param {Component} component
-     * The component to add
-     */
+   * Adds a component instance to the registry
+   * @param {Component} component
+   * The component to add
+   */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
 
     }
 
     /**
-     * Removes a component instance from the registry
-     * @param {Component} component
-     * The component to remove
-     */
+   * Removes a component instance from the registry
+   * @param {Component} component
+   * The component to remove
+   */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-     * Retrieves the IDs of the registered component instances
-     * @return {string[]}
-     * Array of component IDs
-     */
+   * Retrieves the IDs of the registered component instances
+   * @return {string[]}
+   * Array of component IDs
+   */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-     * Retrieves all registered component instances
-     * @return {ComponentType[]}
-     * Array of components
-     */
+   * Retrieves all registered component instances
+   * @return {ComponentType[]}
+   * Array of components
+   */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component<any> => instanceRegistry[id]);
     }
 
+    /**
+     *
+     */
     export function getComponent<T extends Class<Component>>(
         key: string
-    ): (T|undefined) {
+    ): (T | undefined) {
         return registry[key] as T;
     }
 
+    /**
+     *
+     */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
     }
+    /**
+     *
+     */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,
         // Are there cases where a group should be the sender?
@@ -940,7 +985,7 @@ namespace Component {
                         if (component && component.id !== sender.id) {
                             if (
                                 component.type === recipient ||
-                                recipient === 'all'
+                recipient === 'all'
                             ) {
                                 emit(component);
                             }
