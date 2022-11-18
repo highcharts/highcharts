@@ -234,7 +234,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         let bounds = point.bounds;
 
         if (mapView && bounds) {
-
             const inset = isNumber(point.insetIndex) &&
                 mapView.insets[point.insetIndex];
             if (inset) {
