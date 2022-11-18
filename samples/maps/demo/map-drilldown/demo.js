@@ -57,7 +57,13 @@ const drilldown = async function (e) {
 // On drill up, reset to the top-level map view
 const drillup = function (e) {
     if (e.seriesOptions.custom && e.seriesOptions.custom.mapView) {
-        e.target.mapView.update(e.seriesOptions.custom.mapView, false);
+        e.target.mapView.update(
+            Highcharts.merge(
+                { insets: undefined },
+                e.seriesOptions.custom.mapView
+            ),
+            false
+        );
     }
 };
 
