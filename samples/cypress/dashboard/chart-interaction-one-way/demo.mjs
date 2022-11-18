@@ -93,7 +93,10 @@ const dashboard = new Dashboard('container', {
     store,
     sync: {
       'visibility': true,
-      'tooltip': true
+      'tooltip': {
+        handler: true,
+        emitter: false
+      }
     }
   }]
 });

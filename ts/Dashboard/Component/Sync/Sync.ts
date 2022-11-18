@@ -13,8 +13,8 @@ namespace Sync {
         SyncHandler['func']
     ];
     export interface OptionsEntry {
-        emitter: EmitterConfig;
-        handler: HandlerConfig;
+        emitter?: EmitterConfig | null | boolean;
+        handler?: HandlerConfig | null | boolean;
     }
 
     export type OptionsRecord = (
@@ -91,22 +91,36 @@ class Sync {
         Object.keys(syncConfig)
             .forEach((id): void => {
                 if (syncEvents.indexOf(id as Sync.EventType) > -1) {
-                    const {
+                    let {
                         emitter: emitterConfig,
                         handler: handlerConfig
                     } = syncConfig[id];
-                    // Avoid registering the same handler multiple times
-                    // i.e. panning and selection uses the same handler
-                    const handler = new SyncHandler(...handlerConfig);
-                    if (!this.isRegisteredHandler(handler.id)) {
-                        this.registerSyncHandler(handler);
-                        handler.create(component);
+                    if (handlerConfig) {
+                        // Avoid registering the same handler multiple times
+                        // i.e. panning and selection uses the same handler
+                        if (typeof handlerConfig === 'boolean') {
+                            handlerConfig =
+                              Sync.defaultHandlers[id]
+                                  .handler as Sync.HandlerConfig;
+                        }
+                        const handler = new SyncHandler(...handlerConfig);
+                        if (!this.isRegisteredHandler(handler.id)) {
+                            this.registerSyncHandler(handler);
+                            handler.create(component);
+                        }
                     }
 
-                    const emitter = new SyncEmitter(...emitterConfig);
-                    if (!this.isRegisteredEmitter(emitter.id)) {
-                        this.registerSyncEmitter(emitter);
-                        emitter.create(component);
+                    if (emitterConfig) {
+                        if (typeof emitterConfig === 'boolean') {
+                            emitterConfig =
+                              Sync.defaultHandlers[id]
+                                  .emitter as Sync.EmitterConfig;
+                        }
+                        const emitter = new SyncEmitter(...emitterConfig);
+                        if (!this.isRegisteredEmitter(emitter.id)) {
+                            this.registerSyncEmitter(emitter);
+                            emitter.create(component);
+                        }
                     }
 
                 }

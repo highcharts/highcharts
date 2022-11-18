@@ -754,7 +754,7 @@ namespace Component {
             detail?: DataEventEmitter.EventDetail;
         } & EventRecord;
 
-    export type SyncOptions = Record<string, boolean | Sync.OptionsEntry>;
+    export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
         parentCell?: Cell;
