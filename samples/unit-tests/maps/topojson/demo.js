@@ -30,7 +30,6 @@ QUnit.test('Load map from TopoJSON', assert => {
     );
 
     // Zoom to inset point
-
     chart.series[0].data[50].zoomTo(); // Alaska inset
 
     assert.close(
