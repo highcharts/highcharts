@@ -59,9 +59,29 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
+
+function afterNavigate(timeline, pointsPlayed) {
+    var synth = window.speechSynthesis;
+    if (!synth || !window.SpeechSynthesisUtterance) {
+        return;
+    }
+    synth.cancel();
+    var announcement = pointsPlayed.reduce(function (acc, cur) {
+            const val = cur.y + ' ' + cur.series.name;
+            return acc ? acc + ', ' + val : val;
+        }, '') + '. X is ' + pointsPlayed[0].x,
+        utterance = new window.SpeechSynthesisUtterance(announcement);
+    utterance.rate = 2;
+    utterance.volume = 0.4;
+    synth.speak(utterance);
+}
+
 document.addEventListener('keydown', function (e) {
     var timeline = chart.sonification.timeline;
     if (e.code === 'KeyS') {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
         if (chart.sonification.isPlaying()) {
             timeline.pause();
         } else if (timeline && timeline.isPaused) {
@@ -71,11 +91,15 @@ document.addEventListener('keydown', function (e) {
         }
     } else if (e.code === 'KeyA') {
         if (timeline) {
-            timeline.playAdjacent(false);
+            timeline.playAdjacent(false, afterNavigate);
         }
     } else if (e.code === 'KeyD') {
         if (timeline) {
-            timeline.playAdjacent(true);
+            timeline.playAdjacent(true, afterNavigate);
+        }
+    } else if (e.code === 'Escape') {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
         }
     }
 });

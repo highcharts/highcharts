@@ -14,6 +14,7 @@
 
 import type SonificationSpeaker from './SonificationSpeaker';
 import type Chart from '../../Core/Chart/Chart';
+import type Point from '../../Core/Series/Point';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
@@ -142,7 +143,8 @@ class SonificationTimeline {
             getEventKeysSignature = (e: Sonification.TimelineEvent): string =>
                 Object.keys(e.speechOptions || {})
                     .concat(Object.keys(e.instrumentEventOptions || {}))
-                    .join();
+                    .join(),
+            pointsPlayed: Point[] = [];
 
         if (filterPersists) {
             this.playingChannels = channels;
@@ -200,6 +202,9 @@ class SonificationTimeline {
                     needsCallback = e.callback || point &&
                         (showPlayMarker || showCrosshairOnly) &&
                         (e.time - lastCallbackTime > 50 || i === numEvents - 1);
+                if (point) {
+                    pointsPlayed.push(point);
+                }
                 if (needsCallback) {
                     this.scheduledCallbacks.push(
                         setTimeout((): void => {
@@ -237,10 +242,10 @@ class SonificationTimeline {
                     this.resetPlayState();
                 }
                 if (onEndOpt) {
-                    onEndOpt(this);
+                    onEndOpt(this, pointsPlayed);
                 }
                 if (onEnd) {
-                    onEnd(this);
+                    onEnd(this, pointsPlayed);
                 }
                 if (chart) {
                     if (chart.tooltip) {
@@ -287,7 +292,7 @@ class SonificationTimeline {
 
 
     // Play event(s) occurring next/prev from paused state.
-    playAdjacent(next: boolean): void {
+    playAdjacent(next: boolean, onEnd?: Function): void {
         const fromTime = this.isPaused ? this.resumeFromTime : -1,
             closestTime = this.channels.reduce(
                 (time, channel): number => {
@@ -331,7 +336,7 @@ class SonificationTimeline {
         this.play((e): boolean => (next ?
             e.time > fromTime && e.time <= closestTime + margin :
             e.time < fromTime && e.time >= closestTime - margin
-        ), false, false);
+        ), false, false, onEnd);
         this.playingChannels = this.playingChannels || this.channels;
         this.isPaused = true;
         this.isPlaying = false;
