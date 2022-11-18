@@ -293,7 +293,6 @@ class Legend {
 
         if (!this.chart.styledMode) {
             this.itemStyle = options.itemStyle;
-
             this.itemHiddenStyle = merge(
                 this.itemStyle,
                 options.itemHiddenStyle
@@ -655,7 +654,6 @@ class Legend {
     public renderItem(
         item: Legend.Item
     ): void {
-
         const legend = this,
             legendItem = item.legendItem = item.legendItem || {},
             chart = legend.chart,

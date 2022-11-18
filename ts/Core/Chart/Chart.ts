@@ -421,6 +421,7 @@ class Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
+
         // Handle regular options
         const userPlotOptions =
             userOptions.plotOptions || {} as SeriesTypePlotOptions;
