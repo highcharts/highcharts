@@ -1,4 +1,4 @@
-describe('Chart synchronized series state', () => {
+describe.skip('Chart synchronized series state', () => {
     it('should synchronize visible series between two charts sharing the same store', () => {
         // There should be no hidden legend items
         cy.get('.highcharts-legend-item-hidden')
