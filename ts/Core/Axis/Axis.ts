@@ -3819,7 +3819,7 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = (options as YAxisOptions).stackLabels,
+            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
