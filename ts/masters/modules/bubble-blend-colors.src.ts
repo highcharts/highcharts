@@ -3,11 +3,15 @@
  * @module highcharts/modules/bubble-blend-colors
  * @requires highcharts
  *
- * Blend colors module for bubble series
+ * Blend colors composition for bubble series
  *
  * (c) 2010-2022
  *
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/BubbleBlendColors.js';
+import BubbleBlendColors from '../../Extensions/BubbleBlendColors.js';
+
+const G: AnyRecord = Highcharts;
+
+BubbleBlendColors.compose(G.Series);

@@ -11,11 +11,13 @@
 'use strict';
 
 /* *
+ *
  *  Imports
  *
  * */
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+
 const {
     seriesTypes: {
         bubble: BubbleSeries
@@ -23,37 +25,135 @@ const {
 } = SeriesRegistry;
 
 import U from '../Core/Utilities.js';
+import Chart from '../Core/Chart/Chart';
+
 const {
-    merge,
-    extend
+    addEvent
 } = U;
 
-class BubbleBlendColors extends BubbleSeries {
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+namespace BubbleBlendColorsComposition {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class BubbleBlendColorsComposition extends BubbleSeries {
+
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Extends the series with a small addition.
+     *
+     * @private
+     *
+     * @param SeriesClass
+     * Series class to use.
+     *
+     * @param ChartClass
+     * Chart class to use.
+     */
+    export function compose<T extends typeof BubbleSeries>(
+        SeriesClass: T
+    ): (typeof BubbleBlendColorsComposition & T) {
+        const {
+            seriesAfterInit
+        } = Additions.prototype;
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(BubbleSeries, 'afterInit', seriesAfterInit);
+        }
+
+        return SeriesClass as (typeof BubbleBlendColorsComposition & T);
+    }
+
+    /* *
+     *
+     *  Classes
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export class Additions {
+        chart: Chart;
+        series: BubbleBlendColorsComposition;
+
+        /* *
+         *
+         *  Constructors
+         *
+         * */
+
+        /**
+         * @private
+         */
+        public constructor(series: BubbleBlendColorsComposition) {
+            this.chart = series.chart;
+            this.series = series;
+        }
+
+        /* *
+         *
+         *  Properties
+         *
+         * */
+
+        /**
+         * Initialize Series on point on series init.
+         *
+         * @ignore
+         */
+        public seriesAfterInit(this: any): void {
+            // console.log('Hello composition!');
+        }
+    }
 }
 
 /* *
  *
- *  Prototype properties
+ *  Default Export
  *
  * */
 
-interface BubbleBlendColors {
-
-}
+export default BubbleBlendColorsComposition;
 
 /* *
  *
- *  Default export
+ *  API Options
  *
  * */
 
-export default BubbleBlendColors;
-
-/* *
- *
- *  API options
- *
- * */
-
-''; // adds doclets above to transpiled file
+''; // keeps doclets above in transpiled file
