@@ -480,6 +480,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 chartOptions,
                 chartConstructor,
                 // TODO: may need to handle callback functions
+                // Maybe have a sync.toJSON()
                 sync: {}
             }
         };
