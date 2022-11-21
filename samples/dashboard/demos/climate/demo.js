@@ -40,7 +40,7 @@ const highchartsLogo = [
     'AAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
 ];
 
-const storePool = {};
+const dataPool = new Dashboard.DataOnDemand();
 
 function ajax(request) {
     return new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
-function buildDashboard() {
+async function buildDashboard() {
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
@@ -174,16 +174,35 @@ function buildDashboard() {
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             chartOptions: {
+                chart: {
+                    map: 'custom/world',
+                    proj4: window.proj4,
+                    type: 'line'
+                },
                 series: [{
                     type: 'map',
                     name: 'World Map'
+                }, {
+                    type: 'heatmap',
+                    opacity: 0.4,
+                    data: []
                 }],
-                chart: {
-                    map: 'custom/world',
-                    type: 'line'
-                },
                 title: {
                     text: 'World Map'
+                },
+                colorAxis: {
+                    max: 333,
+                    maxColor: '#F93',
+                    min: 213,
+                    minColor: '#39F'
+                },
+                xAxis: {
+                    max: 270,
+                    min: -270
+                },
+                yAxis: {
+                    max: 85,
+                    min: -56
                 }
             },
             events: {
@@ -237,6 +256,15 @@ function buildDashboard() {
         }
     });
     console.log(dashboard);
+
+    const heatmapTable = await dataPool.getSourceTable(1262649600000);
+
+    dashboard
+        .mountedComponents[6]
+        .component
+        .chart
+        .series[1]
+        .setData(heatmapTable.modified.getRows(undefined, undefined, ['lon', 'lat', 'TX']));
 }
 
 function loadStoreAsync(store) {
@@ -260,33 +288,38 @@ function loadStoreAsync(store) {
 }
 
 async function main() {
-    storePool.Sources = await loadStoreAsync(
-        new Dashboard.GoogleSheetsStore(
-            undefined,
-            {
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                googleSpreadsheetKey: '1U0Jfb9AR4vMKGZEorJD5Ns7W8W8GwVLGr9oMUFpbp8k'
-            }
-        )
-    );
+    dataPool.setSourceOptions({
+        name: 's3Test',
+        storeOptions: {
+            csvURL: 'https://assets.highcharts.com/dashboard-demodata/placeholder.csv'
+        },
+        storeType: 'CSVStore'
+    });
+    dataPool.setSourceOptions({
+        name: 'googleSources',
+        storeOptions: {
+            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+            googleSpreadsheetKey: '1U0Jfb9AR4vMKGZEorJD5Ns7W8W8GwVLGr9oMUFpbp8k'
+        },
+        storeType: 'GoogleSheetsStore'
+    });
 
-    const promises = [];
+    const sourceTable = await dataPool.getSourceTable('googleSources');
 
-    for (const row of storePool.Sources.table.getRowObjects()) {
-        storePool[row['Store Name']] = new Dashboard.GoogleSheetsStore(
-            undefined,
-            {
+    for (const row of sourceTable.getRowObjects()) {
+        dataPool.setSourceOptions({
+            name: row['Store Name'],
+            storeOptions: {
                 googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
                 googleSpreadsheetKey: row['Store Link'].match(/[\w-]{44}/gu)[0]
-            }
-        );
-        promises.push(loadStoreAsync(storePool[row['Store Name']]));
+            },
+            storeType: 'GoogleSheetsStore'
+        });
     }
 
-    return Promise
-        .all(promises)
-        .then(() => console.log(storePool))
-        .then(() => buildDashboard());
+    console.log(dataPool);
+
+    await buildDashboard();
 }
 
 main().catch(e => console.error(e));
