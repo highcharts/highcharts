@@ -116,7 +116,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.scaleElements = this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
-            this.syncEvents as any, // TODO: any-cast
             this.syncHandlers
         );
 

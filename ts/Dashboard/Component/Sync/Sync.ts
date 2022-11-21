@@ -61,7 +61,7 @@ class Sync {
     /**
      * The sync events to enable for the component
      */
-    public syncEvents: Sync.EventType[];
+    private syncEvents: string[];
 
     /**
      * The emitters and handlers to use for each event
@@ -72,11 +72,11 @@ class Sync {
 
     constructor(
         component: ComponentTypes,
-        syncEvents: Sync.EventType[],
+        // syncEvents: Sync.EventType[],
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
     ) {
         this.component = component;
-        this.syncEvents = syncEvents;
+        this.syncEvents = Object.keys(syncHandlers);
         this.syncConfig = syncHandlers;
         this.registeredSyncHandlers = {};
         this.registeredSyncEmitters = {};

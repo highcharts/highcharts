@@ -174,7 +174,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         }
 
         this.sync = new HighchartsComponent.Sync(
-            this, this.syncEvents as any, // TODO fix any-cast
+            this,
             this.syncHandlers
         );
         this.chartOptions = (
@@ -479,7 +479,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 ...base.options,
                 chartOptions,
                 chartConstructor,
-                syncEvents: this.sync.syncEvents
+                // TODO: may need to handle callback functions
+                sync: {}
             }
         };
 

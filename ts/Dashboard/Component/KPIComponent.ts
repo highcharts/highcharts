@@ -95,7 +95,6 @@ class KPIComponent extends Component {
         this.type = 'KPI';
         this.sync = new Component.Sync(
             this,
-            this.syncEvents as any, // TODO fix any-cast
             this.syncHandlers
         );
 

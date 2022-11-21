@@ -110,7 +110,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     protected hasLoaded: boolean;
 
     protected syncHandlers: Sync.OptionsRecord;
-    protected syncEvents;
 
     public presentationModifier?: DataModifier;
     public presentationTable?: DataTable;
@@ -172,7 +171,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: null
         };
 
-        this.syncEvents = Object.keys(this.options.sync);
         this.syncHandlers = Object.keys(this.options.sync)
             .reduce(
                 (
@@ -767,8 +765,6 @@ namespace Component {
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
-        // syncEvents: Sync.EventType[];
-        // syncHandlers: Sync.OptionsRecord;
         sync: SyncOptions;
     }
 
