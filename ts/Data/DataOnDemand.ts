@@ -23,7 +23,9 @@ import type {
     DataOnDemandOptions,
     DataOnDemandSourceOptions
 } from './DataOnDemandOptions.js';
+import type DataTable from './DataTable.js';
 
+import DataOnDemandDefaults from './DataOnDemandDefaults.js';
 import DataStore from './Stores/DataStore.js';
 
 /* *
@@ -42,7 +44,7 @@ import DataStore from './Stores/DataStore.js';
  * @param {Highcharts.DataOnDemandOptions} options
  * Pool options with all sources.
  */
-export class DataOnDemand {
+class DataOnDemand {
 
     /* *
      *
@@ -51,8 +53,10 @@ export class DataOnDemand {
      * */
 
     public constructor(
-        options: DataOnDemandOptions
+        options: (DataOnDemandOptions|undefined) = DataOnDemandDefaults
     ) {
+        options.sources = (options.sources || []);
+
         this.options = options;
         this.sources = {};
     }
@@ -86,6 +90,37 @@ export class DataOnDemand {
      * */
 
     /**
+     * Loads the store of the source.
+     *
+     * @function Highcharts.DataOnDemand#getSource
+     *
+     * @param {string} name
+     * Name of the source.
+     *
+     * @return {Promise<Highcharts.DataStore>}
+     * Returns the store of the source.
+     */
+    public getSource(
+        name: string
+    ): Promise<DataStore<DataStore.Event>> {
+        const sources = this.sources;
+        const source = sources[name];
+
+        if (source) {
+            // already loaded
+            return Promise.resolve(source);
+        }
+
+        const sourceOptions = this.getSourceOptions(name);
+
+        if (sourceOptions) {
+            return this.loadStore(sourceOptions);
+        }
+
+        throw new Error('Source not found');
+    }
+
+    /**
      * Loads the options of the source.
      *
      * @private
@@ -109,33 +144,22 @@ export class DataOnDemand {
     }
 
     /**
-     * Loads the store of the source.
+     * Loads the store table of the source.
      *
-     * @function Highcharts.DataOnDemand#getSource
+     * @function Highcharts.DataOnDemand#getSourceTable
      *
      * @param {string} name
      * Name of the source.
      *
-     * @return {Promise<Highcharts.DataStore>}
-     * Returns the store of the source.
+     * @return {Promise<Highcharts.DataTable>}
+     * Returns the store table of the source.
      */
-    public getSource(
+    public getSourceTable(
         name: string
-    ): Promise<DataStore<DataStore.Event>> {
-        const sources = this.sources;
-        const source = sources[name];
-
-        if (source) {
-            return Promise.resolve(source);
-        }
-
-        const sourceOptions = this.getSourceOptions(name);
-
-        if (sourceOptions) {
-            return this.loadStore(sourceOptions);
-        }
-
-        throw new Error('Source not found');
+    ): Promise<DataTable> {
+        return this
+            .getSource(name)
+            .then((source): DataTable => source.table);
     }
 
     /**
@@ -157,7 +181,7 @@ export class DataOnDemand {
                 DataStore.getStore(sourceOptions.storeType);
 
             if (!StoreClass) {
-                throw new Error('Store type not found');
+                throw new Error(`Store type not found. (${sourceOptions.storeType})`);
             }
 
             const store = new StoreClass(void 0, sourceOptions.storeOptions);
@@ -168,6 +192,28 @@ export class DataOnDemand {
             store.on('loadError', reject);
             store.load();
         });
+    }
+
+    /**
+     * Sets source options.
+     *
+     * @param {Highcharts.DataOnDemandSourceOptions} sourceOptions
+     * Source options to set.
+     */
+    public setSourceOptions(
+        sourceOptions: DataOnDemandSourceOptions
+    ): void {
+        const options = this.options;
+        const sources = options.sources;
+
+        for (let i = 0, iEnd = sources.length; i < iEnd; ++i) {
+            if (sources[i].name === sourceOptions.name) {
+                sources.splice(i, 1, sourceOptions);
+                return;
+            }
+        }
+
+        sources.push(sourceOptions);
     }
 
 }
