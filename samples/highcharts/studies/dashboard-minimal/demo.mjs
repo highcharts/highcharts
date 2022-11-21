@@ -1,6 +1,6 @@
 
 // Bring in other forms of Highcharts
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
 const { CSVStore, PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);

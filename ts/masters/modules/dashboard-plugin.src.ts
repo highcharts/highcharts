@@ -21,7 +21,7 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import HighchartsPlugin from '../../Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../Extensions/DashboardPlugins/HighchartsPlugin.js';
 
 const G: AnyRecord = Highcharts;
 G.DashboardPlugin = HighchartsPlugin;

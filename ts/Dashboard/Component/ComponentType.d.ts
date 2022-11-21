@@ -10,8 +10,8 @@
  *
  * */
 
-import type DataGridComponent from '../../Extensions/DashboardPlugin/DataGridComponent';
-import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
+import type DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type HTMLComponent from './HTMLComponent';
 import type KPIComponent from './KPIComponent';
 import type ThresholdComponent from './ThresholdComponent';

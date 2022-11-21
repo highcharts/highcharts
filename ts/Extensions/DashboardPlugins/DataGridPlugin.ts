@@ -34,9 +34,9 @@ import DataGrid from '../../DataGrid/DataGrid';
  * @param {Highcharts} dataGrid DataGrid core to connect.
  */
 function connectDataGrid(
-    dataGrid: typeof DataGrid|any
+    DataGridClass: typeof DataGrid
 ): void {
-    DataGridComponent.DataGrid = dataGrid.DataGrid;
+    DataGridComponent.DataGridConstructor = DataGridClass;
 }
 
 /**

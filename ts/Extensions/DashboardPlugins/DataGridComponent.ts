@@ -32,7 +32,6 @@ const {
     uniqueKey
 } = U;
 
-
 /* *
  *
  *  Class
@@ -54,7 +53,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      * */
 
     public static syncHandlers = HighchartsSyncHandlers;
-    public static DataGrid?: any;
+    public static DataGridConstructor?: typeof DataGrid;
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -68,6 +67,12 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             ],
             syncHandlers: HighchartsSyncHandlers
         });
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     public static fromJSON(
         json: DataGridComponent.ClassJSON
@@ -184,7 +189,9 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
-        this.dataGrid = this.constructDataGrid();
+        if (!this.dataGrid) {
+            this.dataGrid = this.constructDataGrid();
+        }
         this.sync.start();
         this.emit({ type: 'afterRender' });
         return this;
@@ -205,13 +212,17 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     }
 
 
-    private constructDataGrid(): DataGrid|any {
-        this.dataGrid = new DataGridComponent.DataGrid(this.dataGridContainer, {
-            editable: false,
-            dataTable: this.store && this.store.table.modified
-        });
+    private constructDataGrid(): DataGrid {
+        if (DataGridComponent.DataGridConstructor) {
+            this.dataGrid = new DataGridComponent.DataGridConstructor(
+                this.dataGridContainer, {
+                    ...this.options.dataGridOptions,
+                    dataTable: this.store && this.store.table.modified
+                });
+            return this.dataGrid;
+        }
 
-        return this.dataGrid;
+        throw new Error('DataGrid not connected.');
     }
 
 

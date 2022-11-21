@@ -1,13 +1,13 @@
 // Bring in other forms of Highcharts
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/DataGridPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
 
 const { CSVStore, PluginHandler } = Dashboard;
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-DataGridPlugin.custom.connectDataGrid(DataGrid);
+DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
 PluginHandler.addPlugin(DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
@@ -49,11 +49,19 @@ const dashboard = new Dashboard.Dashboard('container', {
                 chart: {
                     animation: false,
                     type: 'column'
+                },
+                plotOptions: {
+                    series: {
+                        dragDrop: {
+                            draggableY: true
+                        }
+                    }
                 }
             }
         }, {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
-            store
+            store,
+            editable: true
         }]
 });
