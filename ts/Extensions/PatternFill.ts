@@ -636,7 +636,7 @@ addEvent(Chart, 'endResize', function (): void {
         // all points.
         this.series.forEach(function (series: Series): void {
 
-            if (series.visible){
+            if (series.visible) {
                 series.points.forEach(function (point: Point): void {
                     const colorOptions = point.options && point.options.color;
 
