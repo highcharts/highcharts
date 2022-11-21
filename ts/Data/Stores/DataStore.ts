@@ -60,10 +60,10 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     private static readonly registry = {} as Record<string, StoreType>;
 
     /**
-     * Regular expression to extract the store name (group 1) from the
-     * stringified class type.
+     * Regular expression to extract the store type (group 1) from the
+     * stringified class constructor.
      */
-    private static readonly nameRegExp = (
+    private static readonly typeRegExp = (
         /^function\s+(\w*?)(?:DataStore)?\s*\(/
     );
 
@@ -83,37 +83,37 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a store registered with this name.
+     * their is already a store registered with this class name.
      */
     public static addStore(dataStore: StoreType): boolean {
-        const name = DataStore.getName(dataStore),
+        const type = DataStore.getType(dataStore),
             registry = DataStore.registry;
 
         if (
-            typeof name === 'undefined' ||
-            registry[name]
+            typeof type === 'undefined' ||
+            registry[type]
         ) {
             return false;
         }
 
-        registry[name] = dataStore;
+        registry[type] = dataStore;
 
         return true;
     }
 
     /**
-     * Returns all registered dataStore names.
+     * Returns all registered DataStore types.
      *
      * @return {Array<string>}
-     * All registered store names.
+     * All registered store types.
      */
-    public static getAllStoreNames(): Array<string> {
+    public static getAllStoreTypes(): Array<string> {
         return Object.keys(DataStore.registry);
     }
 
     /**
      * Returns a copy of the dataStore registry as record object with
-     * dataStore names and their dataStore class.
+     * DataStore type and their class.
      *
      * @return {Record<string,DataStoreRegistryType>}
      * Copy of the dataStore registry.
@@ -123,18 +123,18 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     }
 
     /**
-     * Extracts the name from a given dataStore class.
+     * Extracts the type from a given DataStore class.
      *
      * @param {DataStore} dataStore
-     * DataStore class to extract the name from.
+     * DataStore class to extract the type from.
      *
      * @return {string}
-     * DataStore name, if the extraction was successful, otherwise an empty
+     * DataStore type, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(dataStore: (NewableFunction|StoreType)): string {
+    private static getType(dataStore: (NewableFunction|StoreType)): string {
         return (
-            dataStore.toString().match(DataStore.nameRegExp) ||
+            dataStore.toString().match(DataStore.typeRegExp) ||
             ['', '']
         )[1];
     }
@@ -143,14 +143,14 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * Returns a dataStore class (aka class constructor) of the given dataStore
      * name.
      *
-     * @param {string} name
-     * Registered class name of the class type.
+     * @param {string} type
+     * Registered class type.
      *
      * @return {DataStoreRegistryType|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
+     * Class, if the class name was found, otherwise `undefined`.
      */
-    public static getStore(name: string): (StoreType|undefined) {
-        return DataStore.registry[name];
+    public static getStore(type: string): (StoreType|undefined) {
+        return DataStore.registry[type];
     }
 
     /* *

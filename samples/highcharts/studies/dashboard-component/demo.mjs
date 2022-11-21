@@ -29,10 +29,6 @@ store.table.setColumns(
   }
 );
 
-store.on('load', (e) => {
-  console.log(e)
-})
-
 const components = [];
 components.push(new DOMComponent({
   store,
@@ -145,7 +141,6 @@ components.map(comp => {
       colorAxis: {
         min: 0
       },
-
     }
   });
 
