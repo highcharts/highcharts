@@ -220,18 +220,52 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @sample maps/members/point-zoomto/
-     *         Zoom to points from butons
+     *         Zoom to points from buttons
      *
      * @requires modules/map
      *
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point = this as (MapPoint&MapPoint.CacheObject);
-        const chart = point.series.chart;
+        const point = this as (MapPoint&MapPoint.CacheObject),
+            chart = point.series.chart,
+            mapView = chart.mapView;
 
-        if (chart.mapView && point.bounds) {
-            chart.mapView.fitToBounds(point.bounds, void 0, false);
+        let bounds = point.bounds;
+
+        if (mapView && bounds) {
+            const inset = isNumber(point.insetIndex) &&
+                mapView.insets[point.insetIndex];
+            if (inset) {
+                // If in an inset, translate the bounds to pixels ...
+                const px1 = inset.projectedUnitsToPixels({
+                        x: bounds.x1,
+                        y: bounds.y1
+                    }),
+                    px2 = inset.projectedUnitsToPixels({
+                        x: bounds.x2,
+                        y: bounds.y2
+                    }),
+                    // ... then back to projected units in the main mapView
+                    proj1 = mapView.pixelsToProjectedUnits({
+                        x: px1.x,
+                        y: px1.y
+                    }),
+                    proj2 = mapView.pixelsToProjectedUnits({
+                        x: px2.x,
+                        y: px2.y
+                    });
+
+                bounds = {
+                    x1: proj1.x,
+                    y1: proj1.y,
+                    x2: proj2.x,
+                    y2: proj2.y
+                };
+
+            }
+
+            mapView.fitToBounds(bounds, void 0, false);
 
             point.series.isDirty = true;
             chart.redraw();

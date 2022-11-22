@@ -1,5 +1,6 @@
 QUnit.test('SplineSeries.getPointSpline (#4918)', function (assert) {
-    var getPointSpline = Highcharts.seriesTypes.spline.prototype.getPointSpline,
+    var getPointSpline =
+            Highcharts.Series.types.spline.prototype.getPointSpline,
         segment = [
             {
                 plotX: -5,

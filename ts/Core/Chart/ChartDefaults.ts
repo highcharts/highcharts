@@ -462,6 +462,7 @@ const ChartDefaults: ChartOptions = {
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
+         * @declare    Highcharts.OptionsChartPanningTypeValue
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
@@ -918,6 +919,8 @@ const ChartDefaults: ChartOptions = {
      * Additional CSS styles to apply inline to the container `div`. Note
      * that since the default font styles are applied in the renderer, it
      * is ignorant of the individual chart options and must be set globally.
+     * Also note that changing the font size in the `chart.style` options only
+     * applies to those elements that do not have a specific `fontSize` setting.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.
@@ -972,6 +975,8 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highcharts} highcharts/chart/zoomtype-xy/
      *         Xy
+     * @sample {highcharts} highcharts/chart/zoomtype-polar/
+     *         Zoom on polar chart
      * @sample {highstock} stock/demo/basic-line/
      *         None by default
      * @sample {highstock} stock/chart/zoomtype-x/
@@ -1030,6 +1035,7 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can zoom by dragging the mouse.
          * Can be one of `x`, `y` or `xy`.
          *
+         * @declare    Highcharts.OptionsChartZoomingTypeValue
          * @type       {string}
          * @default    {highcharts} undefined
          * @product    highcharts highstock gantt

@@ -22,10 +22,11 @@ import type {
 } from '../Core/Renderer/CSSObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
+import H from '../Core/Globals.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 import F from '../Core/FormatUtilities.js';
@@ -63,7 +64,7 @@ declare module '../Core/Chart/ChartLike' {
         breadcrumbs?: Breadcrumbs;
     }
 }
-declare module '../Core/LangOptions' {
+declare module '../Core/Options' {
     interface LangOptions {
         breadcrumbsToLabel?: string;
         mainBreadcrumb?: string;

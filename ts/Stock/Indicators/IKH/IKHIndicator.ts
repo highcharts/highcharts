@@ -637,7 +637,7 @@ class IKHIndicator extends SMAIndicator {
 
         // Generate senkouSpan area:
 
-        // If graphColection exist then remove svg
+        // If graphCollection exist then remove svg
         // element and indicator property
         if (indicator.graphCollection) {
             indicator.graphCollection.forEach(function (
@@ -648,7 +648,7 @@ class IKHIndicator extends SMAIndicator {
             });
         }
 
-        // Clean grapCollection or initialize it
+        // Clean graphCollection or initialize it
         indicator.graphCollection = [];
 
         // When user set negativeColor property
@@ -678,7 +678,7 @@ class IKHIndicator extends SMAIndicator {
                     const x = Math.floor(sectionPoints.length / 2);
 
                     // When middle points has equal values
-                    // Compare all ponints plotY value sum
+                    // Compare all points plotY value sum
                     if (sectionPoints[x].plotY === sectionNextPoints[x].plotY) {
                         pointsPlotYSum = 0;
                         nextPointsPlotYSum = 0;
@@ -894,27 +894,31 @@ class IKHIndicator extends SMAIndicator {
                 IKH[i] = [];
             }
 
-            if (typeof IKH[i + period] === 'undefined') {
-                IKH[i + period] = [];
+            if (typeof IKH[i + period - 1] === 'undefined') {
+                IKH[i + period - 1] = [];
             }
 
-            IKH[i + period][0] = TS;
-            IKH[i + period][1] = KS;
-            IKH[i + period][2] = void 0;
+            IKH[i + period - 1][0] = TS;
+            IKH[i + period - 1][1] = KS;
+            IKH[i + period - 1][2] = void 0;
 
-            IKH[i][2] = CS;
+            if (typeof IKH[i + 1] === 'undefined') {
+                IKH[i + 1] = [];
+            }
+
+            IKH[i + 1][2] = CS;
 
             if (i <= period) {
-                IKH[i + period][3] = void 0;
-                IKH[i + period][4] = void 0;
+                IKH[i + period - 1][3] = void 0;
+                IKH[i + period - 1][4] = void 0;
             }
 
-            if (typeof IKH[i + 2 * period] === 'undefined') {
-                IKH[i + 2 * period] = [];
+            if (typeof IKH[i + 2 * period - 2] === 'undefined') {
+                IKH[i + 2 * period - 2] = [];
             }
 
-            IKH[i + 2 * period][3] = SSA;
-            IKH[i + 2 * period][4] = SSB;
+            IKH[i + 2 * period - 2][3] = SSA;
+            IKH[i + 2 * period - 2][4] = SSB;
 
             xData.push(date);
         }

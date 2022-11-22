@@ -1,34 +1,34 @@
 QUnit.test('Mapping of joinBy with data', assert => {
     const chart = Highcharts.mapChart('container', {
-        colorAxis: {
-            min: 0,
-            minColor: '#EFEFFF',
-            maxColor: '#102D4C'
-        },
-        series: [
-            {},
-            {
-                data: [{
-                    custom: {
-                        code: 'PL' // iso-a2 (by code, inside custom)
-                    },
-                    value: 0
-                }, {
-                    value: 0,
-                    code: 'no' // hc-key (by code)
-                }, {
-                    value: 0,
-                    'hc-key': 'dk' // hc-key (directly by string)
-                }, {
-                    value: 0,
-                    'iso-a2': 'SE' // iso-a2 (directly by string)
-                }],
-                mapData: Highcharts.maps['custom/europe'],
-                joinBy: ['iso-a2', 'custom.code']
-            }
-        ]
-    }),
-    series = chart.series[1];
+            colorAxis: {
+                min: 0,
+                minColor: '#EFEFFF',
+                maxColor: '#102D4C'
+            },
+            series: [
+                {},
+                {
+                    data: [{
+                        custom: {
+                            code: 'PL' // iso-a2 (by code, inside custom)
+                        },
+                        value: 0
+                    }, {
+                        value: 0,
+                        code: 'no' // hc-key (by code)
+                    }, {
+                        value: 0,
+                        'hc-key': 'dk' // hc-key (directly by string)
+                    }, {
+                        value: 0,
+                        'iso-a2': 'SE' // iso-a2 (directly by string)
+                    }],
+                    mapData: Highcharts.maps['custom/europe'],
+                    joinBy: ['iso-a2', 'custom.code']
+                }
+            ]
+        }),
+        series = chart.series[1];
 
     [
         ['hc-key', 'code'],
@@ -48,7 +48,7 @@ QUnit.test('Mapping of joinBy with data', assert => {
 
         assert.strictEqual(
             series.points[i].color,
-            Highcharts.seriesTypes.map.defaultOptions.nullColor,
+            Highcharts.Series.types.map.defaultOptions.nullColor,
             `The joinBy changed - ${i + 1}. point should no longer be colored.`
         );
     });

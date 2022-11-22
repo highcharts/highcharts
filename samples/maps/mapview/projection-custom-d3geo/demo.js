@@ -27,7 +27,7 @@ if (window.d3) {
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    // Random dummy data
+    // Add some data for each geometry
     const data = map.objects.default.geometries.map((g, i) => i);
 
     // Initialize the chart

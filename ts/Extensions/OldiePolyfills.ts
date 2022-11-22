@@ -242,7 +242,7 @@ if (!Object.keys) {
 // Copyright: Eike Send https://eike.se/nd
 // License: MIT License
 if (!document.getElementsByClassName) {
-    document.getElementsByClassName = function (
+    const getElementsByClassNamePolyfill = function (
         search: string
     ): any {
         let d = document,
@@ -272,4 +272,7 @@ if (!document.getElementsByClassName) {
         }
         return results;
     };
+
+    document.getElementsByClassName = getElementsByClassNamePolyfill;
+    Element.prototype.getElementsByClassName = getElementsByClassNamePolyfill;
 }

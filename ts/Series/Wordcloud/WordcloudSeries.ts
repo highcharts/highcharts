@@ -495,7 +495,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Series.PlotBoxObject {
+    public getPlotBox(): Series.PlotBoxTransform {
         const series = this,
             chart = series.chart,
             inverted = chart.inverted,

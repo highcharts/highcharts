@@ -350,11 +350,12 @@ function seriesSetStackedPoints(
     stackingParam?: string
 ): void {
 
-    const stacking = stackingParam || this.options.stacking;
+    const chart = this.chart,
+        stacking = stackingParam || this.options.stacking;
 
     if (!stacking || (
         this.visible !== true &&
-        this.chart.options.chart.ignoreHiddenSeries !== false
+        chart.options.chart.ignoreHiddenSeries !== false
     )) {
         return;
     }
@@ -371,7 +372,9 @@ function seriesSetStackedPoints(
         stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = stacking === 'group' ?
+            chart.yAxis[0] as StackingAxis :
+            series.yAxis as StackingAxis,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks;
 
