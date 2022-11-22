@@ -67,7 +67,7 @@ QUnit.skip('data-google-spreadsheetloading', function (assert) {
         },
         data: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-            googleSpreadsheetKey: '1BNuncjK16FzPUE045dfBUheODVYIJpe1UXtVFLprmgw'
+            googleSpreadsheetKey: '1_J29LnBjjXOPF8KtZf1s9SCaVvWVvzoLNVfUhy8OKR8'
         }
     });
 });

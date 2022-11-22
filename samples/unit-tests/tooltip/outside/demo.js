@@ -81,3 +81,37 @@ QUnit.test('Outside tooltip styling', function (assert) {
         '#11494: Setting tooltip.style.zIndex should also work'
     );
 });
+
+QUnit.test('Tooltip when markers are outside, #17929.', function (assert) {
+    const chart =  Highcharts.chart('container', {
+            chart: {
+                marginTop: 80,
+                width: 300
+            },
+            title: {
+                text: ''
+            },
+            yAxis: {
+                tickInterval: 1,
+                min: 0,
+                max: 8
+            },
+            series: [{
+                type: 'scatter',
+                marker: {
+                    enabled: true,
+                    radius: 40
+                },
+                data: [8, 8, 8]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        controller = new TestController(chart);
+
+    controller.moveTo(chart.plotLeft + point.plotX, point.plotY + 50);
+    assert.notOk(
+        chart.tooltip.isHidden,
+        `When hovering over a marker that is partially outside the plot area,
+        the tooltip still should be shown, #17929.`
+    );
+});

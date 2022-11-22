@@ -486,7 +486,6 @@ namespace Accessibility {
      * @private
      */
     export function compose(
-        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
         PointClass: typeof Point,
