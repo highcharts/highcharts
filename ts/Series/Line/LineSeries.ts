@@ -168,7 +168,9 @@ class LineSeries extends Series {
 
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
-                } else if (options.linecap !== 'square') {
+                }
+
+                if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
                 }
