@@ -891,7 +891,6 @@ class ColumnSeries extends Series {
 
                     if (!chart.styledMode && series.options.cursor) {
                         (series as any)[key]
-                            .css(css)
                             .css({ cursor: series.options.cursor });
                     }
                 }

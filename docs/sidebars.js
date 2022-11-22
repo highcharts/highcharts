@@ -31,6 +31,7 @@ module.exports = {
             'chart-concepts/security'
         ],
         'Stock': [
+            'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
