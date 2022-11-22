@@ -81,7 +81,7 @@
 
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        const points = mapChart.getSelectedPoints();
+        const points = this.series.chart.getSelectedPoints();
         if (points.length) {
             if (points.length === 1) {
                 document.querySelector('#info #flag')
