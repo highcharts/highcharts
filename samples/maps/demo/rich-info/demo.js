@@ -99,8 +99,7 @@
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
                     chart: {
-                        height: 250,
-                        spacingLeft: 0
+                        height: 250
                     },
                     credits: {
                         enabled: false
