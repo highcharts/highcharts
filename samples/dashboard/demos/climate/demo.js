@@ -172,7 +172,7 @@ async function buildDashboard() {
         }, {
             cell: 'world-map',
             type: 'Highcharts',
-            chartConstructor: 'mapChart',
+            chartConstructor: 'chart',
             chartOptions: {
                 chart: {
                     map: 'custom/world',
@@ -180,12 +180,11 @@ async function buildDashboard() {
                     type: 'line'
                 },
                 series: [{
-                    type: 'map',
-                    name: 'World Map'
-                }, {
                     type: 'heatmap',
-                    opacity: 0.4,
-                    data: []
+                    data: [],
+                    tooltip: {
+                        pointFormat: '{point.value}˚K (lat: {point.y}, lon: {point.x})'
+                    }
                 }],
                 title: {
                     text: 'World Map'
@@ -194,15 +193,32 @@ async function buildDashboard() {
                     max: 333,
                     maxColor: '#F93',
                     min: 213,
-                    minColor: '#39F'
+                    minColor: '#39F',
+                    title: {
+                        text: 'Temperature ˚K'
+                    }
                 },
                 xAxis: {
-                    max: 270,
-                    min: -270
+                    labels: {
+                        enabled: false
+                    },
+                    max: 180,
+                    min: -180,
+                    tickWidth: 0,
+                    title: {
+                        text: 'Longitude'
+                    }
                 },
                 yAxis: {
-                    max: 85,
-                    min: -56
+                    labels: {
+                        enabled: false
+                    },
+                    max: 90,
+                    min: -90,
+                    tickWidth: 0,
+                    title: {
+                        text: 'Latitude'
+                    }
                 }
             },
             events: {
@@ -263,7 +279,7 @@ async function buildDashboard() {
         .mountedComponents[6]
         .component
         .chart
-        .series[1]
+        .series[0]
         .setData(heatmapTable.modified.getRows(undefined, undefined, ['lon', 'lat', 'TX']));
 }
 
