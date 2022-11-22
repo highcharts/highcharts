@@ -3,17 +3,16 @@ Highcharts.chart('container', {
         type: 'pictorial'
     },
 
-    colors: ['#88e2fd', '#cbf0f8', '#ececec', '#fefae2', '#fbea3e', '#fec941'],
-
-    accessibility: {
-        description: '',
-        point: {
-            valueDescriptionFormat: ''
-        }
-    },
+    colors: ['#B0FDFE', '#E3FED4', '#F9F492', '#FAF269', '#FAE146', '#FDA003'],
 
     title: {
         text: 'Kelvin color temperature scale chart'
+    },
+
+    subtitle: {
+        text: 'Source: ' +
+          '<a href="https://en.wikipedia.org/wiki/Color_temperature"' +
+          'target="_blank">Wikipedia.org</a> '
     },
 
     xAxis: {
@@ -26,18 +25,19 @@ Highcharts.chart('container', {
     },
 
     legend: {
+        align: 'right',
+        floating: true,
         itemMarginTop: 5,
         itemMarginBottom: 5,
         layout: 'vertical',
-        floating: true,
+        margin: 0,
         padding: 0,
-        verticalAlign: 'middle',
-        align: 'right',
-        margin: 0
+        verticalAlign: 'middle'
     },
 
     tooltip: {
-        headerFormat: ''
+        headerFormat: '',
+        valueSuffix: ' K'
     },
 
     plotOptions: {
@@ -61,24 +61,24 @@ Highcharts.chart('container', {
         name: 'Daylight',
         data: [6500]
     }, {
-        name: 'Cool white',
+        name: 'Moonlight',
         data: [4000]
     },
     {
-        name: 'White',
+        name: 'Morning/Evening Sun',
         data: [3500]
     },
     {
-        name: 'Warm white',
+        name: 'Lightbulb',
         data: [3000]
     },
     {
-        name: 'Warm white',
-        data: [2700]
+        name: 'Sunrise/sunset',
+        data: [2500]
     },
     {
-        name: 'Extra warm white',
-        data: [2500]
+        name: 'Candle flame',
+        data: [1800]
     }
     ]
 });
