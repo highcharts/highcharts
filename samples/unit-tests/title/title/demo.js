@@ -90,7 +90,8 @@ QUnit.test('useHTML and title alignment', function (assert) {
         title: {
             useHTML: true,
             align: 'right',
-            text: 'Here is a title that helps show the issue, it is pretty long'
+            text: `Here is a title that helps show the issue, < it is pretty
+                long`
         }
     });
 
@@ -98,5 +99,13 @@ QUnit.test('useHTML and title alignment', function (assert) {
         chart.title.element.offsetLeft + chart.title.element.offsetWidth <
             chart.chartWidth,
         'The title should not spill out of the chart area (#7787)'
+    );
+
+    const ariaValue = document.getElementById('container')
+        .getAttribute('aria-label');
+
+    assert.ok(
+        !/\</g.test(ariaValue),
+        '"<" should not be included in aria-label#17753'
     );
 });
