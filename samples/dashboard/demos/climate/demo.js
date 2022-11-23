@@ -196,18 +196,18 @@ async function buildDashboard() {
                     name: 'World Map'
                 }, {
                     type: 'mapbubble',
-                    keys: ['lat', 'lon', 'z'],
-                    colorKey: 'z',
+                    name: 'Temperature',
                     data: climateTable
                         .modified
                         .getRows(undefined, undefined, ['lat', 'lon', 'TX']),
+                    keys: ['lat', 'lon', 'z'],
+                    colorKey: 'z',
+                    maxSize: 1,
+                    minSize: 1,
+                    opacity: 0.5,
                     marker: {
                         symbol: 'square'
                     },
-                    maxSize: 1,
-                    minSize: 1,
-                    name: 'Temperature ˚K',
-                    opacity: 0.5,
                     tooltip: {
                         pointFormat: '{point.z}˚K'
                     }
