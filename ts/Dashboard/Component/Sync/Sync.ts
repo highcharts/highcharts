@@ -13,7 +13,21 @@ namespace Sync {
         SyncHandler['func']
     ];
     export interface OptionsEntry {
+        /**
+         * Responsible for communicating to the component group that the action
+         * has been triggered on the component.
+         *
+         * If `true` the default emitter will be used, if `false` or `null` it
+         * will be disabled
+         */
         emitter?: EmitterConfig | null | boolean;
+        /**
+         * Responsible for _handling_ incoming action from the synced component
+         * group.
+         *
+         * If `true` the default handler will be used, if `false` or `null` it
+         * will be disabled
+         */
         handler?: HandlerConfig | null | boolean;
     }
 
