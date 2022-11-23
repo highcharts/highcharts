@@ -100,7 +100,7 @@ const configs: {
 
                     if (chart) {
                         const setHoverPointWithDetail = (
-                            hoverPoint: SharedState.PresentationHoverPointType | undefined
+                            hoverPoint?: SharedState.PresentationHoverPointType
                         ): void => {
                             groups.forEach((group): void => {
                                 requestAnimationFrame((): void => {
@@ -134,13 +134,13 @@ const configs: {
                             // Listen to the pointer to get when the hoverpoint is undefined
                             addEvent(chart.pointer, 'afterGetHoverData', (): void => {
                                 if (chart.hoverPoint === null) {
-                                    setHoverPointWithDetail(void 0);
+                                    setHoverPointWithDetail();
                                 }
                             }),
 
                             // TODO: check if sticky is set, etc.
                             addEvent(chart.renderTo, 'mouseleave', (): void => {
-                                setHoverPointWithDetail(void 0);
+                                setHoverPointWithDetail();
                             })
                         ];
 
@@ -315,7 +315,7 @@ const configs: {
             'afterHoverPointChange',
             function (this: HighchartsComponent, e: SharedState.PointHoverEvent): void {
                 const { chart } = this;
-                const { hoverPoint } = e;
+                const { hoverPoint, hoverRow } = e;
 
                 if (chart && chart.tooltip) {
                     if (hoverPoint === void 0 && !chart.hoverPoint) {
@@ -326,6 +326,16 @@ const configs: {
                         if (match) {
                             chart.tooltip.refresh(match);
                         }
+                    }
+                    if (hoverRow && hoverRow.firstChild) {
+                        const cell = hoverRow.firstChild as HTMLElement,
+                            cellName = cell.innerHTML;
+
+                        chart.series[0].points.forEach((point): void => {
+                            if (point.name === cellName) {
+                                chart.tooltip && chart.tooltip.refresh(point);
+                            }
+                        });
                     }
                 }
             }

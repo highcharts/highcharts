@@ -24,7 +24,7 @@ import type DataGrid from '../../DataGrid/DataGrid';
 
 import Component from '../../Dashboard/Component/Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
-import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -52,7 +52,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    public static syncHandlers = HighchartsSyncHandlers;
+    public static syncHandlers = DataGridSyncHandlers;
     public static DataGridConstructor?: typeof DataGrid;
     public static defaultOptions = merge(
         Component.defaultOptions,
@@ -65,7 +65,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                 'dataGridClassName',
                 'dataGridID'
             ],
-            syncHandlers: HighchartsSyncHandlers
+            syncHandlers: DataGridSyncHandlers
         });
 
     /* *
