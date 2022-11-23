@@ -140,7 +140,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             if (!el) {
                 throw new Error(
                     'Could not find element with id: ' +
-          this.options.parentElement
+                    this.options.parentElement
                 );
             }
             this.parentElement = el;
@@ -161,7 +161,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.store = this.options.store;
         this.hasLoaded = false;
         this.editableOptions =
-      new EditableOptions(this, options.editableOptionsBindings);
+            new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
@@ -185,7 +185,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                         }
                         if (handler && typeof handler === 'boolean') {
                             carry[handlerName] =
-                  Sync.defaultHandlers[handlerName];
+                                Sync.defaultHandlers[handlerName];
                         }
                     }
 
@@ -206,7 +206,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     // Setup listeners on cell/other things up the chain
     private attachCellListeneres(): void {
-    // remove old listeners
+        // remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -229,7 +229,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                         const { row } = e;
                         if (row && this.parentCell) {
                             const hasLeftTheRow =
-                row.getCellIndex(this.parentCell) === void 0;
+                                row.getCellIndex(this.parentCell) === void 0;
                             if (hasLeftTheRow) {
                                 if (this.parentCell) {
                                     this.setCell(this.parentCell);
@@ -377,13 +377,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     private getContentHeight(): number {
         const parentHeight =
-      this.dimensions.height || Number(getStyle(this.element, 'height'));
+            this.dimensions.height || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;
         const captionHeight = this.captionElement ?
             this.captionElement.clientHeight +
-      getMargins(this.captionElement).y :
+            getMargins(this.captionElement).y :
             0;
 
         return parentHeight - titleHeight - captionHeight;
@@ -398,19 +398,19 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    * @param {number|string|null} [height]
    * The height to set the component to.
    * Can be pixels, a percentage string or null.
-   * Null will unset the style
+   * Null will unset the style.
    */
     public resize(
         width?: number | string | null,
         height?: number | string | null
     ): void {
-    // if (!this.resizeTimeout) {
-    //     this.resizeTimeout = requestAnimationFrame(() => {
+        // if (!this.resizeTimeout) {
+        //     this.resizeTimeout = requestAnimationFrame(() => {
 
         if (height) {
             // Get offset for border, padding
             const pad =
-        getPaddings(this.element).y + getMargins(this.element).y;
+                getPaddings(this.element).y + getMargins(this.element).y;
 
             this.dimensions.height = relativeLength(
                 height, Number(getStyle(this.parentElement, 'height'))
@@ -420,7 +420,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
         if (width) {
             const pad =
-        getPaddings(this.element).x + getMargins(this.element).x;
+                getPaddings(this.element).x + getMargins(this.element).x;
             this.dimensions.width = relativeLength(
                 width, Number(getStyle(this.parentElement, 'width'))
             ) - pad;
@@ -441,10 +441,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width,
             height
         });
-    //         cancelAnimationFrame(this.resizeTimeout)
-    //         this.resizeTimeout = 0;
-    //     });
-    // }
+        //         cancelAnimationFrame(this.resizeTimeout)
+        //         this.resizeTimeout = 0;
+        //     });
+        // }
     }
 
     public resizeTo(element: HTMLElement): void {
@@ -477,7 +477,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    * The component for chaining
    */
     public update(newOptions: Partial<Component.ComponentOptions>): this {
-    // Update options
+        // Update options
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
             options: newOptions
@@ -488,7 +488,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const titleElement =
-      Component.createTextElement('h1', 'title', titleOptions);
+            Component.createTextElement('h1', 'title', titleOptions);
         if (titleElement) {
             this.titleElement = titleElement;
         }
@@ -496,7 +496,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const captionElement =
-      Component.createTextElement('div', 'caption', captionOptions);
+            Component.createTextElement('div', 'caption', captionOptions);
         if (captionElement) {
             this.captionElement = captionElement;
         }
@@ -583,7 +583,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    * The component for chaining
    */
     public redraw(): this {
-    // Do a redraw
+        // Do a redraw
         const e = {
             component: this
         };
@@ -644,7 +644,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         if (
             typeof message === 'object' &&
-      typeof message.callback === 'function'
+            typeof message.callback === 'function'
         ) {
             message.callback.apply(this);
         }
@@ -698,7 +698,7 @@ namespace Component {
    * */
 
     export interface JSON extends Serializable.JSON<string> {
-    // store?: DataStore.ClassJSON;
+        // store?: DataStore.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -706,15 +706,15 @@ namespace Component {
    * The basic events
    */
     export type EventTypes =
-    ResizeEvent |
-    UpdateEvent |
-    TableChangedEvent |
-    LoadEvent |
-    RenderEvent |
-    RedrawEvent |
-    JSONEvent |
-    MessageEvent |
-    PresentationModifierEvent;
+        ResizeEvent |
+        UpdateEvent |
+        TableChangedEvent |
+        LoadEvent |
+        RenderEvent |
+        RedrawEvent |
+        JSONEvent |
+        MessageEvent |
+        PresentationModifierEvent;
 
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
@@ -741,7 +741,7 @@ namespace Component {
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>;
     export type PresentationModifierEvent =
-    Component.Event<'afterPresentationModifier', { table: DataTable }>;
+        Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
 
     export type Event<
@@ -770,7 +770,7 @@ namespace Component {
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
-    // store?: DataStore.ClassJSON; // store id
+        // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
         dimensions?: { width: number; height: number };
@@ -847,7 +847,7 @@ namespace Component {
 
         if (
             typeof name === 'undefined' ||
-      registry[name]
+            registry[name]
         ) {
             return false;
         }
@@ -886,7 +886,7 @@ namespace Component {
     ): string {
         return (
             component.toString().match(nameRegExp) ||
-      ['', '']
+            ['', '']
         )[1];
     }
 
@@ -981,7 +981,7 @@ namespace Component {
                         if (component && component.id !== sender.id) {
                             if (
                                 component.type === recipient ||
-                recipient === 'all'
+                                recipient === 'all'
                             ) {
                                 emit(component);
                             }
