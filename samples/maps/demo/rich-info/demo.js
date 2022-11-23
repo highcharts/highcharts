@@ -81,7 +81,7 @@
 
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        const points = mapChart.getSelectedPoints();
+        const points = this.series.chart.getSelectedPoints();
         if (points.length) {
             if (points.length === 1) {
                 document.querySelector('#info #flag')
@@ -99,8 +99,7 @@
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
                     chart: {
-                        height: 250,
-                        spacingLeft: 0
+                        height: 250
                     },
                     credits: {
                         enabled: false
