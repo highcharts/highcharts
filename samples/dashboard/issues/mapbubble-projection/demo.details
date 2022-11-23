@@ -1,0 +1,7 @@
+---
+ name: MapBubble Projection
+ authors:
+   - Torstein Hønsi
+ requiresManualTesting: true
+ js_wrap: b
+...
