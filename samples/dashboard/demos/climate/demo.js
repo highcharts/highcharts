@@ -73,6 +73,13 @@ async function ajaxAll(requests) {
 }
 
 async function buildDashboard() {
+    const topology = await Promise
+        .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
+        .then(fetch)
+        .then(response => response.json());
+
+    const climateTable = await dataPool.getSourceTable(1262649600000);
+
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
@@ -172,18 +179,37 @@ async function buildDashboard() {
         }, {
             cell: 'world-map',
             type: 'Highcharts',
-            chartConstructor: 'chart',
+            chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    map: 'custom/world',
-                    proj4: window.proj4,
-                    type: 'line'
+                    map: topology
+                },
+                mapView: {
+                    maxZoom: 1,
+                    projection: {
+                        name: 'Miller'
+                    },
+                    zoom: 1
                 },
                 series: [{
-                    type: 'heatmap',
-                    data: [],
+                    type: 'map',
+                    name: 'World Map'
+                }, {
+                    type: 'mapbubble',
+                    keys: ['lat', 'lon', 'z'],
+                    colorKey: 'z',
+                    data: climateTable
+                        .modified
+                        .getRows(undefined, undefined, ['lat', 'lon', 'TX']),
+                    marker: {
+                        symbol: 'square'
+                    },
+                    maxSize: 1,
+                    minSize: 1,
+                    name: 'Temperature ˚K',
+                    opacity: 0.5,
                     tooltip: {
-                        pointFormat: '{point.value}˚K (lat: {point.y}, lon: {point.x})'
+                        pointFormat: '{point.z}˚K'
                     }
                 }],
                 title: {
@@ -193,41 +219,16 @@ async function buildDashboard() {
                     max: 333,
                     maxColor: '#F93',
                     min: 213,
-                    minColor: '#39F',
-                    title: {
-                        text: 'Temperature ˚K'
-                    }
-                },
-                xAxis: {
-                    labels: {
-                        enabled: false
-                    },
-                    max: 180,
-                    min: -180,
-                    tickWidth: 0,
-                    title: {
-                        text: 'Longitude'
-                    }
-                },
-                yAxis: {
-                    labels: {
-                        enabled: false
-                    },
-                    max: 90,
-                    min: -90,
-                    tickWidth: 0,
-                    title: {
-                        text: 'Latitude'
-                    }
+                    minColor: '#39F'
                 }
             },
             events: {
                 mount: function () {
                     // call action
-                    console.log('map mount event');
+                    console.log('map mount event', this);
                 },
                 unmount: function () {
-                    console.log('map unmount event');
+                    console.log('map unmount event', this);
                 }
             }
         }],
@@ -273,34 +274,6 @@ async function buildDashboard() {
     });
     console.log(dashboard);
 
-    const heatmapTable = await dataPool.getSourceTable(1262649600000);
-
-    dashboard
-        .mountedComponents[6]
-        .component
-        .chart
-        .series[0]
-        .setData(heatmapTable.modified.getRows(undefined, undefined, ['lon', 'lat', 'TX']));
-}
-
-function loadStoreAsync(store) {
-    return new Promise((resolve, reject) => {
-        const offs = [
-            store.on('loadError', (e) => {
-                for (const off of offs) {
-                    off();
-                }
-                reject(e)
-            }),
-            store.on('afterLoad', (e) => {
-                for (const off of offs) {
-                    off();
-                }
-                resolve(store);
-            })
-        ];
-        store.load();
-    });
 }
 
 async function main() {
@@ -322,12 +295,20 @@ async function main() {
 
     const sourceTable = await dataPool.getSourceTable('googleSources');
 
+    let match;
+
     for (const row of sourceTable.getRowObjects()) {
+        match = row['Store Link'].match(/[\w-]{44}/gu);
+
+        if (!match) {
+            continue;
+        }
+
         dataPool.setSourceOptions({
             name: row['Store Name'],
             storeOptions: {
                 googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                googleSpreadsheetKey: row['Store Link'].match(/[\w-]{44}/gu)[0]
+                googleSpreadsheetKey: match[0]
             },
             storeType: 'GoogleSheetsStore'
         });
