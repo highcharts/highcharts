@@ -15,23 +15,15 @@ const store = new CSVStore(undefined, {
  41,23,2`,
   firstRowAsNames: true
 });
+
 store.load();
 
-console.log(store);
-
-const dashboard = new Dashboard('container', {
+new Dashboard('container', {
   gui: {
     enabled: true,
     layouts: [{
-      id: 'layout-1', // mandatory
-      rowClassName: 'custom-row', // optional
-      columnClassName: 'custom-column', // optional
-      style: {
-        fontSize: '1.5em',
-        color: 'blue'
-      },
+      id: 'layout-1',
       rows: [{
-        // id: 'dashboard-row-0',
         cells: [{
           id: 'dashboard-col-0'
         }, {
@@ -47,7 +39,7 @@ const dashboard = new Dashboard('container', {
         }]
       }]
     }, {
-      id: 'layout-2', // mandatory
+      id: 'layout-2',
       rows: [{
         id: 'dashboard-row-2',
         cells: [{
@@ -61,16 +53,11 @@ const dashboard = new Dashboard('container', {
     isResizable: true,
     type: 'Highcharts',
     chartOptions: {
-      series: [{
-        name: 'Series from options',
-        data: [1, 2, 3, 4]
-      }],
       chart: {
         animation: false,
         type: 'column'
       }
     },
-    events: {},
     store,
     sync: {
       'visibility': true,
@@ -81,15 +68,10 @@ const dashboard = new Dashboard('container', {
     type: 'Highcharts',
     chartOptions: {
       type: 'column',
-      series: [{
-        name: 'Series from options',
-        data: [1, 2, 3, 4]
-      }],
       chart: {
         animation: false
       }
     },
-    events: {},
     store,
     sync: {
       'visibility': true,
@@ -101,8 +83,3 @@ const dashboard = new Dashboard('container', {
   }]
 });
 
-window.addEventListener('resize', e => {
-  dashboard.mountedComponents.forEach(({ component }) => {
-    component.resize();
-  });
-});

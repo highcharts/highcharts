@@ -18,7 +18,7 @@ namespace Sync {
     }
 
     export type OptionsRecord = (
-        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+        Record<(SyncEmitter['id'] | SyncHandler['id']), OptionsEntry>
     );
 }
 /* *
@@ -93,8 +93,8 @@ class Sync {
                     // i.e. panning and selection uses the same handler
                     if (typeof handlerConfig === 'boolean') {
                         handlerConfig =
-                              Sync.defaultHandlers[id]
-                                  .handler as Sync.HandlerConfig;
+                            Sync.defaultHandlers[id]
+                                .handler as Sync.HandlerConfig;
                     }
                     const handler = new SyncHandler(...handlerConfig);
                     if (!this.isRegisteredHandler(handler.id)) {
@@ -106,8 +106,8 @@ class Sync {
                 if (emitterConfig) {
                     if (typeof emitterConfig === 'boolean') {
                         emitterConfig =
-                              Sync.defaultHandlers[id]
-                                  .emitter as Sync.EmitterConfig;
+                            Sync.defaultHandlers[id]
+                                .emitter as Sync.EmitterConfig;
                     }
                     const emitter = new SyncEmitter(...emitterConfig);
                     if (!this.isRegisteredEmitter(emitter.id)) {
