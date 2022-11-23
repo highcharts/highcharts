@@ -38,7 +38,7 @@ const highchartsLogo = [
     'Pf3W9nbKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBeh',
     'v5pDgbN4PzsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     'AAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
-];
+].join('');
 
 const dataPool = new Dashboard.DataOnDemand();
 
@@ -86,26 +86,41 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '100px',
-                    type: 'timeline'
+                    height: '100px'
                 },
                 series: [{
+                    type: 'scatter',
+                    name: 'Timeline',
                     data: (() => {
                         const years = [];
                         for (let i = 1951, iEnd = 2011; i < iEnd; ++i) {
-                            years.push(i);
+                            years.push([i, 0]);
                         }
                         return years;
-                    })()
+                    })(),
+                    tooltip: {
+                        headerFormat: '',
+                        pointFormat: 'Year {point.x}'
+                    }
                 }],
                 title: {
-                    text: void 0
+                    margin: 0,
+                    text: 'Timeline'
                 },
                 xAxis: {
-                    visible: false
+                    max: 2010,
+                    min: 1951,
+                    tickWidth: 0,
+                    visible: true,
+                    labels: {
+                        step: 2
+                    }
                 },
                 yAxis: {
                     visible: false
+                },
+                legend: {
+                    enabled: false
                 }
             }
         }, {
@@ -123,33 +138,17 @@ async function buildDashboard() {
             }],
             title: 'KPI 1'
         }, {
-            cell: 'kpi-2',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'KPI 2'
-        }, {
-            cell: 'kpi-3',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'KPI 3'
+            cell: 'kpi-chart',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    type: 'line'
+                },
+                series: [{
+                    name: 'Series from options',
+                    data: [1, 2, 1, 4]
+                }]
+            }
         }, {
             cell: 'selection-grid',
             type: 'html',
@@ -164,18 +163,6 @@ async function buildDashboard() {
                 }
             }],
             title: 'Selection Grid'
-        }, {
-            cell: 'kpi-chart',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    type: 'line'
-                },
-                series: [{
-                    name: 'Series from options',
-                    data: [1, 2, 1, 4]
-                }]
-            }
         }, {
             cell: 'world-map',
             type: 'Highcharts',
@@ -249,26 +236,19 @@ async function buildDashboard() {
                         id: 'kpi-1',
                         width: '20%'
                     }, {
-                        id: 'kpi-2',
-                        width: '20%'
-                    }, {
-                        id: 'kpi-3',
-                        width: '20%'
+                        id: 'kpi-chart',
+                        width: '40%'
                     }, {
                         id: 'selection-grid',
                         width: '40%'
                     }]
                 }, {
                     cells: [{
-                        id: 'kpi-chart',
-                        width: '100%'
-                    }]
-                }, {
-                    cells: [{
                         id: 'world-map',
                         width: '100%'
                     }]
-                }]
+                }],
+                style: {}
             }]
         }
     });
