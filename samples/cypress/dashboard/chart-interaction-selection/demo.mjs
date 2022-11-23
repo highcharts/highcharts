@@ -87,7 +87,10 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['selection', 'panning']
+        sync: {
+          'selection': true,  
+          'panning': true
+        }
     }, {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
@@ -108,7 +111,10 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['selection', 'panning']
+        sync: {
+          'selection': true,  
+          'panning': true
+        }
     }]
 });
 

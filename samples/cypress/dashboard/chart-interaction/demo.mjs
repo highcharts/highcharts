@@ -90,6 +90,7 @@ const dashboard = new Dashboard('container', {
             }
         },
         events: {},
+        store,
         sync: {
           'visibility' : true, 
           'tooltip': true
