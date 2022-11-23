@@ -30,6 +30,7 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
     connectorColor?: ColorString;
     connectorWidth?: number;
     groupPadding?: number;
+    /** @deprecated */
     lowColor?: ColorType;
     pointPadding?: number;
     states?: SeriesStatesOptions<LollipopSeries>;

@@ -16,7 +16,7 @@
 
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
  *
@@ -28,7 +28,7 @@ export interface LollipopPointOptions extends ScatterPointOptions {
     connectorColor?: ColorType;
     connectorWidth?: number;
     dashStyle?: DashStyleValue;
-    low?: number;
+    /** @deprecated */
     lowColor?: ColorType;
 }
 

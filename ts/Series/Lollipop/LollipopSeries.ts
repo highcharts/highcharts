@@ -17,15 +17,12 @@
  * */
 
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
 
 import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Series from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
         column: {
             prototype: colProto
         },
@@ -38,8 +35,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -97,10 +93,8 @@ class LollipopSeries extends ScatterSeries {
      * @optionparent plotOptions.lollipop
      */
     public static defaultOptions: LollipopSeriesOptions = merge(
-        ScatterSeries.defaultOptions,
+        Series.defaultOptions,
         {
-            /** @ignore-option */
-            lowColor: void 0,
             /** @ignore-option */
             threshold: 0,
             /** @ignore-option */
@@ -140,11 +134,7 @@ class LollipopSeries extends ScatterSeries {
                  */
                 y: void 0
             },
-            pointRange: 1,
-            tooltip: {
-                headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
-            }
+            pointRange: 1
         } as LollipopSeriesOptions);
 
     /* *
@@ -156,17 +146,6 @@ class LollipopSeries extends ScatterSeries {
     public data: Array<LollipopPoint> = void 0 as any;
     public options: LollipopSeriesOptions = void 0 as any;
     public points: Array<LollipopPoint> = void 0 as any;
-    public lowColor?: ColorType;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public toYData(point: LollipopPoint): Array<number> {
-        return [pick(point.y, point.low)];
-    }
 
     /**
      * Extend the arearange series' drawPoints method by applying a connector
@@ -179,12 +158,13 @@ class LollipopSeries extends ScatterSeries {
      *
      */
     public drawPoints(): void {
-        let series = this,
-            pointLength = series.points.length,
-            i = 0,
+        const series = this,
+            pointLength = series.points.length;
+
+        let i = 0,
             point;
 
-        this.seriesDrawPoints.apply(series, arguments as any);
+        super.drawPoints.apply(series, arguments as any);
 
         // Draw connectors
         while (i < pointLength) {
@@ -209,7 +189,6 @@ interface LollipopSeries {
     getColumnMetrics: typeof colProto['getColumnMetrics'];
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
-    seriesDrawPoints: typeof ScatterSeries.prototype['drawPoints'];
     translate: typeof colProto['translate'];
 }
 
@@ -221,7 +200,6 @@ extend(LollipopSeries.prototype, {
     getColumnMetrics: colProto.getColumnMetrics,
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
     pointClass: LollipopPoint,
-    seriesDrawPoints: ScatterSeries.prototype.drawPoints,
     translate: colProto.translate
 });
 

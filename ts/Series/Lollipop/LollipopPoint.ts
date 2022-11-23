@@ -44,8 +44,7 @@ const {
 
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    isObject
+    extend
 } = U;
 
 /* *
@@ -65,31 +64,6 @@ class LollipopPoint extends ScatterPoint {
     public options: LollipopPointOptions = void 0 as any;
 
     public series: LollipopSeries = void 0 as any;
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-    public low: number = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public init(
-        _series: LollipopSeries,
-        options: LollipopPointOptions,
-        _x?: number
-    ): typeof pointProto {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return pointProto.init.apply(this, arguments);
-    }
 }
 
 /* *

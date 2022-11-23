@@ -9,7 +9,7 @@ QUnit.test('Lollipop offset affection.', function (assert) {
                     negativeColor: '#ff0000',
                     data: [
                         {
-                            low: 2
+                            y: 2
                         },
                         3,
                         -4,
