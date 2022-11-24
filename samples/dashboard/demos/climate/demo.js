@@ -86,7 +86,7 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '100px'
+                    height: '100px',
                 },
                 series: [{
                     type: 'scatter',
@@ -169,18 +169,29 @@ async function buildDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    map: topology
+                    map: topology,
+                    spacing: [0, 0, 0, 0],
+                },
+                colorAxis: {
+                    max: 333,
+                    maxColor: '#F93',
+                    min: 213,
+                    minColor: '#39F',
+                },
+                legend: {
+                    margin: 0,
                 },
                 mapView: {
-                    maxZoom: 1,
+                    maxZoom: 1.4,
+                    padding: 0,
                     projection: {
-                        name: 'Miller'
+                        name: 'Miller',
                     },
-                    zoom: 1
+                    zoom: 1.4,
                 },
                 series: [{
                     type: 'map',
-                    name: 'World Map'
+                    name: 'World Map',
                 }, {
                     type: 'mapbubble',
                     name: 'Temperature',
@@ -200,14 +211,9 @@ async function buildDashboard() {
                     }
                 }],
                 title: {
-                    text: 'World Map'
+                    margin: 0,
+                    text: void 0
                 },
-                colorAxis: {
-                    max: 333,
-                    maxColor: '#F93',
-                    min: 213,
-                    minColor: '#39F'
-                }
             },
             events: {
                 mount: function () {
