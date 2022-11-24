@@ -284,7 +284,7 @@ QUnit.test('Drilldown methods', function (assert) {
 
     assert.strictEqual(
         chart.xAxis[0].ticks[0].label.element.style.textDecoration,
-        'none',
+        '',
         '#17933: Labels should not have underline.'
     );
 });
