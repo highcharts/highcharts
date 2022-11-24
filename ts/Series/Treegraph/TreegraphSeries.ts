@@ -51,6 +51,7 @@ import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
+import { support } from 'jquery';
 
 /* *
  *
@@ -268,6 +269,11 @@ class TreegraphSeries extends TreemapSeries {
         node.children.forEach((childNode): void => {
             this.setCollapsedStatus(childNode, visibility);
         });
+    }
+
+    public drawTracker(): void {
+        ColumnSeries.prototype.drawTracker.apply(this, arguments);
+        ColumnSeries.prototype.drawTracker.call(this, this.links);
     }
 
     /**
