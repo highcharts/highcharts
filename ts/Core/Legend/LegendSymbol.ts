@@ -87,28 +87,32 @@ namespace LegendSymbol {
         this: Series,
         legend: Legend
     ): void {
-
         const legendItem = this.legendItem = this.legendItem || {},
             options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
-            generalRadius = symbolHeight / 2,
+            generalRadius = (symbolHeight / 2),
             renderer = this.chart.renderer,
             legendItemGroup = legendItem.group,
             verticalCenter = (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3);
-
         let attr: SVGAttributes = {},
             legendSymbol,
             markerOptions = options.marker;
-
+        
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': options.lineWidth || 0
+                'stroke-width': options.lineWidth || 0,
             };
+            
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
+            }
+
+            if(this.type === 'line'){
+                attr["stroke-linecap"] = (options.linecap || "round") as
+                    "butt" | "round" | "square" | undefined;
             }
         }
 
