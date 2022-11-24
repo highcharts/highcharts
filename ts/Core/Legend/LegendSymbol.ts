@@ -100,8 +100,7 @@ namespace LegendSymbol {
 
         let attr: SVGAttributes = {},
             legendSymbol,
-            markerOptions = options.marker,
-            itemLineScaler = 0;
+            markerOptions = options.marker;
 
         // Draw the line
         if (!this.chart.styledMode) {
@@ -116,17 +115,20 @@ namespace LegendSymbol {
             if (this.type === 'line') {
                 attr['stroke-linecap'] = (options.linecap || 'round') as
                     'butt' | 'round' | 'square' | undefined;
-
-                if (attr['stroke-linecap'] === 'round') {
-                    itemLineScaler = symbolWidth / 2;
-                }
             }
         }
 
         legendItem.line = renderer
             .path([
-                ['M', itemLineScaler, verticalCenter],
-                ['L', symbolWidth - itemLineScaler, verticalCenter]
+                ['M', 0, verticalCenter],
+                ['L',
+                    symbolWidth - (
+                        attr['stroke-linecap'] === 'round' ?
+                            symbolWidth / 2 :
+                            0
+                    ),
+                    verticalCenter
+                ]
             ])
             .addClass('highcharts-graph')
             .attr(attr)
