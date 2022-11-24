@@ -354,6 +354,11 @@ class AST {
                 });
                 delete attributes[key];
             }
+
+            // #17753, < is not allowed in SVG attributes
+            if (isString(val) && attributes[key]) {
+                attributes[key] = val.replace(/</g, '&lt;') as any;
+            }
         });
         return attributes;
     }
