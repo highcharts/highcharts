@@ -233,7 +233,7 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     public setHoverPoint(
         point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
-        eventDetail?: any
+        eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
         const isDataGrid = eventDetail && eventDetail.isDataGrid;
         this.hoverPoint = isDataGrid ? void 0 : point;
@@ -384,6 +384,11 @@ namespace SharedComponentState {
      */
     export interface ColumnOrderCallback {
         (a: string, b: string): number;
+    }
+
+    export interface HoverPointEventDetails extends DataEventEmitter.EventDetail {
+        isDataGrid?: boolean;
+        sender?: string
     }
 
     /**
