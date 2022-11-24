@@ -429,7 +429,7 @@ class Tooltip {
 
     /**
      * Get the CSS class names for the tooltip's label. Styles the label
-     * by colorIndex or user-defined CSS.
+     * by `colorIndex` or user-defined CSS.
      *
      * @function Highcharts.Tooltip#getClassName
      *
@@ -450,7 +450,7 @@ class Tooltip {
             'highcharts-label',
             isHeader && 'highcharts-tooltip-header',
             isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
-            !isHeader && 'highcharts-tooltip-' + pick(
+            !isHeader && 'highcharts-color-' + pick(
                 point.colorIndex, series.colorIndex
             ),
             (seriesOptions && seriesOptions.className)
