@@ -226,7 +226,11 @@ async function buildDashboard() {
             }
         }],
         editMode: {
-            enabled: false
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/dashboard/gfx/dashboard-icons/menu.svg',
+            },
         },
         gui: {
             enabled: true,
