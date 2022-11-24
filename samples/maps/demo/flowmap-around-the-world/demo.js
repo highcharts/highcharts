@@ -22,7 +22,12 @@
 
         series: [{
             topology,
-            showInLegend: false
+            showInLegend: false,
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            }
         }, {
             type: 'mappoint',
             name: 'Cities',
@@ -62,11 +67,11 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            markerEnd: {
-                height: 15,
-                width: 8
-            },
+            fillColor: '#37cc5f',
+            fillOpacity: '0.3',
+            color: '#18750f',
             growTowards: true,
+
             data: [{
                 from: 'London',
                 to: 'Suez',
@@ -80,7 +85,11 @@
                 from: 'Suez',
                 to: 'Bombay',
                 curveFactor: 0.4,
-                weight: 13
+                weight: 13,
+                markerEnd: {
+                    height: 15,
+                    width: 8
+                }
             }, {
                 from: 'Bombay',
                 to: 'Calcutta',
@@ -94,7 +103,11 @@
                 from: 'Calcutta',
                 to: 'Hong Kong',
                 curveFactor: 0.4,
-                weight: 13
+                weight: 13,
+                markerEnd: {
+                    height: 15,
+                    width: 8
+                }
             }, {
                 from: 'Hong Kong',
                 to: 'Yokohama',
@@ -117,12 +130,20 @@
                 from: 'San Francisco',
                 to: 'New York',
                 curveFactor: -0.7,
-                weight: 7
+                weight: 7,
+                markerEnd: {
+                    height: 15,
+                    width: 8
+                }
             }, {
                 from: 'New York',
                 to: 'London',
                 curveFactor: 0.4,
-                weight: 9
+                weight: 9,
+                markerEnd: {
+                    height: 15,
+                    width: 8
+                }
             }]
         }]
     });

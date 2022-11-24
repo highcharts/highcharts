@@ -7,7 +7,7 @@ A flow map is a series type that allows to display route paths (e.g. flights or 
 
 Setting the Flow Map Series
 ----------------------------------
-In the above example, our map data is based on regions, so we need to load and add a base map firs:
+In the above example, our map data is based on regions, so we need to load and add a base map first:
 ```js
 const topology = await fetch(
     'https://code.highcharts.com/mapdata/custom/world.topo.json'
@@ -38,7 +38,7 @@ series: [{
     ],
     ...
 }]
-``` 
+```
 
 Last step is to add our flow map series config. The [series.type](https://api.highcharts.com/highmaps/series.flowmap.type) has to be set to `'flowmap'` and the data points will be connected with [id](https://api.highcharts.com/highmaps/series.mappoint.id). The important options that you may notice in the example below are [curveFactor](https://api.highcharts.com/highmaps/series.flowmap.data.curveFactor) and [markerEnd](https://api.highcharts.com/highmaps/series.flowmap.data.markerEnd):
 ```js

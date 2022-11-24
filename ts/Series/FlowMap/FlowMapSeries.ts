@@ -231,44 +231,43 @@ class FlowMapSeries extends MapLineSeries {
 
         let path: SVGPath = [];
 
-        // For arrow head calculation
+        // For arrow head calculation.
         if (type === 'arrow') {
-
-            // Left side of arrow head
+            // Left side of arrow head.
             let [x, y] = lCorner;
             x -= edgeX * width;
             y -= edgeY * width;
             path.push(['L', x, y]);
 
-            path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head
+            path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head.
 
-            // Right side of arrow head
+            // Right side of arrow head.
             [x, y] = rCorner;
             x += edgeX * width;
             y += edgeY * width;
             path.push(['L', x, y]);
         }
 
-        // For mushroom head calculation
+        // For mushroom head calculation.
         if (type === 'mushroom') {
             let [xLeft, yLeft] = lCorner,
                 [xRight, yRight] = rCorner;
             const [xTop, yTop] = topCorner,
                 xMid = (xRight - xLeft) / 2 + xLeft,
                 yMid = (yRight - yLeft) / 2 + yLeft,
-                xControl = (xTop - xMid) * 2 + xMid, // control point for curve
+                xControl = (xTop - xMid) * 2 + xMid, // control point for curve.
                 yControl = (yTop - yMid) * 2 + yMid;
 
-            // Left side of arrow head
+            // Left side of arrow head.
             xLeft -= edgeX * width;
             yLeft -= edgeY * width;
             path.push(['L', xLeft, yLeft]);
 
-            // Right side of arrow head
+            // Right side of arrow head.
             xRight += edgeX * width;
             yRight += edgeY * width;
 
-            // Curve from left to right
+            // Curve from left to right.
             path.push(['Q', xControl, yControl, xRight, yRight]);
         }
 
@@ -345,7 +344,7 @@ class FlowMapSeries extends MapLineSeries {
         state: StatesOptionsKey
     ): SVGAttributes {
         const attrs =
-                MapSeries.prototype.pointAttribs.call(this, point, state);
+            MapSeries.prototype.pointAttribs.call(this, point, state);
 
         attrs.fill = pick(
             point.options.fillColor,
@@ -377,11 +376,11 @@ class FlowMapSeries extends MapLineSeries {
                 toPoint = chart.get(point.options.to || '');
 
             // Connect to the linked parent point (in mappoint) to trigger
-            // series redraw for the linked point (in flow)
+            // series redraw for the linked point (in flow).
             if (
                 !(fromPoint instanceof Point) ||
                 !(toPoint instanceof Point) ||
-                // Don't draw point if weight is not valid
+                // Don't draw point if weight is not valid.
                 !this.scaleWeight(point)
             ) {
                 return;
@@ -391,7 +390,7 @@ class FlowMapSeries extends MapLineSeries {
                 point.series.isDirty = true;
             }
 
-            // We have from and to & before the proceed
+            // We have from and to & before the proceed.
             if (toPoint !== point.oldToPoint || !point.oldToPoint) {
                 if (point.removeEventForToPoint) {
                     point.removeEventForToPoint();
@@ -425,21 +424,21 @@ class FlowMapSeries extends MapLineSeries {
             point.x = point.plotX = 1;
 
             // When updating point from null to normal value, set a real color
-            // (don't keep nullColor)
+            // (don't keep nullColor).
             point.color = pick(
                 point.options.color,
                 point.series.color
             );
         });
 
-        // Draw the points
+        // Draw the points.
         ColumnSeries.prototype.drawPoints.apply(this);
     }
 
     public getPointShapeArgs(point: FlowMapPoint): SVGAttributes {
         const fromPoint = point.oldFromPoint,
             toPoint = point.oldToPoint,
-            // Get a new rescaled weight
+            // Get a new rescaled weight.
             scaledWeight = this.scaleWeight(point);
 
         if (!fromPoint || !toPoint) {
@@ -629,7 +628,7 @@ interface FlowMapSeries {
 
 extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
-    // Make it work on zoom or pan
+    // Make it work on zoom or pan.
     useMapGeometry: true
 });
 
@@ -676,8 +675,8 @@ export default FlowMapSeries;
  * An array of data points for the series. For the `flowmap` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 6 values. In this case, the values correspond
- *     to `from, to, weight`. Example:
+ * 1.  An array of arrays with options as values. In this case,
+ *     the values correspond to `from, to, weight`. Example:
  *     ```js
  *     data: [
  *         ["Point 1", "Point 2", 4],
@@ -708,8 +707,9 @@ export default FlowMapSeries;
  */
 
 /**
- * Higher numbers makes the links more curved. A `curveFactor` of 0 makes the
- * lines straight.
+ * A `curveFactor` with higher value makes the link more curved.
+ * A negative value will curve the link in the opposite direction.
+ * A `curveFactor` of 0 makes the link straight.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
  *         Example ship route
@@ -719,7 +719,7 @@ export default FlowMapSeries;
  */
 
 /**
- * The fill color of an individual link
+ * The fill color of an individual link.
  *
  *
  * @type      {string}
@@ -822,7 +822,7 @@ export default FlowMapSeries;
 
 /**
  * The weight of the link determines how thick it will be compared to
- * other weights.
+ * other links.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
  *         Example ship route

@@ -13,7 +13,7 @@
         },
 
         subtitle: {
-            text: 'Demo of Highcharts map.'
+            text: 'Demo of Highcharts map'
         },
 
         mapNavigation: {
@@ -21,9 +21,15 @@
         },
 
         series: [{
-            name: 'Basemap'
+            name: 'Basemap',
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            }
         }, {
             type: 'mappoint',
+            id: 'europe',
             name: 'Cities',
             dataLabels: {
                 format: '{point.id}'
@@ -37,6 +43,7 @@
                 lat: 52.169192,
                 lon: 20.973514
             }, {
+
                 id: 'Paris',
                 lat: 48.7294,
                 lon: 2.3681
@@ -68,44 +75,69 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            keys: [
-                'from', 'to', 'curveFactor', 'weight', 'growTowards',
-                'markerEnd'
-            ],
-            data: [
-                ['Warszawa', 'Oslo', 0, 5, true, {
-                    height: 15,
-                    width: 10
-                }],
-                ['Warszawa', 'Dublin', -0.5, 5, true, {
-                    height: 30,
-                    width: 20
-                }],
-                ['Warszawa', 'Helsinki', 0, 5, true, {
-                    height: 15,
-                    width: 20
-                }],
-                ['Warszawa', 'Paris', -0.3, 10, true, {
-                    height: 20,
-                    width: 10.3
-                }],
-                ['Warszawa', 'Madrid', 0.1, 7, true, {
-                    height: 20,
-                    width: 10.3
-                }],
-                ['Warszawa', 'Budapest', 0.1, 3, true, {
-                    height: 20,
-                    width: 10.3
-                }],
-                ['Warszawa', 'Sofia', 1, 6, true, {
-                    height: 20,
-                    width: 10.3
-                }],
-                ['Warszawa', 'Roma', -0.3, 6, true, {
-                    height: 20,
-                    width: 10.3
-                }]
-            ]
+            minWeight: 5,
+            maxWeight: 15,
+            growTowards: true,
+            markerEnd: {
+                width: '50%',
+                height: '50%'
+            },
+            fillColor: '#31c2cc',
+            fillOpacity: 0.2,
+            color: '#0000FF',
+            data: [{
+                from: 'Oslo',
+                to: 'Helsinki',
+                curveFactor: 1,
+                weight: 20,
+                markerEnd: {
+                    width: '70%',
+                    height: '70%'
+                }
+            }, {
+                from: 'Oslo',
+                to: 'Dublin',
+                weight: 70,
+                curveFactor: -0.2,
+                fillOpacity: 0.7
+            }, {
+                from: 'Warszawa',
+                to: 'Helsinki',
+                weight: 10,
+                curveFactor: -0.2
+            }, {
+                from: 'Warszawa',
+                to: 'Paris',
+                weight: 5,
+                curveFactor: -0.5
+            }, {
+                from: 'Warszawa',
+                to: 'Madrid',
+                weight: 20,
+                curveFactor: 0
+            }, {
+                from: 'Warszawa',
+                to: 'Budapest',
+                weight: 0.1,
+                curveFactor: 0.2
+            }, {
+                from: 'Warszawa',
+                to: 'Sofia',
+                weight: 60,
+                curveFactor: 1,
+                growTowards: true,
+                fillColor: '#1cd635',
+                fillOpacity: 0.4
+            }, {
+                from: 'Warszawa',
+                to: 'Roma',
+                weight: 2,
+                curveFactor: -0.3,
+                markerEnd: {
+                    width: 14,
+                    height: 24
+                }
+            }]
         }]
     });
 })();

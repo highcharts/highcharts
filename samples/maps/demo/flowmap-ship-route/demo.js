@@ -33,14 +33,20 @@
                 }
                 return '<b>' + this.point.id + '</b>' + (
                     this.point.lat ?
-                        '<br>Lat: ' + this.point.lat + ' Lon: ' +
-                            this.point.lon : ''
+                        '<br>Lat: ' + this.point.lat +
+                        ' Lon: ' + this.point.lon :
+                        ''
                 );
             }
         },
 
         series: [{
             name: 'Basemap',
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            },
             showInLegend: false
         }, {
             type: 'mappoint',
@@ -85,10 +91,12 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
+            fillColor: '#b37e24',
+            fillOpacity: 0.2,
+            color: '#7d4015',
             name: 'Ship Routes',
             growTowards: true,
             markerEnd: {
-                enabled: true,
                 height: 10,
                 width: 5
             },
@@ -103,7 +111,6 @@
                 weight: 22,
                 curveFactor: -0.15,
                 markerEnd: {
-                    enabled: true,
                     height: 30,
                     width: 15
                 }
@@ -128,7 +135,6 @@
                 weight: 10,
                 curveFactor: -0.4,
                 markerEnd: {
-                    enabled: true,
                     height: 20,
                     width: 12
                 }
@@ -136,13 +142,13 @@
                 from: 'Singapore',
                 to: 'Vung Tao',
                 weight: 3
+
             }, {
                 from: 'Vung Tao',
                 to: 'Hong Kong',
                 weight: 3,
                 curveFactor: -0.4,
                 markerEnd: {
-                    enabled: true,
                     height: 15,
                     width: 8
                 }
