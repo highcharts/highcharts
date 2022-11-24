@@ -569,34 +569,29 @@ class FlowMapSeries extends MapLineSeries {
         }
 
         const shapeArgs: SVGAttributes = {
-            d: [
-                [
-                    'M',
-                    fromX - fromXToArc,
-                    fromY - fromYToArc
-                ],
-                [
-                    'Q',
-                    arcPointX - wX,
-                    arcPointY - wY,
-                    toX - toXToArc,
-                    toY - toYToArc
-                ],
-                // This is where markerEnd will be spliced to.
-                [
-                    'L',
-                    toX + toXToArc,
-                    toY + toYToArc
-                ],
-                [
-                    'Q',
-                    arcPointX + wX,
-                    arcPointY + wY,
-                    fromX + fromXToArc,
-                    fromY + fromYToArc
-                ],
-                ['Z']
-            ]
+            d: [[
+                'M',
+                fromX - fromXToArc,
+                fromY - fromYToArc
+            ], [
+                'Q',
+                arcPointX - wX,
+                arcPointY - wY,
+                toX - toXToArc,
+                toY - toYToArc
+            ], [ // The markerEnd will be spliced between these arrays.
+                'L',
+                toX + toXToArc,
+                toY + toYToArc
+            ], [
+                'Q',
+                arcPointX + wX,
+                arcPointY + wY,
+                fromX + fromXToArc,
+                fromY + fromYToArc
+            ], [
+                'Z'
+            ]]
         };
 
         if (markerEndOptions && markerEndOptions.enabled && shapeArgs.d) {
