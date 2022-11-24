@@ -42,6 +42,8 @@ const highchartsLogo = [
 
 const dataPool = new Dashboard.DataOnDemand();
 
+let worldMap;
+
 function ajax(request) {
     return new Promise((resolve, reject) => {
         Highcharts.ajax({
@@ -124,7 +126,14 @@ async function buildDashboard() {
                     data: buildDates(),
                     events: {
                         click: function (e) {
-                            alert(JSON.stringify(e.point.options));
+                            dataPool
+                                .getSourceTable(e.point.x)
+                                .then(table => worldMap.setData(
+                                    table.modified.getRows(
+                                        undefined, undefined,
+                                        ['lat', 'lon', 'TX']
+                                    )
+                                ));
                         }
                     },
                     tooltip: {
@@ -150,6 +159,80 @@ async function buildDashboard() {
                 },
                 legend: {
                     enabled: false
+                }
+            }
+        }, {
+            cell: 'world-map',
+            type: 'Highcharts',
+            chartConstructor: 'mapChart',
+            chartOptions: {
+                chart: {
+                    map: topology,
+                    spacing: [0, 0, 0, 0],
+                },
+                colorAxis: {
+                    max: 333,
+                    maxColor: '#F93',
+                    min: 213,
+                    minColor: '#39F',
+                },
+                legend: {
+                    margin: 0,
+                },
+                mapView: {
+                    maxZoom: 1.4,
+                    padding: 0,
+                    projection: {
+                        name: 'Miller',
+                    },
+                    zoom: 1.4,
+                },
+                series: [{
+                    type: 'map',
+                    name: 'World Map',
+                }, {
+                    type: 'mapbubble',
+                    name: 'Temperature',
+                    data: climateTable
+                        .modified
+                        .getRows(undefined, undefined, ['lat', 'lon', 'TX']),
+                    keys: ['lat', 'lon', 'z'],
+                    colorKey: 'z',
+                    maxSize: 1.1,
+                    minSize: 1.1,
+                    opacity: 0.5,
+                    marker: {
+                        symbol: 'square'
+                    },
+                    tooltip: {
+                        pointFormatter: function () {
+                            const point = this;
+
+                            return [
+                                Highcharts.correctFloat(point.z, 4) + '˚K',
+                                Highcharts.correctFloat(
+                                    (point.z - 273.15), 3
+                                ) + '˚C',
+                                Highcharts.correctFloat(
+                                    (point.z * 1.8 - 459.67), 3
+                                ) + '˚F'
+                            ].join('<br />');
+                        }
+                    }
+                }],
+                title: {
+                    margin: 0,
+                    text: void 0
+                },
+            },
+            events: {
+                mount: function () {
+                    // call action
+                    console.log('map mount event', this);
+                    worldMap = this.chart.series[1];
+                },
+                unmount: function () {
+                    console.log('map unmount event', this);
                 }
             }
         }, {
@@ -192,67 +275,6 @@ async function buildDashboard() {
                 }
             }],
             title: 'Selection Grid'
-        }, {
-            cell: 'world-map',
-            type: 'Highcharts',
-            chartConstructor: 'mapChart',
-            chartOptions: {
-                chart: {
-                    map: topology,
-                    spacing: [0, 0, 0, 0],
-                },
-                colorAxis: {
-                    max: 333,
-                    maxColor: '#F93',
-                    min: 213,
-                    minColor: '#39F',
-                },
-                legend: {
-                    margin: 0,
-                },
-                mapView: {
-                    maxZoom: 1.4,
-                    padding: 0,
-                    projection: {
-                        name: 'Miller',
-                    },
-                    zoom: 1.4,
-                },
-                series: [{
-                    type: 'map',
-                    name: 'World Map',
-                }, {
-                    type: 'mapbubble',
-                    name: 'Temperature',
-                    data: climateTable
-                        .modified
-                        .getRows(undefined, undefined, ['lat', 'lon', 'TX']),
-                    keys: ['lat', 'lon', 'z'],
-                    colorKey: 'z',
-                    maxSize: 1,
-                    minSize: 1,
-                    opacity: 0.5,
-                    marker: {
-                        symbol: 'square'
-                    },
-                    tooltip: {
-                        pointFormat: '{point.z}˚K'
-                    }
-                }],
-                title: {
-                    margin: 0,
-                    text: void 0
-                },
-            },
-            events: {
-                mount: function () {
-                    // call action
-                    console.log('map mount event', this);
-                },
-                unmount: function () {
-                    console.log('map unmount event', this);
-                }
-            }
         }],
         editMode: {
             enabled: true,
