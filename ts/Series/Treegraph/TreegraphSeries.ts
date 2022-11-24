@@ -251,6 +251,12 @@ class TreegraphSeries extends TreemapSeries {
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
+    public markerAttribs(): SVGAttributes {
+        // The super Series.markerAttribs returns { width: NaN, height: NaN },
+        // so just disable this for now.
+        return {};
+    }
+
     public setCollapsedStatus(
         node: TreegraphNode,
         visibility: boolean
