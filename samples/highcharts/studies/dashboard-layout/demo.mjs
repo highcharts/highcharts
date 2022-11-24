@@ -29,7 +29,6 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
                 id: 'saveLocal',
@@ -97,11 +96,9 @@ let dashboard = new Dashboard('container', {
             cell: {
                 menu: {
                     items: [{
-                        id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        id: 'drag'
                     }, {
-                        id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        id: 'settings'
                     },
                     // {
                     //     id: 'my-option-1',
@@ -113,22 +110,18 @@ let dashboard = new Dashboard('container', {
                     //     }
                     // },
                     {
-                        id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        id: 'destroy'
                     }]
                 }
             },
             row: {
                 menu: {
                     items: [{
-                        id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        id: 'drag'
                     }, {
-                        id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        id: 'settings'
                     }, {
-                        id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        id: 'destroy'
                     }]
                 }
             },
@@ -575,7 +568,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png',
                 title: 'I heard you like components'
             }
         }]
@@ -611,7 +604,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
                 id: 'saveLocal',
