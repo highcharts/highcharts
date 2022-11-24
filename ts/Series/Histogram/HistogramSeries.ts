@@ -316,6 +316,7 @@ interface HistogramSeries extends DerivedComposition.SeriesComposition {
     animate: typeof ColumnSeries.prototype.animate;
     destroy: typeof ColumnSeries.prototype.destroy;
     drawPoints: typeof ColumnSeries.prototype.drawPoints;
+    drawTracker: typeof ColumnSeries.prototype.drawTracker;
     group: typeof ColumnSeries.prototype.group;
     init: typeof ColumnSeries.prototype.init;
     pointAttribs: typeof ColumnSeries.prototype.pointAttribs;
