@@ -125,39 +125,14 @@ class Point {
 
     public color?: ColorType;
 
-    /**
-     * The point's current color index, used in styled mode instead of
-     * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number}
-     */
-    public colorIndex?: number = void 0;
+    public colorIndex?: number;
 
     public dataLabels?: Array<SVGLabel>;
 
     public formatPrefix: string = 'point';
 
-    /**
-     * SVG graphic representing the point in the chart. In some cases it may be
-     * a hidden graphic to improve accessibility.
-     *
-     * @see Highcharts.Point#graphics
-     *
-     * @name Highcharts.Point#graphic
-     * @type {Highcharts.SVGElement|undefined}
-     */
     public graphic?: SVGElement;
 
-    /**
-     * Array for multiple SVG graphics representing the point in the chart. Only
-     * used in cases where the point can not be represented by a single graphic.
-     *
-     * @see Highcharts.Point#graphic
-     *
-     * @name Highcharts.Point#graphics
-     * @type {Array<Highcharts.SVGElement>|undefined}
-     */
     public graphics?: Array<SVGElement>;
 
     public id: string = void 0 as any;
@@ -874,6 +849,13 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
+        /**
+         * The point's current color index, used in styled mode instead of
+         * `color`. The color index is inserted in class names used for styling.
+         *
+         * @name Highcharts.Point#colorIndex
+         * @type {number|undefined}
+         */
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
         /**

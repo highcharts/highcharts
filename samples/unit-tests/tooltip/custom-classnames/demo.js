@@ -35,7 +35,7 @@ QUnit.test(
         assert.strictEqual(
             container.getElementsByClassName(
                 'highcharts-label highcharts-tooltip ' +
-                'highcharts-tooltip-0 oranges'
+                'highcharts-color-0 oranges'
             ).length,
             1,
             'Tooltip with correct classes should exist'
@@ -54,7 +54,7 @@ QUnit.test(
         assert.strictEqual(
             container.getElementsByClassName(
                 'highcharts-label highcharts-tooltip ' +
-                'highcharts-tooltip-0 oranges'
+                'highcharts-color-0 oranges'
             ).length,
             1,
             'Tooltip with correct classes should exist'
@@ -73,7 +73,7 @@ QUnit.test(
         assert.strictEqual(
             container.getElementsByClassName(
                 'highcharts-label highcharts-tooltip-box ' +
-                'highcharts-tooltip-0 oranges'
+                'highcharts-color-0 oranges'
             ).length,
             1,
             'Split tooltip with correct classes should exist for single series'
