@@ -72,6 +72,36 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
+function buildDates() {
+    const dates = [];
+
+    for (let date = new Date(Date.UTC(2010, 0, 5)),
+            dateEnd = new Date(Date.UTC(2010, 11, 25));
+        date <= dateEnd;
+        date = date.getUTCDate() >= 25 ?
+            new Date(Date.UTC(2010, date.getUTCMonth() + 1, 5)) :
+            new Date(Date.UTC(2010, date.getUTCMonth(), date.getUTCDate() + 10))
+    ) {
+        dates.push([date.getTime(), 0]);
+    }
+
+    return dates;
+}
+
+function buildDateTicks() {
+    const dates = [];
+
+    for (let date = new Date(Date.UTC(2010, 0, 15)),
+            dateEnd = new Date(Date.UTC(2010, 11, 15));
+        date <= dateEnd;
+        date = new Date(Date.UTC(2010, date.getUTCMonth() + 1, 15))
+    ) {
+        dates.push(date.getTime());
+    }
+
+    return dates;
+}
+
 async function buildDashboard() {
     const topology = await Promise
         .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
@@ -91,29 +121,28 @@ async function buildDashboard() {
                 series: [{
                     type: 'scatter',
                     name: 'Timeline',
-                    data: (() => {
-                        const years = [];
-                        for (let i = 1951, iEnd = 2011; i < iEnd; ++i) {
-                            years.push([i, 0]);
+                    data: buildDates(),
+                    events: {
+                        click: function (e) {
+                            alert(JSON.stringify(e.point.options));
                         }
-                        return years;
-                    })(),
+                    },
                     tooltip: {
                         headerFormat: '',
-                        pointFormat: 'Year {point.x}'
+                        pointFormat: '{point.x:%Y-%m-%d}'
                     }
                 }],
                 title: {
                     margin: 0,
-                    text: 'Timeline'
+                    text: 'Timeline 2010'
                 },
                 xAxis: {
-                    max: 2010,
-                    min: 1951,
-                    tickWidth: 0,
+                    tickPositions: buildDateTicks(),
+                    // tickWidth: 0,
+                    type: 'datetime',
                     visible: true,
                     labels: {
-                        step: 2
+                        format: '{value:%m-%d}'
                     }
                 },
                 yAxis: {
@@ -243,6 +272,11 @@ async function buildDashboard() {
                     }]
                 }, {
                     cells: [{
+                        id: 'world-map',
+                        width: '100%'
+                    }]
+                }, {
+                    cells: [{
                         id: 'kpi-1',
                         width: '20%'
                     }, {
@@ -252,13 +286,7 @@ async function buildDashboard() {
                         id: 'selection-grid',
                         width: '40%'
                     }]
-                }, {
-                    cells: [{
-                        id: 'world-map',
-                        width: '100%'
-                    }]
-                }],
-                style: {}
+                }]
             }]
         }
     });
