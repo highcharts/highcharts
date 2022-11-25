@@ -79,8 +79,8 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     private columnHeadersContainer?: HTMLElement;
     private columnDragHandlesContainer?: HTMLElement;
     private columnResizeCrosshair?: HTMLElement;
-    private draggedResizeHandle: null|HTMLElement;
-    private draggedColumnRightIx: null|number;
+    private draggedResizeHandle: null | HTMLElement;
+    private draggedColumnRightIx: null | number;
     private dragResizeStart?: number;
     private prevTop = -1;
     private scrollEndRowCount = 0;
@@ -95,7 +95,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      *
      * */
 
-    constructor(container: (string|HTMLElement), options: DeepPartial<DataGridOptions>) {
+    constructor(container: (string | HTMLElement), options: DeepPartial<DataGridOptions>) {
         // Initialize containers
         if (typeof container === 'string') {
             const existingContainer = doc.getElementById(container);
@@ -162,7 +162,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      */
     public resizeColumn(
         width: number,
-        columnNameOrIndex?: (string|number)
+        columnNameOrIndex?: (string | number)
     ): void {
         const headers = this.columnHeadersContainer;
         const index = typeof columnNameOrIndex === 'string' ?
@@ -339,11 +339,22 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         const rowCount = this.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
-            const cellElements = this.rowElements[j].childNodes;
+            const rowElement = this.rowElements[j];
+            rowElement.dataset.rowIndex = String(i);
+
+            const cellElements = rowElement.childNodes;
+
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.getCell(columnsInPresentationOrder[k], i)
-                );
+                const cell = cellElements[k] as HTMLElement;
+                const value = this.dataTable
+                    .getCell(columnsInPresentationOrder[k], i);
+                cell.textContent = dataTableCellToString(value);
+
+                // TODO: consider adding these dynamically to the input element
+                cell.dataset.originalData = cell.textContent;
+                cell.dataset.columnName = columnsInPresentationOrder[k];
+                // TODO: get this from the store if set?
+                cell.dataset.dataType = typeof value;
             }
         }
 
@@ -394,6 +405,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
                 input.focus();
                 input.value = cellValue || '';
             }
+
+            // Emit for use in extensions
+            this.emit({ type: 'cellClick', input });
         }
     }
 
@@ -764,7 +778,8 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
 namespace DataGrid {
     export type Event = (
-        ColumnResizeEvent
+        ColumnResizeEvent |
+        CellClickEvent
     );
 
     export interface ColumnResizeEvent {
@@ -772,6 +787,11 @@ namespace DataGrid {
         readonly width: number;
         readonly index?: number;
         readonly name?: string;
+    }
+
+    export interface CellClickEvent {
+        readonly type: 'cellClick';
+        readonly input: HTMLElement;
     }
 }
 

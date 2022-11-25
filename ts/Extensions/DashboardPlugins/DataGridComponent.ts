@@ -23,14 +23,11 @@ import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 
 import Component from '../../Dashboard/Component/Component.js';
+import DataConverter from '../../Data/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
-const {
-    createElement,
-    merge,
-    uniqueKey
-} = U;
+const { createElement, merge, uniqueKey } = U;
 
 /* *
  *
@@ -45,7 +42,6 @@ const {
  * @name Highcharts.DashboardComponent
  */
 class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents> {
-
     /* *
      *
      *  Static properties
@@ -54,19 +50,17 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
 
     public static syncHandlers = HighchartsSyncHandlers;
     public static DataGridConstructor?: typeof DataGrid;
-    public static defaultOptions = merge(
-        Component.defaultOptions,
-        {
-            dataGridClassName: 'dataGrid-container',
-            dataGridID: 'dataGrid-' + uniqueKey(),
-            dataGridOptions: {},
-            editableOptions: [
-                ...Component.defaultOptions.editableOptions,
-                'dataGridClassName',
-                'dataGridID'
-            ],
-            syncHandlers: HighchartsSyncHandlers
-        });
+    public static defaultOptions = merge(Component.defaultOptions, {
+        dataGridClassName: 'dataGrid-container',
+        dataGridID: 'dataGrid-' + uniqueKey(),
+        dataGridOptions: {},
+        editableOptions: [
+            ...Component.defaultOptions.editableOptions,
+            'dataGridClassName',
+            'dataGridID'
+        ],
+        syncHandlers: HighchartsSyncHandlers
+    });
 
     /* *
      *
@@ -81,13 +75,10 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
 
         const component = new DataGridComponent(
-            merge(
-                options,
-                {
-                    dataGridOptions,
-                    syncHandlers: DataGridComponent.syncHandlers
-                }
-            )
+            merge(options, {
+                dataGridOptions,
+                syncHandlers: DataGridComponent.syncHandlers
+            })
         );
 
         component.emit({
@@ -117,10 +108,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      * */
 
     constructor(options: Partial<DataGridComponent.DataGridOptions>) {
-        options = merge(
-            DataGridComponent.defaultOptions,
-            options
-        );
+        options = merge(DataGridComponent.defaultOptions, options);
 
         super(options);
 
@@ -135,9 +123,8 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         );
 
         if (this.options.dataGridClassName) {
-            this.dataGridContainer.classList.add(
-                this.options.dataGridClassName
-            );
+            this.dataGridContainer.classList
+                .add(this.options.dataGridClassName);
         }
         if (this.options.dataGridID) {
             this.dataGridContainer.id = this.options.dataGridID;
@@ -149,7 +136,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             this.options.syncHandlers
         );
 
-        this.dataGridOptions = (this.options.dataGridOptions || {} as any);
+        this.dataGridOptions = this.options.dataGridOptions || ({} as any);
 
         if (this.store) {
             // this.on('tableChanged', (): void => this.updateSeries());
@@ -169,10 +156,10 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     }
 
     /* *
-     *
-     *  Class methods
-     *
-     * */
+ *
+ *  Class methods
+ *
+ * */
 
     public load(): this {
         this.emit({ type: 'load' });
@@ -194,6 +181,61 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
         this.sync.start();
         this.emit({ type: 'afterRender' });
+
+        // TODO: should be configurable
+        this.dataGrid.on('cellClick', (e): void => {
+            if ('input' in e) {
+                e.input.addEventListener('keyup', (e): void => {
+                    const inputElement = e.target as HTMLInputElement;
+                    if (inputElement) {
+                        const parentRow = inputElement.closest('.hc-dg-row');
+                        const cell = inputElement.closest('.hc-dg-cell');
+
+                        const converter = new DataConverter();
+
+                        if (
+                            parentRow &&
+                            parentRow instanceof HTMLElement &&
+                            cell &&
+                            cell instanceof HTMLElement
+                        ) {
+                            const dataTableRowIndex = parentRow
+                                .dataset.rowIndex;
+                            const { columnName } = cell.dataset;
+
+                            // TODO: maybe not insert directly into the table,
+                            // should have a safer method
+                            // (when polling live data at least)
+                            if (
+                                dataTableRowIndex !== void 0 &&
+                                columnName !== void 0
+                            ) {
+                                const table = this.store &&
+                                    this.store.table.modified;
+
+                                if (table) {
+                                    // TODO: could also use a
+                                    // asType('string', value) method
+                                    let valueToSet = converter
+                                        .asGuessedType(inputElement.value);
+
+                                    if (valueToSet instanceof Date) {
+                                        valueToSet = valueToSet.toString();
+                                    }
+
+                                    table.setCell(
+                                        columnName,
+                                        parseInt(dataTableRowIndex, 10),
+                                        valueToSet
+                                    );
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
         return this;
     }
 
@@ -205,26 +247,26 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public update(options: Partial<DataGridComponent.DataGridOptions>): this {
         super.update(options);
         if (this.dataGrid) {
-            this.dataGrid.update(this.options.dataGridOptions || {} as any);
+            this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });
         return this;
     }
 
-
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
-                this.dataGridContainer, {
+                this.dataGridContainer,
+                {
                     ...this.options.dataGridOptions,
                     dataTable: this.store && this.store.table.modified
-                });
+                }
+            );
             return this.dataGrid;
         }
 
         throw new Error('DataGrid not connected.');
     }
-
 
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
@@ -251,20 +293,22 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
  * */
 
 namespace DataGridComponent {
-
     export type ComponentType = DataGridComponent;
 
-    export type ChartComponentEvents =
-        JSONEvent |
-        Component.EventTypes;
+    export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
+    export type JSONEvent = Component.Event<
+    'toJSON' | 'fromJSON',
+    {
         json: ClassJSON;
-    }>;
+    }
+    >;
 
-    export interface DataGridOptions extends Component.ComponentOptions, EditableOptions {
+    export interface DataGridOptions
+        extends Component.ComponentOptions,
+        EditableOptions {
         dataGridClassName?: string;
-        dataGridID?: string
+        dataGridID?: string;
     }
 
     export interface EditableOptions extends Component.EditableOptions {
