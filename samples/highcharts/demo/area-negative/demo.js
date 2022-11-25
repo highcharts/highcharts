@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        text: 'Production, consumption and trade surplus of electrical power'
+        text: 'Production, consumption and trade surplus of electrical power',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: <a ' +
