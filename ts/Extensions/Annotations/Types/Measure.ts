@@ -1076,7 +1076,7 @@ Measure.prototype.defaultOptions = merge(
                     x, y;
 
                 if (selectType === 'x') {
-                    targetY = (ext.yAxisMax - ext.yAxisMin) / 2;
+                    targetY = (ext.yAxisMax + ext.yAxisMin) / 2;
 
                     // first control point
                     if (cpIndex === 0) {
