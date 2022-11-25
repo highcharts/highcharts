@@ -51,7 +51,6 @@ import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
-import { support } from 'jquery';
 
 /* *
  *
