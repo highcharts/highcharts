@@ -196,7 +196,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
-        this.contentElement.style.overflow = 'auto';
         this.emit({ type: 'afterRender' });
         return this;
     }
