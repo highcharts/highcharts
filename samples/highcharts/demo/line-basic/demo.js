@@ -1,7 +1,8 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'U.S Solar Employment Growth by Job Category, 2010-2020'
+        text: 'U.S Solar Employment Growth by Job Category, 2010-2020',
+        align: 'left'
     },
 
     subtitle: {
