@@ -2705,7 +2705,10 @@ class Series {
                     ) {
 
                         /**
-                         * The graphic representation of the point.
+                         * SVG graphic representing the point in the chart. In
+                         * some cases it may be a hidden graphic to improve
+                         * accessibility.
+                         *
                          * Typically this is a simple shape, like a `rect`
                          * for column charts or `path` for line markers, but
                          * for some complex series types like boxplot or 3D
@@ -2714,8 +2717,10 @@ class Series {
                          * the first time {@link Series#drawPoints} runs,
                          * and updated and moved on subsequent runs.
                          *
-                         * @name Point#graphic
-                         * @type {SVGElement}
+                         * @see Highcharts.Point#graphics
+                         *
+                         * @name Highcharts.Point#graphic
+                         * @type {Highcharts.SVGElement|undefined}
                          */
                         point.graphic = graphic = chart.renderer
                             .symbol(
