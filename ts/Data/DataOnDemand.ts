@@ -103,8 +103,8 @@ class DataOnDemand {
     public getSource(
         name: string
     ): Promise<DataStore<DataStore.Event>> {
-        const sources = this.sources;
-        const source = sources[name];
+        const sources = this.sources,
+            source = sources[name];
 
         if (source) {
             // already loaded
@@ -203,8 +203,8 @@ class DataOnDemand {
     public setSourceOptions(
         sourceOptions: DataOnDemandSourceOptions
     ): void {
-        const options = this.options;
-        const sources = options.sources;
+        const options = this.options,
+            sources = options.sources;
 
         for (let i = 0, iEnd = sources.length; i < iEnd; ++i) {
             if (sources[i].name === sourceOptions.name) {
