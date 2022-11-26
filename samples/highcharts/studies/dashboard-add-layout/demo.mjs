@@ -1,83 +1,19 @@
-import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
-import PluginHandler from  '../../../../code/es-modules/Dashboard/PluginHandler.js';
-import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
-import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+
+const { PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-let exportedLayoutId;
 
-
-window.dashboard = new Dashboard('container', {
+let dashboard = new Dashboard.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
             icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: [{
-                id: 'saveLocal',
-                className: 'test-test-test',
-                events: {
-                    click: function () {
-                        console.log('save local');
-                    }
-                }
-            }, 'verticalSeparator', 'editMode', {
-                id: 'export-dashboard',
-                text: 'Export dashboard',
-                events: {
-                    click: function () {
-                        dashboard.exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        dashboard.destroy();
-                    }
-                }
-            }, {
-                id: 'import-dashboard',
-                text: 'Import saved dashboard',
-                events: {
-                    click: function () {
-                        dashboard = Dashboard.importLocal();
-                    }
-                }
-            }, {
-                id: 'export-layout',
-                text: 'Export 1 layout',
-                events: {
-                    click: function () {
-                        exportedLayoutId = dashboard.layouts[0].options.id;
-                        dashboard.layouts[0].exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-layout',
-                text: 'Delete 1 layout',
-                events: {
-                    click: function () {
-                        dashboard.layouts[0].destroy();
-                    }
-                }
-            }, {
-                id: 'import-layout',
-                text: 'Import saved layout',
-                events: {
-                    click: function () {
-                        const layout = dashboard.importLayoutLocal(
-                            exportedLayoutId
-                        );
-                        console.log('Imported layout: ', layout);
-                    }
-                }
-            }]
+            items: ['editMode']
         },
         toolbars: {
             cell: {
@@ -227,4 +163,3 @@ window.dashboard = new Dashboard('container', {
         },
     ]
 });
-

@@ -152,6 +152,9 @@ namespace Bindings {
 
     }
 
+    export interface LayoutOptions {
+    }
+
     export interface ComponentOptions {
         cell: string;
         type: string;
