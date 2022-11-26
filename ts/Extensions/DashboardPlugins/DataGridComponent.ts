@@ -61,7 +61,8 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                 'dataGridClassName',
                 'dataGridID'
             ],
-            syncHandlers: DataGridSyncHandlers
+            syncHandlers: DataGridSyncHandlers,
+            onUpdate: DataGridComponent.onUpdate
         });
 
     /* *
@@ -69,6 +70,53 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *  Static Functions
      *
      * */
+
+    public static onUpdate(
+        e: KeyboardEvent,
+        store: Component.StoreTypes
+    ): void {
+        const inputElement = e.target as HTMLInputElement;
+        if (inputElement) {
+            const parentRow = inputElement
+                .closest('.hc-dg-row');
+            const cell = inputElement.closest('.hc-dg-cell');
+
+            const converter = new DataConverter();
+
+            if (
+                parentRow &&
+                parentRow instanceof HTMLElement &&
+                cell &&
+                cell instanceof HTMLElement
+            ) {
+                const dataTableRowIndex = parentRow
+                    .dataset.rowIndex;
+                const { columnName } = cell.dataset;
+
+                if (
+                    dataTableRowIndex !== void 0 &&
+                                    columnName !== void 0
+                ) {
+                    const table = store.table.modified;
+
+                    if (table) {
+                        let valueToSet = converter
+                            .asGuessedType(inputElement.value);
+
+                        if (valueToSet instanceof Date) {
+                            valueToSet = valueToSet.toString();
+                        }
+
+                        table.setCell(
+                            columnName,
+                            parseInt(dataTableRowIndex, 10),
+                            valueToSet
+                        );
+                    }
+                }
+            }
+        }
+    }
 
     public static fromJSON(
         json: DataGridComponent.ClassJSON
@@ -158,10 +206,10 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     }
 
     /* *
- *
- *  Class methods
- *
- * */
+     *
+     *  Class methods
+     *
+     * */
 
     public load(): this {
         this.emit({ type: 'load' });
@@ -184,59 +232,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         this.sync.start();
         this.emit({ type: 'afterRender' });
 
-        // TODO: should be configurable
-        this.dataGrid.on('cellClick', (e): void => {
-            if ('input' in e) {
-                e.input.addEventListener('keyup', (e): void => {
-                    const inputElement = e.target as HTMLInputElement;
-                    if (inputElement) {
-                        const parentRow = inputElement.closest('.hc-dg-row');
-                        const cell = inputElement.closest('.hc-dg-cell');
-
-                        const converter = new DataConverter();
-
-                        if (
-                            parentRow &&
-                            parentRow instanceof HTMLElement &&
-                            cell &&
-                            cell instanceof HTMLElement
-                        ) {
-                            const dataTableRowIndex = parentRow
-                                .dataset.rowIndex;
-                            const { columnName } = cell.dataset;
-
-                            // TODO: maybe not insert directly into the table,
-                            // should have a safer method
-                            // (when polling live data at least)
-                            if (
-                                dataTableRowIndex !== void 0 &&
-                                columnName !== void 0
-                            ) {
-                                const table = this.store &&
-                                    this.store.table.modified;
-
-                                if (table) {
-                                    // TODO: could also use a
-                                    // asType('string', value) method
-                                    let valueToSet = converter
-                                        .asGuessedType(inputElement.value);
-
-                                    if (valueToSet instanceof Date) {
-                                        valueToSet = valueToSet.toString();
-                                    }
-
-                                    table.setCell(
-                                        columnName,
-                                        parseInt(dataTableRowIndex, 10),
-                                        valueToSet
-                                    );
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        });
+        this.setupStoreUpdate();
 
         return this;
     }
@@ -268,6 +264,22 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
 
         throw new Error('DataGrid not connected.');
+    }
+
+    private setupStoreUpdate(): void {
+        const { store, dataGrid } = this;
+
+        if (store && dataGrid) {
+            dataGrid.on('cellClick', (e): void => {
+                if ('input' in e) {
+                    e.input.addEventListener(
+                        'keyup',
+                        (keyEvent): void =>
+                            this.options.onUpdate(keyEvent, store)
+                    );
+                }
+            });
+        }
     }
 
     public toJSON(): DataGridComponent.ClassJSON {
@@ -311,6 +323,7 @@ namespace DataGridComponent {
         EditableOptions {
         dataGridClassName?: string;
         dataGridID?: string;
+        onUpdate: typeof DataGridComponent.onUpdate
     }
 
     export interface EditableOptions extends Component.EditableOptions {
