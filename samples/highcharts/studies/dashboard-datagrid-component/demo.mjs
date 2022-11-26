@@ -38,6 +38,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             cell: 'dashboard-col-0',
             store,
             type: 'Highcharts',
+            syncEvents: ['tooltip'],
             tableAxisMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
@@ -62,6 +63,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
             store,
-            editable: true
+            editable: true,
+            syncEvents: ['tooltip']
         }]
 });
