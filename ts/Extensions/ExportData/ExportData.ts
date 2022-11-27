@@ -1236,7 +1236,6 @@ function onChartAfterViewData(
 ): void {
     const chart = this,
         dataTableDiv = chart.dataTableDiv,
-        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
         getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
             tr.children[index].textContent,
         comparer = (index: number, ascending: boolean) =>
@@ -1255,6 +1254,7 @@ function onChartAfterViewData(
 
 
     if (dataTableDiv) {
+        const row = dataTableDiv.querySelectorAll('thead')[0].querySelectorAll('tr')[0];
         row.childNodes.forEach((th: any): void => {
             const table = th.closest('table');
 
