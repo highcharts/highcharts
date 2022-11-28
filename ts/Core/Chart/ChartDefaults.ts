@@ -919,6 +919,8 @@ const ChartDefaults: ChartOptions = {
      * Additional CSS styles to apply inline to the container `div`. Note
      * that since the default font styles are applied in the renderer, it
      * is ignorant of the individual chart options and must be set globally.
+     * Also note that changing the font size in the `chart.style` options only
+     * applies to those elements that do not have a specific `fontSize` setting.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.

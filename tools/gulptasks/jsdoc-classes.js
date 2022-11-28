@@ -64,6 +64,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/SeriesLabel/SeriesLabel.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
+    'js/Series/AreaRange/AreaRangeSeries.js',
     'js/Series/Column/ColumnSeries.js',
     'js/Series/Networkgraph/NetworkgraphSeries.js',
     'js/Series/Organization/OrganizationSeries.js',
