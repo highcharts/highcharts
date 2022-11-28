@@ -100,7 +100,8 @@ namespace LegendSymbol {
 
         let attr: SVGAttributes = {},
             legendSymbol,
-            markerOptions = options.marker;
+            markerOptions = options.marker,
+            symbolOffset = 0;
 
         // Draw the line
         if (!this.chart.styledMode) {
@@ -112,21 +113,12 @@ namespace LegendSymbol {
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
             }
-
         }
 
         legendItem.line = renderer
             .path([
                 ['M', 0, verticalCenter],
-                ['L',
-                    (
-                        !this.chart.styledMode &&
-                            attr['stroke-linecap'] === 'round' ?
-                            symbolWidth - (symbolWidth / 2) :
-                            symbolWidth
-                    ),
-                    verticalCenter
-                ]
+                ['L', symbolWidth, verticalCenter]
             ])
             .addClass('highcharts-graph')
             .attr(attr)
@@ -161,6 +153,7 @@ namespace LegendSymbol {
                 )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
+
             legendSymbol.isMarker = true;
         }
     }
@@ -185,6 +178,7 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
+
         const legendItem = item.legendItem || {},
             options = legend.options,
             symbolHeight = legend.symbolHeight,
