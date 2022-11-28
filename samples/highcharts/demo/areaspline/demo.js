@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: 'Moose and deer hunting in Norway, 2000 - 2021'
+        text: 'Moose and deer hunting in Norway, 2000 - 2021',
+        align: 'left'
     },
     subtitle: {
         align: 'center',

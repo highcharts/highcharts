@@ -1,6 +1,7 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Unemployment rates in engineering and ICT subjects, 2021'
+        text: 'Unemployment rates in engineering and ICT subjects, 2021',
+        align: 'left'
     },
     subtitle: {
         text: 'Chart option: Plain | Source: ' +

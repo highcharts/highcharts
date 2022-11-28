@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        text: 'Greenhouse gases from Norwegian economic activity'
+        text: 'Greenhouse gases from Norwegian economic activity',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
