@@ -4,73 +4,22 @@ const dataPool = new Dashboard.DataOnDemand();
 
 let worldMap;
 
-function ajax(request) {
-    return new Promise((resolve, reject) => {
-        Highcharts.ajax({
-            data: request.data,
-            dataType: request.dataType,
-            headers: request.headers,
-            type: request.type,
-            url: request.url,
-            success: (result) => {
-                request.success = result;
-                resolve(request);
-            },
-            error: (error) => {
-                request.error = error;
-                reject(request);
-            }
-        });
-    });
-}
-
-async function ajaxAll(requests) {
-    const promises = [];
-
-    for (const request of requests) {
-        promises.push(ajax(request));
-    }
-
-    return Promise.all(promises);
-}
-
-function buildDates() {
-    const dates = [];
-
-    for (let date = new Date(Date.UTC(2010, 0, 5)),
-            dateEnd = new Date(Date.UTC(2010, 11, 25));
-        date <= dateEnd;
-        date = date.getUTCDate() >= 25 ?
-            new Date(Date.UTC(2010, date.getUTCMonth() + 1, 5)) :
-            new Date(Date.UTC(2010, date.getUTCMonth(), date.getUTCDate() + 10))
-    ) {
-        dates.push([date.getTime(), 0]);
-    }
-
-    return dates;
-}
-
-function buildDateTicks() {
-    const dates = [];
-
-    for (let date = new Date(Date.UTC(2010, 0, 15)),
-            dateEnd = new Date(Date.UTC(2010, 11, 15));
-        date <= dateEnd;
-        date = new Date(Date.UTC(2010, date.getUTCMonth() + 1, 15))
-    ) {
-        dates.push(date.getTime());
-    }
-
-    return dates;
-}
-
 async function buildDashboard() {
     const topology = await Promise
         .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
         .then(fetch)
         .then(response => response.json());
 
+    const citiesTable = await dataPool.getSourceTable('Cities');
     const climateTable = await dataPool.getSourceTable(1262649600000);
+    const cityClimateTable = await dataPool.getSourceTable(
+        citiesTable
+            .getRow(
+                citiesTable.getRowIndexBy('City', 'Tokyo'),
+                ['Latitude', 'Longitude']
+            )
+            .join('_')
+    );
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -214,12 +163,29 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    type: 'line'
+                    type: 'line',
+                    zooming: {
+                        type: 'x'
+                    }
                 },
                 series: [{
-                    name: 'Series from options',
-                    data: [1, 2, 1, 4]
-                }]
+                    name: 'Tokyo',
+                    data: cityClimateTable
+                        .modified
+                        .getRows(undefined, undefined, ['time', 'TX']),
+                }],
+                title: {
+                    text: 'Tokyo'
+                },
+                xAxis: {
+                    tickPositions: buildDateTicks(),
+                    // tickWidth: 0,
+                    type: 'datetime',
+                    visible: true,
+                    labels: {
+                        format: '{value:%Y-%m-%d}'
+                    },
+                },
             }
         }, {
             cell: 'selection-grid',
@@ -326,6 +292,72 @@ async function main() {
 }
 
 main().catch(e => console.error(e));
+
+/* *
+ *
+ *  Helper Functions
+ *
+ * */
+
+function ajax(request) {
+    return new Promise((resolve, reject) => {
+        Highcharts.ajax({
+            data: request.data,
+            dataType: request.dataType,
+            headers: request.headers,
+            type: request.type,
+            url: request.url,
+            success: (result) => {
+                request.success = result;
+                resolve(request);
+            },
+            error: (error) => {
+                request.error = error;
+                reject(request);
+            }
+        });
+    });
+}
+
+async function ajaxAll(requests) {
+    const promises = [];
+
+    for (const request of requests) {
+        promises.push(ajax(request));
+    }
+
+    return Promise.all(promises);
+}
+
+function buildDates() {
+    const dates = [];
+
+    for (let date = new Date(Date.UTC(2010, 0, 5)),
+            dateEnd = new Date(Date.UTC(2010, 11, 25));
+        date <= dateEnd;
+        date = date.getUTCDate() >= 25 ?
+            new Date(Date.UTC(2010, date.getUTCMonth() + 1, 5)) :
+            new Date(Date.UTC(2010, date.getUTCMonth(), date.getUTCDate() + 10))
+    ) {
+        dates.push([date.getTime(), 0]);
+    }
+
+    return dates;
+}
+
+function buildDateTicks() {
+    const dates = [];
+
+    for (let date = new Date(Date.UTC(2010, 0, 15)),
+            dateEnd = new Date(Date.UTC(2010, 11, 15));
+        date <= dateEnd;
+        date = new Date(Date.UTC(2010, date.getUTCMonth() + 1, 15))
+    ) {
+        dates.push(date.getTime());
+    }
+
+    return dates;
+}
 
 /**
  * @deprecated
