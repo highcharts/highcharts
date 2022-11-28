@@ -2,6 +2,8 @@
 
 const dataPool = new Dashboard.DataOnDemand();
 
+let citySeries;
+let dataScope = 'TX';
 let worldMap;
 
 async function buildDashboard() {
@@ -35,18 +37,24 @@ async function buildDashboard() {
                     data: buildDates(),
                     events: {
                         click: function (e) {
+
+                            if (!worldMap) {
+                                return; // not ready
+                            }
+
                             dataPool
                                 .getSourceTable(e.point.x)
                                 .then(table => worldMap.setData(
                                     table.modified.getRows(
-                                        undefined, undefined,
-                                        ['lat', 'lon', 'TX']
+                                        void 0, void 0,
+                                        ['lat', 'lon', dataScope]
                                     )
                                 ));
                         }
                     },
                     tooltip: {
-                        headerFormat: '',
+                        footerFormat: void 0,
+                        headerFormat: void 0,
                         pointFormat: '{point.x:%Y-%m-%d}'
                     }
                 }],
@@ -102,9 +110,10 @@ async function buildDashboard() {
                 }, {
                     type: 'mapbubble',
                     name: 'Temperature',
-                    data: climateTable
-                        .modified
-                        .getRows(undefined, undefined, ['lat', 'lon', 'TX']),
+                    data: climateTable.modified.getRows(
+                        void 0, void 0,
+                        ['lat', 'lon', dataScope]
+                    ),
                     keys: ['lat', 'lon', 'z'],
                     colorKey: 'z',
                     maxSize: 1.1,
@@ -114,24 +123,54 @@ async function buildDashboard() {
                         symbol: 'square'
                     },
                     tooltip: {
-                        pointFormatter: function () {
-                            const point = this;
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormatter: temperatureFormatter,
+                    }
+                }, {
+                    type: 'mappoint',
+                    name: 'Cities',
+                    data: citiesTable.modified.getRows(
+                            void 0, void 0,
+                            ['Latitude', 'Longitude', 'City'],
+                        ),
+                    keys: ['lat', 'lon', 'name'],
+                    color: '#000',
+                    events: {
+                        click: function (e) {
 
-                            return [
-                                Highcharts.correctFloat(point.z, 4) + '˚K',
-                                Highcharts.correctFloat(
-                                    (point.z - 273.15), 3
-                                ) + '˚C',
-                                Highcharts.correctFloat(
-                                    (point.z * 1.8 - 459.67), 3
-                                ) + '˚F'
-                            ].join('<br />');
+                            if (!citySeries) {
+                                return; // not ready
+                            }
+
+                            const point = e.point;
+                            const city = point.name;
+
+                            dataPool
+                                .getSourceTable(point.lat + '_' + point.lon)
+                                .then(table => {
+                                    citySeries.chart.update({
+                                        title: { text: city }
+                                    });
+                                    citySeries.update({
+                                        name: city,
+                                        data: table.modified.getRows(
+                                            void 0, void 0,
+                                            ['time', dataScope]
+                                        )
+                                    });
+                                });
                         }
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormat: '<b>{point.name}</b><br />{point.lat} &phi;, {point.lon} &lambda;'
                     }
                 }],
                 title: {
                     margin: 0,
-                    text: void 0
+                    text: void 0,
                 },
             },
             events: {
@@ -170,12 +209,24 @@ async function buildDashboard() {
                 },
                 series: [{
                     name: 'Tokyo',
-                    data: cityClimateTable
-                        .modified
-                        .getRows(undefined, undefined, ['time', 'TX']),
+                    data: cityClimateTable.modified.getRows(
+                        void 0, void 0,
+                        ['time', dataScope]
+                    ),
+                    legend: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormatter: temperatureFormatter
+                    }
                 }],
                 title: {
                     text: 'Tokyo'
+                },
+                tooltip: {
+                    enabled: true
                 },
                 xAxis: {
                     tickPositions: buildDateTicks(),
@@ -186,6 +237,11 @@ async function buildDashboard() {
                         format: '{value:%Y-%m-%d}'
                     },
                 },
+            },
+            events: {
+                mount: function () {
+                    citySeries = this.chart.series[0];
+                }
             }
         }, {
             cell: 'selection-grid',
@@ -357,6 +413,20 @@ function buildDateTicks() {
     }
 
     return dates;
+}
+
+function temperatureFormatter() {
+    const point = this;
+
+    return [
+        Highcharts.correctFloat(point.z, 4) + '˚K',
+        Highcharts.correctFloat(
+            (point.z - 273.15), 3
+        ) + '˚C',
+        Highcharts.correctFloat(
+            (point.z * 1.8 - 459.67), 3
+        ) + '˚F'
+    ].join('<br />');
 }
 
 /**
