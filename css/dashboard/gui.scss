@@ -240,7 +240,7 @@ body {
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
-    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/gfx/dashboard-icons/drag.svg") no-repeat 50% 50%;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -248,7 +248,7 @@ body {
 
 .hd-toolbar .edit-col,
 .hd-toolbar .edit-row {
-    background: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0px;
     text-indent: -9999px;
@@ -635,8 +635,8 @@ h1 {
     height: 20px;
     background-size: 20px;
     background-color: #1779BA;
-    -webkit-mask-image: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg");
-    mask-image: url("https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg");
+    -webkit-mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
+    mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
 }
