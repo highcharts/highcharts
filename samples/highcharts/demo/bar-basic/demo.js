@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Historic World Population by Region'
+        text: 'Historic World Population by Region',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: <a ' +

@@ -70,7 +70,8 @@ var ranges = [
 Highcharts.chart('container', {
 
     title: {
-        text: 'July temperatures in Nesbyen, 2022'
+        text: 'July temperatures in Nesbyen, 2022',
+        align: 'left'
     },
 
     subtitle: {

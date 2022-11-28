@@ -61,7 +61,8 @@ var chart = Highcharts.chart('container', {
         type: 'lowmedhigh'
     },
     title: {
-        text: 'Monthly earnings, by level of education in Norway'
+        text: 'Monthly earnings, by level of education in Norway',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
