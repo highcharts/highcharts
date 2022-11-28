@@ -526,7 +526,7 @@ class FlowMapSeries extends MapLineSeries {
         wX *= scaledWeight * fineTune;
         wY *= scaledWeight * fineTune;
 
-        // Ccalculate the arc strength.
+        // Calculate the arc strength.
         let arcPointX = (mX + dX * curveFactor),
             arcPointY = (mY + dY * curveFactor);
 
@@ -543,7 +543,6 @@ class FlowMapSeries extends MapLineSeries {
 
         fromXToArc *= scaledWeight;
         fromYToArc *= scaledWeight;
-
 
         // Calculate edge vectors in the to-point.
         let [toXToArc, toYToArc] =
@@ -719,6 +718,22 @@ export default FlowMapSeries;
  *
  * @type      {string}
  * @apioption series.flowmap.data.fillColor
+ */
+
+/**
+ * ID referencing a map point holding coordinates of the link origin.
+ *
+ *
+ * @type      {string}
+ * @apioption series.flowmap.data.from
+ */
+
+/**
+ * ID referencing a map point holding coordinates of the link destination.
+ *
+ *
+ * @type      {string}
+ * @apioption series.flowmap.data.to
  */
 
 /**

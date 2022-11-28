@@ -1,7 +1,5 @@
 /* *
  *
- *  FlowMap
- *
  *  (c) 2018-2022 Askel Eirik Johansson
  *
  *  License: www.highcharts.com/license
