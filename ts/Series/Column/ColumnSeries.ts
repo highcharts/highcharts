@@ -600,8 +600,10 @@ class ColumnSeries extends Series {
             // #3648)
             point.tooltipPos = chart.inverted ?
                 [
-                    clamp(
-                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                    clamp( // Place the tooltip at the end of stack, #17948
+                        !yAxis.options.reversedStacks && point.stackTotal ?
+                            yAxis.toPixels(point.stackTotal, true) :
+                            yAxis.len + yAxis.pos - chart.plotLeft - plotY,
                         yAxis.pos - chart.plotLeft,
                         yAxis.len + yAxis.pos - chart.plotLeft
                     ),
