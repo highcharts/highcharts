@@ -837,7 +837,7 @@ class ColumnSeries extends Series {
      * Draw the tracker for a point.
      * @private
      */
-    public drawTracker(): void {
+    public drawTracker(points: Array<ColumnPoint> = this.points): void {
         const series = this,
             chart = series.chart,
             pointer = chart.pointer,
@@ -853,7 +853,7 @@ class ColumnSeries extends Series {
         let dataLabels;
 
         // Add reference to the point
-        series.points.forEach(function (point): void {
+        points.forEach(function (point): void {
             dataLabels = (
                 isArray(point.dataLabels) ?
                     point.dataLabels :
