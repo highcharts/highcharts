@@ -105,27 +105,25 @@ namespace LegendSymbol {
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': options.lineWidth || 0
+                'stroke-width': options.lineWidth || 0,
+                'stroke-linecap': (options.linecap || 'round') as any
             };
 
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
             }
 
-            if (this.type === 'line') {
-                attr['stroke-linecap'] = (options.linecap || 'round') as
-                    'butt' | 'round' | 'square' | undefined;
-            }
         }
 
         legendItem.line = renderer
             .path([
                 ['M', 0, verticalCenter],
                 ['L',
-                    symbolWidth - (
-                        attr['stroke-linecap'] === 'round' ?
-                            symbolWidth / 2 :
-                            0
+                    (
+                        !this.chart.styledMode &&
+                            attr['stroke-linecap'] === 'round' ?
+                            symbolWidth - (symbolWidth / 2) :
+                            symbolWidth
                     ),
                     verticalCenter
                 ]
