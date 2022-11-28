@@ -263,8 +263,7 @@ async function buildDashboard() {
             contextMenu: {
                 enabled: true,
                 icon: (
-                    'https://raw.githubusercontent.com/highcharts/highcharts/' +
-                    'dashboard/gfx/dashboard-icons/menu.svg'
+                    'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
                 ),
             },
         },
