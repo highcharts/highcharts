@@ -1,1 +1,0 @@
-This is an advanced demo showing how to use an dynamic mapbubble series on top of a map, with extended graphic effects to highlight changes in the data.
