@@ -116,24 +116,24 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         x?: number
     ): MapPoint {
 
-        let series = this.series,
+        const series = this.series,
             point: MapPoint = (
                 super.applyOptions.call(this, options, x) as any
             ),
-            joinBy = series.joinBy,
-            mapPoint;
+            joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
-            const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(
-                point,
-                joinKey
-            ) as string;
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
+            const joinKey = joinBy[1],
+                mapKey = super.getNestedProperty.call(
+                    point,
+                    joinKey
+                ) as string,
+                mapPoint = typeof mapKey !== 'undefined' &&
+                    series.mapMap[mapKey];
+
             if (mapPoint) {
                 extend(point, mapPoint); // copy over properties
-            } else {
+            } else if (series.pointArrayMap.indexOf('value') !== -1) {
                 point.value = point.value || null;
             }
         }
