@@ -1254,42 +1254,46 @@ function onChartAfterViewData(
 
 
     if (dataTableDiv) {
-        const row = dataTableDiv.querySelectorAll('thead')[0].querySelectorAll('tr')[0];
-        row.childNodes.forEach((th: any): void => {
-            const table = th.closest('table');
+        const row = dataTableDiv.querySelector('thead tr');
+        if (row) {
+            row.childNodes.forEach((th: any): void => {
+                const table = th.closest('table');
 
-            th.addEventListener('click', function (): void {
-                const rows = [...dataTableDiv.querySelectorAll(
-                        'tr:not(thead tr)'
-                    ) as unknown as Array<HTMLElement>],
-                    headers = [...th.parentNode.children];
+                th.addEventListener('click', function (): void {
+                    const rows = [...dataTableDiv.querySelectorAll(
+                            'tr:not(thead tr)'
+                        ) as unknown as Array<HTMLElement>],
+                        headers = [...th.parentNode.children];
 
-                rows.sort(
-                    comparer(
-                        headers.indexOf(th),
-                        chart.ascendingOrderInTable =
-                            !chart.ascendingOrderInTable
-                    )
-                ).forEach((tr: HTMLDOMElement): void => {
-                    table.appendChild(tr);
-                });
+                    rows.sort(
+                        comparer(
+                            headers.indexOf(th),
+                            chart.ascendingOrderInTable =
+                                !chart.ascendingOrderInTable
+                        )
+                    ).forEach((tr: HTMLDOMElement): void => {
+                        table.appendChild(tr);
+                    });
 
-                headers.forEach((th): void => {
-                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
-                        .forEach((className): void => {
+                    headers.forEach((th): void => {
+                        [
+                            'highcharts-sort-ascending',
+                            'highcharts-sort-descending'
+                        ].forEach((className): void => {
                             if (th.classList.contains(className)) {
                                 th.classList.remove(className);
                             }
                         });
-                });
+                    });
 
-                th.classList.add(
-                    chart.ascendingOrderInTable ?
-                        'highcharts-sort-ascending' :
-                        'highcharts-sort-descending'
-                );
+                    th.classList.add(
+                        chart.ascendingOrderInTable ?
+                            'highcharts-sort-ascending' :
+                            'highcharts-sort-descending'
+                    );
+                });
             });
-        });
+        }
     }
 }
 
