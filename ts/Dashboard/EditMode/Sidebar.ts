@@ -161,7 +161,7 @@ class Sidebar {
             ): Cell | void {
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
-                        type: 'chart',
+                        type: 'Highcharts',
                         cell: '',
                         chartOptions: {
                             type: 'line',

@@ -1,41 +1,57 @@
-function isWithinParent(element){
-    assert.isAtMost(element.width(), element.parent().innerWidth());
-    assert.isAtMost(element.height(), element.parent().innerHeight());
+function grabComponent(name) {
+    cy.get('.hd-edit-tools-btn').contains('Add').click();
+    cy.get('.hd-edit-sidebar-tab').contains('components').click();
+    cy.get('.hd-edit-sidebar-tab-content')
+        .children()
+        .contains(name)
+        .trigger('mousedown');
 }
 
-function checkCells() {
-    cy.get('.hd-cell').each(cell => {
-        isWithinParent(cell)
-    });
+function dropComponent(elementName) {
+
+        cy.get(elementName).first().trigger('mouseenter', {force: true});
+        cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
+        cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
 }
 
-function checkRowsAndCells() {
-    cy.wait(100) // wait a bit for the DOM to settle
-    cy.get('.hd-row').within(row => {
-        // Row is within parent
-        isWithinParent(row);
-        checkCells();
+describe('Add component through UI', () => {
+    before(() => {
+        cy.visit('/dashboard/demos/dashboard-add-layout');
+        cy.viewport(1200, 1000);
     });
-}
 
-describe('Add layout through UI', () => {
-    before(()=>{
-        cy.visit('/highcharts/studies/dashboard-add-layout');
-    });
-    it('should be able to add a layout', function() {
-
+    before(() => {
         cy.get('.hd-edit-context-menu-btn').click();
         cy.get('.hd-edit-toggle-slider').click();
-        cy.get('.hd-edit-tools-btn').contains('Add').click();
-        cy.get('.hd-edit-sidebar-tab').contains('components').click();
-        cy.get('.hd-edit-sidebar-tab-content')
-            .children()
-            .contains('layout')
-            .trigger('mousedown');
-
-
-        cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
-        cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
-        cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
     });
+
+    // it('should be able to add a layout',term function() {
+    //     grabComponent('layout');
+
+    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
+    // });
+
+    it('should be able to add a chart component', function() {
+        grabComponent('chart');
+        dropComponent('#dashboard-col-0')
+    });
+
+
+    // it('should be able to add a HTML component', function() {
+    //     grabComponent('HTML')
+
+    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
+    // });
+
+    // it('should be able to add a Data grid component', function() {
+    //     grabComponent('datagrid');
+
+    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
+    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
+    // });
 });
