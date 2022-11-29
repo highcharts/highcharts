@@ -575,7 +575,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png',
                 title: 'I heard you like components'
             }
         }]
