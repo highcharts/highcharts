@@ -759,15 +759,6 @@ class Legend {
             // Draw the legend symbol inside the group box
             series.drawLegendSymbol(legend, item);
 
-            if (chart.inverted) {
-                series.legendItem.symbol.attr({
-                    rotation: 90,
-                    rotationOriginX: 10,
-                    rotationOriginY: 10,
-                    translateY: legend.symbolHeight / 4
-                });
-            }
-
             if (legend.setItemEvents) {
                 legend.setItemEvents(item, label, useHTML);
             }
