@@ -3,13 +3,6 @@ Highcharts.chart('container', {
         type: 'pictorial'
     },
 
-    accessibility: {
-        description: '',
-        point: {
-            valueDescriptionFormat: ''
-        }
-    },
-
     title: {
         text: 'Composition of the human body'
     },
