@@ -324,6 +324,10 @@ class SankeySeries extends ColumnSeries {
         };
 
     }
+    public drawTracker(): void {
+        ColumnSeries.prototype.drawTracker.call(this, this.points);
+        ColumnSeries.prototype.drawTracker.call(this, this.nodes);
+    }
 
     public drawPoints(): void {
         ColumnSeries.prototype.drawPoints.call(this, this.points);
