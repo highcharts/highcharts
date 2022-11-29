@@ -1,0 +1,13 @@
+---
+name: Pictorial chart
+author:
+  - Magdalena Gut
+js_wrap: b
+alt_text: >-
+  Highcharts pictorial chart JavaScript example visualizes
+  Caffeine depending on type of coffe bean.
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

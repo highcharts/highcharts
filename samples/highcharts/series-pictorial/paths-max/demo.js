@@ -3,6 +3,12 @@ Highcharts.chart('container', {
         type: 'pictorial'
     },
 
+    subtitle: {
+        text: 'Source: ' +
+                '<a href="https://en.wikipedia.org/wiki/Coffea_liberica" ' +
+                'target="_blank">Wikipedia.com</a>'
+    },
+
     accessibility: {
         description: '',
         point: {
@@ -11,16 +17,16 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Caffeine depending on type of bean'
+        text: 'Caffeine depending on type of coffe bean'
     },
 
     xAxis: {
-        categories: ['Excelsa', 'Liberica', 'Arabica', 'Robusta']
+        categories: ['Liberica', 'Arabica', 'Robusta']
     },
 
     yAxis: {
         title: {
-            text: 'mg/100g coffe'
+            text: 'mg/100g coffe beans'
         },
         labels: {
             format: '{value} mg'
@@ -41,7 +47,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Coffeine',
-        data: [1, 1.23, 1.61, 2.26],
+        data: [1.23, 1.61, 2.26],
         color: '#4B371C'
     }]
 });
