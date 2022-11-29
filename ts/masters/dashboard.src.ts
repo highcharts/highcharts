@@ -20,6 +20,7 @@
 
 import CSVStore from '../Data/Stores/CSVStore.js';
 import Dashboard from '../Dashboard/Dashboard.js';
+import DataOnDemand from '../Data/DataOnDemand.js';
 import DataPromise from '../Data/DataPromise.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboard/Globals.js';
@@ -59,6 +60,7 @@ const D = {
     CSVStore,
     Dashboard,
     DataGrid,
+    DataOnDemand,
     DataPromise,
     DataTable,
     GoogleSheetsStore,

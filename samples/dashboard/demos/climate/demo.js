@@ -1,46 +1,358 @@
 /* eslint-disable */
 
-const highchartsLogo = [
-    'data:image/png;base64,',
-    'iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX///93dY2j7Llkmp+Ah',
-    'egwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9Pj3/fllma',
-    'F8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89Lk+et/g988Unc',
-    '1SHBAWXuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfObucSLj+puk7hzj8fv',
-    '7/xqlbCjp+61uPHH19/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e6+Uvqx/hpab0LJ8f8Z5e',
-    'aNmeqJejZpeYoFOcIpZgZRUeJNRWn2vysyd17WJoaGCjpqgnrS1tceFr7ONjKXOztuVwq6wsM',
-    'M1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djFyEJIw4oigZxCVFURInGJSiuaEy+/7dIVVd',
-    '1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-    'VLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P8NEOZwJ7waX636KSXJvJly+cKnBPl0JO52LF',
-    '7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqDp3',
-    'U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBMpvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrg',
-    'vRxje5S8ik9g0nx7M+1LhslDoNc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWb',
-    'h+kI/fCXZIgN8uljVeGDWKEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+',
-    'zc785pA2dukT8lVm7W2O1y7Mt5vHukjjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+d',
-    'hQmPQ2Abmvi5tcoRA5qiRyxddN6vtXl1SF3tLEn3k8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF',
-    '75giV3iZ9SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW3kfTphjnEWOTQ0gbMqIgU',
-    'XvUMiH1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960j1HubeBVJV',
-    'fArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCsyrl',
-    'QS6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRNkokMU5W',
-    'Z3kbOp4vl8tgI/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9mtvcFIGvB06G',
-    '2dm3b6JJ2lYNra+LFUb4xaKQi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+OlzLdNPIpmWpTalMRF',
-    'bm86197f+xZRNKpNgUHRsSolztCzqDf6ve33rNJGirpfF0sPjD0qLDQa3H6bJInTKSqkswf+M',
-    'sOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTaFNu1+LRmh866l0u+3UpFU/sBfZFM',
-    'WFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cMpOmqyajkokk8gf+/AOjLCoirtkV',
-    'igz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+ljRmZ6mMcLcA6M8KjhzOeNjmRF8qltZj',
-    'P3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/',
-    'e6ZSnYmluFtBekq0ZsF3LHBcfa3MquiphBYs8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSH',
-    'I2rRaVHB6W/w2ND/X0EkKQcamFaNCKLx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU',
-    '9OacbytTN4PspzZKSSFY1BVWioq5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctT',
-    'YPtjERaSSHQ7+DiqJjrnf5Qf3vDsCm1pJAoB0bhYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4',
-    'ZeUkiUqMgZIQ8/25K8rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtORXd9p1p4x36knhUQeGJZviJb',
-    'toqGuGjJfnyzEB4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91lPs2fedlFZSD9d',
-    'UE0KAW9u3c/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy7j',
-    'Pf3W9nbKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBeh',
-    'v5pDgbN4PzsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-    'AAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
-];
+const dataPool = new Dashboard.DataOnDemand();
 
-const storePool = {};
+let citySeries;
+let dataScope = 'TX';
+let worldMap;
+
+async function buildDashboard() {
+    const topology = await Promise
+        .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
+        .then(fetch)
+        .then(response => response.json());
+
+    const citiesTable = await dataPool.getSourceTable('Cities');
+    const climateTable = await dataPool.getSourceTable(1262649600000);
+    const cityClimateTable = await dataPool.getSourceTable(
+        citiesTable
+            .getRow(
+                citiesTable.getRowIndexBy('City', 'Tokyo'),
+                ['Latitude', 'Longitude']
+            )
+            .join('_')
+    );
+
+    const dashboard = new Dashboard.Dashboard('container', {
+        components: [{
+            cell: 'time-range-selector',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    height: '100px',
+                },
+                series: [{
+                    type: 'scatter',
+                    name: 'Timeline',
+                    data: buildDates(),
+                    events: {
+                        click: function (e) {
+
+                            if (!worldMap) {
+                                return; // not ready
+                            }
+
+                            dataPool
+                                .getSourceTable(e.point.x)
+                                .then(table => worldMap.setData(
+                                    table.modified.getRows(
+                                        void 0, void 0,
+                                        ['lat', 'lon', dataScope]
+                                    )
+                                ));
+                        }
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormat: '{point.x:%Y-%m-%d}'
+                    }
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Timeline 2010'
+                },
+                xAxis: {
+                    tickPositions: buildDateTicks(),
+                    // tickWidth: 0,
+                    type: 'datetime',
+                    visible: true,
+                    labels: {
+                        format: '{value:%m-%d}'
+                    }
+                },
+                yAxis: {
+                    visible: false
+                },
+                legend: {
+                    enabled: false
+                }
+            }
+        }, {
+            cell: 'world-map',
+            type: 'Highcharts',
+            chartConstructor: 'mapChart',
+            chartOptions: {
+                chart: {
+                    map: topology,
+                    spacing: [0, 0, 0, 0],
+                },
+                colorAxis: {
+                    max: 333,
+                    maxColor: '#F93',
+                    min: 213,
+                    minColor: '#39F',
+                },
+                legend: {
+                    margin: 0,
+                },
+                mapView: {
+                    maxZoom: 1.4,
+                    padding: 0,
+                    projection: {
+                        name: 'Miller',
+                    },
+                    zoom: 1.4,
+                },
+                series: [{
+                    type: 'map',
+                    name: 'World Map',
+                }, {
+                    type: 'mapbubble',
+                    name: 'Temperature',
+                    data: climateTable.modified.getRows(
+                        void 0, void 0,
+                        ['lat', 'lon', dataScope]
+                    ),
+                    keys: ['lat', 'lon', 'z'],
+                    colorKey: 'z',
+                    maxSize: 1.1,
+                    minSize: 1.1,
+                    opacity: 0.5,
+                    marker: {
+                        symbol: 'square'
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormatter: temperatureFormatter,
+                    }
+                }, {
+                    type: 'mappoint',
+                    name: 'Cities',
+                    data: citiesTable.modified.getRows(
+                            void 0, void 0,
+                            ['Latitude', 'Longitude', 'City'],
+                        ),
+                    keys: ['lat', 'lon', 'name'],
+                    color: '#000',
+                    events: {
+                        click: function (e) {
+
+                            if (!citySeries) {
+                                return; // not ready
+                            }
+
+                            const point = e.point;
+                            const city = point.name;
+
+                            dataPool
+                                .getSourceTable(point.lat + '_' + point.lon)
+                                .then(table => {
+                                    citySeries.chart.update({
+                                        title: { text: city }
+                                    });
+                                    citySeries.update({
+                                        name: city,
+                                        data: table.modified.getRows(
+                                            void 0, void 0,
+                                            ['time', dataScope]
+                                        )
+                                    });
+                                });
+                        }
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormat: '<b>{point.name}</b><br />{point.lat} &phi;, {point.lon} &lambda;'
+                    }
+                }],
+                title: {
+                    margin: 0,
+                    text: void 0,
+                },
+            },
+            events: {
+                mount: function () {
+                    // call action
+                    console.log('map mount event', this);
+                    worldMap = this.chart.series[1];
+                },
+                unmount: function () {
+                    console.log('map unmount event', this);
+                }
+            }
+        }, {
+            cell: 'kpi-1',
+            type: 'html',
+            // dimensions: {
+            //     width: 200,
+            //     height: 200
+            // },
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        }, {
+            cell: 'kpi-chart',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    type: 'line',
+                    zooming: {
+                        type: 'x'
+                    }
+                },
+                series: [{
+                    name: 'Tokyo',
+                    data: cityClimateTable.modified.getRows(
+                        void 0, void 0,
+                        ['time', dataScope]
+                    ),
+                    legend: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        footerFormat: void 0,
+                        headerFormat: void 0,
+                        pointFormatter: temperatureFormatter
+                    }
+                }],
+                title: {
+                    text: 'Tokyo'
+                },
+                tooltip: {
+                    enabled: true
+                },
+                xAxis: {
+                    tickPositions: buildDateTicks(),
+                    // tickWidth: 0,
+                    type: 'datetime',
+                    visible: true,
+                    labels: {
+                        format: '{value:%Y-%m-%d}'
+                    },
+                },
+            },
+            events: {
+                mount: function () {
+                    citySeries = this.chart.series[0];
+                }
+            }
+        }, {
+            cell: 'selection-grid',
+            type: 'html',
+            // dimensions: {
+            //     width: 200,
+            //     height: 200
+            // },
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'Selection Grid'
+        }],
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                icon: (
+                    'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
+                ),
+            },
+        },
+        gui: {
+            enabled: true,
+            layouts: [{
+                id: 'layout-1', // mandatory
+                rows: [{
+                    cells: [{
+                        id: 'time-range-selector',
+                        width: '100%'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'world-map',
+                        width: '100%'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'kpi-1',
+                        width: '20%'
+                    }, {
+                        id: 'kpi-chart',
+                        width: '40%'
+                    }, {
+                        id: 'selection-grid',
+                        width: '40%'
+                    }]
+                }]
+            }]
+        }
+    });
+    console.log(dashboard);
+
+}
+
+async function main() {
+    dataPool.setSourceOptions({
+        name: 's3Test',
+        storeOptions: {
+            csvURL: (
+                'https://assets.highcharts.com/dashboard-demodata/' +
+                'placeholder.csv'
+            ),
+        },
+        storeType: 'CSVStore'
+    });
+    dataPool.setSourceOptions({
+        name: 'googleSources',
+        storeOptions: {
+            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+            googleSpreadsheetKey: '1U0Jfb9AR4vMKGZEorJD5Ns7W8W8GwVLGr9oMUFpbp8k'
+        },
+        storeType: 'GoogleSheetsStore'
+    });
+
+    const sourceTable = await dataPool.getSourceTable('googleSources');
+
+    let match;
+
+    for (const row of sourceTable.getRowObjects()) {
+        match = row['Store Link'].match(/[\w-]{44}/gu);
+
+        if (!match) {
+            continue;
+        }
+
+        dataPool.setSourceOptions({
+            name: row['Store Name'],
+            storeOptions: {
+                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+                googleSpreadsheetKey: match[0]
+            },
+            storeType: 'GoogleSheetsStore'
+        });
+    }
+
+    console.log(dataPool);
+
+    await buildDashboard();
+}
+
+main().catch(e => console.error(e));
+
+/* *
+ *
+ *  Helper Functions
+ *
+ * */
 
 function ajax(request) {
     return new Promise((resolve, reject) => {
@@ -72,221 +384,94 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
-function createDashboard(worldMapJSON) {
-    var dashboard = new Dashboard.Dashboard('container', {
-        components: [{
-            cell: 'time-range-selector',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    height: '100px',
-                    type: 'timeline'
-                },
-                series: [{
-                    data: (() => {
-                        const years = [];
-                        for (let i = 1951, iEnd = 2011; i < iEnd; ++i) {
-                            years.push(i);
-                        }
-                        return years;
-                    })()
-                }],
-                title: {
-                    text: void 0
-                },
-                xAxis: {
-                    visible: false
-                },
-                yAxis: {
-                    visible: false
-                }
-            }
-        }, {
-            cell: 'kpi-1',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'KPI 1'
-        }, {
-            cell: 'kpi-2',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'KPI 2'
-        }, {
-            cell: 'kpi-3',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'KPI 3'
-        }, {
-            cell: 'selection-grid',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: highchartsLogo
-                }
-            }],
-            title: 'Selection Grid'
-        }, {
-            cell: 'kpi-chart',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    type: 'line'
-                },
-                series: [{
-                    name: 'Series from options',
-                    data: [1, 2, 1, 4]
-                }]
-            }
-        }, {
-            cell: 'world-map',
-            type: 'Highcharts',
-            chartConstructor: 'mapChart',
-            chartOptions: {
-                series: [{
-                    type: 'map',
-                    name: 'World Map',
-                    mapData: Highcharts.geojson(worldMapJSON)
-                }],
-                chart: {
-                    map: worldMapJSON,
-                    type: 'line'
-                },
-                title: {
-                    text: 'World Map'
-                }
-            },
-            events: {
-                mount: function () {
-                    // call action
-                    console.log('map mount event');
-                },
-                unmount: function () {
-                    console.log('map unmount event');
-                }
-            }
-        }],
-        editMode: {
-            enabled: false
-        },
-        gui: {
-            enabled: true,
-            layouts: [{
-                id: 'layout-1', // mandatory
-                rows: [{
-                    cells: [{
-                        id: 'time-range-selector',
-                        width: '100%'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'kpi-1',
-                        width: '20%'
-                    }, {
-                        id: 'kpi-2',
-                        width: '20%'
-                    }, {
-                        id: 'kpi-3',
-                        width: '20%'
-                    }, {
-                        id: 'selection-grid',
-                        width: '40%'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'kpi-chart',
-                        width: '100%'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'world-map',
-                        width: '100%'
-                    }]
-                }]
-            }]
-        }
-    });
-    console.log(dashboard);
-}
+function buildDates() {
+    const dates = [];
 
-function loadStoreAsync(store) {
-    return new Promise((resolve, reject) => {
-        const offs = [
-            store.on('loadError', (e) => {
-                for (const off of offs) {
-                    off();
-                }
-                reject(e)
-            }),
-            store.on('afterLoad', (e) => {
-                for (const off of offs) {
-                    off();
-                }
-                resolve(store);
-            })
-        ];
-        store.load();
-    });
-}
-
-async function main() {
-    storePool.Sources = await loadStoreAsync(
-        new Dashboard.GoogleSheetsStore(
-            undefined,
-            {
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                googleSpreadsheetKey: '1U0Jfb9AR4vMKGZEorJD5Ns7W8W8GwVLGr9oMUFpbp8k'
-            }
-        )
-    );
-
-    for (const row of storePool.climateSources.table.getRowObjects()) {
-        storePool[row['Store Name']] = await loadStoreAsync(
-            new Dashboard.GoogleSheetsStore(
-                undefined,
-                {
-                    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                    googleSpreadsheetKey: row['Store Link'].match(/[\w-]{44}/gu)[0]
-                }
-            )
-        );
+    for (let date = new Date(Date.UTC(2010, 0, 5)),
+            dateEnd = new Date(Date.UTC(2010, 11, 25));
+        date <= dateEnd;
+        date = date.getUTCDate() >= 25 ?
+            new Date(Date.UTC(2010, date.getUTCMonth() + 1, 5)) :
+            new Date(Date.UTC(2010, date.getUTCMonth(), date.getUTCDate() + 10))
+    ) {
+        dates.push([date.getTime(), 0]);
     }
 
-    console.log(storePool);
+    return dates;
 }
 
-main().catch((e) => {
-    console.error(e);
-    window.alert(JSON.stringify(e));
-});
+function buildDateTicks() {
+    const dates = [];
+
+    for (let date = new Date(Date.UTC(2010, 0, 15)),
+            dateEnd = new Date(Date.UTC(2010, 11, 15));
+        date <= dateEnd;
+        date = new Date(Date.UTC(2010, date.getUTCMonth() + 1, 15))
+    ) {
+        dates.push(date.getTime());
+    }
+
+    return dates;
+}
+
+function temperatureFormatter() {
+    const point = this;
+
+    return [
+        Highcharts.correctFloat(point.z, 4) + '˚K',
+        Highcharts.correctFloat(
+            (point.z - 273.15), 3
+        ) + '˚C',
+        Highcharts.correctFloat(
+            (point.z * 1.8 - 459.67), 3
+        ) + '˚F'
+    ].join('<br />');
+}
+
+/**
+ * @deprecated
+ * @todo remove
+ */
+function placeholder() {
+    return [
+        'data:image/png;base64,',
+        'iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX///93dY2j7Llkm',
+        'p+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9P',
+        'j3/fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89L',
+        'k+et/g988Unc1SHBAWXuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfOb',
+        'ucSLj+puk7hzj8fv7/xqlbCjp+61uPHH19/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e',
+        '6+Uvqx/hpab0LJ8f8Z5eaNmeqJejZpeYoFOcIpZgZRUeJNRWn2vysyd17WJoaGCjpqgnr',
+        'S1tceFr7ONjKXOztuVwq6wsMM1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djFyEJIw4',
+        'oigZxCVFURInGJSiuaEy+/7dIVVd1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAA',
+        'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P',
+        '8NEOZwJ7waX636KSXJvJly+cKnBPl0JO52LF7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6',
+        'ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqDp3U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBM',
+        'pvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrgvRxje5S8ik9g0nx7M+1LhslDo',
+        'Nc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWbh+kI/fCXZIgN8uljVeGDW',
+        'KEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+zc785pA2dukT8lVm7',
+        'W2O1y7Mt5vHukjjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+dhQmPQ2Abmvi5t',
+        'coRA5qiRyxddN6vtXl1SF3tLEn3k8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF75giV3iZ9',
+        'SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW3kfTphjnEWOTQ0gbMqIgUXvUMi',
+        'H1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960j1HubeBVJVf',
+        'ArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCs',
+        'yrlQS6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRN',
+        'kokMU5WZ3kbOp4vl8tgI/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9m',
+        'tvcFIGvB06G2dm3b6JJ2lYNra+LFUb4xaKQi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+Olz',
+        'LdNPIpmWpTalMRFbm86197f+xZRNKpNgUHRsSolztCzqDf6ve33rNJGirpfF0sPjD0qLD',
+        'Qa3H6bJInTKSqkswf+MsOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTaFNu1+',
+        'LRmh866l0u+3UpFU/sBfZFMWFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cM',
+        'pOmqyajkokk8gf+/AOjLCoirtkVigz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+l',
+        'jRmZ6mMcLcA6M8KjhzOeNjmRF8qltZjP3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci',
+        '79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/e6ZSnYmluFtBekq0ZsF3LHBcfa3MquiphB',
+        'Ys8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSHI2rRaVHB6W/w2ND/X0EkKQcamFaNCK',
+        'Lx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU9OacbytTN4PspzZKSSFY1BVWio',
+        'q5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctTYPtjERaSSHQ7+DiqJjrnf5',
+        'Qf3vDsCm1pJAoB0bhYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4ZeUkiUqMgZIQ8/25K8',
+        'rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtORXd9p1p4x36knhUQeGJZviJbtoqGuGjJfnyzEB',
+        '4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91lPs2fedlFZSD9dUE0KAW9u3c',
+        '/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy7jPf3W9n',
+        'bKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5',
+        'pDgbN4PzsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+        'AAAAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
+    ].join('');
+}
