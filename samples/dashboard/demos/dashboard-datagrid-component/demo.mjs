@@ -65,5 +65,6 @@ const dashboard = new Dashboard.Dashboard('container', {
             store,
             editable: true,
             syncEvents: ['tooltip']
-        }]
+        }
+    ]
 });
