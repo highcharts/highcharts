@@ -1,13 +1,22 @@
 
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 
-<div id="outer-container">
+<figure class="highcharts-figure">
     <div id="container"></div>
 
-    <input id="date-range" type="range">
-    <button id="play-pause"></button>
-    <span id="report-time"></span>
-</div>
+    <div id="controls">
+        <input id="date-range" type="range">
+        <button id="play-pause">▶︎</button>
+        <span id="report-time"></span>
+    </div>
+
+    <p class="highcharts-description">
+        This is an advanced demo showing how to use an dynamic mapbubble series
+        on top of a map, with extended graphic effects to highlight changes in
+        the data.
+    </p>
+</figure>
+
 
 <!-- Data from https://frost.met.no/api.html#!/lightning/getLightning -->
 <pre id="data">0 2022 07 03 23 59 58 511459840 57.8617 11.0360 -11 0 10 15 35.55 0.40 0.40 3.56 8.1 21.9 -4.3 0 1 0 1

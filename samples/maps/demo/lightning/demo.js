@@ -1,6 +1,8 @@
+// Start at this time
 let currentTime = Date.UTC(2022, 6, 3, 20);
 
-const getColorValue = (now, datetime) => {
+// Get the data class of a lightning strike based on the time ago
+const getDataClass = (now, datetime) => {
     if (now - datetime > 20 * 60000) {
         return 3;
     }
@@ -13,6 +15,7 @@ const getColorValue = (now, datetime) => {
     return 0;
 };
 
+// Parse the data which comes in the ualf format, a subset of CSV
 const parseData = () => {
     const ualf = document.getElementById('data').innerText,
         lines = ualf.split('\n');
@@ -48,11 +51,12 @@ const parseData = () => {
 
 const ualf = parseData();
 
+// Get the data for the initial time
 const getInitialData = time => ualf.slice(
     ualf.findIndex(p => p.datetime > time - 30 * 60000),
     ualf.findLastIndex(p => p.datetime <= time)
 ).map(p => {
-    p.colorValue = getColorValue(time, p.datetime);
+    p.colorValue = getDataClass(time, p.datetime);
     return p;
 });
 
@@ -65,10 +69,12 @@ const displayTime = time => {
 
 (async () => {
 
+    // Load the map
     const topology = await fetch(
         'https://code.highcharts.com/mapdata/custom/europe.topo.json'
     ).then(response => response.json());
 
+    // Create the chart
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: topology,
@@ -174,6 +180,7 @@ const displayTime = time => {
     });
     displayTime(currentTime);
 
+    // Update the colors of the data points
     const updateColors = time => {
         let redraw = false;
         // Modify older points
@@ -182,7 +189,7 @@ const displayTime = time => {
             if (time - p.options.datetime > 30 * 60000) {
                 p.remove();
             } else  {
-                colorValue = getColorValue(time, p.options.datetime);
+                colorValue = getDataClass(time, p.options.datetime);
             }
 
             if (colorValue && colorValue !== p.options.colorValue) {
@@ -193,6 +200,8 @@ const displayTime = time => {
         return redraw;
     };
 
+    // For the strongest lightning strikes, light up the chart with a temporary
+    // flash
     const flash = point => {
         const pos = chart.mapView.lonLatToPixels(point);
 
@@ -222,6 +231,7 @@ const displayTime = time => {
         chart.redraw();
     }
 
+    // The remainder of the data after currentTime
     let data = ualf.slice(ualf.findIndex(p => p.datetime > currentTime));
 
     const endTime = data.at(-1).datetime,
@@ -235,13 +245,21 @@ const displayTime = time => {
         document.getElementById('play-pause').textContent = '▶︎';
     };
 
+    // Add the lightning strikes for the last n minutes
     const addPoints = time => {
+
+        const rangeInput = document.getElementById('date-range');
+
+        // Internal Highcharts CI sample verification
+        if (!rangeInput) {
+            return;
+        }
 
         currentTime = time;
         let redraw = false;
 
         displayTime(time);
-        document.getElementById('date-range').value = time;
+        rangeInput.value = time;
 
         if (updateColors(time)) {
             redraw = true;
@@ -278,7 +296,7 @@ const displayTime = time => {
     const play = () => {
         document.getElementById('play-pause').textContent = '▮▮';
         data = ualf.slice(ualf.findIndex(p => p.datetime > currentTime));
-        addPoints(currentTime);
+        timer = setTimeout(() => addPoints(currentTime + step), 25);
     };
 
     const setUpInputs = () => {
@@ -309,6 +327,8 @@ const displayTime = time => {
     };
     setUpInputs();
 
-    play();
+    if (!window.karma) { // CI tests
+        play();
+    }
 
 })();
