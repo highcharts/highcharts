@@ -2764,9 +2764,6 @@ class Series {
                                 ),
                                 chart.inverted ? {
                                     rotation: 90,
-                                    rotationOriginX: (markerAttribs.x || 0) +
-                                        (markerAttribs.width &&
-                                            markerAttribs.width / 2 || 0),
                                     rotationOriginY: (markerAttribs.y || 0) +
                                         (markerAttribs.height &&
                                             markerAttribs.height / 2 || 0)
