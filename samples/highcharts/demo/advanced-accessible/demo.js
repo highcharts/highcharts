@@ -66,7 +66,8 @@ var chart = Highcharts.chart('container', {
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>'
+            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>',
+        align: 'left'
     },
     accessibility: {
         point: {

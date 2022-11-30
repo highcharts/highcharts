@@ -77,7 +77,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.yr.no/nb/historikk/graf/1-113585/Norge/Viken/Nesbyen/Nesbyen?q=2022-07"' +
-            'target="_blank">YR</a>'
+            'target="_blank">YR</a>',
+        align: 'left'
     },
 
     xAxis: {

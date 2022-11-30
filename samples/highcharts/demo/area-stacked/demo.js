@@ -9,7 +9,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.ssb.no/en/statbank/table/09288/"' +
-            'target="_blank">SSB</a>'
+            'target="_blank">SSB</a>',
+        align: 'left'
     },
     yAxis: {
         title: {

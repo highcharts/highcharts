@@ -6,7 +6,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>'
+        text: 'Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>',
+        align: 'left'
     },
 
     yAxis: {
