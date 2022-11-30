@@ -510,7 +510,7 @@ export default Funnel3DSeries;
  *         Funnel3d demo
  *
  * @since     7.1.0
- * @extends   series.funnel,plotOptions.funnel3d
+ * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
  * @requires  highcharts-3d

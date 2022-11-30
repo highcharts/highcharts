@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
-    "testall": "npx gulp test --browsers all --force --speak",
+    "test-all": "npx gulp test --browsers all --force --speak",
+    "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
