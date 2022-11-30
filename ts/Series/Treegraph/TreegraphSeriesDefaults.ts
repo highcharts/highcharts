@@ -217,6 +217,7 @@ const TreegraphSeriesDefaults = {
      * @declare Highcharts.SeriesTreegraphDataLabelsOptionsObject
      */
     dataLabels: {
+        defer: true,
         /**
          * Options for a _link_ label text which should follow link
          * connection. Border and background are disabled for a label

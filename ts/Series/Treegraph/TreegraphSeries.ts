@@ -457,9 +457,7 @@ class TreegraphSeries extends TreemapSeries {
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
 
-            if (!isArray(this.options.dataLabels)) {
-                this.options.dataLabels = [this.options.dataLabels];
-            }
+            this.options.dataLabels = splat(this.options.dataLabels);
 
             // Render node labels.
             this.drawNodeLabels(this.points);
