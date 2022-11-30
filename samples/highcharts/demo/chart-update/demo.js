@@ -6,7 +6,8 @@ const chart = Highcharts.chart('container', {
     subtitle: {
         text: 'Chart option: Plain | Source: ' +
             '<a href="https://www.nav.no/no/nav-og-samfunn/statistikk/arbeidssokere-og-stillinger-statistikk/helt-ledige"' +
-            'target="_blank">NAV</a>'
+            'target="_blank">NAV</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

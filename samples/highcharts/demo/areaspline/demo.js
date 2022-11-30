@@ -8,8 +8,8 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        align: 'center',
-        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
+        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>',
+        align: 'left'
     },
     legend: {
         layout: 'vertical',

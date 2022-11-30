@@ -9,7 +9,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a ' +
             'href="https://www.ssb.no/energi-og-industri/energi/statistikk/elektrisitet/artikler/lavere-kraftproduksjon"' +
-            ' target="_blank">SSB</a>'
+            ' target="_blank">SSB</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['Q1 2019', 'Q2 2019', 'Q3 2019', 'Q4 2019', 'Q1 2020', 'Q2 2020',
