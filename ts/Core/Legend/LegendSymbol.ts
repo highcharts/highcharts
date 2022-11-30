@@ -101,7 +101,8 @@ namespace LegendSymbol {
         let attr: SVGAttributes = {},
             legendSymbol,
             markerOptions = options.marker,
-            symbolOffset = 0;
+            symbolOffset = 0,
+            lineSizer;
 
         // Draw the line
         if (!this.chart.styledMode) {
@@ -115,10 +116,15 @@ namespace LegendSymbol {
             }
         }
 
+
+        lineSizer = attr['stroke-width'] ?
+            Math.min(attr['stroke-width'] / 2, symbolWidth / 2) :
+            0;
+
         legendItem.line = renderer
             .path([
-                ['M', 0, verticalCenter],
-                ['L', symbolWidth, verticalCenter]
+                ['M', lineSizer, verticalCenter],
+                ['L', symbolWidth - lineSizer, verticalCenter]
             ])
             .addClass('highcharts-graph')
             .attr(attr)
