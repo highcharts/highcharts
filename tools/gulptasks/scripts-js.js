@@ -49,7 +49,13 @@ function task() {
         processLib.isRunning('scripts-js', true);
 
         BuildScripts
+            // assemble JS files
             .fnFirstBuild()
+            // deleting invalid masters DTS
+            .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
+                path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
+            ))
+            // copy valid native DTS
             .then(() => fsLib.copyAllFiles(
                 'js/',
                 'code/es-modules/',
