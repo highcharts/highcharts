@@ -670,7 +670,7 @@ export default PictorialSeries;
  */
 
 /**
- * The color of the stackShadow  border.
+ * The color of the stackShadow border.
  *
  * @declare   Highcharts.XAxisOptions
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
