@@ -47,11 +47,11 @@ store.load();
     components: [
         {
         store,
-        syncEvents: [
-            'visibility',
-            'selection',
-            'tooltip'
-        ],
+        sync: {
+            visibility: true,
+            selection: true,
+            tooltip : true
+        },
         cell: 'dashboard-col-0',
         isResizable: true,
         type: 'Highcharts',
@@ -80,11 +80,11 @@ store.load();
     }, {
         cell: 'dashboard-col-1',
         store,
-        syncEvents: [
-            'visibility',
-            'tooltip',
-            'selection'
-        ],
+        sync: {
+            visibility: true,
+            selection: true,
+            tooltip : true
+        },
         type: 'Highcharts',
         tableAxisMap: {
             Food: 'x',
@@ -102,11 +102,11 @@ store.load();
     }, {
         cell: 'dashboard-col-2',
         type: 'html',
-        syncEvents: [
-            'visibility',
-            'selection',
-            'tooltip'
-        ],
+        sync: {
+            visibility: true,
+            selection: true,
+            tooltip : true
+        },
         elements: [{
             tagName: 'div',
             id: 'datagrid'

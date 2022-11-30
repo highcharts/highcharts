@@ -76,9 +76,9 @@ components.push(new HighchartsComponent({
     'hc-key': null,
     Country: 'x'
   },
-  syncEvents: [
-    'visibility'
-  ],
+  sync: {
+    visibility: true
+  },
   style,
   chartOptions: {
     title: null,
@@ -112,9 +112,9 @@ components.map(comp => {
       'hc-key': 'x',
       Country: null
     },
-    syncEvents: [
-      'visibility'
-    ],
+    sync: {
+      visibility: true
+    },
     chartOptions: {
       title: null,
       tooltip: {

@@ -9,12 +9,18 @@ Sync works by [groups](#groups), which are set up by default for components shar
         isResizable: true,
         type: 'Highcharts',
         store,
-        syncEvents: ['visibility', 'tooltip']
+        sync: {
+          visibility: true, 
+          tooltip: true
+        }
     }, {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
         store,
-        syncEvents: ['visibility', 'tooltip']
+        sync: {
+          visibility: true, 
+          tooltip: true
+        }
     }]
 ```
 
@@ -107,7 +113,7 @@ Sync works by [groups](#groups), which are set up by default for components shar
     ]
     ...
 
-    syncHandlers: {
+    sync: {
         selection: {
             handler: altSyncHandler,
             emitter: altSyncEmitter

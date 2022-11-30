@@ -480,7 +480,9 @@ const components = state => [
                 type: 'datetime'
             }
         },
-        syncEvents: ['selection'],
+        syncEvents: {
+            selection: true
+        },
         events: {
             afterPresentationModifier: function () {
                 if (this.store && this.options.showByDefault === false) {
@@ -523,8 +525,7 @@ const components = state => [
                 }
             }
         },
-        syncEvents: ['selection'],
-        syncHandlers: {
+        sync: {
             selection: {
                 handler: altSyncHandler
             }
@@ -565,8 +566,7 @@ const components = state => [
                 }
             }
         },
-        syncEvents: ['selection'],
-        syncHandlers: {
+        sync: {
             selection: {
                 handler: altSyncHandler
             }
