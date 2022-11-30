@@ -3,16 +3,25 @@ QUnit.test('MapBubble', function (assert) {
         chart: {
             map: 'countries/gb/gb-all'
         },
+        colorAxis: {
+            dataClasses: [{
+                from: 0,
+                to: 0,
+                color: 'green'
+            }]
+        },
         series: [{
 
         }, {
             type: 'mapbubble',
             lineWidth: 2,
+            colorKey: 'colorValue',
             data: [
                 {
                     lat: 51.507222,
                     lon: -0.1275,
-                    z: 3
+                    z: 3,
+                    colorValue: 0
                 },
                 {
                     lat: 52.483056,
@@ -32,6 +41,12 @@ QUnit.test('MapBubble', function (assert) {
             ]
         }]
     });
+
+    assert.strictEqual(
+        chart.series[1].points[0].color,
+        'green',
+        'Color axis with colorKey should work'
+    );
 
     // Passing the default joinBy value for MapBubbleSeries (#16750).
     assert.strictEqual(

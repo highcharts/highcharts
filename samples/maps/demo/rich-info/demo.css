@@ -22,12 +22,12 @@
     width: 270px;
     padding-left: 20px;
     margin: 100px 0 0;
-    border-left: 1px solid silver;
 }
 
 #info h2 {
     display: inline;
     font-size: 13pt;
+    text-transform: none;
 }
 
 #info .f32 .flag {
@@ -36,9 +36,11 @@
 
 #info h4 {
     margin: 1em 0 0;
+    font-size: 12pt;
+    text-transform: none;
 }
 
-@media screen and (max-width: 920px) {
+@media screen and (max-width: 1000px) {
     #wrapper,
     #container,
     #info {

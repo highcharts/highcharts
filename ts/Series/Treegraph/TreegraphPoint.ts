@@ -200,9 +200,7 @@ class TreegraphPoint extends TreemapPoint {
         };
     }
 
-    public setState(): void {
-        Point.prototype.setState.apply(this, arguments);
-    }
+    public setState = Point.prototype.setState;
 }
 
 addEvent(TreegraphPoint, 'mouseOut', function (): void {
