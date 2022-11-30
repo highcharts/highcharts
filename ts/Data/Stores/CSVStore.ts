@@ -49,7 +49,7 @@ const {
  *
  * @private
  */
-class CSVStore extends DataStore<CSVStore.Event> {
+class CSVStore extends DataStore {
 
     /* *
      *
@@ -113,10 +113,10 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * Options related to the handling of the CSV datastore,
@@ -166,7 +166,7 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataStore#load
@@ -175,7 +175,7 @@ class CSVStore extends DataStore<CSVStore.Event> {
      */
     private fetchCSV(
         initialFetch?: boolean,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const store = this,
             maxRetries = 3,
@@ -232,13 +232,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
     /**
      * Initiates the loading of the CSV source to the store
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVParser#load
      * @emits CSVParser#afterLoad
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEventEmitter.Detail): void {
         const store = this,
             parser = store.parser,
             table = store.table,
@@ -397,6 +397,20 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface CSVStore {
+    emit(e: CSVStore.Event): void;
+    on<TEvent extends CSVStore.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
+    ): Function;
+}
+
 /**
  *
  *  Namespace
@@ -411,12 +425,12 @@ namespace CSVStore {
     /**
      * Event objects fired from CSVDataStore events
      */
-    export type Event = (ErrorEvent | LoadEvent);
+    export type Event = (ErrorEvent|LoadEvent);
 
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>;
+    export type OptionsType = Partial<(CSVStore.Options&CSVParser.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?
@@ -430,7 +444,7 @@ namespace CSVStore {
      */
     export interface ErrorEvent extends DataStore.Event {
         type: ('loadError');
-        error: (string | Error);
+        error: (string|Error);
         xhr?: XMLHttpRequest;
     }
 
@@ -438,7 +452,7 @@ namespace CSVStore {
      * The event object that is provided on load events within CSVDataStore
      */
     export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
+        type: ('load'|'afterLoad');
         csv?: string;
     }
 

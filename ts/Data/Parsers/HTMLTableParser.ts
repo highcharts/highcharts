@@ -41,7 +41,7 @@ const { merge } = U;
  *
  * @private
  */
-class HTMLTableParser extends DataParser<DataParser.Event> {
+class HTMLTableParser extends DataParser {
 
     /* *
      *
@@ -121,7 +121,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -130,7 +130,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      */
     public parse(
         options: HTMLTableParser.OptionsType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const parser = this,
             converter = this.converter,
@@ -147,7 +147,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit<DataParser.Event>({
+            parser.emit({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -159,7 +159,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
 
-        this.emit<DataParser.Event>({
+        this.emit({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -250,7 +250,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit<DataParser.Event>({
+        this.emit({
             type: 'afterParse',
             columns,
             detail: eventDetail,

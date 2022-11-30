@@ -49,7 +49,7 @@ const {
  *
  * */
 
-class DataGrid implements DataEventEmitter<DataGrid.Event> {
+class DataGrid implements DataEventEmitter {
 
     /* *
      *
@@ -236,9 +236,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on(
-        type: DataGrid.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataGrid.Event>
+    public on<TEvent extends DataGrid.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }

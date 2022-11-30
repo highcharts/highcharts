@@ -44,7 +44,7 @@ const {
  *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataParser implements DataEventEmitter {
 
     /* *
      *
@@ -123,7 +123,7 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
      * @param {DataParser.Event} [e]
      * Event object containing additional event data
      */
-    public emit<T extends DataEventEmitter.Event>(e: T): void {
+    public emit(e: DataParser.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -133,15 +133,15 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<TEvent extends DataEventEmitter.Event>(
+    public on<TEvent extends DataParser.Event>(
         type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
+        callback: DataEventEmitter.Callback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }

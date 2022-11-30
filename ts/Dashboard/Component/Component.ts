@@ -586,7 +586,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public on(
         type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject | Component.EventTypes>
+        callback: (
+            DataEventEmitter.Callback<this, (TEventObject|Component.EventTypes)>
+        )
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -727,7 +729,7 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: DataEventEmitter.EventDetail;
+            detail?: DataEventEmitter.Detail;
         } & EventRecord;
 
     export interface ComponentOptions extends EditableOptions {
@@ -756,7 +758,7 @@ namespace Component {
         id: string;
     }
 
-    export type StoreTypes = DataStore<DataStore.Event>;
+    export type StoreTypes = DataStore;
 
     export interface EditableOptions {
         store?: StoreTypes;

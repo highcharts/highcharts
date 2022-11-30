@@ -42,7 +42,7 @@ const {
  * table instance.
  */
 class SharedComponentState implements
-DataEventEmitter<SharedComponentState.Event>,
+DataEventEmitter,
 Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
@@ -148,7 +148,7 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -156,7 +156,7 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      */
     public on(
         type: SharedComponentState.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, SharedComponentState.Event>
+        callback: DataEventEmitter.Callback<this, SharedComponentState.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -167,12 +167,12 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      * @param {Array<string>} columnOrder
      * Array of column names in order.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public setColumnOrder(
         columnOrder: Array<string>,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const presentationState = this,
             oldColumnOrder = (presentationState.columnOrder || []).slice(),

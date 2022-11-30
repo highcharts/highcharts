@@ -28,7 +28,7 @@ import type JSON from '../Core/JSON';
 /**
  * Describes methods to attach callbacks to events of a class instance.
  */
-declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
+declare interface DataEventEmitter {
 
     /* *
      *
@@ -39,7 +39,7 @@ declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
     /**
      * Registered events managed by Highcharts utility functions.
      */
-    hcEvents?: DataEventEmitter.HCEventsCollection<TEvent>;
+    hcEvents?: DataEventEmitter.HCEventsCollection<DataEventEmitter.Event>;
 
     /* *
      *
@@ -54,7 +54,7 @@ declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
      * @param {DataEventEmitter.Event} e
      * Event object containing additonal event information.
      */
-    emit(e: TEvent): void;
+    emit(e: DataEventEmitter.Event): void;
 
     /**
      * Registers a callback for a specific event.
@@ -62,15 +62,15 @@ declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an event callback.
      *
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    on(
+    on<TEvent extends DataEventEmitter.Event>(
         type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
+        callback: DataEventEmitter.Callback<this, DataEventEmitter.Event>
     ): Function;
 
 }
@@ -91,7 +91,7 @@ declare namespace DataEventEmitter {
      * Describes the callbacks expected types. This generic interface can be
      * extended by implementing classes.
      */
-    export interface EventCallback<TScope, TEventObject extends Event> {
+    export interface Callback<TScope, TEventObject extends Event> {
         /**
          *
          * @param this
@@ -106,7 +106,7 @@ declare namespace DataEventEmitter {
     /**
      * Custom information for an event object.
      */
-    export type EventDetail = JSON.Object;
+    export type Detail = JSON.Object;
 
     /**
      * Event object with additional event information. This interface can be
@@ -117,23 +117,27 @@ declare namespace DataEventEmitter {
         /**
          * Additional meta information regarding the event.
          */
-        readonly detail?: EventDetail;
+        readonly detail?: Detail;
 
         /**
          * Event type as a string.
          */
-        readonly type: ('test'|string);
+        readonly type: string;
+
     }
 
+    /** @internal */
     export interface HCEventObject<TEventObject extends Event> {
-        fn: DataEventEmitter.EventCallback<unknown, TEventObject>;
+        fn: DataEventEmitter.Callback<unknown, TEventObject>;
         order?: number;
     }
 
+    /** @internal */
     export type HCEvents<TEventObject extends Event> = (
         Array<HCEventObject<TEventObject>>
     );
 
+    /** @internal */
     export type HCEventsCollection<TEventObject extends Event> = (
         Record<TEventObject['type'], HCEvents<TEventObject>>
     );

@@ -51,7 +51,7 @@ const {
  * @param {string} [id]
  * DataTable identifier.
  */
-class DataTable implements DataEventEmitter<DataTable.Event> {
+class DataTable implements DataEventEmitter {
 
     /* *
      *
@@ -239,7 +239,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      */
     public clone(
         skipColumns?: boolean,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): DataTable {
         const table = this,
             aliasMap = table.aliasMap,
@@ -328,7 +328,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      */
     public deleteColumns(
         columnNames?: Array<string>,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): (DataTable.ColumnCollection|undefined) {
         const table = this,
             columns = table.columns,
@@ -406,7 +406,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
     public deleteRows(
         rowIndex?: number,
         rowCount: number = 1,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): Array<DataTable.Row> {
         const table = this,
             deletedRows: Array<DataTable.Row> = [],
@@ -1158,9 +1158,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on(
-        type: DataTable.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTable.Event>
+    public on<TEvent extends DataTable.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -1230,7 +1230,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columnNameOrAlias: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const table = this,
             columns = table.columns,
@@ -1302,7 +1302,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columnNameOrAlias: string,
         column: DataTable.Column = [],
         rowIndex: number = 0,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
     }
@@ -1356,7 +1356,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
     public setColumns(
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const table = this,
             tableColumns = table.columns,
@@ -1448,7 +1448,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
      */
     public setModifier(
         modifier?: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): DataPromise<this> {
         const table = this;
 
@@ -1518,7 +1518,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
     public setRow(
         row: (DataTable.Row|DataTable.RowObject),
         rowIndex?: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         this.setRows([row], rowIndex, eventDetail);
     }
@@ -1545,7 +1545,7 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const table = this,
             aliasMap = table.aliasMap,
@@ -1618,16 +1618,6 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         });
     }
 
-}
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface DataTable extends DataEventEmitter<DataTable.Event> {
-    // nothing here yet
 }
 
 /* *

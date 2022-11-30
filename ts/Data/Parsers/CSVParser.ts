@@ -37,7 +37,7 @@ const { merge } = U;
  *
  * @private
  */
-class CSVParser extends DataParser<DataParser.Event> {
+class CSVParser extends DataParser {
 
     /* *
      *
@@ -98,7 +98,7 @@ class CSVParser extends DataParser<DataParser.Event> {
      * @param {CSVParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -106,7 +106,7 @@ class CSVParser extends DataParser<DataParser.Event> {
      */
     public parse(
         options: CSVParser.OptionsType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const parser = this,
             dataTypes = parser.dataTypes,
@@ -130,7 +130,7 @@ class CSVParser extends DataParser<DataParser.Event> {
 
         parser.columns = [];
 
-        parser.emit<DataParser.Event>({
+        parser.emit({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -143,8 +143,8 @@ class CSVParser extends DataParser<DataParser.Event> {
 
         if (csv) {
             lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
+                .replace(/\r\n/gu, '\n') // Unix
+                .replace(/\r/gu, '\n') // Mac
                 .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
@@ -167,7 +167,7 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                    headers[i] = headers[i].replace(/^["']|["']$/gu, '');
                 }
 
                 parser.headers = headers;
@@ -213,7 +213,7 @@ class CSVParser extends DataParser<DataParser.Event> {
             }
         }
 
-        parser.emit<DataParser.Event>({
+        parser.emit({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,

@@ -46,7 +46,7 @@ const {
  *
  * @private
  */
-abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataStore implements DataEventEmitter {
 
     /* *
      *
@@ -186,7 +186,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * The DataParser responsible for handling converting the provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser<DataParser.Event>;
+    public abstract readonly parser: DataParser;
 
     /**
      * Metadata to describe the store and the content of columns.
@@ -246,7 +246,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {DataStore.Event} [e]
      * Event object containing additional event information.
      */
-    public emit(e: TEventObject): void {
+    public emit(e: DataStore.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -329,15 +329,15 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for the store callback.
      *
      * @return {Function}
      * Function to unregister callback from the store event.
      */
-    public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+    public on<TEvent extends DataStore.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, DataStore.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -380,19 +380,19 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
 namespace DataStore {
 
     /**
-     * The default event object for a datastore
-     */
-    export interface Event extends DataEventEmitter.Event {
-        readonly table: DataTable;
-    }
-
-    /**
      * Object with columns for object.
      */
     export interface ColumnsForExportObject {
         columnNames: Array<string>;
         columnValues: Array<DataTable.Column>;
         columnHeaderFormatter?: Function;
+    }
+
+    /**
+     * The default event object for a datastore
+     */
+    export interface Event extends DataEventEmitter.Event {
+        readonly table: DataTable;
     }
 
     /**

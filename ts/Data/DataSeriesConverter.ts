@@ -181,12 +181,12 @@ class DataSeriesConverter {
      * @param {Array<LineSeries>} allSeries
      * Array of series options to store in the converter.
      *
-     * @param {DataEventEmitter.EventDetail} eventDetail
+     * @param {DataEventEmitter.Detail} eventDetail
      * Custom information for pending events.
      */
     updateTable(
         allSeries: Array<LineSeries>,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const table = this.table;
 

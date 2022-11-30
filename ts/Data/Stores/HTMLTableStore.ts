@@ -43,7 +43,7 @@ const {
  *
  * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
+class HTMLTableStore extends DataStore {
 
     /* *
      *
@@ -153,14 +153,14 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEventEmitter.Detail): void {
         const store = this;
 
         store.fetchTable();
@@ -454,7 +454,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
      * Options that override default or existing export options.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {string}
@@ -463,7 +463,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      */
     public save(
         htmlExportOptions: HTMLTableStore.ExportOptions,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
@@ -483,6 +483,19 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface HTMLTableStore {
+    emit(e: HTMLTableStore.Event): void;
+    on<TEvent extends HTMLTableStore.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
+    ): Function;
+}
 
 /**
  *
@@ -501,9 +514,12 @@ namespace HTMLTableStore {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Options used in the constructor of HTMLTableDataStore
+     * Provided event object on errors within HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
+    export interface ErrorEvent extends DataStore.Event {
+        type: 'loadError';
+        error: (string|Error);
+    }
 
     /**
      * Options for exporting the store as an HTML table
@@ -516,14 +532,6 @@ namespace HTMLTableStore {
         useMultiLevelHeaders?: boolean;
         useRowspanHeaders?: boolean;
         usePresentationOrder?: boolean;
-    }
-
-    /**
-     * Provided event object on errors within HTMLTableDataStore
-     */
-    export interface ErrorEvent extends DataStore.Event {
-        type: 'loadError';
-        error: (string|Error);
     }
 
     /**
@@ -540,6 +548,12 @@ namespace HTMLTableStore {
     export interface Options {
         table: (string|HTMLElement);
     }
+
+    /**
+     * Options used in the constructor of HTMLTableDataStore
+     */
+    export type OptionsType =
+        Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>;
 
 }
 

@@ -46,8 +46,7 @@ const {
  *
  * @private
  */
-abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<(TEvent|DataModifier.Event)> {
+abstract class DataModifier implements DataEventEmitter {
 
     /* *
      *
@@ -190,7 +189,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
-        const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
+        const modifier = this;
         const execute = (): void => {
             modifier.modifyTable(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
@@ -242,10 +241,10 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
     /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
-     * @param {DataEventEmitter.Event} [e]
+     * @param {DataModifier.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: (TEvent|DataModifier.Event)): void {
+    public emit(e: DataModifier.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -255,7 +254,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -263,7 +262,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      */
     public modify<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): DataPromise<T> {
         const modifier = this;
         return new DataPromise((resolve, reject): void => {
@@ -310,7 +309,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -338,7 +337,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -366,7 +365,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -378,7 +377,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
@@ -386,7 +385,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      */
     public abstract modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T;
 
     /**
@@ -395,15 +394,15 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on(
+    public on<TEvent extends DataModifier.Event>(
         type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
+        callback: DataEventEmitter.Callback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }

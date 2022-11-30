@@ -46,7 +46,7 @@ const {
  * @private
  * @todo implement save, requires oauth2
  */
-class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
+class GoogleSheetsStore extends DataStore {
 
     /* *
      *
@@ -121,10 +121,10 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEventEmitter.Detail): void {
         const store = this,
             {
                 dataRefreshRate,
@@ -190,6 +190,20 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         });
     }
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface GoogleSheetsStore {
+    emit(e: GoogleSheetsStore.Event): void;
+    on<TEvent extends GoogleSheetsStore.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
+    ): Function;
 }
 
 /* *

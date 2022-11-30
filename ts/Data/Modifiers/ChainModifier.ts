@@ -39,7 +39,7 @@ const {
  *
  * @private
  */
-class ChainModifier extends DataModifier<ChainModifier.Event> {
+class ChainModifier extends DataModifier {
 
     /* *
      *
@@ -109,12 +109,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public add(
         modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         this.emit({
             type: 'addModifier',
@@ -134,10 +134,10 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
+    public clear(eventDetail?: DataEventEmitter.Detail): void {
         this.emit({
             type: 'clearChain',
             detail: eventDetail
@@ -180,7 +180,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -233,7 +233,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -285,7 +285,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
@@ -320,7 +320,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -331,7 +331,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): T {
         const chain = this;
 
@@ -369,12 +369,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public remove(
         modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.Detail
     ): void {
         const modifiers = this.modifiers;
 
@@ -393,6 +393,20 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         });
     }
 
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface ChainModifier {
+    emit(e: ChainModifier.Event): void;
+    on<TEvent extends ChainModifier.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.Callback<this, TEvent>
+    ): Function;
 }
 
 /* *
