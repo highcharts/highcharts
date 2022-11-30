@@ -22,7 +22,7 @@ import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 
-import { CollapseButtonOptions } from './TreegraphSeriesOptions';
+import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
 import Point from '../../Core/Series/Point.js';

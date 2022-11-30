@@ -45,7 +45,8 @@ const {
     isArray,
     merge,
     pick,
-    relativeLength
+    relativeLength,
+    splat
 } = U;
 
 import TreegraphLink from './TreegraphLink.js';
@@ -429,7 +430,10 @@ class TreegraphSeries extends TreemapSeries {
             }
 
             // Set dataLabel width to the width of the point shape.
-            if (point.shapeArgs) {
+            if (
+                point.shapeArgs &&
+                !splat(series.options.dataLabels)[0].style.width
+            ) {
                 (options.style as any).width = point.shapeArgs.width;
                 if (point.dataLabel) {
                     point.dataLabel.css({

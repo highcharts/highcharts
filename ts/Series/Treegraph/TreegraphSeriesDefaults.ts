@@ -156,11 +156,11 @@ const TreegraphSeriesDefaults = {
         /**
          * Height of the button.
          */
-        height: 15,
+        height: 18,
         /**
          * Width of the button.
          */
-        width: 15,
+        width: 18,
         /**
          * The symbol of the collapse button.
          */
@@ -172,7 +172,9 @@ const TreegraphSeriesDefaults = {
          * `.highcharts-collapse-button` class.
          */
         style: {
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '16px'
         }
     },
     /**

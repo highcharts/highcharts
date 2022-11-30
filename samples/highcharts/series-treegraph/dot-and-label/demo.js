@@ -168,8 +168,11 @@ const data = [
 ];
 
 Highcharts.chart('container', {
+    chart: {
+        marginRight: 180
+    },
     title: {
-        text: 'Treegraph with color variation'
+        text: 'Treegraph with dots and labels design'
     },
     series: [
         {
@@ -179,12 +182,23 @@ Highcharts.chart('container', {
                 pointFormat: '{point.name}'
             },
             marker: {
-                symbol: 'rect',
-                width: '25%'
+                symbol: 'circle',
+                radius: 6,
+                fillColor: '#ffffff',
+                lineWidth: 3
             },
-            borderRadius: 10,
             dataLabels: {
-                pointFormat: '{point.name}'
+                align: 'left',
+                pointFormat: '{point.name}',
+                style: {
+                    color: '#000000',
+                    textOverflow: 'none',
+                    textOutline: '5px #ffffff',
+                    whiteSpace: 'nowrap'
+                },
+                x: 24,
+                crop: false,
+                overflow: 'none'
             },
             levels: [
                 {
