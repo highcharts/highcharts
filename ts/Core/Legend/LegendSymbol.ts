@@ -116,10 +116,11 @@ namespace LegendSymbol {
             }
         }
 
-
-        lineSizer = attr['stroke-width'] ?
-            Math.min(attr['stroke-width'] / 2, symbolWidth / 2) :
-            0;
+        lineSizer = (
+            attr['stroke-width'] && attr['stroke-width'] < symbolWidth ?
+                attr['stroke-width'] :
+                symbolWidth
+        ) / 2;
 
         legendItem.line = renderer
             .path([
