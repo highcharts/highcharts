@@ -109,46 +109,58 @@ class FlowMapSeries extends MapLineSeries {
         keys: ['from', 'to', 'weight'],
 
         /**
-         * The arrow type and size properties.
+         * A `markerEnd` creates an arrow symbol
+         * indicating the direction of flow at the destination. Specifying a
+         * `markerEnd` here will create one for each link.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          * @since   next
          */
         markerEnd: {
             /**
-             * Whether a flowmap point should end with a symbol or not.
+             * Enable the markerEnd.
              *
              * @since next
              * @type  {boolean}
              */
             enabled: true,
             /**
-             * Height of a flowmap point's symbol.
+             * Height of the markerEnd. Can be a number in pixels
+             * or a percentage based on the weight of the link.
              *
              * @since next
              * @type  {number|string}
              */
             height: '40%',
             /**
-             * Width of a flowmap point's symbol.
+             * Width of the markerEnd. Can be a number in pixels
+             * or a percentage based on the weight of the link.
              *
              * @since next
              * @type  {number|string}
              */
-            width: '40%'
+            width: '40%',
+            /**
+             * Change the shape of the `markerEnd`.
+             * Can be `arrow` or `mushroom`.
+             *
+             * @type      {string}
+             * @default arrow
+             */
+            markerType: 'arrow'
         },
 
         /**
-         * Maximum flow map links weight. It will automatically
-         * size between the minWeight and maxWeight.
+         * Maximum weight of a link. The weight of a link is mapped between
+         * `maxWeight` and `minWeight`.
          *
          * @since   next
          */
         maxWeight: 25,
 
         /**
-         * Minimum flow map links weight. It will automatically
-         * size between the minWeight and maxWeight.
+         * Minimum weight of a link. The weight of a link is mapped between
+         * `maxWeight` and `minWeight`.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          * @since   next
@@ -754,8 +766,10 @@ export default FlowMapSeries;
  */
 
 /**
- * The marker-end defines the arrowhead that will be drawn at the final vertex
- * of the given path.
+ * Specifying a `markerEnd` here will create an arrow symbol
+ * indicating the direction of flow at the destination of one individual link.
+ * If one has been previously speficied at the higher level option it will be
+ * overridden for the current link.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
  *         Example ship route
@@ -765,24 +779,33 @@ export default FlowMapSeries;
  */
 
 /**
- * Enable or disable the marker-end on the series.
+ * Enable the markerEnd.
  *
  * @type      {boolean}
  * @apioption series.flowmap.data.markerEnd.enabled
  */
 
 /**
- * The width of the marker-end symbol in pixels or percentage.
+ * Height of the markerEnd. Can be a number in pixels
+ * or a percentage based on the weight of the link.
  *
  * @type      {number|string}
  * @apioption series.flowmap.data.markerEnd.height
  */
 
 /**
- * The width of the marker-end symbol in pixels or percentage.
+ * Width of the markerEnd. Can be a number in pixels
+ * or a percentage based on the weight of the link.
  *
  * @type      {number|string}
  * @apioption series.flowmap.data.markerEnd.width
+ */
+
+/**
+ * Change the shape of the `markerEnd`. Can be `arrow` or `mushroom`.
+ *
+ * @type      {string}
+ * @apioption series.flowmap.data.markerEnd.markerType
  */
 
 /**
