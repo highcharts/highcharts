@@ -1,6 +1,13 @@
 // Bring in other forms of Highcharts
+import Dashboard from '../../../../code/es-modules/masters/dashboard.src.js';
+import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import DraggablePoints from 'masters/modules/draggable-points.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
+
+Highcharts.win.Highcharts = Highcharts;
+DraggablePoints(Highcharts);
 
 const { CSVStore, PluginHandler } = Dashboard;
 
