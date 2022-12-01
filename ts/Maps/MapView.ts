@@ -928,36 +928,16 @@ class MapView {
 
                 } else { // #17238
                     const scale = this.getScale(),
-                        flipFactor = this.projection.hasCoordinates ? 1 : -1,
-                        options = chart.userOptions;
+                        flipFactor = this.projection.hasCoordinates ? 1 : -1;
 
-                    let newCenter;
-
-                    if (options.chart && options.chart.panning &&
-                            options.chart.panning.type === 'x') {
-                        newCenter = this.projection.inverse([
-                            mouseDownCenterProjected[0] +
-                                (mouseDownX - chartX) / scale,
-                            mouseDownCenterProjected[1]
-                        ]);
-                    } else if (options.chart && options.chart.panning &&
-                                    options.chart.panning.type === 'y') {
-                        newCenter = this.projection.inverse([
-                            mouseDownCenterProjected[0],
-                            mouseDownCenterProjected[1] -
-                                (mouseDownY - chartY) / scale * flipFactor
-                        ]);
-                    } else {
-                        newCenter = this.projection.inverse([
-                            mouseDownCenterProjected[0] +
-                                (mouseDownX - chartX) / scale,
-                            mouseDownCenterProjected[1] -
-                                (mouseDownY - chartY) / scale * flipFactor
-                        ]);
-                    }
+                    const newCenter = this.projection.inverse([
+                        mouseDownCenterProjected[0] +
+                            (mouseDownX - chartX) / scale,
+                        mouseDownCenterProjected[1] -
+                            (mouseDownY - chartY) / scale * flipFactor
+                    ]);
 
                     this.setView(newCenter, void 0, true, false);
-
                 }
 
                 e.preventDefault();
