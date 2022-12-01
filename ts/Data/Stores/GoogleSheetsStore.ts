@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataStore from './DataStore.js';
@@ -121,10 +121,10 @@ class GoogleSheetsStore extends DataStore {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: DataEventEmitter.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): void {
         const store = this,
             {
                 dataRefreshRate,
@@ -143,7 +143,7 @@ class GoogleSheetsStore extends DataStore {
         // If already loaded, clear the current table
         store.table.deleteColumns();
 
-        store.emit({
+        store.emit<GoogleSheetsStore.Event>({
             type: 'load',
             detail: eventDetail,
             table: store.table,
@@ -168,7 +168,7 @@ class GoogleSheetsStore extends DataStore {
                     );
                 }
 
-                store.emit({
+                store.emit<GoogleSheetsStore.Event>({
                     type: 'afterLoad',
                     detail: eventDetail,
                     table: store.table,
@@ -179,7 +179,7 @@ class GoogleSheetsStore extends DataStore {
                 xhr: XMLHttpRequest,
                 error: (string|Error)
             ): void => {
-                store.emit({
+                store.emit<GoogleSheetsStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
@@ -190,20 +190,6 @@ class GoogleSheetsStore extends DataStore {
         });
     }
 
-}
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface GoogleSheetsStore {
-    emit(e: GoogleSheetsStore.Event): void;
-    on<TEvent extends GoogleSheetsStore.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, TEvent>
-    ): Function;
 }
 
 /* *

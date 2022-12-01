@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import CSVParser from '../Parsers/CSVParser.js';
@@ -166,7 +166,7 @@ class CSVStore extends DataStore {
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataStore#load
@@ -175,7 +175,7 @@ class CSVStore extends DataStore {
      */
     private fetchCSV(
         initialFetch?: boolean,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const store = this,
             maxRetries = 3,
@@ -189,7 +189,11 @@ class CSVStore extends DataStore {
             store.liveDataURL = csvURL;
         }
 
-        store.emit({ type: 'load', detail: eventDetail, table: store.table });
+        store.emit<CSVStore.Event>({
+            type: 'load',
+            detail: eventDetail,
+            table: store.table
+        });
 
         ajax({
             url: store.liveDataURL || '',
@@ -206,7 +210,7 @@ class CSVStore extends DataStore {
                     store.poll();
                 }
 
-                store.emit({
+                store.emit<CSVStore.Event>({
                     type: 'afterLoad',
                     csv,
                     detail: eventDetail,
@@ -218,7 +222,7 @@ class CSVStore extends DataStore {
                 if (++currentRetries < maxRetries) {
                     store.poll();
                 }
-                store.emit({
+                store.emit<CSVStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
@@ -232,13 +236,13 @@ class CSVStore extends DataStore {
     /**
      * Initiates the loading of the CSV source to the store
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVParser#load
      * @emits CSVParser#afterLoad
      */
-    public load(eventDetail?: DataEventEmitter.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): void {
         const store = this,
             parser = store.parser,
             table = store.table,
@@ -250,7 +254,7 @@ class CSVStore extends DataStore {
         if (csv) {
             // If already loaded, clear the current rows
             table.deleteRows();
-            store.emit({
+            store.emit<CSVStore.Event>({
                 type: 'load',
                 csv,
                 detail: eventDetail,
@@ -258,7 +262,7 @@ class CSVStore extends DataStore {
             });
             parser.parse({ csv });
             table.setColumns(parser.getTable().getColumns());
-            store.emit({
+            store.emit<CSVStore.Event>({
                 type: 'afterLoad',
                 csv,
                 detail: eventDetail,
@@ -267,14 +271,12 @@ class CSVStore extends DataStore {
         } else if (csvURL) {
             store.fetchCSV(true, eventDetail);
         } else {
-            store.emit(
-                {
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error: 'Unable to load: no CSV string or URL was provided',
-                    table
-                }
-            );
+            store.emit<CSVStore.Event>({
+                type: 'loadError',
+                detail: eventDetail,
+                error: 'Unable to load: no CSV string or URL was provided',
+                table
+            });
         }
     }
 
@@ -395,20 +397,6 @@ class CSVStore extends DataStore {
         return this.getCSVForExport(merge(exportOptions, csvExportOptions));
     }
 
-}
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface CSVStore {
-    emit(e: CSVStore.Event): void;
-    on<TEvent extends CSVStore.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, TEvent>
-    ): Function;
 }
 
 /**

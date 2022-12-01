@@ -20,7 +20,7 @@
  *
  * */
 
-import type DataEventEmitter from './DataEventEmitter';
+import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type JSON from '../Core/JSON';
 
@@ -51,7 +51,7 @@ const {
  * @param {string} [id]
  * DataTable identifier.
  */
-class DataTable implements DataEventEmitter {
+class DataTable implements DataEvent.Emitter {
 
     /* *
      *
@@ -239,7 +239,7 @@ class DataTable implements DataEventEmitter {
      */
     public clone(
         skipColumns?: boolean,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): DataTable {
         const table = this,
             aliasMap = table.aliasMap,
@@ -328,7 +328,7 @@ class DataTable implements DataEventEmitter {
      */
     public deleteColumns(
         columnNames?: Array<string>,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): (DataTable.ColumnCollection|undefined) {
         const table = this,
             columns = table.columns,
@@ -406,7 +406,7 @@ class DataTable implements DataEventEmitter {
     public deleteRows(
         rowIndex?: number,
         rowCount: number = 1,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): Array<DataTable.Row> {
         const table = this,
             deletedRows: Array<DataTable.Row> = [],
@@ -481,7 +481,7 @@ class DataTable implements DataEventEmitter {
      * @param {DataTable.Event} e
      * Event object with event information.
      */
-    public emit(e: DataTable.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         const frame = this;
 
         switch (e.type) {
@@ -1158,9 +1158,9 @@ class DataTable implements DataEventEmitter {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on<TEvent extends DataTable.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, TEvent>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -1230,7 +1230,7 @@ class DataTable implements DataEventEmitter {
         columnNameOrAlias: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
             columns = table.columns,
@@ -1302,7 +1302,7 @@ class DataTable implements DataEventEmitter {
         columnNameOrAlias: string,
         column: DataTable.Column = [],
         rowIndex: number = 0,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
     }
@@ -1356,7 +1356,7 @@ class DataTable implements DataEventEmitter {
     public setColumns(
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
             tableColumns = table.columns,
@@ -1448,7 +1448,7 @@ class DataTable implements DataEventEmitter {
      */
     public setModifier(
         modifier?: DataModifier,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): DataPromise<this> {
         const table = this;
 
@@ -1518,7 +1518,7 @@ class DataTable implements DataEventEmitter {
     public setRow(
         row: (DataTable.Row|DataTable.RowObject),
         rowIndex?: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         this.setRows([row], rowIndex, eventDetail);
     }
@@ -1545,7 +1545,7 @@ class DataTable implements DataEventEmitter {
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
             aliasMap = table.aliasMap,
@@ -1634,7 +1634,7 @@ namespace DataTable {
     /**
      * Event object for cell-related events.
      */
-    export interface CellEvent extends DataEventEmitter.Event {
+    export interface CellEvent extends DataEvent {
         readonly type: (
             'setCell'|'afterSetCell'
         );
@@ -1651,7 +1651,7 @@ namespace DataTable {
     /**
      * Event object for clone-related events.
      */
-    export interface CloneEvent extends DataEventEmitter.Event {
+    export interface CloneEvent extends DataEvent {
         readonly type: (
             'cloneTable'|'afterCloneTable'
         );
@@ -1676,7 +1676,7 @@ namespace DataTable {
     /**
      * Event object for column-related events.
      */
-    export interface ColumnEvent extends DataEventEmitter.Event {
+    export interface ColumnEvent extends DataEvent {
         readonly type: (
             'deleteColumns'|'afterDeleteColumns'|
             'setColumns'|'afterSetColumns'
@@ -1700,8 +1700,10 @@ namespace DataTable {
     /**
      * Event object for modifier-related events.
      */
-    export interface ModifierEvent extends DataEventEmitter.Event {
-        readonly type: ('setModifier'|'afterSetModifier');
+    export interface ModifierEvent extends DataEvent {
+        readonly type: (
+            'setModifier'|'afterSetModifier'
+        );
         readonly modifier: (DataModifier|undefined);
     }
 
@@ -1716,7 +1718,7 @@ namespace DataTable {
     /**
      * Event object for row-related events.
      */
-    export interface RowEvent extends DataEventEmitter.Event {
+    export interface RowEvent extends DataEvent {
         readonly type: (
             'deleteRows'|'afterDeleteRows'|
             'setRows'|'afterSetRows'
@@ -1736,7 +1738,7 @@ namespace DataTable {
     /**
     * Event object for the setModifier events.
     */
-    export interface SetModifierEvent extends DataEventEmitter.Event {
+    export interface SetModifierEvent extends DataEvent {
         readonly type: (
             'setModifier'|'afterSetModifier'|
             'setModifierError'

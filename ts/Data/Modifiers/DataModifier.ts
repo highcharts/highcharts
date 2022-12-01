@@ -20,7 +20,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
 import type JSON from '../../Core/JSON';
 import type ModifierType from './ModifierType';
@@ -46,7 +46,7 @@ const {
  *
  * @private
  */
-abstract class DataModifier implements DataEventEmitter {
+abstract class DataModifier implements DataEvent.Emitter {
 
     /* *
      *
@@ -192,7 +192,9 @@ abstract class DataModifier implements DataEventEmitter {
         const modifier = this;
         const execute = (): void => {
             modifier.modifyTable(dataTable);
-            modifier.emit({ type: 'afterBenchmarkIteration' });
+            modifier.emit<DataModifier.Event>({
+                type: 'afterBenchmarkIteration'
+            });
         };
 
         const defaultOptions = {
@@ -206,7 +208,10 @@ abstract class DataModifier implements DataEventEmitter {
 
         modifier.on('afterBenchmarkIteration', (): void => {
             if (results.length === iterations) {
-                modifier.emit({ type: 'afterBenchmark', results });
+                modifier.emit<DataModifier.Event>({
+                    type: 'afterBenchmark',
+                    results
+                });
                 return;
             }
 
@@ -214,10 +219,7 @@ abstract class DataModifier implements DataEventEmitter {
             execute();
         });
 
-        const times: {
-            startTime: number;
-            endTime: number;
-        } = {
+        const times = {
             startTime: 0,
             endTime: 0
         };
@@ -244,7 +246,7 @@ abstract class DataModifier implements DataEventEmitter {
      * @param {DataModifier.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: DataModifier.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
@@ -254,7 +256,7 @@ abstract class DataModifier implements DataEventEmitter {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -262,7 +264,7 @@ abstract class DataModifier implements DataEventEmitter {
      */
     public modify<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): DataPromise<T> {
         const modifier = this;
         return new DataPromise((resolve, reject): void => {
@@ -272,7 +274,7 @@ abstract class DataModifier implements DataEventEmitter {
             try {
                 resolve(modifier.modifyTable(table, eventDetail));
             } catch (e) {
-                modifier.emit({
+                modifier.emit<DataModifier.Event>({
                     type: 'error',
                     detail: eventDetail,
                     table
@@ -309,7 +311,7 @@ abstract class DataModifier implements DataEventEmitter {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -337,7 +339,7 @@ abstract class DataModifier implements DataEventEmitter {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -365,7 +367,7 @@ abstract class DataModifier implements DataEventEmitter {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         return this.modifyTable(table);
     }
@@ -377,7 +379,7 @@ abstract class DataModifier implements DataEventEmitter {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
@@ -385,7 +387,7 @@ abstract class DataModifier implements DataEventEmitter {
      */
     public abstract modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T;
 
     /**
@@ -400,9 +402,9 @@ abstract class DataModifier implements DataEventEmitter {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<TEvent extends DataModifier.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, TEvent>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -434,7 +436,7 @@ namespace DataModifier {
     /**
      * Benchmark event with additional event information.
      */
-    export interface BenchmarkEvent extends DataEventEmitter.Event {
+    export interface BenchmarkEvent extends DataEvent {
         readonly type: (
             'afterBenchmark'|
             'afterBenchmarkIteration'
@@ -452,8 +454,10 @@ namespace DataModifier {
     /**
      * Error event with additional event information.
      */
-    export interface ErrorEvent extends DataEventEmitter.Event {
-        readonly type: 'error';
+    export interface ErrorEvent extends DataEvent{
+        readonly type: (
+            'error'
+        );
         readonly table: DataTable;
     }
 
@@ -465,7 +469,7 @@ namespace DataModifier {
     /**
      * Modify event with additional event information.
      */
-    export interface ModifyEvent extends DataEventEmitter.Event {
+    export interface ModifyEvent extends DataEvent {
         readonly type: (
             'modify'|'afterModify'
         );

@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -98,7 +98,7 @@ class CSVParser extends DataParser {
      * @param {CSVParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -106,7 +106,7 @@ class CSVParser extends DataParser {
      */
     public parse(
         options: CSVParser.OptionsType,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
             dataTypes = parser.dataTypes,
@@ -130,7 +130,7 @@ class CSVParser extends DataParser {
 
         parser.columns = [];
 
-        parser.emit({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -213,7 +213,7 @@ class CSVParser extends DataParser {
             }
         }
 
-        parser.emit({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,

@@ -20,7 +20,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -115,7 +115,7 @@ class InvertModifier extends DataModifier {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
             modifiedRowIndex = modified.getRowIndexBy(
@@ -164,7 +164,7 @@ class InvertModifier extends DataModifier {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
             modifiedColumnNames = (modified.getColumn('columnNames') || []);
@@ -245,7 +245,7 @@ class InvertModifier extends DataModifier {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         const columnNames = table.getColumnNames(),
             modified = table.modified,
@@ -299,7 +299,7 @@ class InvertModifier extends DataModifier {
      * @param {DataTable} table
      * Table to invert.
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -307,7 +307,7 @@ class InvertModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 

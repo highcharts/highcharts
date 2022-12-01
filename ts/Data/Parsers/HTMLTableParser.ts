@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -121,7 +121,7 @@ class HTMLTableParser extends DataParser {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -130,7 +130,7 @@ class HTMLTableParser extends DataParser {
      */
     public parse(
         options: HTMLTableParser.OptionsType,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
             converter = this.converter,
@@ -147,7 +147,7 @@ class HTMLTableParser extends DataParser {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit({
+            parser.emit<DataParser.Event>({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -159,7 +159,7 @@ class HTMLTableParser extends DataParser {
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
 
-        this.emit({
+        this.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -250,7 +250,7 @@ class HTMLTableParser extends DataParser {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit({
+        this.emit<DataParser.Event>({
             type: 'afterParse',
             columns,
             detail: eventDetail,

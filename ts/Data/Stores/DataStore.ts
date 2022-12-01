@@ -21,7 +21,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
@@ -46,7 +46,7 @@ const {
  *
  * @private
  */
-abstract class DataStore implements DataEventEmitter {
+abstract class DataStore implements DataEvent.Emitter {
 
     /* *
      *
@@ -246,7 +246,7 @@ abstract class DataStore implements DataEventEmitter {
      * @param {DataStore.Event} [e]
      * Event object containing additional event information.
      */
-    public emit(e: DataStore.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
@@ -335,9 +335,9 @@ abstract class DataStore implements DataEventEmitter {
      * @return {Function}
      * Function to unregister callback from the store event.
      */
-    public on<TEvent extends DataStore.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, DataStore.Event>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -391,7 +391,7 @@ namespace DataStore {
     /**
      * The default event object for a datastore
      */
-    export interface Event extends DataEventEmitter.Event {
+    export interface Event extends DataEvent {
         readonly table: DataTable;
     }
 

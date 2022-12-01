@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataParser from './DataParser.js';
@@ -113,7 +113,7 @@ class GoogleSheetsParser extends DataParser {
      * @param {GoogleSheetsParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits GoogleSheetsParser#parse
@@ -121,7 +121,7 @@ class GoogleSheetsParser extends DataParser {
      */
     public parse(
         json: Partial<GoogleSheetsParser.ClassJSONOptions>,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
         const parser = this,
             parserOptions = merge(parser.options, json),
@@ -140,7 +140,7 @@ class GoogleSheetsParser extends DataParser {
         parser.header = [];
         parser.columns = [];
 
-        parser.emit({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -172,7 +172,7 @@ class GoogleSheetsParser extends DataParser {
             }
         }
 
-        parser.emit({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,

@@ -300,11 +300,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                 'setModifier',
                 (): void => this.clearTableListeners()
             );
-            this.store.table.on('afterSetModifier', (e): void => {
-                if (e.type === 'afterSetModifier' && e.modified) {
-                    this.setupTableListeners(e.modified);
+            this.store.table.on(
+                'afterSetModifier',
+                (e: DataTable.SetModifierEvent): void => {
+                    if (e.type === 'afterSetModifier' && e.modified) {
+                        this.setupTableListeners(e.modified);
+                    }
                 }
-            });
+            );
         }
 
         // Clean up old event listeners

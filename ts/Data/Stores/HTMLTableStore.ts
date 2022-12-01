@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataStore from './DataStore.js';
@@ -153,14 +153,14 @@ class HTMLTableStore extends DataStore {
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(eventDetail?: DataEventEmitter.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): void {
         const store = this;
 
         store.fetchTable();
@@ -168,7 +168,7 @@ class HTMLTableStore extends DataStore {
         // If already loaded, clear the current rows
         store.table.deleteColumns();
 
-        store.emit({
+        store.emit<HTMLTableStore.Event>({
             type: 'load',
             detail: eventDetail,
             table: store.table,
@@ -176,7 +176,7 @@ class HTMLTableStore extends DataStore {
         });
 
         if (!store.tableElement) {
-            store.emit({
+            store.emit<HTMLTableStore.Event>({
                 type: 'loadError',
                 detail: eventDetail,
                 error: 'HTML table not provided, or element with ID not found',
@@ -192,7 +192,7 @@ class HTMLTableStore extends DataStore {
 
         store.table.setColumns(store.parser.getTable().getColumns());
 
-        store.emit({
+        store.emit<HTMLTableStore.Event>({
             type: 'afterLoad',
             detail: eventDetail,
             table: store.table,
@@ -454,7 +454,7 @@ class HTMLTableStore extends DataStore {
      * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
      * Options that override default or existing export options.
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {string}
@@ -463,7 +463,7 @@ class HTMLTableStore extends DataStore {
      */
     public save(
         htmlExportOptions: HTMLTableStore.ExportOptions,
-        eventDetail?: DataEventEmitter.Detail
+        eventDetail?: DataEvent.Detail
     ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
@@ -481,20 +481,6 @@ class HTMLTableStore extends DataStore {
         );
     }
 
-}
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface HTMLTableStore {
-    emit(e: HTMLTableStore.Event): void;
-    on<TEvent extends HTMLTableStore.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.Callback<this, TEvent>
-    ): Function;
 }
 
 /**
