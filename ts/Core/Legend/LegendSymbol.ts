@@ -106,7 +106,7 @@ namespace LegendSymbol {
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': options.lineWidth || 0,
+                'stroke-width': Math.min(options.lineWidth || 0, 24),
                 'stroke-linecap': (options.linecap || 'round') as any
             };
 
@@ -117,8 +117,8 @@ namespace LegendSymbol {
 
         legendItem.line = renderer
             .path()
-            .attr(attr)
             .addClass('highcharts-graph')
+            .attr(attr)
             .add(legendItemGroup);
 
         lineSizer = Math.min(
