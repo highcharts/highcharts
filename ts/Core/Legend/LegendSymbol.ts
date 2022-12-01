@@ -101,7 +101,6 @@ namespace LegendSymbol {
         let attr: SVGAttributes = {},
             legendSymbol,
             markerOptions = options.marker,
-            symbolOffset = 0,
             lineSizer;
 
         // Draw the line
@@ -116,20 +115,24 @@ namespace LegendSymbol {
             }
         }
 
-        lineSizer = (
-            attr['stroke-width'] && attr['stroke-width'] < symbolWidth ?
-                attr['stroke-width'] :
-                symbolWidth
+        legendItem.line = renderer
+            .path()
+            .attr(attr)
+            .addClass('highcharts-graph')
+            .add(legendItemGroup);
+
+        lineSizer = Math.min(
+            legendItem.line.strokeWidth(),
+            symbolWidth
         ) / 2;
 
-        legendItem.line = renderer
-            .path([
-                ['M', lineSizer, verticalCenter],
-                ['L', symbolWidth - lineSizer, verticalCenter]
-            ])
-            .addClass('highcharts-graph')
-            .attr(attr)
-            .add(legendItemGroup);
+        legendItem.line
+            .attr({
+                d: [
+                    ['M', lineSizer, verticalCenter],
+                    ['L', symbolWidth - lineSizer, verticalCenter]
+                ]
+            });
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
