@@ -254,7 +254,20 @@ class Popup {
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(closeBtn, eventName, (): void => {
                 if (this.chart) {
-                    fireEvent(this.chart.navigationBindings, 'closePopup');
+                    const navigationBindings = this.chart.navigationBindings;
+
+                    fireEvent(navigationBindings, 'closePopup');
+
+                    if (
+                        navigationBindings &&
+                        navigationBindings.selectedButtonElement
+                    ) {
+                        fireEvent(
+                            navigationBindings,
+                            'deselectButton',
+                            { button: navigationBindings.selectedButtonElement }
+                        );
+                    }
                 } else {
                     this.closePopup();
                 }

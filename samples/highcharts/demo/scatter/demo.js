@@ -44,7 +44,7 @@ getData().then(data => {
         return temp;
     };
     series.forEach(s => {
-        s.data = getData(s.id)
+        s.data = getData(s.id);
     });
 
     Highcharts.chart('container', {

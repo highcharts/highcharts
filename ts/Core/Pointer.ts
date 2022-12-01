@@ -1357,7 +1357,7 @@ class Pointer {
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
-            transform: Series.PlotBoxObject = {} as any,
+            transform: Series.PlotBoxTransform = {} as any,
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&
@@ -1740,7 +1740,7 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOut
      * @emits Highcharts.Point#event:mouseOver
      */
-    public runPointActions(e: PointerEvent, p?: Point): void {
+    public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
         const pointer = this,
             chart = pointer.chart,
             series = chart.series,
@@ -1792,8 +1792,11 @@ class Pointer {
         // #3926, #4200
         if (
             hoverPoint &&
-            // !(hoverSeries && hoverSeries.directTouch) &&
-            (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
+            (
+                force ||
+                hoverPoint !== chart.hoverPoint ||
+                (tooltip && tooltip.isHidden)
+            )
         ) {
             (chart.hoverPoints || []).forEach(function (p: Point): void {
                 if (points.indexOf(p) === -1) {
@@ -1916,7 +1919,10 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#scaleGroups
      */
-    public scaleGroups(attribs?: Series.PlotBoxObject, clip?: boolean): void {
+    public scaleGroups(
+        attribs?: Series.PlotBoxTransform,
+        clip?: boolean
+    ): void {
 
         const chart = this.chart;
 
