@@ -117,7 +117,7 @@ class DataOnDemand {
             return this.loadStore(sourceOptions);
         }
 
-        throw new Error('Source not found');
+        throw new Error(`Source not found. (${name})`);
     }
 
     /**
