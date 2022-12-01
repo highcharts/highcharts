@@ -2757,17 +2757,10 @@ class Series {
                     // Presentational attributes
                     if (graphic && !chart.styledMode) {
                         graphic[verb](
-                            merge(
-                                series.pointAttribs(
-                                    point,
-                                    (point.selected && 'select') as any
-                                ),
-                                chart.inverted ? {
-                                    rotation: 90,
-                                    rotationOriginY: (markerAttribs.y || 0) +
-                                        (markerAttribs.height &&
-                                            markerAttribs.height / 2 || 0)
-                                } : {}
+                            series.pointAttribs(
+                                point,
+                                (point.selected && 'select') as any,
+                                chart.inverted
                             )
                         );
                     }
@@ -2876,7 +2869,8 @@ class Series {
      */
     public pointAttribs(
         point?: Point,
-        state?: StatesOptionsKey
+        state?: StatesOptionsKey,
+        flip?: boolean
     ): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
             pointOptions = point && point.options,
@@ -2885,7 +2879,16 @@ class Series {
             ),
             pointColorOption = pointOptions && pointOptions.color,
             pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color;
+            zoneColor = point && point.zone && point.zone.color,
+            rotationOptions = flip && point && point.graphic ?
+                {
+                    rotation: 90,
+                    rotationOriginY: point.graphic.y +
+                        (point.graphic.height && point.graphic.height / 2),
+                    rotationOriginX: point.graphic.x +
+                        (point.graphic.width && point.graphic.width / 2)
+                } : {};
+
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2956,7 +2959,8 @@ class Series {
             'stroke': stroke,
             'stroke-width': strokeWidth,
             'fill': fill,
-            'opacity': opacity
+            'opacity': opacity,
+            ...rotationOptions
         };
     }
 

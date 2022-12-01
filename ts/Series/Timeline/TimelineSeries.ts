@@ -25,6 +25,7 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointMarkerOptions,
     PointStatesOptions
@@ -37,6 +38,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
@@ -423,6 +425,15 @@ class TimelineSeries extends LineSeries {
         return attribs;
 
     }
+
+    public pointAttribs(
+        point?: Point,
+        state?: StatesOptionsKey,
+        flip?: boolean
+    ): SVGAttributes {
+        return Series.prototype.pointAttribs.call(this, point, state, false);
+    }
+
 
     public processData(): undefined {
         let series = this,
