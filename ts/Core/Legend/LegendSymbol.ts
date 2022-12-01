@@ -163,7 +163,6 @@ namespace LegendSymbol {
                 )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
-
             legendSymbol.isMarker = true;
         }
     }
@@ -188,7 +187,6 @@ namespace LegendSymbol {
         legend: Legend,
         item: (Point|Series)
     ): void {
-
         const legendItem = item.legendItem || {},
             options = legend.options,
             symbolHeight = legend.symbolHeight,
