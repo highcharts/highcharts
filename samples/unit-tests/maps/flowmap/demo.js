@@ -70,6 +70,12 @@
             should not be drawn.`
         );
 
+        assert.ok(
+            series.points[1].isNull,
+            `The point without a weight defined on a point or series level
+            should be null.`
+        );
+
         series.points[1].update({
             weight: 1
         });
@@ -78,6 +84,12 @@
             series.points[1].shapeArgs.d.length,
             8,
             `The point with a weight defined on a point level should be drawn.`
+        );
+
+        assert.notOk(
+            series.points[1].isNull,
+            `The point with a weight defined on a point level should not be
+            null.`
         );
 
         series.points[1].update({

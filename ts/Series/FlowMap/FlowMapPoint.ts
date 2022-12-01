@@ -21,7 +21,6 @@ import type FlowMapSeries from './FlowMapSeries';
 import type Point from '../../Core/Series/Point';
 
 import ColorMapComposition from '../ColorMapComposition.js';
-import { PointShortOptions } from '../../Core/Series/PointOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -35,6 +34,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
+    extend,
     isString
 } = U;
 
@@ -77,24 +77,6 @@ class FlowMapPoint extends MapLinePoint {
         return isString(this.options.from) &&
             isString(this.options.to) &&
             defined(this.options.weight || this.series.options.weight);
-    }
-
-    /**
-     * @private
-     */
-    public applyOptions(
-        options: (FlowMapPointOptions|PointShortOptions),
-        x?: number
-    ): FlowMapPoint {
-        const point = super.applyOptions.call(this, options, x) as any;
-
-        // Flowmap point doesn't need `value`, but if it's not there, the point
-        // is treated as a null point. So we just set `value: 0`.
-        if (point.value === null) {
-            point.value = 0;
-        }
-
-        return point;
     }
 
 }

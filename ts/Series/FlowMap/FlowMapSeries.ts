@@ -81,7 +81,9 @@ class FlowMapSeries extends MapLineSeries {
      * is drawing a link between two mappoints.
      *
      * @extends      plotOptions.mapline
-     * @excluding    dataLabels
+     * @excluding    allAreas, allowPointSelect, boostBlending, boostThreshold,
+     * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy,
+     * mapData, negativeColor, onPoint, shadow, showCheckbox
      * @product      highmaps
      * @requires     modules/flowmap
      * @optionparent plotOptions.flowmap
@@ -201,7 +203,7 @@ class FlowMapSeries extends MapLineSeries {
      * @private
      */
     public static normalize(x: number, y: number): Array<number> {
-        const length = FlowMapSeries.getLength(x, y);
+        const length = this.getLength(x, y);
         return [x / length, y / length];
     }
 
@@ -696,7 +698,6 @@ export default FlowMapSeries;
  *     ```
  *
  * @type      {Array<number|null|*>}
- * @excluding labelrank, outgoing
  * @apioption series.flowmap.data
  */
 
