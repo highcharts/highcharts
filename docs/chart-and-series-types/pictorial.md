@@ -1,7 +1,7 @@
 Pictorial series
 ===============
 
-The Pictorial Series is a type of chart that uses images to visualize data. It is a great way to illustrate complex concepts in a simple and easy to understand way.
+The Pictorial series is a type of chart that uses vector images to visualize data. It is a great way to illustrate complex concepts in a simple and easy to understand way.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/highcharts/demo/pictorial" allow="fullscreen"></iframe>
 
@@ -10,14 +10,14 @@ Setting the Pictorial Chart Series
 
 The pictorial series requires the [modules/pictorial.js](https://code.highcharts.com/modules/pictorial.js) file to be loaded.
 
-Here is an example of loading pictorial modules into a webpage:
+Here is an example of loading the pictorial module into a webpage:
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/pictorial.js"></script>
 ```
 
-In the beginning, the series type must be provide:
+In order to set the default series type to `pictorial`, set the `chart.type`:
 
 ```js
 chart: {
@@ -25,9 +25,9 @@ chart: {
 }
 ```
 
-The next step is to add an image. Use [paths.definition](https://api.highcharts.com/highcharts/series.pictorial.paths.definition) option for this purpose. The image should be provided as an SVG path and should be cropped to maintain the correct proportions. Take notice, that an image corresponds to one series, not one point. 
+The next step is to add an image. Use the [paths.definition](https://api.highcharts.com/highcharts/series.pictorial.paths.definition) option for this purpose. The image should be provided as an SVG path and should be cropped to maintain the correct proportions. Take notice that an image corresponds to one series, not one point.
 
-As you can see in the following example, there is also used [series.stacking](https://api.highcharts.com/highcharts/series.pictorial.stacking). To imagine how Pictorial Series works, you can base it on a column series. If there is a multiple series, the columns are grouped next to each other, but when they are stacked, they form one column made up of these series. By analogy with this, you can imagine a column as an image, which is composed of several series, to create one shape. Depending on your requirements, it can be used with `percent` or `normal` stacking.
+As you can see in the following example, [series.stacking](https://api.highcharts.com/highcharts/series.pictorial.stacking) is also used. To understand how the Pictorial series works, think of a column series. If there are multiple series, the columns are grouped next to each other, but when they are [stacked](https://api.highcharts.com/highcharts/series.column.stacking), they form one column made up of these series. By analogy with this, you can imagine a column as an image, which is composed of several series to create one shape. Depending on your requirements, it can be used with `percent` or `normal` stacking.
 
 ```js
   plotOptions: {
@@ -43,6 +43,11 @@ As you can see in the following example, there is also used [series.stacking](ht
 The data structure is usually presented as several series that when they are stacked, create one shape.
 
 ```js
+  plotOptions: {
+    pictorial: {
+      stacking: 'normal
+    }
+  },
   series: [{
       name: 'Daylight',
       data: [6500]
@@ -69,7 +74,7 @@ The data structure is usually presented as several series that when they are sta
   ]
 ```
 
-In the case of `normal` stacking, the shape can be not completely filled with data. It is possible to set a background shape by enabling [yAxis.stackShadow](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow) option. It is fully customizable, so it can be set as a fill [color](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow.color) or even [border](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow.borderWidth).
+In the case of `normal` stacking, the shape is sometimes not completely filled with data. It is possible to set a background shape by enabling the [yAxis.stackShadow](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow) option. It is fully customizable, so it can be set as a fill [color](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow.color) or even [border](https://api.highcharts.com/highcharts/series.pictorial.yAxis.stackShadow.borderWidth).
 
 ```js
   yAxis: {
