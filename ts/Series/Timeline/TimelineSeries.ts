@@ -434,7 +434,6 @@ class TimelineSeries extends LineSeries {
         return Series.prototype.pointAttribs.call(this, point, state, false);
     }
 
-
     public processData(): undefined {
         let series = this,
             visiblePoints = 0,
