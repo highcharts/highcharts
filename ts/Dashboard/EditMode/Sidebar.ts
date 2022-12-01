@@ -83,25 +83,24 @@ class Sidebar {
                 }
 
                 const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                );
-                const dashboard = row.layout.dashboard;
-
-                const newLayoutName = GUIElement.createElementId('layout');
-                const cellName = GUIElement.createElementId('cell');
-                const layout = new Layout(dashboard, {
-                    id: newLayoutName,
-                    copyId: '',
-                    parentContainerId: dashboard.container.id,
-                    rows: [{
-                        cells: [{
-                            id: cellName
-                        }]
-                    }],
-                    style: {}
-                });
+                        dropContext.getType() === 'cell' ?
+                            (dropContext as Cell).row :
+                            (dropContext as Row)
+                    ),
+                    dashboard = row.layout.dashboard,
+                    newLayoutName = GUIElement.createElementId('layout'),
+                    cellName = GUIElement.createElementId('cell'),
+                    layout = new Layout(dashboard, {
+                        id: newLayoutName,
+                        copyId: '',
+                        parentContainerId: dashboard.container.id,
+                        rows: [{
+                            cells: [{
+                                id: cellName
+                            }]
+                        }],
+                        style: {}
+                    });
 
                 if (layout) {
                     dashboard.layouts.push(layout);
@@ -109,6 +108,7 @@ class Sidebar {
                 const component = Bindings.addComponent({
                     type: 'Highcharts',
                     cell: cellName,
+                    isResizable: true,
                     chartOptions: {
                         type: 'line',
                         series: [{
@@ -129,12 +129,12 @@ class Sidebar {
                     return sidebar.onDropNewComponent(dropContext, {
                         type: 'Highcharts',
                         cell: '',
-                        dimensions: {
-                            width: 200,
-                            height: 200
-                        },
+                        isResizable: true,
                         chartOptions: {
-                            type: 'line',
+                            chart: {
+                                type: 'line',
+                                animation: false
+                            },
                             series: [{
                                 name: 'Series from options',
                                 data: [1, 2, 3, 4]
@@ -199,14 +199,6 @@ class Sidebar {
         }, {
             text: 'datagrid',
             onDrop: function (sidebar: Sidebar, dropContext: Cell | Row): void {
-                if (sidebar && dropContext) {
-
-                    sidebar.onDropNewComponent(dropContext, {
-                        type: 'datagrid',
-                        cell: ''
-                    });
-                }
-
             }
         }
     ];
@@ -218,14 +210,6 @@ class Sidebar {
             cell: ['addComponent']
         }
     }];
-
-    // {
-    //     type: 'layout',
-    //     icon: '',
-    //     items: {
-    //         cell: ['addLayout']
-    //     }
-    // }
 
     public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         componentSettings: {

@@ -89,13 +89,8 @@ let dashboard = new Dashboard.Dashboard('container', {
                 id: 'layout-1', // mandatory
                 rowClassName: 'custom-row', // optional
                 cellClassName: 'custom-cell', // optional
-                style: {
-                    // fontSize: '1.5em',
-                    // color: 'blue'
-                },
                 rows: [
                     {
-                        // id: 'dashboard-row-0',
                         cells: [
                             {
                                 id: 'dashboard-col-0',
@@ -107,9 +102,6 @@ let dashboard = new Dashboard.Dashboard('container', {
                             {
                                 id: 'dashboard-col-1',
                                 width: '1/2',
-                                style: {
-                                    // color: 'orange'
-                                }
                             }
                         ]
                     },

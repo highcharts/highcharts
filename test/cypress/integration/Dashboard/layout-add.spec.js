@@ -34,14 +34,15 @@ describe('Add component through UI', () => {
         dropComponent('#dashboard-col-0')
     });
 
-
     it('should be able to add a HTML component', function() {
         grabComponent('HTML')
         dropComponent('#dashboard-col-0')
     });
 
-    it('should be able to add a Data grid component', function() {
-        grabComponent('datagrid');
-        dropComponent('#dashboard-col-0')
-    });
+    // TODO: add after the datagrid component is added
+    // it('should be able to add a Data grid component', function() {
+    //     grabComponent('datagrid');
+    //     dropComponent('#dashboard-col-0')
+    // });
+    // TODO: how to get dashboard values?
 });
