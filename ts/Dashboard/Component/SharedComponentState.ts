@@ -60,6 +60,8 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     private hoverPoint?: SharedComponentState.PresentationHoverPointType;
 
+    private hoverRow?: HTMLElement;
+
     private selection: Record<string, { min?: number; max?: number }> = {};
 
     /**
@@ -228,13 +230,20 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
     }
 
     public setHoverPoint(
-        point?: SharedComponentState.PresentationHoverPointType,
-        eventDetail?: {}
+        point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
+        eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
-        this.hoverPoint = point;
+        const isDataGrid = eventDetail && eventDetail.isDataGrid;
+        this.hoverPoint = isDataGrid ? void 0 : point;
+
+        if (point instanceof HTMLElement) {
+            this.hoverRow = isDataGrid ? point : void 0;
+        }
+
         this.emit({
             type: 'afterHoverPointChange',
-            hoverPoint: this.hoverPoint,
+            hoverPoint: isDataGrid ? void 0 : this.hoverPoint,
+            hoverRow: isDataGrid ? this.hoverRow : void 0,
             detail: eventDetail
         });
     }
@@ -375,6 +384,12 @@ namespace SharedComponentState {
         (a: string, b: string): number;
     }
 
+    export interface HoverPointEventDetails {
+        detail?: AnyRecord;
+        isDataGrid?: boolean;
+        sender?: string
+    }
+
     /**
      * All information objects of DataPrsentationState events.
      */
@@ -406,7 +421,8 @@ namespace SharedComponentState {
     export interface PointHoverEvent {
         type: HoverPointEventType;
         detail?: AnyRecord,
-        hoverPoint: PresentationHoverPointType | undefined;
+        hoverPoint?: PresentationHoverPointType;
+        hoverRow?: HTMLElement;
     }
 
     export type ColumnVisibilityType = Record<string, boolean>;

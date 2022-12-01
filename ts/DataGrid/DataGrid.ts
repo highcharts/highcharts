@@ -68,8 +68,9 @@ class DataGrid {
     public container: HTMLElement;
     public options: DataGridOptions;
     public dataTable: DataTable;
+    public hoveredRow?: HTMLElement;
+    public rowElements: Array<HTMLElement>;
 
-    private rowElements: Array<HTMLElement>;
     private gridContainer: HTMLElement;
     private outerContainer: HTMLElement;
     private scrollContainer: HTMLElement;
@@ -221,6 +222,18 @@ class DataGrid {
         fireEvent(this, e.type, e);
     }
 
+    /**
+     * Add class to given element to toggle highlight.
+     * @param  {HTMLElement} row Row to highlight.
+     * @return {void}
+     */
+    public toggleRowHighlight(row?: HTMLElement): void {
+        if (this.hoveredRow && this.hoveredRow.classList.contains('hovered')) {
+            this.hoveredRow.classList.remove('hovered');
+        }
+        row && (row.classList.contains('hovered') ?
+            row.classList.remove('hovered') : row.classList.add('hovered'));
+    }
 
     /**
      * Registers a callback for a specific event.
@@ -305,14 +318,15 @@ class DataGrid {
      * Add internal event listeners to the grid.
      */
     private addEvents(): void {
-        this.outerContainer.addEventListener(
-            'scroll',
-            (e): void => this.onScroll(e)
-        );
-        document.addEventListener(
-            'click',
-            (e): void => this.onDocumentClick(e)
-        );
+        this.outerContainer.addEventListener('scroll', (e): void => {
+            this.onScroll(e);
+        });
+        document.addEventListener('click', (e): void => {
+            this.onDocumentClick(e);
+        });
+        this.container.addEventListener('mouseover', (e): void => {
+            this.handleMouseOver(e);
+        });
     }
 
 
@@ -412,6 +426,24 @@ class DataGrid {
         }
     }
 
+    /**
+     * Handle hovering over rows- highlight proper row if needed.
+     * @param  {MouseEvent} e Mouse event object.
+     * @return {void}
+     */
+    private handleMouseOver(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+
+        if (target && target.classList.contains('hc-dg-cell')) {
+            const row = target.parentElement as HTMLElement;
+            this.toggleRowHighlight(row);
+            this.hoveredRow = row;
+            fireEvent(this.container, 'dataGridHover', { row });
+        } else if (this.hoveredRow) {
+            this.toggleRowHighlight();
+            this.hoveredRow = void 0;
+        }
+    }
 
     /**
      * Remove the <input> overlay and update the cell value
