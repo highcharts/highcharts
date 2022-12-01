@@ -34,7 +34,6 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    extend,
     isString
 } = U;
 
