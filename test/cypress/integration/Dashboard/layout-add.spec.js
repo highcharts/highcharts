@@ -8,10 +8,9 @@ function grabComponent(name) {
 }
 
 function dropComponent(elementName) {
-
-        cy.get(elementName).first().trigger('mouseenter', {force: true});
-        cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
-        cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
+    cy.get(elementName).first().trigger('mouseenter', {force: true});
+    cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
+    cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
 }
 
 describe('Add component through UI', () => {
@@ -25,13 +24,10 @@ describe('Add component through UI', () => {
         cy.get('.hd-edit-toggle-slider').click();
     });
 
-    // it('should be able to add a layout',term function() {
-    //     grabComponent('layout');
-
-    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
-    // });
+    it('should be able to add a layout', function() {
+        grabComponent('layout');
+        dropComponent("#dashboard-col-0")
+    });
 
     it('should be able to add a chart component', function() {
         grabComponent('chart');
@@ -39,19 +35,13 @@ describe('Add component through UI', () => {
     });
 
 
-    // it('should be able to add a HTML component', function() {
-    //     grabComponent('HTML')
+    it('should be able to add a HTML component', function() {
+        grabComponent('HTML')
+        dropComponent('#dashboard-col-0')
+    });
 
-    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
-    // });
-
-    // it('should be able to add a Data grid component', function() {
-    //     grabComponent('datagrid');
-
-    //     cy.get('#dashboard-col-0').first().trigger('mouseenter', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mousemove', 'right', {force: true});
-    //     cy.get('#dashboard-col-0').first().trigger('mouseup', 'right', {force: true});
-    // });
+    it('should be able to add a Data grid component', function() {
+        grabComponent('datagrid');
+        dropComponent('#dashboard-col-0')
+    });
 });
