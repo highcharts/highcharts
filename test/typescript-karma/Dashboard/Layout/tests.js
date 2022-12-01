@@ -58,6 +58,14 @@ const components = [{
 
 test('Components in layout with no row style', function (assert) {
     const container = setupContainer();
+    container.innerHTML = 'Loading';
+
+    assert.strictEqual(
+        container.innerText,
+        'Loading',
+        'Text should be set before adding dashboard.'
+    );
+
     const dashboard = new Dashboard(container.id, {
         gui: {
             enabled: true,
@@ -65,6 +73,12 @@ test('Components in layout with no row style', function (assert) {
         },
         components
     });
+
+    assert.strictEqual(
+        container.innerText,
+        '',
+        'Container content should be cleared after creating dashboard.'
+    );
 
     const comps = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
     for (const component of comps) {
