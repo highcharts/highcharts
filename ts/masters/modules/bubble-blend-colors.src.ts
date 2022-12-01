@@ -14,4 +14,4 @@ import BubbleBlendColors from '../../Extensions/BubbleBlendColors.js';
 
 const G: AnyRecord = Highcharts;
 
-BubbleBlendColors.compose(G.Series);
+BubbleBlendColors.compose(G.seriesTypes.bubble);
