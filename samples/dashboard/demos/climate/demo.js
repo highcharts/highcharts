@@ -259,17 +259,10 @@ async function buildDashboard() {
             }
         }, {
             cell: 'selection-grid',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
+            type: 'DataGrid',
+            cityClimateTable,
+            editable: true,
+            syncEvents: ['tooltip'],
             title: 'Selection Grid'
         }],
         editMode: {
