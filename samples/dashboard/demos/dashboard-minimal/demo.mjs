@@ -22,7 +22,11 @@ store.load();
 const dashboard = new Dashboard.Dashboard('container', {
     store: store,
     editMode: {
-        enabled: false
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            items: ['editMode']
+        }
     },
     gui: {
         enabled: true,
