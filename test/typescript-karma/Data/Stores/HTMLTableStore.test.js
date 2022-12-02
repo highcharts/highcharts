@@ -333,10 +333,12 @@ test('Export as HTML', function (assert) {
     const csvdatastore = new CSVStore(undefined, { csv: tableCSV });
     csvdatastore.load();
 
-    const htmlstore = new HTMLTableStore(csvdatastore.table)
+    const htmlstore = new HTMLTableStore(csvdatastore.table),
+        htmlparser = htmlstore.parser;
 
     // Export with default settings (multiline and rowspan should be enabled)
-    let htmlString = htmlstore.save()
+    let htmlString = htmlparser.export(htmlstore);
+    console.log(htmlparser.options, htmlString);
     const HTMLElement = createElement('div');
     HTMLElement.innerHTML = htmlString;
 
@@ -359,7 +361,7 @@ test('Export as HTML', function (assert) {
     // );
 
     // Multilevel headers disabled
-    htmlString = htmlstore.save({
+    htmlString = htmlparser.export(htmlstore, {
         useMultiLevelHeaders: false
     });
     HTMLElement.innerHTML = htmlString;
@@ -381,7 +383,7 @@ test('Export as HTML', function (assert) {
     );
 
     // table caption
-    htmlString = htmlstore.save({
+    htmlString = htmlparser.export(htmlstore, {
         useMultiLevelHeaders: false,
         tableCaption: 'My Data Table'
     });
@@ -405,8 +407,8 @@ test('Export as HTML', function (assert) {
 
     storeFromExportedHTML.on('afterLoad', e => {
         assert.strictEqual(
-            storeFromExportedHTML.save(),
-            htmlstore.save(),
+            htmlparser.export(storeFromExportedHTML),
+            htmlparser.export(htmlstore),
             'Store from parsed table should produce same result as original store'
         );
         doneLoading();

@@ -112,9 +112,7 @@ test('CSV with ""s', (assert) => {
 "s",5
 12,"5"
 `
-    const datastore = new CSVStore(undefined, {
-        csv
-    });
+    const datastore = new CSVStore(undefined, { csv });
 
     datastore.load();
 
@@ -129,7 +127,7 @@ test('CSV with ""s', (assert) => {
     })
 
     assert.strictEqual(
-        datastore.save().split('\n')[1].split(',')[0],
+        datastore.parser.export(datastore).split('\n')[1].split(',')[0],
         '\"12\"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
     )

@@ -58,11 +58,9 @@ class GoogleSheetsParser extends DataParser {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: (
-        GoogleSheetsParser.ClassJSONOptions
-    ) = {
-            ...DataParser.defaultOptions
-        };
+    protected static readonly defaultOptions: GoogleSheetsParser.Options = {
+        ...DataParser.defaultOptions
+    };
 
     /* *
      *
@@ -99,13 +97,26 @@ class GoogleSheetsParser extends DataParser {
     private columns: DataTable.CellType[][];
     private header: string[];
     public converter: DataConverter;
-    public options: GoogleSheetsParser.ClassJSONOptions;
+    public options: GoogleSheetsParser.Options;
 
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * @private
+     */
+    public export(): string {
+        this.emit<DataParser.Event>({
+            type: 'exportError',
+            columns: this.columns,
+            headers: this.header
+        });
+
+        throw new Error('Not implemented');
+    }
 
     /**
      * Initiates the parsing of the Google Sheet
@@ -120,7 +131,7 @@ class GoogleSheetsParser extends DataParser {
      * @emits GoogleSheetsParser#afterParse
      */
     public parse(
-        json: Partial<GoogleSheetsParser.ClassJSONOptions>,
+        json: Partial<GoogleSheetsParser.Options>,
         eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
         const parser = this,
@@ -203,12 +214,12 @@ namespace GoogleSheetsParser {
     /**
      * The available options for the parser
      */
-    export type OptionsType = Partial<ClassJSONOptions>;
+    export type OptionsType = Partial<Options>;
 
     /**
      * Options for the parser compatible with ClassJSON
      */
-    export interface ClassJSONOptions extends DataParser.Options {
+    export interface Options extends DataParser.Options {
         json?: GoogleSpreadsheetJSON;
     }
 

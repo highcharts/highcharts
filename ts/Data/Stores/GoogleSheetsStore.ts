@@ -25,6 +25,7 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
@@ -124,7 +125,7 @@ class GoogleSheetsStore extends DataStore {
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: DataEvent.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
         const store = this,
             {
                 dataRefreshRate,
@@ -163,7 +164,7 @@ class GoogleSheetsStore extends DataStore {
                 // Polling
                 if (enablePolling) {
                     setTimeout(
-                        (): void => store.load(),
+                        (): DataPromise<this> => store.load(),
                         dataRefreshRate * 1000
                     );
                 }
@@ -188,6 +189,8 @@ class GoogleSheetsStore extends DataStore {
                 });
             }
         });
+
+        return DataPromise.resolve(this);
     }
 
 }

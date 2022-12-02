@@ -26,6 +26,7 @@ import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import CSVParser from '../Parsers/CSVParser.js';
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import HU from '../../Core/HttpUtilities.js';
@@ -62,12 +63,6 @@ class CSVStore extends DataStore {
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
-    };
-
-    static readonly defaultExportOptions: CSVStore.ExportOptions = {
-        decimalPoint: null,
-        itemDelimiter: null,
-        lineDelimiter: '\n'
     };
 
     /* *
@@ -242,7 +237,7 @@ class CSVStore extends DataStore {
      * @emits CSVParser#load
      * @emits CSVParser#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
         const store = this,
             parser = store.parser,
             table = store.table,
@@ -278,123 +273,8 @@ class CSVStore extends DataStore {
                 table
             });
         }
-    }
 
-    /**
-     * Creates a CSV string from the datatable on the store instance.
-     *
-     * @param {CSVStore.ExportOptions} exportOptions
-     * The options used for the export.
-     *
-     * @return {string}
-     * A CSV string from the table.
-     */
-    public getCSVForExport(exportOptions: CSVStore.ExportOptions): string {
-        const { useLocalDecimalPoint, lineDelimiter } = exportOptions,
-            exportNames = (this.parserOptions.firstRowAsNames !== false);
-
-        let { decimalPoint, itemDelimiter } = exportOptions;
-
-        if (!decimalPoint) {
-            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.';
-        }
-
-        if (!itemDelimiter) {
-            itemDelimiter = decimalPoint === ',' ? ';' : ',';
-        }
-
-        const { columnNames, columnValues } = this.getColumnsForExport(
-            exportOptions.usePresentationOrder
-        );
-        const csvRows: Array<string> = [],
-            columnsCount = columnNames.length;
-
-        const rowArray: Array<DataTable.Row> = [];
-
-        // Add the names as the first row if they should be exported
-        if (exportNames) {
-            csvRows.push(columnNames.map(
-                (columnName): string => `"${columnName}"`
-            ).join(itemDelimiter));
-        }
-
-        for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-            const columnName = columnNames[columnIndex],
-                column = columnValues[columnIndex],
-                columnLength = column.length;
-
-            const columnMeta = this.whatIs(columnName);
-            let columnDataType;
-
-            if (columnMeta) {
-                columnDataType = columnMeta.dataType;
-            }
-
-            for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
-                let cellValue = column[rowIndex];
-
-                if (!rowArray[rowIndex]) {
-                    rowArray[rowIndex] = [];
-                }
-
-                // Prefer datatype from metadata
-                if (columnDataType === 'string') {
-                    cellValue = `"${cellValue}"`;
-                } else if (typeof cellValue === 'number') {
-                    cellValue = String(cellValue).replace('.', decimalPoint);
-                } else if (typeof cellValue === 'string') {
-                    cellValue = `"${cellValue}"`;
-                }
-
-                rowArray[rowIndex][columnIndex] = cellValue;
-
-                // On the final column, push the row to the CSV
-                if (columnIndex === columnsCount - 1) {
-                    // Trim repeated undefined values starting at the end
-                    // Currently, we export the first "comma" even if the
-                    // second value is undefined
-                    let i = columnIndex;
-                    while (rowArray[rowIndex].length > 2) {
-                        const cellVal = rowArray[rowIndex][i];
-                        if (cellVal !== void 0) {
-                            break;
-                        }
-                        rowArray[rowIndex].pop();
-                        i--;
-                    }
-
-                    csvRows.push(rowArray[rowIndex].join(itemDelimiter));
-                }
-            }
-        }
-
-        return csvRows.join(lineDelimiter);
-    }
-
-    /**
-     * Exports the datastore as a CSV string, using the options
-     * provided on import unless other options are provided.
-     *
-     * @param {CSVStore.ExportOptions} [csvExportOptions]
-     * Options to use instead of those used on import.
-     *
-     * @return {string}
-     * CSV from the store's current table.
-     *
-     */
-    public save(csvExportOptions?: Partial<CSVStore.ExportOptions>): string {
-        const exportOptions = CSVStore.defaultExportOptions;
-
-        // Merge in the provided parser options
-        objectEach(this.parserOptions, function (value, key): void {
-            if (key in exportOptions) {
-                exportOptions[key] = value;
-            }
-        });
-
-        return this.getCSVForExport(merge(exportOptions, csvExportOptions));
+        return DataPromise.resolve(store);
     }
 
 }
@@ -452,17 +332,6 @@ namespace CSVStore {
         csvURL: string;
         enablePolling: boolean;
         dataRefreshRate: number;
-    }
-
-    /**
-     * The available options when exporting the table as CSV.
-     */
-    export interface ExportOptions extends JSON.Object {
-        decimalPoint: string | null;
-        itemDelimiter: string | null;
-        lineDelimiter: string;
-        useLocalDecimalPoint?: boolean;
-        usePresentationOrder?: boolean;
     }
 
 }

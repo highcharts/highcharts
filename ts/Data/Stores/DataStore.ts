@@ -26,6 +26,7 @@ import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
 import DataParser from '../Parsers/DataParser.js';
+import DataPromise from '../DataPromise.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -229,7 +230,9 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {Record<string, DataStore.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
-    public describeColumns(columns: Record<string, DataStore.MetaColumn>): void {
+    public describeColumns(
+        columns: Record<string, DataStore.MetaColumn>
+    ): void {
         const store = this,
             columnNames = Object.keys(columns);
 
@@ -256,24 +259,21 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {boolean} [usePresentationState]
      * Whether to use the column order of the presentation state of the table.
      *
-     * @return {Array<string>}
+     * @return {Array<string>|undefined}
      * Order of columns.
      */
-    public getColumnOrder(usePresentationState?: boolean): Array<string> {
+    public getColumnOrder(
+        usePresentationState?: boolean
+    ): (Array<string>|undefined) {
         const store = this,
-            metadata = store.metadata,
-            columns = metadata.columns,
-            columnNames = Object.keys(columns),
-            columnOrder: Array<string> = [];
+            columns = store.metadata.columns,
+            names = Object.keys(columns || {});
 
-        let columnName: string;
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnName = columnNames[i];
-            columnOrder[pick(columns[columnName].index, i)] = columnName;
+        if (names.length) {
+            return names.sort((a, b): number => (
+                pick(columns[a].index, 0) - pick(columns[b].index, 0)
+            ));
         }
-
-        return columnOrder;
     }
 
     /**
@@ -286,41 +286,25 @@ abstract class DataStore implements DataEvent.Emitter {
      * @return {{}}
      * An object with the properties `columnNames` and `columnValues`
      */
-    protected getColumnsForExport(
+    public getColumnsOrdered(
         usePresentationOrder?: boolean
-    ): DataStore.ColumnsForExportObject {
-        const table = this.table,
-            columnsRecord = table.getColumns(),
-            columnNames = table.getColumnNames();
-
-        const columnOrder = this.getColumnOrder(usePresentationOrder);
-
-        if (columnOrder.length) {
-            columnNames.sort((a, b): number => {
-                if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
-                    return 1;
-                }
-                if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
-                    return -1;
-                }
-                return 0;
-            });
-        }
-
-        return ({
-            columnNames,
-            columnValues: columnNames.map(
-                (name: string): DataTable.Column => columnsRecord[name]
-            )
-        });
+    ): DataTable.ColumnCollection {
+        return this.table.getColumns(
+            this.getColumnOrder(usePresentationOrder)
+        );
     }
 
     /**
      * The default load method, which fires the `afterLoad` event
+     *
+     * @return {Promise<DataStore>}
+     * The loaded store.
+     *
      * @emits DataStore#afterLoad
      */
-    public load(): void {
+    public load(): DataPromise<this> {
         fireEvent(this, 'afterLoad', { table: this.table });
+        return DataPromise.resolve(this);
     }
 
     /**
@@ -340,6 +324,20 @@ abstract class DataStore implements DataEvent.Emitter {
         callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
+    }
+
+    /**
+     * The default save method, which fires the `afterSave` event
+     *
+     * @return {Promise<DataStore>}
+     * The saved store.
+     *
+     * @emits DataStore#afterSave
+     * @emits DataStore#saveError
+     */
+    public save(): DataPromise<this> {
+        fireEvent(this, 'saveError', { table: this.table });
+        return DataPromise.reject(new Error('Not implemented'));
     }
 
     /**
@@ -378,15 +376,6 @@ abstract class DataStore implements DataEvent.Emitter {
  * */
 
 namespace DataStore {
-
-    /**
-     * Object with columns for object.
-     */
-    export interface ColumnsForExportObject {
-        columnNames: Array<string>;
-        columnValues: Array<DataTable.Column>;
-        columnHeaderFormatter?: Function;
-    }
 
     /**
      * The default event object for a datastore

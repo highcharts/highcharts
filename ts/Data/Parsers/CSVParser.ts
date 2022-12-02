@@ -23,6 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataStore from '../Stores/DataStore';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -48,7 +49,7 @@ class CSVParser extends DataParser {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: CSVParser.ClassJSONOptions = {
+    protected static readonly defaultOptions: CSVParser.Options = {
         ...DataParser.defaultOptions,
         lineDelimiter: '\n'
     };
@@ -83,14 +84,115 @@ class CSVParser extends DataParser {
      *  Properties
      *
      * */
+
     private columns: Array<DataTable.Column> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
-    private options: CSVParser.ClassJSONOptions;
+    private options: CSVParser.Options;
     public converter: DataConverter;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Creates a CSV string from the datatable on the store instance.
+     *
+     * @param {CSVParser.Options} [options]
+     * The options used for the export.
+     *
+     * @return {string}
+     * A CSV string from the table.
+     */
+    public export(
+        store: DataStore,
+        options: CSVParser.Options = this.options
+    ): string {
+        const { useLocalDecimalPoint, lineDelimiter } = options,
+            exportNames = (this.options.firstRowAsNames !== false);
+
+        let { decimalPoint, itemDelimiter } = options;
+
+        if (!decimalPoint) {
+            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.';
+        }
+
+        if (!itemDelimiter) {
+            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+        }
+
+        const columns = store.getColumnsOrdered(options.usePresentationOrder),
+            columnNames = Object.keys(columns),
+            csvRows: Array<string> = [],
+            columnsCount = columnNames.length;
+
+        const rowArray: Array<DataTable.Row> = [];
+
+        // Add the names as the first row if they should be exported
+        if (exportNames) {
+            csvRows.push(columnNames.map(
+                (columnName): string => `"${columnName}"`
+            ).join(itemDelimiter));
+        }
+
+        for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+            const columnName = columnNames[columnIndex],
+                column = columns[columnName],
+                columnLength = column.length;
+
+            const columnMeta = store.whatIs(columnName);
+            let columnDataType;
+
+            if (columnMeta) {
+                columnDataType = columnMeta.dataType;
+            }
+
+            for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+                let cellValue = column[rowIndex];
+
+                if (!rowArray[rowIndex]) {
+                    rowArray[rowIndex] = [];
+                }
+
+                // Prefer datatype from metadata
+                if (columnDataType === 'string') {
+                    cellValue = `"${cellValue}"`;
+                } else if (typeof cellValue === 'number') {
+                    cellValue = String(cellValue).replace('.', decimalPoint);
+                } else if (typeof cellValue === 'string') {
+                    cellValue = `"${cellValue}"`;
+                }
+
+                rowArray[rowIndex][columnIndex] = cellValue;
+
+                // On the final column, push the row to the CSV
+                if (columnIndex === columnsCount - 1) {
+                    // Trim repeated undefined values starting at the end
+                    // Currently, we export the first "comma" even if the
+                    // second value is undefined
+                    let i = columnIndex;
+                    while (rowArray[rowIndex].length > 2) {
+                        const cellVal = rowArray[rowIndex][i];
+                        if (cellVal !== void 0) {
+                            break;
+                        }
+                        rowArray[rowIndex].pop();
+                        i--;
+                    }
+
+                    csvRows.push(rowArray[rowIndex].join(itemDelimiter));
+                }
+            }
+        }
+
+        return csvRows.join(lineDelimiter);
+    }
 
     /**
      * Initiates parsing of CSV
@@ -510,25 +612,28 @@ namespace CSVParser {
     /**
      * All available options for the parser
      */
-    export type OptionsType = Partial<ClassJSONOptions & ParserOptions>;
+    export type OptionsType = Partial<(Options&SpecialOptions)>;
 
     /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
-    export interface ClassJSONOptions extends DataParser.Options {
+    export interface Options extends DataParser.Options {
         csv?: string;
         decimalPoint?: string;
         itemDelimiter?: string;
         lineDelimiter: string;
+        useLocalDecimalPoint?: boolean;
+        usePresentationOrder?: boolean;
     }
 
     /**
      * Options that are not compatible with ClassJSON
      */
-    export interface ParserOptions {
+    export interface SpecialOptions {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
+
 }
 
 /* *

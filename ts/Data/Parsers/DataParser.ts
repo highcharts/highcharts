@@ -23,6 +23,7 @@
 
 import type DataConverter from '../DataConverter';
 import type DataEvent from '../DataEvent';
+import type DataStore from '../Stores/DataStore';
 import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
@@ -105,6 +106,17 @@ abstract class DataParser implements DataEvent.Emitter {
 
     /* *
      *
+     *  Properties
+     *
+     * */
+
+    /**
+     * DataConverter for the parser.
+     */
+    public abstract converter: DataConverter;
+
+    /* *
+     *
      *  Functions
      *
      * */
@@ -125,6 +137,20 @@ abstract class DataParser implements DataEvent.Emitter {
     public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
+
+    /**
+     * Initiates the data exporting. Should emit `exportError` on failure.
+     *
+     * @param {DataStore} store
+     * Store to export from.
+     *
+     * @param {DataParser.Options} [options]
+     * Options for the export.
+     */
+    public abstract export(
+        store: DataStore,
+        options?: DataParser.Options
+    ): string;
 
     /**
      * Registers a callback for a specific parser event.
@@ -153,10 +179,6 @@ abstract class DataParser implements DataEvent.Emitter {
      */
     public abstract parse(options: DataParser.Options): void;
 
-    /**
-     * DataConverter for the parser.
-     */
-    public abstract converter: DataConverter;
 }
 
 /* *
@@ -175,7 +197,10 @@ namespace DataParser {
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
     export interface Event extends DataEvent {
-        readonly type: ('parse' | 'afterParse' | 'parseError');
+        readonly type: (
+            'export'|'afterExport'|'exportError'|
+            'parse'|'afterParse'|'parseError'
+        );
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
         readonly headers: string[];
