@@ -3,12 +3,14 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Historic World Population by Region'
+        text: 'Historic World Population by Region',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: <a ' +
             'href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"' +
-            'target="_blank">Wikipedia.org</a>'
+            'target="_blank">Wikipedia.org</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],

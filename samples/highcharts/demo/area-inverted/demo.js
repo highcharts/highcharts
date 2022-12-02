@@ -5,7 +5,8 @@ Highcharts.chart('container', {
         inverted: true
     },
     title: {
-        text: 'Alibaba and Meta (Facebook) revenue'
+        text: 'Alibaba and Meta (Facebook) revenue',
+        align: 'left'
     },
     accessibility: {
         keyboardNavigation: {
