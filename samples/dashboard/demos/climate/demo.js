@@ -260,9 +260,9 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            cityClimateTable,
+            // store: cityClimateTable,
             editable: true,
-            syncEvents: ['tooltip'],
+            // syncEvents: ['tooltip'],
             title: 'Selection Grid'
         }],
         editMode: {

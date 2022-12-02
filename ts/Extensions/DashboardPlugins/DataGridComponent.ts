@@ -221,7 +221,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                 });
             return this.dataGrid;
         }
-console.log('init');
+
         throw new Error('DataGrid not connected.');
     }
 

@@ -49,19 +49,19 @@ class Bindings {
 
         // add elements to containers
         if (compontentContainer) {
+            const ComponentClass = Component.getComponent(options.type);
+
             switch (options.type) {
                 case 'html':
-                    component = new HTMLComponent(
-                        merge(
-                            options,
-                            {
-                                parentElement: compontentContainer as HTMLDOMElement,
-                                elements: options.elements
-                            })
+                    component = new HTMLComponent(merge(
+                        options,
+                        {
+                            parentElement: compontentContainer as HTMLDOMElement,
+                            elements: options.elements
+                        })
                     );
                     break;
-                case 'Highcharts': 
-                    const ComponentClass = Component.getComponent(options.type);
+                case 'Highcharts':
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -73,15 +73,15 @@ class Bindings {
                         )) as HighchartsComponent;
                     }
                     break;
-                case 'DataGrid': 
-                    component = new DataGridComponent(
-                        merge(
+                case 'DataGrid':
+                    if (ComponentClass) {
+                        component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: compontentContainer as HTMLDOMElement,
-                                elements: options.elements
+                                parentElement: compontentContainer as HTMLDOMElement
                             })
-                    );
+                        ) as DataGridComponent;
+                    }
                     break;
                 default:
                     return;
