@@ -50,10 +50,12 @@ Highcharts.chart('container', {
         height: '100%'
     },
     title: {
-        text: 'The Indo-European Language Tree'
+        text: 'The Indo-European Language Tree',
+        align: 'left'
     },
     subtitle: {
-        text: 'A Force-Directed Network Graph in Highcharts'
+        text: 'A Force-Directed Network Graph in Highcharts',
+        align: 'left'
     },
     plotOptions: {
         networkgraph: {

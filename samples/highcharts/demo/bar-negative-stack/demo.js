@@ -9,12 +9,14 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Population pyramid for Somalia, 2021'
+        text: 'Population pyramid for Somalia, 2021',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: <a ' +
             'href="https://countryeconomy.com/demography/population-structure/somalia"' +
-            'target="_blank">countryeconomy.com</a>'
+            'target="_blank">countryeconomy.com</a>',
+        align: 'left'
     },
     accessibility: {
         point: {

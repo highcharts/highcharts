@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in May, 2020'
+        text: 'Browser market shares in May, 2020',
+        align: 'left'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

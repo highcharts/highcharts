@@ -32,11 +32,13 @@
         },
 
         title: {
-            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)'
+            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>'
+            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>',
+            align: 'left'
         },
 
         tooltip: {
