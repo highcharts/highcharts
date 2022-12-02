@@ -20,7 +20,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -93,7 +93,7 @@ class SeriesPointsModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -101,7 +101,7 @@ class SeriesPointsModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 

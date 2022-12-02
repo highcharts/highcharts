@@ -270,7 +270,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         const { store, dataGrid } = this;
 
         if (store && dataGrid) {
-            dataGrid.on('cellClick', (e): void => {
+            dataGrid.on<DataGrid.Event>('cellClick', (e): void => {
                 if ('input' in e) {
                     e.input.addEventListener(
                         'keyup',

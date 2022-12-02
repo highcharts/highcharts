@@ -161,6 +161,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         if (!renderTo) {
             error(13, true);
         }
+
+        // Clear the container from any content.
+        dashboard.container.innerHTML = '';
     }
 
     public setLayouts(guiOptions: Dashboard.GUIOptions): void {

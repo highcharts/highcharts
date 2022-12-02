@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataStore from './DataStore.js';
@@ -43,7 +43,7 @@ const {
  *
  * @private
  */
-class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
+class HTMLTableStore extends DataStore {
 
     /* *
      *
@@ -153,14 +153,14 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEvent.Detail): void {
         const store = this;
 
         store.fetchTable();
@@ -168,7 +168,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         // If already loaded, clear the current rows
         store.table.deleteColumns();
 
-        store.emit({
+        store.emit<HTMLTableStore.Event>({
             type: 'load',
             detail: eventDetail,
             table: store.table,
@@ -176,7 +176,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         });
 
         if (!store.tableElement) {
-            store.emit({
+            store.emit<HTMLTableStore.Event>({
                 type: 'loadError',
                 detail: eventDetail,
                 error: 'HTML table not provided, or element with ID not found',
@@ -192,7 +192,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         store.table.setColumns(store.parser.getTable().getColumns());
 
-        store.emit({
+        store.emit<HTMLTableStore.Event>({
             type: 'afterLoad',
             detail: eventDetail,
             table: store.table,
@@ -454,7 +454,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
      * Options that override default or existing export options.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {string}
@@ -463,7 +463,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      */
     public save(
         htmlExportOptions: HTMLTableStore.ExportOptions,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
@@ -483,7 +483,6 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
 }
 
-
 /**
  *
  *  Namespace
@@ -501,9 +500,12 @@ namespace HTMLTableStore {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Options used in the constructor of HTMLTableDataStore
+     * Provided event object on errors within HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
+    export interface ErrorEvent extends DataStore.Event {
+        type: 'loadError';
+        error: (string|Error);
+    }
 
     /**
      * Options for exporting the store as an HTML table
@@ -516,14 +518,6 @@ namespace HTMLTableStore {
         useMultiLevelHeaders?: boolean;
         useRowspanHeaders?: boolean;
         usePresentationOrder?: boolean;
-    }
-
-    /**
-     * Provided event object on errors within HTMLTableDataStore
-     */
-    export interface ErrorEvent extends DataStore.Event {
-        type: 'loadError';
-        error: (string|Error);
     }
 
     /**
@@ -540,6 +534,12 @@ namespace HTMLTableStore {
     export interface Options {
         table: (string|HTMLElement);
     }
+
+    /**
+     * Options used in the constructor of HTMLTableDataStore
+     */
+    export type OptionsType =
+        Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>;
 
 }
 
