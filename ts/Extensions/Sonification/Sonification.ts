@@ -18,12 +18,13 @@
  *
  * */
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
+
 import Instrument from './Instrument.js';
 import SU from './SonificationUtilities.js';
 import sonificationOptions from './Options.js';

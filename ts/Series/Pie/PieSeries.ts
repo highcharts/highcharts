@@ -84,7 +84,7 @@ class PieSeries extends Series {
      *
      * */
 
-    public static defaultOptions: PieSeriesOptions = merge(
+    public static defaultOptions = merge(
         Series.defaultOptions,
         PieSeriesDefaults
     );

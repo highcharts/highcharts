@@ -181,11 +181,7 @@ QUnit.test('Option chart border and background update', function (assert) {
         '#ffffff',
         'Chart background is updated'
     );
-    assert.strictEqual(
-        chart.chartBackground.element.getAttribute('stroke'),
-        null,
-        'Chart border is removed'
-    );
+
     assert.strictEqual(
         chart.chartBackground.element.getAttribute('rx'),
         '0',
@@ -277,8 +273,8 @@ QUnit.test('Option chart.inverted update', function (assert) {
     assert.strictEqual(chart.xAxis[0].side, 3, 'X axis on left');
 
     assert.strictEqual(
-        chart.series[0].group.inverted,
-        true,
+        chart.series[0].group.rotation,
+        90,
         'Series is inverted (#5938)'
     );
 

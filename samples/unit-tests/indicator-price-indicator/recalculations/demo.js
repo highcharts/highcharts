@@ -260,7 +260,7 @@ function (assert) {
         'Series last price indicator should be visible.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
+        chart.series[0].lastPrice.attr('stroke'),
         '#ff0000',
         'Cross label fill color should be red.'
     );
@@ -296,7 +296,7 @@ function (assert) {
         'Series last price indicator should be visible again.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
+        chart.series[0].lastPrice.attr('stroke'),
         '#ff0000',
         'Cross label fill color should be red again.'
     );

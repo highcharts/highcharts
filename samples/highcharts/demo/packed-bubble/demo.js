@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         height: '100%'
     },
     title: {
-        text: 'Carbon emissions around the world (2014)'
+        text: 'Carbon emissions around the world (2014)',
+        align: 'left'
     },
     tooltip: {
         useHTML: true,

@@ -864,26 +864,28 @@ function relativeLength(
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-function wrap(
-    obj: any,
-    method: string,
-    func: Utilities.WrapProceedFunction
+function wrap<T, K extends FunctionNamesOf<T>>(
+    obj: T,
+    method: K,
+    func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
-    const proceed = obj[method];
+    const proceed = obj[method] as T[K]&ArrowFunction;
 
-    obj[method] = function (): any {
-        const args = Array.prototype.slice.call(arguments),
-            outerArgs = arguments,
-            ctx = this;
+    obj[method] = function (this: T): ReturnType<typeof func> {
+        const outerArgs = arguments,
+            scope = this;
 
-        ctx.proceed = function (): void {
-            proceed.apply(ctx, arguments.length ? arguments : outerArgs);
-        };
-        args.unshift(proceed);
-        const ret = func.apply(this, args);
-        ctx.proceed = null;
-        return ret;
-    };
+        return func.apply(this, [
+            function (): ReturnType<typeof proceed> {
+                return proceed.apply(
+                    scope,
+                    arguments.length ? arguments : outerArgs
+                );
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
+    } as T[K];
 }
 
 /**
@@ -2060,8 +2062,8 @@ namespace Utilities {
         top: number;
         width: number;
     }
-    export interface WrapProceedFunction {
-        (...args: Array<any>): any;
+    export interface WrapProceedFunction<T extends ArrowFunction> {
+        (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
 
