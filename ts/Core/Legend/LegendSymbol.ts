@@ -107,7 +107,7 @@ namespace LegendSymbol {
         if (!this.chart.styledMode) {
             attr = {
                 'stroke-width': Math.min(options.lineWidth || 0, 24),
-                'stroke-linecap': (options.linecap || 'round') as any
+                'stroke-linecap': options.linecap || 'round'
             };
 
             if (options.dashStyle) {
