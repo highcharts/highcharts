@@ -127,7 +127,7 @@ class CSVParser extends DataParser {
             itemDelimiter = decimalPoint === ',' ? ';' : ',';
         }
 
-        const columns = store.getColumnsOrdered(options.usePresentationOrder),
+        const columns = store.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             csvRows: Array<string> = [],
             columnsCount = columnNames.length;

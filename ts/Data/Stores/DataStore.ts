@@ -286,7 +286,7 @@ abstract class DataStore implements DataEvent.Emitter {
      * @return {{}}
      * An object with the properties `columnNames` and `columnValues`
      */
-    public getColumnsOrdered(
+    public getSortedColumns(
         usePresentationOrder?: boolean
     ): DataTable.ColumnCollection {
         return this.table.getColumns(

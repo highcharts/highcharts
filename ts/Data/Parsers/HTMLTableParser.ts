@@ -269,7 +269,7 @@ class HTMLTableParser extends DataParser {
                 val + '</' + tag + '>';
         };
 
-        const columns = store.getColumnsOrdered(options.usePresentationOrder),
+        const columns = store.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
