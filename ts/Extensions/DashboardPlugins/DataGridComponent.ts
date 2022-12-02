@@ -95,7 +95,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
 
                 if (
                     dataTableRowIndex !== void 0 &&
-                                    columnName !== void 0
+                    columnName !== void 0
                 ) {
                     const table = store.table.modified;
 
