@@ -590,7 +590,7 @@ class HeatmapSeries extends ScatterSeries {
         let series = this,
             attr =
                 Series.prototype.pointAttribs.call(
-                    series, point, state, false
+                    series, point, state
                 ),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},

@@ -2880,13 +2880,14 @@ class Series {
             pointColorOption = pointOptions && pointOptions.color,
             pointColor = point && point.color,
             zoneColor = point && point.zone && point.zone.color,
+
             rotationOptions = flip && point && point.graphic ?
                 {
                     rotation: 90,
-                    rotationOriginY: point.graphic.y +
-                        (point.graphic.height && point.graphic.height / 2),
-                    rotationOriginX: point.graphic.x +
-                        (point.graphic.width && point.graphic.width / 2)
+                    rotationOriginY: point.plotY && point.plotY +
+                        ((point.hasImage && 15) || 15),
+                    rotationOriginX: point.plotX && point.plotX +
+                        ((point.hasImage && 15) || 15)
                 } : {};
 
         let seriesStateOptions,

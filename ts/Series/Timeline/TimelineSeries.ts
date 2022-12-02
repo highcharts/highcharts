@@ -431,7 +431,7 @@ class TimelineSeries extends LineSeries {
         state?: StatesOptionsKey,
         flip?: boolean
     ): SVGAttributes {
-        return Series.prototype.pointAttribs.call(this, point, state, false);
+        return Series.prototype.pointAttribs.call(this, point, state);
     }
 
     public processData(): undefined {
