@@ -80,7 +80,7 @@ class DataOnDemand {
      * @private
      */
     protected readonly sources: (
-        Record<string, (DataStore<DataStore.Event>|undefined)>
+        Record<string, (DataStore|undefined)>
     );
 
     /* *
@@ -102,7 +102,7 @@ class DataOnDemand {
      */
     public getSource(
         name: string
-    ): Promise<DataStore<DataStore.Event>> {
+    ): Promise<DataStore> {
         const sources = this.sources,
             source = sources[name];
 
@@ -175,7 +175,7 @@ class DataOnDemand {
      */
     protected loadStore(
         sourceOptions: DataOnDemandSourceOptions
-    ): Promise<DataStore<DataStore.Event>> {
+    ): Promise<DataStore> {
         return new Promise((resolve, reject): void => {
             const StoreClass: (Class|undefined) =
                 DataStore.getStore(sourceOptions.storeType);

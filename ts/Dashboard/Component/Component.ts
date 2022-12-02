@@ -9,7 +9,6 @@ import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
-import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -301,11 +300,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                 'setModifier',
                 (): void => this.clearTableListeners()
             );
-            this.store.table.on('afterSetModifier', (e): void => {
-                if (e.type === 'afterSetModifier' && e.modified) {
-                    this.setupTableListeners(e.modified);
+            this.store.table.on(
+                'afterSetModifier',
+                (e: DataTable.SetModifierEvent): void => {
+                    if (e.type === 'afterSetModifier' && e.modified) {
+                        this.setupTableListeners(e.modified);
+                    }
                 }
-            });
+            );
         }
 
         // Clean up old event listeners
@@ -584,15 +586,15 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         Component.removeInstance(this);
     }
 
-    public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject | Component.EventTypes>
+    public on<TEvent extends Component.EventTypes>(
+        type: TEvent['type'],
+        callback: (this: this, e: TEvent) => void
     ): Function {
         return addEvent(this, type, callback);
     }
 
-    public emit(
-        e: Component.EventTypes
+    public emit<TEvent extends Component.EventTypes>(
+        e: TEvent
     ): void {
         if (!e.target) {
             e.target = this;
@@ -723,11 +725,11 @@ namespace Component {
 
 
     export type Event<
-        EventType extends DataEventEmitter.Event['type'],
+        EventType extends string,
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: DataEventEmitter.EventDetail;
+            detail?: AnyRecord;
         } & EventRecord;
 
     export interface ComponentOptions extends EditableOptions {
@@ -756,7 +758,7 @@ namespace Component {
         id: string;
     }
 
-    export type StoreTypes = DataStore<DataStore.Event>;
+    export type StoreTypes = DataStore;
 
     export interface EditableOptions {
         store?: StoreTypes;
@@ -965,4 +967,5 @@ namespace Component {
     }
 
 }
+
 export default Component;

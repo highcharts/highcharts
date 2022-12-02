@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataEventEmitter from '../Data/DataEventEmitter';
+import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
@@ -49,7 +49,7 @@ const {
  *
  * */
 
-class DataGrid implements DataEventEmitter<DataGrid.Event> {
+class DataGrid {
 
     /* *
      *
@@ -201,7 +201,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
         this.renderColumnDragHandles();
 
-        this.emit({
+        this.emit<DataGrid.Event>({
             type: 'afterResizeColumn',
             width,
             index,
@@ -218,7 +218,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {DataGrid.Event} e
      * Event object with event information.
      */
-    public emit(e: DataGrid.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
@@ -249,9 +249,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on(
-        type: DataGrid.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataGrid.Event>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -795,16 +795,18 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 }
 
 namespace DataGrid {
+
     export type Event = (
         ColumnResizeEvent
     );
 
-    export interface ColumnResizeEvent {
+    export interface ColumnResizeEvent extends DataEvent {
         readonly type: 'afterResizeColumn';
         readonly width: number;
         readonly index?: number;
         readonly name?: string;
     }
+
 }
 
 export default DataGrid;

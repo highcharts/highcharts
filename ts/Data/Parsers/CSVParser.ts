@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -37,7 +37,7 @@ const { merge } = U;
  *
  * @private
  */
-class CSVParser extends DataParser<DataParser.Event> {
+class CSVParser extends DataParser {
 
     /* *
      *
@@ -98,7 +98,7 @@ class CSVParser extends DataParser<DataParser.Event> {
      * @param {CSVParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -106,7 +106,7 @@ class CSVParser extends DataParser<DataParser.Event> {
      */
     public parse(
         options: CSVParser.OptionsType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
             dataTypes = parser.dataTypes,
@@ -143,8 +143,8 @@ class CSVParser extends DataParser<DataParser.Event> {
 
         if (csv) {
             lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
+                .replace(/\r\n/gu, '\n') // Unix
+                .replace(/\r/gu, '\n') // Mac
                 .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
@@ -167,7 +167,7 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                    headers[i] = headers[i].replace(/^["']|["']$/gu, '');
                 }
 
                 parser.headers = headers;
