@@ -721,17 +721,17 @@ class DragDrop {
                 if (newCell.nestedLayout) {
 
                     // @ToDo temp dimensions - improve when responsive grid.
-                    if (draggedCell.container) {
-                        draggedCell.container.style.width = '100%';
-                        draggedCell.container.style.height = (
-                            dragDrop.dropPointer.element.offsetHeight + 'px'
-                        );
-                    }
+                    // if (draggedCell.container) {
+                    //     draggedCell.container.style.width = '100%';
+                    //     draggedCell.container.style.height = (
+                    //         dragDrop.dropPointer.element.offsetHeight + 'px'
+                    //     );
+                    // }
 
-                    // @ToDo temp dimensions - improve when responsive grid.
-                    if (dropContextCell.container) {
-                        dropContextCell.container.style.width = '100%';
-                    }
+                    // // @ToDo temp dimensions - improve when responsive grid.
+                    // if (dropContextCell.container) {
+                    //     dropContextCell.container.style.width = '100%';
+                    // }
 
                     newCell.nestedLayout.rows[0].mountCell(dropContextCell);
                     newCell.nestedLayout.rows[1].mountCell(draggedCell);
@@ -740,10 +740,10 @@ class DragDrop {
                 dropContext = dropContext as Cell;
 
                 // @ToDo temp dimensions - improve when responsive grid.
-                if (draggedCell.container && dropContext.container) {
-                    draggedCell.container.style.height =
-                        dropContext.container.offsetHeight + 'px';
-                }
+                // if (draggedCell.container && dropContext.container) {
+                //     draggedCell.container.style.height =
+                //         dropContext.container.offsetHeight + 'px';
+                // }
 
                 dropContext.row.mountCell(
                     draggedCell,
@@ -752,15 +752,15 @@ class DragDrop {
                 );
 
                 // @ToDo temp dimensions - improve when responsive grid.
-                const cellsLength = dropContext.row.cells.length;
-                const newWidth = 100 / cellsLength;
-                for (let i = 0, iEnd = cellsLength; i < iEnd; ++i) {
-                    const cell = dropContext.row.cells[i];
+                // const cellsLength = dropContext.row.cells.length;
+                // const newWidth = 100 / cellsLength;
+                // for (let i = 0, iEnd = cellsLength; i < iEnd; ++i) {
+                //     const cell = dropContext.row.cells[i];
 
-                    if (cell.container) {
-                        cell.container.style.width = newWidth + '%';
-                    }
-                }
+                //     if (cell.container) {
+                //         cell.container.style.width = newWidth + '%';
+                //     }
+                // }
             }
         }
 

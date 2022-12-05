@@ -127,18 +127,19 @@ class Sidebar {
             ): Cell | void {
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
-                        type: 'Highcharts',
                         cell: '',
-                        isResizable: true,
+                        type: 'Highcharts',
                         chartOptions: {
+                            series: [
+                                {
+                                    name: 'Series from options',
+                                    data: [1, 2, 1, 4]
+                                }
+                            ],
                             chart: {
-                                type: 'line',
-                                animation: false
-                            },
-                            series: [{
-                                name: 'Series from options',
-                                data: [1, 2, 3, 4]
-                            }]
+                                animation: false,
+                                type: 'pie'
+                            }
                         }
                     });
                 }
@@ -955,10 +956,23 @@ class Sidebar {
                 });
 
             dragDrop.onCellDragEnd(newCell);
-            const component = Bindings.addComponent(merge(componentOptions, {
+            let options = merge(componentOptions, {
                 cell: newCell.id
-            }));
-            newCell.mountedComponent = component;
+            });
+            const component = Bindings.addComponent(options);
+
+            if (newCell && component) {
+                component.setCell(newCell);
+                newCell.mountedComponent = component;
+
+                row.layout.dashboard.mountedComponents.push({
+                    options,
+                    component: component,
+                    cell: newCell
+                });
+            } else {
+                // Error
+            }
 
             return newCell;
         }

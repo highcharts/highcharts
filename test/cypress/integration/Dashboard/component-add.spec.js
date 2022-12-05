@@ -29,14 +29,20 @@ describe('Add component through UI', () => {
         dropComponent("#dashboard-col-0")
     });
 
-    it('should be able to add a chart component', function() {
-        grabComponent('chart');
-        dropComponent('#dashboard-col-0')
+    it('should be able to add a HTML component', function() {
+        grabComponent('HTML');
+        dropComponent('#dashboard-col-0');
     });
 
-    it('should be able to add a HTML component', function() {
-        grabComponent('HTML')
-        dropComponent('#dashboard-col-0')
+    it('should be able to add a chart component', function() {
+        grabComponent('chart');
+        dropComponent('#dashboard-col-1')
+    });
+
+    it('should be possible to resize the added component', function() {
+        cy.get('.hd-edit-resize-snap-x').trigger('mousedown');
+        cy.get('.hd-cell').eq(1).trigger('mousemove');
+        cy.get('.hd-cell').eq(1).trigger('mouseup');
     });
 
     // TODO: add after the datagrid component is added

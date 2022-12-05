@@ -110,7 +110,7 @@ class Resizer {
      * Resized element reference.
      */
     public currentCell: Cell|undefined;
-    
+
     /**
      * Dimension of current resizing (x or y).
      */
@@ -310,7 +310,7 @@ class Resizer {
     public revertSiblingsAutoWidth(): void {
         const tempSiblingsWidth = this.tempSiblingsWidth;
         let cellContainer, cellResize;
-        
+
         for (let i = 0, iEnd = tempSiblingsWidth.length; i < iEnd; ++i) {
             cellContainer = tempSiblingsWidth[i].container;
 
@@ -330,7 +330,7 @@ class Resizer {
     }
 
     /**
-     * Add mouse events to snaps 
+     * Add mouse events to snaps
      *
      */
     public addResizeEvents(): void {

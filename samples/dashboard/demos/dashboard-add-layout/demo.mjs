@@ -1,6 +1,6 @@
 
 // Bring in other forms of Highcharts
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
 const { PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
@@ -12,7 +12,67 @@ let dashboard = new Dashboard.Dashboard('container', {
         contextMenu: {
             icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: ['editMode']
+            items: [{
+                id: 'saveLocal',
+                className: 'test-test-test',
+                events: {
+                    click: function () {
+                        console.log('save local');
+                    }
+                }
+            }, 'verticalSeparator', 'editMode', {
+                id: 'export-dashboard',
+                text: 'Export dashboard',
+                events: {
+                    click: function () {
+                        dashboard.exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-dashboard',
+                text: 'Delete current dashboard',
+                events: {
+                    click: function () {
+                        dashboard.destroy();
+                    }
+                }
+            }, {
+                id: 'import-dashboard',
+                text: 'Import saved dashboard',
+                events: {
+                    click: function () {
+                        dashboard = Dashboard.importLocal();
+                    }
+                }
+            }, {
+                id: 'export-layout',
+                text: 'Export 1 layout',
+                events: {
+                    click: function () {
+                        exportedLayoutId = dashboard.layouts[0].options.id;
+                        dashboard.layouts[0].exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-layout',
+                text: 'Delete 1 layout',
+                events: {
+                    click: function () {
+                        dashboard.layouts[0].destroy();
+                    }
+                }
+            }, {
+                id: 'import-layout',
+                text: 'Import saved layout',
+                events: {
+                    click: function () {
+                        const layout = dashboard.importLayoutLocal(
+                            exportedLayoutId
+                        );
+                        console.log('Imported layout: ', layout);
+                    }
+                }
+            }]
         },
         toolbars: {
             cell: {
@@ -24,7 +84,16 @@ let dashboard = new Dashboard.Dashboard('container', {
                         id: 'settings',
                         icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                     },
-                {
+                    // {
+                    //     id: 'my-option-1',
+                    //     text: 't1',
+                    //     events: {
+                    //         click: function() {
+                    //             console.log('hello world!');
+                    //         }
+                    //     }
+                    // },
+                    {
                         id: 'destroy',
                         icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                     }]
@@ -106,13 +175,12 @@ let dashboard = new Dashboard.Dashboard('container', {
                         ]
                     },
                 ]
-            },
+            }
         ]
     },
     components: [
         {
             cell: 'dashboard-col-0',
-            isResizable: true,
             type: 'Highcharts',
             chartOptions: {
                 series: [
@@ -126,8 +194,7 @@ let dashboard = new Dashboard.Dashboard('container', {
                     type: 'pie'
                 }
             },
-        },
-        {
+        }, {
             cell: 'dashboard-col-1',
             type: 'html',
             dimensions: {
