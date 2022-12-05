@@ -959,20 +959,7 @@ class Sidebar {
             let options = merge(componentOptions, {
                 cell: newCell.id
             });
-            const component = Bindings.addComponent(options);
-
-            if (newCell && component) {
-                component.setCell(newCell);
-                newCell.mountedComponent = component;
-
-                row.layout.dashboard.mountedComponents.push({
-                    options,
-                    component: component,
-                    cell: newCell
-                });
-            } else {
-                // Error
-            }
+            Bindings.addComponent(options, newCell);
 
             return newCell;
         }

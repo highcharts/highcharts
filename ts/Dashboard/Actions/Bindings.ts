@@ -39,10 +39,12 @@ class Bindings {
     }
 
     public static addComponent(
-        options: Bindings.ComponentOptions
+        options: Bindings.ComponentOptions,
+        cell?: Cell
     ): ComponentTypes | undefined {
         const compontentContainer = document.getElementById(options.cell);
 
+        cell = cell || Bindings.getCell(options.cell);
         let component: ComponentTypes|undefined;
 
         // add elements to containers
@@ -86,6 +88,16 @@ class Bindings {
             fireEvent(component, 'mount');
         }
 
+            if (cell && component) {
+                component.setCell(cell); // should probably be done by Bindings
+                cell.mountedComponent = component; // @ToDo cell.addComponent() perhaps? - checks if cell is free
+
+                cell.row.layout.dashboard.mountedComponents.push({
+                    options: options,
+                    component: component,
+                    cell: cell
+                });
+            }
         return component;
     }
 
@@ -150,9 +162,6 @@ class Bindings {
 namespace Bindings {
     export interface Options {
 
-    }
-
-    export interface LayoutOptions {
     }
 
     export interface ComponentOptions {
