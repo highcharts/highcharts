@@ -501,7 +501,7 @@ h1 {
 
 .hd-edit-sidebar {
     top: 0px;
-    left: -310px;
+    left: -340px; // width + paddings
     transition: 0.5s;
     width: 300px;
     background: #fff;
