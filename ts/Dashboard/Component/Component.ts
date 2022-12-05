@@ -170,7 +170,28 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: null
         };
 
-        this.syncHandlers = Object.keys(this.options.sync)
+        this.handleSyncOptions();
+
+        this.element = createElement('div', {
+            className: this.options.className
+        }, this.options.style);
+
+        this.contentElement = createElement('div', {
+            className: `${this.options.className}-content`
+        }, {
+            height: '100%'
+        }, void 0, true);
+
+    }
+
+    /**
+     * Handles the sync options. Applies the given defaults if no
+     * specific callback given
+     */
+    protected handleSyncOptions(
+        defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
+    ): typeof this.syncHandlers {
+        return Object.keys(this.options.sync)
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
@@ -184,23 +205,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                         }
                         if (handler && typeof handler === 'boolean') {
                             carry[handlerName] =
-                                Sync.defaultHandlers[handlerName];
+                  defaultHandlers[handlerName];
                         }
                     }
 
                     return carry;
                 }, {});
-
-        this.element = createElement('div', {
-            className: this.options.className
-        }, this.options.style);
-
-        this.contentElement = createElement('div', {
-            className: `${this.options.className}-content`
-        }, {
-            height: '100%'
-        }, void 0, true);
-
     }
 
     // Setup listeners on cell/other things up the chain

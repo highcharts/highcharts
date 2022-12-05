@@ -143,6 +143,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             this.dataGridContainer.id = this.options.dataGridID;
         }
 
+        this.syncHandlers = this.handleSyncOptions(DataGridSyncHandlers);
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers
