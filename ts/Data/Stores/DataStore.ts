@@ -25,7 +25,7 @@ import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
-import DataParser from '../Parsers/DataParser.js';
+import DataConverter from '../Converters/DataConverter.js';
 import DataPromise from '../DataPromise.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -184,10 +184,10 @@ abstract class DataStore implements DataEvent.Emitter {
      * */
 
     /**
-     * The DataParser responsible for handling converting the provided data to
+     * The DataConverter responsible for handling conversion of provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser;
+    public abstract readonly converter: DataConverter;
 
     /**
      * Metadata to describe the store and the content of columns.

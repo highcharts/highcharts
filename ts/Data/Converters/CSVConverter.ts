@@ -25,9 +25,9 @@
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
 
-import DataParser from './DataParser.js';
+import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import DataConverter from '../DataConverter.js';
+import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -38,7 +38,7 @@ const { merge } = U;
  *
  * @private
  */
-class CSVParser extends DataParser {
+class CSVConverter extends DataConverter {
 
     /* *
      *
@@ -49,8 +49,8 @@ class CSVParser extends DataParser {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: CSVParser.Options = {
-        ...DataParser.defaultOptions,
+    protected static readonly defaultOptions: CSVConverter.Options = {
+        ...DataConverter.defaultOptions,
         lineDelimiter: '\n'
     };
 
@@ -63,20 +63,20 @@ class CSVParser extends DataParser {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVParser.OptionsType} [options]
+     * @param {CSVConverter.OptionsType} [options]
      * Options for the CSV parser.
      *
      * @param {DataConverter} converter
      * Parser data converter.
      */
     public constructor(
-        options?: CSVParser.OptionsType,
-        converter?: DataConverter
+        options?: CSVConverter.OptionsType,
+        converter?: OldDataConverter
     ) {
         super();
 
-        this.options = merge(CSVParser.defaultOptions, options);
-        this.converter = converter || new DataConverter();
+        this.options = merge(CSVConverter.defaultOptions, options);
+        this.converter = converter || new OldDataConverter();
     }
 
     /* *
@@ -90,8 +90,8 @@ class CSVParser extends DataParser {
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
-    private options: CSVParser.Options;
-    public converter: DataConverter;
+    private options: CSVConverter.Options;
+    public converter: OldDataConverter;
 
     /* *
      *
@@ -102,7 +102,7 @@ class CSVParser extends DataParser {
     /**
      * Creates a CSV string from the datatable on the store instance.
      *
-     * @param {CSVParser.Options} [options]
+     * @param {CSVConverter.Options} [options]
      * The options used for the export.
      *
      * @return {string}
@@ -110,7 +110,7 @@ class CSVParser extends DataParser {
      */
     public export(
         store: DataStore,
-        options: CSVParser.Options = this.options
+        options: CSVConverter.Options = this.options
     ): string {
         const { useLocalDecimalPoint, lineDelimiter } = options,
             exportNames = (this.options.firstRowAsNames !== false);
@@ -197,7 +197,7 @@ class CSVParser extends DataParser {
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVParser.OptionsType}[options]
+     * @param {CSVConverter.OptionsType}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -207,7 +207,7 @@ class CSVParser extends DataParser {
      * @emits CSVDataParser#afterParse
      */
     public parse(
-        options: CSVParser.OptionsType,
+        options: CSVConverter.OptionsType,
         eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
@@ -232,7 +232,7 @@ class CSVParser extends DataParser {
 
         parser.columns = [];
 
-        parser.emit<DataParser.Event>({
+        parser.emit<DataConverter.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -315,7 +315,7 @@ class CSVParser extends DataParser {
             }
         }
 
-        parser.emit<DataParser.Event>({
+        parser.emit<DataConverter.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
@@ -594,12 +594,12 @@ class CSVParser extends DataParser {
      * Table from the parsed CSV.
      */
     public getTable(): DataTable {
-        return DataParser.getTableFromColumns(this.columns, this.headers);
+        return DataConverter.getTableFromColumns(this.columns, this.headers);
     }
 
 }
 
-namespace CSVParser {
+namespace CSVConverter {
 
     /**
      * Interface for the BeforeParse callback function
@@ -617,7 +617,7 @@ namespace CSVParser {
     /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
-    export interface Options extends DataParser.Options {
+    export interface Options extends DataConverter.Options {
         csv?: string;
         decimalPoint?: string;
         itemDelimiter?: string;
@@ -642,4 +642,4 @@ namespace CSVParser {
  *
  * */
 
-export default CSVParser;
+export default CSVConverter;

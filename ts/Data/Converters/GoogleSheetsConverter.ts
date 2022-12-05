@@ -25,9 +25,9 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataParser from './DataParser.js';
+import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import DataConverter from '../DataConverter.js';
+import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -47,7 +47,7 @@ const {
  *
  * @private
  */
-class GoogleSheetsParser extends DataParser {
+class GoogleSheetsConverter extends DataConverter {
 
     /* *
      *
@@ -58,8 +58,8 @@ class GoogleSheetsParser extends DataParser {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: GoogleSheetsParser.Options = {
-        ...DataParser.defaultOptions
+    protected static readonly defaultOptions: GoogleSheetsConverter.Options = {
+        ...DataConverter.defaultOptions
     };
 
     /* *
@@ -71,21 +71,21 @@ class GoogleSheetsParser extends DataParser {
     /**
      * Constructs an instance of the GoogleSheetsParser.
      *
-     * @param {GoogleSheetsParser.OptionsType} [options]
+     * @param {GoogleSheetsConverter.OptionsType} [options]
      * Options for the Google Sheets parser.
      *
      * @param {DataConverter} converter
      * Parser data converter.
      */
     constructor(
-        options?: GoogleSheetsParser.OptionsType,
-        converter?: DataConverter
+        options?: GoogleSheetsConverter.OptionsType,
+        converter?: OldDataConverter
     ) {
         super();
         this.columns = [];
         this.header = [];
-        this.options = merge(GoogleSheetsParser.defaultOptions, options);
-        this.converter = converter || new DataConverter();
+        this.options = merge(GoogleSheetsConverter.defaultOptions, options);
+        this.converter = converter || new OldDataConverter();
     }
 
     /* *
@@ -96,8 +96,8 @@ class GoogleSheetsParser extends DataParser {
 
     private columns: DataTable.CellType[][];
     private header: string[];
-    public converter: DataConverter;
-    public options: GoogleSheetsParser.Options;
+    public converter: OldDataConverter;
+    public options: GoogleSheetsConverter.Options;
 
     /* *
      *
@@ -109,7 +109,7 @@ class GoogleSheetsParser extends DataParser {
      * @private
      */
     public export(): string {
-        this.emit<DataParser.Event>({
+        this.emit<DataConverter.Event>({
             type: 'exportError',
             columns: this.columns,
             headers: this.header
@@ -121,7 +121,7 @@ class GoogleSheetsParser extends DataParser {
     /**
      * Initiates the parsing of the Google Sheet
      *
-     * @param {GoogleSheetsParser.OptionsType}[options]
+     * @param {GoogleSheetsConverter.OptionsType}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -131,7 +131,7 @@ class GoogleSheetsParser extends DataParser {
      * @emits GoogleSheetsParser#afterParse
      */
     public parse(
-        json: Partial<GoogleSheetsParser.Options>,
+        json: Partial<GoogleSheetsConverter.Options>,
         eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
         const parser = this,
@@ -151,7 +151,7 @@ class GoogleSheetsParser extends DataParser {
         parser.header = [];
         parser.columns = [];
 
-        parser.emit<DataParser.Event>({
+        parser.emit<DataConverter.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -183,7 +183,7 @@ class GoogleSheetsParser extends DataParser {
             }
         }
 
-        parser.emit<DataParser.Event>({
+        parser.emit<DataConverter.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
@@ -198,7 +198,7 @@ class GoogleSheetsParser extends DataParser {
      * Table from the parsed Google Sheet
      */
     public getTable(): DataTable {
-        return DataParser.getTableFromColumns(this.columns, this.header);
+        return DataConverter.getTableFromColumns(this.columns, this.header);
     }
 
 }
@@ -209,7 +209,7 @@ class GoogleSheetsParser extends DataParser {
  *
  * */
 
-namespace GoogleSheetsParser {
+namespace GoogleSheetsConverter {
 
     /**
      * The available options for the parser
@@ -219,7 +219,7 @@ namespace GoogleSheetsParser {
     /**
      * Options for the parser compatible with ClassJSON
      */
-    export interface Options extends DataParser.Options {
+    export interface Options extends DataConverter.Options {
         json?: GoogleSpreadsheetJSON;
     }
 
@@ -236,4 +236,4 @@ namespace GoogleSheetsParser {
  *
  * */
 
-export default GoogleSheetsParser;
+export default GoogleSheetsConverter;

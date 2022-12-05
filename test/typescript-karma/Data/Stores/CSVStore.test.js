@@ -71,7 +71,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     assert.strictEqual(
         typeof store.table.getCell('Value', 2),
         'number',
-        'The parser should be able to guess this decimalpoint'
+        'The converter should be able to guess this decimalpoint'
     )
 
     store = new CSVStore(undefined,
@@ -127,7 +127,7 @@ test('CSV with ""s', (assert) => {
     })
 
     assert.strictEqual(
-        datastore.parser.export(datastore).split('\n')[1].split(',')[0],
+        datastore.converter.export(datastore).split('\n')[1].split(',')[0],
         '\"12\"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
     )

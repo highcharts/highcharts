@@ -30,7 +30,7 @@ import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
-import HTMLTableParser from '../Parsers/HTMLTableParser.js';
+import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -71,13 +71,13 @@ class HTMLTableStore extends DataStore {
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
      *
-     * @param {DataParser} parser
-     * Optional parser to replace the default parser
+     * @param {DataConverter} converter
+     * Optional converter to replace the default converter
      */
     public constructor(
         table: DataTable = new DataTable(),
         options: HTMLTableStore.OptionsType = {},
-        parser?: HTMLTableParser
+        converter?: HTMLTableConverter
     ) {
         super(table);
 
@@ -85,8 +85,7 @@ class HTMLTableStore extends DataStore {
 
 
         this.options = merge(HTMLTableStore.defaultOptions, options);
-        this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(
+        this.converter = converter || new HTMLTableConverter(
             this.options,
             this.tableElement
         );
@@ -103,13 +102,13 @@ class HTMLTableStore extends DataStore {
      * @todo this should not include parsing options
      */
     public readonly options: (
-        HTMLTableStore.Options&HTMLTableParser.OptionsType
+        HTMLTableStore.Options&HTMLTableConverter.OptionsType
     );
 
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly parser: HTMLTableParser;
+    public readonly converter: HTMLTableConverter;
 
     /**
      * The table element to create the store from. Is either supplied directly
@@ -118,11 +117,6 @@ class HTMLTableStore extends DataStore {
     public tableElement: (HTMLElement|null);
 
     public tableID?: string;
-
-    /**
-     * The options that were passed to the parser.
-     */
-    private parserOptions: HTMLTableParser.OptionsType;
 
     /**
      * Handles retrieving the HTML table by ID if an ID is provided
@@ -185,12 +179,12 @@ class HTMLTableStore extends DataStore {
             return DataPromise.reject(new Error(error));
         }
 
-        store.parser.parse(
+        store.converter.parse(
             merge({ tableHTML: store.tableElement }, store.options),
             eventDetail
         );
 
-        store.table.setColumns(store.parser.getTable().getColumns());
+        store.table.setColumns(store.converter.getTable().getColumns());
 
         store.emit<HTMLTableStore.Event>({
             type: 'afterLoad',
@@ -260,7 +254,7 @@ namespace HTMLTableStore {
      * Options used in the constructor of HTMLTableDataStore
      */
     export type OptionsType =
-        Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>;
+        Partial<(HTMLTableStore.Options&HTMLTableConverter.OptionsType)>;
 
 }
 

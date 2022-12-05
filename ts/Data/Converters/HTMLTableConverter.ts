@@ -25,9 +25,9 @@
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
 
-import DataParser from './DataParser.js';
+import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import DataConverter from '../DataConverter.js';
+import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -42,7 +42,7 @@ const { merge } = U;
  *
  * @private
  */
-class HTMLTableParser extends DataParser {
+class HTMLTableConverter extends DataConverter {
 
     /* *
      *
@@ -53,8 +53,8 @@ class HTMLTableParser extends DataParser {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableParser.Options = {
-        ...DataParser.defaultOptions,
+    protected static readonly defaultOptions: HTMLTableConverter.Options = {
+        ...DataConverter.defaultOptions,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
     };
@@ -68,7 +68,7 @@ class HTMLTableParser extends DataParser {
     /**
      * Constructs an instance of the HTML table parser.
      *
-     * @param {HTMLTableParser.OptionsType} [options]
+     * @param {HTMLTableConverter.OptionsType} [options]
      * Options for the CSV parser.
      *
      * @param {HTMLElement | null} tableElement
@@ -78,15 +78,15 @@ class HTMLTableParser extends DataParser {
      * Parser data converter.
      */
     constructor(
-        options?: Partial<HTMLTableParser.OptionsType>,
+        options?: Partial<HTMLTableConverter.OptionsType>,
         tableElement: (HTMLElement | null) = null,
-        converter?: DataConverter
+        converter?: OldDataConverter
     ) {
         super();
         this.columns = [];
         this.headers = [];
-        this.options = merge(HTMLTableParser.defaultOptions, options);
-        this.converter = converter || new DataConverter();
+        this.options = merge(HTMLTableConverter.defaultOptions, options);
+        this.converter = converter || new OldDataConverter();
 
         if (tableElement) {
             this.tableElement = tableElement;
@@ -105,8 +105,8 @@ class HTMLTableParser extends DataParser {
 
     private columns: DataTable.CellType[][];
     private headers: string[];
-    public converter: DataConverter;
-    public options: HTMLTableParser.Options;
+    public converter: OldDataConverter;
+    public options: HTMLTableConverter.Options;
     public tableElement?: HTMLElement;
     public tableElementID?: string;
 
@@ -132,7 +132,7 @@ class HTMLTableParser extends DataParser {
      */
     public export(
         store: DataStore,
-        options: HTMLTableParser.Options = this.options
+        options: HTMLTableConverter.Options = this.options
     ): string {
         const decimalPoint = options.useLocalDecimalPoint ?
                 (1.1).toLocaleString()[1] :
@@ -370,7 +370,7 @@ class HTMLTableParser extends DataParser {
     /**
      * Initiates the parsing of the HTML table
      *
-     * @param {HTMLTableParser.OptionsType}[options]
+     * @param {HTMLTableConverter.OptionsType}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -381,7 +381,7 @@ class HTMLTableParser extends DataParser {
      * @emits HTMLTableParser#parseError
      */
     public parse(
-        options: HTMLTableParser.OptionsType,
+        options: HTMLTableConverter.OptionsType,
         eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
@@ -399,7 +399,7 @@ class HTMLTableParser extends DataParser {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit<DataParser.Event>({
+            parser.emit<DataConverter.Event>({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -411,7 +411,7 @@ class HTMLTableParser extends DataParser {
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
 
-        this.emit<DataParser.Event>({
+        this.emit<DataConverter.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -502,7 +502,7 @@ class HTMLTableParser extends DataParser {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit<DataParser.Event>({
+        this.emit<DataConverter.Event>({
             type: 'afterParse',
             columns,
             detail: eventDetail,
@@ -517,7 +517,7 @@ class HTMLTableParser extends DataParser {
      * Table from the parsed HTML table
      */
     public getTable(): DataTable {
-        return DataParser.getTableFromColumns(this.columns, this.headers);
+        return DataConverter.getTableFromColumns(this.columns, this.headers);
     }
 
 }
@@ -528,7 +528,7 @@ class HTMLTableParser extends DataParser {
  *
  * */
 
-namespace HTMLTableParser {
+namespace HTMLTableConverter {
 
     /**
      * The available options for the parser
@@ -538,7 +538,7 @@ namespace HTMLTableParser {
     /**
      * Options for the parser compatible with ClassJSON
      */
-    export interface Options extends DataParser.Options {
+    export interface Options extends DataConverter.Options {
         decimalPoint?: string|null;
         exportIDColumn?: boolean;
         tableCaption?: string;
@@ -563,4 +563,4 @@ namespace HTMLTableParser {
  *
  * */
 
-export default HTMLTableParser;
+export default HTMLTableConverter;

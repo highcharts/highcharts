@@ -25,7 +25,7 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import CSVParser from '../Parsers/CSVParser.js';
+import CSVConverter from '../Converters/CSVConverter.js';
 import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -80,13 +80,13 @@ class CSVStore extends DataStore {
      * @param {CSVStore.OptionsType} options
      * Options for the store and parser.
      *
-     * @param {DataParser} parser
-     * Optional parser to replace the default parser.
+     * @param {DataConverter} converter
+     * Optional converter to replace the default converter.
      */
     public constructor(
         table: DataTable = new DataTable(),
         options: CSVStore.OptionsType = {},
-        parser?: CSVParser
+        converter?: CSVConverter
     ) {
         super(table);
 
@@ -98,12 +98,11 @@ class CSVStore extends DataStore {
             ...parserOptions
         } = options;
 
-        this.parserOptions = parserOptions;
         this.options = merge(
             CSVStore.defaultOptions,
             { csv, csvURL, enablePolling, dataRefreshRate }
         );
-        this.parser = parser || new CSVParser(parserOptions);
+        this.converter = converter || new CSVConverter(parserOptions);
     }
 
 
@@ -122,12 +121,7 @@ class CSVStore extends DataStore {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly parser: CSVParser;
-
-    /**
-     * The options that were passed to the parser.
-     */
-    private parserOptions: CSVParser.OptionsType;
+    public readonly converter: CSVConverter;
 
     /**
      * The URL to fetch if the source is external
@@ -196,10 +190,10 @@ class CSVStore extends DataStore {
             success: function (csv): void {
                 csv = `${csv}`;
 
-                store.parser.parse({ csv });
+                store.converter.parse({ csv });
 
                 // On inital fetch we need to set the columns
-                store.table.setColumns(store.parser.getTable().getColumns());
+                store.table.setColumns(store.converter.getTable().getColumns());
 
                 if (store.liveDataURL) {
                     store.poll();
@@ -239,7 +233,7 @@ class CSVStore extends DataStore {
      */
     public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
         const store = this,
-            parser = store.parser,
+            parser = store.converter,
             table = store.table,
             {
                 csv,
@@ -298,7 +292,8 @@ namespace CSVStore {
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options&CSVParser.OptionsType)>;
+    export type OptionsType =
+        Partial<(CSVStore.Options&CSVConverter.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?

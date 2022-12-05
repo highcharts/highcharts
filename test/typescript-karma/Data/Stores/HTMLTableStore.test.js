@@ -1,5 +1,5 @@
 import HTMLTableStore from '/base/code/es-modules/Data/Stores/HTMLTableStore.js'
-import HTMLTableParser from '/base/code/es-modules/Data/Parsers/HTMLTableParser.js'
+import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableConverter.js'
 import U from '/base/code/es-modules/Core/Utilities.js';
 import { registerStoreEvents, testExportedDataTable } from './utils.js'
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
@@ -304,25 +304,25 @@ test('HTMLTableStore from HTML element', function (assert) {
     datastore.load();
 });
 
-test('HTMLTableParser', function (assert) {
+test('HTMLTableConverter', function (assert) {
     const tableElement = createElement('div');
 
     tableElement.setAttribute('id', 'myDivider');
     tableElement.innerHTML = tableHTML;
 
-    const dataparser = new HTMLTableParser({}, tableElement)
+    const dataconverter = new HTMLTableConverter({}, tableElement)
     const done = assert.async();
 
-    dataparser.on('afterParse', e => {
+    dataconverter.on('afterParse', e => {
         assert.strictEqual(
-            dataparser.tableElementID,
+            dataconverter.tableElementID,
             tableElement.id,
-            'exported parser has correct `tableElementID`'
+            'Exported converter should have correct `tableElementID`.'
         );
         assert.ok(true);
         done();
     })
-    dataparser.parse()
+    dataconverter.parse()
 });
 
 test('Export as HTML', function (assert) {
@@ -334,11 +334,11 @@ test('Export as HTML', function (assert) {
     csvdatastore.load();
 
     const htmlstore = new HTMLTableStore(csvdatastore.table),
-        htmlparser = htmlstore.parser;
+        htmlconverter = htmlstore.converter;
 
     // Export with default settings (multiline and rowspan should be enabled)
-    let htmlString = htmlparser.export(htmlstore);
-    console.log(htmlparser.options, htmlString);
+    let htmlString = htmlconverter.export(htmlstore);
+    console.log(htmlconverter.options, htmlString);
     const HTMLElement = createElement('div');
     HTMLElement.innerHTML = htmlString;
 
@@ -361,7 +361,7 @@ test('Export as HTML', function (assert) {
     // );
 
     // Multilevel headers disabled
-    htmlString = htmlparser.export(htmlstore, {
+    htmlString = htmlconverter.export(htmlstore, {
         useMultiLevelHeaders: false
     });
     HTMLElement.innerHTML = htmlString;
@@ -383,7 +383,7 @@ test('Export as HTML', function (assert) {
     );
 
     // table caption
-    htmlString = htmlparser.export(htmlstore, {
+    htmlString = htmlconverter.export(htmlstore, {
         useMultiLevelHeaders: false,
         tableCaption: 'My Data Table'
     });
@@ -407,8 +407,8 @@ test('Export as HTML', function (assert) {
 
     storeFromExportedHTML.on('afterLoad', e => {
         assert.strictEqual(
-            htmlparser.export(storeFromExportedHTML),
-            htmlparser.export(htmlstore),
+            htmlconverter.export(storeFromExportedHTML),
+            htmlconverter.export(htmlstore),
             'Store from parsed table should produce same result as original store'
         );
         doneLoading();

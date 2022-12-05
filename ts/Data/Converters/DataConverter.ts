@@ -21,7 +21,7 @@
  *
  * */
 
-import type DataConverter from '../DataConverter';
+import type OldDataConverter from '../DataConverter';
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
 import type JSON from '../../Core/JSON';
@@ -40,11 +40,11 @@ const {
  * */
 
 /**
- * Abstract class providing an interface and basic methods for a DataParser
+ * Abstract class providing an interface and basic methods for a DataConverter
  *
  * @private
  */
-abstract class DataParser implements DataEvent.Emitter {
+abstract class DataConverter implements DataEvent.Emitter {
 
     /* *
      *
@@ -55,7 +55,7 @@ abstract class DataParser implements DataEvent.Emitter {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: DataParser.Options = {
+    protected static readonly defaultOptions: DataConverter.Options = {
         startColumn: 0,
         endColumn: Number.MAX_VALUE,
         startRow: 0,
@@ -111,9 +111,9 @@ abstract class DataParser implements DataEvent.Emitter {
      * */
 
     /**
-     * DataConverter for the parser.
+     * Old DataConverter functions
      */
-    public abstract converter: DataConverter;
+    public abstract converter: OldDataConverter;
 
     /* *
      *
@@ -129,9 +129,9 @@ abstract class DataParser implements DataEvent.Emitter {
     public abstract getTable(): DataTable;
 
     /**
-     * Emits an event on the DataParser instance.
+     * Emits an event on the DataConverter instance.
      *
-     * @param {DataParser.Event} [e]
+     * @param {DataConverter.Event} [e]
      * Event object containing additional event data
      */
     public emit<E extends DataEvent>(e: E): void {
@@ -144,16 +144,16 @@ abstract class DataParser implements DataEvent.Emitter {
      * @param {DataStore} store
      * Store to export from.
      *
-     * @param {DataParser.Options} [options]
+     * @param {DataConverter.Options} [options]
      * Options for the export.
      */
     public abstract export(
         store: DataStore,
-        options?: DataParser.Options
+        options?: DataConverter.Options
     ): string;
 
     /**
-     * Registers a callback for a specific parser event.
+     * Registers a callback for a specific event.
      *
      * @param {string} type
      * Event type as a string.
@@ -174,10 +174,10 @@ abstract class DataParser implements DataEvent.Emitter {
     /**
      * Initiates the data parsing. Should emit `parseError` on failure.
      *
-     * @param {DataParser.Options} options
-     * Options for the parser.
+     * @param {DataConverter.Options} options
+     * Options for the converter.
      */
-    public abstract parse(options: DataParser.Options): void;
+    public abstract parse(options: DataConverter.Options): void;
 
 }
 
@@ -190,10 +190,10 @@ abstract class DataParser implements DataEvent.Emitter {
 /**
  * Additionally provided types for events and conversion.
  */
-namespace DataParser {
+namespace DataConverter {
 
     /**
-     * The basic event object for a DataParser instance.
+     * The basic event object for a DataConverter instance.
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
     export interface Event extends DataEvent {
@@ -207,7 +207,7 @@ namespace DataParser {
     }
 
     /**
-     * The shared options for all DataParser instances
+     * The shared options for all DataConverter instances
      */
     export interface Options extends JSON.Object {
         startRow: number;
@@ -220,4 +220,4 @@ namespace DataParser {
 
 }
 
-export default DataParser;
+export default DataConverter;
