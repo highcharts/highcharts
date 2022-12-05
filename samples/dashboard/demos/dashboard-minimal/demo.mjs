@@ -1,4 +1,3 @@
-
 // Bring in other forms of Highcharts
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
@@ -56,11 +55,11 @@ const dashboard = new Dashboard.Dashboard('container', {
     components: [
         {
             store,
-            syncEvents: [
-                'visibility',
-                'selection',
-                'tooltip'
-            ],
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
             cell: 'dashboard-col-0',
             isResizable: true,
             type: 'Highcharts',
@@ -85,11 +84,11 @@ const dashboard = new Dashboard.Dashboard('container', {
         }, {
             cell: 'dashboard-col-1',
             store,
-            syncEvents: [
-                'visibility',
-                'tooltip',
-                'selection'
-            ],
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
             type: 'Highcharts',
             tableAxisMap: {
                 Food: 'x',
@@ -107,11 +106,11 @@ const dashboard = new Dashboard.Dashboard('container', {
         }, {
             cell: 'dashboard-col-12',
             store,
-            syncEvents: [
-                'visibility',
-                'tooltip',
-                'selection'
-            ],
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
             type: 'Highcharts',
             tableAxisMap: {
                 Food: 'x',
@@ -131,6 +130,8 @@ const dashboard = new Dashboard.Dashboard('container', {
             type: 'DataGrid',
             store,
             editable: true,
-            syncEvents: ['tooltip']
+            sync: {
+                tooltip: true
+            }
         }]
 });

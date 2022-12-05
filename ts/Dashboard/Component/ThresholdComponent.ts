@@ -36,8 +36,7 @@ class ThresholdComponent extends Component {
         this.type = 'threshold';
         this.sync = new Component.Sync(
             this,
-            this.options.syncEvents,
-            this.options.syncHandlers
+            this.syncHandlers
         );
     }
 
