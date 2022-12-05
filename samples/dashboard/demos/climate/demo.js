@@ -2,6 +2,7 @@
 
 const dataPool = new Dashboard.DataOnDemand();
 
+let cityGrid;
 let citySeries;
 let dataScope = 'TX';
 let worldMap;
@@ -14,7 +15,7 @@ async function buildDashboard() {
 
     const citiesTable = await dataPool.getSourceTable('cities');
     const climateTable = await dataPool.getSourceTable(1262649600000);
-    const cityClimateTable = await dataPool.getSourceTable('Tokyo');
+    const cityClimate = await dataPool.getSource('Tokyo');
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -138,7 +139,7 @@ async function buildDashboard() {
                     events: {
                         click: function (e) {
 
-                            if (!citySeries) {
+                            if (!cityGrid || !citySeries) {
                                 return; // not ready
                             }
 
@@ -146,18 +147,19 @@ async function buildDashboard() {
                             const city = point.name;
 
                             dataPool
-                                .getSourceTable(city)
-                                .then(table => {
+                                .getSource(city)
+                                .then(store => {
                                     citySeries.chart.update({
                                         title: { text: city }
                                     });
                                     citySeries.update({
                                         name: city,
-                                        data: table.modified.getRows(
+                                        data: store.table.modified.getRows(
                                             void 0, void 0,
                                             ['time', dataScope]
                                         )
                                     });
+                                    cityGrid.update({ store });
                                 });
                         }
                     },
@@ -221,7 +223,7 @@ async function buildDashboard() {
                 },
                 series: [{
                     name: 'Tokyo',
-                    data: cityClimateTable.modified.getRows(
+                    data: cityClimate.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -232,7 +234,7 @@ async function buildDashboard() {
                         footerFormat: void 0,
                         headerFormat: void 0,
                         pointFormatter: function () {
-                            temperatureFormatter(this.y);
+                            return temperatureFormatter(this.y);
                         },
                     }
                 }],
@@ -260,10 +262,17 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            // store: cityClimateTable,
+            store: cityClimate,
             editable: true,
             // syncEvents: ['tooltip'],
-            title: 'Selection Grid'
+            title: 'Selection Grid',
+            events: {
+                mount: function () {
+                    // call action
+                    console.log('grid mount event', this);
+                    cityGrid = this.dataGrid;
+                },
+            }
         }],
         editMode: {
             enabled: true,
