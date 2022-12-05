@@ -269,7 +269,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'afterSetRows',
             'afterDeleteRows',
             'afterSetColumns',
-            'afterDeleteColumns'
+            'afterDeleteColumns',
+            'afterSetCell'
         ].forEach((event: any): void => {
             if (this.store && table) {
                 this.tableEvents.push((table)
