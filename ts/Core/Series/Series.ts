@@ -2883,9 +2883,7 @@ class Series {
 
             rotationOptions = flip && point ?
                 {
-                    rotation: 90,
-                    rotationOriginX: point.plotX,
-                    rotationOriginY: point.plotY
+                    rotation: 90
                 } : {};
 
         let seriesStateOptions,
