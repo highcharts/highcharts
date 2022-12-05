@@ -13,9 +13,9 @@ async function buildDashboard() {
         .then(fetch)
         .then(response => response.json());
 
-    const citiesTable = await dataPool.getSourceTable('cities');
-    const climateTable = await dataPool.getSourceTable(1262649600000);
-    const cityClimate = await dataPool.getSource('Tokyo');
+    const citiesTable = await dataPool.getStoreTable('cities');
+    const climateTable = await dataPool.getStoreTable(1262649600000);
+    const cityClimate = await dataPool.getStore('Tokyo');
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -37,7 +37,7 @@ async function buildDashboard() {
                             }
 
                             dataPool
-                                .getSourceTable(e.point.x)
+                                .getStoreTable(e.point.x)
                                 .then(table => worldMap.setData(
                                     table.modified.getRows(
                                         void 0, void 0,
@@ -147,7 +147,7 @@ async function buildDashboard() {
                             const city = point.name;
 
                             dataPool
-                                .getSource(city)
+                                .getStore(city)
                                 .then(store => {
                                     citySeries.chart.update({
                                         title: { text: city }
@@ -317,7 +317,7 @@ async function buildDashboard() {
 }
 
 async function main() {
-    dataPool.setSourceOptions({
+    dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
@@ -325,7 +325,7 @@ async function main() {
         },
         storeType: 'GoogleSheetsStore'
     });
-    dataPool.setSourceOptions({
+    dataPool.setStoreOptions({
         name: 'climate',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
@@ -334,10 +334,10 @@ async function main() {
         storeType: 'GoogleSheetsStore'
     });
 
-    let csvReferences = await dataPool.getSourceTable('cities');
+    let csvReferences = await dataPool.getStoreTable('cities');
 
     for (const row of csvReferences.getRowObjects()) {
-        dataPool.setSourceOptions({
+        dataPool.setStoreOptions({
             name: row['city'],
             storeOptions: {
                 csvURL: row['csv'],
@@ -346,10 +346,10 @@ async function main() {
         });
     }
 
-    csvReferences = await dataPool.getSourceTable('climate');
+    csvReferences = await dataPool.getStoreTable('climate');
 
     for (const row of csvReferences.getRowObjects()) {
-        dataPool.setSourceOptions({
+        dataPool.setStoreOptions({
             name: row['time'],
             storeOptions: {
                 csvURL: row['csv'],
