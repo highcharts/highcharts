@@ -170,8 +170,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: null
         };
 
-        this.handleSyncOptions();
-
+        this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
         }, this.options.style);
@@ -204,13 +203,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                             carry[handlerName] = handler;
                         }
                         if (handler && typeof handler === 'boolean') {
-                            carry[handlerName] =
-                  defaultHandlers[handlerName];
+                            carry[handlerName] = defaultHandlers[handlerName];
                         }
                     }
 
                     return carry;
-                }, {});
+                },
+                {}
+            );
     }
 
     // Setup listeners on cell/other things up the chain
