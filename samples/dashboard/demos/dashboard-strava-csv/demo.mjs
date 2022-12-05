@@ -25,7 +25,7 @@ const altSyncHandler = [
         const component = this;
         if (
             e.selection.xAxis &&
-            !isNaN(e.selection.xAxis.min)
+      !isNaN(e.selection.xAxis.min)
         ) {
             const range = {
                 column: e.selection.xAxis.columnName,
@@ -34,16 +34,16 @@ const altSyncHandler = [
             };
 
             component.presentationModifier =
-                new ChainModifier({},
-                    new RangeModifier({
-                        ranges: [range]
-                    }),
-                    component.options.presentationModifier
-                );
+        new ChainModifier({},
+            new RangeModifier({
+                ranges: [range]
+            }),
+            component.options.presentationModifier
+        );
 
         } else {
             component.presentationModifier =
-                component.options.presentationModifier;
+        component.options.presentationModifier;
         }
 
         component.redraw();
@@ -156,7 +156,7 @@ function sumTable(table) {
     const values = table.getColumn('value');
     const subtables = table.getColumn('table');
 
-    const columns = subtables ?  {
+    const columns = subtables ? {
         Activity: values,
         Count: subtables.map(table => table.getRowCount())
     } : {};
@@ -480,7 +480,7 @@ const components = state => [
                 type: 'datetime'
             }
         },
-        syncEvents: {
+        sync: {
             selection: true
         },
         events: {
@@ -595,7 +595,7 @@ const components = state => [
                 this.on('tableChanged', () => {
                     setTimeout(() => {
                         this.contentElement.innerHTML =
-                            dumpHTMLTable(this.store.table.modified);
+              dumpHTMLTable(this.store.table.modified);
                     }, 0);
                 });
 
