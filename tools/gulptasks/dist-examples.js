@@ -24,7 +24,15 @@ const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
 
-const DEMO_BUILD_PATH = getGitIgnoreMeProperties()['demos.path'] || 'tmp/demo';
+function getDemoBuildPath() {
+    let value;
+    try {
+        value = getGitIgnoreMeProperties()['demos.path'];
+    } catch {
+        value = 'tmp/demo';
+    }
+    return value;
+}
 
 /**
  * Creates an index page from the supplied options
@@ -170,7 +178,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     function getLocalSidebar(path) {
         const file = readFileSync(
-            Path.join(DEMO_BUILD_PATH, `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`),
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`),
             'utf-8'
         );
         return file;
