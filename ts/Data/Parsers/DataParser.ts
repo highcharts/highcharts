@@ -22,15 +22,14 @@
  * */
 
 import type DataConverter from '../DataConverter';
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    uniqueKey
+    fireEvent
 } = U;
 
 /* *
@@ -44,7 +43,7 @@ const {
  *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataParser implements DataEvent.Emitter {
 
     /* *
      *
@@ -123,7 +122,7 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
      * @param {DataParser.Event} [e]
      * Event object containing additional event data
      */
-    public emit<T extends DataEventEmitter.Event>(e: T): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
@@ -133,15 +132,15 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<TEvent extends DataEventEmitter.Event>(
-        type: TEvent['type'],
-        callback: DataEventEmitter.EventCallback<this, TEvent>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -175,7 +174,7 @@ namespace DataParser {
      * The basic event object for a DataParser instance.
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
-    export interface Event extends DataEventEmitter.Event {
+    export interface Event extends DataEvent {
         readonly type: ('parse' | 'afterParse' | 'parseError');
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);

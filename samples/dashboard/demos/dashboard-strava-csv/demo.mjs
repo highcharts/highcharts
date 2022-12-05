@@ -10,7 +10,7 @@ import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -638,7 +638,7 @@ store.load();
 const editMode = {
     enabled: true,
     contextMenu: {
-        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
+        icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
         enabled: true,
         items: [{
             id: 'saveLocal',
@@ -707,10 +707,10 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                 }, {
                     id: 'my-option-1',
                     text: 't1',
@@ -721,7 +721,7 @@ const editMode = {
                     }
                 }, {
                     id: 'destroy',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                 }]
             }
         },
@@ -729,19 +729,19 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                 }, {
                     id: 'destroy',
-                    icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                 }]
             }
         },
         settings: {
-            closeIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg',
-            dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+            closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
+            dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
         }
     },
     lang: {
@@ -751,12 +751,12 @@ const editMode = {
     },
     tools: {
         addComponentBtn: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
         }
     },
     confirmationPopup: {
         close: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
         }
     },
     resize: {

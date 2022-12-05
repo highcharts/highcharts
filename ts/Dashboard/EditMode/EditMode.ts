@@ -31,6 +31,9 @@ class EditMode {
     * */
     protected static readonly defaultOptions: EditMode.Options = {
         enabled: true,
+        contextMenu: {
+            icon: EditGlobals.iconsURL + 'menu.svg'
+        },
         tools: {
             addComponentBtn: {
                 icon: EditGlobals.iconsURL + 'add.svg'

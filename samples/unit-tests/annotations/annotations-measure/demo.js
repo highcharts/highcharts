@@ -6,6 +6,7 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
                 height: '50%'
             },
             {
+                min: 3,
                 top: '50%',
                 height: '50%'
             }
@@ -84,5 +85,16 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         0.5,
         `Annotation's label's X position should be close
         to the X position of the annotation after updates.`
+    );
+
+    const axisMiddlePos = chart.yAxis[1].top + chart.yAxis[1].height / 2,
+        { y, height } = chart.annotations[0].controlPoints[0].graphic.getBBox(),
+        controlPointYPos = y + height / 2;
+
+    assert.equal(
+        controlPointYPos,
+        axisMiddlePos,
+        `Annotation's control points should be positioned in the middle of yAxis
+        #17995`
     );
 });

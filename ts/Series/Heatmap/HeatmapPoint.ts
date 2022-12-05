@@ -80,6 +80,11 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
+        // #17970, if point is null remove its color, because it may be updated
+        if (this.isNull || this.value === null) {
+            delete this.color;
+        }
+
         const point: HeatmapPoint = super.applyOptions.call(
             this,
             options,

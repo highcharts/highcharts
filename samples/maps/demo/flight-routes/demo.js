@@ -8,7 +8,8 @@
     const chart = Highcharts.mapChart('container', {
 
         title: {
-            text: 'Highmaps simple flight routes demo'
+            text: 'Highmaps simple flight routes demo',
+            align: 'left'
         },
 
         legend: {

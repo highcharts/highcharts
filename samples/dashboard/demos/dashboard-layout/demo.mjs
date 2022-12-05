@@ -4,7 +4,7 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 
 // Bring in other forms of Highcharts
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
@@ -29,7 +29,7 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
                 id: 'saveLocal',
@@ -98,10 +98,10 @@ let dashboard = new Dashboard('container', {
                 menu: {
                     items: [{
                         id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                     }, {
                         id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                     },
                     // {
                     //     id: 'my-option-1',
@@ -114,7 +114,7 @@ let dashboard = new Dashboard('container', {
                     // },
                     {
                         id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                     }]
                 }
             },
@@ -122,19 +122,19 @@ let dashboard = new Dashboard('container', {
                 menu: {
                     items: [{
                         id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                     }, {
                         id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                     }, {
                         id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                     }]
                 }
             },
             settings: {
-                closeIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg',
-                dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
+                dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
             }
         },
         lang: {
@@ -144,17 +144,17 @@ let dashboard = new Dashboard('container', {
         },
         tools: {
             addComponentBtn: {
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+                icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
             },
             rwdIcons: {
-                small: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/smartphone.svg',
-                medium: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/tablet.svg',
-                large: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/computer.svg'
+                small: 'https://code.highcharts.com/gfx/dashboard-icons/smartphone.svg',
+                medium: 'https://code.highcharts.com/gfx/dashboard-icons/tablet.svg',
+                large: 'https://code.highcharts.com/gfx/dashboard-icons/computer.svg'
             }
         },
         confirmationPopup: {
             close: {
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+                icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
             }
         },
         resize: {
@@ -575,7 +575,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png',
                 title: 'I heard you like components'
             }
         }]
@@ -611,7 +611,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/menu.svg',
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
                 id: 'saveLocal',
@@ -680,10 +680,10 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                 menu: {
                     items: [{
                         id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                     }, {
                         id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                     },
                     // {
                     //     id: 'my-option-1',
@@ -696,7 +696,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                     // },
                     {
                         id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                     }]
                 }
             },
@@ -704,19 +704,19 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                 menu: {
                     items: [{
                         id: 'drag',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
                     }, {
                         id: 'settings',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
                     }, {
                         id: 'destroy',
-                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
                     }]
                 }
             },
             settings: {
-                closeIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg',
-                dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
+                dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
             }
         },
         lang: {
@@ -726,12 +726,12 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         },
         tools: {
             addComponentBtn: {
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/add.svg'
+                icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
             }
         },
         confirmationPopup: {
             close: {
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg'
+                icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
             }
         },
         resize: {

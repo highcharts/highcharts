@@ -1,10 +1,13 @@
-
 // Bring in other forms of Highcharts
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
 
 const { CSVStore, PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
+
+DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+PluginHandler.addPlugin(DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
 
@@ -15,7 +18,7 @@ const store = new CSVStore(void 0, {
 
 store.load();
 
- new Dashboard.Dashboard('container', {
+const dashboard = new Dashboard.Dashboard('container', {
     store: store,
     editMode: {
         enabled: false
@@ -30,100 +33,101 @@ store.load();
                 // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0',
-                    width: '50%',
+                    width: '50%'
                 }, {
-                    id: 'dashboard-col-1',
-                    width: '1/2',
+                    id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-12'
                 }]
             }, {
                 id: 'dashboard-row-1',
                 cells: [{
                     id: 'dashboard-col-2',
-                    width: '1',
+                    width: '1'
                 }]
             }]
         }]
     },
     components: [
         {
-        store,
-        sync: {
-            visibility: true,
-            selection: true,
-            tooltip : true
-        },
-        cell: 'dashboard-col-0',
-        isResizable: true,
-        type: 'Highcharts',
-        tableAxisMap: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
-        chartOptions: {
-            chart: {
-                type: 'pie'
-            }
-        },
-        /*dimensions: {
-            width: 400,
-            height: 400
-        },*/
-        events: {
-            mount: function () {
-                // call action
-                console.log('dashboard-col-0 mount event');
+            store,
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
             },
-            unmount: function () {
-                console.log('dashboard-col-0 unmount event');
-            }
-        }
-    }, {
-        cell: 'dashboard-col-1',
-        store,
-        sync: {
-            visibility: true,
-            selection: true,
-            tooltip : true
-        },
-        type: 'Highcharts',
-        tableAxisMap: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
-        chartOptions: {
-            xAxis: {
-                type: 'category'
+            cell: 'dashboard-col-0',
+            isResizable: true,
+            type: 'Highcharts',
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'value'
             },
-            chart: {
-                animation: false,
-                type: 'column'
+            chartOptions: {
+                chart: {
+                    type: 'pie'
+                }
+            },
+            events: {
+                mount: function () {
+                    // call action
+                    console.log('dashboard-col-0 mount event');
+                },
+                unmount: function () {
+                    console.log('dashboard-col-0 unmount event');
+                }
             }
-        },
-    }, {
-        cell: 'dashboard-col-2',
-        type: 'html',
-        sync: {
-            visibility: true,
-            selection: true,
-            tooltip : true
-        },
-        elements: [{
-            tagName: 'div',
-            id: 'datagrid'
-        }],
-        dimensions: {
-            // width: '100%'
-        height:'100%'
-        },
-        events: {
-            mount: function () {
-                // call action
-                const container = document.querySelector('#datagrid');
-                const datagrid = new Dashboard.DataGrid(container, {
-                    editable: false,
-                    dataTable: store.table.modified
-                });
+        }, {
+            cell: 'dashboard-col-1',
+            store,
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
+            type: 'Highcharts',
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'y'
+            },
+            chartOptions: {
+                xAxis: {
+                    type: 'category'
+                },
+                chart: {
+                    animation: false,
+                    type: 'column'
+                }
             }
-        }
-    }]
+        }, {
+            cell: 'dashboard-col-12',
+            store,
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
+            type: 'Highcharts',
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'y'
+            },
+            chartOptions: {
+                xAxis: {
+                    type: 'category'
+                },
+                chart: {
+                    animation: false,
+                    type: 'scatter'
+                }
+            }
+        }, {
+            cell: 'dashboard-col-2',
+            type: 'DataGrid',
+            store,
+            editable: true,
+            sync: {
+                tooltip: true
+            }
+        }]
 });

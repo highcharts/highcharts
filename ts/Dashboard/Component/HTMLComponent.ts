@@ -119,7 +119,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
             this.syncHandlers
         );
 
-        this.on('tableChanged', (e): void => {
+        this.on('tableChanged', (e: Component.EventTypes): void => {
             if ('detail' in e && e.detail && e.detail.sender !== this.id) {
                 this.redraw();
             }

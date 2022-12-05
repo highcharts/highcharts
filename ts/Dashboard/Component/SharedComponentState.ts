@@ -20,7 +20,6 @@
  *
  * */
 
-import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type PointType from '../../Core/Series/PointType';
 
 import Serializable from '../Serializable.js';
@@ -41,9 +40,8 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class SharedComponentState implements
-DataEventEmitter<SharedComponentState.Event>,
-Serializable<SharedComponentState, SharedComponentState.JSON> {
+class SharedComponentState
+implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -61,6 +59,8 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
     private hiddenRowIndexes: number[] = [];
 
     private hoverPoint?: SharedComponentState.PresentationHoverPointType;
+
+    private hoverRow?: HTMLElement;
 
     private selection: Record<string, { min?: number; max?: number }> = {};
 
@@ -148,7 +148,7 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -156,7 +156,7 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      */
     public on(
         type: SharedComponentState.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, SharedComponentState.Event>
+        callback: (this: this, e: SharedComponentState.Event) => void
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -167,12 +167,12 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
      * @param {Array<string>} columnOrder
      * Array of column names in order.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEventEmitter.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public setColumnOrder(
         columnOrder: Array<string>,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: AnyRecord
     ): void {
         const presentationState = this,
             oldColumnOrder = (presentationState.columnOrder || []).slice(),
@@ -230,13 +230,20 @@ Serializable<SharedComponentState, SharedComponentState.JSON> {
     }
 
     public setHoverPoint(
-        point?: SharedComponentState.PresentationHoverPointType,
-        eventDetail?: {}
+        point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
+        eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
-        this.hoverPoint = point;
+        const isDataGrid = eventDetail && eventDetail.isDataGrid;
+        this.hoverPoint = isDataGrid ? void 0 : point;
+
+        if (point instanceof HTMLElement) {
+            this.hoverRow = isDataGrid ? point : void 0;
+        }
+
         this.emit({
             type: 'afterHoverPointChange',
-            hoverPoint: this.hoverPoint,
+            hoverPoint: isDataGrid ? void 0 : this.hoverPoint,
+            hoverRow: isDataGrid ? this.hoverRow : void 0,
             detail: eventDetail
         });
     }
@@ -377,6 +384,12 @@ namespace SharedComponentState {
         (a: string, b: string): number;
     }
 
+    export interface HoverPointEventDetails {
+        detail?: AnyRecord;
+        isDataGrid?: boolean;
+        sender?: string
+    }
+
     /**
      * All information objects of DataPrsentationState events.
      */
@@ -388,23 +401,28 @@ namespace SharedComponentState {
     /**
      * Describes the information object for order-related events.
      */
-    export interface ColumnOrderEvent extends DataEventEmitter.Event {
+    export interface ColumnOrderEvent {
         type: ColumnOrderEventType;
+        detail?: AnyRecord,
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
     }
-    export interface ColumnVisibilityEvent extends DataEventEmitter.Event {
+    export interface ColumnVisibilityEvent {
         type: ColumnVisibilityEventType;
+        detail?: AnyRecord,
         visibilityMap: Record<string, boolean>;
     }
-    export interface HiddenRowEvent extends DataEventEmitter.Event {
+    export interface HiddenRowEvent {
         type: ('afterSetHiddenRows');
+        detail?: AnyRecord,
         hiddenRows: number[];
     }
 
-    export interface PointHoverEvent extends DataEventEmitter.Event {
+    export interface PointHoverEvent {
         type: HoverPointEventType;
-        hoverPoint: PresentationHoverPointType | undefined;
+        detail?: AnyRecord,
+        hoverPoint?: PresentationHoverPointType;
+        hoverRow?: HTMLElement;
     }
 
     export type ColumnVisibilityType = Record<string, boolean>;
@@ -413,10 +431,11 @@ namespace SharedComponentState {
 
     export type PresentationHoverPointType = Partial<PointType>;
 
-    export interface SelectionEvent extends DataEventEmitter.Event {
+    export interface SelectionEvent {
         type: selectionEventType;
-        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        detail?: AnyRecord,
         reset: boolean;
+        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
     }
 
     /**
