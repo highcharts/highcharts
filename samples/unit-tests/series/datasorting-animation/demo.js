@@ -227,7 +227,7 @@ QUnit.test(
             // Old point
             assert.close(
                 pointC.plotX,
-                pointC.graphic.getBBox(false, 0).x,
+                pointC.graphic.getBBox().x,
                 2,
                 'Time 0 - point has not started moving'
             );
@@ -287,8 +287,8 @@ QUnit.test(
                 );
                 // New point
                 assert.strictEqual(
-                    pointD.graphic.getBBox(false, 0).x > 10 &&
-                        pointD.graphic.getBBox(false, 0).x < pointD.plotX,
+                    pointD.graphic.getBBox().x > 10 &&
+                        pointD.graphic.getBBox().x < pointD.plotX,
                     true,
                     'Time 200 - new point has continued'
                 );
@@ -327,7 +327,7 @@ QUnit.test(
                 );
                 // New point
                 assert.close(
-                    pointD.graphic.getBBox(false, 0).x,
+                    pointD.graphic.getBBox().x,
                     pointD.plotX,
                     2,
                     'Time 600 - new point should be placed in the final position'
