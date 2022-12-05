@@ -8,6 +8,8 @@ const Gulp = require('gulp');
 const Path = require('path');
 const { readFileSync } = require('node:fs');
 
+const { getGitIgnoreMeProperties } = require('./lib/uploadS3.js');
+
 /* *
  *
  *  Constants
@@ -22,7 +24,7 @@ const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
 
-const DEMO_BUILD_PATH = 'tmp/demo'; // TODO: add/find a config file to use
+const DEMO_BUILD_PATH = getGitIgnoreMeProperties()['demos.path'] || 'tmp/demo';
 
 /**
  * Creates an index page from the supplied options
@@ -144,8 +146,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-                        FS.readFileSync(path).toString() ||
-                        ''
+          FS.readFileSync(path).toString() ||
+          ''
                 );
                 return obj;
             },
