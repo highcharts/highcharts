@@ -148,20 +148,6 @@ class Bindings {
         const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
     }
-
-    // public static htmlComponent(
-    //     compontentContainer: HTMLDOMElement,
-    //     options: Bindings.ComponentOptions
-    // ): HTMLComponent {
-    //     return new HTMLComponent(
-    //         merge(
-    //             options,
-    //             {
-    //                 parentElement: compontentContainer as HTMLDOMElement,
-    //                 elements: options.elements
-    //             })
-    //     );
-    // }
 }
 
 namespace Bindings {
