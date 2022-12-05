@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataStore from './DataStore.js';
@@ -46,7 +46,7 @@ const {
  * @private
  * @todo implement save, requires oauth2
  */
-class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
+class GoogleSheetsStore extends DataStore {
 
     /* *
      *
@@ -121,10 +121,10 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEvent.Detail): void {
         const store = this,
             {
                 dataRefreshRate,
@@ -143,7 +143,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         // If already loaded, clear the current table
         store.table.deleteColumns();
 
-        store.emit({
+        store.emit<GoogleSheetsStore.Event>({
             type: 'load',
             detail: eventDetail,
             table: store.table,
@@ -168,7 +168,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
                     );
                 }
 
-                store.emit({
+                store.emit<GoogleSheetsStore.Event>({
                     type: 'afterLoad',
                     detail: eventDetail,
                     table: store.table,
@@ -179,7 +179,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
                 xhr: XMLHttpRequest,
                 error: (string|Error)
             ): void => {
-                store.emit({
+                store.emit<GoogleSheetsStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,

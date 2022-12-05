@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -41,7 +41,7 @@ const { merge } = U;
  *
  * @private
  */
-class HTMLTableParser extends DataParser<DataParser.Event> {
+class HTMLTableParser extends DataParser {
 
     /* *
      *
@@ -121,7 +121,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -130,7 +130,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      */
     public parse(
         options: HTMLTableParser.OptionsType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): void {
         const parser = this,
             converter = this.converter,

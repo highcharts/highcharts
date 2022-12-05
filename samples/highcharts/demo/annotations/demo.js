@@ -1899,7 +1899,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: '2017 Tour de France Stage 8: Dole - Station des Rousses'
+        text: '2017 Tour de France Stage 8: Dole - Station des Rousses',
+        align: 'left'
     },
 
     accessibility: {

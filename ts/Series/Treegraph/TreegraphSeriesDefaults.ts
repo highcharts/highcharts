@@ -223,7 +223,7 @@ const TreegraphSeriesDefaults = {
          * @sample highcharts/series-treegraph/link-text-path
          *         Treegraph series with link text path dataLabels.
          *
-         * @extends plotOptions.treegraph.dataLabels.linkTextPath
+         * @extends plotOptions.treegraph.dataLabels.textPath
          * @since 10.3.0
          */
         linkTextPath: {

@@ -4,7 +4,7 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 
 // Bring in other forms of Highcharts
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
@@ -575,7 +575,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png',
                 title: 'I heard you like components'
             }
         }]

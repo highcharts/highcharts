@@ -86,11 +86,13 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'Norwegian regions and counties by area'
+        text: 'Norwegian regions and counties by area',
+        align: 'left'
     },
     subtitle: {
         text:
-            'Source: <a href="https://snl.no/Norge" target="_blank">SNL</a>'
+            'Source: <a href="https://snl.no/Norge" target="_blank">SNL</a>',
+        align: 'left'
     },
     tooltip: {
         useHTML: true,

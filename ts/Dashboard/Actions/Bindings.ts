@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
-import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Serializable from '../Serializable';
 
@@ -17,10 +17,10 @@ const {
 } = U;
 class Bindings {
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
     private static getGUIElement(idOrElement: string): GUIElement|undefined {
         const container = typeof idOrElement === 'string' ?
             document.getElementById(idOrElement) : idOrElement;

@@ -33,11 +33,13 @@
     Highcharts.mapChart('container', {
 
         title: {
-            text: 'US unemployment rate in Dec. 2017'
+            text: 'US unemployment rate in Dec. 2017',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Small US map with data labels'
+            text: 'Small US map with data labels',
+            align: 'left'
         },
 
         mapNavigation: {

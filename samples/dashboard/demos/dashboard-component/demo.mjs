@@ -1,6 +1,6 @@
 import Highcharts from 'https://code.highcharts.com/es-modules/masters/highmaps.src.js';
 
-import HighchartsComponent from 'https://code.highcharts.com/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
+import HighchartsComponent from 'https://code.highcharts.com/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
 import DOMComponent from 'https://code.highcharts.com/es-modules/Dashboard/Component/HTMLComponent.js';
 import CSVStore from 'https://code.highcharts.com/es-modules/Data/Stores/CSVStore.js';
 

@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataEventEmitter from '../Data/DataEventEmitter';
+import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
@@ -49,7 +49,7 @@ const {
  *
  * */
 
-class DataGrid implements DataEventEmitter<DataGrid.Event> {
+class DataGrid {
 
     /* *
      *
@@ -68,8 +68,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     public container: HTMLElement;
     public options: DataGridOptions;
     public dataTable: DataTable;
+    public hoveredRow?: HTMLElement;
+    public rowElements: Array<HTMLElement>;
 
-    private rowElements: Array<HTMLElement>;
     private gridContainer: HTMLElement;
     private outerContainer: HTMLElement;
     private scrollContainer: HTMLElement;
@@ -200,7 +201,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
         this.renderColumnDragHandles();
 
-        this.emit({
+        this.emit<DataGrid.Event>({
             type: 'afterResizeColumn',
             width,
             index,
@@ -217,10 +218,22 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {DataGrid.Event} e
      * Event object with event information.
      */
-    public emit(e: DataGrid.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
+    /**
+     * Add class to given element to toggle highlight.
+     * @param  {HTMLElement} row Row to highlight.
+     * @return {void}
+     */
+    public toggleRowHighlight(row?: HTMLElement): void {
+        if (this.hoveredRow && this.hoveredRow.classList.contains('hovered')) {
+            this.hoveredRow.classList.remove('hovered');
+        }
+        row && (row.classList.contains('hovered') ?
+            row.classList.remove('hovered') : row.classList.add('hovered'));
+    }
 
     /**
      * Registers a callback for a specific event.
@@ -236,9 +249,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on(
-        type: DataGrid.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataGrid.Event>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -305,14 +318,15 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * Add internal event listeners to the grid.
      */
     private addEvents(): void {
-        this.outerContainer.addEventListener(
-            'scroll',
-            (e): void => this.onScroll(e)
-        );
-        document.addEventListener(
-            'click',
-            (e): void => this.onDocumentClick(e)
-        );
+        this.outerContainer.addEventListener('scroll', (e): void => {
+            this.onScroll(e);
+        });
+        document.addEventListener('click', (e): void => {
+            this.onDocumentClick(e);
+        });
+        this.container.addEventListener('mouseover', (e): void => {
+            this.handleMouseOver(e);
+        });
     }
 
 
@@ -412,6 +426,24 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         }
     }
 
+    /**
+     * Handle hovering over rows- highlight proper row if needed.
+     * @param  {MouseEvent} e Mouse event object.
+     * @return {void}
+     */
+    private handleMouseOver(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+
+        if (target && target.classList.contains('hc-dg-cell')) {
+            const row = target.parentElement as HTMLElement;
+            this.toggleRowHighlight(row);
+            this.hoveredRow = row;
+            fireEvent(this.container, 'dataGridHover', { row });
+        } else if (this.hoveredRow) {
+            this.toggleRowHighlight();
+            this.hoveredRow = void 0;
+        }
+    }
 
     /**
      * Remove the <input> overlay and update the cell value
@@ -763,16 +795,18 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 }
 
 namespace DataGrid {
+
     export type Event = (
         ColumnResizeEvent
     );
 
-    export interface ColumnResizeEvent {
+    export interface ColumnResizeEvent extends DataEvent {
         readonly type: 'afterResizeColumn';
         readonly width: number;
         readonly index?: number;
         readonly name?: string;
     }
+
 }
 
 export default DataGrid;
