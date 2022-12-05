@@ -11,10 +11,6 @@ QUnit.test(
                 margin: 40
             },
 
-            mapNavigation: {
-                enabled: false
-            },
-
             colorAxis: {
                 min: 1,
                 max: 1000,
@@ -73,21 +69,19 @@ QUnit.test(
         chart.mapZoom(0.2);
 
         const [lon, lat] = chart.mapView.center;
-
+        // #17238
         controller.pan(
             [plotLeft + 50, plotTop + 50],
             [plotLeft + 100, plotTop + 100]
         );
 
-        assert.notEqual(
-            chart.mapView.center[0],
-            lon,
+        assert.ok(
+            chart.mapView.center[0] < lon,
             'The chart should pan horizontally'
         );
 
-        assert.notEqual(
-            chart.mapView.center[1],
-            lat,
+        assert.ok(
+            chart.mapView.center[1] < lat,
             'The chart should pan vertically'
         );
 
@@ -310,6 +304,13 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
                     type: 'Point',
                     coordinates: [0, 80]
                 }
+            }, {
+                name: 'B',
+                id: 'B',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [90, 0]
+                }
             }],
             color: '#313f77'
         }]
@@ -371,6 +372,27 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         chart.mapView.projection.options.rotation,
         oldRotation,
         'Rotation should be activated (#16722).'
+    );
+
+    assert.strictEqual(
+        chart.get('B').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels behind the horizon on an Ortho map should be hidden (#17907)'
+    );
+    assert.notStrictEqual(
+        chart.get('A').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels on the near side should not be hidden'
+    );
+    assert.strictEqual(
+        chart.get('B').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics behind the horizon on an Ortho map should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.get('A').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics on the near side should not be hidden'
     );
 
 });

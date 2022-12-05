@@ -46,7 +46,8 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: "https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/js-frameworks-trends.csv"
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/js-frameworks-trends.csv',
+        endColumn: 4
     },
 
     series: [{

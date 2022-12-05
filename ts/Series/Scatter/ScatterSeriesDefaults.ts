@@ -71,7 +71,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
      * settings.
      *
-     * @sample {highcharts} highcharts/series-scatter/jitter
+     * @sample {highcharts} highcharts/demo/scatter-jitter
      *         Jitter on a scatter plot
      *
      * @sample {highcharts} highcharts/series-scatter/jitter-boxplot

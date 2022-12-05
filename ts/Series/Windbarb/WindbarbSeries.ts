@@ -24,7 +24,6 @@ const { animObject } = A;
 import ApproximationRegistry from
     '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -439,6 +438,7 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
     remove: typeof ColumnSeries.prototype.remove;
+    drawTracker: typeof ColumnSeries.prototype.remove;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
@@ -451,11 +451,11 @@ extend(WindbarbSeries.prototype, {
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'],
+    invertible: false,
     parallelArrays: ['x', 'value', 'direction'],
     pointArrayMap: ['value', 'direction'],
     pointClass: WindbarbPoint,
     trackerGroups: ['markerGroup'],
-    invertGroups: noop, // Don't invert the marker group (#4960)
     translate: function (this: WindbarbSeries): void {
         const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;

@@ -218,4 +218,9 @@ describe('Indicator popup searchbox, #16019.', () => {
         cy.openIndicators();
         cy.get('.highcharts-popup').should('be.visible');
     });
+
+    it('Indicators button should be inactive when popup is closed #16487', () => {
+        cy.get('.highcharts-popup-close').click();
+        cy.get('.highcharts-indicators').should('not.have.class', 'highcharts-active');
+    });
 });

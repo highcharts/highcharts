@@ -21,6 +21,9 @@
 import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SeriesClass from '../../Core/Series/Series';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
     XRangePointOptions,
@@ -265,6 +268,13 @@ class XRangeSeries extends ColumnSeries {
         }
 
         return pointIndex;
+    }
+
+    public alignDataLabel(point: XRangePoint): void {
+        const oldPlotX = point.plotX;
+        point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+        super.alignDataLabel.apply(this, arguments);
+        point.plotX = oldPlotX;
     }
 
     /**

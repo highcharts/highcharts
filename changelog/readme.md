@@ -24,12 +24,20 @@ describing the internals of how it was fixed.
 1. Run the script that copies PR descriptions since the last release into markdown files for each product.
 
     ```
+    node changelog/generate --review
+    ```
+
+3. Review the contents of the generated HTML page in a browser, and make edits upstream in the PR descriptions.
+
+3. Generate again, this time without the `review` flag.
+
+    ```
     node changelog/generate
     ```
 
-3. Manually edit these generated markdown files to your wish (or run `node changelog/generate --review` and make edits upstream first).
+4. Optionally, make edits to the generated markdown files that could not be done upstream.
 
-4. Run the script that assembles the content of all markdown files in to a HTML file and uploads it to S3, where the website will pick it up. If testing, run `node changelog/generate-html` first.
+5. Run the script that assembles the content of all markdown files in to a HTML file and uploads it to S3, where the website will pick it up. If testing, run `node changelog/generate-html` first.
 
     ```
     node changelog/upload
