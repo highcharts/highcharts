@@ -190,12 +190,12 @@ async function buildDashboard() {
             events: {
                 mount: function () {
                     // call action
-                    console.log('map mount event', this);
+                    // console.log('map mount event', this);
                     worldMap = this.chart.series[1];
                 },
-                unmount: function () {
-                    console.log('map unmount event', this);
-                }
+                // unmount: function () {
+                //     console.log('map unmount event', this);
+                // }
             }
         }, {
             cell: 'kpi-1',
