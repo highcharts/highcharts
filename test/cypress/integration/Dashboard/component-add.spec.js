@@ -66,7 +66,7 @@ describe('Add component through UI', () => {
             assert.equal(
                 m[m.length - 1].component.type,
                 'Highcharts',
-                `New component's type should be HTML`
+                `New component's type should be Highcharts.`
             );
         });
     });
@@ -95,5 +95,4 @@ describe('Add component through UI', () => {
     //     grabComponent('datagrid');
     //     dropComponent('#dashboard-col-0')
     // });
-    // TODO: how to get dashboard values?
 });
