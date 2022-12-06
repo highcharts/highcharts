@@ -1268,6 +1268,8 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         }
     });
 
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
     assert.strictEqual(
         chart.dataTableDiv.children[0].children[2].children[0].children[0]
             .innerText,
