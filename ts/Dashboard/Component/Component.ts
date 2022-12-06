@@ -79,8 +79,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             display: 'flex',
             'flex-direction': 'column'
         },
-        syncEvents: [],
-        syncHandlers: Sync.defaultHandlers,
+        sync: Sync.defaultHandlers,
         editableOptions: [
             'id',
             'store',
@@ -109,6 +108,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
 
+    protected syncHandlers: Sync.OptionsRecord;
+
     public presentationModifier?: DataModifier;
     public presentationTable?: DataTable;
 
@@ -117,13 +118,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
-     * Timeouts for calls to `Component.resizeTo()`
-     */
+   * Timeouts for calls to `Component.resizeTo()`
+   */
     protected resizeTimeouts: number[] = [];
 
     /**
-     * Timeouts for resizing the content. I.e. `chart.setSize()`
-     */
+   * Timeouts for resizing the content. I.e. `chart.setSize()`
+   */
     protected innerResizeTimeouts: number[] = [];
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -169,6 +170,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: null
         };
 
+        this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
         }, this.options.style);
@@ -179,6 +181,36 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             height: '100%'
         }, void 0, true);
 
+    }
+
+    /**
+     * Handles the sync options. Applies the given defaults if no
+     * specific callback given
+     */
+    protected handleSyncOptions(
+        defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
+    ): typeof this.syncHandlers {
+        return Object.keys(this.options.sync)
+            .reduce(
+                (
+                    carry: Sync.OptionsRecord,
+                    handlerName
+                ): Sync.OptionsRecord => {
+                    if (handlerName) {
+                        const handler = this.options.sync[handlerName];
+
+                        if (handler && typeof handler === 'object') {
+                            carry[handlerName] = handler;
+                        }
+                        if (handler && typeof handler === 'boolean') {
+                            carry[handlerName] = defaultHandlers[handlerName];
+                        }
+                    }
+
+                    return carry;
+                },
+                {}
+            );
     }
 
     // Setup listeners on cell/other things up the chain
@@ -237,7 +269,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'afterSetRows',
             'afterDeleteRows',
             'afterSetColumns',
-            'afterDeleteColumns'
+            'afterDeleteColumns',
+            'afterSetCell'
         ].forEach((event: any): void => {
             if (this.store && table) {
                 this.tableEvents.push((table)
@@ -370,16 +403,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Resize the component
-     * @param {number|string|null} [width]
-     * The width to set the component to.
-     * Can be pixels, a percentage string or null.
-     * Null will unset the style
-     * @param {number|string|null} [height]
-     * The height to set the component to.
-     * Can be pixels, a percentage string or null.
-     * Null will unset the style
-     */
+   * Resize the component
+   * @param {number|string|null} [width]
+   * The width to set the component to.
+   * Can be pixels, a percentage string or null.
+   * Null will unset the style
+   * @param {number|string|null} [height]
+   * The height to set the component to.
+   * Can be pixels, a percentage string or null.
+   * Null will unset the style.
+   */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -449,13 +482,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles updating via options
-     * @param {Partial<Component.ComponentOptions>} newOptions
-     * The options to apply
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * Handles updating via options
+   * @param {Partial<Component.ComponentOptions>} newOptions
+   * The options to apply
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public update(newOptions: Partial<Component.ComponentOptions>): this {
         // Update options
         this.options = merge(this.options, newOptions);
@@ -483,11 +516,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles setting things up on initial render
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * Handles setting things up on initial render
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public load(): this {
 
         // Set up the store on inital load if it has not been done
@@ -543,11 +576,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo make this call load on initial render
-     *
-     * @return {this}
-     * The component for chaining
-     */
+   * @todo make this call load on initial render
+   *
+   * @return {this}
+   * The component for chaining
+   */
     public render(): this {
         if (!this.hasLoaded) {
             this.load();
@@ -558,10 +591,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo redraw should (usually) call render
-     * @return {this}
-     * The component for chaining
-     */
+   * @todo redraw should (usually) call render
+   * @return {this}
+   * The component for chaining
+   */
     public redraw(): this {
         // Do a redraw
         const e = {
@@ -572,9 +605,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo Should perhaps also remove the component from the registry
-     * or set an `isactive` flag to false
-     */
+   * @todo Should perhaps also remove the component from the registry
+   * or set an `isactive` flag to false
+   */
     public destroy(): void {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -631,11 +664,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @return {Component.JSON}
-     * Class JSON of this Component instance.
-     */
+   * Converts the class instance to a class JSON.
+   *
+   * @return {Component.JSON}
+   * Class JSON of this Component instance.
+   */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
@@ -672,10 +705,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 namespace Component {
 
     /* *
-     *
-     *  Declarations
-     *
-     * */
+   *
+   *  Declarations
+   *
+   * */
 
     export interface JSON extends Serializable.JSON<string> {
         // store?: DataStore.ClassJSON;
@@ -683,8 +716,8 @@ namespace Component {
     }
 
     /**
-     * The basic events
-     */
+   * The basic events
+   */
     export type EventTypes =
         ResizeEvent |
         UpdateEvent |
@@ -732,6 +765,8 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
+    export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
+
     export interface ComponentOptions extends EditableOptions {
         parentCell?: Cell;
         parentElement: HTMLElement | string;
@@ -743,8 +778,7 @@ namespace Component {
         editableOptions: Array<keyof EditableOptions>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
-        syncEvents: Sync.EventType[];
-        syncHandlers: Sync.OptionsRecord;
+        sync: SyncOptions;
     }
 
     // JSON compatible options for export
@@ -784,38 +818,41 @@ namespace Component {
     };
 
     /* *
-     *
-     *  Constants
-     *
-     * */
+   *
+   *  Constants
+   *
+   * */
 
     /**
-     *
-     * Record of component instances
-     *
-     */
+   *
+   * Record of component instances
+   *
+   */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
     /**
-     * Regular expression to extract the  name (group 1) from the
-     * stringified class type.
-     */
+   * Regular expression to extract the  name (group 1) from the
+   * stringified class type.
+   */
     const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
 
     /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
+   *
+   * Record of component classes
+   * @todo
+   *
+   */
     export const registry: Record<string, Class<Component>> = {};
 
     /* *
-     *
-     *  Functions
-     *
-     * */
+   *
+   *  Functions
+   *
+   * */
 
+    /**
+     *
+     */
     export function addComponent<T extends Class<Component>>(
         componentClass: T
     ): boolean {
@@ -833,24 +870,30 @@ namespace Component {
         return true;
     }
 
+    /**
+     *
+     */
     export function getAllComponentNames(): Array<string> {
         return Object.keys(Component.registry);
     }
 
+    /**
+     *
+     */
     export function getAllComponents(): Record<string, Class<Component>> {
         return merge(Component.registry);
     }
 
     /**
-     * Extracts the name from a given component class.
-     *
-     * @param {DataStore} component
-     * Component class to extract the name from.
-     *
-     * @return {string}
-     * Component name, if the extraction was successful, otherwise an empty
-     * string.
-     */
+   * Extracts the name from a given component class.
+   *
+   * @param {DataStore} component
+   * Component class to extract the name from.
+   *
+   * @return {string}
+   * Component name, if the extraction was successful, otherwise an empty
+   * string.
+   */
     export function getName(
         component: (NewableFunction | ComponentType)
     ): string {
@@ -861,52 +904,61 @@ namespace Component {
     }
 
     /**
-     * Adds a component instance to the registry
-     * @param {Component} component
-     * The component to add
-     */
+   * Adds a component instance to the registry
+   * @param {Component} component
+   * The component to add
+   */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
 
     }
 
     /**
-     * Removes a component instance from the registry
-     * @param {Component} component
-     * The component to remove
-     */
+   * Removes a component instance from the registry
+   * @param {Component} component
+   * The component to remove
+   */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-     * Retrieves the IDs of the registered component instances
-     * @return {string[]}
-     * Array of component IDs
-     */
+   * Retrieves the IDs of the registered component instances
+   * @return {string[]}
+   * Array of component IDs
+   */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-     * Retrieves all registered component instances
-     * @return {ComponentType[]}
-     * Array of components
-     */
+   * Retrieves all registered component instances
+   * @return {ComponentType[]}
+   * Array of components
+   */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component<any> => instanceRegistry[id]);
     }
 
+    /**
+     *
+     */
     export function getComponent<T extends Class<Component>>(
         key: string
-    ): (T|undefined) {
+    ): (T | undefined) {
         return registry[key] as T;
     }
 
+    /**
+     *
+     */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
     }
+    /**
+     *
+     */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,
         // Are there cases where a group should be the sender?

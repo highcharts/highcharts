@@ -72,7 +72,10 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['visibility', 'tooltip']
+        sync: {
+          'visibility' : true, 
+          'tooltip': true
+        }
     }, {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
@@ -88,7 +91,10 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['visibility', 'tooltip']
+        sync: {
+          'visibility' : true, 
+          'tooltip': true
+        }
     }]
 });
 

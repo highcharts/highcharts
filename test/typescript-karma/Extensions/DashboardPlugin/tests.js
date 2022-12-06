@@ -26,11 +26,11 @@ test('Both components should work', (assert) => {
     const components = [
         new HighchartsComponent({
             store,
-            syncEvents: ['visibility']
+            sync: {'visibility': true}
         }),
         new HighchartsComponent({
             store,
-            syncEvents: ['visibility']
+            sync: {'visibility': true}
         })
     ];
 
