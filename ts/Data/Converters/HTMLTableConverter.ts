@@ -24,10 +24,10 @@
 
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
+import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -86,7 +86,7 @@ class HTMLTableConverter extends DataConverter {
         this.columns = [];
         this.headers = [];
         this.options = merge(HTMLTableConverter.defaultOptions, options);
-        this.converter = converter || new OldDataConverter();
+        this.converter = this;
 
         if (tableElement) {
             this.tableElement = tableElement;
@@ -105,8 +105,8 @@ class HTMLTableConverter extends DataConverter {
 
     private columns: DataTable.CellType[][];
     private headers: string[];
-    public converter: OldDataConverter;
-    public options: HTMLTableConverter.Options;
+    public readonly converter: this;
+    public readonly options: HTMLTableConverter.Options;
     public tableElement?: HTMLElement;
     public tableElementID?: string;
 
@@ -539,7 +539,7 @@ namespace HTMLTableConverter {
      * Options for the parser compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
-        decimalPoint?: string|null;
+        decimalPoint?: string;
         exportIDColumn?: boolean;
         tableCaption?: string;
         useLocalDecimalPoint?: boolean;

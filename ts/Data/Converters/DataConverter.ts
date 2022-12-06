@@ -21,12 +21,12 @@
  *
  * */
 
-import type OldDataConverter from '../DataConverter';
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
 import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
+import OldDataConverter from './OldDataConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -44,7 +44,7 @@ const {
  *
  * @private
  */
-abstract class DataConverter implements DataEvent.Emitter {
+abstract class DataConverter extends OldDataConverter implements DataEvent.Emitter {
 
     /* *
      *
@@ -113,7 +113,7 @@ abstract class DataConverter implements DataEvent.Emitter {
     /**
      * Old DataConverter functions
      */
-    public abstract converter: OldDataConverter;
+    public abstract readonly converter: this;
 
     /* *
      *
@@ -121,12 +121,25 @@ abstract class DataConverter implements DataEvent.Emitter {
      *
      * */
 
+
     /**
-     * Getter for the data table.
+     * Casts a string value to it's guessed type
+     * @param {string} value
+     * The string to examine
      *
-     * @return {DataTable}
+     * @return {number|string|Date}
+     * The converted value
      */
-    public abstract getTable(): DataTable;
+    public asGuessedType(value: string): (number|string|Date) {
+        const converter = this,
+            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
+                'number': converter.asNumber,
+                'Date': converter.asDate,
+                'string': converter.asString
+            };
+
+        return typeMap[converter.guessType(value)].call(converter, value);
+    }
 
     /**
      * Emits an event on the DataConverter instance.
@@ -151,6 +164,13 @@ abstract class DataConverter implements DataEvent.Emitter {
         store: DataStore,
         options?: DataConverter.Options
     ): string;
+
+    /**
+     * Getter for the data table.
+     *
+     * @return {DataTable}
+     */
+    public abstract getTable(): DataTable;
 
     /**
      * Registers a callback for a specific event.
@@ -204,6 +224,16 @@ namespace DataConverter {
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
         readonly headers: string[];
+    }
+
+    export interface DateFormatCallbackFunction {
+        (match: ReturnType<string['match']>): number;
+    }
+
+    export interface DateFormatObject {
+        alternative?: string;
+        parser: DateFormatCallbackFunction;
+        regex: RegExp;
     }
 
     /**

@@ -24,10 +24,10 @@
 
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
+import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -76,7 +76,7 @@ class CSVConverter extends DataConverter {
         super();
 
         this.options = merge(CSVConverter.defaultOptions, options);
-        this.converter = converter || new OldDataConverter();
+        this.converter = this;
     }
 
     /* *
@@ -90,8 +90,8 @@ class CSVConverter extends DataConverter {
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
-    private options: CSVConverter.Options;
-    public converter: OldDataConverter;
+    public readonly converter: this;
+    public readonly options: CSVConverter.Options;
 
     /* *
      *

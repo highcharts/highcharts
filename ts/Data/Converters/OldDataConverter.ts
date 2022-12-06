@@ -22,10 +22,11 @@
  *
  * */
 
-import type DataTable from './DataTable.js';
-import type JSON from '../Core/JSON';
+import type DataConverter from './DataConverter';
+import type DataTable from '../DataTable';
+import type JSON from '../../Core/JSON';
 
-import U from './../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -40,7 +41,7 @@ const {
 /**
  * Class to convert between common value types.
  */
-class DataConverter {
+class OldDataConverter {
 
     /* *
      *
@@ -51,7 +52,7 @@ class DataConverter {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: DataConverter.Options = {
+    protected static readonly defaultOptions: OldDataConverter.Options = {
         dateFormat: '',
         alternativeFormat: ''
     };
@@ -73,12 +74,12 @@ class DataConverter {
      * into JavaScript timestamps.
      */
     public constructor(
-        options?: DataConverter.Options,
-        parseDate?: DataConverter.ParseDateFunction
+        options?: OldDataConverter.Options,
+        parseDate?: OldDataConverter.ParseDateFunction
     ) {
         let decimalPoint;
 
-        this.options = merge(DataConverter.defaultOptions, options);
+        this.options = merge(OldDataConverter.defaultOptions, options);
         this.parseDateFn = parseDate;
 
         decimalPoint = this.options.decimalPoint;
@@ -102,12 +103,12 @@ class DataConverter {
     /**
      * Options for the DataConverter.
      */
-    private options: DataConverter.Options;
+    public readonly options: OldDataConverter.Options;
 
     /**
      * Custom parsing function used instead of build-in parseDate method.
      */
-    private parseDateFn: (DataConverter.ParseDateFunction|undefined);
+    private parseDateFn: (OldDataConverter.ParseDateFunction|undefined);
 
     /**
      * Regular expression used in the trim method to change a decimal point.
@@ -122,7 +123,7 @@ class DataConverter {
      */
     private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
+            regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -132,7 +133,7 @@ class DataConverter {
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -143,7 +144,7 @@ class DataConverter {
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -153,7 +154,7 @@ class DataConverter {
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 const d = new Date();
 
@@ -174,7 +175,7 @@ class DataConverter {
             alternative: 'mm/dd/YY' // different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -211,7 +212,7 @@ class DataConverter {
      * @return {boolean}
      * Converted value as a boolean.
      */
-    public asBoolean(value: DataConverter.Type): boolean {
+    public asBoolean(value: OldDataConverter.Type): boolean {
         if (typeof value === 'boolean') {
             return value;
         }
@@ -230,7 +231,7 @@ class DataConverter {
      * @return {globalThis.Date}
      * Converted value as a Date.
      */
-    public asDate(value: DataConverter.Type): Date {
+    public asDate(value: OldDataConverter.Type): Date {
         let timestamp;
 
         if (typeof value === 'string') {
@@ -255,7 +256,7 @@ class DataConverter {
      * @return {number}
      * Converted value as a number.
      */
-    public asNumber(value: DataConverter.Type): number {
+    public asNumber(value: OldDataConverter.Type): number {
         if (typeof value === 'number') {
             return value;
         }
@@ -264,7 +265,7 @@ class DataConverter {
         }
         if (typeof value === 'string') {
             if (value.indexOf(' ') > -1) {
-                value = value.replace(/\s+/g, '');
+                value = value.replace(/\s+/gu, '');
             }
             if (this.decimalRegex) {
                 value = value.replace(this.decimalRegex, '$1.$2');
@@ -290,7 +291,7 @@ class DataConverter {
      * @return {string}
      * Converted value as a string.
      */
-    public asString(value: DataConverter.Type): string {
+    public asString(value: OldDataConverter.Type): string {
         return `${value}`;
     }
 
@@ -313,11 +314,11 @@ class DataConverter {
         const converter = this;
 
         if (typeof str === 'string') {
-            str = str.replace(/^\s+|\s+$/g, '');
+            str = str.replace(/^\s+|\s+$/gu, '');
 
             // Clear white space insdie the string, like thousands separators
-            if (inside && /^[0-9\s]+$/.test(str)) {
-                str = str.replace(/\s/g, '');
+            if (inside && /^[0-9\s]+$/u.test(str)) {
+                str = str.replace(/\s/gu, '');
             }
 
             if (converter.decimalRegex) {
@@ -376,25 +377,6 @@ class DataConverter {
         }
 
         return result;
-    }
-
-    /**
-     * Casts a string value to it's guessed type
-     * @param {string} value
-     * The string to examine
-     *
-     * @return {number|string|Date}
-     * The converted value
-     */
-    public asGuessedType(value: string): (number|string|Date) {
-        const converter = this,
-            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
-                'number': converter.asNumber,
-                'Date': converter.asDate,
-                'string': converter.asString
-            };
-
-        return typeMap[converter.guessType(value)].call(converter, value);
     }
 
     /**
@@ -531,9 +513,9 @@ class DataConverter {
             ) {
                 thing = data[i]
                     .trim()
-                    .replace(/\//g, ' ')
-                    .replace(/\-/g, ' ')
-                    .replace(/\./g, ' ')
+                    .replace(/\//gu, ' ')
+                    .replace(/-/gu, ' ')
+                    .replace(/\./gu, ' ')
                     .split(' ');
 
                 guessedFormat = [
@@ -629,17 +611,7 @@ class DataConverter {
 /**
  * Additionally provided types to describe supported value types.
  */
-namespace DataConverter {
-
-    export interface DateFormatObject {
-        alternative?: string;
-        parser: DateFormatCallbackFunction;
-        regex: RegExp;
-    }
-
-    export interface DateFormatCallbackFunction {
-        (match: ReturnType<string['match']>): number;
-    }
+namespace OldDataConverter {
 
     /**
      * Internal options for DataConverter.
@@ -673,4 +645,4 @@ namespace DataConverter {
  *
  * */
 
-export default DataConverter;
+export default OldDataConverter;

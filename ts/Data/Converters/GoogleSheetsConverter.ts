@@ -24,10 +24,10 @@
 
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
+import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import OldDataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -85,7 +85,7 @@ class GoogleSheetsConverter extends DataConverter {
         this.columns = [];
         this.header = [];
         this.options = merge(GoogleSheetsConverter.defaultOptions, options);
-        this.converter = converter || new OldDataConverter();
+        this.converter = this;
     }
 
     /* *
@@ -96,8 +96,8 @@ class GoogleSheetsConverter extends DataConverter {
 
     private columns: DataTable.CellType[][];
     private header: string[];
-    public converter: OldDataConverter;
-    public options: GoogleSheetsConverter.Options;
+    public readonly converter: this;
+    public readonly options: GoogleSheetsConverter.Options;
 
     /* *
      *
