@@ -2729,9 +2729,16 @@ class Series {
                                 markerAttribs.y,
                                 markerAttribs.width,
                                 markerAttribs.height,
+                                merge({
+                                    scaleX: (
+                                        point.hasImage &&
+                                        this.chart.inverted
+                                    ) ? -1 : 1
+                                },
                                 hasPointMarker ?
                                     pointMarkerOptions :
                                     seriesMarkerOptions
+                                )
                             )
                             .add(markerGroup);
                         // Sliding animation for new points

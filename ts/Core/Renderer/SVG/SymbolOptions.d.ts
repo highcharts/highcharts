@@ -25,6 +25,7 @@ export interface SymbolOptions {
     longArc?: (0|1);
     open?: boolean;
     r?: number;
+    scaleX?: number;
     start?: number;
     width?: number;
     x?: number;

@@ -1498,9 +1498,7 @@ class SVGRenderer implements SVGRendererLike {
                         }
 
                         if (!alignByTranslate) {
-                            const scaleX = (
-                                this.parentGroup && this.parentGroup.scaleX
-                            ) || 1;
+                            const scaleX = (options && options.scaleX || 1);
                             this.translate(
                                 ((width || 0) - (imgSize * scale * scaleX)) / 2,
                                 ((height || 0) - (imgSize * scale)) / 2
