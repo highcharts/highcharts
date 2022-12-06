@@ -121,6 +121,49 @@ abstract class DataConverter extends OldDataConverter implements DataEvent.Emitt
      *
      * */
 
+    /**
+     * Converts a value to a boolean.
+     *
+     * @param {DataConverter.Type} value
+     * Value to convert.
+     *
+     * @return {boolean}
+     * Converted value as a boolean.
+     */
+    public asBoolean(value: OldDataConverter.Type): boolean {
+        if (typeof value === 'boolean') {
+            return value;
+        }
+        if (typeof value === 'string') {
+            return value !== '' && value !== '0' && value !== 'false';
+        }
+        return !!this.asNumber(value);
+    }
+
+    /**
+     * Converts a value to a Date.
+     *
+     * @param {DataConverter.Type} value
+     * Value to convert.
+     *
+     * @return {globalThis.Date}
+     * Converted value as a Date.
+     */
+    public asDate(value: OldDataConverter.Type): Date {
+        let timestamp;
+
+        if (typeof value === 'string') {
+            timestamp = this.parseDate(value);
+        } else if (typeof value === 'number') {
+            timestamp = value;
+        } else if (value instanceof Date) {
+            return value;
+        } else {
+            timestamp = this.parseDate(this.asString(value));
+        }
+
+        return new Date(timestamp);
+    }
 
     /**
      * Casts a string value to it's guessed type
@@ -139,6 +182,54 @@ abstract class DataConverter extends OldDataConverter implements DataEvent.Emitt
             };
 
         return typeMap[converter.guessType(value)].call(converter, value);
+    }
+
+    /**
+     * Converts a value to a number.
+     *
+     * @param {DataConverter.Type} value
+     * Value to convert.
+     *
+     * @return {number}
+     * Converted value as a number.
+     */
+    public asNumber(value: OldDataConverter.Type): number {
+        if (typeof value === 'number') {
+            return value;
+        }
+        if (typeof value === 'boolean') {
+            return value ? 1 : 0;
+        }
+        if (typeof value === 'string') {
+            if (value.indexOf(' ') > -1) {
+                value = value.replace(/\s+/gu, '');
+            }
+            if (this.decimalRegex) {
+                value = value.replace(this.decimalRegex, '$1.$2');
+            }
+            return parseFloat(value);
+        }
+        if (value instanceof Date) {
+            return value.getDate();
+        }
+        if (value) {
+            return value.getRowCount();
+        }
+
+        return NaN;
+    }
+
+    /**
+     * Converts a value to a string.
+     *
+     * @param {DataConverter.Type} value
+     * Value to convert.
+     *
+     * @return {string}
+     * Converted value as a string.
+     */
+    public asString(value: OldDataConverter.Type): string {
+        return '' + value;
     }
 
     /**
