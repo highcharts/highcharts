@@ -1,0 +1,7 @@
+---
+ name: Climate Map
+ authors:
+   - Sophie Bremer
+ requiresManualTesting: true
+ js_wrap: b
+...
