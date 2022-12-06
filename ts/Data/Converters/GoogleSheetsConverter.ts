@@ -72,19 +72,14 @@ class GoogleSheetsConverter extends DataConverter {
      *
      * @param {GoogleSheetsConverter.OptionsType} [options]
      * Options for the Google Sheets parser.
-     *
-     * @param {DataConverter} converter
-     * Parser data converter.
      */
     constructor(
-        options?: GoogleSheetsConverter.OptionsType,
-        converter?: DataConverter
+        options?: GoogleSheetsConverter.OptionsType
     ) {
         super();
         this.columns = [];
         this.header = [];
         this.options = merge(GoogleSheetsConverter.defaultOptions, options);
-        this.converter = this;
     }
 
     /* *
@@ -95,7 +90,10 @@ class GoogleSheetsConverter extends DataConverter {
 
     private columns: DataTable.CellType[][];
     private header: string[];
-    public readonly converter: this;
+
+    /**
+     * Options for the DataConverter.
+     */
     public readonly options: GoogleSheetsConverter.Options;
 
     /* *
@@ -133,9 +131,8 @@ class GoogleSheetsConverter extends DataConverter {
         json: Partial<GoogleSheetsConverter.Options>,
         eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
-        const parser = this,
-            parserOptions = merge(parser.options, json),
-            converter = parser.converter,
+        const converter = this,
+            parserOptions = merge(converter.options, json),
             columns = ((
                 parserOptions.json &&
                 parserOptions.json.values
@@ -147,23 +144,23 @@ class GoogleSheetsConverter extends DataConverter {
             return false;
         }
 
-        parser.header = [];
-        parser.columns = [];
+        converter.header = [];
+        converter.columns = [];
 
-        parser.emit<DataConverter.Event>({
+        converter.emit<DataConverter.Event>({
             type: 'parse',
-            columns: parser.columns,
+            columns: converter.columns,
             detail: eventDetail,
-            headers: parser.header
+            headers: converter.header
         });
 
-        parser.columns = columns;
+        converter.columns = columns;
 
         let column;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             column = columns[i];
-            parser.header[i] = (
+            converter.header[i] = (
                 parserOptions.firstRowAsNames ?
                     `${column.shift()}` :
                     uniqueKey()
@@ -177,16 +174,16 @@ class GoogleSheetsConverter extends DataConverter {
                     if (cellValue instanceof Date) {
                         cellValue = cellValue.getTime();
                     }
-                    parser.columns[i][j] = cellValue;
+                    converter.columns[i][j] = cellValue;
                 }
             }
         }
 
-        parser.emit<DataConverter.Event>({
+        converter.emit<DataConverter.Event>({
             type: 'afterParse',
-            columns: parser.columns,
+            columns: converter.columns,
             detail: eventDetail,
-            headers: parser.header
+            headers: converter.header
         });
     }
 

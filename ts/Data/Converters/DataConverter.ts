@@ -151,11 +151,6 @@ abstract class DataConverter implements DataEvent.Emitter {
      * */
 
     /**
-     * Old DataConverter functions
-     */
-    public abstract readonly converter: this;
-
-    /**
      * A collection of available date formats.
      *
      * @name Highcharts.Data#dateFormats

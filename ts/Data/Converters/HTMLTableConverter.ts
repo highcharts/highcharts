@@ -72,20 +72,15 @@ class HTMLTableConverter extends DataConverter {
      *
      * @param {HTMLElement | null} tableElement
      * The HTML table to parse
-     *
-     * @param {DataConverter} converter
-     * Parser data converter.
      */
     constructor(
         options?: Partial<HTMLTableConverter.OptionsType>,
-        tableElement: (HTMLElement | null) = null,
-        converter?: DataConverter
+        tableElement: (HTMLElement | null) = null
     ) {
         super();
         this.columns = [];
         this.headers = [];
         this.options = merge(HTMLTableConverter.defaultOptions, options);
-        this.converter = this;
 
         if (tableElement) {
             this.tableElement = tableElement;
@@ -104,8 +99,12 @@ class HTMLTableConverter extends DataConverter {
 
     private columns: DataTable.CellType[][];
     private headers: string[];
-    public readonly converter: this;
+
+    /**
+     * Options for the DataConverter.
+     */
     public readonly options: HTMLTableConverter.Options;
+
     public tableElement?: HTMLElement;
     public tableElementID?: string;
 
@@ -383,11 +382,10 @@ class HTMLTableConverter extends DataConverter {
         options: HTMLTableConverter.OptionsType,
         eventDetail?: DataEvent.Detail
     ): void {
-        const parser = this,
-            converter = this.converter,
+        const converter = this,
             columns: Array<DataTable.Column> = [],
             headers: string[] = [],
-            parseOptions = merge(parser.options, options),
+            parseOptions = merge(converter.options, options),
             {
                 endRow,
                 startColumn,
@@ -398,7 +396,7 @@ class HTMLTableConverter extends DataConverter {
 
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit<DataConverter.Event>({
+            converter.emit<DataConverter.Event>({
                 type: 'parseError',
                 columns,
                 detail: eventDetail,
@@ -407,14 +405,14 @@ class HTMLTableConverter extends DataConverter {
             });
             return;
         }
-        parser.tableElement = this.tableElement;
-        parser.tableElementID = tableHTML.id;
+        converter.tableElement = this.tableElement;
+        converter.tableElementID = tableHTML.id;
 
         this.emit<DataConverter.Event>({
             type: 'parse',
-            columns: parser.columns,
+            columns: converter.columns,
             detail: eventDetail,
-            headers: parser.headers
+            headers: converter.headers
         });
         const rows = tableHTML.getElementsByTagName('tr'),
             rowsCount = rows.length;

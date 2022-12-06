@@ -64,18 +64,13 @@ class CSVConverter extends DataConverter {
      *
      * @param {CSVConverter.OptionsType} [options]
      * Options for the CSV parser.
-     *
-     * @param {DataConverter} converter
-     * Parser data converter.
      */
     public constructor(
-        options?: CSVConverter.OptionsType,
-        converter?: DataConverter
+        options?: CSVConverter.OptionsType
     ) {
         super();
 
         this.options = merge(CSVConverter.defaultOptions, options);
-        this.converter = this;
     }
 
     /* *
@@ -89,7 +84,10 @@ class CSVConverter extends DataConverter {
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
-    public readonly converter: this;
+
+    /**
+     * Options for the DataConverter.
+     */
     public readonly options: CSVConverter.Options;
 
     /* *
@@ -209,9 +207,8 @@ class CSVConverter extends DataConverter {
         options: CSVConverter.OptionsType,
         eventDetail?: DataEvent.Detail
     ): void {
-        const parser = this,
-            dataTypes = parser.dataTypes,
-            converter = parser.converter,
+        const converter = this,
+            dataTypes = converter.dataTypes,
             parserOptions = merge(this.options, options),
             {
                 beforeParse,
@@ -229,13 +226,13 @@ class CSVConverter extends DataConverter {
             } = parserOptions,
             column;
 
-        parser.columns = [];
+        converter.columns = [];
 
-        parser.emit<DataConverter.Event>({
+        converter.emit<DataConverter.Event>({
             type: 'parse',
-            columns: parser.columns,
+            columns: converter.columns,
             detail: eventDetail,
-            headers: parser.headers
+            headers: converter.headers
         });
 
         if (csv && beforeParse) {
@@ -257,21 +254,23 @@ class CSVConverter extends DataConverter {
             }
 
             if (!itemDelimiter) {
-                parser.guessedItemDelimiter = parser.guessDelimiter(lines);
+                converter.guessedItemDelimiter =
+                    converter.guessDelimiter(lines);
             }
 
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                const headers = lines[0]
-                    .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+                const headers = lines[0].split(
+                    itemDelimiter || converter.guessedItemDelimiter || ','
+                );
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
                     headers[i] = headers[i].replace(/^["']|["']$/gu, '');
                 }
 
-                parser.headers = headers;
+                converter.headers = headers;
 
                 startRow++;
             }
@@ -282,23 +281,24 @@ class CSVConverter extends DataConverter {
                 if (lines[rowIt][0] === '#') {
                     offset++;
                 } else {
-                    parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                    converter
+                        .parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
 
             if (dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' && // format is a string date
-                !parser.converter.options.dateFormat
+                !converter.options.dateFormat
             ) {
-                parser.converter.deduceDateFormat(
-                    parser.columns[0] as Array<string>, null, true
+                converter.deduceDateFormat(
+                    converter.columns[0] as Array<string>, null, true
                 );
             }
 
             // Guess types.
-            for (let i = 0, iEnd = parser.columns.length; i < iEnd; ++i) {
-                column = parser.columns[i];
+            for (let i = 0, iEnd = converter.columns.length; i < iEnd; ++i) {
+                column = converter.columns[i];
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
@@ -308,17 +308,17 @@ class CSVConverter extends DataConverter {
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
-                        parser.columns[i][j] = cellValue;
+                        converter.columns[i][j] = cellValue;
                     }
                 }
             }
         }
 
-        parser.emit<DataConverter.Event>({
+        converter.emit<DataConverter.Event>({
             type: 'afterParse',
-            columns: parser.columns,
+            columns: converter.columns,
             detail: eventDetail,
-            headers: parser.headers
+            headers: converter.headers
         });
     }
 
@@ -329,19 +329,18 @@ class CSVConverter extends DataConverter {
         columnStr: string,
         rowNumber: number
     ): void {
-        const parser = this,
-            converter = this.converter,
-            columns = parser.columns || [],
-            dataTypes = parser.dataTypes,
-            { startColumn, endColumn } = parser.options,
+        const converter = this,
+            columns = converter.columns || [],
+            dataTypes = converter.dataTypes,
+            { startColumn, endColumn } = converter.options,
             itemDelimiter = (
-                parser.options.itemDelimiter ||
-                parser.guessedItemDelimiter
+                converter.options.itemDelimiter ||
+                converter.guessedItemDelimiter
             );
 
-        let { decimalPoint } = parser.options;
+        let { decimalPoint } = converter.options;
         if (!decimalPoint || decimalPoint === itemDelimiter) {
-            decimalPoint = parser.guessedDecimalPoint || '.';
+            decimalPoint = converter.guessedDecimalPoint || '.';
         }
 
         let i = 0,
