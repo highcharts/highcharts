@@ -1,142 +1,21 @@
 
 // Bring in other forms of Highcharts
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
 
 const { PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
+DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+PluginHandler.addPlugin(DataGridPlugin);
+
 let dashboard = new Dashboard.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: [{
-                id: 'saveLocal',
-                className: 'test-test-test',
-                events: {
-                    click: function () {
-                        console.log('save local');
-                    }
-                }
-            }, 'verticalSeparator', 'editMode', {
-                id: 'export-dashboard',
-                text: 'Export dashboard',
-                events: {
-                    click: function () {
-                        dashboard.exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        dashboard.destroy();
-                    }
-                }
-            }, {
-                id: 'import-dashboard',
-                text: 'Import saved dashboard',
-                events: {
-                    click: function () {
-                        dashboard = Dashboard.importLocal();
-                    }
-                }
-            }, {
-                id: 'export-layout',
-                text: 'Export 1 layout',
-                events: {
-                    click: function () {
-                        exportedLayoutId = dashboard.layouts[0].options.id;
-                        dashboard.layouts[0].exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-layout',
-                text: 'Delete 1 layout',
-                events: {
-                    click: function () {
-                        dashboard.layouts[0].destroy();
-                    }
-                }
-            }, {
-                id: 'import-layout',
-                text: 'Import saved layout',
-                events: {
-                    click: function () {
-                        const layout = dashboard.importLayoutLocal(
-                            exportedLayoutId
-                        );
-                        console.log('Imported layout: ', layout);
-                    }
-                }
-            }]
-        },
-        toolbars: {
-            cell: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    },
-                    // {
-                    //     id: 'my-option-1',
-                    //     text: 't1',
-                    //     events: {
-                    //         click: function() {
-                    //             console.log('hello world!');
-                    //         }
-                    //     }
-                    // },
-                    {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            row: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    }, {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            settings: {
-                closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
-                dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-            }
-        },
-        lang: {
-            editMode: 'My edit mode',
-            saveLocal: 'Save locally 1',
-            chartOptions: 'Chart options EN'
-        },
-        tools: {
-            addComponentBtn: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
-            },
-            rwdIcons: {
-                small: 'https://code.highcharts.com/gfx/dashboard-icons/smartphone.svg',
-                medium: 'https://code.highcharts.com/gfx/dashboard-icons/tablet.svg',
-                large: 'https://code.highcharts.com/gfx/dashboard-icons/computer.svg'
-            }
-        },
-        confirmationPopup: {
-            close: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
-            }
+            items: ['verticalSeparator', 'editMode']
         },
         resize: {
             enabled: true,
@@ -158,23 +37,15 @@ let dashboard = new Dashboard.Dashboard('container', {
                 id: 'layout-1', // mandatory
                 rowClassName: 'custom-row', // optional
                 cellClassName: 'custom-cell', // optional
-                rows: [
-                    {
-                        cells: [
-                            {
-                                id: 'dashboard-col-0',
-                                width: '50%',
-                                style: {
-                                    color: 'yellow'
-                                }
-                            },
-                            {
-                                id: 'dashboard-col-1',
-                                width: '1/2',
-                            }
-                        ]
-                    },
-                ]
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-0',
+                        width: '50%',
+                    }, {
+                        id: 'dashboard-col-1',
+                        width: '1/2',
+                    }]
+                }]
             }
         ]
     },

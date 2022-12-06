@@ -17,9 +17,6 @@ describe('Add component through UI', () => {
     before(() => {
         cy.visit('/dashboard/demos/dashboard-add-layout');
         cy.viewport(1200, 1000);
-    });
-
-    before(() => {
         cy.get('.hd-edit-context-menu-btn').click();
         cy.get('.hd-edit-toggle-slider').click();
     });
@@ -46,9 +43,9 @@ describe('Add component through UI', () => {
     });
 
     // TODO: add after the datagrid component is added
-    // it('should be able to add a Data grid component', function() {
-    //     grabComponent('datagrid');
-    //     dropComponent('#dashboard-col-0')
-    // });
+    it('should be able to add a Data grid component', function() {
+        grabComponent('datagrid');
+        dropComponent('#dashboard-col-0')
+    });
     // TODO: how to get dashboard values?
 });

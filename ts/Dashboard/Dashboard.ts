@@ -201,13 +201,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public setComponents(
         components: Array<Bindings.ComponentOptions>
     ): void {
-        const dashboard = this;
-
-        let component,
-            cell;
-
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            component = Bindings.addComponent(components[i]);
+            Bindings.addComponent(components[i]);
         }
     }
 

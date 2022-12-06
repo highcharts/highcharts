@@ -89,8 +89,8 @@ class Bindings {
         }
 
             if (cell && component) {
-                component.setCell(cell); // should probably be done by Bindings
-                cell.mountedComponent = component; // @ToDo cell.addComponent() perhaps? - checks if cell is free
+                component.setCell(cell);
+                cell.mountedComponent = component;
 
                 cell.row.layout.dashboard.mountedComponents.push({
                     options: options,

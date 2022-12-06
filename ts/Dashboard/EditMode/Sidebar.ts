@@ -199,7 +199,18 @@ class Sidebar {
             }
         }, {
             text: 'datagrid',
-            onDrop: function (sidebar: Sidebar, dropContext: Cell | Row): void {
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell | Row
+            ): Cell|void {
+
+                // TODO: Add datagrid through the drag&drop
+                // if (sidebar && dropContext) {
+                //     return sidebar.onDropNewComponent(dropContext, {
+                //         cell: '',
+                //         type: 'datagrid'
+                //     });
+                // }
             }
         }
     ];
