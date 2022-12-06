@@ -1418,13 +1418,6 @@ class SVGRenderer implements SVGRendererLike {
                 extend(obj, options);
             }
 
-            if (obj.parentGroup && obj.parentGroup.rotation === 90) {
-                obj.attr({
-                    rotationOriginX: x && x + (this.width / 2),
-                    rotationOriginY: y && y + (this.height / 2)
-                });
-            }
-
         // Image symbols
         } else if (isImage) {
 
@@ -1474,9 +1467,6 @@ class SVGRenderer implements SVGRendererLike {
                     let imgSize = this['img' + key];
                     if (defined(imgSize)) {
                         let scale = 1;
-                        const inverted =
-                            this.parentGroup &&
-                            this.parentGroup.rotation === 90;
 
                         // Scale and center the image within its container.
                         // The name `backgroundSize` is taken from the CSS spec,
@@ -1503,21 +1493,16 @@ class SVGRenderer implements SVGRendererLike {
                                 height: Math.round(imgheight * scale)
                             });
 
-                            if (inverted) {
-                                this.attr({
-                                    rotationOriginX: x && x + (this.width / 2),
-                                    rotationOriginY: y && y + (this.height / 2)
-                                });
-                            }
-
                         } else if (element) {
                             element.setAttribute(key, imgSize);
                         }
 
                         if (!alignByTranslate) {
+                            const scaleX = (
+                                this.parentGroup && this.parentGroup.scaleX
+                            ) || 1;
                             this.translate(
-                                ((width || 0) + ((inverted ? 1 : -1) *
-                                    (imgSize * scale))) / 2,
+                                ((width || 0) - (imgSize * scale * scaleX)) / 2,
                                 ((height || 0) - (imgSize * scale)) / 2
                             );
                         }
