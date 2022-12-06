@@ -1263,11 +1263,27 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         }
         ],
         exporting: {
-            showTable: true
+            showTable: true,
+            allowTableSorting: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[2].children[0].children[0]
+            .innerText,
+        'NL',
+        `Data order in table should not change when allowTableSorting equals
+        false, #18007.`
+    );
+
+    chart.update({
+        exporting: {
+            allowTableSorting: true
         }
     });
 
     chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
     assert.strictEqual(
         chart.dataTableDiv.children[0].children[3].children[0].innerText,
         'BE',
