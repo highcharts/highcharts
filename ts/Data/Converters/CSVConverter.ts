@@ -30,7 +30,11 @@ import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Handles parsing and transforming CSV to a table.
@@ -597,11 +601,22 @@ class CSVConverter extends DataConverter {
 
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace CSVConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Interface for the BeforeParse callback function
-     *
      */
     export interface DataBeforeParseCallbackFunction {
         (csv: string): string;
@@ -636,7 +651,7 @@ namespace CSVConverter {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

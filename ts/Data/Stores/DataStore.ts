@@ -371,11 +371,17 @@ abstract class DataStore implements DataEvent.Emitter {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 namespace DataStore {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * The default event object for a datastore
@@ -419,7 +425,7 @@ declare module './StoreType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

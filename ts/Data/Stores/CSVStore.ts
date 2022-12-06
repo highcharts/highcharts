@@ -32,18 +32,13 @@ import DataTable from '../DataTable.js';
 import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge } = U;
 
 /* *
  *
  *  Class
  *
  * */
-
-/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * Class that handles creating a datastore from CSV
@@ -66,10 +61,10 @@ class CSVStore extends DataStore {
     };
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
 
     /**
      * Constructs an instance of CSVDataStore.
@@ -132,6 +127,12 @@ class CSVStore extends DataStore {
      * The current timeout ID if polling is enabled
      */
     private liveDataTimeout?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Handles polling of live data
@@ -273,16 +274,22 @@ class CSVStore extends DataStore {
 
 }
 
-/**
+/* *
  *
- *  Namespace
+ *  Class Namespace
  *
- */
+ * */
 
 /**
  * Types for class-specific options and events
  */
 namespace CSVStore {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Event objects fired from CSVDataStore events
@@ -348,7 +355,7 @@ declare module './StoreType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -37,7 +37,11 @@ const {
     objectEach
 } = U;
 
-/** eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Class that handles creating a datastore from an HTML table
@@ -58,7 +62,7 @@ class HTMLTableStore extends DataStore {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -92,10 +96,10 @@ class HTMLTableStore extends DataStore {
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * Options for the HTMLTable datastore
@@ -198,16 +202,22 @@ class HTMLTableStore extends DataStore {
 
 }
 
-/**
+/* *
  *
- *  Namespace
+ *  Clas Namespace
  *
- */
+ * */
 
 /**
  * Types for class-specific options and events
  */
 namespace HTMLTableStore {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Type for event object fired from HTMLTableDataStore
@@ -260,7 +270,7 @@ namespace HTMLTableStore {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -274,7 +284,7 @@ declare module './StoreType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

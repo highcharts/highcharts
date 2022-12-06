@@ -33,8 +33,6 @@ const {
     uniqueKey
 } = U;
 
-/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
-
 /* *
  *
  *  Class
@@ -77,6 +75,7 @@ class GoogleSheetsConverter extends DataConverter {
         options?: GoogleSheetsConverter.OptionsType
     ) {
         super();
+
         this.columns = [];
         this.header = [];
         this.options = merge(GoogleSheetsConverter.defaultOptions, options);
@@ -201,11 +200,17 @@ class GoogleSheetsConverter extends DataConverter {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 namespace GoogleSheetsConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * The available options for the parser
@@ -228,7 +233,7 @@ namespace GoogleSheetsConverter {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

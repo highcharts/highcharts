@@ -33,8 +33,6 @@ const {
     merge
 } = U;
 
-/** eslint-disable valid-jsdoc */
-
 /* *
  *
  *  Class
@@ -413,7 +411,7 @@ abstract class DataModifier implements DataEvent.Emitter {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -422,6 +420,12 @@ abstract class DataModifier implements DataEvent.Emitter {
  * conversion.
  */
 namespace DataModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Class constructor of modifiers.
@@ -490,7 +494,7 @@ namespace DataModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -502,7 +506,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

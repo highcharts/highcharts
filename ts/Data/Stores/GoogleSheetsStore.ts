@@ -119,8 +119,6 @@ class GoogleSheetsStore extends DataStore {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
@@ -197,7 +195,7 @@ class GoogleSheetsStore extends DataStore {
 
 /* *
  *
- *  Class Name
+ *  Class Namespace
  *
  * */
 
@@ -327,7 +325,7 @@ declare module './StoreType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

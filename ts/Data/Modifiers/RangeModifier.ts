@@ -193,7 +193,7 @@ class RangeModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -202,6 +202,12 @@ class RangeModifier extends DataModifier {
  * conversion.
  */
 namespace RangeModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -240,7 +246,7 @@ namespace RangeModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -254,7 +260,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

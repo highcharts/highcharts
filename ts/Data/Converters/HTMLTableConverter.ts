@@ -70,14 +70,15 @@ class HTMLTableConverter extends DataConverter {
      * @param {HTMLTableConverter.OptionsType} [options]
      * Options for the CSV parser.
      *
-     * @param {HTMLElement | null} tableElement
+     * @param {HTMLElement|null} [tableElement]
      * The HTML table to parse
      */
     constructor(
         options?: Partial<HTMLTableConverter.OptionsType>,
-        tableElement: (HTMLElement | null) = null
+        tableElement: (HTMLElement|null) = null
     ) {
         super();
+
         this.columns = [];
         this.headers = [];
         this.options = merge(HTMLTableConverter.defaultOptions, options);
@@ -521,11 +522,17 @@ class HTMLTableConverter extends DataConverter {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 namespace HTMLTableConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * The available options for the parser
@@ -556,7 +563,7 @@ namespace HTMLTableConverter {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

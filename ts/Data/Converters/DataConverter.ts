@@ -10,6 +10,8 @@
  *  - Sophie Bremer
  *  - Sebastian Bochan
  *  - Gøran Slettemark
+ *  - Torstein Hønsi
+ *  - Wojciech Chmiel
  *
  * */
 
@@ -124,7 +126,7 @@ abstract class DataConverter implements DataEvent.Emitter {
      * into JavaScript timestamps.
      */
     public constructor(
-        options?: DataConverter.Options,
+        options?: Partial<DataConverter.Options>,
         parseDate?: DataConverter.ParseDateFunction
     ) {
         let decimalPoint;
@@ -725,7 +727,7 @@ abstract class DataConverter implements DataEvent.Emitter {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -733,6 +735,12 @@ abstract class DataConverter implements DataEvent.Emitter {
  * Additionally provided types for events and conversion.
  */
 namespace DataConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * The basic event object for a DataConverter instance.
@@ -789,5 +797,11 @@ namespace DataConverter {
     );
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataConverter;
