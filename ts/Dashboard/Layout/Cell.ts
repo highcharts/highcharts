@@ -2,7 +2,7 @@
 
 'use strict';
 
-import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import type CSSJSONObject from '../CSSJSONObject';
 import type Component from './../Component/Component.js';
 import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
