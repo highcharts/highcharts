@@ -1,0 +1,13 @@
+---
+name: Overview
+authors:
+  - Mustapha Mekhatria
+js_wrap: b
+requiresManualTesting: true
+tags:
+  - Highcharts Maps demo
+categories:
+  - General:
+      priority: 1
+use_png_thumbnail: true
+...
