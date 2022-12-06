@@ -58,6 +58,14 @@ const exporting: ExportingOptions = {
      */
 
     /**
+     * Allows to sort table data by clicking on columns' headers.
+     *
+     * @since next
+     * @apioption exporting.allowTableSorting
+     */
+    allowTableSorting: true,
+
+    /**
      * Additional chart options to be merged into the chart before exporting to
      * an image format. This does not apply to printing the chart via the export
      * menu.
