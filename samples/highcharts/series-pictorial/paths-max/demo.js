@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Caffeine depending on type of coffe bean'
+        text: 'Caffeine depending on type of coffee bean'
     },
 
     xAxis: {
@@ -39,7 +39,7 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'Coffeine',
+        name: 'Caffeine',
         data: [1.23, 1.61, 2.26],
         color: '#4B371C'
     }]
