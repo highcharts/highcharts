@@ -18,7 +18,6 @@
 
 'use strict';
 
-import Dashboard from './Dashboard';
 /* *
  *
  *  Imports
@@ -26,6 +25,7 @@ import Dashboard from './Dashboard';
  * */
 
 import type GUIElement from './Layout/GUIElement';
+import type Dashboard from './Dashboard';
 
 /* *
  *
