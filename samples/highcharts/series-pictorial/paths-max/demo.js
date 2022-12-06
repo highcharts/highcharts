@@ -9,13 +9,6 @@ Highcharts.chart('container', {
                 'target="_blank">Wikipedia.com</a>'
     },
 
-    accessibility: {
-        description: '',
-        point: {
-            valueDescriptionFormat: ''
-        }
-    },
-
     title: {
         text: 'Caffeine depending on type of coffe bean'
     },

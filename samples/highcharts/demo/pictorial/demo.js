@@ -15,6 +15,19 @@ Highcharts.chart('container', {
           'target="_blank">Wikipedia.org</a> '
     },
 
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><p>{typeDescription}</p><p>{chartSubtitle}</p><p>{chartLongdesc}</p>'
+        },
+        point: {
+            valueDescriptionFormat: '{value}.'
+        },
+        series: {
+            descriptionFormat: ''
+        },
+        landmarkVerbosity: 'one'
+    },
+
     xAxis: {
         visible: false,
         min: 0.2
