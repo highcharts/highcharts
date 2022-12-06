@@ -109,6 +109,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         // Init events.
         this.initEvents();
+
+        this.index = Globals.dashboards.length;
+        Globals.dashboards.push(this);
     }
 
     /* *
@@ -123,6 +126,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
     public id: string;
+    public index: number;
     public editMode?: EditMode;
     public layoutsWrapper: globalThis.HTMLElement;
 
@@ -223,6 +227,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         objectEach(dashboard, function (val: unknown, key: string): void {
             delete (dashboard as Record<string, any>)[key];
         });
+
+        Globals.dashboards[this.index] = void 0;
 
         return;
     }
