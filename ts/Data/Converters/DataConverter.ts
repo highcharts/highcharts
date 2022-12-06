@@ -43,11 +43,11 @@ const {
  * */
 
 /**
- * Abstract class providing an interface and basic methods for a DataConverter
+ * Base class providing an interface and basic methods for a DataConverter
  *
  * @private
  */
-abstract class DataConverter implements DataEvent.Emitter {
+class DataConverter implements DataEvent.Emitter {
 
     /* *
      *
@@ -513,17 +513,27 @@ abstract class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.Options} [options]
      * Options for the export.
      */
-    public abstract export(
+    public export(
         store: DataStore,
         options?: DataConverter.Options
-    ): string;
+    ): string {
+        this.emit<DataConverter.Event>({
+            type: 'exportError',
+            columns: [],
+            headers: []
+        });
+        throw new Error('Not implemented');
+    }
 
     /**
      * Getter for the data table.
      *
      * @return {DataTable}
+     * Table of parsed data.
      */
-    public abstract getTable(): DataTable;
+    public getTable(): DataTable {
+        throw new Error('Not implemented');
+    }
 
     /**
      * Guesses the potential type of a string value
@@ -600,7 +610,14 @@ abstract class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.Options} options
      * Options for the converter.
      */
-    public abstract parse(options: DataConverter.Options): void;
+    public parse(options: DataConverter.Options): void {
+        this.emit<DataConverter.Event>({
+            type: 'parseError',
+            columns: [],
+            headers: []
+        });
+        throw new Error('Not implemented');
+    }
 
     /**
      * Parse a date and return it as a number.

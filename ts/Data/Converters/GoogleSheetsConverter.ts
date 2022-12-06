@@ -102,19 +102,6 @@ class GoogleSheetsConverter extends DataConverter {
      * */
 
     /**
-     * @private
-     */
-    public export(): string {
-        this.emit<DataConverter.Event>({
-            type: 'exportError',
-            columns: this.columns,
-            headers: this.header
-        });
-
-        throw new Error('Not implemented');
-    }
-
-    /**
      * Initiates the parsing of the Google Sheet
      *
      * @param {GoogleSheetsConverter.OptionsType}[options]
