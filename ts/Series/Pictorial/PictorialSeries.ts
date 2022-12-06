@@ -656,7 +656,7 @@ export default PictorialSeries;
  */
 
 /**
- * The stackShadow forms the background of stacked points. Requires the `series.stacking` to be defined.
+ * The `stackShadow` forms the background of stacked points. Requires the `series.stacking` to be defined.
  *
  * @sample {highcharts} highcharts/yaxis/stackshadow/
  *         Pictorial stackShadow option
@@ -670,7 +670,7 @@ export default PictorialSeries;
  */
 
 /**
- * The color of the stackShadow border.
+ * The color of the `stackShadow` border.
  *
  * @declare   Highcharts.XAxisOptions
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
@@ -681,7 +681,7 @@ export default PictorialSeries;
  */
 
 /**
- * The width of the stackShadow border.
+ * The width of the `stackShadow` border.
  *
  * @declare   Highcharts.XAxisOptions
  * @type      {number}
@@ -692,7 +692,7 @@ export default PictorialSeries;
  */
 
 /**
- * The color of the stackShadow.
+ * The color of the `stackShadow`.
  *
  * @declare   Highcharts.XAxisOptions
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
@@ -703,7 +703,7 @@ export default PictorialSeries;
  */
 
 /**
- * Enable or disable stackShadow.
+ * Enable or disable `stackShadow`.
  *
  * @declare   Highcharts.XAxisOptions
  * @type      {boolean}
