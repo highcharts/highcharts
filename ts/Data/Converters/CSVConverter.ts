@@ -24,7 +24,6 @@
 
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
-import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -71,7 +70,7 @@ class CSVConverter extends DataConverter {
      */
     public constructor(
         options?: CSVConverter.OptionsType,
-        converter?: OldDataConverter
+        converter?: DataConverter
     ) {
         super();
 
@@ -290,7 +289,7 @@ class CSVConverter extends DataConverter {
             if (dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' && // format is a string date
-                !parser.converter.getDateFormat()
+                !parser.converter.options.dateFormat
             ) {
                 parser.converter.deduceDateFormat(
                     parser.columns[0] as Array<string>, null, true

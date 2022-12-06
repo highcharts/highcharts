@@ -24,7 +24,6 @@
 
 import type DataEvent from '../DataEvent';
 import type DataStore from '../Stores/DataStore';
-import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -80,7 +79,7 @@ class HTMLTableConverter extends DataConverter {
     constructor(
         options?: Partial<HTMLTableConverter.OptionsType>,
         tableElement: (HTMLElement | null) = null,
-        converter?: OldDataConverter
+        converter?: DataConverter
     ) {
         super();
         this.columns = [];

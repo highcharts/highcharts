@@ -24,7 +24,6 @@
 
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
-import type OldDataConverter from './OldDataConverter';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -79,7 +78,7 @@ class GoogleSheetsConverter extends DataConverter {
      */
     constructor(
         options?: GoogleSheetsConverter.OptionsType,
-        converter?: OldDataConverter
+        converter?: DataConverter
     ) {
         super();
         this.columns = [];
