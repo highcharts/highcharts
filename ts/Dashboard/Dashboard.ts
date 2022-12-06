@@ -247,6 +247,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
             delete (dashboard as Record<string, any>)[key];
         });
 
+        Globals.dashboards[this.index] = void 0;
+
         return;
     }
 
