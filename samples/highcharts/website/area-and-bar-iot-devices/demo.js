@@ -241,13 +241,6 @@ fetch('https://raw.githubusercontent.com/u-raza/highcharts_broken_area/master/_d
 
         chartOne = Object.assign({}, chartOne, optionsOne);
         chartTwo = Object.assign({}, optionsTwo, chartTwo);
-        const chartTwo2 = jQuery.extend(true, {}, optionsTwo, chartTwo);
         var chartOneRendered = new Highcharts.Chart(chartOne);
-
         var chartTwoRendered = new Highcharts.Chart(chartTwo);
-
-        console.log(chartTwo);
-        console.log(chartTwo2);
-
-        console.log(JSON.stringify(chartTwo) === JSON.stringify(chartTwo2)); // true
     });
