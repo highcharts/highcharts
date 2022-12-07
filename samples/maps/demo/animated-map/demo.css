@@ -5,7 +5,7 @@
     margin: 1em auto;
 }
 
-.animatedLine {
+.animated-line {
     stroke-dasharray: 8;
     stroke-dashoffset: 10;
     animation: dash 5s linear infinite;
@@ -17,6 +17,6 @@
     }
 
     to {
-        stroke-dashoffset: 0;
+        stroke-dashoffset: 20;
     }
 }
