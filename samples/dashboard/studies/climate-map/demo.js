@@ -8,11 +8,13 @@ async function buildMap() {
     const citiesTable = await dataPool.getSourceTable('cities');
     const climateTable = await dataPool.getSourceTable(1262649600000);
 
-    const chart = Highcharts.mapChart(
+    const chart = Highcharts.chart(
         'container',
         {
             chart: {
+                height: 480,
                 spacing: [0, 0, 0, 0],
+                width: 960,
             },
             colorAxis: {
                 max: 325,
