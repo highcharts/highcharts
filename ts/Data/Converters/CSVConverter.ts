@@ -103,11 +103,14 @@ class CSVConverter extends DataConverter {
     /**
      * Creates a CSV string from the datatable on the store instance.
      *
+     * @param {DataStore} store
+     * Store instance to export from.
+     *
      * @param {CSVConverter.Options} [options]
-     * The options used for the export.
+     * Options used for the export.
      *
      * @return {string}
-     * A CSV string from the table.
+     * CSV string from the store table.
      */
     public export(
         store: DataStore,

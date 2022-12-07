@@ -116,7 +116,7 @@ abstract class DataStore implements DataEvent.Emitter {
      * Returns a copy of the dataStore registry as record object with
      * DataStore type and their class.
      *
-     * @return {Record<string,DataStoreRegistryType>}
+     * @return {Highcharts.Dictionary<DataStoreRegistryType>}
      * Copy of the dataStore registry.
      */
     public static getAllStores(): Record<string, StoreType> {
@@ -227,7 +227,7 @@ abstract class DataStore implements DataEvent.Emitter {
     /**
      * Method for applying columns meta information to the whole datastore.
      *
-     * @param {Record<string, DataStore.MetaColumn>} columns
+     * @param {Highcharts.Dictionary<DataStore.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
     public describeColumns(
@@ -283,7 +283,7 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state of the table.
      *
-     * @return {{}}
+     * @return {Highcharts.DataTableColumnCollection}
      * An object with the properties `columnNames` and `columnValues`
      */
     public getSortedColumns(
@@ -360,7 +360,7 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {string} name
      * The identifier for the column that should be described
      *
-     * @return {DataStore.MetaColumn | undefined}
+     * @return {DataStore.MetaColumn|undefined}
      * Returns a MetaColumn object if found.
      */
     public whatIs(name: string): (DataStore.MetaColumn | undefined) {

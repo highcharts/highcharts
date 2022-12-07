@@ -119,15 +119,14 @@ class HTMLTableConverter extends DataConverter {
      * Exports the datastore as an HTML string, using the options
      * provided on import unless other options are provided.
      *
-     * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
-     * Options that override default or existing export options.
+     * @param {DataStore} store
+     * Store instance to export from.
      *
-     * @param {DataEvent.Detail} [eventDetail]
-     * Custom information for pending events.
+     * @param {HTMLTableStore.ExportOptions} [options]
+     * Options that override default or existing export options.
      *
      * @return {string}
      * HTML from the current dataTable.
-     *
      */
     public export(
         store: DataStore,
