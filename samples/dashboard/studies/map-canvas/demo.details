@@ -1,0 +1,7 @@
+---
+ name: Map Canvas
+ authors:
+   - Sophie Bremer
+ requiresManualTesting: true
+ js_wrap: b
+...
