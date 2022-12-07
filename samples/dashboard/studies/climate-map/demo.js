@@ -23,26 +23,15 @@ async function buildMap() {
             legend: {
                 margin: 0,
             },
-            mapView: {
-                maxZoom: 1.4,
-                padding: 0,
-                projection: {
-                    name: 'Miller',
-                },
-                zoom: 1.4,
-            },
             series: [{
-                type: 'mapbubble',
+                type: 'heatmap',
                 name: 'Temperature',
                 data: climateTable.modified.getRows(
                     void 0, void 0,
-                    ['lat', 'lon', dataScope]
+                    ['lon', 'lat', dataScope]
                 ),
-                keys: ['lat', 'lon', 'z'],
+                keys: ['x', 'y', 'z'],
                 colorKey: 'z',
-                maxSize: 1.1,
-                minSize: 1.1,
-                opacity: 0.6,
                 marker: {
                     symbol: 'square'
                 },
@@ -51,25 +40,29 @@ async function buildMap() {
                     headerFormat: void 0,
                     pointFormatter: function () {
                         return (
-                            `<b>${this.lat} &phi;, ` +
-                            `${this.lon} &lambda;</b><br>` +
+                            `<b>${this.lat || this.y} &phi;, ` +
+                            `${this.lon || this.x} &lambda;</b><br>` +
                             temperatureFormatter(this.z)
                         );
                     },
                 }
             }, {
-                type: 'mappoint',
+                type: 'heatmap',
                 name: 'Cities',
                 data: citiesTable.modified.getRows(
                     void 0, void 0,
-                    ['lat2', 'lon2', 'city'],
+                    ['lon2', 'lat2', 'city'],
                 ),
-                keys: ['lat', 'lon', 'name'],
+                keys: ['x', 'y', 'name'],
                 color: '#000',
                 events: {
                     click: function (e) {
                         alert(e);
                     }
+                },
+                label: {
+                    boxesToAvoid: [],
+                    enabled: true
                 },
                 tooltip: {
                     footerFormat: void 0,
@@ -79,9 +72,9 @@ async function buildMap() {
                         const temperature = climateTable.getCellAsNumber(
                             dataScope,
                             climateTable.getRowIndexBy(
-                                'lon', point.lon,
-                                climateTable.getRowIndexBy('lat', point.lat)
-                                ),
+                                'lon', point.lon || point.y,
+                                climateTable.getRowIndexBy('lat', point.lat || point.x)
+                            ),
                             true
                         );
                         return (
@@ -99,8 +92,15 @@ async function buildMap() {
                 animation: false,
                 enabled: true,
             },
+            xAxis: {
+                max: 180,
+                min: -180,
+                visible: false,
+            },
             yAxis: {
-                reversed: true,
+                max: 84,
+                min: -56,
+                visible: false,
             },
         }
     );
