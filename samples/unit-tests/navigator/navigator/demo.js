@@ -584,16 +584,16 @@ QUnit.test(
                 }
             ];
 
-        Highcharts.each(series, function (s) {
+        series.forEach(s => {
             chart.addSeries(s, false);
         });
         chart.xAxis[0].setExtremes();
 
-        Highcharts.each(points, function (s, index) {
+        points.forEach((s, index) => {
             if (
                 chart.series[index].options.id !== 'highcharts-navigator-series'
             ) {
-                Highcharts.each(s.data, function (p) {
+                s.data.forEach(p => {
                     chart.series[index].addPoint(p, false);
                 });
             }
@@ -1023,6 +1023,33 @@ QUnit.test('stickToMin and stickToMax', function (assert) {
         'stickToMax, multiple series with different ranges: ' +
             'Correct extremes after rangeSelector use and adding points(#9075)'
     );
+
+    chart.series[0].addPoint(100);
+
+    const { max: initialMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.max + 1,
+        initialMax,
+        'By default, navigator should stick to max after adding point(#17539).'
+    );
+
+    chart.update({
+        navigator: {
+            stickToMax: false
+        }
+    });
+
+    chart.series[0].addPoint(0);
+
+    const { max: updatedMax } = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        initialMax,
+        updatedMax,
+        `Max value of the navigator xAxis extremes did not change after
+        adding points.`
+    );
 });
 
 QUnit.test(
@@ -1306,4 +1333,48 @@ QUnit.test('Initiation chart without data but with set range, #15864.', function
         `After adding series to the chart that has set the range,
         the navigator shouldn't stick to min.`
     );
+});
+
+
+QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+    const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
+
+    const mocks = [
+        // Regular case, simple series
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] }
+            ]
+        },
+        // Two series, one without xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { }
+            ]
+        },
+        // Two series, one without empty xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { xData: [] }
+            ]
+        },
+        // One series, undefiend in xData
+        {
+            baseSeries: [
+                { xData: [-5, undefined, 5] }
+            ]
+        }
+    ];
+
+    mocks.forEach(mock => {
+        const result = method.call(mock, 0);
+
+        assert.strictEqual(
+            result,
+            -5,
+            `With config: ${JSON.stringify(mock)}, the min should not be a NaN`
+        );
+    });
 });

@@ -50,6 +50,7 @@ body {
     user-select: none;
     touch-action: manipulation;
     outline: none;
+    top: 0 !important;
 }
 
 .chart-container .highcharts-background {
@@ -116,6 +117,9 @@ body {
 #charts {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #charts .highcharts-plot-background,
@@ -269,7 +273,7 @@ body {
 }
 
 #charts #particle-3 {
-    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p3.svg");
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/homepage/p3.svg");
     width: 60px;
     height: 86px;
     top: 154px;

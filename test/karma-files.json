@@ -3,6 +3,7 @@
 	"vendor/moment-2.18.1.js",
 	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
 	"vendor/proj4-2.3.6.js",
+	"vendor/rgbcolor.js",
 	"vendor/topojson-client.min.js",
 	"node_modules/lolex/lolex.js",
 
@@ -29,6 +30,7 @@
 	"code/modules/tilemap.src.js",
 	"code/modules/timeline.src.js",
 	"code/modules/treemap.src.js",
+	"code/modules/treegraph.src.js",
 	"code/modules/item-series.src.js",
 	"code/modules/drilldown.src.js",
 	"code/modules/histogram-bellcurve.src.js",
@@ -41,6 +43,7 @@
 	"code/modules/pattern-fill.src.js",
 	"code/modules/price-indicator.src.js",
 	"code/modules/sankey.src.js",
+	"code/modules/arc-diagram.src.js",
 	"code/modules/dependency-wheel.src.js",
 	"code/modules/series-label.src.js",
 	"code/modules/solid-gauge.src.js",

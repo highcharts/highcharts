@@ -219,13 +219,13 @@ class BulletSeries extends ColumnSeries {
                     targetOptions.width as any,
                     (shapeArgs as any).width
                 );
-                y = (series.yAxis.translate(
+                y = series.yAxis.translate(
                     targetVal,
                     false,
                     true,
                     false,
                     true
-                ) as any) - (targetOptions.height as any) / 2 - 0.5;
+                ) - (targetOptions.height as any) / 2 - 0.5;
 
                 targetShapeArgs = series.crispCol.apply({
                 // Use fake series object to set borderWidth of target
@@ -312,9 +312,7 @@ class BulletSeries extends ColumnSeries {
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
         const dataExtremes = super.getExtremes.call(this, yData),
-            series = this,
-            targetData = series.targetData;
-        let yMax, yMin;
+            targetData = this.targetData;
 
         if (targetData && targetData.length) {
             const targetExtremes = super.getExtremes.call(

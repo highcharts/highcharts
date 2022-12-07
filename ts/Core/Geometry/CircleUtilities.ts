@@ -239,7 +239,7 @@ namespace CircleUtilities {
     }
 
     /**
-     * Tests wether the first circle is completely overlapping the second
+     * Tests whether the first circle is completely overlapping the second
      * circle.
      *
      * @private
@@ -264,7 +264,7 @@ namespace CircleUtilities {
     }
 
     /**
-     * Tests wether a point lies within a given circle.
+     * Tests whether a point lies within a given circle.
      * @private
      * @param {Highcharts.PositionObject} point
      * The point to test for.
@@ -283,7 +283,7 @@ namespace CircleUtilities {
     }
 
     /**
-     * Tests wether a point lies within a set of circles.
+     * Tests whether a point lies within a set of circles.
      *
      * @private
      *
@@ -306,7 +306,7 @@ namespace CircleUtilities {
     }
 
     /**
-     * Tests wether a point lies outside a set of circles.
+     * Tests whether a point lies outside a set of circles.
      *
      * TODO: add unit tests.
      *

@@ -5,6 +5,7 @@ authors:
 js_wrap: b
 tags:
   - Highcharts Maps demo
+use_png_thumbnail: true
 categories:
   - General
 ...

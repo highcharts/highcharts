@@ -1,0 +1,6 @@
+---
+ name: "Map comparison: USA earthquakes 2000 - 2019 (mag 4.5+) with Marker Clusters"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

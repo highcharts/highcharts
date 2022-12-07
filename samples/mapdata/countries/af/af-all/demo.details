@@ -1,5 +1,5 @@
 ---
- name: Afghanistan - Highmaps
- description: Highmaps demo
+ name: Afghanistan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

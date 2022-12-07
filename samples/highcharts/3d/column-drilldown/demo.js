@@ -36,6 +36,11 @@ Highcharts.chart('container', {
         stack: 0
     }],
     drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
         series: [{
             id: 'animals',
             name: 'Animals',

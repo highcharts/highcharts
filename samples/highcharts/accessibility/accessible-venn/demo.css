@@ -147,10 +147,6 @@ body {
 .data-label {
     font-family: "IBM Plex Sans", sans-serif;
     position: absolute;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    justify-items: center;
     border: 0 solid #000;
     width: 300px;
     top: 0;
@@ -163,9 +159,6 @@ body {
 }
 
 .data-label.over {
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    justify-items: left;
     opacity: 100%;
     z-index: 1000;
 }
@@ -173,7 +166,6 @@ body {
 .data-label h4 {
     font-weight: normal;
     display: none;
-    text-shadow: 0 0 3px rgb(255 255 255 / 50%);
     font-size: 16px;
     margin: 0 0 5px;
 }
@@ -189,14 +181,13 @@ body {
     margin: 0;
     padding: 0;
     white-space: normal;
-    text-shadow: 0 0 3px rgb(255 255 255 / 50%);
 }
 
 .data-label .info {
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: normal;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 22px;
     color: #000;
     opacity: 0%;
     white-space: normal;
@@ -214,39 +205,32 @@ body {
 }
 
 #innovation p {
-    grid-row: 2 / span 1;
-    grid-column: 1 / span 1;
     opacity: 0%;
     margin-bottom: 45px;
     height: fit-content;
 }
 
 #brand p {
-    margin-top: -240px;
-    margin-left: -10px;
-    color: #252525;
-    width: 95%;
+    margin-top: 0;
+    margin-left: 30px;
+    color: #000;
+    width: 80%;
+    text-align: center;
 }
 
 #brand.over a {
-    color: #252525;
+    color: #000;
     text-decoration: underline;
 }
 
 #innovation.over a {
-    color: #252525;
+    color: #fff;
     text-decoration: underline;
 }
 
 #reach.over a {
-    color: #252525;
+    color: #fff;
     text-decoration: underline;
-}
-
-#innovation i {
-    grid-row: 3 / span 1;
-    transition: none;
-    top: 184px;
 }
 
 #brand i {
@@ -254,16 +238,9 @@ body {
     top: 15px;
 }
 
-#reach i {
-    grid-row: 3 / span1;
-    margin-top: 44px;
-    margin-bottom: 20px;
-    margin-left: -10px;
-}
-
 #brand h4 {
     margin-top: -45px;
-    margin-left: 60px;
+    margin-left: 70px;
     margin-bottom: 0;
     color: #252525;
     width: 100px;
@@ -278,63 +255,66 @@ body {
     margin-left: 20px;
 }
 
-#legal i {
-    margin-left: -60px;
-    margin-top: 15px;
-    justify-self: left;
+#legal-icon {
+    left: -30px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/risk.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
 }
 
-#legal.over i {
-    margin-top: -110px;
-    margin-right: 13px;
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 2;
-    justify-self: right;
+#legal.over #legal-icon {
+    animation: rain 3s steps(5, end);
+    left: 140px;
+    top: 10px;
+    height: 100px;
+    width: 100px;
+    transform: translate(-30px, -10px);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/risk-s.png);
+    background-position: 0 -600;
 }
 
 #legal.over {
-    background-color: #e4f3ff;
-    clip-path: ellipse(150px 117px at 50% 35%);
+    background-color: #30426b;
+    clip-path: ellipse(150px 117px at 50% 27.5%);
     height: 340px;
     top: -125px;
-    top: -80px;
-    left: -205px;
-    grid-template-columns: 225px 65px;
-    justify-items: left;
-    align-items: center;
+    left: -255px;
     padding-left: 10px;
+    padding-top: 100px;
 }
 
 #legal.over p {
-    margin-top: -250px;
-    margin-left: 45px;
-    color: #252525;
-    grid-column: 1 / span 1;
-    grid-row: 2/ span 1;
+    /* margin-top: -250px; */
+    margin-left: 50px;
+    width: 200px;
+    color: #fff;
+    text-align: center;
 }
 
 #legal.over h4 {
-    margin-top: -35px;
-    color: #252525;
+    margin-top: 105px;
+    color: #fff;
     width: 200px;
+    text-align: center;
     white-space: normal;
-    text-align: left;
-    grid-column: 1 / span 1;
-    margin-left: 45px;
+    margin-left: 70px;
 }
 
 #legal.over a {
-    color: #252525;
+    color: #fff;
     text-decoration: underline;
 }
 
 #legal.over a:hover {
-    color: #000;
+    color: fff0;
 }
 
 #legal {
     top: -40px;
-    left: 55px;
+    left: 0;
     grid-template-columns: 40px 1fr;
     justify-items: left;
 }
@@ -342,8 +322,6 @@ body {
 #innovation {
     top: -230px;
     left: -150px;
-    grid-template-columns: 1fr;
-    justify-items: center;
     text-align: center;
     background-color: transparent;
     clip-path: unset;
@@ -353,19 +331,17 @@ body {
 #innovation h4.open {
     opacity: 0%;
     margin-top: 20px;
-    grid-row: 1 / span 1;
     font-weight: bold;
 }
 
 #innovation h4.closed {
     opacity: 100%;
-    grid-row: 4 / span 1;
 }
 
 #innovation.over h4.open {
     opacity: 100%;
     margin-top: 70px;
-    color: #252525;
+    color: #fff;
 }
 
 #innovation.over h4.closed {
@@ -373,114 +349,169 @@ body {
 }
 
 #reach.over a:hover {
-    color: #000;
+    color: #fff;
 }
 
 #innovation.over {
-    background-color: #d9dbfb;
+    background-color: #5749ad;
     clip-path: ellipse(150px 116px at 50% 34%);
     height: 340px;
+    padding-top: 70px;
 }
 
 #innovation.over p {
     margin-bottom: 30px;
     opacity: 100%;
     display: block;
-    margin-top: -120px;
-    color: #252525;
-}
-
-#innovation.over i {
-    top: -154px;
+    color: #fff;
 }
 
 #innovation.over a:hover {
     color: #000;
 }
 
+#innovation-icon {
+    left: 130px;
+    top: 170px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/innovation.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+#innovation.over #innovation-icon {
+    animation: rocket 0.8s steps(4, jump-none) forwards;
+    transform: translate(-30px, -12px);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/innovation-s.png);
+    background-position: 0 -600px;
+    background-repeat: no-repeat;
+    height: 94px;
+    width: 100px;
+    position: absolute;
+}
+
 #brand {
-    grid-template-columns: 100px 100px;
     align-items: center;
     top: -140px;
     left: -20px;
 }
 
 #brand.over {
-    grid-template-columns: 70px 1fr;
-    background-color: #d9fae6;
-    clip-path: ellipse(150px 117px at 50% 35%);
+    background-color: #a3edba;
+    clip-path: ellipse(150px 117px at 50% 28.81%);
     height: 340px;
     left: -5px;
     top: -230px;
+    padding-top: 80px;
 }
 
 #brand.over a:hover {
     color: #000;
 }
 
-#brand.over i {
-    grid-row: 1 / span 2;
-    grid-column: 1 /span 1;
-    left: 18px;
-    top: 105px;
+#brand-icon {
+    content: "";
+    left: 40px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/brand.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+#brand.over #brand-icon {
+    animation: gem 3s steps(12, end);
+    left: 130px;
+    top: 10px;
+    height: 100px;
+    width: 100px;
+    transform: translate(-24px, 0) scale(0.8);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/brand-s.png);
+    background-position: 0 -1200px;
 }
 
 #brand.over h4 {
     width: 200px;
     text-align: left;
-}
-
-#brand.over p {
-    grid-row: 2 / span 1;
-    grid-column: 2 / span 1;
+    margin-top: 100px;
 }
 
 #reach {
     top: -30px;
     left: -140px;
-    grid-template-columns: 1fr;
-    justify-items: center;
     text-align: center;
 }
 
 #reach.over {
-    background-color: #ddebed;
+    background-color: #00766f;
     clip-path: ellipse(150px 120px at 50% 36%);
     height: 355px;
-    top: -10px;
+    top: -60px;
     left: -150px;
+    padding-top: 150px;
 }
 
 #reach.over h4 {
-    grid-row: 2 / span1;
     margin-bottom: 5px;
-    margin-top: -210px;
-    color: #252525;
+    margin-top: 0;
+    color: #fff;
 }
 
-#reach.over i {
-    grid-row: 1 / span1;
-    margin-left: 10px;
-    margin-top: 22px;
+#reach-icon {
+    left: 125px;
+    top: 40px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/reach.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+#reach.over #reach-icon {
+    animation: globe 1s steps(5, end);
+    transform: translate(-20px, -15px);
+    top: 70px;
+    width: 100px;
+    height: 100px;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/reach-s.png);
+    background-position: 0 -500;
 }
 
 #reach.over p {
-    margin-top: 90px;
     width: 70%;
-    color: #252525;
+    margin-left: 40px;
+    color: #fff;
 }
 
 #aicon {
-    color: #000;
-    font-size: 70px;
     position: absolute;
-    top: -5px;
-    left: -5px;
 }
 
 #aicon.over {
     color: transparent;
 }
+
+#aicon::before {
+    content: "";
+    width: 160px;
+    height: 160px;
+    left: -30px;
+    top: -40px;
+    position: absolute;
+    transform: scale(0.9);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/a11y.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+
+/* #aicon.over #aicon-icon::before {
+    transform: translateY(10px) scale(1.4);
+    background: url(eye.png) no-repeat;
+} */
 
 #container svg {
     transform: scale(1, 0.8);
@@ -507,5 +538,45 @@ body {
 @media (max-width: 575px) {
     .btn {
         min-width: 140px;
+    }
+}
+
+@keyframes rocket {
+    from {
+        background-position: 0 -600;
+    }
+
+    to {
+        background-position: 0 0;
+    }
+}
+
+@keyframes gem {
+    0% {
+        background-position: 0 -1200px;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+@keyframes rain {
+    0% {
+        background-position: 0 -500px;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+@keyframes globe {
+    0% {
+        background-position: 0 -500px;
+    }
+
+    100% {
+        background-position: 0 0;
     }
 }

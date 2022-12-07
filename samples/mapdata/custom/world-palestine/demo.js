@@ -1,260 +1,93 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['gl', 0],
-    ['sh', 1],
-    ['bu', 2],
-    ['lk', 3],
-    ['as', 4],
-    ['dk', 5],
-    ['fo', 6],
-    ['gu', 7],
-    ['mp', 8],
-    ['pr', 9],
-    ['um', 10],
-    ['us', 11],
-    ['vi', 12],
-    ['ca', 13],
-    ['st', 14],
-    ['jp', 15],
-    ['cv', 16],
-    ['dm', 17],
-    ['sc', 18],
-    ['jm', 19],
-    ['ws', 20],
-    ['om', 21],
-    ['in', 22],
-    ['vc', 23],
-    ['sb', 24],
-    ['lc', 25],
-    ['fr', 26],
-    ['nr', 27],
-    ['no', 28],
-    ['fm', 29],
-    ['kn', 30],
-    ['cn', 31],
-    ['bh', 32],
-    ['to', 33],
-    ['id', 34],
-    ['mu', 35],
-    ['se', 36],
-    ['tt', 37],
-    ['sw', 38],
-    ['bs', 39],
-    ['pw', 40],
-    ['ec', 41],
-    ['au', 42],
-    ['tv', 43],
-    ['mh', 44],
-    ['cl', 45],
-    ['ki', 46],
-    ['ph', 47],
-    ['gd', 48],
-    ['ee', 49],
-    ['ag', 50],
-    ['es', 51],
-    ['bb', 52],
-    ['it', 53],
-    ['mt', 54],
-    ['mv', 55],
-    ['sp', 56],
-    ['pg', 57],
-    ['vu', 58],
-    ['sg', 59],
-    ['gb', 60],
-    ['cy', 61],
-    ['gr', 62],
-    ['km', 63],
-    ['fj', 64],
-    ['ru', 65],
-    ['va', 66],
-    ['sm', 67],
-    ['am', 68],
-    ['az', 69],
-    ['ls', 70],
-    ['tj', 71],
-    ['ml', 72],
-    ['dz', 73],
-    ['co', 74],
-    ['tw', 75],
-    ['uz', 76],
-    ['tz', 77],
-    ['ar', 78],
-    ['sa', 79],
-    ['nl', 80],
-    ['ye', 81],
-    ['ae', 82],
-    ['bd', 83],
-    ['ch', 84],
-    ['pt', 85],
-    ['my', 86],
-    ['vn', 87],
-    ['br', 88],
-    ['pa', 89],
-    ['ng', 90],
-    ['tr', 91],
-    ['ir', 92],
-    ['ht', 93],
-    ['do', 94],
-    ['sl', 95],
-    ['sn', 96],
-    ['gw', 97],
-    ['hr', 98],
-    ['th', 99],
-    ['mx', 100],
-    ['tn', 101],
-    ['kw', 102],
-    ['de', 103],
-    ['mm', 104],
-    ['gq', 105],
-    ['cnm', 106],
-    ['nc', 107],
-    ['ie', 108],
-    ['kz', 109],
-    ['pl', 110],
-    ['lt', 111],
-    ['eg', 112],
-    ['ug', 113],
-    ['cd', 114],
-    ['mk', 115],
-    ['al', 116],
-    ['cm', 117],
-    ['bj', 118],
-    ['ge', 119],
-    ['tl', 120],
-    ['tm', 121],
-    ['kh', 122],
-    ['pe', 123],
-    ['mw', 124],
-    ['mn', 125],
-    ['ao', 126],
-    ['mz', 127],
-    ['za', 128],
-    ['cr', 129],
-    ['sv', 130],
-    ['ly', 131],
-    ['sd', 132],
-    ['kp', 133],
-    ['kr', 134],
-    ['gy', 135],
-    ['hn', 136],
-    ['ga', 137],
-    ['ni', 138],
-    ['et', 139],
-    ['so', 140],
-    ['ke', 141],
-    ['gh', 142],
-    ['si', 143],
-    ['gt', 144],
-    ['bz', 145],
-    ['ba', 146],
-    ['jo', 147],
-    ['we', 148],
-    ['il', 149],
-    ['zm', 150],
-    ['mc', 151],
-    ['uy', 152],
-    ['rw', 153],
-    ['bo', 154],
-    ['cg', 155],
-    ['eh', 156],
-    ['rs', 157],
-    ['me', 158],
-    ['tg', 159],
-    ['la', 160],
-    ['af', 161],
-    ['jk', 162],
-    ['pk', 163],
-    ['bg', 164],
-    ['ua', 165],
-    ['ro', 166],
-    ['qa', 167],
-    ['li', 168],
-    ['at', 169],
-    ['sk', 170],
-    ['sz', 171],
-    ['hu', 172],
-    ['ne', 173],
-    ['lu', 174],
-    ['ad', 175],
-    ['ci', 176],
-    ['lr', 177],
-    ['bn', 178],
-    ['mr', 179],
-    ['be', 180],
-    ['iq', 181],
-    ['gm', 182],
-    ['ma', 183],
-    ['td', 184],
-    ['kv', 185],
-    ['lb', 186],
-    ['sx', 187],
-    ['dj', 188],
-    ['er', 189],
-    ['bi', 190],
-    ['sr', 191],
-    ['gn', 192],
-    ['zw', 193],
-    ['py', 194],
-    ['by', 195],
-    ['lv', 196],
-    ['sy', 197],
-    ['bt', 198],
-    ['na', 199],
-    ['bf', 200],
-    ['cf', 201],
-    ['md', 202],
-    ['gz', 203],
-    ['ss', 204],
-    ['cz', 205],
-    ['nz', 206],
-    ['cu', 207],
-    ['fi', 208],
-    ['mg', 209],
-    ['ve', 210],
-    ['is', 211],
-    ['np', 212],
-    ['kg', 213],
-    ['bw', 214]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/world-palestine'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world-palestine.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['gl', 10], ['sh', 11], ['bu', 12], ['lk', 13], ['as', 14], ['dk', 15],
+        ['fo', 16], ['gu', 17], ['mp', 18], ['pr', 19], ['um', 20], ['us', 21],
+        ['vi', 22], ['ca', 23], ['st', 24], ['jp', 25], ['cv', 26], ['dm', 27],
+        ['sc', 28], ['jm', 29], ['ws', 30], ['om', 31], ['in', 32], ['vc', 33],
+        ['sb', 34], ['lc', 35], ['fr', 36], ['nr', 37], ['no', 38], ['fm', 39],
+        ['kn', 40], ['cn', 41], ['bh', 42], ['to', 43], ['id', 44], ['mu', 45],
+        ['se', 46], ['tt', 47], ['sw', 48], ['bs', 49], ['pw', 50], ['ec', 51],
+        ['au', 52], ['tv', 53], ['mh', 54], ['cl', 55], ['ki', 56], ['ph', 57],
+        ['gd', 58], ['ee', 59], ['ag', 60], ['es', 61], ['bb', 62], ['it', 63],
+        ['mt', 64], ['mv', 65], ['sp', 66], ['pg', 67], ['vu', 68], ['sg', 69],
+        ['gb', 70], ['cy', 71], ['gr', 72], ['km', 73], ['fj', 74], ['ru', 75],
+        ['va', 76], ['sm', 77], ['am', 78], ['az', 79], ['ls', 80], ['tj', 81],
+        ['ml', 82], ['dz', 83], ['co', 84], ['tw', 85], ['uz', 86], ['tz', 87],
+        ['ar', 88], ['sa', 89], ['nl', 90], ['ye', 91], ['ae', 92], ['bd', 93],
+        ['ch', 94], ['pt', 95], ['my', 96], ['vn', 97], ['br', 98], ['pa', 99],
+        ['ng', 100], ['tr', 101], ['ir', 102], ['ht', 103], ['do', 104],
+        ['sl', 105], ['sn', 106], ['gw', 107], ['hr', 108], ['th', 109],
+        ['mx', 110], ['tn', 111], ['kw', 112], ['de', 113], ['mm', 114],
+        ['gq', 115], ['cnm', 116], ['nc', 117], ['ie', 118], ['kz', 119],
+        ['pl', 120], ['lt', 121], ['eg', 122], ['ug', 123], ['cd', 124],
+        ['mk', 125], ['al', 126], ['cm', 127], ['bj', 128], ['ge', 129],
+        ['tl', 130], ['tm', 131], ['kh', 132], ['pe', 133], ['mw', 134],
+        ['mn', 135], ['ao', 136], ['mz', 137], ['za', 138], ['cr', 139],
+        ['sv', 140], ['ly', 141], ['sd', 142], ['kp', 143], ['kr', 144],
+        ['gy', 145], ['hn', 146], ['ga', 147], ['ni', 148], ['et', 149],
+        ['so', 150], ['ke', 151], ['gh', 152], ['si', 153], ['gt', 154],
+        ['bz', 155], ['ba', 156], ['jo', 157], ['we', 158], ['il', 159],
+        ['zm', 160], ['mc', 161], ['uy', 162], ['rw', 163], ['bo', 164],
+        ['cg', 165], ['eh', 166], ['rs', 167], ['me', 168], ['tg', 169],
+        ['la', 170], ['af', 171], ['jk', 172], ['pk', 173], ['bg', 174],
+        ['ua', 175], ['ro', 176], ['qa', 177], ['li', 178], ['at', 179],
+        ['sk', 180], ['sz', 181], ['hu', 182], ['ne', 183], ['lu', 184],
+        ['ad', 185], ['ci', 186], ['lr', 187], ['bn', 188], ['mr', 189],
+        ['be', 190], ['iq', 191], ['gm', 192], ['ma', 193], ['td', 194],
+        ['kv', 195], ['lb', 196], ['sx', 197], ['dj', 198], ['er', 199],
+        ['bi', 200], ['sr', 201], ['gn', 202], ['zw', 203], ['py', 204],
+        ['by', 205], ['lv', 206], ['sy', 207], ['bt', 208], ['na', 209],
+        ['bf', 210], ['cf', 211], ['md', 212], ['gz', 213], ['ss', 214],
+        ['cz', 215], ['nz', 216], ['cu', 217], ['fi', 218], ['mg', 219],
+        ['ve', 220], ['is', 221], ['np', 222], ['kg', 223], ['bw', 224]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-palestine.js">World with Palestine areas, medium resolution</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-palestine.topo.json">World with Palestine areas, medium resolution</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

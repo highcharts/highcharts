@@ -1,5 +1,5 @@
 ---
- name: Denmark - Highmaps
- description: Highmaps demo
+ name: Denmark - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

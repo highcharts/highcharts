@@ -47,6 +47,7 @@ const {
     seriesTypes
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import { CursorValue } from '../Core/Renderer/CSSObject';
 const {
     addEvent,
     clamp,
@@ -151,7 +152,7 @@ declare global {
         interface DragDropHandleOptionsObject {
             className?: string;
             color?: ColorType;
-            cursor?: string;
+            cursor?: CursorValue;
             lineColor?: ColorString;
             lineWidth?: number;
             pathFormatter?: Function;
@@ -633,7 +634,7 @@ if (seriesTypes.boxplot) {
             }
         },
         median: {
-            // Median can not be dragged individually, just move the whole
+            // Median cannot be dragged individually, just move the whole
             // point for this.
             axis: 'y',
             move: true
@@ -871,7 +872,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[0] &&
+                    point.graphics[0].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -898,7 +903,11 @@ if (seriesTypes.arearange) {
             handlePositioner: function (
                 point: AreaRangePoint
             ): PositionObject {
-                const bBox = point.upperGraphic && point.upperGraphic.getBBox();
+                const bBox = (
+                    point.graphics &&
+                    point.graphics[1] &&
+                    point.graphics[1].getBBox()
+                );
 
                 return bBox ? {
                     x: bBox.x + bBox.width / 2,
@@ -1197,11 +1206,11 @@ const defaultGuideBoxOptions: (
 
 
 /**
- * Options for the drag handles.
+ * Options for the drag handles available in column series.
  *
  * @declare      Highcharts.DragDropHandleOptionsObject
  * @since        6.2.0
- * @optionparent plotOptions.series.dragDrop.dragHandle
+ * @optionparent plotOptions.column.dragDrop.dragHandle
  *
  * @private
  */
@@ -1214,7 +1223,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {Function}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.pathFormatter
+     * @apioption plotOptions.column.dragDrop.dragHandle.pathFormatter
      */
     // pathFormatter: null,
 
@@ -1225,7 +1234,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {string}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.cursor
+     * @apioption plotOptions.column.dragDrop.dragHandle.cursor
      */
     // cursor: null,
 
@@ -1393,6 +1402,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * @type       {string}
  * @since      6.2.0
  * @validvalue ["alt", "ctrl", "meta", "shift"]
+ * @deprecated
  * @requires  modules/draggable-points
  * @apioption  chart.zoomKey
  */
@@ -1753,7 +1763,7 @@ function getGroupedPoints(point: Point): Array<Point> {
         points: Array<Point> = [],
         groupKey = (series.options.dragDrop as any).groupBy;
 
-    if (series.isSeriesBoosting) { // #11156
+    if (series.boosted) { // #11156
         (series.options.data as any).forEach(function (
             pointOptions: (PointOptions|PointShortOptions),
             i: number
@@ -2504,14 +2514,16 @@ Point.prototype.showDragHandles = function (): void {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            if (!path || pos.x < 0 || pos.y < 0) {
+            // Correct left edge value depending on the xAxis' type, #16596
+            const minEdge = point.series.xAxis.categories ? -0.5 : 0;
+            if (!path || pos.x < minEdge || pos.y < 0) {
                 return;
             }
 
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
-                (val.axis === 'x') !== !!chart.inverted ?
-                'ew-resize' : 'ns-resize';
+                ((val.axis === 'x') !== !!chart.inverted ?
+                    'ew-resize' : 'ns-resize');
 
             // Create and add the handle element if it doesn't exist
             handle = (chart.dragHandles as any)[val.optionName];
@@ -2904,9 +2916,9 @@ addEvent(Point, 'remove', function (): void {
  */
 Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
-    const chartOptions = this.userOptions.chart || {},
+    const chartOptions = this.options.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
-        zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
+        zoomKey = chartOptions.zooming.key && chartOptions.zooming.key + 'Key';
 
     return ((e as any)[zoomKey as any] || (e as any)[panKey as any]);
 };

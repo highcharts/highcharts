@@ -28,7 +28,6 @@ import type GeoJSONGeometryMultiPoint from '../../Maps/GeoJSON';
 
 export interface MapPointOptions extends ScatterPointOptions {
     color?: ColorType;
-    // coordinates?: LonLatArray[]|LonLatArray[][]|LonLatArray[][][];
     dataLabels?: DataLabelOptions;
     drilldown?: string;
     geometry?: GeoJSONGeometryMultiPoint;
@@ -39,7 +38,6 @@ export interface MapPointOptions extends ScatterPointOptions {
     name?: string;
     path?: (string|SVGPath);
     properties?: AnyRecord;
-    // type?: 'LineString'|'Polygon'|'MultiLineString'|'MultiPolygon';
     value?: (number|null);
 }
 

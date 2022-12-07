@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type {
+    AccessibilityAnnounceNewDataOptions
+} from '../../Options/A11yOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
@@ -188,7 +191,7 @@ class NewDataAnnouncer {
             chart = this.chart,
             e = this.eventProvider;
 
-        e.addEvent(chart, 'afterDrilldown', function (): void {
+        e.addEvent(chart, 'afterApplyDrilldown', function (): void {
             announcer.lastAnnouncementTime = 0;
         });
 
@@ -277,7 +280,7 @@ class NewDataAnnouncer {
         newPoint?: Accessibility.PointComposition
     ): void {
         const chart = this.chart;
-        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =
+        const annOptions: AccessibilityAnnounceNewDataOptions =
             (chart.options.accessibility as any).announceNewData;
 
         if (annOptions.enabled) {

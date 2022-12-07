@@ -19,6 +19,7 @@ import type CSSObject from './Renderer/CSSObject';
 import type F from './FormatUtilities';
 import type Point from '../Core/Series/Point';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
+import type Time from './Time';
 import type Tooltip from './Tooltip';
 
 /* *
@@ -43,7 +44,7 @@ export interface TooltipOptions {
     changeDecimals?: number;
     /** @deprecated */
     crosshairs?: any;
-    dateTimeLabelFormats: Record<string, string>;
+    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
     enabled: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;

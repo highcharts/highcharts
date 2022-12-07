@@ -22,14 +22,14 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+const { animObject } = A;
 import H from '../../Core/Globals.js';
+const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -44,9 +44,7 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import CU from '../Utils/ChartUtilities.js';
-const {
-    getChartTitle
-} = CU;
+const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
@@ -62,8 +60,8 @@ const {
  * */
 
 
-declare module '../../Core/Legend/LegendItemObject' {
-    interface LegendItemObject {
+declare module '../../Core/Legend/LegendItem' {
+    interface LegendItem {
         a11yProxyElement?: ProxyElement;
     }
 }
@@ -88,13 +86,11 @@ declare module '../../Core/Series/SeriesLike' {
  * */
 
 
-/* eslint-disable valid-jsdoc */
-
 /**
  * @private
  */
 function scrollLegendToItem(legend: Legend, itemIx: number): void {
-    const itemPage = legend.allItems[itemIx].pageIx,
+    const itemPage = (legend.allItems[itemIx].legendItem || {}).pageIx,
         curPage: number = legend.currentPage as any;
 
     if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
@@ -108,15 +104,38 @@ function scrollLegendToItem(legend: Legend, itemIx: number): void {
  */
 function shouldDoLegendA11y(chart: Chart): boolean {
     const items = chart.legend && chart.legend.allItems,
-        legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
+        legendA11yOptions: LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
-        );
+        ),
+        unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
+            (c): boolean => !c.dataClasses || !c.dataClasses.length);
 
     return !!(
         items && items.length &&
-        !(chart.colorAxis && chart.colorAxis.length) &&
+        !unsupportedColorAxis &&
         legendA11yOptions.enabled !== false
     );
+}
+
+
+/**
+ * @private
+ */
+function setLegendItemHoverState(
+    hoverActive: boolean,
+    item: Legend.Item
+): void {
+    const legendItem = item.legendItem || {};
+
+    item.setState(hoverActive ? 'hover' : '', true);
+
+    for (const key of ['group', 'label', 'symbol'] as const) {
+        const svgElement = legendItem[key];
+        const element = svgElement && svgElement.element || svgElement;
+        if (element) {
+            fireEvent(element, hoverActive ? 'mouseover' : 'mouseout');
+        }
+    }
 }
 
 
@@ -143,8 +162,8 @@ class LegendComponent extends AccessibilityComponent {
      *
      * */
 
-
     public highlightedLegendItemIx: number = NaN;
+    private proxyGroup: HTMLElement|null = null;
 
 
     /* *
@@ -152,8 +171,6 @@ class LegendComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -164,7 +181,7 @@ class LegendComponent extends AccessibilityComponent {
         const component = this;
         this.recreateProxies();
 
-        // Note: Chart could create legend dynamically, so events can not be
+        // Note: Chart could create legend dynamically, so events cannot be
         // tied to the component's chart's current legend.
         // @todo 1. attach component to created legends
         // @todo 2. move listeners to composition and access `this.component`
@@ -221,17 +238,22 @@ class LegendComponent extends AccessibilityComponent {
         const curPage = legend.currentPage || 1;
         const clipHeight = legend.clipHeight || 0;
 
-        items.forEach(function (item: Legend.Item): void {
+        let legendItem;
+
+        items.forEach((item): void => {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
                 const proxyEl = item.a11yProxyElement.element;
+
                 let hide = false;
 
+                legendItem = item.legendItem || {};
+
                 if (hasPages) {
-                    const itemPage = item.pageIx || 0;
-                    const y = item._legendItemPos ? item._legendItemPos[1] : 0;
-                    const h = item.legendItem ?
-                        Math.round(item.legendItem.getBBox().height) :
+                    const itemPage = legendItem.pageIx || 0;
+                    const y = legendItem.y || 0;
+                    const h = legendItem.label ?
+                        Math.round(legendItem.label.getBBox().height) :
                         0;
                     hide = y + h - legend.pages[itemPage] > clipHeight ||
                         itemPage !== curPage - 1;
@@ -273,15 +295,16 @@ class LegendComponent extends AccessibilityComponent {
         const pages = legend.pages || [];
 
         if (newPageIx > 0 && newPageIx <= pages.length) {
-            const len = legend.allItems.length;
-            for (let i = 0; i < len; ++i) {
-                if ((legend.allItems[i].pageIx as number) + 1 === newPageIx) {
-                    const res = chart.highlightLegendItem(i);
+            let i = 0,
+                res;
+            for (const item of legend.allItems) {
+                if (((item.legendItem || {}).pageIx || 0) + 1 === newPageIx) {
+                    res = chart.highlightLegendItem(i);
                     if (res) {
                         this.highlightedLegendItemIx = i;
                     }
-                    return;
                 }
+                ++i;
             }
         }
     }
@@ -305,6 +328,11 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public recreateProxies(): boolean {
+        const focusedElement = doc.activeElement;
+        const proxyGroup = this.proxyGroup;
+        const shouldRestoreFocus = focusedElement && proxyGroup &&
+            proxyGroup.contains(focusedElement);
+
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -312,6 +340,10 @@ class LegendComponent extends AccessibilityComponent {
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
             this.updateLegendTitle();
+
+            if (shouldRestoreFocus) {
+                this.chart.highlightLegendItem(this.highlightedLegendItemIx);
+            }
             return true;
         }
         return false;
@@ -362,7 +394,7 @@ class LegendComponent extends AccessibilityComponent {
         const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
 
-        this.proxyProvider.addGroup('legend', 'ul', {
+        this.proxyGroup = this.proxyProvider.addGroup('legend', 'ul', {
             // Filled by updateLegendTitle, to keep up to date without
             // recreating group
             'aria-label': '_placeholder_',
@@ -376,13 +408,13 @@ class LegendComponent extends AccessibilityComponent {
      */
     public proxyLegendItems(): void {
         const component = this,
-            items = (
-                this.chart.legend &&
-                this.chart.legend.allItems || []
-            );
+            items = (this.chart.legend || {}).allItems || [];
 
-        items.forEach(function (item: Legend.Item): void {
-            if (item.legendItem && item.legendItem.element) {
+        let legendItem;
+
+        items.forEach((item): void => {
+            legendItem = item.legendItem || {};
+            if (legendItem.label && legendItem.label.element) {
                 component.proxyLegendItem(item);
             }
         });
@@ -396,7 +428,9 @@ class LegendComponent extends AccessibilityComponent {
     public proxyLegendItem(
         item: Legend.Item
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        const legendItem = item.legendItem || {};
+
+        if (!legendItem.label || !legendItem.group) {
             return;
         }
 
@@ -414,12 +448,12 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ?
-            item.legendItem :
-            item.legendGroup;
+        const proxyPositioningElement = legendItem.group.div ?
+            legendItem.label :
+            legendItem.group;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
-            click: item.legendItem as SVGElement,
+            click: legendItem.label as SVGElement,
             visual: proxyPositioningElement.element
         }, attribs);
     }
@@ -434,7 +468,7 @@ class LegendComponent extends AccessibilityComponent {
             component = this,
             chart = this.chart;
 
-        return new (KeyboardNavigationHandler as any)(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 [
                     [keys.left, keys.right, keys.up, keys.down],
@@ -448,12 +482,8 @@ class LegendComponent extends AccessibilityComponent {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: KeyboardNavigationHandler,
-                        keyCode: number
+                        this: KeyboardNavigationHandler
                     ): number {
-                        if (H.isFirefox && keyCode === keys.space) { // #15520
-                            return this.response.success;
-                        }
                         return component.onKbdClick(this);
                     }
                 ],
@@ -474,25 +504,24 @@ class LegendComponent extends AccessibilityComponent {
                 return component.shouldHaveLegendNavigation();
             },
 
-            init: function (direction: number): void {
-                return component.onKbdNavigationInit(direction);
+            init: function (): void {
+                chart.highlightLegendItem(0);
+                component.highlightedLegendItemIx = 0;
             },
 
             terminate: function (): void {
                 component.highlightedLegendItemIx = -1;
                 chart.legend.allItems.forEach(
-                    (item): unknown => item.setState('', true));
+                    (item): void => setLegendItemHoverState(false, item)
+                );
             }
         });
     }
 
 
     /**
+     * Arrow key navigation
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {number} keyCode
-     * @return {number}
-     * Response code
      */
     public onKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -521,8 +550,7 @@ class LegendComponent extends AccessibilityComponent {
             return response.success;
         }
 
-        // No wrap, move
-        return response[direction > 0 ? 'next' : 'prev'];
+        return response.success;
     }
 
 
@@ -550,42 +578,24 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public shouldHaveLegendNavigation(): (boolean) {
+        if (!shouldDoLegendA11y(this.chart)) {
+            return false;
+        }
+
         const chart = this.chart,
             legendOptions = chart.options.legend || {},
-            hasLegend = chart.legend && chart.legend.allItems,
-            hasColorAxis = chart.colorAxis && chart.colorAxis.length,
             legendA11yOptions: DeepPartial<(
-                Highcharts.LegendAccessibilityOptions
+                LegendAccessibilityOptions
             )> = (
                 legendOptions.accessibility || {}
             );
 
         return !!(
-            hasLegend &&
             chart.legend.display &&
-            !hasColorAxis &&
-            legendA11yOptions.enabled &&
             legendA11yOptions.keyboardNavigation &&
             legendA11yOptions.keyboardNavigation.enabled
         );
     }
-
-
-    /**
-     * @private
-     * @param {number} direction
-     */
-    public onKbdNavigationInit(
-        direction: number
-    ): void {
-        const chart = this.chart,
-            lastIx = chart.legend.allItems.length - 1,
-            ixToHighlight = direction > 0 ? 0 : lastIx;
-
-        chart.highlightLegendItem(ixToHighlight);
-        this.highlightedLegendItemIx = ixToHighlight;
-    }
-
 }
 
 
@@ -659,28 +669,25 @@ namespace LegendComponent {
         const items = this.legend.allItems;
         const oldIx = this.accessibility &&
                 this.accessibility.components.legend.highlightedLegendItemIx;
-        const itemToHighlight = items[ix];
+        const itemToHighlight = items[ix],
+            legendItem = itemToHighlight.legendItem || {};
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
-                fireEvent(
-                    (items[oldIx].legendGroup as any).element,
-                    'mouseout'
-                );
+                setLegendItemHoverState(false, items[oldIx]);
             }
 
             scrollLegendToItem(this.legend, ix);
 
-            const legendItemProp = itemToHighlight.legendItem;
+            const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
                 itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }
 
-            if (itemToHighlight.legendGroup) {
-                fireEvent(itemToHighlight.legendGroup.element, 'mouseover');
-            }
+            setLegendItemHoverState(true, itemToHighlight);
+
             return true;
         }
         return false;

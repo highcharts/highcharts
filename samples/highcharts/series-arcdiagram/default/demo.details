@@ -1,0 +1,7 @@
+---
+ name: Highcharts Arc Diagram
+ authors:
+   - Piotr Madej
+   - Grzegorz Blachliński
+ js_wrap: b
+...

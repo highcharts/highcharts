@@ -59,7 +59,7 @@ function fireEventOnWrappedOrUnwrappedElement(
     const hcEvents = (el as SVGElement).hcEvents;
 
     if (
-        doc.createEvent &&
+        (doc.createEvent) &&
         ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)
     ) {
         if (el.dispatchEvent) {
@@ -171,10 +171,12 @@ function getCategoryAxisRangeDesc(axis: Axis): string {
  */
 function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart,
-        range: Record<string, number> = {};
+        range: Record<string, number> = {},
+        min = axis.dataMin || axis.min || 0,
+        max = axis.dataMax || axis.max || 0;
     let rangeUnit = 'Seconds';
 
-    range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
+    range.Seconds = (max - min) / 1000;
     range.Minutes = range.Seconds / 60;
     range.Hours = range.Minutes / 60;
     range.Days = range.Hours / 24;
@@ -215,10 +217,14 @@ function getAxisFromToDescription(axis: Axis): string {
             options.accessibility.screenReaderSection.axisRangeDateFormat ||
             ''
         ),
-        format = function (axisKey: string): string {
-            return axis.dateTime ? chart.time.dateFormat(
-                dateRangeFormat, (axis as any)[axisKey]
-            ) : (axis as any)[axisKey];
+        extremes: Record<string, number> = {
+            min: axis.dataMin || axis.min || 0,
+            max: axis.dataMax || axis.max || 0
+        },
+        format = function (key: ('max'|'min')): string {
+            return axis.dateTime ?
+                chart.time.dateFormat(dateRangeFormat, extremes[key]) :
+                extremes[key].toString();
         };
 
     return chart.langFormat(

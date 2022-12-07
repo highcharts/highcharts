@@ -249,11 +249,26 @@ const getFile = url => new Promise((resolve, reject) => {
 
         const filename = path.join(__dirname, 'review.html');
 
-        fs.writeFileSync(
-            filename,
-            marked(md),
-            'utf8'
-        );
+        const html = `<html>
+        <head>
+            <title>Changelog Review</title>
+            <style>
+            * {
+                font-family: sans-serif
+            }
+            code {
+                font-family: monospace;
+                color: green;
+            }
+            </style>
+        </head>
+        <body>
+        ${marked.parse(md)}
+        </body>
+        </html>`;
+
+
+        fs.writeFileSync(filename, html, 'utf8');
 
         console.log(`Review: ${filename}`);
     }

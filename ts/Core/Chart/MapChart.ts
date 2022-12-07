@@ -17,19 +17,16 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type MapView from '../../Maps/MapView';
 import type Options from '../Options';
-import type { ProjectionRotationOption } from '../../Maps/ProjectionOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Chart from './Chart.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { getOptions } = D;
-import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
-    clamp,
-    isNumber,
     merge,
     pick
 } = U;
@@ -73,11 +70,6 @@ class MapChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-
-        // Initialize the MapView after initialization, but before firstRender
-        addEvent(this, 'afterInit', function (): void {
-            this.mapView = new MapView(this, this.options.mapView);
-        });
 
         const defaultCreditsOptions = getOptions().credits;
 

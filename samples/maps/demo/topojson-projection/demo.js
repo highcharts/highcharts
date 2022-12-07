@@ -974,6 +974,7 @@ const afterAnimate = e => {
     if (!chart.get('flight-route')) {
         chart.addSeries({
             type: 'mapline',
+            name: 'Flight route, Amsterdam - Los Angeles',
             animation: false,
             id: 'flight-route',
             data: [{
@@ -986,7 +987,10 @@ const afterAnimate = e => {
                 },
                 color: '#313f77'
             }],
-            lineWidth: 2
+            lineWidth: 2,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }, false);
         chart.addSeries({
             type: 'mappoint',
@@ -1004,7 +1008,10 @@ const afterAnimate = e => {
                     coordinates: [-118.24, 34.05]
                 }
             }],
-            color: '#313f77'
+            color: '#313f77',
+            accessibility: {
+                enabled: false
+            }
         }, false);
         chart.redraw(false);
     }
@@ -1012,21 +1019,12 @@ const afterAnimate = e => {
 
 
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2e11000c966a20f08afc4e0927b91df99821de99/samples/data/world-countries.topo.json',
+    'https://code.highcharts.com/mapdata/custom/world.topo.json',
     topology => {
-
-        // Convert the topoJSON feature into geoJSON
-        const geojson = window.topojson.feature(
-            topology,
-            // For this demo, get the first of the named objects
-            topology.objects[Object.keys(topology.objects)[0]]
-        );
-        geojson.copyrightUrl = topology.copyrightUrl;
-        geojson.copyrightShort = topology.copyrightShort;
 
         const chart = Highcharts.mapChart('container', {
             chart: {
-                map: geojson
+                map: topology
             },
 
             title: {
@@ -1091,7 +1089,11 @@ Highcharts.getJSON(
                 id: 'graticule',
                 type: 'mapline',
                 data: getGraticule(),
-                nullColor: 'rgba(0, 0, 0, 0.05)'
+                nullColor: 'rgba(0, 0, 0, 0.05)',
+                accessibility: {
+                    enabled: false
+                },
+                enableMouseTracking: false
             }, {
                 data,
                 joinBy: 'name',
@@ -1108,6 +1110,9 @@ Highcharts.getJSON(
                 },
                 events: {
                     afterAnimate
+                },
+                accessibility: {
+                    exposeAsGroupOnly: true
                 }
             }]
         });

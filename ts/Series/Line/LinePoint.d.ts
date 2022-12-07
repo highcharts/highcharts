@@ -28,7 +28,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
-        category?: string;
+        category?: (number|string);
         clientX?: number;
         dist?: number;
         distX?: number;
@@ -38,8 +38,6 @@ declare module '../../Core/Series/PointLike' {
         low?: number;
         negative?: boolean;
         options: PointOptions;
-        plotX?: number;
-        plotY?: number;
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;

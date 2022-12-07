@@ -11,6 +11,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             text: 'AAPL Stock Price'
         },
 
+        navigator: {
+            series: {
+                accessibility: {
+                    exposeAsGroupOnly: true
+                }
+            }
+        },
+
         series: [{
             name: 'AAPL Stock Price',
             data: data,

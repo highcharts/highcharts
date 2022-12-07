@@ -1,5 +1,5 @@
 ---
- name: Sudan with disputed territories - Highmaps
- description: Highmaps demo
+ name: Sudan with disputed territories - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -20,10 +26,8 @@ import type ZigzagPoint from './ZigzagPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -32,7 +36,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -47,6 +51,13 @@ const {
  */
 
 class ZigzagIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Zig Zag indicator.
      *
@@ -105,11 +116,13 @@ class ZigzagIndicator extends SMAIndicator {
     public data: Array<ZigzagPoint> = void 0 as any;
     public points: Array<ZigzagPoint> = void 0 as any;
     public options: ZigzagOptions = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
+
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ZigzagParamsOptions
@@ -294,6 +307,11 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 
 export default ZigzagIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not

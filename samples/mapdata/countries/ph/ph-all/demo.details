@@ -1,5 +1,5 @@
 ---
- name: Philippines - Highmaps
- description: Highmaps demo
+ name: Philippines - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

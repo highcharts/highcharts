@@ -18,7 +18,9 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type StackItem from '../Core/Axis/Stacking/StackItem';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
@@ -64,15 +66,12 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             !yAxis.options.stackLabels.allowOverlap
         ) {
             objectEach(yAxis.stacking.stacks, function (
-                stack: Record<string, Highcharts.StackItem>
+                stack: Record<string, StackItem>
             ): void {
                 objectEach(stack, function (
-                    stackItem: Highcharts.StackItem
+                    stackItem: StackItem
                 ): void {
-                    if (
-                        stackItem.label &&
-                        stackItem.label.visibility !== 'hidden' // #15607
-                    ) {
+                    if (stackItem.label) {
                         labels.push(stackItem.label);
                     }
                 });
@@ -268,7 +267,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 box2 &&
                 label1 !== label2 && // #6465, polar chart with connectEnds
                 label1.newOpacity !== 0 &&
-                label2.newOpacity !== 0
+                label2.newOpacity !== 0 &&
+                // #15863 dataLabels are no longer hidden by translation
+                label1.visibility !== 'hidden' &&
+                label2.visibility !== 'hidden'
             ) {
                 if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)

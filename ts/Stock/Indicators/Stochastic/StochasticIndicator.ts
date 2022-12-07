@@ -26,10 +26,8 @@ import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -126,9 +124,21 @@ class StochasticIndicator extends SMAIndicator {
         }
     } as StochasticOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
     public points: Array<StochasticPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -224,20 +234,20 @@ class StochasticIndicator extends SMAIndicator {
 
 /* *
  *
- *  Class Properties
+ *  Class Prototype
  *
  * */
 
-interface StochasticIndicator extends MultipleLinesComposition.Composition {
+interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof StochasticPoint>;
     pointClass: typeof StochasticPoint;
     pointValKey: string;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
+
 extend(StochasticIndicator.prototype, {
     areaLinesNames: [],
     nameComponents: ['periods'],
@@ -247,6 +257,7 @@ extend(StochasticIndicator.prototype, {
     pointValKey: 'y',
     linesApiNames: ['smoothedLine']
 });
+
 MultipleLinesComposition.compose(StochasticIndicator);
 
 /* *
@@ -269,6 +280,12 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  * */
 
 export default StochasticIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not

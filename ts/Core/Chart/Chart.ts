@@ -59,6 +59,11 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
+import D from '../Defaults.js';
+const {
+    defaultOptions,
+    defaultTime
+} = D;
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
@@ -73,11 +78,6 @@ const {
 } = H;
 import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
-import D from '../DefaultOptions.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
@@ -102,7 +102,6 @@ const {
     fireEvent,
     getStyle,
     isArray,
-    isFunction,
     isNumber,
     isObject,
     isString,
@@ -478,6 +477,29 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
+            const zooming = optionsChart.zooming = optionsChart.zooming || {};
+
+            // Other options have no default so just pick
+            if (userOptions.chart && !userOptions.chart.zooming) {
+                zooming.resetButton = optionsChart.resetZoomButton;
+            }
+            zooming.key = pick(
+                zooming.key,
+                optionsChart.zoomKey
+            );
+            zooming.pinchType = pick(
+                zooming.pinchType,
+                optionsChart.pinchType
+            );
+            zooming.singleTouch = pick(
+                zooming.singleTouch,
+                optionsChart.zoomBySingleTouch
+            );
+            zooming.type = pick(
+                zooming.type,
+                optionsChart.zoomType
+            );
+
             /**
              * The options structure for the chart after merging
              * {@link #defaultOptions} and {@link #userOptions}. It contains
@@ -720,12 +742,14 @@ class Chart {
             e = {
                 x,
                 y,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options
             };
 
         if (!options.ignoreX) {
             const xAxis = (
-                series && (inverted ? series.yAxis : series.xAxis)
+                series &&
+                (inverted && !this.polar ? series.yAxis : series.xAxis)
             ) || {
                 pos: plotLeft,
                 len: Infinity
@@ -750,6 +774,8 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
+                options.axis && !options.axis.isXAxis && options.axis
+            ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
                 pos: plotTop,
@@ -1538,7 +1564,7 @@ class Chart {
         attr(renderTo, indexAttrName, chart.index);
 
         // remove previous chart
-        renderTo.innerHTML = '';
+        renderTo.innerHTML = AST.emptyHTML;
 
         // If the container doesn't have an offsetWidth, it has or is a child of
         // a node that has display:none. We need to temporarily move it out to a
@@ -2643,7 +2669,7 @@ class Chart {
         // Remove container and all SVG, check container as it can break in IE
         // when destroyed before finished loading
         if (container) {
-            container.innerHTML = '';
+            container.innerHTML = AST.emptyHTML;
             removeEvent(container);
             if (parentNode) {
                 discardElement(container);
@@ -2760,15 +2786,48 @@ class Chart {
         fireEvent(this, 'load');
         fireEvent(this, 'render');
 
-
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
             this.setReflow(this.options.chart.reflow);
         }
 
+        this.warnIfA11yModuleNotLoaded();
+
         // Don't run again
         this.hasLoaded = true;
     }
+
+
+    /**
+     * Emit console warning if the a11y module is not loaded.
+     */
+    public warnIfA11yModuleNotLoaded():void {
+        const { options, title } = this;
+        if (options && !this.accessibility) {
+            // Make chart behave as an image with the title as alt text
+            this.renderer.boxWrapper.attr({
+                role: 'img',
+                'aria-label': (
+                    (title && title.element.textContent) || ''
+                // #17753, < is not allowed in SVG attributes
+                ).replace(/</g, '&lt;')
+            });
+
+            if (!(
+                options.accessibility && options.accessibility.enabled === false
+            )) {
+                error(
+                    'Highcharts warning: Consider including the ' +
+                    '"accessibility.js" module to make your chart more ' +
+                    'usable for people with disabilities. Set the ' +
+                    '"accessibility.enabled" option to false to remove this ' +
+                    'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
+                    false, this
+                );
+            }
+        }
+    }
+
 
     /**
      * Add a series to the chart after render time. Note that this method should
@@ -3469,11 +3528,11 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
+
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.resetZoomButton as any,
+            btnOptions = chart.options.chart.zooming.resetButton as any,
             theme = btnOptions.theme,
-            states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
@@ -3495,8 +3554,7 @@ class Chart {
                     null as any,
                     null as any,
                     zoomOut,
-                    theme,
-                    states && states.hover
+                    theme
                 )
                 .attr({
                     align: btnOptions.position.align,
@@ -3531,15 +3589,13 @@ class Chart {
      */
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
-            pointer = chart.pointer,
-            mouseDownPos = chart.inverted ?
-                pointer.mouseDownX : pointer.mouseDownY;
+            pointer = chart.pointer;
 
         let displayButton = false,
             hasZoomed;
 
         // If zoom is called with no arguments, reset the axes
-        if (!event || (event as any).resetSelection) {
+        if (!event || event.resetSelection) {
             chart.axes.forEach(function (axis): void {
                 hasZoomed = (axis.zoom as any)();
             });
@@ -3550,29 +3606,24 @@ class Chart {
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    axisStartPos = chart.inverted ? axis.left : axis.top,
-                    axisEndPos = chart.inverted ?
-                        axisStartPos + axis.width : axisStartPos + axis.height,
                     isXAxis = axis.isXAxis;
 
-                let isWithinPane = false;
-
-                // Check if zoomed area is within the pane (#1289).
-                // In case of multiple panes only one pane should be zoomed.
-                if (
-                    (
-                        !isXAxis &&
-                        (mouseDownPos as any) >= axisStartPos &&
-                        (mouseDownPos as any) <= axisEndPos
-                    ) ||
-                    isXAxis ||
-                    !defined(mouseDownPos)
-                ) {
-                    isWithinPane = true;
-                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                if (
+                    pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
+                    (
+                        defined(pointer.mouseDownX) &&
+                        defined(pointer.mouseDownY) &&
+                        chart.isInsidePlot(
+                            pointer.mouseDownX - chart.plotLeft,
+                            pointer.mouseDownY - chart.plotTop,
+                            { axis }
+                        )
+                    ) || !defined(
+                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
+                    )
+                ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;
@@ -3626,9 +3677,7 @@ class Chart {
                         type: 'x'
                     }
             ),
-            chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled;
+            chartOptions = chart.options.chart;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
@@ -3796,7 +3845,6 @@ class Chart {
 
                         if (
                             !chart.resetZoomButton &&
-                            !hasMapNavigation &&
                             // Show reset zoom button only when both newMin and
                             // newMax values are between padded axis range.
                             newMin !== paddedMin &&
@@ -3853,6 +3901,8 @@ extend(Chart.prototype, {
      *
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
+     *
+     * @private
      */
     collectionsWithInit: {
         // collectionName: [ initializingMethod, [extraArguments] ]
@@ -3864,6 +3914,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
+     * @private
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -3874,6 +3925,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -3891,7 +3943,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @type {Array}
+     * @private
      */
     propsRequireReflow: [
         'margin',
@@ -3909,6 +3961,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireUpdateSeries: [
         'chart.inverted',
@@ -3974,6 +4027,7 @@ namespace Chart {
     );
 
     export interface IsInsideOptionsObject {
+        axis?: Axis;
         ignoreX?: boolean;
         ignoreY?: boolean;
         inverted?: boolean;
@@ -4127,6 +4181,9 @@ export default Chart;
 
 /**
  * @interface Highcharts.ChartIsInsideOptionsObject
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#axis
+ * @type {Highcharts.Axis|undefined}
  *//**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
  * @type {boolean|undefined}

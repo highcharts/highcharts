@@ -1,4 +1,4 @@
-const colors =  ['#8085ef', '#8bf0b6', '#569ba3', '#7bb5ec', 'rgba(255,255,255,0.1)'];
+const colors =  ['#8085ef', '#8bf0b6', '#569ba3', '#30426b', 'rgba(255,255,255,0.1)'];
 Highcharts.setOptions({
     colors: colors
 });
@@ -47,6 +47,7 @@ const chart = Highcharts.chart('container', {
     series: [{
         type: 'venn',
         borderColor: '#333',
+        opacity: 1,
         borderWidth: 0,
         states: {
             hover: {
@@ -71,11 +72,12 @@ const chart = Highcharts.chart('container', {
         point: {
             events: {
                 mouseOver: function () {
-                    var point = this;
-                    var pointName = point.name;
-                    var category = pointName.split(',')[0];
+                    const point = this;
+                    const pointName = point.name;
+                    const category = pointName.split(',')[0];
 
                     clearTimeout(nextMouseOver);
+
                     nextMouseOver = setTimeout(function () {
                         getByClass('data-label').forEach(function (e) {
                             e.classList.remove('over');
@@ -91,6 +93,7 @@ const chart = Highcharts.chart('container', {
                             caption.classList.remove('visible');
                             label.classList.add('over');
                             getEl('aicon').classList.add('over');
+
                         }
                     }, 100);
                 }
@@ -106,7 +109,7 @@ const chart = Highcharts.chart('container', {
             name: 'innovation',
             color: Highcharts.getOptions().colors[0],
             dataLabels: {
-                format: '<div id="innovation"  class="data-label"><h4 class="open">Drive Innovation</h4><p class="info">Accessibility features in products and services often solve unanticipated problems for all users.</p><i id="innovation-icon" class="fas fa-cogs"></i><h4 class="closed">Drive Innovation</h4></div>'
+                format: '<div id="innovation"  class="data-label"><h4 class="open">Drive Innovation</h4><p class="info">Accessibility features in products and services often solve unanticipated problems for all users.</p><i id="innovation-icon"></i><h4 class="closed">Drive Innovation</h4></div>'
             }
         }, {
             sets: ['3'],
@@ -120,7 +123,7 @@ const chart = Highcharts.chart('container', {
             dataLabels: {
                 y: 110,
                 x: -30,
-                format: '<div id="brand" class="data-label"><h4>Enhance your brand</h4><i id="brand-icon" class="far fa-smile"></i><p  class="info">Accessible content will not only enhance customer loyalty and brand awareness, but also improve organic search results.</p></div>'
+                format: '<div id="brand" class="data-label"><h4>Enhance your brand</h4><i id="brand-icon" ></i><p  class="info">Accessible content will not only enhance customer loyalty and brand awareness, but also improve organic search results.</p></div>'
             }
         }, {
             sets: ['4'],
@@ -134,7 +137,7 @@ const chart = Highcharts.chart('container', {
                 y: 0,
                 x: 0,
                 zIndex: 10,
-                format: '<div id="reach" class="data-label"><i id="reach-icon" class="fas fa-funnel-dollar"></i><h4 >Extend Market Reach</h4><p  class="info">Reach the <b>1.3 billion people</b> world-wide who are affected by a visual impairment with accessible content.</p></div>'
+                format: '<div id="reach" class="data-label"><i id="reach-icon" ></i><h4 >Extend Market Reach</h4><p  class="info">Reach the <b>1.3 billion people</b> world-wide who are affected by a visual impairment with accessible content.</p></div>'
             }
         }, {
             sets: ['5'],
@@ -147,7 +150,7 @@ const chart = Highcharts.chart('container', {
             dataLabels: {
                 y: 5,
                 x: -10,
-                format: '<div id="legal" class="data-label"><i id="legal-icon" class="fas fa-gavel"></i><h4 >Minimize Legal Risk</h4><p class="info">You or your customer might be facing a lawsuit if your software products are not accessible.</p> </div>'
+                format: '<div id="legal" class="data-label"><i id="legal-icon"></i><h4 >Minimize Legal Risk</h4><p class="info">You or your customer might be facing a lawsuit if your software products are not accessible.</p> </div>'
             }
         }, {
             sets: ['4', '5'],
@@ -276,7 +279,7 @@ const chart = Highcharts.chart('container', {
                 enabled: true,
                 y: -30,
                 x: -30,
-                format: '<i id="aicon" class="fas fa-universal-access"></i>'
+                format: '<i id="aicon"></i>'
             }
         }]
     }],
@@ -302,16 +305,16 @@ function removeOverlay() {
         }
     });
     chart.series[0].points[14].update({
-        color: '#fff'
+        color: '#46465c'
     });
     chart.series[0].points[12].update({
-        color: '#fff'
+        color: '#46465c'
     });
     chart.series[0].points[11].update({
-        color: '#fff'
+        color: '#46465c'
     });
     chart.series[0].points[9].update({
-        color: '#fff'
+        color: '#46465c'
     });
     document.getElementsByTagName('svg')[0].style.opacity = 1;
 
@@ -343,7 +346,9 @@ getEl('after').addEventListener('focus', removeOverlay);
 
 getEl('removeOverlay').onclick = removeOverlay;
 
+
 // Venn code
+
 
 function removeHover() {
     getByClass('data-label').forEach(function (e) {

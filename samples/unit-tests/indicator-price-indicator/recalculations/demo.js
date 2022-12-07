@@ -50,6 +50,23 @@ QUnit.test('Price indicator.', function (assert) {
         true,
         'No errors when points are missing.'
     );
+
+    chart.xAxis[0].setExtremes(1484663400000, 1484836200000, false);
+    chart.series[0].update({
+        lastVisiblePrice: {
+            enabled: false
+        },
+        lastPrice: {
+            label: {
+                enabled: true
+            }
+        }
+    });
+
+    assert.ok(
+        true,
+        'There should be no error when the lastPrice label is enabled, #17522.'
+    );
 });
 
 QUnit.test('Datagrouping and setExtremes.', function (assert) {
@@ -190,8 +207,8 @@ function (assert) {
     // Show croshair with the label.
     controller.moveTo(200, 200);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.yAxis[0].crossLabel.visibility,
+        'inherit',
         'Axis cross label should be visible.'
     );
     assert.strictEqual(
@@ -203,7 +220,7 @@ function (assert) {
     // Hide croshair with the label.
     controller.moveTo(30, 20);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
+        chart.yAxis[0].crossLabel.visibility,
         'hidden',
         'Cross label should not be visible.'
     );
@@ -212,8 +229,8 @@ function (assert) {
     chart.navigationBindings.options.bindings.currentPriceIndicator.init
         .call(chart.navigationBindings, button);
     assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.series[0].crossLabel.visibility,
+        'inherit',
         'Series price indicator should be visible.'
     );
     assert.strictEqual(
@@ -225,8 +242,8 @@ function (assert) {
     // Show currentPriceIndicator togehter with axis croshair.
     controller.moveTo(200, 200);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.yAxis[0].crossLabel.visibility,
+        'inherit',
         'Cross label should be visible.'
     );
     assert.strictEqual(
@@ -238,12 +255,12 @@ function (assert) {
     // Adjust extremes to show the lastPrice line.
     chart.xAxis[0].setExtremes(0, 4);
     assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.series[0].crossLabel.visibility,
+        'inherit',
         'Series last price indicator should be visible.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
+        chart.series[0].lastPrice.attr('stroke'),
         '#ff0000',
         'Cross label fill color should be red.'
     );
@@ -264,8 +281,8 @@ function (assert) {
     chart.navigationBindings.options.bindings.currentPriceIndicator.init
         .call(chart.navigationBindings, button);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.yAxis[0].crossLabel.visibility,
+        'inherit',
         'Cross label should be visible again.'
     );
     assert.strictEqual(
@@ -274,12 +291,12 @@ function (assert) {
         'Cross label fill color should be blue again.'
     );
     assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
+        chart.series[0].crossLabel.visibility,
+        'inherit',
         'Series last price indicator should be visible again.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
+        chart.series[0].lastPrice.attr('stroke'),
         '#ff0000',
         'Cross label fill color should be red again.'
     );

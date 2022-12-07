@@ -35,13 +35,13 @@ QUnit.test('Markers for arearange.', function (assert) {
         return d;
     }
 
-    Highcharts.each(chart.series[0].points, function (point) {
+    chart.series[0].points.forEach(point => {
         assert.ok(
-            point.lowerGraphic !== undefined,
+            point.graphics[0] !== undefined,
             'Bottom marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
-            point.upperGraphic !== undefined,
+            point.graphics[1] !== undefined,
             'Top marker for point: x=' + point.x + ' exists.'
         );
     });
@@ -110,7 +110,7 @@ QUnit.test('Zones', function (assert) {
 
     assert.deepEqual(
         chart.series[0].points.map(function (p) {
-            return [p.upperGraphic.attr('fill'), p.lowerGraphic.attr('fill')];
+            return [p.graphics[1].attr('fill'), p.graphics[0].attr('fill')];
         }),
         [
             ['red', 'red'],

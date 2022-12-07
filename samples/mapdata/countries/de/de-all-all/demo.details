@@ -1,5 +1,5 @@
 ---
- name: Germany, admin2 - Highmaps
- description: Highmaps demo
+ name: Germany, admin2 - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

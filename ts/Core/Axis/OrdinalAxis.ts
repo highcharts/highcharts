@@ -16,10 +16,10 @@
  *
  * */
 
-import type DateTimeAxis from './DateTimeAxis';
-import type NavigatorAxis from './NavigatorAxis';
+import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -48,7 +48,7 @@ declare module './AxisComposition' {
         ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
         getTimeTicks(
-            normalizedInterval: DateTimeAxis.NormalizedObject,
+            normalizedInterval: Time.TimeNormalizedObject,
             min: number,
             max: number,
             startOfWeek?: number,
@@ -114,7 +114,7 @@ namespace OrdinalAxis {
         isInternal?: boolean;
         ordinal: Additions;
         getTimeTicks(
-            normalizedInterval: DateTimeAxis.NormalizedObject,
+            normalizedInterval: Time.TimeNormalizedObject,
             min: number,
             max: number,
             startOfWeek: number,
@@ -202,7 +202,7 @@ namespace OrdinalAxis {
      */
     function getTimeTicks(
         this: Axis,
-        normalizedInterval: DateTimeAxis.NormalizedObject,
+        normalizedInterval: Time.TimeNormalizedObject,
         min: number,
         max: number,
         startOfWeek?: number,
@@ -650,9 +650,11 @@ namespace OrdinalAxis {
                 // how many ordinal units did we move?
                 movedUnits = ((mouseDownX as any) - chartX) / pointPixelWidth,
                 // get index of all the chart's points
+                extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
                     ordinal: {
-                        positions: xAxis.ordinal.getExtendedPositions()
+                        positions: extendedOrdinalPositions,
+                        extendedOrdinalPositions: extendedOrdinalPositions
                     }
                 },
                 index2val = xAxis.index2val,
@@ -705,7 +707,7 @@ namespace OrdinalAxis {
                 // it happens on the current x axis which is smaller and faster.
                 chart.fixedRange = max - min;
 
-                trimmedRange = (xAxis as NavigatorAxis).navigatorAxis
+                trimmedRange = (xAxis as NavigatorAxisComposition).navigatorAxis
                     .toFixedRange(
                         void 0,
                         void 0,
@@ -908,7 +910,7 @@ namespace OrdinalAxis {
         public axis: Composition;
         public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
-        public index: Record<string, Array<number>> = {};
+        public index?: Record<string, Array<number>> = {};
         public offset?: number;
         public overscrollPointsRange?: number;
         public positions?: Array<number>;
@@ -943,13 +945,34 @@ namespace OrdinalAxis {
                 i,
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
-                useOrdinal = false;
+                useOrdinal = false,
+                adjustOrdinalExtremesPoints = false,
+                isBoosted = false;
 
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
+                let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
+
+                    // For an axis with multiple series, check if the distance
+                    // between points is identical throughout all series.
+                    if (
+                        i > 0 &&
+                        series.options.id !== 'highcharts-navigator-series' &&
+                        series.processedXData.length > 1
+                    ) {
+                        adjustOrdinalExtremesPoints =
+                            distanceBetweenPoint !== series.processedXData[1] -
+                                series.processedXData[0];
+                    }
+                    distanceBetweenPoint =
+                        series.processedXData[1] - series.processedXData[0];
+
+                    if (series.boosted) {
+                        isBoosted = series.boosted;
+                    }
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
@@ -1015,6 +1038,15 @@ namespace OrdinalAxis {
                         }
                     }
                 });
+
+                // If the distance between points is not identical throughout
+                // all series, remove the first and last ordinal position to
+                // avoid enabling ordinal logic when it is not needed, #17405.
+                // Only for boosted series because changes are negligible.
+                if (adjustOrdinalExtremesPoints && isBoosted) {
+                    ordinalPositions.pop();
+                    ordinalPositions.shift();
+                }
 
                 // cache the length
                 len = ordinalPositions.length;

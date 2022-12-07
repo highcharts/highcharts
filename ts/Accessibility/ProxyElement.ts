@@ -33,6 +33,11 @@ import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+type Nullable<T> = {
+    [P in keyof T]: T[P] | null;
+};
+export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
+
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
@@ -98,11 +103,12 @@ class ProxyElement {
         private chart: Accessibility.ChartComposition,
         public target: ProxyElement.Target,
         public groupType: ProxyElement.GroupType,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ) {
+        const isListItem = groupType === 'ul';
         this.eventProvider = new EventProvider();
 
-        const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
+        const wrapperEl = isListItem ? doc.createElement('li') : null;
         const btnEl = this.buttonElement = doc.createElement('button');
 
         if (!chart.styledMode) {
@@ -110,6 +116,10 @@ class ProxyElement {
         }
 
         if (wrapperEl) {
+            if (isListItem && !chart.styledMode) {
+                wrapperEl.style.listStyle = 'none';
+            }
+
             wrapperEl.appendChild(btnEl);
             this.element = wrapperEl;
         } else {
@@ -152,14 +162,21 @@ class ProxyElement {
      */
     public updateTarget(
         target: ProxyElement.Target,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ): void {
         this.target = target;
         this.updateCSSClassName();
+        const attrs = attributes || {};
+
+        Object.keys(attrs).forEach((a): void => {
+            if (attrs[a as keyof HTMLAttributes] === null) {
+                delete attrs[a as keyof HTMLAttributes];
+            }
+        });
 
         attr(this.buttonElement, merge({
             'aria-label': this.getTargetAttr(target.click, 'aria-label')
-        }, attributes));
+        }, attrs as HTMLAttributes));
 
         this.eventProvider.removeAddedEvents();
         this.addProxyEventsToButton(this.buttonElement, target.click);
@@ -295,13 +312,15 @@ class ProxyElement {
 
         if (chartDiv && posElement && posElement.getBoundingClientRect) {
             const rectEl = posElement.getBoundingClientRect(),
-                rectDiv = chartDiv.getBoundingClientRect();
+                chartPos = this.chart.pointer.getChartPosition();
 
             return {
-                x: rectEl.left - rectDiv.left,
-                y: rectEl.top - rectDiv.top,
-                width: rectEl.right - rectEl.left,
-                height: rectEl.bottom - rectEl.top
+                x: (rectEl.left - chartPos.left) / chartPos.scaleX,
+                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                width: rectEl.right / chartPos.scaleX -
+                    rectEl.left / chartPos.scaleX,
+                height: rectEl.bottom / chartPos.scaleY -
+                    rectEl.top / chartPos.scaleY
             };
         }
 

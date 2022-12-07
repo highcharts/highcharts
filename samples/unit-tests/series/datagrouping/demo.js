@@ -734,29 +734,50 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
     );
 });
 
-QUnit.test('DataGrouping and update', function (assert) {
+QUnit.test('DataGrouping with selected range and update', function (assert) {
     const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 0,
+            buttons: [{
+                type: 'all',
+                text: 'All',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['millisecond', [3]]
+                    ]
+                }
+            }]
+        },
         series: [
             {
                 id: 'usdeur',
                 dataGrouping: {
-                    forced: true
+                    forced: true,
+                    approximation: () => 3
                 },
-                data: [1, 2, 3]
+                data: [1, 2, 3, 4, 5, 6]
             }
         ]
     });
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        `When the scope is set in the dataGrouping options
+        it should work as well as without it (#16759)`
+    );
 
     chart.update(
         {
             series: [
                 {
                     id: 'usdeur',
-                    data: [3, 2, 1]
+                    data: [6, 5, 4, 3, 2, 1]
                 },
                 {
                     id: 'eurusd',
-                    data: [1, 2, 3]
+                    data: [1, 2, 3, 4, 5, 6]
                 }
             ]
         },
@@ -1016,4 +1037,29 @@ QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
             the series.${prop} property should be deleted.`
         );
     });
+});
+
+QUnit.test('Data grouping multiple series on zoom, #17141.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 500
+        },
+        series: [{
+            data: Array.from(Array(5000)).map(() => Math.random() * 10)
+        }, {
+            data: Array.from(Array(5000)).map(() => Math.random() * 10)
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(200, 220);
+    assert.notOk(
+        chart.series[0].hasGroupedData,
+        `After zooming to a point where groupinng is no longer needed, it should
+        not be applied.`
+    );
+    assert.notOk(
+        chart.series[1].hasGroupedData,
+        `After zooming to a point where groupinng is no longer needed, it should
+        not be applied.`
+    );
 });

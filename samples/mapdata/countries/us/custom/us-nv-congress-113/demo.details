@@ -1,5 +1,5 @@
 ---
- name: Nevada congressional districts - Highmaps
- description: Highmaps demo
+ name: Nevada congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

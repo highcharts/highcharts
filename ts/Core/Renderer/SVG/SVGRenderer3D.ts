@@ -39,7 +39,7 @@ const {
     charts,
     deg2rad
 } = H;
-import Math3D from '../../../Extensions/Math3D.js';
+import Math3D from '../../Math3D.js';
 const {
     perspective,
     shapeArea
@@ -290,7 +290,7 @@ class SVGRenderer3D extends SVGRenderer {
 
                 hash.d = path;
                 hash.visibility = (this.enabled && area > 0) ?
-                    'visible' : 'hidden';
+                    'inherit' : 'hidden';
             }
             return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;

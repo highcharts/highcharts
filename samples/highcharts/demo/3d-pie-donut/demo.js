@@ -1,3 +1,4 @@
+// Data retrieved from https://olympics.com/en/olympic-games/beijing-2022/medals
 Highcharts.chart('container', {
     chart: {
         type: 'pie',
@@ -7,10 +8,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Contents of Highsoft\'s weekly fruit delivery'
+        text: 'Beijing 2022 gold medals by country',
+        align: 'left'
     },
     subtitle: {
-        text: '3D donut in Highcharts'
+        text: '3D donut in Highcharts',
+        align: 'left'
     },
     plotOptions: {
         pie: {
@@ -19,17 +22,18 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Delivered amount',
+        name: 'Medals',
         data: [
-            ['Bananas', 8],
-            ['Kiwi', 3],
-            ['Mixed nuts', 1],
-            ['Oranges', 6],
-            ['Apples', 8],
-            ['Pears', 4],
-            ['Clementines', 4],
-            ['Reddish (bag)', 1],
-            ['Grapes (bunch)', 1]
+            ['Norway', 16],
+            ['Germany', 12],
+            ['USA', 8],
+            ['Sweden', 8],
+            ['Netherlands', 8],
+            ['ROC', 6],
+            ['Austria', 7],
+            ['Canada', 4],
+            ['Japan', 3]
+
         ]
     }]
 });

@@ -25,7 +25,7 @@ import type {
 *
 * */
 
-export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;

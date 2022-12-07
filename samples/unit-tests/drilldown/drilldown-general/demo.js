@@ -216,6 +216,77 @@ QUnit.test('Drilldown methods', function (assert) {
         2,
         '#15771: Point should be at correct index in ddPoints'
     );
+
+    chart.series[0].update({
+        point: {
+            events: {
+                mouseOver() {
+                    this.series.chart.addSeriesAsDrilldown(this, {
+                        data: [1, 2, 3, 4]
+                    });
+                }
+            }
+        },
+        data: [2, 5]
+    });
+    chart.series[0].points[0].onMouseOver();
+    assert.ok(
+        true,
+        `Adding drill down series through mouseover should not
+        generate errors in console, #16820.`
+    );
+
+    chart.drillUp();
+    chart.update({
+        chart: {
+            width: 150
+        },
+        xAxis: {
+            min: void 0
+        },
+        series: [{
+            data: [{
+                name: "A",
+                y: 3,
+                drilldown: "A"
+            }]
+        }],
+        drilldown: {
+            series: [{
+                name: "A",
+                id: "A",
+                data: [
+                    [
+                        "v65.0",
+                        0.1
+                    ],
+                    [
+                        "v64.0",
+                        1.3
+                    ],
+                    [
+                        "v63.0",
+                        53.02
+                    ],
+                    [
+                        "v62.0",
+                        1.4
+                    ],
+                    [
+                        "v61.0",
+                        0.88
+                    ]
+                ]
+            }]
+        }
+    });
+    chart.series[0].points[0].doDrilldown();
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[0].label.element.style.textDecoration,
+        '',
+        '#17933: Labels should not have underline.'
+    );
 });
 
 QUnit.test('Chart type update after drilldown', function (assert) {

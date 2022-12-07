@@ -1,5 +1,5 @@
 ---
- name: Barbados - Highmaps
- description: Highmaps demo
+ name: Barbados - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

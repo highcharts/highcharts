@@ -50,6 +50,7 @@ body {
     user-select: none;
     touch-action: manipulation;
     outline: none;
+    top: 0 !important;
 }
 
 .chart-container .highcharts-background {
@@ -116,6 +117,9 @@ body {
 #charts {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #charts .highcharts-plot-background,

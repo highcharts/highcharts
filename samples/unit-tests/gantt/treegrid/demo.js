@@ -516,4 +516,11 @@ QUnit.test('series.data[].collapsed', assert => {
         false,
         'This point should be expanded #13838'
     );
+
+    chart.series[0].setData([], true, true, false);
+    assert.notOk(
+        document.querySelector('.highcharts-label-icon'),
+        `After updating data,
+        the unnecessary label icons should be removed, 16673.`
+    );
 });

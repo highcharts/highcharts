@@ -47,6 +47,7 @@ const {
     isPointInsideAllCircles,
     isPointOutsideAllCircles
 } = CU;
+import DPU from '../DrawPointUtilities.js';
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -58,6 +59,7 @@ const {
 } = SeriesRegistry;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -131,6 +133,8 @@ class VennSeries extends ScatterSeries {
      *         Venn diagram
      * @sample {highcharts} highcharts/demo/euler-diagram/
      *         Euler diagram
+     * @sample {highcharts} highcharts/series-venn/point-legend/
+     *         Venn diagram with a legend
      *
      * @extends      plotOptions.scatter
      * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
@@ -163,9 +167,19 @@ class VennSeries extends ScatterSeries {
          * @private
          */
         inactiveOtherPoints: true,
+        /**
+         * @ignore-option
+         * @private
+         */
         marker: false as any,
         opacity: 0.75,
         showInLegend: false,
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
+        legendType: 'point',
         states: {
             /**
              * @excluding halo
@@ -570,7 +584,7 @@ class VennSeries extends ScatterSeries {
                 extend(attribs, series.pointAttribs(point, point.state));
             }
             // Draw the point graphic.
-            point.draw({
+            DPU.draw(point, {
                 isNew: !point.graphic,
                 animatableAttribs: shapeArgs,
                 attribs: attribs,
@@ -756,6 +770,7 @@ class VennSeries extends ScatterSeries {
 interface VennSeries {
     axisTypes: Array<string>;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     isCartesian: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof VennPoint;
@@ -764,6 +779,7 @@ interface VennSeries {
 extend(VennSeries.prototype, {
     axisTypes: [],
     directTouch: true,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     isCartesian: false,
     pointArrayMap: ['value'],
     pointClass: VennPoint,

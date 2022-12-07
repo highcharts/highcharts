@@ -1,0 +1,6 @@
+---
+ name: "Stacked area: Continuous data composition (MSIS atmospheric composition by hight monochrome)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

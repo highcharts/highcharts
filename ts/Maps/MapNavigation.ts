@@ -22,7 +22,6 @@ import type {
     MapNavigationOptions
 } from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -38,7 +37,7 @@ const {
     objectEach,
     pick
 } = U;
-import './MapNavigationOptionsDefault.js';
+import './MapNavigationDefaults.js';
 import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
@@ -49,7 +48,6 @@ import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        mapNavButtons?: Array<SVGElement>;
         mapNavigation?: Highcharts.MapNavigation;
     }
 }
@@ -62,10 +60,10 @@ declare global {
     namespace Highcharts {
 
         interface MapNavigationChart extends Chart {
-            mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
+            /** @deprecated */
             mapZoom(
                 howMuch?: number,
                 xProjected?: number,
@@ -77,6 +75,8 @@ declare global {
         class MapNavigation {
             public constructor(chart: Chart);
             public chart: MapNavigationChart;
+            public navButtons: Array<SVGElement>;
+            public navButtonsGroup: SVGElement;
             public unbindDblClick?: Function;
             public unbindMouseWheel?: Function;
             public init(chart: Chart): void;
@@ -121,6 +121,7 @@ function MapNavigation(
     this: Highcharts.MapNavigation,
     chart: Chart
 ): void {
+    this.navButtons = [];
     this.init(chart);
 }
 
@@ -139,7 +140,6 @@ MapNavigation.prototype.init = function (
     chart: Chart
 ): void {
     this.chart = chart as Highcharts.MapNavigationChart;
-    chart.mapNavButtons = [];
 };
 
 /**
@@ -157,12 +157,10 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    let chart = this.chart,
+    let mapNav = this,
+        chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         attr: ButtonThemeObject,
-        states: ButtonThemeStatesObject|undefined,
-        hoverStates: SVGAttributes|undefined,
-        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
             e: (Event|AnyRecord)
@@ -170,7 +168,7 @@ MapNavigation.prototype.update = function (
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
         },
-        mapNavButtons = chart.mapNavButtons;
+        navButtons = mapNav.navButtons;
 
     // Merge in new options in case of update, and register back to chart
     // options.
@@ -180,12 +178,16 @@ MapNavigation.prototype.update = function (
     }
 
     // Destroy buttons in case of dynamic update
-    while (mapNavButtons.length) {
-        (mapNavButtons.pop() as any).destroy();
+    while (navButtons.length) {
+        (navButtons.pop() as any).destroy();
     }
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-
+        if (!mapNav.navButtonsGroup) {
+            mapNav.navButtonsGroup = chart.renderer.g().attr({
+                zIndex: 4 // #4955, // #8392
+            }).add();
+        }
         objectEach(o.buttons, function (
             buttonOptions: MapNavigationButtonOptions,
             n: string
@@ -199,10 +201,6 @@ MapNavigation.prototype.update = function (
                     buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
-                states = attr.states;
-                hoverStates = states && states.hover;
-                selectStates = states && states.select;
-                delete attr.states;
             }
 
             const button = chart.renderer
@@ -212,8 +210,8 @@ MapNavigation.prototype.update = function (
                     0,
                     outerHandler,
                     attr,
-                    hoverStates,
-                    selectStates,
+                    void 0,
+                    void 0,
                     void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
@@ -228,13 +226,13 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add();
+                .add(mapNav.navButtonsGroup);
             button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
             addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button);
+            navButtons.push(button);
 
             extend(buttonOptions, {
                 width: button.width,
@@ -252,13 +250,63 @@ MapNavigation.prototype.update = function (
                             buttonOptions.alignTo
                         );
                     }
+
                     unbind();
                 });
             } else {
                 button.align(buttonOptions, false, buttonOptions.alignTo);
             }
-
         });
+
+        // Borrowed from overlapping-datalabels. Consider a shared module.
+        const isIntersectRect = (
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean => !(
+            box2.x >= box1.x + box1.width ||
+            box2.x + box2.width <= box1.x ||
+            box2.y >= box1.y + box1.height ||
+            box2.y + box2.height <= box1.y
+        );
+
+        // Check the mapNavigation buttons collision with exporting button
+        // and translate the mapNavigation button if they overlap.
+        const adjustMapNavBtn = function (): void {
+            const expBtnBBox =
+                    chart.exportingGroup && chart.exportingGroup.getBBox();
+
+            if (expBtnBBox) {
+                const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
+
+                // If buttons overlap
+                if (isIntersectRect(expBtnBBox, navBtnsBBox)) {
+                    // Adjust the mapNav buttons' position by translating them
+                    // above or below the exporting button
+                    const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
+                            expBtnBBox.y - 5,
+                        belowExpBtn = expBtnBBox.y + expBtnBBox.height -
+                            navBtnsBBox.y + 5,
+                        mapNavVerticalAlign =
+                            o.buttonOptions && o.buttonOptions.verticalAlign;
+
+                    // If bottom aligned and adjusting the mapNav button would
+                    // translate it out of the plotBox, translate it up
+                    // instead of down
+                    mapNav.navButtonsGroup.attr({
+                        translateY: mapNavVerticalAlign === 'bottom' ?
+                            aboveExpBtn :
+                            belowExpBtn
+                    });
+                }
+            }
+        };
+
+        if (!chart.hasLoaded) {
+            // Align it after the plotBox is known (#12776) and after the
+            // hamburger button's position is known so they don't overlap
+            // (#15782)
+            addEvent(chart, 'render', adjustMapNavBtn);
+        }
     }
 
     this.updateEvents(o);
@@ -387,6 +435,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *
      * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
+     * @deprecated
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]

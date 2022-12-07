@@ -977,8 +977,8 @@ QUnit.test(
             }
         });
         assert.strictEqual(
-            point.dataLabel.y,
-            -9999,
+            point.dataLabel.attr('visibility'),
+            'hidden',
             'Eastern Mediterranean is hidden'
         );
     }

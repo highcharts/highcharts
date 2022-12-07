@@ -34,6 +34,8 @@ const {
 import U from '../../Utilities.js';
 const {
     attr,
+    extend,
+    fireEvent,
     isString,
     objectEach,
     pick
@@ -123,6 +125,7 @@ class TextBuilder {
             !hasMarkup &&
             !this.ellipsis &&
             !this.width &&
+            !wrapper.textPath &&
             (
                 textStr.indexOf(' ') === -1 ||
                 (this.noWrap && !regexMatchBreaks.test(textStr))
@@ -148,7 +151,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(ast.nodes);
 
-            ast.addToDOM(wrapper.element);
+            ast.addToDOM(textNode);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
@@ -414,34 +417,29 @@ class TextBuilder {
     ): void {
 
         const modifyChild = (node: AST.Node, i: number): void => {
-            const { attributes = {}, children, tagName } = node,
+            const { attributes = {}, children, style = {}, tagName } = node,
                 styledMode = this.renderer.styledMode;
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-strong';
                 } else {
-                    attributes.style = (
-                        'font-weight:bold;' + (attributes.style || '')
-                    );
+                    style.fontWeight = 'bold';
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-emphasized';
                 } else {
-                    attributes.style = (
-                        'font-style:italic;' + (attributes.style || '')
-                    );
+                    style.fontStyle = 'italic';
                 }
             }
 
-            // Modify attributes
-            if (isString(attributes.style)) {
-                attributes.style = attributes.style.replace(
-                    /(;| |^)color([ :])/,
-                    '$1fill$2'
-                );
+            // Modify styling
+            if (style && style.color) {
+                style.fill = style.color;
             }
 
             // Handle breaks
@@ -471,7 +469,7 @@ class TextBuilder {
             if (tagName !== '#text' && tagName !== 'a') {
                 node.tagName = 'tspan';
             }
-            node.attributes = attributes;
+            extend(node, { attributes, style });
 
             // Recurse
             if (children) {
@@ -482,6 +480,8 @@ class TextBuilder {
         };
 
         nodes.forEach(modifyChild);
+
+        fireEvent(this.svgElement, 'afterModifyTree', { nodes });
     }
 
     /*
@@ -503,7 +503,7 @@ class TextBuilder {
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 
-        // Word wrap can not be truncated to shorter than one word, ellipsis
+        // Word wrap cannot be truncated to shorter than one word, ellipsis
         // text can be completely blank.
         let minIndex = words ? 1 : 0;
         let maxIndex = (text || words || '').length;

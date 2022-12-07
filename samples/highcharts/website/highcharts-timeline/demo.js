@@ -483,7 +483,7 @@ const options = {
     }
 };
 
-if (Highcharts.seriesTypes.flags) {
+if (Highcharts.Series.types.flags) {
     options.series.push(
         //0
         {

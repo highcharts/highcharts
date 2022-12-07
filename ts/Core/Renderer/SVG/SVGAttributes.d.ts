@@ -85,6 +85,7 @@ export interface SVGAttributes {
     refY?: number;
     rx?: number;
     ry?: number;
+    role?: string;
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
@@ -110,6 +111,7 @@ export interface SVGAttributes {
     tableValues?: string;
     text?: string;
     'text-align'?: 'center'|'left'|'right';
+    'text-anchor'?: string;
     title?: string;
     transform?: string;
     translateX?: number;

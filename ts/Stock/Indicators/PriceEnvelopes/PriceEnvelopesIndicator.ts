@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,12 +22,11 @@ import type {
 } from './PriceEnvelopesOptions';
 import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -31,17 +36,9 @@ const {
 
 /* *
  *
- *  Class Namespace
+ *  Class
  *
  * */
-namespace PriceEnvelopesIndicator {
-    export interface GappedExtensionObject {
-        options?: GappedExtensionOptions;
-    }
-    export interface GappedExtensionOptions {
-        gapSize?: number;
-    }
-}
 
 /**
  * The Price Envelopes series type.
@@ -53,6 +50,13 @@ namespace PriceEnvelopesIndicator {
  * @augments Highcharts.Series
  */
 class PriceEnvelopesIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
      * This series requires the `linkedTo` option to be set and should be loaded
@@ -122,9 +126,21 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }
     } as PriceEnvelopesOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<PriceEnvelopesPoint> = void 0 as any;
     public options: PriceEnvelopesOptions = void 0 as any;
     public points: Array<PriceEnvelopesPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -298,6 +314,12 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface PriceEnvelopesIndicator {
     nameComponents: Array<string>;
     nameBase: string;
@@ -316,6 +338,27 @@ extend(PriceEnvelopesIndicator.prototype, {
     pointValKey: 'middle'
 });
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace PriceEnvelopesIndicator {
+    export interface GappedExtensionObject {
+        options?: GappedExtensionOptions;
+    }
+    export interface GappedExtensionOptions {
+        gapSize?: number;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
@@ -331,6 +374,12 @@ SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
  * */
 
 export default PriceEnvelopesIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A price envelopes indicator. If the [type](#series.priceenvelopes.type)

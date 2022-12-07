@@ -1,5 +1,5 @@
 ---
- name: Kazakhstan - Highmaps
- description: Highmaps demo
+ name: Kazakhstan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
