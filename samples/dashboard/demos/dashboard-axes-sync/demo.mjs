@@ -92,6 +92,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             type: 'Highcharts',
             store,
             sync: {
+                selection: true,
                 tooltip: true
             },
             chartOptions: {
@@ -119,6 +120,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             type: 'Highcharts',
             store,
             sync: {
+                selection: true,
                 tooltip: true
             },
             chartOptions: {
@@ -143,6 +145,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             type: 'Highcharts',
             store,
             sync: {
+                selection: true,
                 tooltip: true
             },
             chartOptions: {
@@ -168,6 +171,7 @@ const dashboard = new Dashboard.Dashboard('container', {
             type: 'Highcharts',
             store,
             sync: {
+                selection: true,
                 tooltip: true
             },
             chartOptions: {
