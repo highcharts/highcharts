@@ -96,15 +96,15 @@
 
     /* Buttons */
     --highcharts-context-button-background: var(--highcharts-background-color);
-    --highcharts-highcharts-button-background: var(--highcharts-neutral-color-3);
-    --highcharts-highcharts-button-border: var(--highcharts-neutral-color-20);
-    --highcharts-highcharts-button-text: var(--highcharts-neutral-color-80);
-    --highcharts-highcharts-button-pressed-background: var(--highcharts-highlight-color-10);
-    --highcharts-highcharts-button-pressed-border: var(--highcharts-neutral-color-20);
-    --highcharts-highcharts-button-pressed-text: var(--highcharts-neutral-color-80);
-    --highcharts-highcharts-button-hover-background: var(--highcharts-neutral-color-10);
-    --highcharts-highcharts-button-hover-border: var(--highcharts-neutral-color-20);
-    --highcharts-highcharts-button-hover-text: var(--highcharts-neutral-color-80);
+    --highcharts-button-background: var(--highcharts-neutral-color-3);
+    --highcharts-button-border: var(--highcharts-neutral-color-20);
+    --highcharts-button-text: var(--highcharts-neutral-color-80);
+    --highcharts-button-pressed-background: var(--highcharts-highlight-color-10);
+    --highcharts-button-pressed-border: var(--highcharts-neutral-color-20);
+    --highcharts-button-pressed-text: var(--highcharts-neutral-color-80);
+    --highcharts-button-hover-background: var(--highcharts-neutral-color-10);
+    --highcharts-button-hover-border: var(--highcharts-neutral-color-20);
+    --highcharts-button-hover-text: var(--highcharts-neutral-color-80);
 
     /* Navigator */
     --highcharts-navigator-series-fill: var(--highcharts-highlight-color-80);
@@ -800,40 +800,40 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 }
 
 .highcharts-button {
-    fill: var(--highcharts-highcharts-button-background);
-    stroke: var(--highcharts-highcharts-button-border);
+    fill: var(--highcharts-button-background);
+    stroke: var(--highcharts-button-border);
     cursor: default;
     stroke-width: 1px;
     transition: fill 250ms;
 }
 
 .highcharts-button text {
-    fill: var(--highcharts-highcharts-button-text);
+    fill: var(--highcharts-button-text);
 }
 
 .highcharts-button-hover {
     transition: fill 0ms;
-    fill: var(--highcharts-highcharts-button-hover-background);
-    stroke: var(--highcharts-highcharts-button-hover-border);
+    fill: var(--highcharts-button-hover-background);
+    stroke: var(--highcharts-button-hover-border);
 }
 
 .highcharts-button-hover text {
-    fill: var(--highcharts-highcharts-button-hover-text);
+    fill: var(--highcharts-button-hover-text);
 }
 
 .highcharts-button-pressed {
     font-weight: bold;
-    fill: var(--highcharts-highcharts-button-pressed-background);
-    stroke: var(--highcharts-highcharts-button-pressed-border);
+    fill: var(--highcharts-button-pressed-background);
+    stroke: var(--highcharts-button-pressed-border);
 }
 
 .highcharts-button-pressed text {
-    fill: var(--highcharts-highcharts-button-pressed-text);
+    fill: var(--highcharts-button-pressed-text);
     font-weight: bold;
 }
 
 .highcharts-button-disabled text {
-    fill: var(--highcharts-highcharts-button-text);
+    fill: var(--highcharts-button-text);
 }
 
 .highcharts-range-selector-buttons .highcharts-button {
