@@ -20,7 +20,7 @@
     --highcharts-color-9: #91e8e1;
 
     /* Chart background, point stroke for markers and columns etc */
-    --highcharts-background-color: #fff;
+    --highcharts-background-color: #ffffff;
 
     /*
     Neutral colors, grayscale by default. The default colors are defined by
@@ -29,19 +29,19 @@
     */
 
     /* Strong text. */
-    --highcharts-neutral-color-100: #000;
+    --highcharts-neutral-color-100: #000000;
 
     /* Main text and some strokes. */
-    --highcharts-neutral-color-80: #333;
+    --highcharts-neutral-color-80: #333333;
 
     /* Axis labels, axis title, connector fallback. */
-    --highcharts-neutral-color-60: #666;
+    --highcharts-neutral-color-60: #666666;
 
     /* Credits text, export menu stroke. */
-    --highcharts-neutral-color-40: #999;
+    --highcharts-neutral-color-40: #999999;
 
     /* Disabled texts, button strokes, crosshair etc. */
-    --highcharts-neutral-color-20: #ccc;
+    --highcharts-neutral-color-20: #cccccc;
 
     /* Grid lines etc. */
     --highcharts-neutral-color-10: #e6e6e6;
@@ -57,13 +57,13 @@
     */
 
     /* Drilldown clickable labels, color axis max color. */
-    --highcharts-highlight-color-100: #039;
+    --highcharts-highlight-color-100: #003399;
 
     /* Selection marker, menu hover, button hover, chart border, navigator
     series. */
     --highcharts-highlight-color-80: #335cad;
 
-    /* Navigator mask fill */
+    /* Navigator mask fill. */
     --highcharts-highlight-color-60: #6685c2;
 
     /* Ticks and axis line. */
@@ -996,7 +996,7 @@ input.highcharts-range-selector {
     border: 1px solid var(--highcharts-neutral-color-40);
     background: var(--highcharts-background-color);
     padding: 5px 0;
-    box-shadow: 3px 3px 10px #888;
+    box-shadow: 3px 3px 10px #888888;
 }
 
 .highcharts-menu-item {
