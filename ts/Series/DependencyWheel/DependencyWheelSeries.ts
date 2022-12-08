@@ -24,9 +24,10 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import CircularDataLabels from '../CircularDataLabels.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
-import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -66,38 +67,10 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
-    /**
-     * A dependency wheel chart is a type of flow diagram, where all nodes are
-     * laid out in a circle, and the flow between the are drawn as link bands.
-     *
-     * @sample highcharts/demo/dependency-wheel/
-     *         Dependency wheel
-     *
-     * @extends      plotOptions.sankey
-     * @exclude      dataSorting
-     * @since        7.1.0
-     * @product      highcharts
-     * @requires     modules/dependency-wheel
-     * @optionparent plotOptions.dependencywheel
-     */
-    public static defaultOptions: DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
-        /**
-         * The center of the wheel relative to the plot area. Can be
-         * percentages or pixel values. The default behaviour is to
-         * center the wheel inside the plot area.
-         *
-         * @type    {Array<number|string|null>}
-         * @default [null, null]
-         * @product highcharts
-         */
-        center: [null, null],
-        curveFactor: 0.6,
-
-        /**
-         * The start angle of the dependency wheel, in degrees where 0 is up.
-         */
-        startAngle: 0
-    } as DependencyWheelSeriesOptions);
+    public static defaultOptions: DependencyWheelSeriesOptions = merge(
+        SankeySeries.defaultOptions,
+        DependencyWheelSeriesDefaults
+    );
 
     /* *
      *

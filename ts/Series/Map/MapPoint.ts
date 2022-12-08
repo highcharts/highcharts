@@ -116,24 +116,24 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         x?: number
     ): MapPoint {
 
-        let series = this.series,
+        const series = this.series,
             point: MapPoint = (
                 super.applyOptions.call(this, options, x) as any
             ),
-            joinBy = series.joinBy,
-            mapPoint;
+            joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
-            const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(
-                point,
-                joinKey
-            ) as string;
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
+            const joinKey = joinBy[1],
+                mapKey = super.getNestedProperty.call(
+                    point,
+                    joinKey
+                ) as string,
+                mapPoint = typeof mapKey !== 'undefined' &&
+                    series.mapMap[mapKey];
+
             if (mapPoint) {
                 extend(point, mapPoint); // copy over properties
-            } else {
+            } else if (series.pointArrayMap.indexOf('value') !== -1) {
                 point.value = point.value || null;
             }
         }
@@ -185,7 +185,12 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      */
     public onMouseOver(e?: PointerEvent): void {
         U.clearTimeout(this.colorInterval as any);
-        if (!this.isNull || this.series.options.nullInteraction) {
+        if (
+            // Valid...
+            (!this.isNull && this.visible) ||
+            // ... or interact anyway
+            this.series.options.nullInteraction
+        ) {
             super.onMouseOver.call(this, e);
         } else {
             // #3401 Tooltip doesn't hide when hovering over null points
@@ -193,22 +198,74 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
     }
 
+    public setVisible(vis?: boolean): void {
+        const method = vis ? 'show' : 'hide';
+
+        this.visible = this.options.visible = !!vis;
+
+        // Show and hide associated elements
+        if (this.dataLabel) {
+            this.dataLabel[method]();
+        }
+
+        // For invisible map points, render them as null points rather than
+        // fully removing them. Makes more sense for color axes with data
+        // classes.
+        if (this.graphic) {
+            this.graphic.attr(this.series.pointAttribs(this));
+        }
+    }
+
     /**
      * Highmaps only. Zoom in on the point using the global animation.
      *
      * @sample maps/members/point-zoomto/
-     *         Zoom to points from butons
+     *         Zoom to points from buttons
      *
      * @requires modules/map
      *
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point = this as (MapPoint&MapPoint.CacheObject);
-        const chart = point.series.chart;
+        const point = this as (MapPoint&MapPoint.CacheObject),
+            chart = point.series.chart,
+            mapView = chart.mapView;
 
-        if (chart.mapView && point.bounds) {
-            chart.mapView.fitToBounds(point.bounds, void 0, false);
+        let bounds = point.bounds;
+
+        if (mapView && bounds) {
+            const inset = isNumber(point.insetIndex) &&
+                mapView.insets[point.insetIndex];
+            if (inset) {
+                // If in an inset, translate the bounds to pixels ...
+                const px1 = inset.projectedUnitsToPixels({
+                        x: bounds.x1,
+                        y: bounds.y1
+                    }),
+                    px2 = inset.projectedUnitsToPixels({
+                        x: bounds.x2,
+                        y: bounds.y2
+                    }),
+                    // ... then back to projected units in the main mapView
+                    proj1 = mapView.pixelsToProjectedUnits({
+                        x: px1.x,
+                        y: px1.y
+                    }),
+                    proj2 = mapView.pixelsToProjectedUnits({
+                        x: px2.x,
+                        y: px2.y
+                    });
+
+                bounds = {
+                    x1: proj1.x,
+                    y1: proj1.y,
+                    x2: proj2.x,
+                    y2: proj2.y
+                };
+
+            }
+
+            mapView.fitToBounds(bounds, void 0, false);
 
             point.series.isDirty = true;
             chart.redraw();

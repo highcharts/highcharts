@@ -82,10 +82,10 @@ describe('Stock Tools annotation popup, #15725', () => {
         cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
-        cy.get('.highcharts-tab-item').contains('edit').click();
+        cy.get('.highcharts-tab-item').contains('Edit').click();
         cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
         cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
-        cy.get('.highcharts-popup-rhs-col button').contains('save').click();
+        cy.get('.highcharts-popup-rhs-col button').contains('Save').click();
     });
 
     it('#16159: For some indicators params, there should be a dropdown with options in popup.', () => {
@@ -208,5 +208,19 @@ describe('Indicator popup searchbox, #16019.', () => {
 
         cy.get('.highcharts-indicator-list li:first')
             .should('contain.text', 'Acceleration Bands');
+    });
+
+    it('Stock-tools should work after update, #17741.', () => {
+        cy.get('.highcharts-toggle-toolbar')
+            .click();
+        cy.get('.highcharts-toggle-toolbar')
+            .click();
+        cy.openIndicators();
+        cy.get('.highcharts-popup').should('be.visible');
+    });
+
+    it('Indicators button should be inactive when popup is closed #16487', () => {
+        cy.get('.highcharts-popup-close').click();
+        cy.get('.highcharts-indicators').should('not.have.class', 'highcharts-active');
     });
 });

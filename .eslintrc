@@ -36,7 +36,8 @@
         "jsdoc/newline-after-description": 0,
         "jsdoc/require-jsdoc": 0,
         "jsdoc/require-param": 1,
-        "jsdoc/require-returns": 0
+        "jsdoc/require-returns": 0,
+        "node/no-unpublished-require": 0
     },
     "settings": {
         "jsdoc": {

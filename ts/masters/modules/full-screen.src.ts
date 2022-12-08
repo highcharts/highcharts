@@ -11,4 +11,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/FullScreen.js';
+import Highcharts from '../../Core/Globals.js';
+import Fullscreen from '../../Extensions/Exporting/Fullscreen.js';
+const G: AnyRecord = Highcharts;
+G.Fullscreen = Fullscreen;
+Fullscreen.compose(G.Chart);

@@ -6,7 +6,9 @@
 
 const Gulp = require('gulp');
 const Path = require('path');
-const { getS3Object } = require('./lib/uploadS3');
+const { readFileSync } = require('node:fs');
+
+const { getGitIgnoreMeProperties } = require('./lib/uploadS3.js');
 
 /* *
  *
@@ -21,6 +23,16 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
+
+function getDemoBuildPath() {
+    let value;
+    try {
+        value = getGitIgnoreMeProperties()['demos.path'];
+    } catch {
+        value = 'tmp/demo';
+    }
+    return value;
+}
 
 /**
  * Creates an index page from the supplied options
@@ -82,6 +94,8 @@ function indexTemplate(options) {
  * */
 
 /**
+ * Assembles samples
+ *
  * @param {string} template
  *        Template string
  *
@@ -102,6 +116,8 @@ function assembleSample(template, variables) {
 }
 
 /**
+ * Creates examples
+ *
  * @param {string} title
  *        Example title
  *
@@ -122,7 +138,6 @@ async function createExamples(title, sourcePath, targetPath, template) {
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
-    const MkDirP = require('mkdirp');
 
     const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
 
@@ -139,8 +154,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-                        FS.readFileSync(path).toString() ||
-                        ''
+          FS.readFileSync(path).toString() ||
+          ''
                 );
                 return obj;
             },
@@ -153,7 +168,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
             targetPath, directoryPath.substr(sourcePath.length)
         );
 
-        MkDirP.sync(path);
+        FS.mkdirSync(path, { recursive: true });
 
         FS.writeFileSync(
             Path.join(path, 'index.html'),
@@ -161,22 +176,20 @@ async function createExamples(title, sourcePath, targetPath, template) {
         );
     });
 
-    /**
-     *
-     * @param {string} path
-     * The subpath for the product. Will substitute 'highcharts' with ''
-     * @return {Promise<string>}
-     * The S3 promise
-     */
-    function downloadSidebar(path) {
-        return getS3Object(
-            'assets.highcharts.com',
-            `demos/demo${path === 'highcharts' ? '' : `/${path}`}/sidebar`
+    function getLocalSidebar(path) {
+        const file = readFileSync(
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`),
+            'utf-8'
         );
+        return file;
     }
 
     LogLib.success('Created', targetPath);
-    const indexContent = (await downloadSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, '')))
+
+    const localsidebar = getLocalSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, ''));
+
+    LogLib.success('Created', targetPath);
+    const indexContent = localsidebar
         .replace(/style=\"display:none;\"/g, '') // remove hidden style
         .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
 
@@ -226,6 +239,8 @@ function convertURLToLocal(str) {
  * */
 
 /**
+ * Creates examples for distribution.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */

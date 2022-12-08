@@ -40,7 +40,9 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { correctFloat, extend, wrap } = U;
+import SunburstNode from './SunburstNode';
+const { correctFloat, extend } = U;
+
 
 /* *
  *
@@ -62,16 +64,17 @@ class SunburstPoint extends TreemapPoint {
 
     public outerArcLength?: number;
 
-    public node: SunburstSeries.NodeObject = void 0 as any;
+    public node: SunburstNode = void 0 as any;
 
     public options: SunburstPointOptions = void 0 as any;
 
     public series: SunburstSeries = void 0 as any;
 
-    public shapeExisting: SunburstSeries.NodeValuesObject = void 0 as any;
+    public shapeExisting: SunburstNode.NodeValuesObject = void 0 as any;
 
     public sliced?: boolean;
 
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = void 0 as any;
     /* *
      *
      *  Functions
@@ -119,6 +122,7 @@ class SunburstPoint extends TreemapPoint {
                 longArc: moreThanHalf ? 1 : 0
             })
             .attr({
+
                 start: (upperHalf ? start : end),
                 end: (upperHalf ? end : start),
                 clockwise: +upperHalf,

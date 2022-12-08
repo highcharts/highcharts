@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     KlingerOptions,
     KlingerParamsOptions
@@ -19,11 +25,9 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -32,6 +36,12 @@ const {
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Klinger oscillator series type.
@@ -406,6 +416,12 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  * */
 
 export default KlingerIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Klinger oscillator. If the [type](#series.klinger.type)

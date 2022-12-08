@@ -130,6 +130,11 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
     },
 
     /**
+     * Whether to use HTML to render the series label.
+     */
+    useHTML: false,
+
+    /**
      * An array of boxes to avoid when laying out the labels. Each
      * item has a `left`, `right`, `top` and `bottom` property.
      *

@@ -314,6 +314,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
                     'Wierd Apricots'
                 ],
                 labels: {
+                    autoRotation: false,
                     step: 1
                 }
             },
@@ -365,6 +366,24 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         box1 = xAxis.ticks[xAxis.tickPositions[1]].label.getBBox(true);
 
     assert.equal(box0.x + box0.width <= box1.x, true, 'No overlap');
+
+
+    chart.update({
+        chart: {
+            width: 250
+        },
+        xAxis: {
+            labels: {
+                autoRotation: [-45]
+            }
+        }
+    });
+
+    assert.deepEqual(
+        xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
+        [-45, -45, -45, -45, -45, -45, -45, -45, -45],
+        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+    );
 });
 
 QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {

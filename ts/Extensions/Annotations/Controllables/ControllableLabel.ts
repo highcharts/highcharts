@@ -14,6 +14,8 @@
 
 import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
+import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPointType } from '../AnnotationSeries';
 import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type { ControllableLabelOptions } from './ControllableOptions';
@@ -247,7 +249,7 @@ class ControllableLabel extends Controllable {
      * it works with absolute instead of relative position.
      */
     public static justifiedOptions(
-        chart: Highcharts.AnnotationChart,
+        chart: AnnotationChart,
         label: SVGElement,
         alignOptions: ControllableAlignObject,
         alignAttr: SVGAttributes
@@ -477,7 +479,7 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
-        _point: Highcharts.AnnotationPointType
+        _point: AnnotationPointType
     ): ControllableAnchorObject {
         const anchor = super.anchor.apply(this, arguments),
             x = this.options.x || 0,

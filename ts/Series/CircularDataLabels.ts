@@ -18,10 +18,11 @@
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type DependencyWheelSeries from './DependencyWheel/DependencyWheelSeries.js';
+import type DependencyWheelSeries from './DependencyWheel/DependencyWheelSeries';
 import type SunburstDataLabelOptions from '../Series/Sunburst/SunburstDataLabelOptions';
-import type SunburstSeries from './Sunburst/SunburstSeries.js';
+import type SunburstSeries from './Sunburst/SunburstSeries';
 import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
+import type SunburstNode from './Sunburst/SunburstNode';
 
 import U from '../Core/Utilities.js';
 import Series from '../Core/Series/Series.js';
@@ -85,7 +86,7 @@ namespace CircularDataLabels {
     ): CicrularDlOptions {
         // Set options to new object to avoid problems with scope
         let point = params.point,
-            shape: Partial<SunburstSeries.NodeValuesObject> = params.shapeArgs,
+            shape: Partial<SunburstNode.NodeValuesObject> = params.shapeArgs,
             optionsPoint = (
                 isObject(params.optionsPoint) ?
                     params.optionsPoint.dataLabels :

@@ -10,7 +10,7 @@
         Highcharts.mapChart('container', {
 
             chart: {
-                marginLeft: 70
+                plotBorderWidth: 1
             },
 
             title: {

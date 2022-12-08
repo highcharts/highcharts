@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AroonOptions,
     AroonParamsOptions
@@ -19,10 +25,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -30,7 +34,12 @@ const {
     pick
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils
 
 // Index of element with extreme value from array (min or max)
@@ -55,8 +64,6 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     return valueIndex;
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
  *  Class
@@ -72,8 +79,14 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-
 class AroonIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -139,6 +152,7 @@ class AroonIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<AroonPoint> = void 0 as any;
 
     public options: AroonOptions = void 0 as any;
@@ -150,6 +164,7 @@ class AroonIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonParamsOptions
@@ -206,10 +221,10 @@ class AroonIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface AroonIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
@@ -232,6 +247,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
@@ -247,6 +263,12 @@ SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
  * */
 
 export default AroonIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Aroon indicator. If the [type](#series.aroon.type) option is not

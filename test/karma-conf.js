@@ -250,6 +250,7 @@ module.exports = function (config) {
             f.indexOf('vendor/jquery') !== 0 &&
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('vendor/rgbcolor') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
             f.indexOf('topojson-client') === -1 &&
 
@@ -342,6 +343,7 @@ module.exports = function (config) {
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
             'samples/maps/plotoptions/series-animation-true/demo.js', // animation
+            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',

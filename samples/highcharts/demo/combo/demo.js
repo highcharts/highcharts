@@ -1,28 +1,19 @@
 // Data retrieved from https://www.ssb.no/energi-og-industri/olje-og-gass/statistikk/sal-av-petroleumsprodukt/artikler/auka-sal-av-petroleumsprodukt-til-vegtrafikk
 Highcharts.chart('container', {
     title: {
-        text: 'Sales of petroleum products March, Norway'
+        text: 'Sales of petroleum products March, Norway',
+        align: 'left'
     },
     xAxis: {
         categories: ['Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil']
     },
     yAxis: {
         title: {
-            text: 'Million liter'
+            text: 'Million liters'
         }
     },
-    labels: {
-        items: [{
-            html: 'Total liter',
-            style: {
-                left: '50px',
-                top: '18px',
-                color: ( // theme
-                    Highcharts.defaultOptions.title.style &&
-                    Highcharts.defaultOptions.title.style.color
-                ) || 'black'
-            }
-        }]
+    tooltip: {
+        valueSuffix: ' million liters'
     },
     series: [{
         type: 'column',
@@ -47,11 +38,19 @@ Highcharts.chart('container', {
         }
     }, {
         type: 'pie',
-        name: 'Liter',
+        name: 'Total',
         data: [{
             name: '2020',
             y: 619,
-            color: Highcharts.getOptions().colors[0] // 2020 color
+            color: Highcharts.getOptions().colors[0], // 2020 color
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                format: '{point.total} M',
+                style: {
+                    fontSize: '15px'
+                }
+            }
         }, {
             name: '2021',
             y: 586,
@@ -61,8 +60,9 @@ Highcharts.chart('container', {
             y: 647,
             color: Highcharts.getOptions().colors[2] // 2022 color
         }],
-        center: [100, 80],
+        center: [75, 65],
         size: 100,
+        innerSize: '70%',
         showInLegend: false,
         dataLabels: {
             enabled: false
