@@ -79,7 +79,7 @@ Highcharts.theme = {
             }
         }
     }
-}
+};
 
 Highcharts.setOptions(Highcharts.theme);
 
