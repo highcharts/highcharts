@@ -496,27 +496,18 @@ class MapSeries extends ScatterSeries {
         const chart = this.chart,
             group = this.group;
 
-        if (chart.renderer.isSVG) {
+        chart.disableTransform = true;
 
+        if (chart.renderer.isSVG) {
             // Initialize the animation
             if (init) {
-                // Scale down the group and place it in the center. This is a
-                // regression from <= v9.2, when it animated from the old point.
                 group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.1,
-                    scaleY: 0.1,
                     opacity: 0.01
                 });
 
             // Run the animation
             } else {
                 group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1,
                     opacity: 1
                 }, (this.chart.options.drilldown as any).animation);
 
@@ -536,15 +527,7 @@ class MapSeries extends ScatterSeries {
     public animateDrillupFrom(): void {
         const chart = this.chart;
 
-        if (chart.renderer.isSVG) {
-            this.group.animate({
-                translateX: chart.plotLeft + chart.plotWidth / 2,
-                translateY: chart.plotTop + chart.plotHeight / 2,
-                scaleX: 0.1,
-                scaleY: 0.1,
-                opacity: 0.01
-            });
-        }
+        chart.disableTransform = true;
     }
 
     /**
@@ -553,7 +536,28 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrillupTo(init?: boolean): void {
-        ColumnSeries.prototype.animateDrillupTo.call(this, init);
+        const chart = this.chart,
+            group = this.group;
+
+        if (chart.renderer.isSVG) {
+
+            // Initialize the animation
+            if (init) {
+                group.attr({
+                    opacity: 0.01
+                });
+
+            // Run the animation
+            } else {
+                group.animate({
+                    opacity: 1
+                }, (this.chart.options.drilldown as any).animation);
+
+                if (chart.drilldown) {
+                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                }
+            }
+        }
     }
 
     public clearBounds(): void {
@@ -755,7 +759,11 @@ class MapSeries extends ScatterSeries {
             */
             const scale = svgTransform.scaleX;
             const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
-            if (renderer.globalAnimation && chart.hasRendered) {
+            if (
+                renderer.globalAnimation &&
+                chart.hasRendered &&
+                !chart.disableTransform
+            ) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')
                 );
@@ -791,9 +799,37 @@ class MapSeries extends ScatterSeries {
                     );
                 };
 
+                let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
+
+                if (chart.userOptions.chart) {
+                    animOptions = merge({}, chart.userOptions.chart.animation);
+                }
+
+                if (typeof animOptions !== 'boolean') {
+                    const userStep = animOptions.step;
+
+                    animOptions.step =
+                        function (obj?: { applyDrilldown?: boolean }): void {
+                            if (userStep) {
+                                userStep.apply(this, arguments);
+                            }
+                            step.apply(this, arguments);
+                        };
+                }
+
                 transformGroup
                     .attr({ animator: 0 })
-                    .animate({ animator: 1 }, { step });
+                    .animate({ animator: 1 }, animOptions, function (): void {
+                        if (
+                            typeof renderer.globalAnimation !== 'boolean' &&
+                            renderer.globalAnimation.complete
+                        ) {
+                            // fire complete only from this place
+                            renderer.globalAnimation.complete({
+                                applyDrilldown: true
+                            });
+                        }
+                    });
 
             // When dragging or first rendering, animation is off
             } else {

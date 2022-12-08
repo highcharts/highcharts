@@ -1753,7 +1753,13 @@ class Pointer {
                 tooltip ?
                     tooltip.shared :
                     false
-            );
+            ),
+            isDrilling = this.chart.series.some((series): boolean =>
+                !!series.isDrilling);
+        // To be consiried to work with hover on color axis
+        if (isDrilling) {
+            return void 0;
+        }
 
         let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
