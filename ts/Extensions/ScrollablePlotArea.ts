@@ -263,6 +263,7 @@ Chart.prototype.moveFixedElements = function (): void {
     let container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
+            '.highcharts-breadcrumbs-group',
             '.highcharts-contextbutton',
             '.highcharts-credits',
             '.highcharts-legend',

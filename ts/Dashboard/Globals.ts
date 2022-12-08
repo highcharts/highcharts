@@ -11,6 +11,8 @@
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
+ *  - Pawel Lysy
+ *  - Karol Kolodziej
  *
  * */
 
@@ -23,6 +25,7 @@
  * */
 
 import type GUIElement from './Layout/GUIElement';
+import type Dashboard from './Dashboard';
 
 /* *
  *
@@ -68,6 +71,8 @@ namespace Globals {
         medium: 'medium',
         large: 'large'
     };
+
+    export const dashboards: Array<Dashboard|undefined> = [];
 
     export const win = window;
 

@@ -116,11 +116,10 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.scaleElements = this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
-            this.options.syncEvents,
-            this.options.syncHandlers
+            this.syncHandlers
         );
 
-        this.on('tableChanged', (e): void => {
+        this.on('tableChanged', (e: Component.EventTypes): void => {
             if ('detail' in e && e.detail && e.detail.sender !== this.id) {
                 this.redraw();
             }

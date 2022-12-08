@@ -10,11 +10,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Most common desktop screen readers'
+        text: 'Most common desktop screen readers',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: WebAIM. Click on points to visit official screen reader website'
+        text: 'Source: WebAIM. Click on points to visit official screen reader website',
+        align: 'left'
     },
 
     yAxis: {

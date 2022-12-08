@@ -95,8 +95,7 @@ class KPIComponent extends Component {
         this.type = 'KPI';
         this.sync = new Component.Sync(
             this,
-            this.options.syncEvents,
-            this.options.syncHandlers
+            this.syncHandlers
         );
 
         this.valueWrap = createElement('div', {
