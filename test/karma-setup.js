@@ -194,6 +194,9 @@ if (window.Promise) {
                     ok: true,
                     json: function () {
                         return localData;
+                    },
+                    text: function () {
+                        return localData;
                     }
                 });
             } else {

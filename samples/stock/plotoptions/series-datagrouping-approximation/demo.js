@@ -35,15 +35,15 @@ Highcharts.stockChart('container', {
             approximation: function () {
                 var start = this.dataGroupInfo.start;
 
-                console.log(
-                    'dataGroupInfo:',
-                    this.dataGroupInfo,
-                    'Raw data:',
-                    this.options.data.slice(
-                        start,
-                        start + this.dataGroupInfo.length
-                    )
-                );
+                // console.log(
+                //     'dataGroupInfo:',
+                //     this.dataGroupInfo,
+                //     'Raw data:',
+                //     this.options.data.slice(
+                //         start,
+                //         start + this.dataGroupInfo.length
+                //     )
+                // );
 
                 // Individual point options can be applied to the grouped points
                 if (this.dataGroupInfo.length < 5) {

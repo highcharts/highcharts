@@ -8,6 +8,7 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
+    "https://raw.githubusercontent.com/u-raza/highcharts_broken_area/master/_data/sorted_data.csv": "ProductType,NumSold,Year,AvgDaysToShip,%ReturnedOnAverage\nBluetoothHeadset,500,2013,5,15\nBluetoothHeadset,2400,2014,5,10\nBluetoothHeadset,4000,2015,5,2\nBluetoothHeadset,4500,2016,5,2\nBodyCamera,50,2013,1,25\nBodyCamera,150,2014,1,20\nBodyCamera,300,2015,1,15\nBodyCamera,400,2016,1,15\nChestStrap,80,2013,7,15\nChestStrap,80,2014,7,10\nChestStrap,50,2015,7,10\nChestStrap,50,2016,7,10\nHeadMountedDisplay,50,2013,10,30\nHeadMountedDisplay,50,2014,10,25\nHeadMountedDisplay,50,2015,10,20\nHeadMountedDisplay,100,2016,10,10\nOther,100,2013,5,35\nOther,950,2014,5,35\nOther,900,2015,5,15\nOther,1000,2016,5,5\nSmartGlasses,50,2013,15,10\nSmartGlasses,50,2014,15,10\nSmartGlasses,50,2015,15,5\nSmartGlasses,50,2016,15,5\nSmartwatch,1000,2013,20,35\nSmartWatch,2000,2014,20,20\nSmartWatch,6500,2015,20,10\nSmartWatch,7200,2016,20,10\nSportsWatch,100,2013,10,30\nSportsWatch,400,2014,10,20\nSportsWatch,1000,2015,10,15\nSportsWatch,1100,2016,10,10\nWristband,1000,2013,1,20\nWristband,3000,2014,1,10\nWristband,3200,2015,1,5\nWristband,3300,2016,1,5",
     "https://sheets.googleapis.com/v4/spreadsheets/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "Sheet1!A1:Q245",
         "majorDimension": "COLUMNS",
