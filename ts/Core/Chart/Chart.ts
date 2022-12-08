@@ -1744,12 +1744,11 @@ class Chart {
     }
 
     /**
-     * Reflows the chart to its container. By default, the chart reflows
-     * automatically to its container following a `window.resize` event, as per
-     * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
-     * option. However, there are no reliable events for div resize, so if the
-     * container is resized without a window resize event, this must be called
-     * explicitly.
+     * Reflows the chart to its container. By default, the Resize Observer is
+     * attached to the chart's div which allows to reflows the he chart
+     * automatically to its container, as per the
+     * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
+     * option.
      *
      * @sample highcharts/members/chart-reflow/
      *         Resize div and reflow
