@@ -157,7 +157,7 @@ namespace CircularDataLabels {
             if (
                 rotationMode !== 'auto' &&
                 rotationMode !== 'circular' &&
-                !options.textPath
+                !(options.textPath && options.textPath.enabled)
             ) {
                 rotationRad = (
                     (shape.end as any) -
