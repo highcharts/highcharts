@@ -4,20 +4,18 @@ const dataPool = new Dashboard.DataOnDemand();
 
 let dataScope = 'TX';
 
-async function buildMap() {
-    const citiesTable = await dataPool.getSourceTable('cities');
-    const climateTable = await dataPool.getSourceTable(1262649600000);
+function buildBackground(table, width, height) {
 
     const canvas = document.createElement('canvas');
-    const center = [360, 180];
+    const center = [width / 2, width / 4];
     const colors = [Highcharts.Color.parse('#39F'), Highcharts.Color.parse('#F93')]
     const extremes = [225, 325];
 
-    canvas.width = center[0] * 2;
-    canvas.height = center[1] * 2;
+    canvas.width = width;
+    canvas.height = width / 2;
 
     const context = canvas.getContext('2d');
-    for (const row of climateTable.getRows()) {
+    for (const row of table.getRows()) {
         context.fillStyle = colors[0].tweenTo(colors[1], (
             (row[row.length-1] - extremes[0]) /
             (extremes[1] - extremes[0])
@@ -30,6 +28,14 @@ async function buildMap() {
         );
     }
 
+    return canvas.toDataURL("image/png");
+}
+
+async function buildMap() {
+    const citiesTable = await dataPool.getSourceTable('cities');
+    const climateTable = await dataPool.getSourceTable(1262649600000);
+
+/*
     const img = document.createElement('img');
     img.height = 480;
     img.width = 960;
@@ -37,8 +43,8 @@ async function buildMap() {
 
     document.getElementById('container').innerHTML = '';
     document.getElementById('container').appendChild(img);
+*/
 
-/*
     const chart = Highcharts.mapChart(
         'container',
         {
@@ -55,14 +61,14 @@ async function buildMap() {
                 margin: 0,
             },
             mapView: {
-                maxZoom: 1.4,
+                maxZoom: 1,
                 padding: 0,
                 projection: {
-                    name: 'Miller',
+                    name: 'EqualEarth',
                 },
-                zoom: 1.4,
+                zoom: 1,
             },
-            series: [{
+            series: [/*{
                 type: 'mapbubble',
                 name: 'Temperature',
                 data: climateTable.modified.getRows(
@@ -88,13 +94,13 @@ async function buildMap() {
                         );
                     },
                 }
-            }, {
+            }, */{
                 type: 'mappoint',
                 name: 'Cities',
                 data: citiesTable.modified.getRows(
                     void 0, void 0,
                     ['lat2', 'lon2', 'city'],
-                ),
+                ).map(point => [-1 * point[0], point[1], point[2]]),
                 keys: ['lat', 'lon', 'name'],
                 color: '#000',
                 events: {
@@ -133,10 +139,17 @@ async function buildMap() {
             yAxis: {
                 reversed: true,
             },
+        },
+        function (chart) {
+            chart.update({
+                chart: {
+                    plotBackgroundImage: buildBackground(climateTable, chart.plotWidth, chart.plotHeight),
+                },
+            });
         }
     );
     console.log(chart);
-*/
+
 }
 
 async function main() {
