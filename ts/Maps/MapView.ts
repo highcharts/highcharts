@@ -925,8 +925,8 @@ class MapView {
 
                     }
 
-
-                } else {
+                // #17925 Skip NaN values
+                } else if (isNumber(chartX) && isNumber(chartY)) {
 
                     const scale = this.getScale();
 
