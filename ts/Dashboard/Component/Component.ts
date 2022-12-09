@@ -189,7 +189,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
-    ): typeof this.syncHandlers {
+    ): Component['syncHandlers'] {
         return Object.keys(this.options.sync)
             .reduce(
                 (

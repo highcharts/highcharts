@@ -4,7 +4,7 @@ const dataPool = new Dashboard.DataOnDemand();
 
 let citySeries;
 let dataScope = 'TX';
-let worldMap;
+let worldTime = new Date(2010, 12, 25); 
 
 async function buildDashboard() {
     const topology = await Promise
@@ -100,7 +100,7 @@ async function buildDashboard() {
                 series: [{
                     type: 'map',
                     name: 'World Map',
-                }, {
+                }, /*{
                     type: 'mapbubble',
                     name: 'Temperature',
                     data: climateTable.modified.getRows(
@@ -126,14 +126,12 @@ async function buildDashboard() {
                             );
                         },
                     }
-                }, {
+                },*/ {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: citiesTable.modified.getRows(
-                            void 0, void 0,
-                            ['lat2', 'lon2', 'city'],
-                        ),
-                    keys: ['lat', 'lon', 'name'],
+                    data: citiesTable.modified
+                        .getRows(void 0, void 0, ['lat2', 'lon2', 'city']),
+                    keys: ['lat', 'lon', 'name', 'z'],
                     color: '#000',
                     events: {
                         click: function (e) {
@@ -189,7 +187,6 @@ async function buildDashboard() {
                 mount: function () {
                     // call action
                     console.log('map mount event', this);
-                    worldMap = this.chart.series[1];
                 },
                 unmount: function () {
                     console.log('map unmount event', this);
