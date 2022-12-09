@@ -49,6 +49,7 @@ const {
 } = H;
 import defaultSonificationOptions from './Options.js';
 import SonificationTimeline from './SonificationTimeline.js';
+import SonificationInstrument from './SonificationInstrument.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
@@ -208,19 +209,23 @@ class Sonification {
     }
 
 
+    // Play points/events adjacent to current timeline cursor location
     playAdjacent(next: boolean, onEnd?: Function): void {
         if (!this.ready(this.playAdjacent.bind(this, next, onEnd))) {
             return;
         }
         if (this.timeline) {
             const opts = this.chart.options.sonification,
-                cx = this.audioContext as AudioContext,
                 onHit = opts && opts.events && opts.events.onBoundaryHit;
             if (!this.boundaryInstrument && !onHit) {
                 this.boundaryInstrument = new SynthPatch(
-                    cx, merge(InstrumentPresets.step, { masterVolume: 1.3 }));
+                    this.audioContext as AudioContext,
+                    merge(InstrumentPresets.step, { masterVolume: 1.3 })
+                );
                 this.boundaryInstrument.startSilently();
-                this.boundaryInstrument.connect(cx.destination);
+                this.boundaryInstrument.connect(
+                    this.audioDestination as AudioDestinationNode
+                );
             }
             this.timeline.playAdjacent(next, onEnd, onHit || ((): void => {
                 if (this.boundaryInstrument) {
@@ -228,6 +233,36 @@ class Sonification {
                 }
             }));
         }
+    }
+
+
+    // Play a note
+    playNote(
+        instrument: string|SynthPatch.SynthPatchOptions,
+        options: SonificationInstrument.ScheduledEventOptions,
+        delayMs = 0
+    ): void {
+        if (!this.ready(this.playNote.bind(this, instrument, options))) {
+            return;
+        }
+        const duration = options.noteDuration = options.noteDuration || 500;
+        const instr = new SonificationInstrument(
+            this.audioContext as AudioContext,
+            this.audioDestination as AudioDestinationNode,
+            {
+                synthPatch: instrument,
+                capabilities: {
+                    filters: true,
+                    tremolo: true,
+                    pan: true
+                }
+            }
+        );
+        instr.scheduleEventAtTime(delayMs / 1000, options);
+        setTimeout(
+            (): void => instr && instr.destroy(),
+            delayMs + duration + 500
+        );
     }
 
 

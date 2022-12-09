@@ -2,13 +2,30 @@ var chart = Highcharts.chart('container', {
     title: {
         text: 'Series sonified simultaneously'
     },
-    tooltip: {
-        shared: true
+
+    subtitle: {
+        text: 'Earcon when finished'
     },
+
+    tooltip: {
+        shared: true,
+        valueDecimals: 3
+    },
+
     sonification: {
         order: 'simultaneous',
-        duration: 4000
+        duration: 4000,
+        events: {
+            onEnd: function (timeline) {
+                var s = timeline.chart.sonification;
+                s.playNote('vibraphone', { note: 'G4' });
+                s.playNote('vibraphone', { note: 'C4', pan: -1 });
+                s.playNote('vibraphone', { note: 'E4', pan: 0 }, 200);
+                s.playNote('vibraphone', { note: 'C5', pan: 1 }, 400);
+            }
+        }
     },
+
     plotOptions: {
         series: {
             marker: {
@@ -16,14 +33,17 @@ var chart = Highcharts.chart('container', {
             }
         }
     },
+
     xAxis: {
         crosshair: {
             enabled: true
         }
     },
+
     series: [{
         sonification: {
             tracks: [{
+                instrument: 'flute',
                 mapping: {
                     pan: -1 // Pan this series left
                 }
@@ -40,7 +60,6 @@ var chart = Highcharts.chart('container', {
     }, {
         sonification: {
             tracks: [{
-                instrument: 'trumpet', // Use a different instrument for this series
                 mapping: {
                     pan: 1 // Pan this series right
                 }
