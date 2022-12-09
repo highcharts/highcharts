@@ -120,14 +120,14 @@ class FlowMapSeries extends MapLineSeries {
          */
         markerEnd: {
             /**
-             * Enable the markerEnd.
+             * Enable or disable the `markerEnd`.
              *
              * @since next
              * @type  {boolean}
              */
             enabled: true,
             /**
-             * Height of the markerEnd. Can be a number in pixels
+             * Height of the `markerEnd`. Can be a number in pixels
              * or a percentage based on the weight of the link.
              *
              * @since next
@@ -135,7 +135,7 @@ class FlowMapSeries extends MapLineSeries {
              */
             height: '40%',
             /**
-             * Width of the markerEnd. Can be a number in pixels
+             * Width of the `markerEnd`. Can be a number in pixels
              * or a percentage based on the weight of the link.
              *
              * @since next
@@ -178,8 +178,6 @@ class FlowMapSeries extends MapLineSeries {
              * value or datetime string depending on the type of axis. For
              * datetime axes, the point.key date format can be set using
              * tooltip.xDateFormat.
-             *
-             * TODO: check why it's not generated in API
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
@@ -714,8 +712,8 @@ export default FlowMapSeries;
  */
 
 /**
- * A `curveFactor` with higher value makes the link more curved.
- * A negative value will curve the link in the opposite direction.
+ * A `curveFactor` with a higher value than 0 will curve the link clockwise.
+ * A negative value will curve the link counter clockwise.
  * A `curveFactor` of 0 makes the link straight.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
@@ -780,14 +778,14 @@ export default FlowMapSeries;
  */
 
 /**
- * Enable the markerEnd.
+ * Enable or disable the `markerEnd`.
  *
  * @type      {boolean}
  * @apioption series.flowmap.data.markerEnd.enabled
  */
 
 /**
- * Height of the markerEnd. Can be a number in pixels
+ * Height of the `markerEnd`. Can be a number in pixels
  * or a percentage based on the weight of the link.
  *
  * @type      {number|string}
@@ -795,7 +793,7 @@ export default FlowMapSeries;
  */
 
 /**
- * Width of the markerEnd. Can be a number in pixels
+ * Width of the `markerEnd`. Can be a number in pixels
  * or a percentage based on the weight of the link.
  *
  * @type      {number|string}
@@ -817,7 +815,8 @@ export default FlowMapSeries;
  */
 
 /**
- * The weight of the link.
+ * The weight of a link determines its thickness compared to
+ * other links.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
  *         Example ship route
@@ -847,7 +846,7 @@ export default FlowMapSeries;
  */
 
 /**
- * The opacity of the all the links.
+ * The opacity of all the links.
  *
  *
  * @type      {number}
@@ -855,7 +854,8 @@ export default FlowMapSeries;
  */
 
 /**
- * The weight of the link determines how thick it will be compared to
+ * The weight for all links with unspecified weights.
+ * The weight of a link determines its thickness compared to
  * other links.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
