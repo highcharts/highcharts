@@ -28,11 +28,13 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
+    fireEvent,
     merge,
     pick
 } = U;
 import H from '../../Core/Globals.js';
 const {
+    doc,
     win
 } = H;
 import defaultSonificationOptions from './Options.js';
@@ -69,11 +71,22 @@ declare module '../../Core/Series/PointLike' {
 class Sonification {
     timeline?: SonificationTimeline;
     audioContext?: AudioContext;
+    unbindKeydown: Function;
     private retryContextCounter: number = 0;
     private audioDestination?: AudioDestinationNode;
     private boundaryInstrument?: SynthPatch;
 
     constructor(private chart: Chart) {
+        this.unbindKeydown = addEvent(doc, 'keydown',
+            function (e: KeyboardEvent): void {
+                if (
+                    chart && chart.sonification &&
+                    (e.key === 'Esc' || e.key === 'Escape')
+                ) {
+                    chart.sonification.cancel();
+                }
+            });
+
         try {
             this.audioContext = new win.AudioContext();
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -97,6 +110,7 @@ class Sonification {
 
 
     destroy(): void {
+        this.unbindKeydown();
         if (this.timeline) {
             this.timeline.destroy();
             delete this.timeline;
@@ -211,6 +225,7 @@ class Sonification {
         if (this.timeline) {
             this.timeline.cancel();
         }
+        fireEvent(this, 'cancel');
     }
 
 
