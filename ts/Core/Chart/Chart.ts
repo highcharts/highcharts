@@ -1750,8 +1750,6 @@ class Chart {
      * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option.
      *
-     * @sample highcharts/members/chart-reflow/
-     *         Resize div and reflow
      * @sample highcharts/chart/events-container/
      *         Pop up and reflow
      *
