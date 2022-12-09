@@ -2795,8 +2795,7 @@ class Series {
      */
     public markerAttribs(
         point: Point,
-        state?: StatesOptionsKey,
-        noFlip?: boolean
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
@@ -2804,7 +2803,11 @@ class Series {
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
-            );
+            ),
+            plotX = point.plotX,
+            plotY = point.plotY,
+            attribs: SVGAttributes = {};
+
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
@@ -2834,21 +2837,19 @@ class Series {
             radius = 0; // and subsequently width and height is not set
         }
 
-        const attribs: SVGAttributes = {};
-        const { plotX, plotY } = point;
         if (isNumber(radius) && isNumber(plotX) && isNumber(plotY)) {
-            // Math.floor for #1843:
-
             attribs.x = plotX - radius;
             attribs.y = plotY - radius;
 
-            if (this.chart.inverted && !noFlip) {
+            if (this.chart.inverted) {
                 attribs.x = this.yAxis.len - plotY - radius;
                 attribs.y = this.xAxis.len - plotX - radius;
             }
 
-            if(seriesOptions.crisp)
-                attribs.x = Math.floor(plotX - radius);
+            if (seriesOptions.crisp) {
+                // Math.floor for #1843:
+                attribs.x = Math.floor(attribs.x);
+            }
         }
 
         if (radius) {

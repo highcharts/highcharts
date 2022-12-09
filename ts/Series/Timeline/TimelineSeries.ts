@@ -396,7 +396,7 @@ class TimelineSeries extends LineSeries {
         // Call default markerAttribs method, when the xAxis type
         // is set to datetime.
         if (series.xAxis.dateTime) {
-            return super.markerAttribs.call(this, point, state, true);
+            return super.markerAttribs.call(this, point, state);
         }
 
         // Handle hover and select states
