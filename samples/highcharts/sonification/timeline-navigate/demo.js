@@ -90,13 +90,9 @@ document.addEventListener('keydown', function (e) {
             chart.sonify();
         }
     } else if (e.code === 'KeyA') {
-        if (timeline) {
-            timeline.playAdjacent(false, afterNavigate);
-        }
+        chart.sonification.playAdjacent(false, afterNavigate);
     } else if (e.code === 'KeyD') {
-        if (timeline) {
-            timeline.playAdjacent(true, afterNavigate);
-        }
+        chart.sonification.playAdjacent(true, afterNavigate);
     } else if (e.code === 'Escape') {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();

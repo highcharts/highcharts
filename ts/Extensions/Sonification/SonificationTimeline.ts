@@ -344,6 +344,59 @@ class SonificationTimeline {
     }
 
 
+    // Divide timeline into 100 parts of equal time, and play one of them.
+    // Used for scrubbing.
+    playSegment(segment: number, onEnd?: Function): void {
+        const numSegments = 100;
+        const eventTimes = {
+            first: Infinity,
+            last: -Infinity
+        };
+        this.channels.forEach((c): void => {
+            if (c.events.length) {
+                eventTimes.first = Math.min(c.events[0].time, eventTimes.first);
+                eventTimes.last = Math.max(
+                    c.events[c.events.length - 1].time, eventTimes.last
+                );
+            }
+        });
+        if (eventTimes.first < Infinity) {
+            const segmentSize =
+                    (eventTimes.last - eventTimes.first) / numSegments,
+                fromTime = eventTimes.first + segment * segmentSize,
+                toTime = fromTime + segmentSize;
+
+            // Binary search, do we have any events within time range?
+            if (!this.channels.some((c): boolean => {
+                const events = c.events;
+                let s = 0,
+                    e = events.length;
+                while (s < e) {
+                    const mid = (s + e) >> 1,
+                        t = events[mid].time;
+                    if (t < fromTime) { // behind
+                        s = mid + 1;
+                    } else if (t > toTime) { // ahead
+                        e = mid;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            })) {
+                return; // If not, don't play - avoid cancelling current play
+            }
+
+            this.play((e): boolean => e.time >= fromTime && e.time <= toTime,
+                false, false, onEnd);
+            this.playingChannels = this.playingChannels || this.channels;
+            this.isPaused = true;
+            this.isPlaying = false;
+            this.resumeFromTime = toTime;
+        }
+    }
+
+
     // Reset play/pause state so that a later call to resume() will start over
     reset(): void {
         this.cancel();

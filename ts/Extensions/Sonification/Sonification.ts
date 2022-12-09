@@ -130,7 +130,7 @@ class Sonification {
 
 
     sonifyChart(onEnd?: Function): void {
-        if (!this.ready(this.sonifyChart.bind(this))) {
+        if (!this.ready(this.sonifyChart.bind(this, onEnd))) {
             return;
         }
 
@@ -142,7 +142,7 @@ class Sonification {
 
 
     sonifySeries(series: Series, onEnd?: Function): void {
-        if (!this.ready(this.sonifySeries.bind(this, series))) {
+        if (!this.ready(this.sonifySeries.bind(this, series, onEnd))) {
             return;
         }
 
@@ -156,7 +156,7 @@ class Sonification {
 
 
     sonifyPoint(point: Point, onEnd?: Function): void {
-        if (!this.ready(this.sonifyPoint.bind(this, point))) {
+        if (!this.ready(this.sonifyPoint.bind(this, point, onEnd))) {
             return;
         }
 
@@ -164,6 +164,26 @@ class Sonification {
             this.timeline.reset();
             this.timeline.play((e): boolean => e.relatedPoint === point,
                 void 0, void 0, onEnd);
+        }
+    }
+
+
+    playSegment(segment: number, onEnd?: Function): void {
+        if (!this.ready(this.playSegment.bind(this, segment, onEnd))) {
+            return;
+        }
+        if (this.timeline) {
+            this.timeline.playSegment(segment, onEnd);
+        }
+    }
+
+
+    playAdjacent(next: boolean, onEnd?: Function): void {
+        if (!this.ready(this.playAdjacent.bind(this, next, onEnd))) {
+            return;
+        }
+        if (this.timeline) {
+            this.timeline.playAdjacent(next, onEnd);
         }
     }
 
@@ -177,7 +197,7 @@ class Sonification {
 
     // Only continue if sonification enabled. If audioContext is
     // suspended, retry up to 20 times with a small delay.
-    private ready(failCallback: () => void): boolean {
+    private ready(whenReady: () => void): boolean {
         if (
             !this.audioContext ||
             !this.audioDestination ||
@@ -195,9 +215,9 @@ class Sonification {
                         this.audioContext.state === 'suspended'
                     ) {
                         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                        this.audioContext.resume().then(failCallback);
+                        this.audioContext.resume().then(whenReady);
                     } else {
-                        failCallback();
+                        whenReady();
                     }
                 }, 5);
             }
@@ -309,9 +329,9 @@ namespace Sonification {
         // Extend points
         if (composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
-            PointClass.prototype.sonify = function (): void {
+            PointClass.prototype.sonify = function (onEnd?: Function): void {
                 if (this.series.chart.sonification) {
-                    this.series.chart.sonification.sonifyPoint(this);
+                    this.series.chart.sonification.sonifyPoint(this, onEnd);
                 }
             };
         }

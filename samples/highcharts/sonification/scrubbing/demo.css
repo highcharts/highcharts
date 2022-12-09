@@ -1,0 +1,11 @@
+#container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+#slider {
+    width: 100%;
+    max-width: 1100px;
+    margin: 20px auto;
+    display: block;
+}

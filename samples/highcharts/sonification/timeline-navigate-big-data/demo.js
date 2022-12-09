@@ -88,13 +88,9 @@ document.addEventListener('keydown', function (e) {
             chart.sonify();
         }
     } else if (e.code === 'KeyA') {
-        if (timeline) {
-            timeline.playAdjacent(false);
-        }
+        chart.sonification.playAdjacent(false);
     } else if (e.code === 'KeyD') {
-        if (timeline) {
-            timeline.playAdjacent(true);
-        }
+        chart.sonification.playAdjacent(true);
     }
 });
 
