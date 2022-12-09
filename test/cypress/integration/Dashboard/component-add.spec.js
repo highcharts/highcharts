@@ -14,7 +14,7 @@ function dropComponent(elementName) {
 }
 
 describe('Add component through UI', () => {
-    before(() => {
+    beforeEach(() => {
         cy.visit('/dashboard/cypress/add-layout');
         cy.viewport(1200, 1000);
         cy.get('.hd-edit-context-menu-btn').click();
@@ -30,6 +30,7 @@ describe('Add component through UI', () => {
                 2,
                 'New layout should be added.'
             );
+            cy.reload();
         });
     });
 
@@ -43,7 +44,7 @@ describe('Add component through UI', () => {
                 'New cell should be added.'
             );
 
-            let m = dashboard.mountedComponents;
+            const m = dashboard.mountedComponents;
             assert.equal(
                 m[m.length - 1].component.type,
                 'HTML',
@@ -52,37 +53,29 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('should be able to add a chart component', function() {
+    it('should be able to add a chart component and resize it', function() {
         grabComponent('chart');
-        dropComponent('#dashboard-col-1')
-        cy.dashboard().then((dashboard) => {
-            assert.equal(
-                dashboard.layouts[0].rows[0].cells.length,
-                4,
-                'New cell should be added.'
-            );
-
-            let m = dashboard.mountedComponents;
-            assert.equal(
-                m[m.length - 1].component.type,
-                'Highcharts',
-                `New component's type should be Highcharts.`
-            );
-        });
-    });
-
-    it('should be possible to resize the added component', function() {
+        dropComponent('#dashboard-col-0')
         cy.get('.hd-edit-resize-snap-x').trigger('mousedown');
         cy.get('.hd-cell').eq(1).trigger('mousemove');
         cy.get('.hd-cell').eq(1).trigger('mouseup');
         cy.dashboard().then((dashboard) => {
+            assert.equal(
+                dashboard.layouts[0].rows[0].cells.length,
+                3,
+                'New cell should be added.'
+            );
 
-            let m = dashboard.mountedComponents,
-                component =  m[m.length - 1];
-
+            const m = dashboard.mountedComponents,
+                component =  m[m.length - 1].component;
+            assert.equal(
+                component.type,
+                'Highcharts',
+                `New component's type should be Highcharts.`
+            );
             assert.closeTo(
-                component.component.dimensions.width,
-                223,
+                component.dimensions.width,
+                270,
                 1,
                 'Width of the element should be equal to given value.'
                 // Any better way of getting width?
