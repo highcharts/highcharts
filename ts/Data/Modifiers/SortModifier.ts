@@ -350,7 +350,7 @@ class SortModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -359,6 +359,12 @@ class SortModifier extends DataModifier {
  * conversion.
  */
 namespace SortModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
