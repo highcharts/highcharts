@@ -186,6 +186,10 @@ declare module '../../Core/Options'{
     interface Options {
         sonification?: Sonification.ChartSonificationOptions;
     }
+    interface LangOptions {
+        downloadMIDI?: string;
+        playAsSound?: string;
+    }
 }
 
 declare module '../../Core/Series/SeriesOptions' {
@@ -235,6 +239,33 @@ const Options: DeepPartial<OptionsType> = {
                 prop: 'y'
             }
         }
+    },
+    exporting: {
+        menuItemDefinitions: {
+            downloadMIDI: {
+                textKey: 'downloadMIDI',
+                onclick: function (): void {
+                    if (this.sonification) {
+                        this.sonification.downloadMIDI();
+                    }
+                }
+            },
+            playAsSound: {
+                textKey: 'playAsSound',
+                onclick: function (): void {
+                    const s = this.sonification;
+                    if (s && s.isPlaying()) {
+                        s.cancel();
+                    } else {
+                        this.sonify();
+                    }
+                }
+            }
+        }
+    },
+    lang: {
+        downloadMIDI: 'Download MIDI',
+        playAsSound: 'Play as sound'
     }
 };
 

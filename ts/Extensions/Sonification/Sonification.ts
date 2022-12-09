@@ -12,10 +12,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Type imports
+ *
+ * */
+
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type { Options } from '../../Core/Options';
+
 /* *
  *
  *  Imports
@@ -23,7 +30,10 @@ import type { Options } from '../../Core/Options';
  * */
 
 import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
+const {
+    defaultOptions,
+    getOptions
+} = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -229,6 +239,16 @@ class Sonification {
     }
 
 
+    downloadMIDI(): void {
+        if (!this.ready(this.downloadMIDI.bind(this))) {
+            return;
+        }
+        if (this.timeline) {
+            this.timeline.downloadMIDI();
+        }
+    }
+
+
     // Only continue if sonification enabled. If audioContext is
     // suspended, retry up to 20 times with a small delay.
     private ready(whenReady: () => void): boolean {
@@ -368,6 +388,21 @@ namespace Sonification {
                     this.series.chart.sonification.sonifyPoint(this, onEnd);
                 }
             };
+        }
+
+        // Add items to the exporting menu
+        const exportingOptions = getOptions().exporting;
+        if (exportingOptions) {
+            if (
+                exportingOptions.buttons &&
+                exportingOptions.buttons.contextButton.menuItems
+            ) {
+                exportingOptions.buttons.contextButton.menuItems.push(
+                    'separator',
+                    'downloadMIDI',
+                    'playAsSound'
+                );
+            }
         }
     }
 }
