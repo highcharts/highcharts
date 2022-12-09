@@ -104,11 +104,7 @@ QUnit.test(
                             Date.UTC(2012, 12, 2),
                             0,
                             93
-                        ] /*, [
-                Date.UTC(2012, 12, 3),
-                0,
-                1
-            ]*/
+                        ]
                     ],
                     colsize: 24 * 3600 * 1000,
                     rowsize: 24 * 3600 * 1000
@@ -240,6 +236,20 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`
+    );
+
+    chart.series[0].update({
+        borderRadius: 0,
+        marker: {
+            lineWidth: 40
+        }
+    });
+
+    setState.call(point, 'hover');
+    assert.equal(
+        point.graphic.attr('stroke'),
+        chart.series[0].color,
+        `Point's stroke should be set on hover, #17856.`
     );
 });
 
