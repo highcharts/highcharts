@@ -55,12 +55,12 @@ var chart = Highcharts.chart('container', {
             color: '#55BF3B', // Color value
             from: -4, // Start of the plot band
             to: 0,
-            outerRadius: "78%"
+            outerRadius: '78%'
         }, {
             color: '#DF5353', // Color value
             from: 0, // Start of the plot band
             to: 4,
-            outerRadius: "78%"
+            outerRadius: '78%'
         }]
     },
 
@@ -70,7 +70,7 @@ var chart = Highcharts.chart('container', {
                 y: 5,
                 borderWidth: 0
             },
-            innerRadius: "80%"
+            innerRadius: '80%'
         }
     },
 

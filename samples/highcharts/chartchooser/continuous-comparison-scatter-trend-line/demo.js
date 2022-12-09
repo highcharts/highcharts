@@ -1,11 +1,11 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "scatter",
-        zoomType: "xy"
+        type: 'scatter',
+        zoomType: 'xy'
     },
     title: {
         HTML: true,
-        text: "Consumer Price Index vs Wages Increase (Norway)"
+        text: 'Consumer Price Index vs Wages Increase (Norway)'
     },
     subtitle: {
         HTML: true,
@@ -16,21 +16,21 @@ Highcharts.chart("container", {
     xAxis: {
         title: {
             enabled: true,
-            text: "Consumer Price Index"
+            text: 'Consumer Price Index'
         },
         startOnTick: true,
         endOnTick: true,
         showLastLabel: true,
         labels: {
-            format: "{text}%"
+            format: '{text}%'
         }
     },
     yAxis: {
         title: {
-            text: "Salary Increase"
+            text: 'Salary Increase'
         },
         labels: {
-            format: "{text}%"
+            format: '{text}%'
         }
     },
 
@@ -41,7 +41,7 @@ Highcharts.chart("container", {
                 states: {
                     hover: {
                         enabled: true,
-                        lineColor: "rgb(100,100,100)"
+                        lineColor: 'rgb(100,100,100)'
                     }
                 }
             },
@@ -53,8 +53,8 @@ Highcharts.chart("container", {
                 }
             },
             tooltip: {
-                headerFormat: "<b>{series.name}</b><br>",
-                pointFormat: "CPI: {point.x}% <br/> Wage Inc: {point.y}%"
+                headerFormat: '<b>{series.name}</b><br>',
+                pointFormat: 'CPI: {point.x}% <br/> Wage Inc: {point.y}%'
             }
         }
     },
@@ -63,7 +63,7 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "2011-2020",
+            name: '2011-2020',
             data: [
                 [1.4, 0.4],
                 [2.4, 5.3],
@@ -79,7 +79,7 @@ Highcharts.chart("container", {
         }, {
             type: 'line',
             name: '2011-2020',
-            color: "#2f7ed8",
+            color: '#2f7ed8',
             data: [[0.6, 5.189],
                 [3.6, 2.9]],
             marker: {
@@ -93,7 +93,7 @@ Highcharts.chart("container", {
             enableMouseTracking: false
         },
         {
-            name: "2001-2010",
+            name: '2001-2010',
             visible: false,
             data: [
                 [2.2, 3.5],
@@ -111,7 +111,7 @@ Highcharts.chart("container", {
             type: 'line',
             name: '2001-2010',
             visible: false,
-            color: "#0d233a",
+            color: '#0d233a',
             data: [[0.3, 5.88],
                 [3.2, 5.82]],
             marker: {
@@ -125,7 +125,7 @@ Highcharts.chart("container", {
             enableMouseTracking: false
         },
         {
-            name: "1991-2000",
+            name: '1991-2000',
             visible: false,
             data: [
                 [2.3, 5.3],
@@ -142,7 +142,7 @@ Highcharts.chart("container", {
         }, {
             type: 'line',
             name: '1991-2000',
-            color: "#8bbc21",
+            color: '#8bbc21',
             visible: false,
             data: [[0.9, 6.045],
                 [2.3, 5.88]],
@@ -157,7 +157,7 @@ Highcharts.chart("container", {
             enableMouseTracking: false
         },
         {
-            name: "1981-1990",
+            name: '1981-1990',
             data: [
                 [2.4, 4.1],
                 [2.5, 1.5],
@@ -173,7 +173,7 @@ Highcharts.chart("container", {
         }, {
             type: 'line',
             name: '1991-2000',
-            color: "#f7a35c",
+            color: '#f7a35c',
             data: [[2.3, 6.25],
                 [4.2, 12.57]],
             marker: {
