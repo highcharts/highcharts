@@ -30,7 +30,6 @@ const {
 interface SonificationTimelineOptions {
     onPlay?: Function;
     onEnd?: Function;
-    onBoundaryHit?: Function;
     showPlayMarker?: boolean;
     showCrosshairOnly?: boolean;
     skipThreshold?: number;
@@ -304,7 +303,11 @@ class SonificationTimeline {
 
 
     // Play event(s) occurring next/prev from paused state.
-    playAdjacent(next: boolean, onEnd?: Function): void {
+    playAdjacent(
+        next: boolean,
+        onEnd?: Function,
+        onBoundaryHit?: Function
+    ): void {
         const fromTime = this.isPaused ? this.resumeFromTime : -1,
             closestTime = this.channels.reduce(
                 (time, channel): number => {
@@ -340,8 +343,8 @@ class SonificationTimeline {
             margin = 0.02;
 
         if (closestTime === Infinity || closestTime === -Infinity) {
-            if (this.options.onBoundaryHit) {
-                this.options.onBoundaryHit({ timeline: this, next });
+            if (onBoundaryHit) {
+                onBoundaryHit({ timeline: this, next });
             }
             return;
         }

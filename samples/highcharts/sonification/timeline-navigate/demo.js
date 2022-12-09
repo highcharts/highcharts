@@ -1,31 +1,8 @@
-// Set up an extra instrument for playing notification when
-// attempting to navigate beyond chart.
-var ax, instr;
-try {
-    ax = new AudioContext();
-    instr = new Highcharts.sonification.SynthPatch(
-        ax,
-        Highcharts.sonification.InstrumentPresets.step
-    );
-    instr.startSilently();
-    instr.connect(ax.destination);
-// eslint-disable-next-line no-unused-vars
-} catch (e) { /* ignore sonification unsupported */ }
-
-
 var chart = Highcharts.chart('container', {
     sonification: {
         order: 'simultaneous',
         duration: 4000,
         masterVolume: 0.5,
-        events: {
-            onBoundaryHit: function () {
-                // Play a sound effect on navigation boundary hit
-                if (instr) {
-                    instr.playFreqAtTime(0, 1, 300);
-                }
-            }
-        },
         defaultInstrumentOptions: {
             mapping: {
                 pitch: {

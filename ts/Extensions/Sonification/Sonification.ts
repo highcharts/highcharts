@@ -36,7 +36,9 @@ const {
     win
 } = H;
 import defaultSonificationOptions from './Options.js';
-import SonificationTimeline from '../../Extensions/Sonification/SonificationTimeline.js';
+import SonificationTimeline from './SonificationTimeline.js';
+import SynthPatch from './SynthPatch.js';
+import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
 
 
@@ -69,6 +71,7 @@ class Sonification {
     audioContext?: AudioContext;
     private retryContextCounter: number = 0;
     private audioDestination?: AudioDestinationNode;
+    private boundaryInstrument?: SynthPatch;
 
     constructor(private chart: Chart) {
         try {
@@ -97,6 +100,9 @@ class Sonification {
         if (this.timeline) {
             this.timeline.destroy();
             delete this.timeline;
+        }
+        if (this.boundaryInstrument) {
+            this.boundaryInstrument.stop();
         }
         if (this.audioContext) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -183,7 +189,20 @@ class Sonification {
             return;
         }
         if (this.timeline) {
-            this.timeline.playAdjacent(next, onEnd);
+            const opts = this.chart.options.sonification,
+                cx = this.audioContext as AudioContext,
+                onHit = opts && opts.events && opts.events.onBoundaryHit;
+            if (!this.boundaryInstrument && !onHit) {
+                this.boundaryInstrument = new SynthPatch(
+                    cx, merge(InstrumentPresets.step, { masterVolume: 1.3 }));
+                this.boundaryInstrument.startSilently();
+                this.boundaryInstrument.connect(cx.destination);
+            }
+            this.timeline.playAdjacent(next, onEnd, onHit || ((): void => {
+                if (this.boundaryInstrument) {
+                    this.boundaryInstrument.playFreqAtTime(0, 1, 300);
+                }
+            }));
         }
     }
 

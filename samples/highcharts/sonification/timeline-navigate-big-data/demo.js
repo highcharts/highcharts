@@ -7,20 +7,6 @@ for (var i = 0; i < size; ++i) {
     dataB.push(i % 17000 ? Math.sin(i / (size / 53)) * 20 + 100 : 2000);
 }
 
-// Set up an extra instrument for playing notification when
-// attempting to navigate beyond chart.
-var ax, instr;
-try {
-    ax = new AudioContext();
-    instr = new Highcharts.sonification.SynthPatch(
-        ax,
-        Highcharts.sonification.InstrumentPresets.step
-    );
-    instr.startSilently();
-    instr.connect(ax.destination);
-// eslint-disable-next-line no-unused-vars
-} catch (e) { /* ignore sonification unsupported */ }
-
 
 // Make the chart
 var chart = Highcharts.chart('container', {
@@ -28,14 +14,6 @@ var chart = Highcharts.chart('container', {
         order: 'simultaneous',
         duration: 5000,
         masterVolume: 0.5,
-        events: {
-            onBoundaryHit: function () {
-                // Play a sound effect on navigation beyond chart
-                if (instr) {
-                    instr.playFreqAtTime(0, 1, 300);
-                }
-            }
-        },
         defaultInstrumentOptions: {
             instrument: 'sine',
             roundToMusicalNotes: false,

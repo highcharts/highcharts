@@ -817,7 +817,6 @@ function timelineFromChart(
         timeline = new SonificationTimeline({
             onPlay: eventOptions.onPlay,
             onEnd: eventOptions.onEnd,
-            onBoundaryHit: eventOptions.onBoundaryHit,
             showCrosshairOnly: options.showCrosshairOnly,
             showPlayMarker: options.showPlayMarker
         }, chart);
