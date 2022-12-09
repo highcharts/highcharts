@@ -34,7 +34,6 @@ const {
     doc
 } = H;
 import U from '../Core/Utilities.js';
-import DataGridComponent from '../Extensions/DashboardPlugins/DataGridComponent';
 const {
     addEvent,
     clamp,
