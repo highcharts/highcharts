@@ -1,10 +1,9 @@
-// Create a data value for each feature
-
 (async () => {
     const topology = await fetch(
         "https://code.highcharts.com/mapdata/custom/world-highres.topo.json"
     ).then(response => response.json());
 
+    // Create a data value for each feature
     const data = [
         {
             "hc-key": "ye",
