@@ -80,12 +80,12 @@ async function buildDashboard() {
                     map: topology,
                     spacing: [0, 0, 0, 0],
                 },
-                colorAxis: {
+                /*colorAxis: {
                     max: 325,
                     maxColor: '#F93',
                     min: 225,
                     minColor: '#39F',
-                },
+                },*/
                 legend: {
                     margin: 0,
                 },
