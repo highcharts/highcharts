@@ -155,14 +155,15 @@ class Sonification {
     }
 
 
-    sonifyPoint(point: Point): void {
+    sonifyPoint(point: Point, onEnd?: Function): void {
         if (!this.ready(this.sonifyPoint.bind(this, point))) {
             return;
         }
 
         if (this.timeline) {
             this.timeline.reset();
-            this.timeline.play((e): boolean => e.relatedPoint === point);
+            this.timeline.play((e): boolean => e.relatedPoint === point,
+                void 0, void 0, onEnd);
         }
     }
 
