@@ -84,6 +84,6 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
     assert.strictEqual(
         point.color,
         series.color,
-        `#17970: Ex-null point shouldn’t have a null color after update.`
+        '#17970: Ex-null point shouldn’t have a null color after update.'
     );
 });

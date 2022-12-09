@@ -1,4 +1,4 @@
-QUnit.test("Check that it doesn't fail (#6655)", function (assert) {
+QUnit.test('Check that it doesn\'t fail (#6655)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 500

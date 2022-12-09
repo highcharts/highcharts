@@ -70,7 +70,7 @@ QUnit.test(
                         lineWidth: 0
                     },
                     yAxis: {
-                        //This is correct:
+                        // This is correct:
                         alternateGridColor: '#C0FFC0',
                         gridLineInterpolation: 'polygon',
                         title: {
