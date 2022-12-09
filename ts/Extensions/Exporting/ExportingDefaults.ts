@@ -58,7 +58,7 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * Allows to sort table data by clicking on columns' headers.
+     * Allows the end user to sort the data table by clicking on column headers.
      *
      * @since next
      * @apioption exporting.allowTableSorting
