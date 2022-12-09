@@ -392,17 +392,16 @@ namespace Sonification {
 
         // Add items to the exporting menu
         const exportingOptions = getOptions().exporting;
-        if (exportingOptions) {
-            if (
-                exportingOptions.buttons &&
-                exportingOptions.buttons.contextButton.menuItems
-            ) {
-                exportingOptions.buttons.contextButton.menuItems.push(
-                    'separator',
-                    'downloadMIDI',
-                    'playAsSound'
-                );
-            }
+        if (
+            exportingOptions &&
+            exportingOptions.buttons &&
+            exportingOptions.buttons.contextButton.menuItems
+        ) {
+            exportingOptions.buttons.contextButton.menuItems.push(
+                'separator',
+                'downloadMIDI',
+                'playAsSound'
+            );
         }
     }
 }
