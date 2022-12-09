@@ -336,7 +336,7 @@ QUnit.test('Toggle chart.scrollbar', assert => {
     assert.strictEqual(
         chart.xAxis[0].tickPositions[0],
         0,
-        "xAxis's tick should equal min and max values (#13184)."
+        'xAxis\'s tick should equal min and max values (#13184).'
     );
 });
 

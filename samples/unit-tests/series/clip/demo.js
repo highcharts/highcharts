@@ -114,7 +114,7 @@ QUnit.test('General series clip tests', assert => {
                         .getAttribute('width')
                 ),
                 chart.clipBox.width,
-                "Correct clippath's width after updating chart (#13751)."
+                'Correct clippath\'s width after updating chart (#13751).'
             );
 
             done();
@@ -181,6 +181,6 @@ QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
         chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height') +
         chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height') <=
         chart.plotHeight,
-        "The sum of the series clip-paths should not be bigger than the plot height."
+        'The sum of the series clip-paths should not be bigger than the plot height.'
     );
 });
