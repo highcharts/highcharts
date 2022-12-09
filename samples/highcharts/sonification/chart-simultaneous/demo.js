@@ -1,37 +1,67 @@
-// Set up a simple chart
 var chart = Highcharts.chart('container', {
     title: {
         text: 'Series sonified simultaneously'
     },
-    legend: {
-        enabled: false
+    tooltip: {
+        shared: true
+    },
+    sonification: {
+        order: 'simultaneous',
+        duration: 4000
+    },
+    plotOptions: {
+        series: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    xAxis: {
+        crosshair: {
+            enabled: true
+        }
     },
     series: [{
-        data: [1, 2, 4, 5, 7, 9, 7, 5]
+        sonification: {
+            tracks: [{
+                mapping: {
+                    pan: -1 // Pan this series left
+                }
+            }]
+        },
+        // Generate some data for series 1
+        data: (function () {
+            var data = [];
+            for (var i = 0; i < 100; ++i) {
+                data.push(Math.sin(i / 30) * 5);
+            }
+            return data;
+        }())
     }, {
-        data: [4, null, 7, 9, 13, 13]
+        sonification: {
+            tracks: [{
+                instrument: 'trumpet', // Use a different instrument for this series
+                mapping: {
+                    pan: 1 // Pan this series right
+                }
+            }]
+        },
+        // Generate some data for series 2
+        data: (function () {
+            var data = [];
+            for (var i = 0; i < 100; ++i) {
+                data.push(Math.sin((i + 30) / 20) * 6);
+            }
+            return data;
+        }())
     }]
 });
 
-// Click button to call chart.sonify()
+// Click button to sonify or stop
 document.getElementById('sonify').onclick = function () {
-    chart.sonify({
-        duration: 2000,
-        order: 'simultaneous',
-        pointPlayTime: 'x',
-        instruments: [{
-            instrument: 'triangleMajor',
-            instrumentMapping: {
-                volume: 0.8,
-                duration: 250,
-                pan: 'x',
-                frequency: 'y'
-            },
-            // Start at C5 note, end at C6
-            instrumentOptions: {
-                minFrequency: 520,
-                maxFrequency: 1050
-            }
-        }]
-    });
+    if (chart.sonification.isPlaying()) {
+        chart.sonification.cancel();
+    } else {
+        chart.sonify();
+    }
 };

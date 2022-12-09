@@ -22,6 +22,7 @@ import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 const {
+    find,
     merge
 } = U;
 
@@ -199,6 +200,7 @@ class SonificationTimeline {
                 }
 
                 const point = e.relatedPoint,
+                    chart = point && point.series && point.series.chart,
                     needsCallback = e.callback || point &&
                         (showPlayMarker || showCrosshairOnly) &&
                         (e.time - lastCallbackTime > 50 || i === numEvents - 1);
@@ -223,7 +225,17 @@ class SonificationTimeline {
                                     if (s.yAxis && s.yAxis.crosshair) {
                                         s.yAxis.drawCrosshair(void 0, point);
                                     }
-                                } else if (showPlayMarker) {
+                                } else if (
+                                    showPlayMarker && !(
+                                        // Don't re-hover if shared tooltip
+                                        chart && chart.hoverPoints &&
+                                        chart.hoverPoints.length > 1 &&
+                                        find(
+                                            chart.hoverPoints,
+                                            (p): boolean => p === point
+                                        )
+                                    )
+                                ) {
                                     point.onMouseOver();
                                 }
                             }
