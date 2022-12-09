@@ -27,7 +27,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { t: 425, vol: 0 }
         ],
         eq: [
-            { frequency: 200, gain: 4 },
+            { frequency: 200, Q: 0.7, gain: 6 },
             { frequency: 450, gain: 6 },
             { frequency: 1300, gain: 2 },
             { frequency: 2600, Q: 0.8, gain: 8 },
@@ -40,7 +40,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             type: 'pulse',
             volume: 0.5,
             pulseWidth: 0.55,
-            volumePitchTrackingMultiplier: 0.07,
+            volumePitchTrackingMultiplier: 0.1,
             lowpass: {
                 frequency: 4.5,
                 frequencyPitchTrackingMultiplier: 900,
@@ -68,7 +68,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // FLUTE ----------------------------
     flute: {
         masterVolume: 0.95,
-        noteGlideDuration: 40,
+        noteGlideDuration: 30,
         masterAttackEnvelope: [
             { t: 0, vol: 0 },
             { t: 29, vol: 1 },
@@ -163,7 +163,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         }, {
             type: 'whitenoise',
             volume: 0.03,
-            volumePitchTrackingMultiplier: 2,
+            volumePitchTrackingMultiplier: 0.0001,
             lowpass: {
                 frequency: 900
             },
@@ -178,7 +178,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             type: 'sine',
             freqMultiplier: 4,
             volume: 0.15,
-            volumePitchTrackingMultiplier: 0.03
+            volumePitchTrackingMultiplier: 0.0001
         }, {
             type: 'sine',
             fixedFrequency: 3,
@@ -198,7 +198,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             type: 'sine',
             freqMultiplier: 9,
             volume: 0.0005,
-            volumePitchTrackingMultiplier: 0.07,
+            volumePitchTrackingMultiplier: 0.0001,
             releaseEnvelope: [
                 { t: 1, vol: 0.97 },
                 { t: 530, vol: 0 }
@@ -288,7 +288,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // TRUMPET ------------------------
     trumpet: {
-        masterVolume: 0.4,
+        masterVolume: 0.3,
         noteGlideDuration: 40,
         masterAttackEnvelope: [
             { t: 1, vol: 0 },
@@ -306,8 +306,8 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { t: 96, vol: 0 }
         ],
         eq: [
+            { frequency: 200, Q: 0.6, gain: 10 },
             { frequency: 600, Q: 0.5, gain: 6 },
-            { frequency: 200, Q: 0.6, gain: 6 },
             { frequency: 1500, Q: 0.7, gain: 14 },
             { frequency: 3200, Q: 2, gain: 8 },
             { frequency: 3800, Q: 0.8, gain: 10 },
@@ -414,7 +414,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // SAWTOOTH -------------------------
     sawtooth: {
-        masterVolume: 0.4,
+        masterVolume: 0.25,
         oscillators: [{
             type: 'sawtooth',
             volume: 0.3,
@@ -424,7 +424,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // SQUARE ---------------------------
     square: {
-        masterVolume: 0.4,
+        masterVolume: 0.3,
         oscillators: [{
             type: 'square',
             volume: 0.2,
@@ -545,7 +545,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // WIND -------------------------------
     wind: {
         masterVolume: 0.75,
-        noteGlideDuration: 250,
+        noteGlideDuration: 150,
         masterReleaseEnvelope: [
             { t: 0, vol: 1 },
             { t: 124, vol: 0.24 },
