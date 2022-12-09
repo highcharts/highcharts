@@ -1,9 +1,10 @@
+// Create a data value for each feature
+
 (async () => {
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/custom/world-highres.topo.json'
+        "https://code.highcharts.com/mapdata/custom/world-highres.topo.json"
     ).then(response => response.json());
 
-    // Create a data value for each feature
     const data = [
         {
             'hc-key': 'ye',
@@ -48,12 +49,12 @@
         {
             'hc-key': 'in',
             color: '#c0ffd5',
-            info: 'Coffee came from Java.'
+            info: 'Coffee came from Yemen.'
         }
     ];
 
     // Initialize the chart
-    Highcharts.mapChart('container', {
+    Highcharts.mapChart("container", {
         chart: {
             map: topology
         },
@@ -121,7 +122,7 @@
                         geometry: {
                             type: 'LineString',
                             coordinates: [
-                                [110.004444, -7.491667], // Java
+                                [48.516388, 15.552727], // Yemen
                                 [78, 21] // India
                             ]
                         },
@@ -168,12 +169,20 @@
             {
                 type: 'mappoint',
                 color: '#333',
+                dataLabels: {
+                    format: '<b>{point.name}</b><br><span style="font-weight: normal; opacity: 0.5">{point.custom.arrival}</span>',
+                    align: 'left',
+                    verticalAlign: 'middle'
+                },
                 data: [
                     {
                         name: 'Yemen',
                         geometry: {
                             type: 'Point',
                             coordinates: [48.516388, 15.552727] // Yemen
+                        },
+                        custom: {
+                            arrival: 1414
                         }
                     },
                     {
@@ -181,6 +190,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [110.004444, -7.491667] // Java
+                        },
+                        custom: {
+                            arrival: 1696
                         }
                     },
                     {
@@ -188,6 +200,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [55.5325, -21.114444] // La reunion
+                        },
+                        custom: {
+                            arrival: 1708
                         }
                     },
                     {
@@ -195,6 +210,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [-43.2, -22.9] // Brazil
+                        },
+                        custom: {
+                            arrival: 1770
                         }
                     },
                     {
@@ -202,6 +220,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [78, 21] // India
+                        },
+                        custom: {
+                            arrival: 1670
                         }
                     },
                     {
@@ -209,6 +230,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [4.9, 52.366667] // Amsterdam
+                        },
+                        custom: {
+                            arrival: 1696
                         }
                     },
                     {
@@ -216,6 +240,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [-61.030556, 14.681944] // Antilles
+                        },
+                        custom: {
+                            arrival: 1714
                         }
                     },
                     {
@@ -223,6 +250,9 @@
                         geometry: {
                             type: 'Point',
                             coordinates: [-53, 4] // Guyane
+                        },
+                        custom: {
+                            arrival: 1714
                         }
                     }
                 ],
