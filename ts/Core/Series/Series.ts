@@ -2729,16 +2729,9 @@ class Series {
                                 markerAttribs.y,
                                 markerAttribs.width,
                                 markerAttribs.height,
-                                merge({
-                                    scaleX: (
-                                        point.hasImage &&
-                                        this.chart.inverted
-                                    ) ? -1 : 1
-                                },
                                 hasPointMarker ?
                                     pointMarkerOptions :
                                     seriesMarkerOptions
-                                )
                             )
                             .add(markerGroup);
                         // Sliding animation for new points
@@ -2766,8 +2759,7 @@ class Series {
                         graphic[verb](
                             series.pointAttribs(
                                 point,
-                                (point.selected && 'select') as any,
-                                chart.inverted
+                                (point.selected && 'select') as any
                             )
                         );
                     }
@@ -2840,13 +2832,22 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = isNumber(radius) ? {
+
+        const attribs: SVGAttributes = {};
+        const { plotX, plotY } = point;
+        if (isNumber(radius) && isNumber(plotX) && isNumber(plotY)) {
             // Math.floor for #1843:
-            x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any - radius) :
-                (point.plotX as any) - radius,
-            y: (point.plotY as any) - radius
-        } : {};
+
+            attribs.x = seriesOptions.crisp ?
+                Math.floor(plotX - radius) :
+                plotX - radius;
+            attribs.y = plotY - radius;
+
+            if (this.chart.inverted) {
+                attribs.x = this.yAxis.len - plotY - radius;
+                attribs.y = this.xAxis.len - plotX - radius;
+            }
+        }
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -2876,8 +2877,7 @@ class Series {
      */
     public pointAttribs(
         point?: Point,
-        state?: StatesOptionsKey,
-        flip?: boolean
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
             pointOptions = point && point.options,
@@ -2886,15 +2886,7 @@ class Series {
             ),
             pointColorOption = pointOptions && pointOptions.color,
             pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color,
-
-            rotationOptions = flip && point ?
-                {
-                    rotation: 90,
-                    rotationOriginX: point.plotX,
-                    rotationOriginY: point.plotY
-                } : {};
-
+            zoneColor = point && point.zone && point.zone.color;
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2965,8 +2957,7 @@ class Series {
             'stroke': stroke,
             'stroke-width': strokeWidth,
             'fill': fill,
-            'opacity': opacity,
-            ...rotationOptions
+            'opacity': opacity
         };
     }
 
@@ -3309,7 +3300,7 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === 'markers' || name === 'series')
+                name === 'series'
             );
 
         // Swap axes for inverted (#2339)
