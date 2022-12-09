@@ -36,7 +36,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 
             graphic.attr({
                 stroke: point.color || series.color,
-                "stroke-width": 1
+                'stroke-width': 1
             });
 
             graphic[verb]({
