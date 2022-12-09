@@ -54,7 +54,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 import Breadcrumbs from './Breadcrumbs.js';
-import MapUtilities from '../Maps/MapUtilities.js';
 
 const {
     addEvent,
@@ -1079,7 +1078,7 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
             fireEvent(
                 chart,
                 'midDrillUp',
-                { },
+                {},
                 function (): void {
                     seriesToRemove.remove(false);
                 }
