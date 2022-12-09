@@ -27,7 +27,7 @@ Cypress.Commands.add('dashboard', () =>
                 });
             }
         } else {
-            reject(new Error('global highcharts namespace is missing.'));
+            reject(new Error('global Dashboard namespace is missing.'));
         }
     }))
 );

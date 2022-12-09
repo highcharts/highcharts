@@ -105,17 +105,18 @@ class Sidebar {
                 if (layout) {
                     dashboard.layouts.push(layout);
                 }
-                const component = Bindings.addComponent({
-                    type: 'Highcharts',
+
+                Bindings.addComponent({
+                    type: 'html',
                     cell: cellName,
                     isResizable: true,
-                    chartOptions: {
-                        type: 'line',
-                        series: [{
-                            name: 'Series from options',
-                            data: [1, 2, 3, 4]
-                        }]
-                    }
+                    elements: [
+                        {
+                            tagName: 'div',
+                            style: { 'text-align': 'center' },
+                            textContent: 'Placeholder text'
+                        }
+                    ]
                 });
 
             }
@@ -967,7 +968,7 @@ class Sidebar {
                 });
 
             dragDrop.onCellDragEnd(newCell);
-            let options = merge(componentOptions, {
+            const options = merge(componentOptions, {
                 cell: newCell.id
             });
             Bindings.addComponent(options, newCell);
