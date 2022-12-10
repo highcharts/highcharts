@@ -47,17 +47,16 @@ const defaultOptions: MapViewOptions = {
     /**
      * Fit the map to a geometry object consisting of individual points or
      * polygons. This is practical for responsive maps where we want to focus on
-     * a specific area regardless of map size - unlike setting `center`
-     * and `zoom`, where the view doesn't scale with different map sizes.
+     * a specific area regardless of map size - unlike setting `center` and
+     * `zoom`, where the view doesn't scale with different map sizes.
      *
      * The geometry can be combined with the [padding](#mapView.padding) option
      * to avoid touching the edges of the chart.
      *
-     * @type {Highcharts.GeoJSONGeometryMultiPoint}
+     * @type {object}
      * @since next
      *
-     * @sample maps/mapview/fittogeometry
-     *         Fitting the view to geometries
+     * @sample maps/mapview/fittogeometry Fitting the view to geometries
      */
     fitToGeometry: void 0,
 
