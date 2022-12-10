@@ -45,6 +45,20 @@ const defaultOptions: MapViewOptions = {
     center: [0, 0],
 
     /**
+     * Fit the map to a geometry object consisting of individual points or
+     * polygons. This is practical for responsive maps where we want to focus on
+     * a specific area regardless of map size. This is unlike setting `center`
+     * and `zoom`, where the view doesn't scale with different map sizes.
+     *
+     * @type {Highcharts.GeoJSONGeometryMultiPoint}
+     * @since next
+     *
+     * @sample maps/mapview/fittogeometry
+     *         Fitting the view to geometries
+     */
+    fitToGeometry: void 0,
+
+    /**
      * Prevents the end user from zooming too far in on the map. See
      * [zoom](#mapView.zoom).
      *

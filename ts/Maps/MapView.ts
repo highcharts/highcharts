@@ -23,7 +23,8 @@ import type {
     MapViewInsetsOptions,
     MapViewOptions,
     MapViewPaddingType,
-    ProjectedXY
+    ProjectedXY,
+    ProjectedXYArray
 } from './MapViewOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -455,6 +456,8 @@ class MapView {
     }
 
     public getProjectedBounds(): MapBounds|undefined {
+        const projection = this.projection;
+
         const allBounds = this.chart.series.reduce(
             (acc, s): MapBounds[] => {
                 const bounds = s.getProjectedBounds && s.getProjectedBounds();
@@ -468,6 +471,28 @@ class MapView {
             },
             [] as MapBounds[]
         );
+
+        // The bounds option
+        const fitToGeometry = this.options.fitToGeometry;
+        if (fitToGeometry) {
+            if (fitToGeometry.type === 'MultiPoint') {
+                const positions = fitToGeometry.coordinates
+                        .map((lonLat): ProjectedXYArray =>
+                            projection.forward(lonLat)
+                        ),
+                    xs = positions.map((pos): number => pos[0]),
+                    ys = positions.map((pos): number => pos[1]);
+
+                return {
+                    x1: Math.min.apply(0, xs),
+                    x2: Math.max.apply(0, xs),
+                    y1: Math.min.apply(0, ys),
+                    y2: Math.max.apply(0, ys)
+                };
+
+            }
+            return boundsFromPath(projection.path(fitToGeometry));
+        }
 
         return this.projection.bounds || MapView.compositeBounds(allBounds);
     }
@@ -1068,6 +1093,8 @@ class MapView {
 
         if (options.center || isNumber(options.zoom)) {
             this.setView(this.options.center, options.zoom, false);
+        } else if ('fitToGeometry' in options) {
+            this.fitToBounds(void 0, void 0, false);
         }
 
         if (redraw) {
