@@ -2813,7 +2813,11 @@ class Series {
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
-            );
+            ),
+            plotX = point.plotX,
+            plotY = point.plotY,
+            attribs: SVGAttributes = {};
+
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
@@ -2842,13 +2846,21 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = isNumber(radius) ? {
-            // Math.floor for #1843:
-            x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any - radius) :
-                (point.plotX as any) - radius,
-            y: (point.plotY as any) - radius
-        } : {};
+
+        if (isNumber(radius) && isNumber(plotX) && isNumber(plotY)) {
+            attribs.x = plotX - radius;
+            attribs.y = plotY - radius;
+
+            if (this.chart.inverted) {
+                attribs.x = this.yAxis.len - plotY - radius;
+                attribs.y = this.xAxis.len - plotX - radius;
+            }
+
+            if (seriesOptions.crisp) {
+                // Math.floor for #1843:
+                attribs.x = Math.floor(attribs.x);
+            }
+        }
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -3301,7 +3313,7 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === 'markers' || name === 'series')
+                name === 'series'
             );
 
         // Swap axes for inverted (#2339)

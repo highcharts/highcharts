@@ -1566,9 +1566,17 @@ class Point {
         const series = this.series,
             chart = series.chart;
 
+        let haloX = this.plotX as any,
+            haloY = this.plotY as any;
+
+        if (chart.inverted) {
+            haloX = series.yAxis.len - haloY;
+            haloY = series.xAxis.len - (this.plotX as any);
+        }
+
         return chart.renderer.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            (this.plotY as any) - size,
+            Math.floor(haloX) - size,
+            haloY - size,
             size * 2,
             size * 2
         );
