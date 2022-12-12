@@ -104,26 +104,15 @@ class AST {
      * potentially harmful content from the chart configuration before adding to
      * the DOM.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedAttributes)
+     *
      * @example
      * // Allow a custom, trusted attribute
      * Highcharts.AST.allowedAttributes.push('data-value');
      *
-     * @name    Highcharts.AST.allowedAttributes
-     * @type    {Array<string>}
-     * @default ["aria-controls","aria-describedby","aria-expanded",
-     *           "aria-haspopup","aria-hidden","aria-label","aria-labelledby",
-     *           "aria-live","aria-pressed","aria-readonly",
-     *           "aria-roledescription","aria-selected","class","clip-path",
-     *           "color","colspan","cx","cy","d","dx","dy","disabled","fill",
-     *           "height","href","id","in","markerHeight","markerWidth",
-     *           "offset","opacity","orient","padding","paddingLeft",
-     *           "paddingRight","patternUnits","r","refX","refY","role","scope",
-     *           "slope","src","startOffset","stdDeviation","stroke",
-     *           "stroke-linecap","stroke-width","style","tableValues","result",
-     *           "rowspan","summary","target","tabindex","text-align",
-     *           "text-anchor","textAnchor","textLength","title","type",
-     *           "valign","width","x","x1","x2","xlink:href","y","y1","y2",
-     *           "zIndex"]
+     * @name Highcharts.AST.allowedAttributes
+     * @type {Array<string>}
      */
     public static allowedAttributes = [
         'aria-controls',
@@ -204,13 +193,15 @@ class AST {
      * `src`. Attribute values will only be allowed if they start with one of
      * these strings.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedReferences)
+     *
      * @example
      * // Allow tel:
      * Highcharts.AST.allowedReferences.push('tel:');
      *
      * @name    Highcharts.AST.allowedReferences
      * @type    {Array<string>}
-     * @default ["https://","http://","mailto:","/","../","./","#"]
      */
     public static allowedReferences = [
         'https://',
@@ -226,21 +217,15 @@ class AST {
      * The list of allowed SVG or HTML tags, used for sanitizing potentially
      * harmful content from the chart configuration before adding to the DOM.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedTags)
+     *
      * @example
      * // Allow a custom, trusted tag
      * Highcharts.AST.allowedTags.push('blink'); // ;)
      *
      * @name    Highcharts.AST.allowedTags
      * @type    {Array<string>}
-     * @default ["a","abbr","b","br","button","caption","circle","clipPath",
-     *           "code","dd","defs","div","dl","dt","em","feComponentTransfer",
-     *           "feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur",
-     *           "feOffset","feMerge","feMergeNode","filter","h1","h2","h3",
-     *           "h4","h5","h6","hr","i","img","li","linearGradient","marker",
-     *           "ol","p","path","pattern","pre","rect","small","span","stop",
-     *           "strong","style","sub","sup","svg","table","text","textPath",
-     *           "thead","title","tbody","tspan","td","th","tr","u","ul",
-     *           "#text"]
      */
     public static allowedTags = [
         'a',
