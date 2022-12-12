@@ -5,9 +5,9 @@ Highcharts optionally features _styled mode_, where the graphic design is clearl
 
 When the [chart.styledMode](https://api.highcharts.com/highcharts/chart.styledMode) option is `true`, no presentational attributes (like `fill`, `stroke`, font styles etc.) are applied to the chart SVG. Instead, the design is applied purely by CSS.
 
-Highcharts comes with a default CSS file, [css/highcharts.css](https://code.highcharts.com/css/highcharts.css), which is built from [SCSS](https://github.com/highcharts/highcharts/blob/master/css/highcharts.scss).
+Highcharts comes with a default CSS file, [css/highcharts.css](https://code.highcharts.com/css/highcharts.css).
 
-To customize your styles, you can [create your own themes with SCSS](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS rules. See our [CodePen SCSS boilerplate](https://codepen.io/anon/pen/eQyawK) to experiment with the default SCSS.
+To customize your styles, you can [create your own themes](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS variables or rules. See our [CSS colors demo](https://www.highcharts.com/samples/highcharts/css/colors) to experiment with the default CSS.
 
 
 WHAT CAN BE STYLED?
@@ -104,7 +104,7 @@ Rules to differentiate between up or down points in Highcharts Stock hollow cand
 
     .highcharts-color-{n}
 
-Colors used for series, or individual points when [colorByPoint](https://api.highcharts.com/highcharts/plotOptions.column.colorByPoint) is set, typically for pie charts etc. Each such color rule sets the fill and stroke to a default color in _highcharts.css_, then these properties may be overridden by more specific rules, for example for a common stroke on pies. The best place to set your own custom colors is by modifying highcharts.css/highcharts.scss, otherwise the strokes and fills must be set more specifically. Replaces [colors](https://api.highcharts.com/highcharts/colors).
+Colors used for series, or individual points when [colorByPoint](https://api.highcharts.com/highcharts/plotOptions.column.colorByPoint) is set, typically for pie charts etc. Each such color rule sets the fill and stroke to a default color in _highcharts.css_, then these properties may be overridden by more specific rules, for example for a common stroke on pies. The best place to set your own custom colors is by overriding the `--highcharts-color-{n}` variables in `highcharts.css`, otherwise the strokes and fills must be set more specifically. Replaces [colors](https://api.highcharts.com/highcharts/colors).
 
 [Demo of styling series and point colors](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/colors/).
 
