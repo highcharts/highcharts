@@ -2795,7 +2795,7 @@ class Series {
      */
     public markerAttribs(
         point: Point,
-        state?: StatesOptionsKey,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
@@ -3303,11 +3303,9 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === "markers" || name === "series") &&
+                (name === 'markers' || name === 'series') &&
                 !this._hasPointMarkers
             );
-
-        console.log(inverted);
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
