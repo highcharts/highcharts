@@ -4,7 +4,8 @@ const dataPool = new Dashboard.DataOnDemand();
 
 let citySeries;
 let dataScope = 'TX';
-let worldMap;
+let worldTable;
+let worldTime = new Date(2010, 12, 25); 
 
 async function buildDashboard() {
     const topology = await Promise
@@ -13,8 +14,9 @@ async function buildDashboard() {
         .then(response => response.json());
 
     const citiesTable = await dataPool.getSourceTable('cities');
-    const climateTable = await dataPool.getSourceTable(1262649600000);
     const cityClimateTable = await dataPool.getSourceTable('Tokyo');
+
+    worldTable = await dataPool.getSourceTable(1262649600000);
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -30,19 +32,11 @@ async function buildDashboard() {
                     data: buildDates(),
                     events: {
                         click: function (e) {
-
-                            if (!worldMap) {
-                                return; // not ready
-                            }
-
                             dataPool
                                 .getSourceTable(e.point.x)
-                                .then(table => worldMap.setData(
-                                    table.modified.getRows(
-                                        void 0, void 0,
-                                        ['lat', 'lon', dataScope]
-                                    )
-                                ));
+                                .then(table => {
+                                    worldTable = table;
+                                });
                         }
                     },
                     tooltip: {
@@ -80,12 +74,12 @@ async function buildDashboard() {
                     map: topology,
                     spacing: [0, 0, 0, 0],
                 },
-                colorAxis: {
+                /*colorAxis: {
                     max: 325,
                     maxColor: '#F93',
                     min: 225,
                     minColor: '#39F',
-                },
+                },*/
                 legend: {
                     margin: 0,
                 },
@@ -100,10 +94,10 @@ async function buildDashboard() {
                 series: [{
                     type: 'map',
                     name: 'World Map',
-                }, {
+                }, /*{
                     type: 'mapbubble',
                     name: 'Temperature',
-                    data: climateTable.modified.getRows(
+                    data: worldTable.modified.getRows(
                         void 0, void 0,
                         ['lat', 'lon', dataScope]
                     ),
@@ -126,14 +120,12 @@ async function buildDashboard() {
                             );
                         },
                     }
-                }, {
+                },*/ {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: citiesTable.modified.getRows(
-                            void 0, void 0,
-                            ['lat2', 'lon2', 'city'],
-                        ),
-                    keys: ['lat', 'lon', 'name'],
+                    data: citiesTable.modified
+                        .getRows(void 0, void 0, ['lat2', 'lon2', 'city']),
+                    keys: ['lat', 'lon', 'name', 'z'],
                     color: '#000',
                     events: {
                         click: function (e) {
@@ -166,10 +158,10 @@ async function buildDashboard() {
                         headerFormat: void 0,
                         pointFormatter: function () {
                             const point = this;
-                            const temperature = climateTable.getCellAsNumber(
+                            const temperature = worldTable.getCellAsNumber(
                                 dataScope,
-                                climateTable.getRowIndexBy('lon', point.lon,
-                                    climateTable.getRowIndexBy('lat', point.lat)
+                                worldTable.getRowIndexBy('lon', point.lon,
+                                    worldTable.getRowIndexBy('lat', point.lat)
                                 ),
                                 true
                             );
@@ -189,7 +181,6 @@ async function buildDashboard() {
                 mount: function () {
                     // call action
                     console.log('map mount event', this);
-                    worldMap = this.chart.series[1];
                 },
                 unmount: function () {
                     console.log('map unmount event', this);
