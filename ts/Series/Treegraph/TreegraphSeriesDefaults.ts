@@ -49,7 +49,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *               zones
  *
  * @product      highcharts
- * @since        next
+ * @since 10.3.0
  * @requires     modules/treemap.js
  * @requires     modules/treegraph.js
  * @optionparent plotOptions.treegraph
@@ -65,7 +65,7 @@ const TreegraphSeriesDefaults = {
      * @type    {boolean}
      * @default false
      * @product highcharts
-     * @since   next
+     * @since 10.3.0
      */
     reversed: false,
     /**
@@ -88,7 +88,7 @@ const TreegraphSeriesDefaults = {
          * @type      {number}
          * @default   0.5
          * @product   highcharts
-         * @since     next
+         * @since 10.3.0
          * @apioption series.treegraph.link.curveFactor
          */
 
@@ -187,7 +187,7 @@ const TreegraphSeriesDefaults = {
          * the point color.
          *
          * @type {string}
-         * @since next
+         * @since 10.3.0
          * @product highcharts
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
@@ -223,8 +223,8 @@ const TreegraphSeriesDefaults = {
          * @sample highcharts/series-treegraph/link-text-path
          *         Treegraph series with link text path dataLabels.
          *
-         * @extends plotOptions.treegraph.dataLabels.linkTextPath
-         * @since   next
+         * @extends plotOptions.treegraph.dataLabels.textPath
+         * @since 10.3.0
          */
         linkTextPath: {
             attributes: {

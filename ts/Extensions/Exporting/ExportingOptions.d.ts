@@ -33,6 +33,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 export interface ExportingOptions {
     allowHTML?: boolean;
+    allowTableSorting?: boolean;
     buttons?: ExportingButtonsOptions;
     chartOptions?: Options;
     enabled?: boolean;
@@ -79,6 +80,7 @@ export interface ExportingButtonOptions {
     text?: string;
     theme?: ButtonThemeObject;
     titleKey?: string;
+    useHTML?: boolean;
     verticalAlign?: VerticalAlignValue;
     width?: number;
     x?: number;

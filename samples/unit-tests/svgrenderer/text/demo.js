@@ -421,7 +421,7 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         assert.strictEqual(
             lab.element.getAttribute('dy'),
             null,
-            "First line shouldn't have dy (#6144) - visually the red text fits in the green box."
+            'First line shouldn\'t have dy (#6144) - visually the red text fits in the green box.'
         );
 
         const txt = renderer
@@ -471,7 +471,7 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.textContent,
             'a < b and c > d',
-            "Tags don't start with spaces (#7126)"
+            'Tags don\'t start with spaces (#7126)'
         );
 
         var html = renderer.text('useHTML', 100, 100, true).add();
@@ -646,7 +646,7 @@ QUnit.test('Attributes', function (assert) {
 
         text = renderer
             .text(
-                "The quick brown fox jumps <span class='red'>over</span> the lazy dog",
+                'The quick brown fox jumps <span class=\'red\'>over</span> the lazy dog',
                 20,
                 20
             )

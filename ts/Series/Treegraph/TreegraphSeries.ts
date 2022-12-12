@@ -251,6 +251,12 @@ class TreegraphSeries extends TreemapSeries {
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
+    public markerAttribs(): SVGAttributes {
+        // The super Series.markerAttribs returns { width: NaN, height: NaN },
+        // so just disable this for now.
+        return {};
+    }
+
     public setCollapsedStatus(
         node: TreegraphNode,
         visibility: boolean
@@ -268,6 +274,11 @@ class TreegraphSeries extends TreemapSeries {
         node.children.forEach((childNode): void => {
             this.setCollapsedStatus(childNode, visibility);
         });
+    }
+
+    public drawTracker(): void {
+        ColumnSeries.prototype.drawTracker.apply(this, arguments);
+        ColumnSeries.prototype.drawTracker.call(this, this.links);
     }
 
     /**
@@ -539,10 +550,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public drawPoints(): void {
         super.drawPoints.apply(this, arguments);
-        const points = this.points;
-        this.points = this.links as any;
-        ColumnSeries.prototype.drawPoints.apply(this, arguments);
-        this.points = points;
+        ColumnSeries.prototype.drawPoints.call(this, this.links);
     }
     /**
      * Run translation operations for one node.

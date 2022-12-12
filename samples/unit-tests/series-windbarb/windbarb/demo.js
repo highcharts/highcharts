@@ -136,7 +136,7 @@ QUnit.test('Inside or outside plot area', function (assert) {
 });
 
 QUnit.test('Wind barb data grouping', assert => {
-    const approx = Highcharts.approximations.windbarb;
+    const approx = Highcharts.dataGrouping.approximations.windbarb;
 
     assert.deepEqual(
         approx([1, 1], [0, 180]),

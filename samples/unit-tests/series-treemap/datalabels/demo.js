@@ -23,7 +23,7 @@ QUnit.test(
                         'Noncommunicable diseases': '487.2',
                         'Communicable & other Group I': '59.2'
                     },
-                    "Democratic People's Republic of Korea": {
+                    'Democratic People\'s Republic of Korea': {
                         Injuries: '91.9',
                         'Noncommunicable diseases': '751.4',
                         'Communicable & other Group I': '117.3'
@@ -457,7 +457,7 @@ QUnit.test(
                         Injuries: '53.8',
                         'Communicable & other Group I': '97.8'
                     },
-                    "C\u00f4te d'Ivoire": {
+                    'C\u00f4te d\'Ivoire': {
                         'Noncommunicable diseases': '794.0',
                         Injuries: '124.0',
                         'Communicable & other Group I': '861.3'
@@ -823,7 +823,7 @@ QUnit.test(
                         Injuries: '59.0',
                         'Noncommunicable diseases': '435.4'
                     },
-                    "Lao People's Democratic Republic": {
+                    'Lao People\'s Democratic Republic': {
                         'Communicable & other Group I': '328.7',
                         Injuries: '75.2',
                         'Noncommunicable diseases': '680.0'
@@ -1031,7 +1031,7 @@ QUnit.test(
         assert.notStrictEqual(
             point2dataLabel.visibility,
             'hidden',
-            "The second point's data label shouldn't overlap (and hide) the third point's datalabel."
+            'The second point\'s data label shouldn\'t overlap (and hide) the third point\'s datalabel.'
         );
 
         assert.strictEqual(
@@ -1044,7 +1044,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    "Treemap: data label exceeds point's boundaries (#8160)",
+    'Treemap: data label exceeds point\'s boundaries (#8160)',
     function (assert) {
         var chart = Highcharts.chart('container', {
                 chart: {
@@ -1117,7 +1117,7 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            "Data label(s) text shouldn't be wider than its box (useHTML: false)."
+            'Data label(s) text shouldn\'t be wider than its box (useHTML: false).'
         );
 
         series.update({
@@ -1146,7 +1146,7 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            "Data label(s) text shouldn't be wider than its box (useHTML: true)."
+            'Data label(s) text shouldn\'t be wider than its box (useHTML: true).'
         );
 
         series.update({

@@ -121,6 +121,9 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      */
     lineWidth: 1,
 
+    /**
+     * @type {number|null}
+     */
     threshold: null,
 
     tooltip: {
@@ -568,6 +571,17 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+
+            /**
+             * Array for multiple SVG graphics representing the point in the
+             * chart. Only used in cases where the point can not be represented
+             * by a single graphic.
+             *
+             * @see Highcharts.Point#graphic
+             *
+             * @name Highcharts.Point#graphics
+             * @type {Array<Highcharts.SVGElement>|undefined}
+             */
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
@@ -660,19 +674,22 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
                 }
             }
         });
-
-        // Postprocess plotHigh
-        if (this.chart.polar) {
-            this.points.forEach((point): void => {
-                this.highToXY(point);
-                point.tooltipPos = [
-                    ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
-                    ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
-                ];
-            });
-        }
     }
 }, { order: 0 });
+
+addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
+    // Postprocess after the PolarComposition's afterTranslate
+    if (this.chart.polar) {
+        this.points.forEach((point): void => {
+            this.highToXY(point);
+            point.plotLow = point.plotY;
+            point.tooltipPos = [
+                ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
+                ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
+            ];
+        });
+    }
+}, { order: 3 });
 
 /* *
  *

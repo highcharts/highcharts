@@ -22,6 +22,7 @@ module.exports = {
         { from: 'maps/create-custom-maps-for-highmaps', to: 'maps/create-custom-maps' },
         { from: 'stock/understanding-highstock', to: 'stock/understanding-highcharts-stock' },
         { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' },
+        { from: 'getting-started/how-to-create-custom-highcharts-files', to: 'getting-started/how-to-create-custom-highcharts-packages' },
         { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' },
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
         { from: 'chart-concepts/range-selector', to: 'stock/range-selector' },

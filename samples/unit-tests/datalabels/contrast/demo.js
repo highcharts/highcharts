@@ -1,5 +1,5 @@
 QUnit.test(
-    "#6487: Column's data label with contrast after justification.",
+    '#6487: Column\'s data label with contrast after justification.',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 chart: {

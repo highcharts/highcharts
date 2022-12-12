@@ -33,12 +33,12 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
         'Hidden data label on setVisible false'
     );
     assert.equal(
-        chart.series[0].points[0].legendItem.textStr,
+        chart.series[0].points[0].legendItem.label.textStr,
         'Slice (0.0%)',
         'Hidden data label text string'
     );
     assert.equal(
-        chart.series[0].points[1].legendItem.textStr,
+        chart.series[0].points[1].legendItem.label.textStr,
         'Slice (14.3%)',
         'Next to hidden data label text string'
     );
@@ -56,7 +56,7 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
         'Visible data label on setVisible true'
     );
     assert.equal(
-        chart.series[0].points[0].legendItem.textStr,
+        chart.series[0].points[0].legendItem.label.textStr,
         'Slice (6.7%)',
         'Visible data label text string'
     );

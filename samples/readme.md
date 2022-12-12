@@ -6,7 +6,6 @@ tests and unit tests. See the [highcharts-utils](https://github.com/highcharts/h
 repo on how to set up the _Sample viewer_.
 
 
-
 Tests
 -----
 
@@ -56,7 +55,7 @@ that is available in the test environment.
 
 ```js
 // Instanciate
-var controller = new TestController(chart);
+const controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });

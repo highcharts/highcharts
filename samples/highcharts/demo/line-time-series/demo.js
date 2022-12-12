@@ -7,11 +7,13 @@ Highcharts.getJSON(
                 zoomType: 'x'
             },
             title: {
-                text: 'USD to EUR exchange rate over time'
+                text: 'USD to EUR exchange rate over time',
+                align: 'left'
             },
             subtitle: {
                 text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                align: 'left'
             },
             xAxis: {
                 type: 'datetime'

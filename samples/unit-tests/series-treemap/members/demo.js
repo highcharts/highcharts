@@ -60,7 +60,7 @@ QUnit.test(
 );
 
 QUnit.test('directTouch', function (assert) {
-    var treemapSeries = Highcharts.seriesTypes.treemap;
+    var treemapSeries = Highcharts.Series.types.treemap;
     assert.strictEqual(
         treemapSeries.prototype.directTouch,
         true,
@@ -69,7 +69,7 @@ QUnit.test('directTouch', function (assert) {
 });
 
 QUnit.test('getListOfParents', function (assert) {
-    var series = Highcharts.seriesTypes.treemap,
+    var series = Highcharts.Series.types.treemap,
         getListOfParents = series.prototype.getListOfParents;
 
     assert.deepEqual(
@@ -115,7 +115,7 @@ QUnit.test('getListOfParents', function (assert) {
 });
 
 QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
-    var series = Highcharts.seriesTypes.treemap,
+    var series = Highcharts.Series.types.treemap,
         setState = series.prototype.pointClass.prototype.setState,
         pointAttribs = series.prototype.pointAttribs,
         noop = Highcharts.noop,
@@ -171,7 +171,7 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
 });
 
 QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
-    var drillUp = Highcharts.seriesTypes.treemap.prototype.drillUp,
+    var drillUp = Highcharts.Series.types.treemap.prototype.drillUp,
         series = {
             rootNode: '',
             setRootNode: function (id) {
@@ -203,7 +203,7 @@ QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
 });
 
 QUnit.module('setRootNode', () => {
-    const { setRootNode } = Highcharts.seriesTypes.treemap.prototype;
+    const { setRootNode } = Highcharts.Series.types.treemap.prototype;
     const { merge } = Highcharts;
     const seriesDefault = {
         chart: {
@@ -237,12 +237,12 @@ QUnit.module('setRootNode', () => {
         assert.strictEqual(
             series.rootNode,
             '',
-            "Drill to '': Root node updated"
+            'Drill to \'\': Root node updated'
         );
         assert.strictEqual(
             series.chart.redrawed,
             undefined,
-            "Drill to '': Redraw false"
+            'Drill to \'\': Redraw false'
         );
 
         setRootNode.call(series, 'A');
@@ -286,7 +286,7 @@ QUnit.module('setRootNode', () => {
 
 QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     var onClickDrillToNode =
-            Highcharts.seriesTypes.treemap.prototype.onClickDrillToNode,
+            Highcharts.Series.types.treemap.prototype.onClickDrillToNode,
         series = {
             setRootNode: function (id) {
                 this.rootNode = id;
@@ -317,12 +317,12 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     assert.strictEqual(
         series.rootNode,
         '',
-        "On click drill to '': rootNode is updated."
+        'On click drill to \'\': rootNode is updated.'
     );
     assert.strictEqual(
         point.state,
         '',
-        "On click drill to '': point.state is updated."
+        'On click drill to \'\': point.state is updated.'
     );
 });
 

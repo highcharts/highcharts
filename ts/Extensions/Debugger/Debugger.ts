@@ -22,7 +22,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {

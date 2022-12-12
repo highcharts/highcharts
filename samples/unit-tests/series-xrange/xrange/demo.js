@@ -636,7 +636,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     var pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -656,7 +656,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -676,7 +676,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -699,7 +699,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -725,7 +725,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -745,7 +745,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -768,7 +768,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -791,7 +791,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,

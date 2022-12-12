@@ -1021,11 +1021,10 @@ class TreemapSeries extends ScatterSeries {
      * Override drawPoints
      * @private
      */
-    public drawPoints(): void {
+    public drawPoints(points: Array<TreemapPoint> = this.points): void {
         const series = this,
             chart = series.chart,
             renderer = chart.renderer,
-            points = series.points,
             styledMode = chart.styledMode,
             options = series.options,
             shadow = styledMode ? {} : options.shadow,
