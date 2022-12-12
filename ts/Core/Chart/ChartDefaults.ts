@@ -502,6 +502,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample highcharts/css/colors
      *         Color theming with CSS
+     * @sample highcharts/css/prefers-color-scheme
+     *         Dynamic theme based on system settings
      * @type       {boolean}
      * @default    false
      * @since      7.0

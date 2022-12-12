@@ -91,9 +91,6 @@
     --highcharts-range-selector-input-text: var(--highcharts-neutral-color-80);
     --highcharts-range-selector-input-border: var(--highcharts-neutral-color-20);
 
-    /* Data-labels */
-    --highcharts-data-label-color: var(--highcharts-neutral-color-80);
-
     /* Buttons */
     --highcharts-context-button-background: var(--highcharts-background-color);
     --highcharts-button-background: var(--highcharts-neutral-color-3);
@@ -434,7 +431,7 @@ g.highcharts-series,
 
 .highcharts-data-label text,
 text.highcharts-data-label {
-    fill: var(--highcharts-data-label-color);
+    fill: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-data-label-connector {
