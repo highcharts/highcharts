@@ -1,8 +1,9 @@
+import type CSSJSONObject from '../../CSSJSONObject';
+
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
-import type { CSSJSONObject } from './../../../Data/DataCSSObject';
 
 const {
     createElement,

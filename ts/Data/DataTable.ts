@@ -125,7 +125,7 @@ class DataTable implements DataEvent.Emitter {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -1630,6 +1630,12 @@ class DataTable implements DataEvent.Emitter {
  * Additionally it provides necessary types for events and JSON conversion.
  */
 namespace DataTable {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Event object for cell-related events.

@@ -13,7 +13,7 @@
 
 /* *
  *
- *  Declarations
+ *  Interface
  *
  * */
 
@@ -33,6 +33,12 @@ interface DataEvent {
     type: string;
 
 }
+
+/* *
+ *
+ *  Interface Namespace
+ *
+ * */
 
 /**
  * Additional types for the event object and the event callback.
