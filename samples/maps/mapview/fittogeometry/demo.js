@@ -90,7 +90,7 @@
 
         mapView: {
             fitToGeometry: multiPointGeometry,
-            padding: 5
+            padding: 15
         },
 
         series: [{
