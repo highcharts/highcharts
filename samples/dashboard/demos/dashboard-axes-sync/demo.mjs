@@ -6,19 +6,20 @@ PluginHandler.addPlugin(HighchartsPlugin);
 
 // Data.
 const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
-        85, 85, 85, 86, 82, 80].map((el, i) => [i, el, '' + i]),
+        85, 85, 85, 86, 82, 80],
     africa = [54, 55, 59, 61, 62, 65, 66, 69, 71, 74, 72, 70, 71, 70, 71, 72,
-        73, 73, 73, 74, 71, 70].map((el, i) => [i, el, '' + i]),
+        73, 73, 73, 74, 71, 70],
     europe = [94, 94, 93, 92, 95, 95, 95, 96, 96, 95, 95, 95, 95, 96, 94, 94,
-        94, 93, 94, 95, 94, 94].map((el, i) => [i, el, '' + i]),
+        94, 93, 94, 95, 94, 94],
     seAsia = [64, 65, 65, 66, 66, 71, 72, 73, 75, 78, 80, 82, 83, 85, 87, 88,
-        87, 90, 91, 90, 85, 82].map((el, i) => [i, el, '' + i]);
+        87, 90, 91, 90, 85, 82];
 
 // Set global chart options.
 Highcharts.setOptions({
     chart: {
         spacingTop: 20,
         spacingBottom: 20,
+        height: 300,
         type: 'area',
         zoomType: 'xy'
     },
@@ -37,7 +38,6 @@ Highcharts.setOptions({
     colors: ['#37D5D6'],
     plotOptions: {
         area: {
-            keys: ['x', 'y', 'name'],
             pointStart: Date.UTC(2000, 0, 1),
             pointIntervalUnit: 'year',
             fillColor: {
@@ -162,8 +162,7 @@ const dashboard = new Dashboard.Dashboard('container', {
                 },
                 series: [{
                     data: africa,
-                    name: 'Africa',
-                    pointStart: Date.UTC(2010, 0, 1)
+                    name: 'Africa'
                 }]
             }
         }, {
