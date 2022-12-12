@@ -239,7 +239,7 @@ QUnit.test('Set min/max size', function (assert) {
     assert.notStrictEqual(
         initialWidth,
         chart.series[0].points[5].graphic.attr('width'),
-        `After adding a new big point, other points should adjust size.`
+        'After adding a new big point, other points should adjust size.'
     );
 
     chart.series[0].remove(false);

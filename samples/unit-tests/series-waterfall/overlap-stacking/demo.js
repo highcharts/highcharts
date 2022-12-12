@@ -52,6 +52,6 @@ QUnit.test('#12248 - Correct visible range for points.', function (assert) {
     assert.strictEqual(
         stackState.length,
         yAxis.waterfall.stacks[firstSeries.stackKey][0].stackState.length,
-        "The number of the first stack's states should be unchanged."
+        'The number of the first stack\'s states should be unchanged.'
     );
 });

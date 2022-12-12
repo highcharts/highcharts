@@ -1,6 +1,6 @@
 /**
-*Function to draw the path
-*/
+ *Function to draw the path
+ */
 function getPath(width, height) {
     var path = [],
         centerX = width * 0.5,
@@ -12,7 +12,7 @@ function getPath(width, height) {
         i,
         angle;
 
-    //loop to add points to the path
+    // loop to add points to the path
     for (i = 0; i < 32; i = i + 1) {
         angle = i * Math.PI / 16;
         if (i === 0) {
@@ -35,8 +35,8 @@ function getPath(width, height) {
 }
 
 /**
-* Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
-*/
+ * Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
+ */
 function onDraw() {
     var path = getPath(this.chartWidth, this.chartHeight);
     if (this.compassrose) {
@@ -66,7 +66,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: "Demo of custom backgroundshape in Highcharts"
+        text: 'Demo of custom backgroundshape in Highcharts'
     },
     pane: {
         startAngle: 0,

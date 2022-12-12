@@ -12,7 +12,7 @@ $(function () {
             depth: 100,
             startAngle: 180,
             type: 'pie',
-            innerSize: "30%",
+            innerSize: '30%',
             name: 'Browser share',
             data: [10]
         }]

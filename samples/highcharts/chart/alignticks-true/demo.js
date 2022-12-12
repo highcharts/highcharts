@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        //alignTicks: false,
+        // alignTicks: false,
         type: 'line'
     },
     xAxis: {

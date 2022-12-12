@@ -132,7 +132,7 @@ const words = {
         shadow: true,
         useHTML: true,
         formatter: function () {
-            const term = this.key; //'radial'
+            const term = this.key; // 'radial'
 
             for (let ii = 0; ii < tipText.length; ++ii) {
                 const tempText = tipText[ii];

@@ -89,7 +89,7 @@ QUnit.test(
                 series: [
                     {
                         type: 'column',
-                        //pointRange: 1,
+                        // pointRange: 1,
                         data: [
                             [7, 7],
                             [10, 8]

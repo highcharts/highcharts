@@ -1,5 +1,5 @@
 QUnit.test(
-    "3D logarithmic zAxis miscalculated points' plotting Z.(#4562)",
+    '3D logarithmic zAxis miscalculated points\' plotting Z.(#4562)',
     function (assert) {
         var chart = $('#container')
             .highcharts({
