@@ -6,7 +6,7 @@ QUnit.test('Sub-millisecond tooltip(#4223)', function (assert) {
         title: {
             text:
                 'Tooltip shows only year when xAxis.closestPointRange < 1 msec',
-            x: -20 //center
+            x: -20 // center
         },
         xAxis: {
             type: 'datetime'

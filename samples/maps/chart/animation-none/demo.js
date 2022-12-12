@@ -27,7 +27,7 @@
             colorAxis: {
                 min: 1,
                 max: 1000,
-                //type: 'logarithmic',
+                // type: 'logarithmic',
                 stops: [
                     [0, '#f8faff'],
                     [0.3, '#2f7ed8'],

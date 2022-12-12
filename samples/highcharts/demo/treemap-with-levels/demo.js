@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     series: [{
-        type: "treemap",
+        type: 'treemap',
         layoutAlgorithm: 'stripes',
         alternateStartingDirection: true,
         levels: [{
@@ -19,7 +19,7 @@ Highcharts.chart('container', {
         data: [{
             id: 'A',
             name: 'Nord-Norge',
-            color: "#50FFB1"
+            color: '#50FFB1'
         }, {
             id: 'B',
             name: 'Trøndelag',
@@ -27,7 +27,7 @@ Highcharts.chart('container', {
         }, {
             id: 'C',
             name: 'Vestlandet',
-            color: "#A09FA8"
+            color: '#A09FA8'
         }, {
             id: 'D',
             name: 'Østlandet',
@@ -97,6 +97,6 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         pointFormat:
-            "The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>"
+            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
     }
 });

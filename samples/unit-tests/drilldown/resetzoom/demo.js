@@ -460,7 +460,7 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
 
 
 QUnit.test(
-    `Reset zoom button with dynamically added multiple drilldowns, #17247.`,
+    'Reset zoom button with dynamically added multiple drilldowns, #17247.',
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {

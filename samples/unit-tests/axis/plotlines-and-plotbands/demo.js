@@ -390,7 +390,7 @@ QUnit.test('General tests', function (assert) {
 });
 
 QUnit.test(
-    "#6433 - axis.update leaves empty plotbands' groups",
+    '#6433 - axis.update leaves empty plotbands\' groups',
     function (assert) {
         var chart = new Highcharts.chart('container', {
             chart: {
@@ -544,7 +544,7 @@ QUnit.test('Plotbands clip (#2361)', function (assert) {
                     label: {
                         text:
                             'I will dissapear if you zoom in <br/>so ' +
-                            "the start of the band isn't visible"
+                            'the start of the band isn\'t visible'
                     }
                 }
             ]
