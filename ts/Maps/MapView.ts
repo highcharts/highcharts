@@ -130,6 +130,7 @@ const mergeCollections = <
 class MapView {
 
     public center: LonLatArray;
+    public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
     public group?: SVGElement;
     public insets: MapViewInset[] = [];
@@ -475,23 +476,29 @@ class MapView {
         // The bounds option
         const fitToGeometry = this.options.fitToGeometry;
         if (fitToGeometry) {
-            if (fitToGeometry.type === 'MultiPoint') {
-                const positions = fitToGeometry.coordinates
-                        .map((lonLat): ProjectedXYArray =>
-                            projection.forward(lonLat)
-                        ),
-                    xs = positions.map((pos): number => pos[0]),
-                    ys = positions.map((pos): number => pos[1]);
+            if (!this.fitToGeometryCache) {
+                if (fitToGeometry.type === 'MultiPoint') {
+                    const positions = fitToGeometry.coordinates
+                            .map((lonLat): ProjectedXYArray =>
+                                projection.forward(lonLat)
+                            ),
+                        xs = positions.map((pos): number => pos[0]),
+                        ys = positions.map((pos): number => pos[1]);
 
-                return {
-                    x1: Math.min.apply(0, xs),
-                    x2: Math.max.apply(0, xs),
-                    y1: Math.min.apply(0, ys),
-                    y2: Math.max.apply(0, ys)
-                };
+                    this.fitToGeometryCache = {
+                        x1: Math.min.apply(0, xs),
+                        x2: Math.max.apply(0, xs),
+                        y1: Math.min.apply(0, ys),
+                        y2: Math.max.apply(0, ys)
+                    };
 
+                } else {
+                    this.fitToGeometryCache = boundsFromPath(
+                        projection.path(fitToGeometry)
+                    );
+                }
             }
-            return boundsFromPath(projection.path(fitToGeometry));
+            return this.fitToGeometryCache;
         }
 
         return this.projection.bounds || MapView.compositeBounds(allBounds);
@@ -1054,6 +1061,10 @@ class MapView {
             this.insets.forEach((inset): void => inset.destroy());
             this.insets.length = 0;
             isDirtyInsets = true;
+        }
+
+        if (isDirtyProjection || 'fitToGeometry' in options) {
+            delete this.fitToGeometryCache;
         }
 
         if (isDirtyProjection || isDirtyInsets) {
