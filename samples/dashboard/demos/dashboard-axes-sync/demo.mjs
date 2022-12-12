@@ -57,10 +57,14 @@ Highcharts.setOptions({
 });
 
 // Create store to sync charts.
-const store = new CSVStore(void 0, {
+const store1 = new CSVStore(void 0, {
     csv: ''
 });
-store.load();
+store1.load();
+const store2 = new CSVStore(void 0, {
+    csv: ''
+});
+store2.load();
 
 const dashboard = new Dashboard.Dashboard('container', {
     gui: {
@@ -90,7 +94,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
-            store,
+            store: store1,
             sync: {
                 selection: true,
                 tooltip: true
@@ -118,7 +122,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }, {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
-            store,
+            store: store1,
             sync: {
                 selection: true,
                 tooltip: true
@@ -143,7 +147,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }, {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
-            store,
+            store: store2,
             sync: {
                 selection: true,
                 tooltip: true
@@ -168,7 +172,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }, {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
-            store,
+            store: store2,
             sync: {
                 selection: true,
                 tooltip: true
