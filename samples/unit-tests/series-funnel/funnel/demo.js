@@ -50,8 +50,8 @@ QUnit.test('Funnel size relative to center(#4738)', function (assert) {
                     center: [110, 150],
                     neckWidth: 50,
                     neckHeight: 100,
-                    //reversed: true,
-                    //-- Other available options
+                    // reversed: true,
+                    // -- Other available options
                     height: 200,
                     width: 150
                 }
@@ -102,7 +102,7 @@ QUnit.test('Visible funnel items', function (assert) {
                 neckWidth: '30%',
                 neckHeight: '25%'
 
-                //-- Other available options
+                // -- Other available options
                 // height: pixels or percent
                 // width: pixels or percent
             }
@@ -340,9 +340,9 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
 
     dataLabel = chart.series[0].points[1].dataLabel;
 

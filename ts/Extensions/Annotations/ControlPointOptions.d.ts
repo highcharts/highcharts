@@ -5,6 +5,8 @@
  * */
 
 import type Annotation from './Annotation';
+import type { AnnotationEventObject } from './EventEmitter';
+import type Controllable from './Controllables/Controllable';
 import type ControlPoint from './ControlPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -16,31 +18,31 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
-export interface AnnotationControlPointDragEventFunction {
+export interface ControlPointDragEventFunction {
     (
         this: Annotation,
-        e: Highcharts.AnnotationEventObject,
-        target: Highcharts.AnnotationControllable
+        e: AnnotationEventObject,
+        target: Controllable
     ): void;
 }
 
-export interface AnnotationControlPointPositionerFunction {
+export interface ControlPointPositionerFunction {
     (
         this: ControlPoint,
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): PositionObject;
 }
 
-export interface AnnotationControlPointEventsOptionsObject {
-    drag?: AnnotationControlPointDragEventFunction;
+export interface ControlPointEventsOptionsObject {
+    drag?: ControlPointDragEventFunction;
 }
 
-export interface AnnotationControlPointOptionsObject {
+export interface ControlPointOptionsObject {
     draggable?: undefined;
-    events: AnnotationControlPointEventsOptionsObject;
+    events: ControlPointEventsOptionsObject;
     height: number;
     index?: number;
-    positioner: AnnotationControlPointPositionerFunction;
+    positioner: ControlPointPositionerFunction;
     style: CSSObject;
     symbol: SymbolKey;
     visible: boolean;
@@ -53,4 +55,4 @@ export interface AnnotationControlPointOptionsObject {
  *
  * */
 
-export default AnnotationControlPointOptionsObject;
+export default ControlPointOptionsObject;

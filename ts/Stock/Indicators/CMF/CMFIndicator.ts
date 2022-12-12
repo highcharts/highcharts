@@ -14,6 +14,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     CMFOptions,
     CMFParamsOptions
@@ -21,16 +27,21 @@ import type {
 import type CMFPoint from './CMFPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The CMF series type.
@@ -42,6 +53,13 @@ const {
  * @augments Highcharts.Series
  */
 class CMFIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Chaikin Money Flow indicator (cmf).
      *
@@ -75,6 +93,7 @@ class CMFIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<CMFPoint> = void 0 as any;
     public options: CMFOptions = void 0 as any;
     public points: Array<CMFPoint> = void 0 as any;
@@ -82,6 +101,12 @@ class CMFIndicator extends SMAIndicator {
     public linkedParent: LineSeries = void 0 as any;
     public yData: Array<Array<number>> = void 0 as any;
     public nameBase: string = 'Chaikin Money Flow';
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Checks if the series and volumeSeries are accessible, number of
@@ -326,6 +351,12 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  * */
 
 export default CMFIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `CMF` series. If the [type](#series.cmf.type) option is not

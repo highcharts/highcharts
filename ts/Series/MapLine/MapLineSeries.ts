@@ -57,6 +57,10 @@ class MapLineSeries extends MapSeries {
      *
      * @sample maps/demo/mapline-mappoint/
      *         Mapline and map-point chart
+     * @sample maps/demo/animated-mapline/
+     *         Mapline with CSS keyframe animation
+     * @sample maps/demo/flight-routes
+     *         Flight routes
      *
      * @extends      plotOptions.map
      * @product      highmaps
@@ -236,7 +240,7 @@ export default MapLineSeries;
  * Pixel width of the mapline line.
  *
  * @type      {number}
- * @since     next
+ * @since 10.2.0
  * @product   highmaps
  * @apioption plotOptions.mapline.states.hover.lineWidth
  */

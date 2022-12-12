@@ -1,0 +1,14 @@
+---
+ name: Scatter plot with jitter
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+ alt_text: >-
+  Highcharts scatter plot JavaScript example displaying individual measurements
+  in a randomized horizontal position, increasing legibility.
+ tags:
+  - Highcharts demo
+ categories:
+  - Scatter and bubble charts:
+      priority: 3
+...

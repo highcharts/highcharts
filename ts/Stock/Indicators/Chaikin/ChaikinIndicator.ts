@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     ChaikinOptions,
     ChaikinParamsOptions
@@ -16,14 +22,11 @@ import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import AD from '../AD/ADIndicator.js'; // For historic reasons, AD is built into Chaikin
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import '../AD/ADIndicator.js'; // For historic reasons, AD i built into Chaikin
 const {
-    seriesTypes: {
-        ad: AD,
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -235,6 +238,12 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *
  * */
 export default ChaikinIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)

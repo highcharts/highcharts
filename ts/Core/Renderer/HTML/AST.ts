@@ -168,6 +168,7 @@ class AST {
         'target',
         'tabindex',
         'text-align',
+        'text-anchor',
         'textAnchor',
         'textLength',
         'title',
@@ -177,6 +178,7 @@ class AST {
         'x',
         'x1',
         'x2',
+        'xlink:href',
         'y',
         'y1',
         'y2',
@@ -270,7 +272,9 @@ class AST {
         'svg',
         'table',
         'text',
+        'textPath',
         'thead',
+        'title',
         'tbody',
         'tspan',
         'td',
@@ -351,6 +355,11 @@ class AST {
                     'Invalid attribute in config': `${key}`
                 });
                 delete attributes[key];
+            }
+
+            // #17753, < is not allowed in SVG attributes
+            if (isString(val) && attributes[key]) {
+                attributes[key] = val.replace(/</g, '&lt;') as any;
             }
         });
         return attributes;
@@ -561,7 +570,8 @@ class AST {
             .trim()
             // The style attribute throws a warning when parsing when CSP is
             // enabled (#6884), so use an alias and pick it up below
-            .replace(/ style="/g, ' data-style="');
+            // Make all quotation marks parse correctly to DOM (#17627)
+            .replace(/ style=(["'])/g, ' data-style=$1');
 
         let doc;
         if (hasValidDOMParser) {

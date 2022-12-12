@@ -24,12 +24,12 @@ import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
-import type RangeSelector from '../Extensions/RangeSelector';
+import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
@@ -40,6 +40,10 @@ const {
     fireEvent,
     merge
 } = U;
+import HU from './Utils/HTMLUtilities.js';
+const {
+    removeElement
+} = HU;
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
@@ -282,6 +286,11 @@ class Accessibility {
             this.proxyProvider.destroy();
         }
 
+        // Remove announcer container
+        if (chart.announcerContainer) {
+            removeElement(chart.announcerContainer);
+        }
+
         // Kill keyboard nav
         if (this.keyboardNavigation) {
             this.keyboardNavigation.destroy();
@@ -477,7 +486,6 @@ namespace Accessibility {
      * @private
      */
     export function compose(
-        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
         PointClass: typeof Point,

@@ -8,11 +8,12 @@
 
 'use strict';
 
-const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     APOOptions,
     APOParamsOptions
@@ -22,6 +23,9 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -175,10 +179,10 @@ class APOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface APOIndicator {
     nameBase: string;
@@ -212,6 +216,12 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  * */
 
 export default APOIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * An `Absolute Price Oscillator` series. If the [type](#series.apo.type) option

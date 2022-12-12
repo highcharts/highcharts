@@ -95,11 +95,11 @@ QUnit.test('Change of label alignment after add(#4605)', function (assert) {
             },
             plotOptions: {
                 columnrange: {
-                    //cropThreshold: Number.MAX_VALUE,
+                    // cropThreshold: Number.MAX_VALUE,
                     dataLabels: {
-                        //allowOverlap: true,
-                        //crop: false,
-                        //overflow: 'none',
+                        // allowOverlap: true,
+                        // crop: false,
+                        // overflow: 'none',
                         enabled: true,
                         inside: true
                     }

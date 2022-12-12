@@ -6,31 +6,43 @@
 
 'use strict';
 
-import type { AnnotationsShapeOptions } from '../AnnotationsOptions';
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+import type { AnnotationPointType } from '../AnnotationSeries';
+import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type MockPointOptions from '../MockPointOptions';
+
 import Annotation from '../Annotation.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Pitchfork extends InfinityLine {
 
-    /**
+    /* *
      *
-     * Static Properties
+     *  Static Properties
      *
-     */
+     * */
+
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
     public static bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);
 
-
     /* *
      *
-     * Static Functions
+     *  Static Functions
      *
      * */
 
@@ -52,9 +64,9 @@ class Pitchfork extends InfinityLine {
     }
 
     public static findEdgePoint(
-        point: Highcharts.AnnotationPointType,
-        firstAnglePoint: Highcharts.AnnotationPointType,
-        secondAnglePoint?: Highcharts.AnnotationPointType
+        point: AnnotationPointType,
+        firstAnglePoint: AnnotationPointType,
+        secondAnglePoint?: AnnotationPointType
     ): PositionObject {
         const angle = Math.atan2(
                 (
@@ -79,24 +91,10 @@ class Pitchfork extends InfinityLine {
             points[0],
             new MockPoint(
                 annotation.chart,
-                target,
+                target as any,
                 annotation.midPointOptions()
             )
         );
-    }
-
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(
-        chart: Highcharts.AnnotationChart,
-        options: Pitchfork.Options
-    ) {
-        super(chart, options);
     }
 
     /* *
@@ -204,6 +202,12 @@ class Pitchfork extends InfinityLine {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Pitchfork {
     defaultOptions: InfinityLine['defaultOptions'];
 }
@@ -246,13 +250,19 @@ Pitchfork.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Pitchfork {
     export interface Options extends InfinityLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
-        innerBackground: AnnotationsShapeOptions;
-        outerBackground: AnnotationsShapeOptions;
+        innerBackground: ControllableShapeOptions;
+        outerBackground: ControllableShapeOptions;
     }
 }
 
@@ -261,16 +271,19 @@ namespace Pitchfork {
  *  Registry
  *
  * */
-Annotation.types.pitchfork = Pitchfork;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;
     }
 }
 
+Annotation.types.pitchfork = Pitchfork;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Pitchfork;

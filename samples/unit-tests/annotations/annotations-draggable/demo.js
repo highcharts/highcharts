@@ -98,7 +98,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         annoattionOptions[0].labels[0].y,
         chart.yAxis[0].toPixels(3) - chart.yAxis[0].toPixels(5),
         1,
-        "Correctly updated options for annotation's label (#10605)."
+        'Correctly updated options for annotation\'s label (#10605).'
     );
 
     // Shape tests:
@@ -116,7 +116,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         annoattionOptions[1].shapes[0].point.y,
         3,
         0.5,
-        "Correctly updated options for annotation's shape (#10605)."
+        'Correctly updated options for annotation\'s shape (#10605).'
     );
 
     [chart.xAxis[0], chart.yAxis[0]].forEach((axis, i) => {

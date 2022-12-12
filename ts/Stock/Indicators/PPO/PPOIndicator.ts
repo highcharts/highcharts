@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -18,10 +24,8 @@ import type PPOPoint from './PPOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -46,6 +50,13 @@ const {
  * @augments Highcharts.Series
  */
 class PPOIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
@@ -84,10 +95,10 @@ class PPOIndicator extends EMAIndicator {
     } as PPOOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<PPOPoint> = void 0 as any;
     public options: PPOOptions = void 0 as any;
@@ -171,10 +182,10 @@ class PPOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface PPOIndicator {
     nameBase: string;
@@ -208,6 +219,12 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  * */
 
 export default PPOIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)

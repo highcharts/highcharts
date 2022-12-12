@@ -14,8 +14,10 @@
  *
  * */
 
-import type { AnnotationsLabelOptions } from './AnnotationsOptions';
 import type AxisType from '../../Core/Axis/AxisType';
+import type {
+    ControllableLabelOptions
+} from './Controllables/ControllableOptions';
 
 /* *
  *
@@ -24,7 +26,7 @@ import type AxisType from '../../Core/Axis/AxisType';
  * */
 
 export interface MockPointOptions {
-    label?: AnnotationsLabelOptions;
+    label?: ControllableLabelOptions;
     x: number;
     xAxis?: (number|AxisType|null);
     y: number;

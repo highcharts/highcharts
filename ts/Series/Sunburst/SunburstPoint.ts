@@ -40,7 +40,9 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import SunburstNode from './SunburstNode';
 const { correctFloat, extend } = U;
+
 
 /* *
  *
@@ -62,16 +64,17 @@ class SunburstPoint extends TreemapPoint {
 
     public outerArcLength?: number;
 
-    public node: SunburstSeries.NodeObject = void 0 as any;
+    public node: SunburstNode = void 0 as any;
 
     public options: SunburstPointOptions = void 0 as any;
 
     public series: SunburstSeries = void 0 as any;
 
-    public shapeExisting: SunburstSeries.NodeValuesObject = void 0 as any;
+    public shapeExisting: SunburstNode.NodeValuesObject = void 0 as any;
 
     public sliced?: boolean;
 
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = void 0 as any;
     /* *
      *
      *  Functions
@@ -112,23 +115,23 @@ class SunburstPoint extends TreemapPoint {
             this.dataLabelPath = this.dataLabelPath.destroy();
         }
 
+        // All times
         this.dataLabelPath = renderer
             .arc({
                 open: true,
                 longArc: moreThanHalf ? 1 : 0
             })
-            // Add it inside the data label group so it gets destroyed
-            // with the label
-            .add(label);
+            .attr({
 
-        this.dataLabelPath.attr({
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf,
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (r + shapeArgs.innerR) / 2
-        });
+                start: (upperHalf ? start : end),
+                end: (upperHalf ? end : start),
+                clockwise: +upperHalf,
+                x: shapeArgs.x,
+                y: shapeArgs.y,
+                r: (r + shapeArgs.innerR) / 2
+            })
+            .add(renderer.defs);
+
         return this.dataLabelPath;
     }
 

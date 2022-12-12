@@ -1,0 +1,6 @@
+---
+ name: Custom color key with stops
+ authors:
+   - Kamil Musialowski
+ js_wrap: b
+...

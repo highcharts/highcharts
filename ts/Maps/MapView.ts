@@ -71,7 +71,8 @@ type SVGTransformType = {
 
 /**
  * The world size in terms of 10k meters in the Web Mercator projection, to
- * match a 256 square tile to zoom level 0
+ * match a 256 square tile to zoom level 0.
+ * @private
  */
 const worldSize = 400.979322;
 const tileSize = 256;
@@ -925,19 +926,18 @@ class MapView {
                     }
 
 
-                } else {
-
-                    const scale = this.getScale();
+                } else { // #17238
+                    const scale = this.getScale(),
+                        flipFactor = this.projection.hasCoordinates ? 1 : -1;
 
                     const newCenter = this.projection.inverse([
                         mouseDownCenterProjected[0] +
                             (mouseDownX - chartX) / scale,
                         mouseDownCenterProjected[1] -
-                            (mouseDownY - chartY) / scale
+                            (mouseDownY - chartY) / scale * flipFactor
                     ]);
 
                     this.setView(newCenter, void 0, true, false);
-
                 }
 
                 e.preventDefault();

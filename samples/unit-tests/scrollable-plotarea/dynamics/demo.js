@@ -41,6 +41,25 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
         chart.fixedRenderer.box.contains(chart.xAxis[0].axisGroup.element),
         'X-axis should be outside the scrollable plot area (#8862)'
     );
+
+    chart.series[0].update({
+        zones: [{
+            value: 0,
+            color: '#f7a35c'
+        }, {
+            value: 1.5,
+            color: '#7cb5ec'
+        }, {
+            color: '#90ed7d'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].clips[0].attr('width'),
+        chart.plotWidth,
+        `When the zones are applied, their' clip width should equal the chart's
+        plotWidth, #17481.`
+    );
 });
 
 QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
@@ -66,10 +85,10 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
     );
 
-    document.getElementById('container').style.height = "190px";
+    document.getElementById('container').style.height = '190px';
     chart.reflow();
 
-    document.getElementById('container').style.height = "400px";
+    document.getElementById('container').style.height = '400px';
     chart.reflow();
 
     chart.tooltip.refresh(chart.series[0].points[0]);

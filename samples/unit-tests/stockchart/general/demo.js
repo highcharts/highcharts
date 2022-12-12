@@ -53,7 +53,7 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     $('#container').highcharts('StockChart', {
         rangeSelector: {
             buttons: buttons
-            //allButtonsEnabled: true //or false - doesn't matter
+            // allButtonsEnabled: true //or false - doesn't matter
         },
         xAxis: {
             minRange: 1

@@ -37,10 +37,11 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions } = D;
+import D from '../../Core/Defaults.js';
+const { defaultOptions, setOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
+import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
     doc,
@@ -104,7 +105,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         contextButtonTitle?: string;
         exitFullscreen?: string;
@@ -115,9 +116,6 @@ declare module '../../Core/LangOptions' {
         printChart?: string;
         viewFullscreen?: string;
     }
-}
-
-declare module '../../Core/Options' {
     interface Options {
         exporting?: ExportingOptions;
         navigation?: NavigationOptions;
@@ -257,19 +255,20 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<typeof Chart> = [];
+    const composedClasses: Array<Function> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
-    const inlineBlacklist: Array<RegExp> = [
+    const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
         /^font$/, // more specific props are set
         /[lL]ogical(Width|Height)$/,
+        /^parentRule$/,
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
-        /^length$/ // #7700
-        // /^text (border|color|cursor|height|webkitBorder)/
+        /^length$/, // #7700
+        /^[0-9]+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
@@ -284,7 +283,7 @@ namespace Exporting {
         'y'
     ];
 
-    export const inlineWhitelist: Array<RegExp> = [];
+    export const inlineAllowlist: Array<RegExp> = [];
 
     const unstyledElements: Array<string> = [
         'clipPath',
@@ -415,7 +414,12 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr
+                attr,
+                void 0,
+                void 0,
+                void 0,
+                void 0,
+                btnOptions.useHTML
             )
             .addClass(options.className as any)
             .attr({
@@ -640,6 +644,7 @@ namespace Exporting {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         ExportingSymbols.compose(SVGRendererClass);
+        Fullscreen.compose(ChartClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -686,6 +691,28 @@ namespace Exporting {
                     }
                 );
             }
+        }
+
+        if (composedClasses.indexOf(setOptions) === -1) {
+            composedClasses.push(setOptions);
+
+            defaultOptions.exporting = merge(
+                ExportingDefaults.exporting,
+                defaultOptions.exporting
+            );
+
+            defaultOptions.lang = merge(
+                ExportingDefaults.lang,
+                defaultOptions.lang
+            );
+
+            // Buttons and menus are collected in a separate config option set
+            // called 'navigation'. This can be extended later to add control
+            // buttons like zoom and pan right click menus.
+            defaultOptions.navigation = merge(
+                ExportingDefaults.navigation,
+                defaultOptions.navigation
+            );
         }
     }
 
@@ -1327,8 +1354,8 @@ namespace Exporting {
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const blacklist = inlineBlacklist,
-            whitelist = inlineWhitelist, // For IE
+        const denylist = inlineDenylist,
+            allowlist = inlineAllowlist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
 
@@ -1361,15 +1388,13 @@ namespace Exporting {
 
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
-                // cssText = '',
                 dummy: Element,
-                styleAttr,
-                blacklisted: (boolean|undefined),
-                whitelisted: (boolean|undefined),
+                denylisted: (boolean|undefined),
+                allowlisted: (boolean|undefined),
                 i: number;
 
             /**
-             * Check computed styles and whether they are in the white/blacklist
+             * Check computed styles and whether they are in the allow/denylist
              * for styles or atttributes.
              * @private
              * @param {string} val
@@ -1382,32 +1407,32 @@ namespace Exporting {
                 prop: string
             ): void {
 
-                // Check against whitelist & blacklist
-                blacklisted = whitelisted = false;
-                if (whitelist.length) {
-                    // Styled mode in IE has a whitelist instead.
-                    // Exclude all props not in this list.
-                    i = whitelist.length;
-                    while (i-- && !whitelisted) {
-                        whitelisted = whitelist[i].test(prop);
+                // Check against allowlist & denylist
+                denylisted = allowlisted = false;
+                if (allowlist.length) {
+                    // Styled mode in IE has a allowlist instead. Exclude all
+                    // props not in this list.
+                    i = allowlist.length;
+                    while (i-- && !allowlisted) {
+                        allowlisted = allowlist[i].test(prop);
                     }
-                    blacklisted = !whitelisted;
+                    denylisted = !allowlisted;
                 }
 
                 // Explicitly remove empty transforms
                 if (prop === 'transform' && val === 'none') {
-                    blacklisted = true;
+                    denylisted = true;
                 }
 
-                i = blacklist.length;
-                while (i-- && !blacklisted) {
-                    blacklisted = (
-                        blacklist[i].test(prop) ||
+                i = denylist.length;
+                while (i-- && !denylisted) {
+                    denylisted = (
+                        denylist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
 
-                if (!blacklisted) {
+                if (!denylisted) {
                     // If parent node has the same style, it gets inherited, no
                     // need to inline it. Top-level props should be diffed
                     // against parent (#7687).
@@ -1427,7 +1452,7 @@ namespace Exporting {
                                 node.setAttribute(hyphenate(prop), val);
                             }
                         // Styles
-                        } else if (prop !== 'parentRule') {
+                        } else {
                             (filteredStyles as any)[prop] = val;
                         }
                     }
@@ -1460,10 +1485,21 @@ namespace Exporting {
                         node.nodeName
                     );
                     dummySVG.appendChild(dummy);
-                    // Copy, so we can remove the node
-                    defaultStyles[node.nodeName] = merge(
-                        win.getComputedStyle(dummy, null) as any
-                    );
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            typeof s[key] === 'string' &&
+                            !/^[0-9]+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
                     // Remove default fill, otherwise text disappears when
                     // exported
                     if (node.nodeName === 'text') {
@@ -1487,15 +1523,6 @@ namespace Exporting {
                 }
 
                 // Apply styles
-                /*
-                if (cssText) {
-                    styleAttr = node.getAttribute('style');
-                    node.setAttribute(
-                        'style',
-                        (styleAttr ? styleAttr + ';' : '') + cssText
-                    );
-                }
-                */
                 css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)
@@ -1590,7 +1617,7 @@ namespace Exporting {
             }
         };
 
-        // Register update() method for navigation. Can not be set the same way
+        // Register update() method for navigation. Cannot be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
         ChartNavigationComposition
@@ -1765,33 +1792,6 @@ namespace Exporting {
 
 /* *
  *
- *  Registry
- *
- * */
-
-defaultOptions.exporting = merge(
-    ExportingDefaults.exporting,
-    defaultOptions.exporting
-);
-defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
-
-// Buttons and menus are collected in a separate config option set called
-// 'navigation'. This can be extended later to add control buttons like
-// zoom and pan right click menus.
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module or in Stock Tools.
- *
- * @requires     modules/exporting
- * @optionparent navigation
- */
-defaultOptions.navigation = merge(
-    ExportingDefaults.navigation,
-    defaultOptions.navigation
-);
-
-/* *
- *
  *  Default Export
  *
  * */
@@ -1810,7 +1810,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event
@@ -1823,7 +1823,7 @@ export default Exporting;
  *
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
- * @param {Highcharts.Chart} chart
+ * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
  * @param {global.Event} event

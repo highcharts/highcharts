@@ -106,7 +106,8 @@
         },
 
         title: {
-            text: 'USA 2016 Presidential Election Results'
+            text: 'USA 2016 Presidential Election Results',
+            align: 'left'
         },
 
         // Default options for the pies
@@ -114,6 +115,7 @@
             pie: {
                 borderColor: 'rgba(255,255,255,0.4)',
                 borderWidth: 1,
+                clip: true,
                 dataLabels: {
                     enabled: false
                 },
@@ -191,19 +193,19 @@
         const setVisible = item.setVisible;
 
         item.setVisible = function () {
-            const legendItem = this;
+            const item = this;
 
-            setVisible.call(legendItem);
+            setVisible.call(item);
 
             chart.series[0].points.forEach(point => {
                 if (
                     chart.colorAxis[0].dataClasses[point.dataClass].name ===
-                    legendItem.name
+                    item.name
                 ) {
                     // Find this state's pie and set visibility
                     Highcharts.find(chart.series, function (item) {
                         return item.name === point.id;
-                    }).setVisible(legendItem.visible, false);
+                    }).setVisible(item.visible, false);
 
                     // Do the same for the connector point if it exists
                     const connector = Highcharts.find(
@@ -212,7 +214,7 @@
                     );
 
                     if (connector) {
-                        connector.setVisible(legendItem.visible, false);
+                        connector.setVisible(item.visible, false);
                     }
                 }
             });

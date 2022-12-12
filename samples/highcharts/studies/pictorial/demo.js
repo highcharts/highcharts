@@ -18,7 +18,7 @@ Highcharts.seriesType(
     },
     {
         pointAttribs: function (point, selected) {
-            const pointAttribs = Highcharts.seriesTypes.column.prototype
+            const pointAttribs = Highcharts.Series.types.column.prototype
                 .pointAttribs.call(this, point, selected);
 
             pointAttribs.fill = {
@@ -49,10 +49,10 @@ Highcharts.seriesType(
 );
 
 Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
-    if (this instanceof Highcharts.seriesTypes.pictorial) {
+    if (this instanceof Highcharts.Series.types.pictorial) {
         this.points.forEach(point => {
             const fill = point.graphic && point.graphic.attr('fill');
-            const match = fill && fill.match(/url\(([^)]+)\)/);
+            const match = fill && fill.match(/url\(([^)]+)\)/u);
             if (match) {
                 const patternPath = document.querySelector(`${match[1]} path`);
                 if (patternPath) {

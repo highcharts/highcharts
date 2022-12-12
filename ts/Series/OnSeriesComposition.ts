@@ -99,13 +99,15 @@ namespace OnSeriesComposition {
      * @private
      */
     export function getPlotBox(
-        this: SeriesComposition
-    ): Series.PlotBoxObject {
+        this: SeriesComposition,
+        name?: string
+    ): Series.PlotBoxTransform {
         return seriesProto.getPlotBox.call(
             (
                 this.options.onSeries &&
                 this.chart.get(this.options.onSeries)
-            ) || this
+            ) || this,
+            name
         );
     }
 

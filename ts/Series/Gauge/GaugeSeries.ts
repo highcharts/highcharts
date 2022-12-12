@@ -243,7 +243,7 @@ class GaugeSeries extends Series {
                  *         Dial options demonstrated
                  *
                  * @type      {Highcharts.SVGPathArray}
-                 * @since     next
+                 * @since 10.2.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.path
                  */

@@ -28,7 +28,7 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
         actual = {
             text: label.text.textStr,
             backgroundColor: label.box.attr('fill'),
-            borderColor: label.box.stroke,
+            borderColor: label.box.attr('stroke'),
             borderRadius: label.box.r,
             borderWidth: label.box['stroke-width'],
             padding: label.padding,

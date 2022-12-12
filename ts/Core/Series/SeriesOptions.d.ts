@@ -44,6 +44,15 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
+export type NonPlotOptions = (
+    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
+    'xAxis'|'yAxis'|'zIndex'
+);
+
+export type PlotOptionsOf<T extends Series = Series> = (
+    Omit<T['options'], NonPlotOptions>
+);
+
 export interface SeriesAfterAnimateEvent {
     target: Series;
     type: 'afterAnimate';
