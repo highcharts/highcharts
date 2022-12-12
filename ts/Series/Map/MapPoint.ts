@@ -19,7 +19,7 @@
 import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
-import type { MapBounds } from '../../Maps/MapViewOptions';
+import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
@@ -93,10 +93,33 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     ): SVGPath {
         if (!point.projectedPath) {
             if (projection && point.geometry) {
+                const mapView = point.series.chart.mapView;
 
                 // Always true when given GeoJSON coordinates
                 projection.hasCoordinates = true;
 
+                // Change lat/lon to projected units in 'mapline' series on non
+                // topoJSON charts #17086
+                if (point.geometry.type === 'LineString' &&
+                        !projection.hasGeoProjection) {
+
+                    let projectedCoords: LonLatArray[] = [];
+                    const coordinates = point.geometry.coordinates;
+
+                    coordinates.forEach((coords): void => {
+                        const newCoords = mapView &&
+                            mapView.lonLatToProjectedUnits({
+                                lon: coords[0],
+                                lat: coords[1]
+                            });
+
+                        if (newCoords) {
+                            projectedCoords.push([newCoords.x, newCoords.y]);
+                        }
+                    });
+
+                    point.geometry.coordinates = projectedCoords;
+                }
                 point.projectedPath = projection.path(point.geometry);
 
             // SVG path given directly in point options
