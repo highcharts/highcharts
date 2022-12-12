@@ -27,7 +27,7 @@ QUnit.test(
         ).add();
 
         ren.text(
-            "<span class='<' id='redText' style='color: red;'>red</span>",
+            '<span class=\'<\' id=\'redText\' style=\'color: red;\'>red</span>',
             200,
             100
         ).add();

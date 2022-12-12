@@ -161,7 +161,7 @@ QUnit.test('Bindings general tests', function (assert) {
         chart.annotations[16].yAxisMax,
         chart.yAxis[0].toValue(chart.plotHeight / 2 + 10),
         1,
-        "Annotation should updated after control point's drag&drop (#12459)"
+        'Annotation should updated after control point\'s drag&drop (#12459)'
     );
 
     // Individual button events:

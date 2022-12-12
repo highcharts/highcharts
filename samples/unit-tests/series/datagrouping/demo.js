@@ -88,7 +88,7 @@ QUnit.test('General dataGrouping options', function (assert) {
 
     assert.ok(
         chart.series[0].points[0].y > 1,
-        "Scatter doesn't prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)"
+        'Scatter doesn\'t prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)'
     );
 
     assert.strictEqual(
@@ -330,7 +330,7 @@ QUnit.test('dataGrouping and multiple series', function (assert) {
     chart.series[1].hide();
     assert.ok(
         chart.series[1].points === null,
-        "Points array is nullified for a hidden series. Hidden series shouldn't have `undefined`-points in a series.points array (#6709)."
+        'Points array is nullified for a hidden series. Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).'
     );
 });
 

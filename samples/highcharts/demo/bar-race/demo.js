@@ -1,7 +1,7 @@
 const startYear = 1960,
     endYear = 2018,
-    btn = document.getElementById("play-pause-button"),
-    input = document.getElementById("play-range"),
+    btn = document.getElementById('play-pause-button'),
+    input = document.getElementById('play-range'),
     nbr = 20;
 
 let dataset, chart;
@@ -15,11 +15,11 @@ let dataset, chart;
 
     // Add animated textSetter, just like fill/strokeSetters
     H.Fx.prototype.textSetter = function () {
-        let startValue = this.start.replace(/ /g, ""),
-            endValue = this.end.replace(/ /g, ""),
-            currentValue = this.end.replace(/ /g, "");
+        let startValue = this.start.replace(/ /g, ''),
+            endValue = this.end.replace(/ /g, ''),
+            currentValue = this.end.replace(/ /g, '');
 
-        if ((startValue || "").match(FLOAT)) {
+        if ((startValue || '').match(FLOAT)) {
             startValue = parseInt(startValue, 10);
             endValue = parseInt(endValue, 10);
 
@@ -37,13 +37,13 @@ let dataset, chart;
 
     // Add textGetter, not supported at all at this moment:
     H.SVGElement.prototype.textGetter = function () {
-        const ct = this.text.element.textContent || "";
+        const ct = this.text.element.textContent || '';
         return this.endText ? this.endText : ct.substring(0, ct.length / 2);
     };
 
     // Temporary change label.attr() with label.animate():
     // In core it's simple change attr(...) => animate(...) for text prop
-    H.wrap(H.Series.prototype, "drawDataLabels", function (proceed) {
+    H.wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
         const attr = H.SVGElement.prototype.attr,
             chart = this.chart;
 
@@ -108,7 +108,7 @@ function getSubtitle() {
     ).then(response => response.json());
 
 
-    chart = Highcharts.chart("container", {
+    chart = Highcharts.chart('container', {
         chart: {
             animation: {
                 duration: 500
@@ -133,7 +133,7 @@ function getSubtitle() {
             enabled: false
         },
         xAxis: {
-            type: "category"
+            type: 'category'
         },
         yAxis: {
             opposite: true,
@@ -153,7 +153,7 @@ function getSubtitle() {
                     enabled: true,
                     matchByName: true
                 },
-                type: "bar",
+                type: 'bar',
                 dataLabels: {
                     enabled: true
                 }
@@ -205,8 +205,8 @@ function getSubtitle() {
  * Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
-    button.title = "play";
-    button.className = "fa fa-play";
+    button.title = 'play';
+    button.className = 'fa fa-play';
     clearTimeout(chart.sequenceTimer);
     chart.sequenceTimer = undefined;
 }
@@ -245,14 +245,14 @@ function update(increment) {
  * Play the timeline.
  */
 function play(button) {
-    button.title = "pause";
-    button.className = "fa fa-pause";
+    button.title = 'pause';
+    button.className = 'fa fa-pause';
     chart.sequenceTimer = setInterval(function () {
         update(1);
     }, 500);
 }
 
-btn.addEventListener("click", function () {
+btn.addEventListener('click', function () {
     if (chart.sequenceTimer) {
         pause(this);
     } else {
@@ -262,6 +262,6 @@ btn.addEventListener("click", function () {
 /*
  * Trigger the update on the range bar click.
  */
-input.addEventListener("click", function () {
+input.addEventListener('click', function () {
     update();
 });
