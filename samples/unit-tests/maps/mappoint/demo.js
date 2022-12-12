@@ -60,6 +60,36 @@ QUnit.test('MapPoint with LineWidth', function (assert) {
             'The proj4 library was loaded correctly from the chart.proj4 property'
         );
 
+        const data = [
+            [-0.1275, 51.507222],
+            [-1.893611, 52.483056]
+        ];
+
+        chart.series[1].update({
+            type: 'mapline',
+            data: [{
+                geometry: {
+                    type: 'LineString',
+                    coordinates: data,
+                    color: 'red'
+                }
+            }]
+        });
+
+        const projectedData = data.map(coords => {
+            const { x, y } = chart.mapView.lonLatToProjectedUnits({
+                lon: coords[0],
+                lat: coords[1]
+            });
+            return [x, y];
+        });
+
+        assert.deepEqual(
+            chart.series[1].data[0].geometry.coordinates,
+            projectedData,
+            'Mapline series should have correct position on non TopoJSON chart.'
+        );
+
     } finally {
         window.proj4 = proj4Script;
         TestUtilities.lolexUninstall(clock);
