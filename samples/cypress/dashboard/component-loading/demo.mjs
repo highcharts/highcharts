@@ -74,9 +74,3 @@ const dashboard = new Dashboard('container', {
         }
     ]
 });
-
-window.addEventListener('resize', e => {
-    dashboard.mountedComponents.forEach(({ component }) => {
-        component.resize();
-    });
-});

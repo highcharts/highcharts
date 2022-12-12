@@ -584,8 +584,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public render(): this {
         if (!this.hasLoaded) {
             this.load();
-            // Call resize to fit to the cell
-            this.resizeTo(this.parentElement);
+            // Call resize to fit to the cell. Timeout was added to make sure
+            // that each element is added to the DOM and that we have the
+            // correct dimensions.
+            setTimeout((): void => {
+                this.resizeTo(this.parentElement);
+            }, 100);
         }
         return this;
     }
