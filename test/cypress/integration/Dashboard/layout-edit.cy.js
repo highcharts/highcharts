@@ -1,25 +1,28 @@
-function isWithinParent(element){
+function isWithinParent(element) {
     assert.isAtMost(element.width(), element.parent().innerWidth());
     assert.isAtMost(element.height(), element.parent().innerHeight());
 }
 
 function checkCells() {
-    cy.get('.hd-cell').each(cell => {
-        isWithinParent(cell)
+    cy.get('.hd-cell').each((cell) => {
+        isWithinParent(cell);
     });
 }
 
 function checkRowsAndCells() {
-    cy.wait(100) // wait a bit for the DOM to settle
-    cy.get('.hd-row').within(row => {
-        // Row is within parent
-        isWithinParent(row);
-        checkCells();
+    cy.wait(100); // wait a bit for the DOM to settle
+
+    cy.get('.hd-row').each(($el) => {
+        cy.wrap($el).within((row) => {
+            // Row is within parent
+            isWithinParent(row);
+            checkCells();
+        });
     });
 }
 
 describe('layout resize on window changes', () => {
-    before(()=>{
+    before(() => {
         cy.visit('/cypress/dashboard/chart-interaction/');
     });
     it('should resize rows and cells correctly on horizontal window changes', () => {
