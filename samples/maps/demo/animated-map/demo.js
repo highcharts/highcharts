@@ -2,7 +2,7 @@
 
 (async () => {
     const topology = await fetch(
-        "https://code.highcharts.com/mapdata/custom/world-highres.topo.json"
+        'https://code.highcharts.com/mapdata/custom/world-highres.topo.json'
     ).then(response => response.json());
 
     const data = [
@@ -54,7 +54,7 @@
     ];
 
     // Initialize the chart
-    Highcharts.mapChart("container", {
+    Highcharts.mapChart('container', {
         chart: {
             map: topology
         },
@@ -183,6 +183,9 @@
                         },
                         custom: {
                             arrival: 1414
+                        },
+                        dataLabels: {
+                            align: 'right'
                         }
                     },
                     {
@@ -213,6 +216,9 @@
                         },
                         custom: {
                             arrival: 1770
+                        },
+                        dataLabels: {
+                            align: 'right'
                         }
                     },
                     {
@@ -243,6 +249,9 @@
                         },
                         custom: {
                             arrival: 1714
+                        },
+                        dataLabels: {
+                            align: 'right'
                         }
                     },
                     {
@@ -253,6 +262,9 @@
                         },
                         custom: {
                             arrival: 1714
+                        },
+                        dataLabels: {
+                            align: 'right'
                         }
                     }
                 ],
