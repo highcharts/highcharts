@@ -20,7 +20,10 @@
             },
 
             mapNavigation: {
-                enabled: true
+                enabled: true,
+                buttonOptions: {
+                    align: 'right'
+                }
             },
 
             mapView: {
