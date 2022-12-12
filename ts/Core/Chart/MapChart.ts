@@ -221,9 +221,9 @@ addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
     point.series.isDrilling = true;
 
     if (
-        chart.userOptions.drilldown &&
-        chart.userOptions.drilldown.animation &&
-        chart.userOptions.drilldown.mapZooming
+        chart.options.drilldown &&
+        chart.options.drilldown.animation &&
+        chart.options.drilldown.mapZooming
     ) {
         // hide and disable dataLabels
         if (point.series.dataLabelsGroup) {
@@ -268,24 +268,6 @@ addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
     return false; // to prevent default function from fireEvent
 });
 
-addEvent(MapChart, 'beforeApplyDrilldown', function (e): void {
-    const chart = this,
-        {
-            level
-        }: {
-            level: Highcharts.DrilldownLevelObject
-        } = e as any;
-
-    // add additional redraws and animation after zooming into region
-
-    if (chart.userOptions.drilldown && chart.userOptions.drilldown.mapZooming) {
-        chart.redraw();
-        if (chart.mapView) { // TO DO try to remove MapSeries
-            chart.mapView.fitToBounds((level.lowerSeries as MapSeries).bounds);
-        }
-    }
-});
-
 addEvent(MapChart, 'applyDrilldown', function (e): boolean {
     const chart = this;
 
@@ -300,8 +282,8 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
         ): void {
 
             if (
-                chart.userOptions.drilldown &&
-                chart.userOptions.drilldown.mapZooming
+                chart.options.drilldown &&
+                chart.options.drilldown.mapZooming
             ) {
                 chart.redraw();
                 if (chart.mapView) { // TO DO try to remove MapSeries
@@ -395,9 +377,9 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
         }
 
         if (
-            chart.userOptions.drilldown &&
-            chart.userOptions.drilldown.animation &&
-            chart.userOptions.drilldown.mapZooming &&
+            chart.options.drilldown &&
+            chart.options.drilldown.animation &&
+            chart.options.drilldown.mapZooming &&
             chart.mapView
         ) {
             chart.redraw(false);
@@ -429,9 +411,9 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
         };
 
         if (
-            chart.userOptions.drilldown &&
-            chart.userOptions.drilldown.animation &&
-            chart.userOptions.drilldown.mapZooming &&
+            chart.options.drilldown &&
+            chart.options.drilldown.animation &&
+            chart.options.drilldown.mapZooming &&
             chart.mapView
         ) {
             // Fit to natural bounds

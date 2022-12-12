@@ -798,8 +798,8 @@ class MapSeries extends ScatterSeries {
 
                 let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
 
-                if (chart.userOptions.chart) {
-                    animOptions = merge({}, chart.userOptions.chart.animation);
+                if (chart.options.chart) {
+                    animOptions = merge({}, chart.options.chart.animation);
                 }
 
                 if (typeof animOptions !== 'boolean') {
