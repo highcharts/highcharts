@@ -85,10 +85,10 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
     );
 
-    document.getElementById('container').style.height = "190px";
+    document.getElementById('container').style.height = '190px';
     chart.reflow();
 
-    document.getElementById('container').style.height = "400px";
+    document.getElementById('container').style.height = '400px';
     chart.reflow();
 
     chart.tooltip.refresh(chart.series[0].points[0]);

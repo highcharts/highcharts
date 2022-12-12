@@ -370,7 +370,7 @@ class InvertModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -379,6 +379,12 @@ class InvertModifier extends DataModifier {
  * conversion.
  */
 namespace InvertModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -390,7 +396,7 @@ namespace InvertModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -404,7 +410,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -141,7 +141,7 @@ QUnit.test('General Navigator tests', function (assert) {
 
     const eventCount = el => {
         let count = 0;
-        //eslint-disable-next-line
+        // eslint-disable-next-line
         for (const t in el.hcEvents) {
             count += el.hcEvents[t].length;
         }
@@ -476,7 +476,7 @@ QUnit.test('Missing points using navigator (#5699)', function (assert) {
 });
 
 QUnit.test(
-    "#3961 - Zone zAxis shouldn't cause errors in Navigator series.",
+    '#3961 - Zone zAxis shouldn\'t cause errors in Navigator series.',
     function (assert) {
         var chart = $('#container')
             .highcharts('StockChart', {
@@ -1284,21 +1284,21 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].min,
         2,
-        `Adding another point should result in changing the extremes.`
+        'Adding another point should result in changing the extremes.'
     );
 
     chart.rangeSelector.clickButton(5); // all
     assert.strictEqual(
         chart.xAxis[0].min,
         0,
-        `After selecting all, extremes should return to the initial one.`
+        'After selecting all, extremes should return to the initial one.'
     );
 
     chart.series[0].addPoint(5);
     assert.strictEqual(
         chart.xAxis[0].min,
         0,
-        `When all button enabled, adding point should not change the extremes.`
+        'When all button enabled, adding point should not change the extremes.'
     );
 
     chart.xAxis[0].setExtremes(2, 5);

@@ -107,7 +107,7 @@ class DataSeriesConverter {
      * @return {Array<PointOptions>}
      * Returns an array of series points opitons.
      */
-    getSeriesData(seriesId: string): Array<PointOptions> {
+    public getSeriesData(seriesId: string): Array<PointOptions> {
         const converter = this,
             table = converter.table,
             seriesData = [];
@@ -157,7 +157,7 @@ class DataSeriesConverter {
      * @return {Array<SeriesOptions>}
      * Returns an array of series opitons.
      */
-    getAllSeriesData(): Array<SeriesOptions> {
+    public getAllSeriesData(): Array<SeriesOptions> {
         const converter = this,
             seriesOptions: Array<SeriesOptions> = [];
 
@@ -184,7 +184,7 @@ class DataSeriesConverter {
      * @param {DataEvent.Detail} eventDetail
      * Custom information for pending events.
      */
-    updateTable(
+    public updateTable(
         allSeries: Array<LineSeries>,
         eventDetail?: DataEvent.Detail
     ): void {
@@ -302,12 +302,21 @@ class DataSeriesConverter {
         }
     }
 }
+
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
+
 namespace DataSeriesConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface Options {
         seriesOptions?: Array<SeriesOptions>;
     }
@@ -317,10 +326,13 @@ namespace DataSeriesConverter {
         pointArrayMap: Array<string>;
         options: SeriesOptions;
     }
+
 }
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default DataSeriesConverter;

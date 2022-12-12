@@ -54,13 +54,13 @@ QUnit.test('Set basemap on chart object', function (assert) {
     assert.strictEqual(
         series.points[0].graphic.attr('fill'),
         series.color,
-        `undefined value is allowed, so the point should be colored, #17279.`
+        'undefined value is allowed, so the point should be colored, #17279.'
     );
 
     assert.strictEqual(
         series.points[1].graphic.attr('fill'),
         nullColor,
-        `Data point with null value should not be colored, #17279.`
+        'Data point with null value should not be colored, #17279.'
     );
 
     series.update({

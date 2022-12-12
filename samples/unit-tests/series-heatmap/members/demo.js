@@ -1,5 +1,5 @@
 QUnit.test(
-    "Heatmap point size shouldn't overflow plot area(#4530)",
+    'Heatmap point size shouldn\'t overflow plot area(#4530)',
     function (assert) {
         var chart = new Highcharts.Chart({
             chart: {
@@ -16,7 +16,7 @@ QUnit.test(
                             Date.UTC(2012, 12, 2),
                             0,
                             93
-                        ] /*, [
+                        ] /* , [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -58,7 +58,7 @@ QUnit.test(
                             Date.UTC(2012, 12, 2),
                             0,
                             93
-                        ] /*, [
+                        ] /* , [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -104,7 +104,7 @@ QUnit.test(
                             Date.UTC(2012, 12, 2),
                             0,
                             93
-                        ] /*, [
+                        ] /* , [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -281,7 +281,7 @@ QUnit.test(
                     Math.round(point0.graphic.getBBox().height),
                     Math.round(point1.graphic.getBBox().height),
                     2,
-                    `Hovering points should not change the cell size (#16921)`
+                    'Hovering points should not change the cell size (#16921)'
                 );
 
                 done();

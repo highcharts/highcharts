@@ -1171,8 +1171,8 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
 
     chart.viewData();
     const csv = '"Category","Series 1"\n' +
-        `0,2\n` +
-        `1,5\n` +
+        '0,2\n' +
+        '1,5\n' +
         '2,1\n' +
         '3,6\n' +
         '4,7';
@@ -1246,9 +1246,9 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
 });
 
 QUnit.test('Sortable table (#16972)', function (assert) {
-    const chart = Highcharts.chart("container", {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: "column"
+            type: 'column'
         },
         xAxis: {
             categories: ['NL', 'ES', 'DE', 'BE', 'NO']
@@ -1263,11 +1263,29 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         }
         ],
         exporting: {
-            showTable: true
+            showTable: true,
+            allowTableSorting: false
         }
     });
 
     chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[2].children[0].children[0]
+            .innerText,
+        'NL',
+        `Data order in table should not change when allowTableSorting equals
+        false, #18007.`
+    );
+
+    chart.update({
+        exporting: {
+            allowTableSorting: true
+        }
+    });
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
     assert.strictEqual(
         chart.dataTableDiv.children[0].children[3].children[0].innerText,
         'BE',
@@ -1338,7 +1356,7 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         data: [[1, 1], [2, 3], [3, 4], [4, 3]]
     }];
 
-    const chart = Highcharts.chart("container", {
+    const chart = Highcharts.chart('container', {
         series: series
     });
 

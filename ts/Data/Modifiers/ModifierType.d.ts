@@ -32,7 +32,7 @@ export interface ModifierTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

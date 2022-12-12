@@ -63,7 +63,7 @@ Highcharts.chart('container', {
         marker: {
             fillColor: 'white',
             lineWidth: 1
-            //lineColor: Highcharts.getOptions().colors[0]
+            // lineColor: Highcharts.getOptions().colors[0]
         },
         tooltip: {
             pointFormat: 'Observation: {point.y}'

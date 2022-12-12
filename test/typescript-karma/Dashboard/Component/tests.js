@@ -1,5 +1,5 @@
 //@ts-check
-import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
+import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
 import HTMLComponent from '/base/code/es-modules/Dashboard/Component/HTMLComponent.js';
 import Component from '/base/code/es-modules/Dashboard/Component/Component.js';
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';

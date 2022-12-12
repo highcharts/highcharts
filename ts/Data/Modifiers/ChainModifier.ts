@@ -57,7 +57,7 @@ class ChainModifier extends DataModifier {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -405,7 +405,7 @@ class ChainModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -414,6 +414,12 @@ class ChainModifier extends DataModifier {
  * conversion.
  */
 namespace ChainModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Event object
@@ -456,7 +462,7 @@ namespace ChainModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -470,7 +476,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
