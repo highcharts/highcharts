@@ -4,16 +4,6 @@ const { CSVStore, PluginHandler } = Dashboard;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-// Data.
-const global = [73, 73, 74, 75, 76, 78, 79, 80, 82, 83, 83, 84, 84, 84, 85, 85,
-        85, 85, 85, 86, 82, 80],
-    africa = [54, 55, 59, 61, 62, 65, 66, 69, 71, 74, 72, 70, 71, 70, 71, 72,
-        73, 73, 73, 74, 71, 70],
-    europe = [94, 94, 93, 92, 95, 95, 95, 96, 96, 95, 95, 95, 95, 96, 94, 94,
-        94, 93, 94, 95, 94, 94],
-    seAsia = [64, 65, 65, 66, 66, 71, 72, 73, 75, 78, 80, 82, 83, 85, 87, 88,
-        87, 90, 91, 90, 85, 82];
-
 // Set global chart options.
 Highcharts.setOptions({
     chart: {
@@ -55,14 +45,17 @@ Highcharts.setOptions({
         }
     }
 });
+const csvData = document.getElementById('csv').innerText;
 
-// Create store to sync charts.
 const store1 = new CSVStore(void 0, {
-    csv: ''
+    csv: csvData,
+    firstRowAsNames: true
 });
 store1.load();
+
 const store2 = new CSVStore(void 0, {
-    csv: ''
+    csv: csvData,
+    firstRowAsNames: true
 });
 store2.load();
 
@@ -99,6 +92,12 @@ const dashboard = new Dashboard.Dashboard('container', {
                 selection: true,
                 tooltip: true
             },
+            tableAxisMap: {
+                x: 'x',
+                Europe: null,
+                Africa: null,
+                'South-East Asia': null
+            },
             chartOptions: {
                 chart: {
                     zoomType: 'x'
@@ -113,11 +112,7 @@ const dashboard = new Dashboard.Dashboard('container', {
                     custom: {
                         syncGroup: 'x-wide'
                     }
-                },
-                series: [{
-                    data: global,
-                    name: 'Global'
-                }]
+                }
             }
         }, {
             cell: 'dashboard-col-2',
@@ -126,6 +121,12 @@ const dashboard = new Dashboard.Dashboard('container', {
             sync: {
                 selection: true,
                 tooltip: true
+            },
+            tableAxisMap: {
+                x: 'x',
+                Global: null,
+                Europe: null,
+                Africa: null
             },
             chartOptions: {
                 chart: {
@@ -138,11 +139,7 @@ const dashboard = new Dashboard.Dashboard('container', {
                     custom: {
                         syncGroup: 'x-wide'
                     }
-                },
-                series: [{
-                    data: seAsia,
-                    name: 'South-East Asia'
-                }]
+                }
             }
         }, {
             cell: 'dashboard-col-3',
@@ -151,6 +148,12 @@ const dashboard = new Dashboard.Dashboard('container', {
             sync: {
                 selection: true,
                 tooltip: true
+            },
+            tableAxisMap: {
+                x: 'x',
+                Global: null,
+                Europe: null,
+                'South-East Asia': null
             },
             chartOptions: {
                 chart: {
@@ -163,11 +166,7 @@ const dashboard = new Dashboard.Dashboard('container', {
                 },
                 title: {
                     text: 'Africa'
-                },
-                series: [{
-                    data: africa,
-                    name: 'Africa'
-                }]
+                }
             }
         }, {
             cell: 'dashboard-col-4',
@@ -176,6 +175,12 @@ const dashboard = new Dashboard.Dashboard('container', {
             sync: {
                 selection: true,
                 tooltip: true
+            },
+            tableAxisMap: {
+                x: 'x',
+                Global: null,
+                Africa: null,
+                'South-East Asia': null
             },
             chartOptions: {
                 chart: {
@@ -188,11 +193,7 @@ const dashboard = new Dashboard.Dashboard('container', {
                 },
                 title: {
                     text: 'Europe'
-                },
-                series: [{
-                    data: europe,
-                    name: 'Europe'
-                }]
+                }
             }
         }
     ]
