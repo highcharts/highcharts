@@ -246,34 +246,34 @@ QUnit.test('Drilldown methods', function (assert) {
         },
         series: [{
             data: [{
-                name: "A",
+                name: 'A',
                 y: 3,
-                drilldown: "A"
+                drilldown: 'A'
             }]
         }],
         drilldown: {
             series: [{
-                name: "A",
-                id: "A",
+                name: 'A',
+                id: 'A',
                 data: [
                     [
-                        "v65.0",
+                        'v65.0',
                         0.1
                     ],
                     [
-                        "v64.0",
+                        'v64.0',
                         1.3
                     ],
                     [
-                        "v63.0",
+                        'v63.0',
                         53.02
                     ],
                     [
-                        "v62.0",
+                        'v62.0',
                         1.4
                     ],
                     [
-                        "v61.0",
+                        'v61.0',
                         0.88
                     ]
                 ]

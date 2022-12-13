@@ -202,7 +202,7 @@ QUnit.test('Annotations events - general', function (assert) {
             ],
             type: 'basicAnnotation'
         },
-        "Annotations' popup should get correct config for fields (#11716)"
+        'Annotations\' popup should get correct config for fields (#11716)'
     );
 
     chart.navigationBindings.activeAnnotation.setVisibility();

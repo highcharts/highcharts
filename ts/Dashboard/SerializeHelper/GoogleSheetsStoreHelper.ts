@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataParser from '../../Data/Parsers/DataParser';
+import type DataConverter from '../../Data/Converters/DataConverter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type Serializable from '../Serializable';
 
@@ -113,7 +113,7 @@ namespace GoogleSheetsStoreHelper {
         table: DataTableHelper.JSON;
     }
 
-    export interface OptionsJSON extends Partial<DataParser.Options> {
+    export interface OptionsJSON extends Partial<DataConverter.Options> {
         dataRefreshRate: number;
         enablePolling: boolean;
         firstRowAsNames: boolean;

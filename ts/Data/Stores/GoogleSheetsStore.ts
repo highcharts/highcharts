@@ -25,9 +25,10 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
+import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
+import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import U from '../../Core/Utilities.js';
@@ -76,10 +77,10 @@ class GoogleSheetsStore extends DataStore {
      * Optional table to create the store from.
      *
      * @param {CSVStore.OptionsType} options
-     * Options for the store and parser.
+     * Options for the store and converter.
      *
-     * @param {DataParser} parser
-     * Optional parser to replace the default parser
+     * @param {DataConverter} converter
+     * Optional converter to replace the default converter.
      */
     public constructor(
         table: DataTable,
@@ -90,11 +91,11 @@ class GoogleSheetsStore extends DataStore {
                 googleSpreadsheetKey: string;
             }
         ),
-        parser?: GoogleSheetsParser
+        converter?: GoogleSheetsConverter
     ) {
         super(table);
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
-        this.parser = parser || new GoogleSheetsParser({
+        this.converter = converter || new GoogleSheetsConverter({
             firstRowAsNames: this.options.firstRowAsNames
         });
     }
@@ -108,9 +109,9 @@ class GoogleSheetsStore extends DataStore {
     public readonly options: GoogleSheetsStore.Options;
 
     /**
-     * The attached parser, which can be replaced in the constructor
+     * The attached converter, which can be replaced in the constructor
      */
-    public readonly parser: GoogleSheetsParser;
+    public readonly converter: GoogleSheetsConverter;
 
     /* *
      *
@@ -118,13 +119,11 @@ class GoogleSheetsStore extends DataStore {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: DataEvent.Detail): void {
+    public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
         const store = this,
             {
                 dataRefreshRate,
@@ -154,16 +153,16 @@ class GoogleSheetsStore extends DataStore {
             url,
             dataType: 'json',
             success: (json): void => {
-                store.parser.parse({
+                store.converter.parse({
                     firstRowAsNames,
-                    json: json as GoogleSheetsParser.GoogleSpreadsheetJSON
+                    json: json as GoogleSheetsConverter.GoogleSpreadsheetJSON
                 });
-                store.table.setColumns(store.parser.getTable().getColumns());
+                store.table.setColumns(store.converter.getTable().getColumns());
 
                 // Polling
                 if (enablePolling) {
                     setTimeout(
-                        (): void => store.load(),
+                        (): DataPromise<this> => store.load(),
                         dataRefreshRate * 1000
                     );
                 }
@@ -188,13 +187,15 @@ class GoogleSheetsStore extends DataStore {
                 });
             }
         });
+
+        return DataPromise.resolve(this);
     }
 
 }
 
 /* *
  *
- *  Class Name
+ *  Class Namespace
  *
  * */
 
@@ -324,7 +325,7 @@ declare module './StoreType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

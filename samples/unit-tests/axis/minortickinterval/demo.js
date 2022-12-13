@@ -7,7 +7,7 @@ QUnit.test('Legacy - null', function (assert) {
             height: 250
         },
         yAxis: {
-            //minorTickInterval: null // default
+            // minorTickInterval: null // default
         },
         series: [
             {
@@ -163,7 +163,7 @@ QUnit.test('Typed - null', function (assert) {
             height: 250
         },
         yAxis: {
-            //minorTickInterval: null // default
+            // minorTickInterval: null // default
         },
         series: [
             {

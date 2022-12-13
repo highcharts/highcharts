@@ -125,7 +125,7 @@ class SeriesPointsModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -145,7 +145,7 @@ namespace SeriesPointsModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -159,7 +159,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

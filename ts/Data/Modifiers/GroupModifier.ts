@@ -56,7 +56,7 @@ class GroupModifier extends DataModifier {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -182,7 +182,7 @@ class GroupModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -191,6 +191,12 @@ class GroupModifier extends DataModifier {
  * conversion.
  */
 namespace GroupModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -214,7 +220,7 @@ namespace GroupModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -228,7 +234,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import type CSSJSONObject from '../CSSJSONObject';
 import type Dashboard from '../Dashboard.js';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';

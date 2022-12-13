@@ -109,6 +109,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         // Init events.
         this.initEvents();
+
+        this.index = Globals.dashboards.length;
+        Globals.dashboards.push(this);
     }
 
     /* *
@@ -123,6 +126,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
     public id: string;
+    public index: number;
     public editMode?: EditMode;
     public layoutsWrapper: globalThis.HTMLElement;
 
@@ -201,27 +205,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public setComponents(
         components: Array<Bindings.ComponentOptions>
     ): void {
-        const dashboard = this;
-
-        let component,
-            cell;
-
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            component = Bindings.addComponent(components[i]);
-            cell = Bindings.getCell(components[i].cell);
-
-            if (cell && component) {
-                component.setCell(cell); // should probably be done by Bindings
-                cell.mountedComponent = component; // @ToDo cell.addComponent() perhaps? - checks if cell is free
-
-                dashboard.mountedComponents.push({
-                    options: components[i],
-                    component: component,
-                    cell: cell
-                });
-            } else {
-                // Error
-            }
+            Bindings.addComponent(components[i]);
         }
     }
 
@@ -242,6 +227,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         objectEach(dashboard, function (val: unknown, key: string): void {
             delete (dashboard as Record<string, any>)[key];
         });
+
+        Globals.dashboards[this.index] = void 0;
 
         return;
     }

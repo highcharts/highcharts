@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: `Treegraph's collpaseButton options`
+        text: 'Treegraph\'s collpaseButton options'
     },
     series: [
         {

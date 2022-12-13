@@ -25,7 +25,7 @@ Highcharts.chart('container', {
             distance: '75%',
             align: 'auto',
             style: {
-                fontSize: "20px"
+                fontSize: '20px'
             }
         },
         plotLines: [{

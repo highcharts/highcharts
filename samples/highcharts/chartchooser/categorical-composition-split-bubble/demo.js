@@ -44,94 +44,94 @@ Highcharts.chart('container', {
             value: 60.89
         },
         {
-            name: "BMW",
+            name: 'BMW',
             value: 48.60
         },
         {
-            name: "Ferrari",
+            name: 'Ferrari',
             value: 45.8
         },
         {
-            name: "PSA",
+            name: 'PSA',
             value: 16.27
         },
         {
-            name: "Renault",
+            name: 'Renault',
             value: 7.69
         }]
     }, {
         name: 'America',
         data: [{
-            name: "Tesla",
+            name: 'Tesla',
             value: 416.19
         },
         {
-            name: "General Motors",
+            name: 'General Motors',
             value: 45.61
         },
         {
-            name: "Ford",
+            name: 'Ford',
             value: 30.87
         },
         {
-            name: "Nokila",
+            name: 'Nokila',
             value: 9.18
         }]
     }, {
         name: 'Asia',
         data: [{
-            name: "Toyota",
+            name: 'Toyota',
             value: 184.11
         },
         {
-            name: "BYD",
+            name: 'BYD',
             value: 51.65
         },
         {
-            name: "Honda",
+            name: 'Honda',
             value: 41.21
         },
         {
-            name: "SAIC",
+            name: 'SAIC',
             value: 35.31
         },
         {
-            name: "Maruti Suzuki",
+            name: 'Maruti Suzuki',
             value: 28.83
         },
         {
-            name: "NIO",
+            name: 'NIO',
             value: 26.43
         },
         {
-            name: "Suziki",
+            name: 'Suziki',
             value: 22.29
         },
         {
-            name: "Geely",
+            name: 'Geely',
             value: 21.20
         },
         {
-            name: "Subaru",
+            name: 'Subaru',
             value: 15.11
         }, {
-            name: "Xpeng",
+            name: 'Xpeng',
             value: 14.88
         },
         {
-            name: "Nissan",
+            name: 'Nissan',
             value: 14.07
         },
         {
-            name: "Mahindra",
+            name: 'Mahindra',
             value: 10.57
         },
         {
-            name: "Changan",
+            name: 'Changan',
             value: 9.5
         },
         {
-            name: "FAW",
+            name: 'FAW',
             value: 8.28
         }]
     }]

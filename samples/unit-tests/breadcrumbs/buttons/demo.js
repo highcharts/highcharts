@@ -438,7 +438,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
 
     assert.ok(
         chart.breadcrumbs.group.element.closest('.highcharts-fixed'),
-        `Breadcrumbs should be a part of fixedSelectors group #17963.`
+        'Breadcrumbs should be a part of fixedSelectors group #17963.'
     );
 });
 

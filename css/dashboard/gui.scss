@@ -37,10 +37,6 @@ body {
     /*flex: auto;*/
 }
 
-.hd-component {
-    overflow: auto;
-}
-
 .hd-layouts-wrapper {
     margin: 0px auto;
     width: 100%;
@@ -178,6 +174,7 @@ body {
 .hd-component img {
     width: 100%;
     height: 100%;
+    overflow: auto;
 }
 
 .hd-edit-resize-snap {
@@ -501,7 +498,7 @@ h1 {
 
 .hd-edit-sidebar {
     top: 0px;
-    left: -310px;
+    left: -340px; // width + paddings
     transition: 0.5s;
     width: 300px;
     background: #fff;

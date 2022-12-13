@@ -173,9 +173,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this.chartContainer.id = this.options.chartID;
         }
 
+        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
+
         this.sync = new HighchartsComponent.Sync(
-            this, this.options.syncEvents,
-            this.options.syncHandlers
+            this,
+            this.syncHandlers
         );
         this.chartOptions = (
             this.options.chartOptions ||
@@ -479,7 +481,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 ...base.options,
                 chartOptions,
                 chartConstructor,
-                syncEvents: this.sync.syncEvents
+                // TODO: may need to handle callback functions
+                // Maybe have a sync.toJSON()
+                sync: {}
             }
         };
 

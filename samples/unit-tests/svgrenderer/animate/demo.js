@@ -621,7 +621,7 @@ QUnit.test(
             }, 250);
 
             setTimeout(function () {
-                //controller.triggerEvent('mouseover', 450, 250);
+                // controller.triggerEvent('mouseover', 450, 250);
                 chart.series[0].points[0].setState('');
             }, 750);
 
