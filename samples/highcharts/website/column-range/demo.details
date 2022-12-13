@@ -1,5 +1,5 @@
 ---
- name: Replecating NYT Weather App - column range 
+ name: Replecating NYT Weather App - column range with precipitation
  authors:
    - Joshua Kunst
  js_wrap: b
