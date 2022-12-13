@@ -10,6 +10,7 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
+import Layout from '../Layout/Layout.js';
 
 const {
     merge,
@@ -72,7 +73,53 @@ class Sidebar {
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
-            onDrop: function (): void {}
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell|Row
+            ): Cell|void {
+
+                if (!dropContext) {
+                    return;
+                }
+
+                const row = (
+                        dropContext.getType() === 'cell' ?
+                            (dropContext as Cell).row :
+                            (dropContext as Row)
+                    ),
+                    dashboard = row.layout.dashboard,
+                    newLayoutName = GUIElement.createElementId('layout'),
+                    cellName = GUIElement.createElementId('cell'),
+                    layout = new Layout(dashboard, {
+                        id: newLayoutName,
+                        copyId: '',
+                        parentContainerId: dashboard.container.id,
+                        rows: [{
+                            cells: [{
+                                id: cellName
+                            }]
+                        }],
+                        style: {}
+                    });
+
+                if (layout) {
+                    dashboard.layouts.push(layout);
+                }
+
+                Bindings.addComponent({
+                    type: 'html',
+                    cell: cellName,
+                    isResizable: true,
+                    elements: [
+                        {
+                            tagName: 'div',
+                            style: { 'text-align': 'center' },
+                            textContent: 'Placeholder text'
+                        }
+                    ]
+                });
+
+            }
         }, {
             text: 'chart',
             onDrop: function (
@@ -81,17 +128,18 @@ class Sidebar {
             ): Cell | void {
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
-                        type: 'chart',
                         cell: '',
+                        type: 'Highcharts',
                         chartOptions: {
-                            type: 'line',
-                            series: [{
-                                name: 'Series from options',
-                                data: [1, 2, 3, 4]
-                            }],
+                            series: [
+                                {
+                                    name: 'Series from options',
+                                    data: [1, 2, 1, 4]
+                                }
+                            ],
                             chart: {
                                 animation: false,
-                                width: 400
+                                type: 'pie'
                             }
                         }
                     });
@@ -151,8 +199,20 @@ class Sidebar {
                 }
             }
         }, {
-            text: 'table',
-            onDrop: function (): void {}
+            text: 'datagrid',
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell | Row
+            ): Cell|void {
+
+                // TODO: Add datagrid through the drag&drop
+                // if (sidebar && dropContext) {
+                //     return sidebar.onDropNewComponent(dropContext, {
+                //         cell: '',
+                //         type: 'datagrid'
+                //     });
+                // }
+            }
         }
     ];
 
@@ -163,14 +223,6 @@ class Sidebar {
             cell: ['addComponent']
         }
     }];
-
-    // {
-    //     type: 'layout',
-    //     icon: '',
-    //     items: {
-    //         cell: ['addLayout']
-    //     }
-    // }
 
     public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
         componentSettings: {
@@ -916,10 +968,10 @@ class Sidebar {
                 });
 
             dragDrop.onCellDragEnd(newCell);
-            const component = Bindings.addComponent(merge(componentOptions, {
+            const options = merge(componentOptions, {
                 cell: newCell.id
-            }));
-            newCell.mountedComponent = component;
+            });
+            Bindings.addComponent(options, newCell);
 
             return newCell;
         }
