@@ -36,8 +36,7 @@ const drilldown = async function (e) {
             Highcharts.merge(
                 { insets: undefined },
                 topology.objects.default['hc-recommended-mapview']
-            ),
-            false
+            )
         );
 
         // Hide loading and add series
@@ -55,7 +54,7 @@ const drilldown = async function (e) {
 };
 
 // On drill up, reset to the top-level map view
-const drillup = function (e) {
+const afterDrillUp = function (e) {
     if (e.seriesOptions.custom && e.seriesOptions.custom.mapView) {
         e.target.mapView.update(
             Highcharts.merge(
@@ -88,7 +87,7 @@ const drillup = function (e) {
         chart: {
             events: {
                 drilldown,
-                drillup
+                afterDrillUp
             }
         },
 
@@ -138,6 +137,10 @@ const drillup = function (e) {
                 color: '#FFFFFF',
                 textDecoration: 'none',
                 textOutline: '1px #000000'
+            },
+            breadcrumbs: {
+                floating: true,
+                relativeTo: 'spacingBox'
             },
             drillUpButton: {
                 relativeTo: 'spacingBox',
