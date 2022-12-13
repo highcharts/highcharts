@@ -7,20 +7,17 @@ QUnit.test('Map drilldown animation', assert => {
     try {
         clock = TestUtilities.lolexInstall();
 
-        let beforeZoom,
-            afterZoom;
-
         const europeTopo = JSON.parse(europeTopojsonText),
             germanyTopo = JSON.parse(germanyTopojsonText),
+            duration = 400,
             chart = Highcharts.mapChart('container', {
                 chart: {
                     animation: {
-                        duration: 100
+                        duration: duration
                     }
                 },
                 series: [{
                     mapData: europeTopo,
-                    name: 'europe',
                     data: [{
                         'hc-key': 'de',
                         value: 1,
@@ -29,49 +26,79 @@ QUnit.test('Map drilldown animation', assert => {
                 }],
                 drilldown: {
                     animation: {
-                        step() {
-                            if (this.opacity <= 0.01) {
-                                afterZoom = chart.series.find(series =>
-                                    series.name === 'europe').group.getBBox();
-                            }
-                        }
+                        duration: duration
                     },
                     series: [{
                         id: 'germany',
-                        name: 'germany',
                         mapData: germanyTopo
                     }]
                 }
             }),
-            point = chart.series[0].points[0];
+            startPos = chart.series[0].group.getBBox();
 
-        beforeZoom = chart.series.find(series =>
-            series.name === 'europe').group.getBBox();
-
-        point.doDrilldown();
+        chart.series[0].points[0].doDrilldown();
 
         setTimeout(function () {
-            console.log(beforeZoom);
-            console.log(afterZoom);
-            assert.strictEqual(
-                beforeZoom.x > afterZoom.x,
-                true,
-                `When drilling down, animation should first zoom to mappoint,
-                then apply drilldown.`
+            assert.ok(
+                startPos.x > chart.series[0].group.getBBox().x,
+                `When drilling down, animation should first zoom to mappoint.`
             );
-            beforeZoom = afterZoom;
+        }, duration / 2);
+
+        setTimeout(function () {
             chart.drillUp();
-        }, 200);
+
+            setTimeout(function () {
+                assert.ok(
+                    startPos.x > chart.series[1].group.getBBox().x,
+                    `When drilling up, animation should zoom out from a mappoint
+                    to a global view.`
+                );
+            }, duration / 2);
+        }, duration * 2.5);
 
         setTimeout(function () {
-            assert.close(
-                beforeZoom.x,
-                afterZoom.x,
-                5,
-                `When drilling up, animation should zoom out from a mappoint to
-                a global view.`
-            );
-        }, 300);
+            chart.update({
+                drilldown: {
+                    mapZooming: false
+                }
+            }, false);
+            chart.series[0].points[0].doDrilldown();
+
+            setTimeout(function () {
+                assert.close(
+                    startPos.x,
+                    chart.series[0].group.getBBox().x,
+                    1,
+                    `When drilling down with disable map zooming, series not
+                    zoom to mappoint.`
+                );
+                assert.ok(
+                    chart.series[0].group.opacity < 1,
+                    `When drilling down with disable map zooming, series should
+                    be only faded out.`
+                );
+            }, duration / 2);
+        }, duration * 4);
+
+        setTimeout(function () {
+            chart.drillUp();
+
+            setTimeout(function () {
+                assert.close(
+                    startPos.x,
+                    chart.series[0].group.getBBox().x,
+                    1,
+                    `When drilling down with disable map zooming, series not
+                    zoom to mappoint.`
+                );
+                assert.ok(
+                    chart.series[0].group.opacity < 1,
+                    `When drilling up with disable map zooming, series should
+                    be only faded in.`
+                );
+            }, duration * 1.5);
+        }, duration * 6);
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
