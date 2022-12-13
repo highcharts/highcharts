@@ -93,14 +93,13 @@
         }, {
             type: 'flowmap',
             linkedTo: 'cities',
-            minWeight: 8,
-            maxWeight: 12,
-            growTowards: true,
+            name: 'From Lerwick',
+            minWeight: 2,
+            maxWeight: 2,
+            weight: 2,
 
             markerEnd: {
-                markerType: 'arrow',
-                width: '50%',
-                height: '50%'
+                enabled: false
             },
 
             color: '#940129',
@@ -135,62 +134,54 @@
         }, {
             type: 'flowmap',
             linkedTo: 'cities',
-            minWeight: 8,
-            maxWeight: 12,
-            growTowards: true,
+            name: 'From London',
+            minWeight: 2,
+            maxWeight: 2,
+            weight: 2,
 
             fillColor: '#faa243',
             fillOpacity: 0.5,
             color: '#c2721d',
 
             markerEnd: {
-                markerType: 'arrow',
-                width: '50%',
-                height: '50%'
+                enabled: false
             },
 
             data: [{
                 id: 'London - Glasgow',
                 from: 'London',
                 to: 'Glasgow',
-                curveFactor: 1,
-                weight: 45
+                curveFactor: 1
             }, {
                 id: 'London - Belfast',
                 from: 'London',
                 to: 'Belfast',
-                curveFactor: 1,
-                weight: 10
+                curveFactor: 1
             }, {
                 id: 'London - Leeds',
                 from: 'London',
                 to: 'Leeds',
-                curveFactor: -1.0,
-                weight: 30
+                curveFactor: -1.0
             }, {
                 id: 'London - Liverpool',
                 from: 'London',
                 to: 'Liverpool',
-                curveFactor: 1,
-                weight: 20
+                curveFactor: 1
             }, {
                 id: 'London - Sheffield',
                 from: 'London',
                 to: 'Sheffield',
-                curveFactor: -0.3,
-                weight: 20
+                curveFactor: -0.3
             }, {
                 id: 'London - Birmingham',
                 from: 'London',
                 to: 'Birmingham',
-                curveFactor: -0.2,
-                weight: 2
+                curveFactor: -0.2
             }, {
                 id: 'London - Bristol',
                 from: 'London',
                 to: 'Bristol',
-                curveFactor: 1,
-                weight: 33
+                curveFactor: 1
             }]
         }]
     });
