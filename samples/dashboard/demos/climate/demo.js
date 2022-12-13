@@ -1,5 +1,8 @@
 /* eslint-disable */
 
+const color1 = Highcharts.Color.parse('#39F');
+const color2 = Highcharts.Color.parse('#6C0');
+const color3 = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 
 let cityGrid;
@@ -429,9 +432,12 @@ function buildDateTicks() {
 }
 
 function temperatureColor(value) {
-    return Highcharts.Color.parse('#39F').tweenTo(
-        Highcharts.Color.parse('#F93'),
-        (Math.round(value) - 275) / 50 // 275 Kelvin - 325 Kelvin
+    const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+
+    return (
+        factor < 0.5 ?
+            color1.tweenTo(color2, factor * 2) :
+            color2.tweenTo(color3, (factor - 0.5) * 2)
     );
 }
 
