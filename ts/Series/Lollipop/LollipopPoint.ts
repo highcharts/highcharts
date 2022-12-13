@@ -23,9 +23,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
         prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
+            pointClass: Point
         }
     },
     seriesTypes: {
@@ -53,7 +51,7 @@ const {
  *
  * */
 
-class LollipopPoint extends ScatterPoint {
+class LollipopPoint extends Point {
 
     /* *
      *
@@ -62,8 +60,8 @@ class LollipopPoint extends ScatterPoint {
      * */
 
     public options: LollipopPointOptions = void 0 as any;
-
     public series: LollipopSeries = void 0 as any;
+    public plotX: number = void 0 as any;
 }
 
 /* *
@@ -74,15 +72,12 @@ class LollipopPoint extends ScatterPoint {
 
 interface LollipopPoint {
     destroy: typeof DumbbellPoint.prototype['destroy'],
-    isValid: typeof pointProto['isValid'],
     pointSetState: typeof ScatterPoint.prototype['setState'],
     setState: typeof DumbbellPoint.prototype['setState']
 }
 
 extend(LollipopPoint.prototype, {
     destroy: DumbbellPoint.prototype.destroy,
-    // Does not work with the inherited `isvalid`
-    isValid: pointProto.isValid,
     pointSetState: ScatterPoint.prototype.setState,
     setState: DumbbellPoint.prototype.setState
 });

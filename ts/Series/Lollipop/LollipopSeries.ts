@@ -66,7 +66,7 @@ declare module '../../Core/Series/SeriesOptions' {
  * @augments Highcharts.Series
  *
  */
-class LollipopSeries extends ScatterSeries {
+class LollipopSeries extends Series {
 
     /* *
      *
@@ -115,24 +115,10 @@ class LollipopSeries extends ScatterSeries {
                 }
             },
             /** @ignore-option */
-            stickyTracking: false,
-            /** @ignore-option */
-            trackByArea: false,
-            /** @ignore-option */
-            fillColor: 'none',
-            /** @ignore-option */
             lineWidth: 0,
-            crisp: false,
             dataLabels: {
                 align: void 0,
-                verticalAlign: void 0,
-                /**
-                 * The y position offset of the label relative to the point in
-                 * pixels.
-                 *
-                 * @type {number}
-                 */
-                y: void 0
+                verticalAlign: void 0
             },
             pointRange: 1
         } as LollipopSeriesOptions);
@@ -148,7 +134,7 @@ class LollipopSeries extends ScatterSeries {
     public points: Array<LollipopPoint> = void 0 as any;
 
     /**
-     * Extend the arearange series' drawPoints method by applying a connector
+     * Extend the series' drawPoints method by applying a connector
      * and coloring markers.
      * @private
      *
@@ -164,12 +150,12 @@ class LollipopSeries extends ScatterSeries {
         let i = 0,
             point;
 
-        super.drawPoints.apply(series, arguments as any);
+        super.drawPoints.apply(series, arguments);
 
         // Draw connectors
         while (i < pointLength) {
             point = series.points[i];
-            series.drawConnector(point as any);
+            series.drawConnector(point);
             i++;
         }
     }
