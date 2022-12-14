@@ -176,9 +176,9 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
 });
 
 QUnit.test('Bubble with custom symbol markers, #17281.', function (assert) {
-    const chart = Highcharts.chart("container", {
+    const chart = Highcharts.chart('container', {
         series: [{
-            type: "bubble",
+            type: 'bubble',
             data: [
                 [1, 1, 1],
                 [2, 2, 2],

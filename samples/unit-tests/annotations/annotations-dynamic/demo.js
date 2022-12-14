@@ -1,4 +1,4 @@
-QUnit.test("Annotation's dynamic methods", function (assert) {
+QUnit.test('Annotation\'s dynamic methods', function (assert) {
     var labelCollector;
     var chart = Highcharts.chart(
         'container',
@@ -70,7 +70,7 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
     assert.strictEqual(
         chart.labelCollectors.indexOf(labelCollector),
         -1,
-        "Annotation label collector is not kept in the chart's label collectors (#7677)."
+        'Annotation label collector is not kept in the chart\'s label collectors (#7677).'
     );
 
     assert.strictEqual(
@@ -296,7 +296,7 @@ QUnit.test(
     }
 );
 
-QUnit.test("Annotation's update methods", function (assert) {
+QUnit.test('Annotation\'s update methods', function (assert) {
     var clock = TestUtilities.lolexInstall();
 
     try {
@@ -350,7 +350,7 @@ QUnit.test("Annotation's update methods", function (assert) {
             assert.equal(
                 isNaN(+x) || isNaN(+y) || isNaN(+width) || isNaN(+height),
                 false,
-                "Annotation's clipRect cannot have a NaN for numerical attributes"
+                'Annotation\'s clipRect cannot have a NaN for numerical attributes'
             );
 
             done();

@@ -561,7 +561,7 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
             (chart.boost && chart.boost.clipRect)
         ) &&
         chart.series[0].currentDataGrouping,
-        `When data grouping is enabled (forced), chart should not be boosted.`
+        'When data grouping is enabled (forced), chart should not be boosted.'
     );
 
     chart.series[0].update({

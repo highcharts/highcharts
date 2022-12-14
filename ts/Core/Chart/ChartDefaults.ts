@@ -466,7 +466,7 @@ const ChartDefaults: ChartOptions = {
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
-         * @default    {highmaps} xy
+         * @product    highcharts highstock gantt
          */
         type: 'x'
     },
@@ -520,7 +520,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * In styled mode, this sets how many colors the class names
      * should rotate between. With ten colors, series (or points) are
-     * given class names like `highcharts-color-0`, `highcharts-color-0`
+     * given class names like `highcharts-color-0`, `highcharts-color-1`
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *

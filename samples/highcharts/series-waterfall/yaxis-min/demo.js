@@ -2,7 +2,7 @@
 // Waterfall with y axis starting at >0 broken in 4.1.x
 Highcharts.chart('container', {
     chart: {
-        type: "waterfall"
+        type: 'waterfall'
     },
     title: {
         text: 'Waterfall with yAxis.min'
