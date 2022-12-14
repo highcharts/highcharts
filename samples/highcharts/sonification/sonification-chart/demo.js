@@ -52,11 +52,11 @@ var chart = Highcharts.chart('container', {
 });
 
 el('chart').onclick = function () {
-    chart.sonify(() => console.log('done'));
+    chart.sonify();
 };
 
 el('series').onclick = function () {
-    chart.series[0].sonify(() => console.log('done'));
+    chart.series[0].sonify();
 };
 
 el('point').onclick = function () {

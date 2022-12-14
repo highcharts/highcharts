@@ -47,15 +47,13 @@ declare global {
             max?: number;
             mapTo: string;
             mapFunction?: MapFunctionTypes;
+            within?: 'chart'|'series'|'xAxis'|'yAxis';
             value?: number;
         }
 
-        interface PitchMappingParameterOptions {
+        interface PitchMappingParameterOptions extends Omit<MappingParameterOptions, 'min'|'max'> {
             min?: number|string;
             max?: number|string;
-            mapTo: string;
-            mapFunction?: MapFunctionTypes;
-            value?: number;
         }
 
         interface FilterMappingOptions {
@@ -216,7 +214,8 @@ const Options: DeepPartial<OptionsType> = {
                 pitch: {
                     mapTo: 'y',
                     min: 'c2',
-                    max: 'c6'
+                    max: 'c6',
+                    within: 'yAxis'
                 }
             },
             pointGrouping: {
