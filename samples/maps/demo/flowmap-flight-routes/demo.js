@@ -17,13 +17,19 @@
             enabled: true
         },
 
-        tooltip: {
-            formatter: function () {
-                return this.point.id + (
-                    this.point.lat ?
-                        '<br>Lat: ' + this.point.lat +
-                        ' Lon: ' + this.point.lon : ''
-                );
+        plotOptions: {
+            flowmap: {
+                tooltip: {
+                    headerFormat: null,
+                    pointFormat: `{point.options.from} \u2192 
+                        {point.options.to}`
+                }
+            },
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
             }
         },
 
@@ -97,35 +103,28 @@
             minWeight: 2,
             maxWeight: 2,
             weight: 2,
-
             markerEnd: {
                 enabled: false
             },
-
             color: '#940129',
             fillColor: '#fc1754',
             fillOpacity: 0.5,
-
             data: [{
-                id: 'Lerwick - Glasgow',
                 from: 'Lerwick',
                 to: 'Glasgow',
                 weight: 10,
                 curveFactor: -0.2
             }, {
-                id: 'Lerwick - Belfast',
                 from: 'Lerwick',
                 to: 'Belfast',
                 weight: 5,
                 curveFactor: -0.7
             }, {
-                id: 'Lerwick - Leeds',
                 from: 'Lerwick',
                 to: 'Leeds',
                 weight: 20,
                 curveFactor: 0.2
             }, {
-                id: 'Lerwick - Liverpool',
                 from: 'Lerwick',
                 to: 'Liverpool',
                 weight: 0.1,
@@ -138,47 +137,37 @@
             minWeight: 2,
             maxWeight: 2,
             weight: 2,
-
             fillColor: '#faa243',
             fillOpacity: 0.5,
             color: '#c2721d',
-
             markerEnd: {
                 enabled: false
             },
-
             data: [{
-                id: 'London - Glasgow',
                 from: 'London',
                 to: 'Glasgow',
                 curveFactor: 1
             }, {
-                id: 'London - Belfast',
                 from: 'London',
                 to: 'Belfast',
                 curveFactor: 1
             }, {
-                id: 'London - Leeds',
                 from: 'London',
                 to: 'Leeds',
                 curveFactor: -1.0
             }, {
-                id: 'London - Liverpool',
                 from: 'London',
                 to: 'Liverpool',
                 curveFactor: 1
             }, {
-                id: 'London - Sheffield',
                 from: 'London',
                 to: 'Sheffield',
                 curveFactor: -0.3
             }, {
-                id: 'London - Birmingham',
                 from: 'London',
                 to: 'Birmingham',
                 curveFactor: -0.2
             }, {
-                id: 'London - Bristol',
                 from: 'London',
                 to: 'Bristol',
                 curveFactor: 1

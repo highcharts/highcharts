@@ -9,15 +9,19 @@
         },
 
         title: {
-            text: 'Highmaps basic lat/lon demo'
+            text: 'Highmaps basic flowmap demo'
         },
 
         subtitle: {
-            text: 'Demo of Highcharts map'
+            text: 'Demo of flowmap series'
         },
 
         mapNavigation: {
             enabled: true
+        },
+
+        legend: {
+            enabled: false
         },
 
         series: [{
