@@ -106,7 +106,8 @@
         },
 
         title: {
-            text: 'USA 2016 Presidential Election Results'
+            text: 'USA 2016 Presidential Election Results',
+            align: 'left'
         },
 
         // Default options for the pies
@@ -114,6 +115,7 @@
             pie: {
                 borderColor: 'rgba(255,255,255,0.4)',
                 borderWidth: 1,
+                clip: true,
                 dataLabels: {
                     enabled: false
                 },

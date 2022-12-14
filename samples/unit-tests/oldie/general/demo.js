@@ -22,10 +22,10 @@ function ok(description, success) {
     });
 }
 
-//----------------------------------------------------------------------------//
+// ----------------------------------------------------------------------------//
 // Start of actual tests
 
-//var types = Highcharts.Series.types;
+// var types = Highcharts.Series.types;
 var types = {
     line: 1,
     column: 1,
@@ -62,7 +62,7 @@ for (var type in types) {
 }
 
 // End of actual tests
-//----------------------------------------------------------------------------//
+// ----------------------------------------------------------------------------//
 
 if (window.__karma__) {
     window.__karma__.start = function () {

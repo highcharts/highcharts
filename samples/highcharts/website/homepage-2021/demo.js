@@ -2,7 +2,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 const updateStyle = function (selector, property, value, duration) {
     [].forEach.call(
@@ -75,7 +75,7 @@ const candlestick = function () {
                 enabled: false
             },
             tooltip: {
-                enabled: false,
+                enabled: true,
                 valueDecimals: 2
             },
             navigator: {
@@ -141,7 +141,7 @@ const candlestick = function () {
             }],
             plotOptions: {
                 series: {
-                    enableMouseTracking: false
+                    enableMouseTracking: true
                 }
             },
             series: [{

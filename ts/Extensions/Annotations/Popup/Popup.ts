@@ -24,10 +24,10 @@ import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
+import D from '../../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import D from '../../../Core/DefaultOptions.js';
-const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
@@ -254,7 +254,20 @@ class Popup {
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(closeBtn, eventName, (): void => {
                 if (this.chart) {
-                    fireEvent(this.chart.navigationBindings, 'closePopup');
+                    const navigationBindings = this.chart.navigationBindings;
+
+                    fireEvent(navigationBindings, 'closePopup');
+
+                    if (
+                        navigationBindings &&
+                        navigationBindings.selectedButtonElement
+                    ) {
+                        fireEvent(
+                            navigationBindings,
+                            'deselectButton',
+                            { button: navigationBindings.selectedButtonElement }
+                        );
+                    }
                 } else {
                     this.closePopup();
                 }

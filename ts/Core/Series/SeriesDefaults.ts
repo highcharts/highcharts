@@ -17,7 +17,11 @@
  * */
 
 import type Point from './Point';
-import type SeriesOptions from './SeriesOptions';
+import type Series from './Series';
+import type {
+    PlotOptionsOf,
+    SeriesOptions
+} from './SeriesOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -32,7 +36,7 @@ import { Palette } from '../Color/Palettes.js';
  *
  * @optionparent plotOptions.series
  */
-const seriesDefaults: SeriesOptions = {
+const seriesDefaults: PlotOptionsOf<Series> = {
     // base series options
 
     /**
@@ -154,11 +158,12 @@ const seriesDefaults: SeriesOptions = {
      *
      * - `defer`: The animation delay time in milliseconds.
      *
-     * - `duration`: The duration of the animation in milliseconds.
+     * - `duration`: The duration of the animation in milliseconds. (Defaults to
+     *   `1000`)
      *
      * - `easing`: Can be a string reference to an easing function set on
      *   the `Math` object or a function. See the _Custom easing function_
-     *   demo below.
+     *   demo below. (Defaults to `easeInOutSine`)
      *
      * Due to poor performance, animation is disabled in old IE browsers
      * for several chart types.
@@ -178,7 +183,7 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
      *         Disabled on mapbubble series
      *
-     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
+     * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
@@ -186,21 +191,17 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     animation: {
-        /** @internal */
+        /** @ignore-option */
         duration: 1000
     },
 
     /**
-     * @default   0
-     * @type      {number}
-     * @since     8.2.0
-     * @apioption plotOptions.series.animation.defer
-     */
-
-    /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
-     * element.
+     * element. Changes to the series' color will also be reflected in a
+     * chart's legend and tooltip.
+     *
+     * @sample {highcharts} highcharts/css/point-series-classname
      *
      * @type      {string}
      * @since     5.0.0
@@ -258,9 +259,11 @@ const seriesDefaults: SeriesOptions = {
      */
 
     /**
-     * Styled mode only. A specific color index to use for the series, so
-     * its graphic representations are given the class name
-     * `highcharts-color-{n}`.
+     * Styled mode only. A specific color index to use for the series, so its
+     * graphic representations are given the class name `highcharts-color-{n}`.
+     *
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0
@@ -1573,6 +1576,7 @@ const seriesDefaults: SeriesOptions = {
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderWidth
          */
+        borderWidth: 0,
 
         /**
          * A class name for the data label. Particularly in styled mode,

@@ -59,8 +59,8 @@ document.getElementById('pre').innerHTML = (function () {
 }());
 
 CodeMirror.fromTextArea(document.getElementById('pre'), {
-    mode: "xml",
-    theme: "default",
+    mode: 'xml',
+    theme: 'default',
     lineNumbers: true,
     lineWrapping: true,
     readOnly: true,

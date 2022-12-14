@@ -767,7 +767,7 @@
         assert.strictEqual(
             isNumber('0'),
             false,
-            "single quoted number ('0') returns false"
+            'single quoted number (\'0\') returns false'
         );
         assert.strictEqual(
             isNumber('0'),
@@ -834,21 +834,19 @@
 
         assert.strictEqual(person.name, 'Torstein Extended', 'Wrapped');
 
-        // Wrap using this.proceed() with no arguments
         Person.prototype.setAge = function (age) {
             this.age = age;
         };
         person.setAge(42);
         assert.strictEqual(person.age, 42, 'Initial age');
 
-        Highcharts.wrap(Person.prototype, 'setAge', function () {
-            this.proceed();
+        Highcharts.wrap(Person.prototype, 'setAge', function (proceed) {
+            proceed();
             this.age += 1;
         });
         person.setAge(43);
         assert.strictEqual(person.age, 44, 'Wrapped age');
 
-        // Wrap with this.proceed() with modified arguments
         Person.prototype.setHeight = function (height) {
             this.height = height;
         };
@@ -859,7 +857,7 @@
             Person.prototype,
             'setHeight',
             function (proceed, height) {
-                this.proceed(height + 1);
+                proceed(height + 1);
             }
         );
         person.setHeight(189);

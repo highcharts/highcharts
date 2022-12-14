@@ -1832,7 +1832,7 @@ export default Legend;
  * Legend data for the series.
  * @name Highcharts.Series#legendItem
  * @type {Highcharts.LegendItemObject|undefined}
- * @since next
+ * @since 10.3.0
  */
 
 /**

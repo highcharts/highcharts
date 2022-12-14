@@ -29,7 +29,7 @@ QUnit.test('Positions of the points.', function (assert) {
     assert.strictEqual(
         yAxis.startAngleRad,
         series.points[0].shapeArgs.start,
-        "The first point's start is in a correct place."
+        'The first point\'s start is in a correct place.'
     );
 
     yAxis.update({
@@ -41,7 +41,7 @@ QUnit.test('Positions of the points.', function (assert) {
         yAxis.endAngleRad,
         series.points[7].shapeArgs.end,
         0.00000001,
-        "The last point's end is in a correct place."
+        'The last point\'s end is in a correct place.'
     );
 
     chart.update({
@@ -55,7 +55,7 @@ QUnit.test('Positions of the points.', function (assert) {
     assert.strictEqual(
         yAxis.startAngleRad,
         series.points[0].shapeArgs.start,
-        "The first point's start is in a correct place (threshold: -10)."
+        'The first point\'s start is in a correct place (threshold: -10).'
     );
 
     yAxis.update({
@@ -174,7 +174,7 @@ QUnit.test('Positions of the stacked points.', function (assert) {
     assert.strictEqual(
         yAxis.max,
         firstSeries.stackedYData[6],
-        "The Y axis' range is correctly set."
+        'The Y axis\' range is correctly set.'
     );
 
     chart.pane[0].update({

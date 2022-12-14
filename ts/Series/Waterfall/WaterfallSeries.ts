@@ -53,8 +53,6 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-import '../../Core/DefaultOptions.js';
-
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -215,20 +213,17 @@ class WaterfallSeries extends ColumnSeries {
      * */
     // After generating points, set y-values for all sums.
     public generatePoints(): void {
-        let point,
-            len,
-            i,
-            y: number;
 
         // Parent call:
         ColumnSeries.prototype.generatePoints.apply(this);
 
-        for (i = 0, len = this.points.length; i < len; i++) {
-            point = this.points[i];
-            y = (this.processedYData[i] as any);
-            // override point value for sums
-            // #3710 Update point does not propagate to sum
-            if (point.isIntermediateSum || point.isSum) {
+        for (let i = 0, len = this.points.length; i < len; i++) {
+            const point = this.points[i],
+                y = this.processedYData[i];
+
+            // Override point value for sums. #3710 Update point does not
+            // propagate to sum
+            if (isNumber(y) && (point.isIntermediateSum || point.isSum)) {
                 point.y = correctFloat(y);
             }
         }
@@ -236,17 +231,18 @@ class WaterfallSeries extends ColumnSeries {
 
     // Translate data points from raw values
     public translate(): void {
-        let series = this,
+        const series = this,
             options = series.options,
             yAxis = series.yAxis,
-            y,
             minPointLength = pick(options.minPointLength, 5),
             halfMinPointLength = minPointLength / 2,
             threshold = options.threshold || 0,
-            previousY = threshold,
-            previousIntermediate = threshold,
             stacking = options.stacking,
-            actualStack = yAxis.waterfall.stacks[series.stackKey],
+            actualStack = yAxis.waterfall.stacks[series.stackKey];
+
+        let previousIntermediate = threshold,
+            previousY = threshold,
+            y,
             total,
             yPos,
             hPos;
@@ -257,22 +253,22 @@ class WaterfallSeries extends ColumnSeries {
         const points = series.points;
 
         for (let i = 0; i < points.length; i++) {
-            const point = points[i];
-            const yValue = series.processedYData[i];
-            const shapeArgs = point.shapeArgs;
+            const point = points[i],
+                yValue = series.processedYData[i],
+                shapeArgs = point.shapeArgs;
 
             if (!shapeArgs || !isNumber(yValue)) {
                 continue;
             }
 
-            const range = [0, yValue];
-            const pointY = point.y;
+            const range = [0, yValue],
+                pointY = point.y;
 
             // code responsible for correct positions of stacked points
             // starts here
             if (stacking) {
                 if (actualStack) {
-                    const actualStackX = (actualStack as any)[i];
+                    const actualStackX = actualStack[i];
 
                     if (stacking === 'overlap') {
                         total =
@@ -302,7 +298,10 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         if (!actualStackX.posTotal) {
-                            if (ownProp(actualStackX, 'absolutePos')) {
+                            if (
+                                isNumber(actualStackX.absolutePos) &&
+                                ownProp(actualStackX, 'absolutePos')
+                            ) {
                                 actualStackX.posTotal =
                                     actualStackX.absolutePos;
                                 delete actualStackX.absolutePos;
@@ -310,7 +309,10 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         if (!actualStackX.negTotal) {
-                            if (ownProp(actualStackX, 'absoluteNeg')) {
+                            if (
+                                isNumber(actualStackX.absoluteNeg) &&
+                                ownProp(actualStackX, 'absoluteNeg')
+                            ) {
                                 actualStackX.negTotal =
                                     actualStackX.absoluteNeg;
                                 delete actualStackX.absoluteNeg;
@@ -601,15 +603,14 @@ class WaterfallSeries extends ColumnSeries {
         state: StatesOptionsKey
     ): SVGAttributes {
 
-        let upColor = this.options.upColor,
-            attr: SVGAttributes;
+        const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
         if (upColor && !point.options.color) {
-            point.color = (point.y as any) > 0 ? upColor : (null as any);
+            point.color = point.y > 0 ? upColor : void 0;
         }
 
-        attr = ColumnSeries.prototype.pointAttribs.call(
+        const attr = ColumnSeries.prototype.pointAttribs.call(
             this,
             point,
             state
@@ -674,10 +675,10 @@ class WaterfallSeries extends ColumnSeries {
                     yPos = Math.round(
                         (yAxis.translate(
                             connectorThreshold,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
+                            false,
+                            true,
+                            false,
+                            true
                         ) +
                         (reversedYAxis ? isPos : 0))
                     ) - graphNormalizer;
@@ -730,9 +731,11 @@ class WaterfallSeries extends ColumnSeries {
     // crisp rendering.
     public drawGraph(): void {
         LineSeries.prototype.drawGraph.call(this);
-        (this.graph as any).attr({
-            d: this.getCrispPath()
-        });
+        if (this.graph) {
+            this.graph.attr({
+                d: this.getCrispPath()
+            });
+        }
     }
 
     // Waterfall has stacking along the x-values too.
@@ -740,13 +743,12 @@ class WaterfallSeries extends ColumnSeries {
         let series = this,
             options = series.options,
             waterfallStacks = series.yAxis.waterfall.stacks,
-            seriesThreshold = options.threshold,
-            stackThreshold = seriesThreshold || 0,
+            seriesThreshold = options.threshold || 0,
+            stackThreshold = seriesThreshold,
             interSum = stackThreshold,
             stackKey = series.stackKey,
             xData = series.xData,
             xLength = xData.length,
-            actualStack,
             actualStackX: (WaterfallAxis.StacksItemObject|undefined),
             totalYVal,
             actualSum,
@@ -760,7 +762,7 @@ class WaterfallSeries extends ColumnSeries {
             alreadyChanged,
             changed;
 
-        // function responsible for calculating correct values for stackState
+        // Function responsible for calculating correct values for stackState
         // array of each stack item. The arguments are: firstS - the value for
         // the first state, nextS - the difference between the previous and the
         // newest state, sInx - counter used in the for that updates each state
@@ -771,23 +773,25 @@ class WaterfallSeries extends ColumnSeries {
             firstS: number,
             nextS: number,
             sInx: number,
-            sOff?: number
+            sOff: number
         ): void {
-            if (!statesLen) {
-                (actualStackX as any).stackState[0] = firstS;
-                statesLen = (actualStackX as any).stackState.length;
-            } else {
-                for (sInx; sInx < statesLen; sInx++) {
-                    (actualStackX as any).stackState[sInx] += sOff;
+            if (actualStackX) {
+                if (!statesLen) {
+                    actualStackX.stackState[0] = firstS;
+                    statesLen = actualStackX.stackState.length;
+                } else {
+                    for (sInx; sInx < statesLen; sInx++) {
+                        actualStackX.stackState[sInx] += sOff;
+                    }
                 }
-            }
 
-            (actualStackX as any).stackState.push(
-                (actualStackX as any).stackState[statesLen - 1] + nextS
-            );
+                actualStackX.stackState.push(
+                    actualStackX.stackState[statesLen - 1] + nextS
+                );
+            }
         }
 
-        (series.yAxis as any).stacking.usePercentage = false;
+        series.yAxis.stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
@@ -798,93 +802,95 @@ class WaterfallSeries extends ColumnSeries {
             changed = waterfallStacks.changed;
             alreadyChanged = waterfallStacks.alreadyChanged;
 
-            // in case of a redraw, stack for each x value must be
-            // emptied (only for the first series in a specific stack)
-            // and recalculated once more
+            // In case of a redraw, stack for each x value must be emptied (only
+            // for the first series in a specific stack) and recalculated once
+            // more
             if (alreadyChanged &&
                 alreadyChanged.indexOf(stackKey) < 0) {
                 changed = true;
             }
 
             if (!waterfallStacks[stackKey]) {
-                (waterfallStacks as any)[stackKey] = {};
+                waterfallStacks[stackKey] = {};
             }
 
-            actualStack = waterfallStacks[stackKey];
-            for (let i = 0; i < xLength; i++) {
-                x = xData[i];
-                if (!(actualStack as any)[x] || changed) {
-                    (actualStack as any)[x] = {
-                        negTotal: 0,
-                        posTotal: 0,
-                        stackTotal: 0,
-                        threshold: 0,
-                        stateIndex: 0,
-                        stackState: [],
-                        label: (
-                            (changed &&
-                            (actualStack as any)[x]) ?
-                                (actualStack as any)[x].label :
-                                void 0
-                        )
-                    };
-                }
-
-                actualStackX = (actualStack as any)[x];
-                yVal = series.yData[i];
-
-                if (yVal >= 0) {
-                    (actualStackX as any).posTotal += yVal;
-                } else {
-                    (actualStackX as any).negTotal += yVal;
-                }
-
-                // points do not exist yet, so raw data is used
-                xPoint = (options.data as any)[i];
-
-                posTotal = (actualStackX as any).absolutePos =
-                    (actualStackX as any).posTotal;
-                negTotal = (actualStackX as any).absoluteNeg =
-                    (actualStackX as any).negTotal;
-                (actualStackX as any).stackTotal = posTotal + negTotal;
-                statesLen = (actualStackX as any).stackState.length;
-
-                if (xPoint && xPoint.isIntermediateSum) {
-                    calculateStackState(
-                        prevSum as any,
-                        actualSum as any,
-                        0,
-                        prevSum as any
-                    );
-
-                    prevSum = actualSum;
-                    actualSum = seriesThreshold;
-
-                    // swapping values
-                    stackThreshold ^= interSum;
-                    interSum ^= stackThreshold;
-                    stackThreshold ^= interSum;
-                } else if (xPoint && xPoint.isSum) {
-                    calculateStackState(
-                        seriesThreshold as any,
-                        totalYVal,
-                        statesLen
-                    );
-
-                    stackThreshold = seriesThreshold as any;
-                } else {
-                    calculateStackState(stackThreshold, yVal, 0, totalYVal);
-
-                    if (xPoint) {
-                        totalYVal += yVal;
-                        actualSum += yVal;
+            const actualStack = waterfallStacks[stackKey];
+            if (actualStack) {
+                for (let i = 0; i < xLength; i++) {
+                    x = xData[i];
+                    if (!actualStack[x] || changed) {
+                        actualStack[x] = {
+                            negTotal: 0,
+                            posTotal: 0,
+                            stackTotal: 0,
+                            threshold: 0,
+                            stateIndex: 0,
+                            stackState: [],
+                            label: (
+                                (changed &&
+                                actualStack[x]) ?
+                                    actualStack[x].label :
+                                    void 0
+                            )
+                        };
                     }
-                }
 
-                (actualStackX as any).stateIndex++;
-                (actualStackX as any).threshold = stackThreshold;
-                stackThreshold += (actualStackX as any).stackTotal;
+                    actualStackX = actualStack[x];
+                    yVal = series.yData[i];
+
+                    if (yVal >= 0) {
+                        actualStackX.posTotal += yVal;
+                    } else {
+                        actualStackX.negTotal += yVal;
+                    }
+
+                    // points do not exist yet, so raw data is used
+                    xPoint = (options.data as any)[i];
+
+                    posTotal = actualStackX.absolutePos = actualStackX.posTotal;
+                    negTotal = actualStackX.absoluteNeg = actualStackX.negTotal;
+                    actualStackX.stackTotal = posTotal + negTotal;
+                    statesLen = actualStackX.stackState.length;
+
+                    if (xPoint && xPoint.isIntermediateSum) {
+                        calculateStackState(
+                            prevSum,
+                            actualSum,
+                            0,
+                            prevSum
+                        );
+
+                        prevSum = actualSum;
+                        actualSum = seriesThreshold;
+
+                        // swapping values
+                        stackThreshold ^= interSum;
+                        interSum ^= stackThreshold;
+                        stackThreshold ^= interSum;
+                    } else if (xPoint && xPoint.isSum) {
+                        calculateStackState(
+                            seriesThreshold,
+                            totalYVal,
+                            statesLen,
+                            0
+                        );
+
+                        stackThreshold = seriesThreshold;
+                    } else {
+                        calculateStackState(stackThreshold, yVal, 0, totalYVal);
+
+                        if (xPoint) {
+                            totalYVal += yVal;
+                            actualSum += yVal;
+                        }
+                    }
+
+                    actualStackX.stateIndex++;
+                    actualStackX.threshold = stackThreshold;
+                    stackThreshold += actualStackX.stackTotal;
+                }
             }
+
             waterfallStacks.changed = false;
             if (!waterfallStacks.alreadyChanged) {
                 waterfallStacks.alreadyChanged = [];

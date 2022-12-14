@@ -24,6 +24,8 @@ import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { getOptions } = D;
 import G from '../Core/Globals.js';
 const { doc } = G;
 import HU from '../Core/HttpUtilities.js';
@@ -32,8 +34,6 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import D from '../Core/DefaultOptions.js';
-const { getOptions } = D;
 const {
     addEvent,
     defined,

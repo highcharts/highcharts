@@ -39,7 +39,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../FormatUtilities.js';
 const { format } = F;
@@ -125,39 +125,14 @@ class Point {
 
     public color?: ColorType;
 
-    /**
-     * The point's current color index, used in styled mode instead of
-     * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number}
-     */
-    public colorIndex?: number = void 0;
+    public colorIndex?: number;
 
     public dataLabels?: Array<SVGLabel>;
 
     public formatPrefix: string = 'point';
 
-    /**
-     * SVG graphic representing the point in the chart. In some cases it may be
-     * a hidden graphic to improve accessibility.
-     *
-     * @see Highcharts.Point#graphics
-     *
-     * @name Highcharts.Point#graphic
-     * @type {Highcharts.SVGElement|undefined}
-     */
     public graphic?: SVGElement;
 
-    /**
-     * Array for multiple SVG graphics representing the point in the chart. Only
-     * used in cases where the point can not be represented by a single graphic.
-     *
-     * @see Highcharts.Point#graphic
-     *
-     * @name Highcharts.Point#graphics
-     * @type {Array<Highcharts.SVGElement>|undefined}
-     */
     public graphics?: Array<SVGElement>;
 
     public id: string = void 0 as any;
@@ -369,10 +344,7 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = pick(
-            point.isValid && !point.isValid(),
-            point.x === null || !isNumber(point.y)
-        ); // #3571, check for NaN
+        point.isNull = this.isValid && !this.isValid();
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
@@ -757,9 +729,13 @@ class Point {
     }
 
     /**
+     * Determine if point is valid.
      * @private
+     * @function Highcharts.Point#isValid
      */
-    public isValid?(): boolean;
+    public isValid(): boolean {
+        return this.x !== null && isNumber(this.y);
+    }
 
     /**
      * Transform number or array configs into objects. Also called for object
@@ -873,6 +849,13 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
+        /**
+         * The point's current color index, used in styled mode instead of
+         * `color`. The color index is inserted in class names used for styling.
+         *
+         * @name Highcharts.Point#colorIndex
+         * @type {number|undefined}
+         */
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
         /**
@@ -954,6 +937,7 @@ class Point {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
@@ -965,6 +949,7 @@ class Point {
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
+
                 pointFormat = pointFormat.replace(
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
@@ -1412,7 +1397,7 @@ class Point {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // opacity also for their labels
-                if (isNumber(opacity)) {
+                if (series.options.inactiveOtherPoints && isNumber(opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {

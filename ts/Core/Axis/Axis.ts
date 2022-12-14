@@ -50,7 +50,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
@@ -3819,7 +3819,7 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = (options as YAxisOptions).stackLabels,
+            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,

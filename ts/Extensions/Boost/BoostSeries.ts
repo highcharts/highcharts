@@ -45,8 +45,8 @@ const {
     getBoostClipRect,
     isChartSeriesBoosting
 } = BoostChart;
-import DefaultOptions from '../../Core/DefaultOptions.js';
-const { getOptions } = DefaultOptions;
+import D from '../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -304,12 +304,11 @@ function compose<T extends typeof Series>(
         ) {
             composedClasses.push(BubbleSeries);
 
-            const bubbleProto = BubbleSeries.prototype as
-                Partial<typeof BubbleSeries.prototype>;
+            const bubbleProto = BubbleSeries.prototype;
 
             // By default, the bubble series does not use the KD-tree, so force
             // it to.
-            delete bubbleProto.buildKDTree;
+            delete (bubbleProto as Partial<Series>).buildKDTree;
             // seriesTypes.bubble.prototype.directTouch = false;
 
             // Needed for markers to work correctly
