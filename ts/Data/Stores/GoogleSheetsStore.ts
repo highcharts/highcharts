@@ -120,6 +120,8 @@ class GoogleSheetsStore extends DataStore {
      * */
 
     /**
+     * Loads data from a Google Spreadsheet.
+     *
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
@@ -130,10 +132,9 @@ class GoogleSheetsStore extends DataStore {
                 enablePolling,
                 firstRowAsNames,
                 googleAPIKey,
-                googleSpreadsheetKey,
-                worksheet
+                googleSpreadsheetKey
             } = store.options,
-            url = GoogleSheetsStore.getFetchURL(
+            url = GoogleSheetsStore.buildFetchURL(
                 googleAPIKey,
                 googleSpreadsheetKey,
                 store.options
@@ -159,6 +160,13 @@ class GoogleSheetsStore extends DataStore {
                 });
                 store.table.setColumns(store.converter.getTable().getColumns());
 
+                store.emit<GoogleSheetsStore.Event>({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table: store.table,
+                    url
+                });
+
                 // Polling
                 if (enablePolling) {
                     setTimeout(
@@ -166,13 +174,6 @@ class GoogleSheetsStore extends DataStore {
                         dataRefreshRate * 1000
                     );
                 }
-
-                store.emit<GoogleSheetsStore.Event>({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table: store.table,
-                    url
-                });
             },
             error: (
                 xhr: XMLHttpRequest,
@@ -255,7 +256,7 @@ namespace GoogleSheetsStore {
     /**
      * @private
      */
-    export function getFetchURL(
+    export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
         options: Partial<(FetchURLOptions|Options)> = {}
@@ -265,7 +266,7 @@ namespace GoogleSheetsStore {
             (
                 options.onlyColumnNames ?
                     'A1:Z1' :
-                    getRange(options)
+                    buildQueryRange(options)
             ) +
             '?alt=json' +
             (
@@ -283,7 +284,7 @@ namespace GoogleSheetsStore {
     /**
      * @private
      */
-    export function getRange(
+    export function buildQueryRange(
         options: Partial<Options> = {}
     ): string {
         const {

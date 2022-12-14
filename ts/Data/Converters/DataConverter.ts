@@ -142,7 +142,7 @@ class DataConverter implements DataEvent.Emitter {
 
         this.decimalRegex = (
             decimalPoint &&
-            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
+            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$', 'u')
         );
     }
 
@@ -160,38 +160,38 @@ class DataConverter implements DataEvent.Emitter {
      */
     private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/u,
+            regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[1], (match[2] as any) - 1, +match[3]) :
+                        Date.UTC(+match[1], (match[3] as any) - 1, +match[4]) :
                         NaN
                 );
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3], (match[2] as any) - 1, +match[1]) :
+                        Date.UTC(+match[4], (match[3] as any) - 1, +match[1]) :
                         NaN
                 );
             },
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3], (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(+match[4], (match[1] as any) - 1, +match[3]) :
                         NaN
                 );
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 const d = new Date();
 
@@ -199,7 +199,7 @@ class DataConverter implements DataEvent.Emitter {
                     return NaN;
                 }
 
-                let year = +match[3];
+                let year = +match[4];
 
                 if (year > (d.getFullYear() - 2000)) {
                     year += 1900;
@@ -207,19 +207,19 @@ class DataConverter implements DataEvent.Emitter {
                     year += 2000;
                 }
 
-                return Date.UTC(year, (match[2] as any) - 1, +match[1]);
+                return Date.UTC(year, (match[3] as any) - 1, +match[1]);
             },
             alternative: 'mm/dd/YY' // different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
                         Date.UTC(
-                            +match[3] + 2000,
+                            +match[4] + 2000,
                             (match[1] as any) - 1,
-                            +match[2]
+                            +match[3]
                         ) :
                         NaN
                 );
@@ -406,9 +406,7 @@ class DataConverter implements DataEvent.Emitter {
             ) {
                 thing = data[i]
                     .trim()
-                    .replace(/\//gu, ' ')
-                    .replace(/-/gu, ' ')
-                    .replace(/\./gu, ' ')
+                    .replace(/[-\.\/]/gu, ' ')
                     .split(' ');
 
                 guessedFormat = [

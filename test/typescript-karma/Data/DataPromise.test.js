@@ -39,7 +39,10 @@ QUnit.test('DataPromise API', function (assert) {
                 'Value should be zero.'
             );
         })
-        .then(() => done());
+        .then(() => {
+            DataPromise.onlyPolyfill = false;
+            done();
+        });
 
     assert.ok(
         isNaN(validateValue),

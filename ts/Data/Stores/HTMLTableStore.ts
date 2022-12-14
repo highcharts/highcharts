@@ -32,10 +32,7 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -85,9 +82,6 @@ class HTMLTableStore extends DataStore {
     ) {
         super(table);
 
-        this.tableElement = null;
-
-
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.converter = converter || new HTMLTableConverter(
             this.options,
@@ -118,7 +112,7 @@ class HTMLTableStore extends DataStore {
      * The table element to create the store from. Is either supplied directly
      * or is fetched by an ID.
      */
-    public tableElement: (HTMLElement|null);
+    public tableElement?: HTMLElement;
 
     public tableID?: string;
 
@@ -139,7 +133,7 @@ class HTMLTableStore extends DataStore {
             store.tableID = tableElement.id;
         }
 
-        store.tableElement = tableElement;
+        store.tableElement = tableElement || void 0;
     }
 
     /**

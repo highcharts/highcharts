@@ -85,21 +85,14 @@ class CSVStore extends DataStore {
     ) {
         super(table);
 
-        const {
-            csv,
-            csvURL,
-            enablePolling,
-            dataRefreshRate,
-            ...parserOptions
-        } = options;
-
         this.options = merge(
             CSVStore.defaultOptions,
-            { csv, csvURL, enablePolling, dataRefreshRate }
+            options
         );
-        this.converter = converter || new CSVConverter(parserOptions);
-    }
 
+        this.converter = converter || new CSVConverter(options);
+
+    }
 
     /* *
      *
@@ -138,10 +131,15 @@ class CSVStore extends DataStore {
      * Handles polling of live data
      */
     private poll(): void {
-        const { dataRefreshRate, enablePolling, csvURL } = this.options;
-        const updateIntervalMs = (
-            dataRefreshRate > 1 ? dataRefreshRate : 1
-        ) * 1000;
+        const {
+                dataRefreshRate,
+                enablePolling,
+                csvURL
+            } = this.options,
+            updateIntervalMs = (
+                dataRefreshRate > 1 ? dataRefreshRate : 1
+            ) * 1000;
+
         if (enablePolling && csvURL === this.liveDataURL) {
             // We need to stop doing this if the URL has changed
             this.liveDataTimeout = setTimeout((): void => {
@@ -170,6 +168,7 @@ class CSVStore extends DataStore {
         const store = this,
             maxRetries = 3,
             { csvURL } = store.options;
+
         let currentRetries: number;
 
         // Clear the table
@@ -188,17 +187,13 @@ class CSVStore extends DataStore {
         ajax({
             url: store.liveDataURL || '',
             dataType: 'text',
-            success: function (csv): void {
-                csv = `${csv}`;
+            success: (csv): void => {
+                csv = '' + csv;
 
                 store.converter.parse({ csv });
 
                 // On inital fetch we need to set the columns
                 store.table.setColumns(store.converter.getTable().getColumns());
-
-                if (store.liveDataURL) {
-                    store.poll();
-                }
 
                 store.emit<CSVStore.Event>({
                     type: 'afterLoad',
@@ -207,11 +202,13 @@ class CSVStore extends DataStore {
                     table: store.table
                 });
 
-            },
-            error: function (xhr, error): void {
-                if (++currentRetries < maxRetries) {
+                if (store.liveDataURL) {
                     store.poll();
                 }
+
+            },
+            error: (xhr, error): void => {
+
                 store.emit<CSVStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
@@ -219,6 +216,11 @@ class CSVStore extends DataStore {
                     table: store.table,
                     xhr
                 });
+
+                if (++currentRetries < maxRetries) {
+                    store.poll();
+                }
+
             }
         });
     }
@@ -234,7 +236,7 @@ class CSVStore extends DataStore {
      */
     public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
         const store = this,
-            parser = store.converter,
+            converter = store.converter,
             table = store.table,
             {
                 csv,
@@ -250,8 +252,8 @@ class CSVStore extends DataStore {
                 detail: eventDetail,
                 table
             });
-            parser.parse({ csv });
-            table.setColumns(parser.getTable().getColumns());
+            converter.parse({ csv });
+            table.setColumns(converter.getTable().getColumns());
             store.emit<CSVStore.Event>({
                 type: 'afterLoad',
                 csv,

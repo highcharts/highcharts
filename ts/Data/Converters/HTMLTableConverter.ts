@@ -32,6 +32,34 @@ const { merge } = U;
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+/**
+ * Row equal
+ */
+function isRowEqual(
+    row1: Array<(number|string|undefined)>,
+    row2: Array<(number|string|undefined)>
+): boolean {
+    let i = row1.length;
+
+    if (row2.length === i) {
+        while (--i) {
+            if (row1[i] !== row2[i]) {
+                return false;
+            }
+        }
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -132,140 +160,8 @@ class HTMLTableConverter extends DataConverter {
         store: DataStore,
         options: HTMLTableConverter.Options = this.options
     ): string {
-        const decimalPoint = options.useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.',
-            exportNames = (options.firstRowAsNames !== false),
-            useMultiLevelHeaders = options.useMultiLevelHeaders,
-            useRowspanHeaders = options.useRowspanHeaders;
-
-        const isRowEqual = function (
-            row1: Array<(number|string|undefined)>,
-            row2: Array<(number|string|undefined)>
-        ): boolean {
-            let i = row1.length;
-
-            if (row2.length === i) {
-                while (i--) {
-                    if (row1[i] !== row2[i]) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-            return true;
-        };
-
-        // Get table header markup from row data
-        const getTableHeaderHTML = function (
-            topheaders: (Array<(number|string)>|null|undefined),
-            subheaders: Array<(number|string|undefined)>,
-            rowLength?: number
-        ): string {
-            let html = '<thead>',
-                i = 0,
-                len = rowLength || subheaders && subheaders.length,
-                next,
-                cur,
-                curColspan = 0,
-                rowspan;
-
-            // Clean up multiple table headers. Chart.getDataRows() returns two
-            // levels of headers when using multilevel, not merged. We need to
-            // merge identical headers, remove redundant headers, and keep it
-            // all marked up nicely.
-            if (
-                useMultiLevelHeaders &&
-                topheaders &&
-                subheaders &&
-                !isRowEqual(topheaders, subheaders)
-            ) {
-                html += '<tr>';
-                for (; i < len; ++i) {
-                    cur = topheaders[i];
-                    next = topheaders[i + 1];
-                    if (cur === next) {
-                        ++curColspan;
-                    } else if (curColspan) {
-                        // Ended colspan
-                        // Add cur to HTML with colspan.
-                        html += getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"',
-                            cur
-                        );
-                        curColspan = 0;
-                    } else {
-                        // Cur is standalone. If it is same as sublevel,
-                        // remove sublevel and add just toplevel.
-                        if (cur === subheaders[i]) {
-                            if (useRowspanHeaders) {
-                                rowspan = 2;
-                                delete subheaders[i];
-                            } else {
-                                rowspan = 1;
-                                subheaders[i] = '';
-                            }
-                        } else {
-                            rowspan = 1;
-                        }
-                        html += getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''),
-                            cur
-                        );
-                    }
-                }
-                html += '</tr>';
-            }
-
-            // Add the subheaders (the only headers if not using multilevels)
-            if (subheaders) {
-                html += '<tr>';
-                for (i = 0, len = subheaders.length; i < len; ++i) {
-                    if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i]
-                        );
-                    }
-                }
-                html += '</tr>';
-            }
-            html += '</thead>';
-            return html;
-        };
-
-        const getCellHTMLFromValue = function (
-            tag: string,
-            classes: (string|null),
-            attrs: string,
-            value: (number|string|undefined)
-        ): string {
-            let val = value,
-                className = 'text' + (classes ? ' ' + classes : '');
-
-            // Convert to string if number
-            if (typeof val === 'number') {
-                val = val.toString();
-                if (decimalPoint === ',') {
-                    val = val.replace('.', decimalPoint);
-                }
-                className = 'number';
-            } else if (!value) {
-                val = '';
-                className = 'empty';
-            }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                ' class="' + className + '">' +
-                val + '</' + tag + '>';
-        };
+        const exportNames = (options.firstRowAsNames !== false),
+            useMultiLevelHeaders = options.useMultiLevelHeaders;
 
         const columns = store.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
@@ -288,9 +184,17 @@ class HTMLTableConverter extends DataConverter {
                     subcategories.push(subhead);
                 }
 
-                tableHead = getTableHeaderHTML(columnNames, subcategories);
+                tableHead = this.getTableHeaderHTML(
+                    columnNames,
+                    subcategories,
+                    options
+                );
             } else {
-                tableHead = getTableHeaderHTML(null, columnNames);
+                tableHead = this.getTableHeaderHTML(
+                    void 0,
+                    columnNames,
+                    options
+                );
             }
         }
 
@@ -299,12 +203,12 @@ class HTMLTableConverter extends DataConverter {
                 column = columns[columnName],
                 columnLength = column.length;
 
-            const columnMeta = store.whatIs(columnName);
-            let columnDataType;
+            // const columnMeta = store.whatIs(columnName);
+            // let columnDataType;
 
-            if (columnMeta) {
-                columnDataType = columnMeta.dataType;
-            }
+            // if (columnMeta) {
+            //     columnDataType = columnMeta.dataType;
+            // }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
                 let cellValue = column[rowIndex];
@@ -327,7 +231,7 @@ class HTMLTableConverter extends DataConverter {
                     cellValue = (cellValue || '').toString();
                 }
 
-                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
+                rowArray[rowIndex][columnIndex] = this.getCellHTMLFromValue(
                     columnIndex ? 'td' : 'th',
                     null,
                     columnIndex ? '' : 'scope="row"',
@@ -363,6 +267,132 @@ class HTMLTableConverter extends DataConverter {
             '</tbody>' +
             '</table>'
         );
+    }
+
+    /**
+     * Get table cell markup from row data.
+     */
+    private getCellHTMLFromValue(
+        tag: string,
+        classes: (string|null),
+        attrs: string,
+        value: (number|string|undefined),
+        decimalPoint?: string
+    ): string {
+        let val = value,
+            className = 'text' + (classes ? ' ' + classes : '');
+
+        // Convert to string if number
+        if (typeof val === 'number') {
+            val = val.toString();
+            if (decimalPoint === ',') {
+                val = val.replace('.', decimalPoint);
+            }
+            className = 'number';
+        } else if (!value) {
+            val = '';
+            className = 'empty';
+        }
+        return '<' + tag + (attrs ? ' ' + attrs : '') +
+            ' class="' + className + '">' +
+            val + '</' + tag + '>';
+    }
+
+    /**
+     * Get table header markup from row data.
+     */
+    private getTableHeaderHTML(
+        topheaders: Array<(number|string)> = [],
+        subheaders: Array<(number|string|undefined)> = [],
+        options: HTMLTableConverter.Options = this.options
+    ): string {
+        const {
+                useMultiLevelHeaders,
+                useRowspanHeaders
+            } = options,
+            decimalPoint = (
+                options.useLocalDecimalPoint ?
+                    (1.1).toLocaleString()[1] :
+                    '.'
+            );
+
+        let html = '<thead>',
+            i = 0,
+            len = subheaders && subheaders.length,
+            next,
+            cur,
+            curColspan = 0,
+            rowspan;
+
+        // Clean up multiple table headers. Chart.getDataRows() returns two
+        // levels of headers when using multilevel, not merged. We need to
+        // merge identical headers, remove redundant headers, and keep it
+        // all marked up nicely.
+        if (
+            useMultiLevelHeaders &&
+            topheaders &&
+            subheaders &&
+            !isRowEqual(topheaders, subheaders)
+        ) {
+            html += '<tr>';
+            for (; i < len; ++i) {
+                cur = topheaders[i];
+                next = topheaders[i + 1];
+                if (cur === next) {
+                    ++curColspan;
+                } else if (curColspan) {
+                    // Ended colspan
+                    // Add cur to HTML with colspan.
+                    html += this.getCellHTMLFromValue(
+                        'th',
+                        'highcharts-table-topheading',
+                        'scope="col" ' +
+                        'colspan="' + (curColspan + 1) + '"',
+                        cur
+                    );
+                    curColspan = 0;
+                } else {
+                    // Cur is standalone. If it is same as sublevel,
+                    // remove sublevel and add just toplevel.
+                    if (cur === subheaders[i]) {
+                        if (useRowspanHeaders) {
+                            rowspan = 2;
+                            delete subheaders[i];
+                        } else {
+                            rowspan = 1;
+                            subheaders[i] = '';
+                        }
+                    } else {
+                        rowspan = 1;
+                    }
+                    html += this.getCellHTMLFromValue(
+                        'th',
+                        'highcharts-table-topheading',
+                        'scope="col"' +
+                        (rowspan > 1 ?
+                            ' valign="top" rowspan="' + rowspan + '"' :
+                            ''),
+                        cur
+                    );
+                }
+            }
+            html += '</tr>';
+        }
+
+        // Add the subheaders (the only headers if not using multilevels)
+        if (subheaders) {
+            html += '<tr>';
+            for (i = 0, len = subheaders.length; i < len; ++i) {
+                if (typeof subheaders[i] !== 'undefined') {
+                    html += this.getCellHTMLFromValue(
+                        'th', null, 'scope="col"', subheaders[i]
+                    );
+                }
+            }
+            html += '</tr>';
+        }
+        html += '</thead>';
+        return html;
     }
 
     /**

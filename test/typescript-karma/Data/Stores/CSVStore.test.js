@@ -182,7 +182,7 @@ test('CSVStore from URL', function (assert) {
         pollNumber++;
 
         // Stop polling
-        if (pollNumber > 1) {
+        if (pollNumber > 2) {
             datastore.options.enablePolling = false;
         }
 

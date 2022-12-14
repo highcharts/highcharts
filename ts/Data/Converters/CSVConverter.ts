@@ -166,7 +166,7 @@ class CSVConverter extends DataConverter {
 
                 // Prefer datatype from metadata
                 if (columnDataType === 'string') {
-                    cellValue = `"${cellValue}"`;
+                    cellValue = '"' + cellValue + '"';
                 } else if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
                 } else if (typeof cellValue === 'string') {
@@ -248,8 +248,7 @@ class CSVConverter extends DataConverter {
 
         if (csv) {
             lines = csv
-                .replace(/\r\n/gu, '\n') // Unix
-                .replace(/\r/gu, '\n') // Mac
+                .replace(/\r\n|\r/gu, '\n') // Windows | Mac
                 .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
@@ -345,7 +344,9 @@ class CSVConverter extends DataConverter {
                 converter.guessedItemDelimiter
             );
 
+
         let { decimalPoint } = converter.options;
+
         if (!decimalPoint || decimalPoint === itemDelimiter) {
             decimalPoint = converter.guessedDecimalPoint || '.';
         }
@@ -358,31 +359,22 @@ class CSVConverter extends DataConverter {
             actualColumn = 0,
             column = 0;
 
-        /**
-         * @private
-         */
-        function read(j: number): void {
+        const read = (j: number): void => {
             c = columnStr[j];
             cl = columnStr[j - 1];
             cn = columnStr[j + 1];
-        }
+        };
 
-        /**
-         * @private
-         */
-        function pushType(type: string): void {
+        const pushType = (type: string): void => {
             if (dataTypes.length < column + 1) {
                 dataTypes.push([type]);
             }
             if (dataTypes[column][dataTypes[column].length - 1] !== type) {
                 dataTypes[column].push(type);
             }
-        }
+        };
 
-        /**
-         * @private
-         */
-        function push(): void {
+        const push = (): void => {
             if (startColumn > actualColumn || actualColumn > endColumn) {
                 // Skip this column, but increment the column count (#7272)
                 ++actualColumn;
@@ -396,7 +388,7 @@ class CSVConverter extends DataConverter {
                     token = parseFloat(token) as any;
                     pushType('number');
                 } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
+                    token = token.replace(/\//gu, '-');
                     pushType('date');
                 } else {
                     pushType('string');
@@ -428,7 +420,7 @@ class CSVConverter extends DataConverter {
             token = '';
             ++column;
             ++actualColumn;
-        }
+        };
 
         if (!columnStr.trim().length) {
             return;
@@ -443,7 +435,7 @@ class CSVConverter extends DataConverter {
 
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
-                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                if (!/^#[0-F]{3,3}|[0-F]{6,6}/iu.test(columnStr.substring(i))) {
                     // The rest of the row is a comment
                     push();
                     return;

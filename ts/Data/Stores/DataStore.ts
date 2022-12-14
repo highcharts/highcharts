@@ -65,7 +65,7 @@ abstract class DataStore implements DataEvent.Emitter {
      * stringified class constructor.
      */
     private static readonly typeRegExp = (
-        /^function\s+(\w*?)(?:DataStore)?\s*\(/
+        /^function\s+(\w*?)(?:DataStore)?\s*\(/u
     );
 
     /* *
@@ -327,7 +327,7 @@ abstract class DataStore implements DataEvent.Emitter {
     }
 
     /**
-     * The default save method, which fires the `afterSave` event
+     * The default save method, which fires the `afterSave` event.
      *
      * @return {Promise<DataStore>}
      * The saved store.
