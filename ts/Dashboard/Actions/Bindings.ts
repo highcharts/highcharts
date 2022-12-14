@@ -8,9 +8,11 @@ import type Serializable from '../Serializable';
 import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
+import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
+
 const {
     fireEvent,
     merge
@@ -49,21 +51,19 @@ class Bindings {
 
         // add elements to containers
         if (compontentContainer) {
+            const ComponentClass = Component.getComponent(options.type);
+
             switch (options.type) {
                 case 'html':
-                    component = Bindings.htmlComponent(
-                        compontentContainer,
-                        options
+                    component = new HTMLComponent(merge(
+                        options,
+                        {
+                            parentElement: compontentContainer as HTMLDOMElement,
+                            elements: options.elements
+                        })
                     );
                     break;
-                // case 'group':
-                //     component = bindings.groupComponent(
-                //         compontentContainer,
-                //         options.config
-                //     );
-                //     break;
-                default:
-                    const ComponentClass = Component.getComponent(options.type);
+                case 'Highcharts':
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -75,6 +75,18 @@ class Bindings {
                         )) as HighchartsComponent;
                     }
                     break;
+                case 'DataGrid':
+                    if (ComponentClass) {
+                        component = new ComponentClass(merge(
+                            options,
+                            {
+                                parentElement: compontentContainer as HTMLDOMElement
+                            })
+                        ) as DataGridComponent;
+                    }
+                    break;
+                default:
+                    return;
             }
 
             component?.render();
@@ -111,12 +123,17 @@ class Bindings {
             case 'HTML':
                 component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
                 break;
-            default:
+            case 'Highcharts': 
                 const componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
                     component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
                 }
                 break;
+            case 'DataGrid': 
+                component = DataGridComponent.fromJSON(json as DataGridComponent.ClassJSON);
+                break;
+            default:
+                return;
         }
 
         component?.render();
@@ -142,20 +159,6 @@ class Bindings {
     public static getLayout(idOrElement: string): Layout|undefined {
         const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
-    }
-
-    public static htmlComponent(
-        compontentContainer: HTMLDOMElement,
-        options: Bindings.ComponentOptions
-    ): HTMLComponent {
-        return new HTMLComponent(
-            merge(
-                options,
-                {
-                    parentElement: compontentContainer as HTMLDOMElement,
-                    elements: options.elements
-                })
-        );
     }
 }
 
