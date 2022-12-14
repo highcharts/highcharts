@@ -22,6 +22,7 @@
 
         series: [{
             name: 'Basemap',
+            showInLegend: false,
             states: {
                 inactive: {
                     enabled: false
@@ -35,7 +36,7 @@
                 format: '{point.id}'
             },
             data: [{
-                id: "Oslo",
+                id: 'Oslo',
                 lat: 60.1975501,
                 lon: 11.1004152
             }, {
@@ -51,11 +52,11 @@
                 lat: 41.80423809568812,
                 lon: 12.59955883026123
             }, {
-                id: "Madrid",
+                id: 'Madrid',
                 lat: 40.4650078,
                 lon: -3.57069739999997
             }, {
-                id: "Dublin",
+                id: 'Dublin',
                 lat: 53.42801115,
                 lon: -6.240388650000005
             }, {
@@ -63,7 +64,7 @@
                 lat: 60.317887,
                 lon: 24.96695
             }, {
-                id: "Budapest",
+                id: 'Budapest',
                 lat: 47.4329065837921,
                 lon: 19.2617931962013
             }, {
