@@ -1,5 +1,5 @@
 ---
- name: Sound Pressure Level
+ name: Sound Pressure Level Errorbar
  authors: Grzegorz Blachlinski
    - 
  js_wrap: b
