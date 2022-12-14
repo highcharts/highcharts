@@ -255,8 +255,8 @@ QUnit.test('Shared tooltip with pointPlacement and stickOnContact', assert => {
         ]
     });
 
-    const offset = Highcharts.offset(chart.container);
-    let point = chart.series[0].points[0];
+    const offset = Highcharts.offset(chart.container),
+        point = chart.series[0].points[0];
 
     // Set hoverPoint
     point.onMouseOver();
@@ -298,15 +298,15 @@ QUnit.test('Shared tooltip with pointPlacement and stickOnContact', assert => {
         }
     });
 
-    point = chart.series[0].points[0];
-    point.onMouseOver();
+    chart.series[0].points[0].onMouseOver();
 
-    const hoverPoint = chart.hoverPoint,
-        pointX = hoverPoint.series.yAxis.toPixels(hoverPoint.stackTotal, true);
+    const predictedTooltipX = chart.series[1].points[0].tooltipPos[0] +
+        chart.plotLeft + chart.tooltip.distance;
 
-    assert.strictEqual(
-        point.tooltipPos[0],
-        pointX,
+    assert.close(
+        predictedTooltipX,
+        chart.tooltip.now.x,
+        1,
         `#17948: Tooltip should be displayed at the end of the bar,
             when reversedStacks is set to false.`
     );
