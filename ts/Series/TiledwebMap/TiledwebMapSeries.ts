@@ -15,7 +15,7 @@
  *
  * */
 
-import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
+import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -71,6 +71,7 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
+    public mapData?: unknown;
     tiles: any;
 
 
