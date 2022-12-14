@@ -71,7 +71,6 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
-    public mapData?: unknown;
     tiles: any;
 
 
