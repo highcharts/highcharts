@@ -1,10 +1,10 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "spline",
-        zoomType: "xy"
+        type: 'spline',
+        zoomType: 'xy'
     },
     title: {
-        text: "NASA Budget as a % of Fed Budget"
+        text: 'NASA Budget as a % of Fed Budget'
     },
     subtitle: {
         text:
@@ -13,15 +13,15 @@ Highcharts.chart("container", {
     xAxis: {
         crosshair: true,
         title: {
-            text: "Year"
+            text: 'Year'
         }
     },
     yAxis: {
         labels: {
-            format: "{value}%"
+            format: '{value}%'
         },
         title: {
-            text: "% of Fed Budget"
+            text: '% of Fed Budget'
         }
     },
     plotOptions: {
@@ -37,7 +37,7 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "% of Fed Budget",
+            name: '% of Fed Budget',
             data: [
                 0.1,
                 0.2,
@@ -104,7 +104,7 @@ Highcharts.chart("container", {
                 0.48
             ],
             tooltip: {
-                valueSuffix: " %"
+                valueSuffix: ' %'
             }
         }
     ]

@@ -1253,7 +1253,11 @@ function onChartAfterViewData(
             };
 
 
-    if (dataTableDiv) {
+    if (
+        dataTableDiv &&
+        chart.options.exporting &&
+        chart.options.exporting.allowTableSorting
+    ) {
         const row = dataTableDiv.querySelector('thead tr');
         if (row) {
             row.childNodes.forEach((th: any): void => {

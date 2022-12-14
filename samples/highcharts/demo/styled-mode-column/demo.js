@@ -44,7 +44,7 @@ Highcharts.chart('container', {
         name: 'Weight',
         data: [92.5, 73.1, 64.8, 49.0],
         tooltip: {
-            valueSuffix: " kg"
+            valueSuffix: ' kg'
         }
     }, {
         name: 'BMI',

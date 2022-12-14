@@ -39,7 +39,8 @@ Highcharts.stockChart('container', {
     },
 
     series: [{
-        data: [1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5, 6, 6, 5, 5, 4, 3, 3, 3, 4, 5, 5, 6, 6],
+        data: [1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5, 6, 6, 5, 5, 4, 3, 3, 3, 4,
+            5, 5, 6, 6],
         tooltip: {
             valueDecimals: 2
         }

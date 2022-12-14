@@ -26,7 +26,7 @@ Highcharts.getSVG = function (charts, options, callback) {
                   '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
             }
             charts[i].getSVGForLocalExport(options, {}, function () {
-                console.log("Failed to get SVG");
+                console.log('Failed to get SVG');
             }, function (svg) {
                 addSVG(svg);
                 return exportChart(i + 1); // Export next only when this SVG is received
@@ -45,7 +45,7 @@ Highcharts.exportCharts = function (charts, options) {
     // Get SVG asynchronously and then download the resulting SVG
     Highcharts.getSVG(charts, options, function (svg) {
         Highcharts.downloadSVGLocal(svg, options, function () {
-            console.log("Failed to export on client side");
+            console.log('Failed to export on client side');
         });
     });
 };
