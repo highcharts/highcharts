@@ -3,5 +3,4 @@ name: Map Markers
 authors:
   - Daniel Studencki / Torstein Hønsi
 js_wrap: b
-requiresManualTesting: true
 ...
