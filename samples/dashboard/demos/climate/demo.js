@@ -222,7 +222,7 @@ async function buildDashboard() {
                     enabled: true
                 },
                 xAxis: {
-                    tickPositions: buildDateTicks(),
+                    // tickPositions: buildDateTicks(),
                     // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
