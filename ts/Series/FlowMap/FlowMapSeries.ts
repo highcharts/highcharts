@@ -89,6 +89,16 @@ class FlowMapSeries extends MapLineSeries {
      * @optionparent plotOptions.flowmap
      */
     public static defaultOptions: FlowMapSeriesOptions = merge(MapLineSeries.defaultOptions, {
+        /**
+         * The `curveFactor` for all links if not specified.
+         * A `curveFactor` with a higher value than 0 will curve the link clockwise.
+         * A negative value will curve the link counter clockwise.
+         * If the value is 0 the link will be straight.
+         *
+         * @type      {number}
+         */
+        curveFactor: void 0,
+
         dataLabels: {
             enabled: false
         },
@@ -462,7 +472,11 @@ class FlowMapSeries extends MapLineSeries {
                 this.options.markerEnd,
                 pointOptions.markerEnd
             ),
-            curveFactor = pointOptions.curveFactor || 0,
+            curveFactor = pick(
+                pointOptions.curveFactor,
+                this.options.curveFactor,
+                0
+            ),
             growTowards = pick(
                 pointOptions.growTowards,
                 this.options.growTowards
@@ -714,7 +728,7 @@ export default FlowMapSeries;
 /**
  * A `curveFactor` with a higher value than 0 will curve the link clockwise.
  * A negative value will curve the link counter clockwise.
- * A `curveFactor` of 0 makes the link straight.
+ * If the value is 0 the link will be straight.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
  *         Example ship route

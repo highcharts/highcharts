@@ -30,6 +30,7 @@ interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     maxWeight: number;
     minWeight: number;
     weight?: number;
+    curveFactor?: number;
 }
 
 /* *
