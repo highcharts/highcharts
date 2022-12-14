@@ -45,18 +45,18 @@ Highcharts.setOptions({
         }
     }
 });
-const csvData = document.getElementById('csv').innerText;
 
-const store1 = new CSVStore(void 0, {
-    csv: csvData,
-    firstRowAsNames: true
-});
+const csvData = document.getElementById('csv').innerText,
+    store1 = new CSVStore(void 0, {
+        csv: csvData,
+        firstRowAsNames: true
+    }),
+    store2 = new CSVStore(void 0, {
+        csv: csvData,
+        firstRowAsNames: true
+    });
+
 store1.load();
-
-const store2 = new CSVStore(void 0, {
-    csv: csvData,
-    firstRowAsNames: true
-});
 store2.load();
 
 const dashboard = new Dashboard.Dashboard('container', {
@@ -107,11 +107,6 @@ const dashboard = new Dashboard.Dashboard('container', {
                 },
                 subtitle: {
                     text: 'Source: https://apps.who.int/gho/data/'
-                },
-                xAxis: {
-                    custom: {
-                        syncGroup: 'x-wide'
-                    }
                 }
             }
         }, {
@@ -134,11 +129,6 @@ const dashboard = new Dashboard.Dashboard('container', {
                 },
                 title: {
                     text: 'South-East Asia'
-                },
-                xAxis: {
-                    custom: {
-                        syncGroup: 'x-wide'
-                    }
                 }
             }
         }, {
@@ -158,11 +148,6 @@ const dashboard = new Dashboard.Dashboard('container', {
             chartOptions: {
                 chart: {
                     zoomType: 'y'
-                },
-                yAxis: {
-                    custom: {
-                        syncGroup: 'y'
-                    }
                 },
                 title: {
                     text: 'Africa'
@@ -185,11 +170,6 @@ const dashboard = new Dashboard.Dashboard('container', {
             chartOptions: {
                 chart: {
                     zoomType: 'y'
-                },
-                yAxis: {
-                    custom: {
-                        syncGroup: 'y'
-                    }
                 },
                 title: {
                     text: 'Europe'
