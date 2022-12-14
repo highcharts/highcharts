@@ -1816,7 +1816,15 @@ class Tooltip {
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
+            // Corrects positions, occurs with tooltip positioner. #16944
+            if (!options.distance && options.positioner) {
+                this.distance = 0;
+            } else {
+                pos.x -= this.distance / 2;
+                pos.y -= this.distance / 2;
+            }
             pad = options.borderWidth + 2 * this.distance;
+
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
@@ -1836,9 +1844,6 @@ class Tooltip {
                 anchorX *= chartPosition.scaleX;
                 anchorY *= chartPosition.scaleY;
             }
-            // Corrects positions, occurs with tooltip positioner. #16944
-            pos.x -= this.distance / 2;
-            pos.y -= this.distance / 2;
             anchorX += chartPosition.left - pos.x;
             anchorY += chartPosition.top - pos.y;
         }
