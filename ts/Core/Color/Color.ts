@@ -333,7 +333,33 @@ class Color implements ColorLike {
     }
 
     /**
-     * Return an intermediate color between two colors.
+     * Returns an intermediate color between three colors.
+     *
+     * @function Highcharts.Color#tweenThree
+     *
+     * @param {Highcharts.Color} middle
+     * The color object in the middle.
+     *
+     * @param {Highcharts.Color} end
+     * The color object at the end.
+     *
+     * @param {number} pos
+     * The intermediate position, where 0 is the start color (current color
+     * item), 0.5 is the `middle` color, and 1 is the `end` color.
+     *
+     * @return {Highcharts.ColorType}
+     * The intermediate color in rgba notation, or unsupported type.
+     */
+    public tweenThree(middle: Color, end: Color, pos: number): ColorType {
+        return (
+            pos < 0.5 ?
+                this.tweenTo(middle, pos * 2) :
+                middle.tweenTo(end, (pos - 0.5) * 2)
+        );
+    }
+
+    /**
+     * Returns an intermediate color between two colors.
      *
      * @function Highcharts.Color#tweenTo
      *
@@ -376,6 +402,7 @@ class Color implements ColorLike {
             ) +
             ')';
     }
+
 }
 
 /* *

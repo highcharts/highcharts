@@ -89,8 +89,9 @@ declare module '../../Series/SeriesLike' {
         axisTypes?: Array<string>;
         colorAxis?: ColorAxis;
         colorKey?: string;
-        minColorValue?: number;
         maxColorValue?: number;
+        middleColorValue?: number;
+        minColorValue?: number;
     }
 }
 
@@ -301,6 +302,12 @@ class ColorAxis extends Axis implements AxisLike {
                 if (colorCounter === colorCount) {
                     colorCounter = 0;
                 }
+            } else if (options.middleColor) {
+                dataClass.color = color(options.minColor).tweenThree(
+                    color(options.middleColor),
+                    color(options.maxColor),
+                    len < 2 ? 0.5 : i / (len - 1) // #3219
+                );
             } else {
                 dataClass.color = color(options.minColor).tweenTo(
                     color(options.maxColor),
@@ -1017,6 +1024,7 @@ namespace ColorAxis {
         legend?: LegendOptions;
         marker?: MarkerOptions;
         maxColor?: ColorType;
+        middleColor?: ColorType;
         minColor?: ColorType;
         showInLegend?: boolean;
         stops?: GradientColor['stops'];
