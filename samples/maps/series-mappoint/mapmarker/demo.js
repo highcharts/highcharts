@@ -1,6 +1,3 @@
-// The demo uses https://api.met.no/ API. Every call downloads the JSON format
-// data, basing on specific capital city latitude and longitude values.
-
 (async () => {
 
     const topology = await fetch(
@@ -62,7 +59,8 @@
     // takes point as first argument, countries series as second and capitals
     // series as third. Capitals series have to be the 'mappoint' series type,
     // and it should be defined before in the series array.
-    async function getTemp(point, countries, capitals) {
+    let labelrank = 0;
+    async function getTemp(point, capitals) {
 
         const json = await fetch(
             'https://api.met.no/weatherapi/locationforecast/2.0/?' +
@@ -73,25 +71,16 @@
                 .air_temperature,
             value = parseInt(temp, 10);
 
-        const country = {
-            'hc-key': point[0],
-            value
-        };
-        const capital = {
-            name: point[3],
-            lat: point[1],
-            lon: point[2],
-            colorKey: 'y',
-            y: Number.isInteger(value) ? value : null,
-            custom: {
-                label: Number.isInteger(value) ?
-                    `${value}℃` :
-                    '<span style="font-weight: normal; opacity: 0.5">N/A</span>'
-            }
-        };
-
-        countries.addPoint(country);
-        capitals.addPoint(capital);
+        if (Number.isInteger(value)) {
+            capitals.addPoint({
+                name: point[3],
+                lat: point[1],
+                lon: point[2],
+                colorKey: 'y',
+                y: value,
+                labelrank: labelrank++
+            });
+        }
     }
 
     // Create the chart
@@ -100,21 +89,27 @@
             map: topology,
             events: {
                 load: function () {
-                    const countries = this.series[0],
-                        capitals = this.series[1];
-                    newData.forEach(elem => getTemp(elem, countries, capitals));
+                    const capitals = this.series[1];
+                    newData.forEach(elem => getTemp(elem, capitals));
                 }
-            }
+            },
+            margin: 1
         },
 
         title: {
             text: 'Current temperatures in capitals of Europe',
-            align: 'left'
+            align: 'right',
+            floating: true,
+            style: {
+                textOutline: '5px contrast'
+            }
         },
 
         subtitle: {
-            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>',
-            align: 'left'
+            text: 'Data source: <a href="https://api.met.no/">api.met.no</a>',
+            align: 'right',
+            floating: true,
+            y: 36
         },
 
         mapNavigation: {
@@ -122,6 +117,10 @@
             buttonOptions: {
                 verticalAlign: 'bottom'
             }
+        },
+
+        mapView: {
+            padding: [0, 0, 80, 0]
         },
 
         colorAxis: {
@@ -141,42 +140,56 @@
         legend: {
             title: {
                 text: 'Degrees Celsius'
-            }
+            },
+            floating: true,
+            backgroundColor: '#ffffffcc'
         },
 
         tooltip: {
             headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
-            pointFormat: 'Temperature: <b>{point.custom.label}</b>'
+            pointFormat: 'Temperature: <b>{point.y}℃</b>'
+        },
+
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'left'
+                }
+            }
         },
 
         series: [{
             allAreas: true,
-            name: 'Temperatures',
+            name: 'Countries',
             states: {
-                hover: {
-                    color: '#BADA55'
+                inactive: {
+                    opacity: 1
                 }
             },
             dataLabels: {
                 enabled: false
             },
-            enableMouseTracking: false,
-            accessibility: {
-                point: {
-                    valueDescriptionFormat: '{xDescription}, {point.value}°C.'
-                }
-            }
+            enableMouseTracking: false
         }, {
             name: 'Capitals of Europe',
+            animation: false,
             type: 'mappoint',
             showInLegend: false,
             marker: {
                 lineWidth: 1,
-                lineColor: '#000'
+                lineColor: '#000',
+                symbol: 'mapmarker',
+                radius: 40
             },
             dataLabels: {
                 crop: true,
-                format: '<span>{key}</span><br><span>{point.custom.label}</span>'
+                format: '{y}',
+                inside: true,
+                y: -7,
+                style: {
+                    color: 'contrast',
+                    textOutline: 'none'
+                }
             },
             accessibility: {
                 point: {
