@@ -21,6 +21,7 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -34,6 +35,7 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -238,6 +240,29 @@ class MapPointSeries extends ScatterSeries {
     /* eslint-enable valid-jsdoc */
 
 }
+
+/* *
+ *
+ * Extra
+ *
+ * */
+const mapmarker = (
+    x: number,
+    y: number,
+    w: number,
+    h: number
+): SVGPath => [
+    ['M', x + w / 2, y + h / 2],
+    ['C', x, y, x + w, y, x + w / 2, y + h / 2],
+    ['Z']
+];
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Highcharts Maps */
+        mapmarker: typeof mapmarker;
+    }
+}
+SVGRenderer.prototype.symbols.mapmarker = mapmarker;
 
 /* *
  *
