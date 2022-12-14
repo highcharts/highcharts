@@ -9,12 +9,12 @@
         },
 
         title: {
-            text: 'Example route of the ship from USA to China'
+            text: 'Example route of a ship from USA to China'
         },
 
         subtitle: {
-            text: `The route through the Suez Canal with a number of travel days
-            between cities`
+            text: `The route through the Suez Canal with the number of travel
+            days between cities`
         },
 
         mapNavigation: {
@@ -26,17 +26,19 @@
             zoom: 2.2
         },
 
-        tooltip: {
-            formatter: function (tooltip) {
-                if (this.series.name === 'Ship Routes') {
-                    return tooltip.defaultFormatter.call(this, tooltip);
+        plotOptions: {
+            flowmap: {
+                tooltip: {
+                    headerFormat: null,
+                    pointFormat: `{point.options.from} \u2192 
+                        {point.options.to}: <b>{point.weight}</b><br/>`
                 }
-                return '<b>' + this.point.id + '</b>' + (
-                    this.point.lat ?
-                        '<br>Lat: ' + this.point.lat +
-                        ' Lon: ' + this.point.lon :
-                        ''
-                );
+            },
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
             }
         },
 
