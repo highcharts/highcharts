@@ -176,10 +176,7 @@
             type: 'mappoint',
             showInLegend: false,
             marker: {
-                lineWidth: 1,
-                lineColor: '#000',
-                symbol: 'mapmarker',
-                radius: 13
+                enabled: false
             },
             dataLabels: {
                 crop: true,
@@ -189,7 +186,11 @@
                 style: {
                     color: 'contrast',
                     textOutline: 'none'
-                }
+                },
+                shape: 'mapmarker',
+                borderColor: 'black',
+                borderWidth: 1,
+                backgroundColor: 'auto'
             },
             accessibility: {
                 point: {

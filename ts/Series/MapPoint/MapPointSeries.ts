@@ -22,6 +22,7 @@ import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -41,7 +42,8 @@ const {
     extend,
     fireEvent,
     isNumber,
-    merge
+    merge,
+    pick
 } = U;
 
 import '../../Core/Defaults.js';
@@ -246,16 +248,49 @@ class MapPointSeries extends ScatterSeries {
  * Extra
  *
  * */
+
+/* *
+ * The mapmarker symbol
+ */
 const mapmarker = (
     x: number,
     y: number,
     w: number,
-    h: number
-): SVGPath => [
-    ['M', x + w / 2, y + h / 2],
-    ['C', x, y, x + w, y, x + w / 2, y + h / 2],
-    ['Z']
-];
+    h: number,
+    options?: SymbolOptions
+): SVGPath => {
+    let anchorX: number,
+        anchorY: number;
+
+    // Put the pin in the anchor position (dataLabel.shape)
+    if (
+        options &&
+        typeof options.anchorX === 'number' &&
+        typeof options.anchorY === 'number'
+    ) {
+        anchorX = options.anchorX;
+        anchorY = options.anchorY;
+
+    // Put the pin in the center and shift upwards (point.marker.symbol)
+    } else {
+        anchorX = x + w / 2;
+        anchorY = y + h / 2;
+        y -= h;
+    }
+
+    // Do not allow distortion
+    w = h;
+    x = anchorX - w / 2;
+
+    return [
+        ['M', anchorX, anchorY],
+        ['C', anchorX, anchorY, x, y + h * 0.8, x, y + h / 2],
+        // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+        ['A', w / 2, h / 2, 1, 1, 1, x + w, y + h / 2],
+        ['C', x + w, y + h * 0.8, anchorX, anchorY, anchorX, anchorY],
+        ['Z']
+    ];
+};
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Highcharts Maps */
