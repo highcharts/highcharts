@@ -26,7 +26,6 @@ import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import CSVConverter from '../Converters/CSVConverter.js';
-import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import HU from '../../Core/HttpUtilities.js';
@@ -234,7 +233,7 @@ class CSVStore extends DataStore {
      * @emits CSVParser#load
      * @emits CSVParser#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
+    public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const store = this,
             converter = store.converter,
             table = store.table,
@@ -271,7 +270,7 @@ class CSVStore extends DataStore {
             });
         }
 
-        return DataPromise.resolve(store);
+        return Promise.resolve(store);
     }
 
 }

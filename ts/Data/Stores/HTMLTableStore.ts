@@ -25,7 +25,6 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
@@ -148,7 +147,7 @@ class HTMLTableStore extends DataStore {
      */
     public load(
         eventDetail?: DataEvent.Detail
-    ): DataPromise<this> {
+    ): Promise<this> {
         const store = this;
 
         store.fetchTable();
@@ -174,7 +173,7 @@ class HTMLTableStore extends DataStore {
                 table: store.table
             });
 
-            return DataPromise.reject(new Error(error));
+            return Promise.reject(new Error(error));
         }
 
         store.converter.parse(
@@ -191,7 +190,7 @@ class HTMLTableStore extends DataStore {
             tableElement: store.tableElement
         });
 
-        return DataPromise.resolve(this);
+        return Promise.resolve(this);
     }
 
 }

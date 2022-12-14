@@ -26,7 +26,6 @@ import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
 import DataConverter from '../Converters/DataConverter.js';
-import DataPromise from '../DataPromise.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -302,9 +301,9 @@ abstract class DataStore implements DataEvent.Emitter {
      *
      * @emits DataStore#afterLoad
      */
-    public load(): DataPromise<this> {
+    public load(): Promise<this> {
         fireEvent(this, 'afterLoad', { table: this.table });
-        return DataPromise.resolve(this);
+        return Promise.resolve(this);
     }
 
     /**
@@ -335,9 +334,9 @@ abstract class DataStore implements DataEvent.Emitter {
      * @emits DataStore#afterSave
      * @emits DataStore#saveError
      */
-    public save(): DataPromise<this> {
+    public save(): Promise<this> {
         fireEvent(this, 'saveError', { table: this.table });
-        return DataPromise.reject(new Error('Not implemented'));
+        return Promise.reject(new Error('Not implemented'));
     }
 
     /**
