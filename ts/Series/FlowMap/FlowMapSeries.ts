@@ -181,13 +181,12 @@ class FlowMapSeries extends MapLineSeries {
 
         tooltip: {
             /**
-             * The HTML of the tooltip header line. Variables are enclosed by
-             * curly brackets. Available variables are point.key, series.name,
-             * series.color and other members from the point and series
-             * objects. The point.key variable contains the category name, x
-             * value or datetime string depending on the type of axis. For
-             * datetime axes, the point.key date format can be set using
-             * tooltip.xDateFormat.
+             * The HTML of the flowmaps's route description in the tooltip.
+             * It consists of the `headerFormat` and `pointFormat`, which can be
+             * edited. Variables are enclosed by curly brackets. Available
+             * variables are `series.name`, `point.options.from`,
+             * `point.options.to`, `point.weight` and other properties on the
+             * same form.
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
