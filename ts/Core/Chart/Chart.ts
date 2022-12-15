@@ -363,6 +363,7 @@ class Chart {
     public time: Time = void 0 as any;
     public title?: SVGElement;
     public titleOffset: Array<number> = void 0 as any;
+    public unbindReflow?: Function;
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
@@ -1812,17 +1813,36 @@ class Chart {
     public setReflow(reflow?: boolean): void {
         const chart = this;
 
-        if (chart && reflow !== false && typeof ResizeObserver === 'function') {
-            chart.resizeObserver = new ResizeObserver((): void => {
-                if (chart.options && chart.hasLoaded) {
-                    chart.reflow();
-                }
-            });
+        if (chart && reflow !== false) {
+            if (typeof ResizeObserver === 'function') {
+                chart.resizeObserver = new ResizeObserver((): void => {
+                    if (chart.options && chart.hasLoaded) {
+                        chart.reflow();
+                    }
+                });
 
-            setTimeout((): void => {
-                chart.resizeObserver &&
-                    chart.resizeObserver.observe(chart.renderTo);
-            });
+                setTimeout((): void => {
+                    chart.resizeObserver &&
+                        chart.resizeObserver.observe(chart.renderTo);
+                });
+            } else {
+                // Fallback for more legacy browser versions.
+                this.unbindReflow = addEvent(win, 'resize', function (
+                    e: Event
+                ): void {
+                    // a removed event listener still runs in Edge and IE if the
+                    // listener was removed while the event runs, so check if
+                    // the chart is not destroyed (#11609)
+                    if (chart.options) {
+                        chart.reflow(e);
+                    }
+                });
+                addEvent(this, 'destroy', this.unbindReflow);
+            }
+        } else if (reflow === false && this.unbindReflow) {
+
+            // Unbind and unset
+            this.unbindReflow = this.unbindReflow();
         }
     }
 
