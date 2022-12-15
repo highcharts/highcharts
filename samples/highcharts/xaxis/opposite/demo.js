@@ -5,12 +5,12 @@ Highcharts.chart('container', {
     xAxis: {
         opposite: true,
         categories: ['Prod AAA AAA', 'Prod BBB', 'Prod CCC', 'Prod DDD', 'Prod EEE', 'Prod FFF'],
-        //categories: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF'],
+        // categories: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF'],
         labels: {
             autoRotation: 0,
             style: {
                 color: 'red'
-                //fontSize: '24px'
+                // fontSize: '24px'
             }
         }
 

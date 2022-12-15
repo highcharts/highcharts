@@ -11,10 +11,6 @@ QUnit.test(
                 margin: 40
             },
 
-            mapNavigation: {
-                enabled: false
-            },
-
             colorAxis: {
                 min: 1,
                 max: 1000,
@@ -73,21 +69,19 @@ QUnit.test(
         chart.mapZoom(0.2);
 
         const [lon, lat] = chart.mapView.center;
-
+        // #17238
         controller.pan(
             [plotLeft + 50, plotTop + 50],
             [plotLeft + 100, plotTop + 100]
         );
 
-        assert.notEqual(
-            chart.mapView.center[0],
-            lon,
+        assert.ok(
+            chart.mapView.center[0] < lon,
             'The chart should pan horizontally'
         );
 
-        assert.notEqual(
-            chart.mapView.center[1],
-            lat,
+        assert.ok(
+            chart.mapView.center[1] < lat,
             'The chart should pan vertically'
         );
 

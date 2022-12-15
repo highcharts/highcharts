@@ -3,16 +3,16 @@ Highcharts.setOptions({
 });
 
 const discipline = [{
-    name: "Basketball",
-    data: "basketball"
+    name: 'Basketball',
+    data: 'basketball'
 },
 {
-    name: "Triathlon",
-    data: "triathlon"
+    name: 'Triathlon',
+    data: 'triathlon'
 },
 {
-    name: "Volleyball",
-    data: "volleyball"
+    name: 'Volleyball',
+    data: 'volleyball'
 }
 ];
 
@@ -46,14 +46,14 @@ getData().then(data => {
         c => Highcharts.color(c).setOpacity(0.5).get()
     );
 
-    Highcharts.chart("container", {
+    Highcharts.chart('container', {
         chart: {
-            type: "scatter",
-            zoomType: "xy"
+            type: 'scatter',
+            zoomType: 'xy'
         },
         colors,
         title: {
-            text: "Olympics 2012 sport by height and weight"
+            text: 'Olympics 2012 sport by height and weight'
         },
         subtitle: {
             text:
@@ -61,10 +61,10 @@ getData().then(data => {
         },
         xAxis: {
             title: {
-                text: "Height"
+                text: 'Height'
             },
             labels: {
-                format: "{value} m"
+                format: '{value} m'
             },
             startOnTick: true,
             endOnTick: true,
@@ -72,10 +72,10 @@ getData().then(data => {
         },
         yAxis: {
             title: {
-                text: "Weight"
+                text: 'Weight'
             },
             labels: {
-                format: "{value} kg"
+                format: '{value} kg'
             }
         },
         legend: {
@@ -85,11 +85,11 @@ getData().then(data => {
             scatter: {
                 marker: {
                     radius: 2.5,
-                    symbol: "circle",
+                    symbol: 'circle',
                     states: {
                         hover: {
                             enabled: true,
-                            lineColor: "rgb(100,100,100)"
+                            lineColor: 'rgb(100,100,100)'
                         }
                     }
                 },
@@ -103,7 +103,7 @@ getData().then(data => {
             }
         },
         tooltip: {
-            pointFormat: "Height: {point.x} m <br/> Weight: {point.y} kg"
+            pointFormat: 'Height: {point.x} m <br/> Weight: {point.y} kg'
         },
         series: series
     });

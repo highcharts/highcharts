@@ -97,6 +97,12 @@ declare global {
             hType?: string,
             series?: Series
         ): Array<any>;
+
+        /** @requires modules/maps */
+        function topo2geo(
+            topology: TopoJSON,
+            objectName?: string
+        ): GeoJSON;
     }
     interface Window {
         d3: any;
@@ -660,6 +666,7 @@ wrap(Chart.prototype, 'addCredits', function (
 });
 
 H.geojson = geojson;
+H.topo2geo = topo2geo;
 
 const GeoJSONModule = {
     geojson,

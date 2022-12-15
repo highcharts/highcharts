@@ -34,7 +34,7 @@ QUnit.test('Drag panes on zoomable chart', function (assert) {
     assert.equal(
         chart.yAxis[1].len,
         strartingNavYAxisLen,
-        "Don't change navigator's yAxis (#7732)"
+        'Don\'t change navigator\'s yAxis (#7732)'
     );
 
     assert.close(

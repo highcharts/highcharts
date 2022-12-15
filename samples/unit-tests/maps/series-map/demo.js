@@ -56,7 +56,7 @@ QUnit.test('Mapping of joinBy with data', assert => {
     assert.strictEqual(
         series.points[0].color,
         'rgb(128,142,166)',
-        `The joinBy set: 1. territory should be colored.`
+        'The joinBy set: 1. territory should be colored.'
     );
 });
 
@@ -203,7 +203,7 @@ QUnit.test('Null points', function (assert) {
 
     assert.notOk(
         chart.series[0].points[0].graphic.hasClass('highcharts-null-point'),
-        "Point with data doesn't have null point class"
+        'Point with data doesn\'t have null point class'
     );
 
     assert.ok(

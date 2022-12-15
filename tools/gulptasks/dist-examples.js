@@ -6,7 +6,9 @@
 
 const Gulp = require('gulp');
 const Path = require('path');
-const { getS3Object } = require('./lib/uploadS3');
+const { readFileSync } = require('node:fs');
+
+const { getGitIgnoreMeProperties } = require('./lib/uploadS3.js');
 
 /* *
  *
@@ -21,6 +23,16 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
+
+function getDemoBuildPath() {
+    let value;
+    try {
+        value = getGitIgnoreMeProperties()['demos.path'];
+    } catch {
+        value = 'tmp/demo';
+    }
+    return value;
+}
 
 /**
  * Creates an index page from the supplied options
@@ -142,8 +154,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-                        FS.readFileSync(path).toString() ||
-                        ''
+          FS.readFileSync(path).toString() ||
+          ''
                 );
                 return obj;
             },
@@ -164,22 +176,20 @@ async function createExamples(title, sourcePath, targetPath, template) {
         );
     });
 
-    /**
-     * Fetch sidebar
-     * @param {string} path
-     * The subpath for the product. Will substitute 'highcharts' with ''
-     * @return {Promise<string>}
-     * The S3 promise
-     */
-    function downloadSidebar(path) {
-        return getS3Object(
-            'assets.highcharts.com',
-            `demos/demo${path === 'highcharts' ? '' : `/${path}`}/sidebar`
+    function getLocalSidebar(path) {
+        const file = readFileSync(
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`),
+            'utf-8'
         );
+        return file;
     }
 
     LogLib.success('Created', targetPath);
-    const indexContent = (await downloadSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, '')))
+
+    const localsidebar = getLocalSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, ''));
+
+    LogLib.success('Created', targetPath);
+    const indexContent = localsidebar
         .replace(/style=\"display:none;\"/g, '') // remove hidden style
         .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
 

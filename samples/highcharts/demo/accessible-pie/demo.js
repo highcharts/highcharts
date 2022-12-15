@@ -20,11 +20,13 @@ var chart = Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Primary desktop/laptop screen readers'
+        text: 'Primary desktop/laptop screen readers',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: WebAIM. Click on point to visit official website'
+        text: 'Source: WebAIM. Click on point to visit official website',
+        align: 'left'
     },
 
     colors: patterns,

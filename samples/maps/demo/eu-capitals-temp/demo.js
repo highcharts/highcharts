@@ -125,11 +125,13 @@
         },
 
         title: {
-            text: 'Current temperatures in capitals of Europe'
+            text: 'Current temperatures in capitals of Europe',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>'
+            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>',
+            align: 'left'
         },
 
         mapNavigation: {

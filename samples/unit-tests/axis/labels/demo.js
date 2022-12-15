@@ -640,13 +640,13 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
             },
             categories: [
                 'Not enough to choose from',
-                "Can't edit colors",
+                'Can\'t edit colors',
                 'I like it so far',
-                "Can't edit icons",
-                "Don't like the content/text",
-                "Don't like the colors",
+                'Can\'t edit icons',
+                'Don\'t like the content/text',
+                'Don\'t like the colors',
                 'It worked nicely.',
-                "Don't like the icons",
+                'Don\'t like the icons',
                 'If I had to make a suggestion. ' +
                     'For the most part they seem OK',
                 'For the text frames with images',
@@ -663,7 +663,7 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                     'Other than that',
                 'much more powerful than powerpoint.',
                 'I think it is great - so easy to use',
-                "I can't find these. Where are they?"
+                'I can\'t find these. Where are they?'
             ]
         },
         yAxis: [
@@ -683,13 +683,13 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                 },
                 data: [
                     ['Not enough to choose from', 21],
-                    ["Can't edit colors", 19],
+                    ['Can\'t edit colors', 19],
                     ['I like it so far', 14],
-                    ["Can't edit icons", 10],
-                    ["Don't like the content/text", 2],
-                    ["Don't like the colors", 2],
+                    ['Can\'t edit icons', 10],
+                    ['Don\'t like the content/text', 2],
+                    ['Don\'t like the colors', 2],
                     ['It worked nicely.', 1],
-                    ["Don't like the icons", 1],
+                    ['Don\'t like the icons', 1],
                     [
                         'If I had to make a suggestion. ' +
                             'For the most part they seem OK',
@@ -725,7 +725,7 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                     ],
                     ['much more powerful than powerpoint.', 1],
                     ['I think it is great - so easy to use', 1],
-                    ["I can't find these. Where are they?", 1]
+                    ['I can\'t find these. Where are they?', 1]
                 ]
             }
         ]

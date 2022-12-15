@@ -198,7 +198,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
-     * element.
+     * element. Changes to the series' color will also be reflected in a
+     * chart's legend and tooltip.
+     *
+     * @sample {highcharts} highcharts/css/point-series-classname
      *
      * @type      {string}
      * @since     5.0.0
@@ -1573,6 +1576,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderWidth
          */
+        borderWidth: 0,
 
         /**
          * A class name for the data label. Particularly in styled mode,
