@@ -367,7 +367,7 @@ wrap(
                     (this as any)[prop] = this.chart.columnGroup;
                     this.chart.columnGroup.attr(this.getPlotBox());
                     (this as any)[prop].survive = true;
-                    if (prop === 'group' || prop === 'markerGroup') {
+                    if (prop === 'group') {
                         arguments[3] = 'visible';
                         // For 3D column group and markerGroup should be visible
                     }
