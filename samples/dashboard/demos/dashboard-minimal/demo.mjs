@@ -18,6 +18,12 @@ const store = new CSVStore(void 0, {
 
 store.load();
 
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 const dashboard = new Dashboard.Dashboard('container', {
     store: store,
     editMode: {
