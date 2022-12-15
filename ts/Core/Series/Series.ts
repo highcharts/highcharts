@@ -2685,9 +2685,19 @@ class Series {
                         'rect' as SymbolKey
                     );
 
+                    const toFlip =
+                        chart.inverted &&
+                        ((
+                            seriesMarkerOptions &&
+                            seriesMarkerOptions.symbol
+                        ) ||
+                            pointMarkerOptions.symbol
+                        );
+
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        (point.selected && 'select') as any,
+                        toFlip as boolean
                     );
 
                     // Set starting position for point sliding animation.
@@ -2805,7 +2815,8 @@ class Series {
      */
     public markerAttribs(
         point: Point,
-        state?: StatesOptionsKey
+        state?: StatesOptionsKey,
+        flip?: boolean
     ): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
@@ -2851,7 +2862,7 @@ class Series {
             attribs.x = plotX - radius;
             attribs.y = plotY - radius;
 
-            if (this.chart.inverted) {
+            if (flip) {
                 attribs.x = this.yAxis.len - plotY - radius;
                 attribs.y = this.xAxis.len - plotX - radius;
             }
@@ -3313,8 +3324,7 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === 'markers' || name === 'series') &&
-                !this._hasPointMarkers
+                (name === 'markers' || name === 'series')
             );
 
         // Swap axes for inverted (#2339)
