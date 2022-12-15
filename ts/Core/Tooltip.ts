@@ -1819,6 +1819,11 @@ class Tooltip {
             // Corrects positions, occurs with tooltip positioner. #16944
             if (!options.distance && options.positioner) {
                 this.distance = 0;
+                pos.x += chartPosition.left;
+                pos.y += chartPosition.top;
+            } else if (options.positioner) {
+                pos.x += chartPosition.left - this.distance / 2;
+                pos.y += chartPosition.top - this.distance / 2;
             } else {
                 pos.x -= this.distance / 2;
                 pos.y -= this.distance / 2;
