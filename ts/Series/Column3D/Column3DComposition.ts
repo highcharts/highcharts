@@ -354,7 +354,7 @@ wrap(
         _zIndex?: number,
         parent?: SVGElement
     ): void {
-        if (prop !== 'dataLabelsGroup') {
+        if (prop !== 'dataLabelsGroup' && prop !== 'markerGroup') {
             if (this.chart.is3d()) {
                 if ((this as any)[prop]) {
                     delete (this as any)[prop];

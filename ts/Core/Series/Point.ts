@@ -1564,15 +1564,22 @@ class Point {
      */
     public haloPath(size: number): SVGPath {
         const series = this.series,
+            seriesMarkerOptions = series.options.marker || {},
+            pointMarkerOptions = this.options.marker || {},
             chart = series.chart;
 
-        const haloPos = !chart.inverted ? {
-            x: this.plotX as any,
-            y: this.plotY as any
-        } : {
-            x: series.yAxis.len - (this.plotY as any),
-            y: series.xAxis.len - (this.plotX as any)
-        };
+        const haloPos = !(chart.inverted &&
+            ((
+                seriesMarkerOptions.symbol ||
+                pointMarkerOptions.symbol
+            ))) ?
+            {
+                x: this.plotX as any,
+                y: this.plotY as any
+            } : {
+                x: series.yAxis.len - (this.plotY as any),
+                y: series.xAxis.len - (this.plotX as any)
+            };
 
         return chart.renderer.symbols.circle(
             Math.floor(haloPos.x) - size,
