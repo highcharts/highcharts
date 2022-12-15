@@ -957,8 +957,9 @@ class MapView {
 
                     }
 
-
-                } else { // #17238
+                // #17925 Skip NaN values
+                } else if (isNumber(chartX) && isNumber(chartY)) {
+                    // #17238
                     const scale = this.getScale(),
                         flipFactor = this.projection.hasCoordinates ? 1 : -1;
 
