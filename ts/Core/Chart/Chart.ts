@@ -351,6 +351,7 @@ class Chart {
     public reflowTimeout?: number;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
+    public resizeObserver?: ResizeObserver;
     public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
     public sharedClips: Record<string, (SVGElement|undefined)> = {};
@@ -1815,19 +1816,32 @@ class Chart {
     public setReflow(reflow?: boolean): void {
         const chart = this;
 
-        if (reflow !== false && !this.unbindReflow) {
-            this.unbindReflow = addEvent(win, 'resize', function (
-                e: Event
-            ): void {
-                // a removed event listener still runs in Edge and IE if the
-                // listener was removed while the event runs, so check if the
-                // chart is not destroyed (#11609)
-                if (chart.options) {
-                    chart.reflow(e);
-                }
-            });
-            addEvent(this, 'destroy', this.unbindReflow);
+        if (chart && reflow !== false) {
+            if (typeof ResizeObserver === 'function') {
+                chart.resizeObserver = new ResizeObserver((): void => {
+                    if (chart.options && chart.hasLoaded) {
+                        chart.reflow();
+                    }
+                });
 
+                setTimeout((): void => {
+                    chart.resizeObserver &&
+                        chart.resizeObserver.observe(chart.renderTo);
+                });
+            } else {
+                // Fallback for more legacy browser versions.
+                this.unbindReflow = addEvent(win, 'resize', function (
+                    e: Event
+                ): void {
+                    // a removed event listener still runs in Edge and IE if the
+                    // listener was removed while the event runs, so check if
+                    // the chart is not destroyed (#11609)
+                    if (chart.options) {
+                        chart.reflow(e);
+                    }
+                });
+                addEvent(this, 'destroy', this.unbindReflow);
+            }
         } else if (reflow === false && this.unbindReflow) {
 
             // Unbind and unset
