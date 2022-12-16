@@ -124,6 +124,24 @@ QUnit.test('Tooltip with default positioner and set outside true on correct posi
         Math.round(pointX),
         'Tooltip position should appear at point with outside true'
     );
+
+    chart.update({
+        chart: {
+            margin: 50
+        }
+    });
+
+    tooltip.refresh(point);
+
+    chart.container.style.margin = '200px';
+
+    tooltip.refresh(point);
+
+    assert.strictEqual(
+        Math.round(tooltipAbsolute),
+        Math.round(pointX),
+        'Tooltip position should appear at point with sets margin for chart and container'
+    );
 });
 
 QUnit.test('Tooltip when markers are outside, #17929.', function (assert) {
