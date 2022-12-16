@@ -996,7 +996,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @declare Highcharts.PointMarkerOptionsObject
      *
-     * @sample {highmaps} maps/series-mappoint/mapmarker
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
      *
      * @private
@@ -1111,7 +1111,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Predefined, graphic and custom markers
          * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
          *         Predefined, graphic and custom markers
-         * @sample {highmaps} maps/series-mappoint/mapmarker
+         * @sample {highmaps} maps/demo/mappoint-mapmarker
          *         Using the mapmarker symbol for points
          *
          * @type      {string}
@@ -1466,7 +1466,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Styled mode example
      * @sample {highmaps} maps/demo/color-axis
      *         Choropleth map with data labels
-     * @sample {highmaps} maps/series-mappoint/datalabels-mapmarker
+     * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
      *         Using data labels as map markers
      *
      * @type    {*|Array<*>}
@@ -1547,7 +1547,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
-         * @sample {highmaps} maps/series-mappoint/datalabels-mapmarker
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
          *         Data labels as map markers
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}

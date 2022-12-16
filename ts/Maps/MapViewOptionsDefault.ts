@@ -81,7 +81,7 @@ const defaultOptions: MapViewOptions = {
      *
      * @sample {highmaps} maps/chart/plotbackgroundcolor-color
      *         Visible plot area and percentage padding
-     * @sample {highmaps} maps/series-mappoint/mapmarker
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Padding for individual sides
      * @type  {number|string|Array<number|string>}
      */
