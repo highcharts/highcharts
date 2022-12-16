@@ -76,9 +76,9 @@ class MapPointSeries extends ScatterSeries {
      *
      * @sample maps/demo/mapline-mappoint/
      *         Map-line and map-point series.
-     * @sample maps/series-mappoint/mapmarker
+     * @sample maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
-     * @sample maps/series-mappoint/datalabels-mapmarker
+     * @sample maps/demo/mappoint-datalabels-mapmarker
      *         Using the mapmarker shape for data labels
      *
      * @extends      plotOptions.scatter
