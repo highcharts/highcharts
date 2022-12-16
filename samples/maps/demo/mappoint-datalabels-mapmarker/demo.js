@@ -369,6 +369,7 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
+                alignTo: 'spacingBox',
                 verticalAlign: 'bottom'
             }
         },
