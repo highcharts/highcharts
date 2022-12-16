@@ -364,6 +364,16 @@ class Tooltip {
 
         points = splat(points);
 
+        // If reversedStacks are false the tooltip position should be taken from
+        // the last point (#17948)
+        if (
+            points[0].series &&
+            points[0].series.yAxis &&
+            !points[0].series.yAxis.options.reversedStacks
+        ) {
+            points = points.slice().reverse();
+        }
+
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
             if (typeof mouseEvent.chartX === 'undefined') {
@@ -373,14 +383,6 @@ class Tooltip {
                 mouseEvent.chartX - plotLeft,
                 mouseEvent.chartY - plotTop
             ];
-        // #17948, if reversedStacks are false tooltip position should be taken
-        // from the last point
-        } else if (
-            points[0].series.yAxis &&
-            !points[0].series.yAxis.options.reversedStacks &&
-            points[points.length - 1].tooltipPos
-        ) {
-            ret = points[points.length - 1].tooltipPos as number[];
 
         // Some series types use a specificly calculated tooltip position for
         // each point
