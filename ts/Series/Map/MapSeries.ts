@@ -176,7 +176,7 @@ class MapSeries extends ScatterSeries {
          * @type       {Highcharts.SeriesLinecapValue}
          * @since      next
          */
-        linecap: 'round',
+        linecap: 'butt',
 
         /**
          * @ignore-option
