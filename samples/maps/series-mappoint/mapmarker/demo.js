@@ -51,7 +51,7 @@
                     lineWidth: 1,
                     lineColor: '#000',
                     symbol: 'mapmarker',
-                    radius: 10
+                    radius: 8
                 },
                 dataLabels: {
                     enabled: false

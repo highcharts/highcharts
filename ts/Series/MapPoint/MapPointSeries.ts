@@ -263,11 +263,16 @@ const mapmarker = (
     h: number,
     options?: SymbolOptions
 ): SVGPath => {
+    const isLegendSymbol = options && options.context === 'legend';
     let anchorX: number,
         anchorY: number;
 
+    if (isLegendSymbol) {
+        anchorX = x + w / 2;
+        anchorY = y + h;
+
     // Put the pin in the anchor position (dataLabel.shape)
-    if (
+    } else if (
         options &&
         typeof options.anchorX === 'number' &&
         typeof options.anchorY === 'number'
@@ -282,16 +287,13 @@ const mapmarker = (
         y -= h;
     }
 
-    // Do not allow distortion
-    w = h;
-    x = anchorX - w / 2;
-
+    const r = isLegendSymbol ? h / 3 : h / 2;
     return [
         ['M', anchorX, anchorY],
-        ['C', anchorX, anchorY, x, y + h * 0.8, x, y + h / 2],
+        ['C', anchorX, anchorY, anchorX - r, y + r * 1.5, anchorX - r, y + r],
         // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-        ['A', w / 2, h / 2, 1, 1, 1, x + w, y + h / 2],
-        ['C', x + w, y + h * 0.8, anchorX, anchorY, anchorX, anchorY],
+        ['A', r, r, 1, 1, 1, anchorX + r, y + r],
+        ['C', anchorX + r, y + r * 1.5, anchorX, anchorY, anchorX, anchorY],
         ['Z']
     ];
 };
