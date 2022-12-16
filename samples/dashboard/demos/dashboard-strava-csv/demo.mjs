@@ -640,15 +640,7 @@ const editMode = {
     contextMenu: {
         icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
         enabled: true,
-        items: [{
-            id: 'saveLocal',
-            className: 'test-test-test',
-            events: {
-                click: function () {
-                    console.log('save local');
-                }
-            }
-        }, 'verticalSeparator', 'editMode', {
+        items: ['editMode', {
             id: 'export-dashboard',
             text: 'Export dashboard',
             events: {
@@ -746,7 +738,6 @@ const editMode = {
     },
     lang: {
         editMode: 'My edit mode',
-        saveLocal: 'Save locally 1',
         chartOptions: 'Chart options EN'
     },
     tools: {

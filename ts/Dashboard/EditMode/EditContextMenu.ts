@@ -22,7 +22,7 @@ class EditContextMenu extends Menu {
         className: EditGlobals.classNames.contextMenu,
         itemsClassName: EditGlobals.classNames.contextMenuItem,
         icon: EditGlobals.iconsURL + 'menu.svg',
-        items: ['saveLocal', 'verticalSeparator', 'editMode']
+        items: ['editMode']
     };
 
     public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
@@ -34,14 +34,6 @@ class EditContextMenu extends Menu {
                 click: function (this: MenuItem, e: any): void {
                     (this.menu as EditContextMenu).editMode.onEditModeToggle();
                 }
-            }
-        },
-        saveLocal: {
-            id: 'saveLocal',
-            type: 'text',
-            text: 'Save locally',
-            events: {
-                click: function (): void {}
             }
         }
     });
