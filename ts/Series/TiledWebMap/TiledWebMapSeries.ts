@@ -27,8 +27,9 @@ const {
 import U from '../../Core/Utilities.js';
 
 const {
+    extend,
     merge,
-    extend
+    pick
 } = U;
 
 /* *
@@ -62,7 +63,16 @@ class TiledWebMapSeries extends MapSeries {
 
     // public static compose = MapBubbleSeries.compose;
 
-    public static defaultOptions: TiledWebMapSeriesOptions = MapSeries.defaultOptions;
+    public static defaultOptions: TiledWebMapSeriesOptions = merge(MapSeries.defaultOptions, {
+        states: {
+            inactive: {
+                enabled: true
+            }
+        },
+        provider: {
+            type: 'OpenStreetMap'
+        }
+    });
 
     /* *
      *
@@ -93,6 +103,8 @@ class TiledWebMapSeries extends MapSeries {
                 tiles,
                 transformGroups
             } = this,
+            options = this.options,
+            provider = options.provider,
             mapView: any = chart.mapView,
             { zoom } = mapView,
             zoomCeil = Math.ceil(zoom);
@@ -135,8 +147,45 @@ class TiledWebMapSeries extends MapSeries {
 
         const addTile = (x: number, y: number, zoom: any): void => {
             if (!tiles[`${zoom},${x},${y}`]) {
+                let url: string;
+
+                if (provider.type === 'OpenStreetMap') {
+                    const s = pick(provider.subdomain, 'a');
+
+                    if (provider.theme === 'bicycle') {
+                        url = `http://${s}.tile.thunderforest.com/cycle/${zoom}/${x}/${y}.png`;
+                    } else {
+                        url = `https://${s}.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+                    }
+
+                } else if (provider.type === 'Google') {
+
+                    url = `https://www.google.com/maps/vt?pb=!1m5!1m4!1i${zoom}!2i${x}!3i${y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2sen-US!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965`;
+
+                } else if (provider.type === 'Carto') {
+                    const s = pick(provider.subdomain, 'a');
+
+                    if (provider.theme === 'dark') {
+                        url = `http://${s}.basemaps.cartocdn.com/dark_all/${zoom}/${x}/${y}.png`;
+                    } else {
+                        url = `http://${s}.basemaps.cartocdn.com/light_all/${zoom}/${x}/${y}.png`;
+                    }
+
+                } else if (provider.type === 'Gaode') {
+                    const s = pick(provider.subdomain, '01');
+
+                    if (provider.theme === 'Satelite') {
+                        url = `http://webst${s}.is.autonavi.com/appmaptile?style=6&x=${x}&y=${y}&z=${zoom}`;
+                    } else {
+                        url = `http://webrd${s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${x}&y=${y}&z=${zoom}`;
+                    }
+
+                } else {
+                    url = 'empty';
+                }
+
                 tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                    `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`,
+                    url,
                     x * 256,
                     y * 256
                 )
