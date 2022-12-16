@@ -107,10 +107,7 @@
                     radius: 8
                 },
                 dataLabels: {
-                    align: 'left',
-                    verticalAlign: 'bottom',
-                    padding: 0,
-                    x: 6
+                    verticalAlign: 'top'
                 }
             }]
         });
