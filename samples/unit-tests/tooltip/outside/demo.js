@@ -89,9 +89,6 @@ QUnit.test('Tooltip with default positioner and set outside true on correct posi
                 height: 400
             },
             tooltip: {
-                formatter() {
-                    return this.y + 'AAAAAAAA';
-                },
                 padding: 0,
                 borderWidth: 0
             },
