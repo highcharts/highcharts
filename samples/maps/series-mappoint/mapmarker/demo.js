@@ -66,6 +66,22 @@
 
         series: [{
             allAreas: true,
+            name: 'Coastline',
+            states: {
+                inactive: {
+                    opacity: 0.2
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            enableMouseTracking: false,
+            showInLegend: false,
+            borderColor: 'blue',
+            opacity: 0.3,
+            borderWidth: 10
+        }, {
+            allAreas: true,
             name: 'Countries',
             states: {
                 inactive: {
@@ -76,7 +92,8 @@
                 enabled: false
             },
             enableMouseTracking: false,
-            showInLegend: false
+            showInLegend: false,
+            borderColor: 'rgba(0, 0, 0, 0.25)'
         }, {
             name: 'Coastal',
             color: 'rgb(124, 181, 236)',
