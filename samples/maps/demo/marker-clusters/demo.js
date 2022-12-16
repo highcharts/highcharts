@@ -98,7 +98,20 @@
                 },
                 colorKey: 'clusterPointsAmount',
                 name: 'Cities',
-                data: data
+                data: data,
+                color: Highcharts.getOptions().colors[5],
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#fff',
+                    symbol: 'mapmarker',
+                    radius: 8
+                },
+                dataLabels: {
+                    align: 'left',
+                    verticalAlign: 'bottom',
+                    padding: 0,
+                    x: 6
+                }
             }]
         });
     });
