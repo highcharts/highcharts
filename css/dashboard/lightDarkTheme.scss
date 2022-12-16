@@ -1,0 +1,12 @@
+$gray: #808080;
+
+@media (prefers-color-scheme: light) {
+    .highcharts-background {
+        fill: white;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .highcharts-background {
+        fill: $gray;
+    }
+}
