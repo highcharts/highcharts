@@ -1,6 +1,7 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 @import "https://code.highcharts.com/css/datagrid.css";
 @import "https://code.highcharts.com/css/dashboard/gui.css";
+@import "https://code.highcharts.com/css/dashboard/lightDarkTheme.css";
 
 #datagrid {
     height: 180px;
