@@ -28,7 +28,7 @@ import type DataOnDemandOptions from './DataOnDemandOptions.js';
  * */
 
 const DataOnDemandDefaults: DataOnDemandOptions = {
-    sources: []
+    stores: []
 };
 
 /* *

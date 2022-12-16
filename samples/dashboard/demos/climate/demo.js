@@ -1,10 +1,13 @@
 /* eslint-disable */
 
+const color1 = Highcharts.Color.parse('#39F');
+const color2 = Highcharts.Color.parse('#6C0');
+const color3 = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 
+let cityGrid;
 let citySeries;
 let dataScope = 'TX';
-let worldTable;
 let worldTime = new Date(2010, 12, 25); 
 
 async function buildDashboard() {
@@ -13,10 +16,11 @@ async function buildDashboard() {
         .then(fetch)
         .then(response => response.json());
 
-    const citiesTable = await dataPool.getSourceTable('cities');
-    const cityClimateTable = await dataPool.getSourceTable('Tokyo');
+    const citiesTable = await dataPool.getStoreTable('cities');
+    const cityClimate = await dataPool.getStore('Tokyo');
 
-    worldTable = await dataPool.getSourceTable(1262649600000);
+    let citiesMap;
+    let worldTable = await dataPool.getStoreTable(1262649600000);
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -33,9 +37,13 @@ async function buildDashboard() {
                     events: {
                         click: function (e) {
                             dataPool
-                                .getSourceTable(e.point.x)
+                                .getStoreTable(e.point.x)
                                 .then(table => {
                                     worldTable = table;
+                                    citiesMap.setData(buildCitiesMap(
+                                        worldTable,
+                                        citiesTable
+                                    ));
                                 });
                         }
                     },
@@ -81,6 +89,7 @@ async function buildDashboard() {
                     minColor: '#39F',
                 },*/
                 legend: {
+                    enabled: false,
                     margin: 0,
                 },
                 mapView: {
@@ -94,43 +103,24 @@ async function buildDashboard() {
                 series: [{
                     type: 'map',
                     name: 'World Map',
-                }, /*{
-                    type: 'mapbubble',
-                    name: 'Temperature',
-                    data: worldTable.modified.getRows(
-                        void 0, void 0,
-                        ['lat', 'lon', dataScope]
-                    ),
-                    keys: ['lat', 'lon', 'z'],
-                    colorKey: 'z',
-                    maxSize: 1.1,
-                    minSize: 1.1,
-                    opacity: 0.6,
-                    marker: {
-                        symbol: 'square'
-                    },
-                    tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
-                        pointFormatter: function () {
-                            return (
-                                `<b>${this.lat} &phi;, ` +
-                                `${this.lon} &lambda;</b><br>` +
-                                temperatureFormatter(this.z)
-                            );
-                        },
-                    }
-                },*/ {
+                }, {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: citiesTable.modified
-                        .getRows(void 0, void 0, ['lat2', 'lon2', 'city']),
-                    keys: ['lat', 'lon', 'name', 'z'],
+                    data: buildCitiesMap(
+                        worldTable,
+                        citiesTable
+                    ),
                     color: '#000',
+                    dataLabels: {
+                        align: 'left',
+                        padding: 7,
+                        verticalAlign: 'middle',
+                        y: -1,
+                    },
                     events: {
                         click: function (e) {
 
-                            if (!citySeries) {
+                            if (!cityGrid || !citySeries) {
                                 return; // not ready
                             }
 
@@ -138,36 +128,33 @@ async function buildDashboard() {
                             const city = point.name;
 
                             dataPool
-                                .getSourceTable(city)
-                                .then(table => {
+                                .getStore(city)
+                                .then(store => {
                                     citySeries.chart.update({
                                         title: { text: city }
                                     });
                                     citySeries.update({
                                         name: city,
-                                        data: table.modified.getRows(
+                                        data: store.table.modified.getRows(
                                             void 0, void 0,
                                             ['time', dataScope]
                                         )
                                     });
+                                    cityGrid.update({ store });
                                 });
                         }
+                    },
+                    marker: {
+                        radius: 6,
                     },
                     tooltip: {
                         footerFormat: void 0,
                         headerFormat: void 0,
                         pointFormatter: function () {
                             const point = this;
-                            const temperature = worldTable.getCellAsNumber(
-                                dataScope,
-                                worldTable.getRowIndexBy('lon', point.lon,
-                                    worldTable.getRowIndexBy('lat', point.lat)
-                                ),
-                                true
-                            );
                             return (
                                 `<b>${point.name}</b><br>` +
-                                temperatureFormatter(temperature)
+                                temperatureFormatter(point.custom.t)
                             );
                         }
                     }
@@ -180,11 +167,12 @@ async function buildDashboard() {
             events: {
                 mount: function () {
                     // call action
+                    citiesMap = this.chart.series[1];
                     console.log('map mount event', this);
                 },
-                unmount: function () {
-                    console.log('map unmount event', this);
-                }
+                // unmount: function () {
+                //     console.log('map unmount event', this);
+                // }
             }
         }, {
             cell: 'kpi-1',
@@ -212,7 +200,7 @@ async function buildDashboard() {
                 },
                 series: [{
                     name: 'Tokyo',
-                    data: cityClimateTable.modified.getRows(
+                    data: cityClimate.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -223,7 +211,7 @@ async function buildDashboard() {
                         footerFormat: void 0,
                         headerFormat: void 0,
                         pointFormatter: function () {
-                            temperatureFormatter(this.y);
+                            return temperatureFormatter(this.y);
                         },
                     }
                 }],
@@ -234,7 +222,7 @@ async function buildDashboard() {
                     enabled: true
                 },
                 xAxis: {
-                    tickPositions: buildDateTicks(),
+                    // tickPositions: buildDateTicks(),
                     // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
@@ -250,18 +238,18 @@ async function buildDashboard() {
             }
         }, {
             cell: 'selection-grid',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'Selection Grid'
+            type: 'DataGrid',
+            store: cityClimate,
+            editable: true,
+            // syncEvents: ['tooltip'],
+            title: 'Selection Grid',
+            events: {
+                mount: function () {
+                    // call action
+                    console.log('grid mount event', this);
+                    cityGrid = this.dataGrid;
+                },
+            }
         }],
         editMode: {
             enabled: true,
@@ -306,7 +294,7 @@ async function buildDashboard() {
 }
 
 async function main() {
-    dataPool.setSourceOptions({
+    dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
@@ -314,7 +302,7 @@ async function main() {
         },
         storeType: 'GoogleSheetsStore'
     });
-    dataPool.setSourceOptions({
+    dataPool.setStoreOptions({
         name: 'climate',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
@@ -323,10 +311,10 @@ async function main() {
         storeType: 'GoogleSheetsStore'
     });
 
-    let csvReferences = await dataPool.getSourceTable('cities');
+    let csvReferences = await dataPool.getStoreTable('cities');
 
     for (const row of csvReferences.getRowObjects()) {
-        dataPool.setSourceOptions({
+        dataPool.setStoreOptions({
             name: row['city'],
             storeOptions: {
                 csvURL: row['csv'],
@@ -335,10 +323,10 @@ async function main() {
         });
     }
 
-    csvReferences = await dataPool.getSourceTable('climate');
+    csvReferences = await dataPool.getStoreTable('climate');
 
     for (const row of csvReferences.getRowObjects()) {
-        dataPool.setSourceOptions({
+        dataPool.setStoreOptions({
             name: row['time'],
             storeOptions: {
                 csvURL: row['csv'],
@@ -390,6 +378,29 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
+function buildCitiesMap(worldTable, citiesTable) {
+    return citiesTable.modified
+        .getRows(void 0, void 0, ['lat2', 'lon2', 'city'])
+        .map(row => ({
+            lat: row[0],
+            lon: row[1],
+            name: row[2],
+            custom: {
+                t: worldTable.getCellAsNumber(
+                    dataScope,
+                    worldTable.getRowIndexBy('lon', row[1],
+                        worldTable.getRowIndexBy('lat', row[0])
+                    ),
+                    true
+                )
+            },
+        }))
+        .map(row => {
+            row.color = temperatureColor(row.custom.t);
+            return row;
+        });
+}
+
 function buildDates() {
     const dates = [];
 
@@ -418,6 +429,16 @@ function buildDateTicks() {
     }
 
     return dates;
+}
+
+function temperatureColor(value) {
+    const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+
+    return (
+        factor < 0.5 ?
+            color1.tweenTo(color2, factor * 2) :
+            color2.tweenTo(color3, (factor - 0.5) * 2)
+    );
 }
 
 function temperatureFormatter(value) {

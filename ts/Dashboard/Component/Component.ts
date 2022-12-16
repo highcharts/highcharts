@@ -584,8 +584,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public render(): this {
         if (!this.hasLoaded) {
             this.load();
-            // Call resize to fit to the cell
-            this.resizeTo(this.parentElement);
+            // Call resize to fit to the cell. Only for non HTML elements.
+            // There is no need to set a fixed height for the HTML element
+            // because it will fill the available space when added to DOM.
+            if (this.type !== 'HTML') {
+                this.resizeTo(this.parentElement);
+            }
         }
         return this;
     }
