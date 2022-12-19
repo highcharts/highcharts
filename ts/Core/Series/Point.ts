@@ -1568,11 +1568,7 @@ class Point {
             pointMarkerOptions = this.options.marker || {},
             chart = series.chart;
 
-        const haloPos = !(chart.inverted &&
-            ((
-                seriesMarkerOptions.symbol ||
-                pointMarkerOptions.symbol
-            ))) ?
+        const haloPos = !chart.inverted ?
             {
                 x: this.plotX as any,
                 y: this.plotY as any
