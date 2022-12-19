@@ -10,11 +10,13 @@
                 map: topology
             },
             title: {
-                text: 'European Train Stations Near Airports'
+                text: 'European Train Stations Near Airports',
+                align: 'left'
             },
             subtitle: {
                 text: 'Source: <a href="https://github.com/trainline-eu/stations">' +
-                    'github.com/trainline-eu/stations</a>'
+                    'github.com/trainline-eu/stations</a>',
+                align: 'left'
             },
             mapNavigation: {
                 enabled: true
@@ -96,7 +98,17 @@
                 },
                 colorKey: 'clusterPointsAmount',
                 name: 'Cities',
-                data: data
+                data: data,
+                color: Highcharts.getOptions().colors[5],
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#fff',
+                    symbol: 'mapmarker',
+                    radius: 8
+                },
+                dataLabels: {
+                    verticalAlign: 'top'
+                }
             }]
         });
     });

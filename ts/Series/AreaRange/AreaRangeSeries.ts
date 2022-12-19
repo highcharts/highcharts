@@ -571,6 +571,17 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+
+            /**
+             * Array for multiple SVG graphics representing the point in the
+             * chart. Only used in cases where the point can not be represented
+             * by a single graphic.
+             *
+             * @see Highcharts.Point#graphic
+             *
+             * @name Highcharts.Point#graphics
+             * @type {Array<Highcharts.SVGElement>|undefined}
+             */
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
@@ -584,9 +595,10 @@ class AreaRangeSeries extends AreaSeries {
                 y: point.y
             };
 
-            if (point.graphic) {
+            if (point.graphic || point.graphics[0]) {
                 point.graphics[0] = point.graphic;
             }
+
             point.graphic = point.graphics[1];
             point.plotY = point.plotHigh;
             if (defined(point.plotHighX)) {
@@ -618,7 +630,8 @@ class AreaRangeSeries extends AreaSeries {
         while (i < pointLength) {
             point = series.points[i];
             point.graphics = point.graphics || [];
-            if (point.graphic) {
+
+            if (point.graphic || point.graphics[1]) {
                 point.graphics[1] = point.graphic;
             }
             point.graphic = point.graphics[0];

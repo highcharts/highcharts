@@ -88,7 +88,7 @@ QUnit.test('Destroy in own callback', function (assert) {
 
             this.destroy();
 
-            /*assert.strictEqual(
+            /* assert.strictEqual(
             this.series,
             undefined,
             'Properties deleted'

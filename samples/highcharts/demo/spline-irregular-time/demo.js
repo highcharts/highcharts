@@ -47,7 +47,7 @@ Highcharts.chart('container', {
     // at 0 for January, 1 for February etc.
     series: [
         {
-            name: "Winter 2019-2020",
+            name: 'Winter 2019-2020',
             data: [
                 [Date.UTC(1970, 9, 24), 0],
                 [Date.UTC(1970, 9, 27), 0.12],
@@ -127,7 +127,7 @@ Highcharts.chart('container', {
                 [Date.UTC(1971, 5, 23), 0]
             ]
         }, {
-            name: "Winter 2020-2021",
+            name: 'Winter 2020-2021',
             data: [
                 [Date.UTC(1970, 10, 14), 0],
                 [Date.UTC(1970, 11,  6), 0.35],
@@ -173,7 +173,7 @@ Highcharts.chart('container', {
                 [Date.UTC(1971, 4, 26), 0]
             ]
         }, {
-            name: "Winter 2021-2022",
+            name: 'Winter 2021-2022',
             data: [
                 [Date.UTC(1970, 10,  5), 0],
                 [Date.UTC(1970, 10, 12), 0.1],

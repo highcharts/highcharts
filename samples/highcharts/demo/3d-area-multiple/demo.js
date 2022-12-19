@@ -154,8 +154,8 @@ Highcharts.chart('container', {
             ['Mont Dolent', 3820],
             ['Aiguille de Triolet', 3870],
             ['Le Tour Noir', 3836],
-            ["Aiguille de l'A Neuve", 3753],
-            ["Aiguille d'Argentière", 3900],
+            ['Aiguille de l\'A Neuve', 3753],
+            ['Aiguille d\'Argentière', 3900],
             ['Aiguille du Chardonnet', 3824],
             ['Aiguille du Tour', 3540],
             ['Aiguille du Pissoir', 3440],
@@ -166,12 +166,12 @@ Highcharts.chart('container', {
             ['Le Cheval Blanc', 2831],
             ['Pointe de la Finive', 2838],
             ['Pic de Tenneverge', 2985],
-            ["Pointe d'Aboillon", 2819],
+            ['Pointe d\'Aboillon', 2819],
             ['Tour Sallière', 3220],
             ['Le Dôme', 3138],
             ['Haute Cime', 3257],
             ['Pierre Avoi', 2473],
-            ["Cime de l'Est", 3178]
+            ['Cime de l\'Est', 3178]
         ]
     }]
 });

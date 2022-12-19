@@ -1,5 +1,6 @@
 /* global window */
 /* eslint quotes: 0, quote-props: 0 */
+/* eslint-disable no-loss-of-precision */
 /**
  * This file contains local representations of JSON data used in the samples,
  * making it possible to run the tests offline. The `window.JSONSources` object
@@ -7,7 +8,7 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
-    "https://sheets.googleapis.com/v4/spreadsheets/1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://sheets.googleapis.com/v4/spreadsheets/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "Sheet1!A1:Q245",
         "majorDimension": "COLUMNS",
         "values": [
@@ -664,7 +665,7 @@ window.JSONSources = {
             ]
         ]
     },
-    "https://sheets.googleapis.com/v4/spreadsheets/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://sheets.googleapis.com/v4/spreadsheets/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "Sheet1!A1:U90",
         "majorDimension": "COLUMNS",
         "values": [
@@ -1102,7 +1103,7 @@ window.JSONSources = {
             ]
         ]
     },
-    "https://sheets.googleapis.com/v4/spreadsheets/0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://sheets.googleapis.com/v4/spreadsheets/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "'Fruit consumption'!A1:T1468",
         "majorDimension": "COLUMNS",
         "values": [
