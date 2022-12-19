@@ -204,7 +204,9 @@ function getDlOptions(
                 !defined((options.style as any).width) &&
                 shape.radius
             ) {
-                (options.style as any).width = 2 * shape.radius;
+                (options.style as any).width = point.node.level === 1 ?
+                    2 * shape.radius :
+                    shape.radius;
             }
         }
 
