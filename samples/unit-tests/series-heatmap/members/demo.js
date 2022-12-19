@@ -241,6 +241,20 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`
     );
+
+    chart.series[0].update({
+        borderRadius: 0,
+        marker: {
+            lineWidth: 40
+        }
+    });
+
+    setState.call(point, 'hover');
+    assert.strictEqual(
+        point.graphic.attr('stroke'),
+        chart.series[0].color,
+        `Point's stroke should be set on hover, #17856.`
+    );
 });
 
 QUnit.test(
