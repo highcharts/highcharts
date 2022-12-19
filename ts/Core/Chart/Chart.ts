@@ -1815,6 +1815,10 @@ class Chart {
     public setReflow(reflow?: boolean): void {
         const chart = this;
 
+        if (typeof ResizeObserver === 'function') {
+            chart;
+        }
+
         if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
                 e: Event
