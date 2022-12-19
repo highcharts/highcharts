@@ -91,6 +91,9 @@ class CSVStore extends DataStore {
 
         this.converter = converter || new CSVConverter(options);
 
+        if (options.enablePolling) {
+            this.startPolling((options.dataRefreshRate || 1) * 1000);
+        }
     }
 
     /* *
@@ -125,104 +128,6 @@ class CSVStore extends DataStore {
      *  Functions
      *
      * */
-
-    /**
-     * Handles polling of live data
-     */
-    private poll(): void {
-        const {
-                dataRefreshRate,
-                enablePolling,
-                csvURL
-            } = this.options,
-            updateIntervalMs = (
-                dataRefreshRate > 1 ? dataRefreshRate : 1
-            ) * 1000;
-
-        if (enablePolling && csvURL === this.liveDataURL) {
-            // We need to stop doing this if the URL has changed
-            this.liveDataTimeout = setTimeout((): void => {
-                this.fetchCSV();
-            }, updateIntervalMs);
-        }
-    }
-
-    /**
-     * Fetches CSV from external source
-     *
-     * @param {boolean} initialFetch
-     * Indicates whether this is a single fetch or a repeated fetch
-     *
-     * @param {DataEvent.Detail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @emits CSVDataStore#load
-     * @emits CSVDataStore#afterLoad
-     * @emits CSVDataStore#loadError
-     */
-    private fetchCSV(
-        initialFetch?: boolean,
-        eventDetail?: DataEvent.Detail
-    ): void {
-        const store = this,
-            maxRetries = 3,
-            { csvURL } = store.options;
-
-        let currentRetries: number;
-
-        // Clear the table
-        store.table.deleteColumns();
-        if (initialFetch) {
-            clearTimeout(store.liveDataTimeout);
-            store.liveDataURL = csvURL;
-        }
-
-        store.emit<CSVStore.Event>({
-            type: 'load',
-            detail: eventDetail,
-            table: store.table
-        });
-
-        ajax({
-            url: store.liveDataURL || '',
-            dataType: 'text',
-            success: (csv): void => {
-                csv = '' + csv;
-
-                store.converter.parse({ csv });
-
-                // On inital fetch we need to set the columns
-                store.table.setColumns(store.converter.getTable().getColumns());
-
-                store.emit<CSVStore.Event>({
-                    type: 'afterLoad',
-                    csv,
-                    detail: eventDetail,
-                    table: store.table
-                });
-
-                if (store.liveDataURL) {
-                    store.poll();
-                }
-
-            },
-            error: (xhr, error): void => {
-
-                store.emit<CSVStore.Event>({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table: store.table,
-                    xhr
-                });
-
-                if (++currentRetries < maxRetries) {
-                    store.poll();
-                }
-
-            }
-        });
-    }
 
     /**
      * Initiates the loading of the CSV source to the store
@@ -260,7 +165,44 @@ class CSVStore extends DataStore {
                 table
             });
         } else if (csvURL) {
-            store.fetchCSV(true, eventDetail);
+            // Clear the table
+            store.table.deleteColumns();
+
+            store.emit<CSVStore.Event>({
+                type: 'load',
+                detail: eventDetail,
+                table: store.table
+            });
+
+            return fetch(csvURL || '')
+                .then((response): Promise<void> => response.text().then(
+                    (csv): void => {
+                        store.converter.parse({ csv });
+
+                        // On inital fetch we need to set the columns
+                        store.table.setColumns(
+                            store.converter.getTable().getColumns()
+                        );
+
+                        store.emit<CSVStore.Event>({
+                            type: 'afterLoad',
+                            csv,
+                            detail: eventDetail,
+                            table: store.table
+                        });
+                    }
+                ))['catch']((error): Promise<void> => {
+                    store.emit<CSVStore.Event>({
+                        type: 'loadError',
+                        detail: eventDetail,
+                        error,
+                        table: store.table
+                    });
+
+                    return Promise.reject(error);
+                }).then(
+                    (): this => store
+                );
         } else {
             store.emit<CSVStore.Event>({
                 type: 'loadError',
@@ -313,17 +255,14 @@ namespace CSVStore {
     /**
      * The event object that is provided on errors within CSVDataStore
      */
-    export interface ErrorEvent extends DataStore.Event {
-        type: ('loadError');
-        error: (string|Error);
-        xhr?: XMLHttpRequest;
+    export interface ErrorEvent extends DataStore.ErrorEvent {
+        csv?: string;
     }
 
     /**
      * The event object that is provided on load events within CSVDataStore
      */
-    export interface LoadEvent extends DataStore.Event {
-        type: ('load'|'afterLoad');
+    export interface LoadEvent extends DataStore.LoadEvent {
         csv?: string;
     }
 
