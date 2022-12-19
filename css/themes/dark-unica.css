@@ -26,42 +26,18 @@
     --highcharts-neutral-color-20: #606063;
     --highcharts-neutral-color-10: #707073;
     --highcharts-neutral-color-5: #505053;
+    --highcharts-neutral-color-3: #303033;
 
-    /* Colored, shades */
-    --highcharts-highlight-color-100: #f0f0f3;
-    --highcharts-highlight-color-60: rgba(255, 255, 255, 0.1);
-    --highcharts-highlight-color-20: var(--highcharts-neutral-color-10);
+    /* Highlight colors https://jsfiddle.net/highcharts/pukradvh/ */
+    --highcharts-highlight-color-100: rgb(166, 199, 237);
+    --highcharts-highlight-color-80: rgb(134, 165, 201);
+    --highcharts-highlight-color-60: rgb(102, 131, 164);
+    --highcharts-highlight-color-20: rgb(39, 64, 91);
+    --highcharts-highlight-color-10: rgb(23, 47, 73);
+}
 
-    /* Data-labels */
-    --highcharts-data-label-color: #b0b0b3;
-
-    /* Fonts */
-    --highcharts-font-family: "Unica One", arial, helvetica, sans-serif;
-    --highcharts-title-font-size: 20px;
-
-    /* Tooltip */
-    --highcharts-tooltip-background: rgba(0, 0, 0, 0.85);
-
-    /* Range-selector */
-    --highcharts-range-selector-input-text: silver;
-    --highcharts-range-selector-input-border: var(--highcharts-neutral-color-5);
-
-    /* Buttons */
-    --highcharts-button-background: var(--highcharts-neutral-color-5);
-    --highcharts-button-text: #cccccc;
-    --highcharts-button-pressed-background: #000003;
-    --highcharts-button-pressed-text: var(--highcharts-neutral-color-100);
-    --highcharts-button-hover-background: var(--highcharts-neutral-color-10);
-    --highcharts-button-hover-text: var(--highcharts-neutral-color-100);
-    --highcharts-context-button-background: var(--highcharts-neutral-color-5);
-
-    /* Navigator */
-    --highcharts-navigator-series-fill: #7798bf;
-    --highcharts-navigator-series-border: #a6c7ed;
-
-    /* Navigator */
-    --highcharts-scrollbar-track-background: #404043;
-    --highcharts-scrollbar-track-border: #404043;
+.highcharts-container {
+    font-family: "Unica One", arial, helvetica, sans-serif;
 }
 
 /* Titles */
@@ -70,9 +46,17 @@
     text-transform: uppercase;
 }
 
+.highcharts-title {
+    font-size: 1.7em;
+}
+
 /* Tooltip */
 .highcharts-tooltip text {
     fill: #f0f0f0;
+}
+
+.highcharts-tooltip-box {
+    fill: #000000;
 }
 
 /* Range-selector */
@@ -104,6 +88,32 @@
     stroke: var(--highcharts-neutral-color-5);
 }
 
+/* Buttons */
+.highcharts-button {
+    fill: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-button text {
+    fill: #cccccc;
+}
+
+.highcharts-button-hover {
+    fill: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-button-hover text {
+    fill: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-button-pressed {
+    fill: #000003;
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-button-pressed text {
+    fill: var(--highcharts-neutral-color-100);
+}
+
 /* Scrollbar */
 .highcharts-scrollbar .highcharts-scrollbar-rifles {
     stroke: var(--highcharts-neutral-color-100);
@@ -124,6 +134,10 @@
 }
 
 /* Navigation */
+.highcharts-contextbutton {
+    fill: var(--highcharts-neutral-color-5);
+}
+
 .highcharts-contextbutton .highcharts-button-symbol {
     stroke: #dddddd;
 }

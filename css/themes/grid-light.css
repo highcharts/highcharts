@@ -14,26 +14,12 @@
     --highcharts-color-7: #55bf3b;
     --highcharts-color-8: #df5353;
     --highcharts-color-9: #7798bf;
-
-    /* Neutral colors */
-    --highcharts-neutral-color-100: #404048;
-    --highcharts-neutral-color-80: #000000;
-
-    /* Fonts */
-    --highcharts-font-family: "Dosis", arial, helvetica, sans-serif;
-    --highcharts-title-font-size: 16px;
-    --highcharts-legend-font-size: 13px;
-    --highcharts-axis-labels-font-size: 12px;
-
-    /* Tooltip */
-    --highcharts-tooltip-border: 0;
-    --highcharts-tooltip-background: rgba(219, 219, 216, 0.8);
-
-    /* Axes */
-    --highcharts-xaxis-grid-line: 1px;
 }
 
-/* Title */
+.highcharts-container {
+    font-family: Dosis, arial, helvetica, sans-serif;
+}
+
 .highcharts-title,
 .highcharts-subtitle,
 .highcharts-yaxis .highcharts-axis-title {
@@ -42,4 +28,22 @@
 
 .highcharts-title {
     font-weight: bold;
+    font-size: 1.3em;
+}
+
+.highcharts-axis-labels {
+    font-size: 1em;
+}
+
+.highcharts-legend-item > text {
+    font-size: 1.1em;
+}
+
+.highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 0;
+    fill: rgb(219, 219, 216);
 }
