@@ -21,13 +21,13 @@
  *
  * */
 
-import type DataEvent from './DataEvent';
+import type DataEvent from '../Data/DataEvent';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
-import DataTable from './DataTable.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../Data/DataTable.js';
+import U from './Utilities.js';
 const {
     defined,
     uniqueKey
