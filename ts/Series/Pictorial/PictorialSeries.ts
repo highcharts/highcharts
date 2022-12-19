@@ -661,56 +661,56 @@ export default PictorialSeries;
  * @sample {highcharts} highcharts/yaxis/stackshadow/
  *         Pictorial stackShadow option
  *
- * @declare   Highcharts.XAxisOptions
+ * @declare   Highcharts.YAxisOptions
  * @type      {*}
  * @since     next
  * @product   highcharts
  * @requires  modules/pictorial
- * @apioption xAxis.stackShadow
+ * @apioption yAxis.stackShadow
  */
 
 /**
  * The color of the `stackShadow` border.
  *
- * @declare   Highcharts.XAxisOptions
+ * @declare   Highcharts.YAxisOptions
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @default   transparent
  * @product   highcharts
  * @requires  modules/pictorial
- * @apioption xAxis.stackShadow.borderColor
+ * @apioption yAxis.stackShadow.borderColor
  */
 
 /**
  * The width of the `stackShadow` border.
  *
- * @declare   Highcharts.XAxisOptions
+ * @declare   Highcharts.YAxisOptions
  * @type      {number}
  * @default   0
  * @product   highcharts
  * @requires  modules/pictorial
- * @apioption xAxis.stackShadow.borderWidth
+ * @apioption yAxis.stackShadow.borderWidth
  */
 
 /**
  * The color of the `stackShadow`.
  *
- * @declare   Highcharts.XAxisOptions
+ * @declare   Highcharts.YAxisOptions
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @default   #dedede
  * @product   highcharts
  * @requires  modules/pictorial
- * @apioption xAxis.stackShadow.color
+ * @apioption yAxis.stackShadow.color
  */
 
 /**
  * Enable or disable `stackShadow`.
  *
- * @declare   Highcharts.XAxisOptions
+ * @declare   Highcharts.YAxisOptions
  * @type      {boolean}
  * @default   undefined
  * @product   highcharts
  * @requires  modules/pictorial
- * @apioption xAxis.stackShadow.enabled
+ * @apioption yAxis.stackShadow.enabled
  */
 
 ''; // adds doclets above to transpiled file
