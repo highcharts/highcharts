@@ -2680,13 +2680,10 @@ class Series {
                         'rect' as SymbolKey
                     );
 
-                    const toFlip =
-                        chart.inverted && !chart.hasParallelCoordinates;
-
                     markerAttribs = series.markerAttribs(
                         point,
                         (point.selected && 'select') as any,
-                        toFlip as boolean
+                        chart.inverted
                     );
 
                     // Set starting position for point sliding animation.
@@ -2847,8 +2844,8 @@ class Series {
             attribs.y = plotY - radius;
 
             if (flip) {
-                attribs.x = this.yAxis.len - plotY - radius;
-                attribs.y = this.xAxis.len - plotX - radius;
+                attribs.x = (this.yAxis.len - (plotY + radius));
+                attribs.y = (this.xAxis.len - (plotX + radius));
             }
 
             if (seriesOptions.crisp) {

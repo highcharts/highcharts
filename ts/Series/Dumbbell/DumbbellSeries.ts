@@ -310,7 +310,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 .attr({
                     zIndex: -1
                 })
-                .add(series.markerGroup);
+                .add(series.group);
         }
 
         point.connector[verb](this.getConnectorAttribs(point));

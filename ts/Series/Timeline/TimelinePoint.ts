@@ -247,16 +247,6 @@ class TimelinePoint extends Series.prototype.pointClass {
         return super.applyOptions(options, x);
     }
 
-    public haloPath(size: number): SVGPath {
-        const ren = this.series.chart.renderer;
-        return ren.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            this.plotY as any - size,
-            size * 2,
-            size * 2
-        );
-    }
-
     /* eslint-enable valid-jsdoc */
 
 }
