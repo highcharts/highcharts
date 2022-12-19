@@ -131,8 +131,6 @@ QUnit.test('Tooltip with default positioner and set outside true on correct posi
         }
     });
 
-    tooltip.refresh(point);
-
     chart.container.style.margin = '200px';
 
     tooltip.refresh(point);
