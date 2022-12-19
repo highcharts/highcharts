@@ -58,6 +58,10 @@ class DependencyWheelPoint extends SankeyPoint {
 
     public index: number = void 0 as any;
 
+    public innerArcLength: number = void 0 as any;
+
+    public outerArcLength: number = void 0 as any;
+
     public linksFrom: Array<DependencyWheelPoint> = void 0 as any;
 
     public linksTo: Array<DependencyWheelPoint> = void 0 as any;
@@ -125,6 +129,12 @@ class DependencyWheelPoint extends SankeyPoint {
                 clockwise: +upperHalf
             })
             .add(renderer.defs);
+
+        if (this.dataLabelPath.r) {
+            label.css({
+                width: (end - start) * this.dataLabelPath.r + 'px'
+            });
+        }
 
         return this.dataLabelPath;
     }

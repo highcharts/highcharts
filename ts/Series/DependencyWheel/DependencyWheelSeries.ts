@@ -22,6 +22,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import CircularDataLabels from '../CircularDataLabels.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
@@ -35,9 +36,14 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import SunburstPoint from '../Sunburst/SunburstPoint';
+import SunburstPointOptions from '../Sunburst/SunburstPointOptions';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import DependencyWheelPointOptions from './DependencyWheelPointOptions';
 const {
     extend,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -227,8 +233,8 @@ class DependencyWheelSeries extends SankeySeries {
      * functions instead of the whole translate function.
      */
     public translate(): void {
-
-        const options = this.options,
+        const series = this,
+            options = this.options,
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
@@ -244,9 +250,11 @@ class DependencyWheelSeries extends SankeySeries {
                     centerY = center[1],
                     r = center[2] / 2,
                     innerR = r - (options.nodeWidth as any),
+                    radius = r - innerR,
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
-                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
+                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0)),
+                    radians = end - start;
 
                 // Middle angle
                 node.angle = start + (end - start) / 2;
@@ -256,10 +264,11 @@ class DependencyWheelSeries extends SankeySeries {
                     x: centerX,
                     y: centerY,
                     r: r,
+                    radius: radius,
                     innerR: innerR,
                     start: start,
                     end: end
-                };
+                } as any;
 
                 node.dlBox = {
                     x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
@@ -267,6 +276,22 @@ class DependencyWheelSeries extends SankeySeries {
                     width: 1,
                     height: 1
                 };
+
+                // Calculate additional properties to get data labels options.
+                if (
+                    node.shapeArgs &&
+                    node.shapeArgs.innerR &&
+                    node.shapeArgs.r
+                ) {
+                    node.innerArcLength = radians * node.shapeArgs.innerR;
+                    node.outerArcLength = radians * node.shapeArgs.r;
+                }
+
+                node.dlOptions = series.getDlOptions({
+                    point: node,
+                    optionsPoint: node.options,
+                    shapeArgs: node.shapeArgs
+                });
 
                 // Draw the links from this node
                 node.linksFrom.forEach(function (point): void {
@@ -356,11 +381,34 @@ interface DependencyWheelSeries {
     getCenter: typeof PieSeries.prototype.getCenter;
     orderNodes: boolean;
     pointClass: typeof DependencyWheelPoint;
+    getDlOptions: (
+        params: DependencyWheelSeries.DlOptionsParams
+    ) => CircularDataLabels.CicrularDlOptions
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     getCenter: PieSeries.prototype.getCenter
 });
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+namespace DependencyWheelSeries {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface DlOptionsParams {
+        point: DependencyWheelPoint,
+        optionsPoint: DependencyWheelPointOptions,
+        shapeArgs: SVGAttributes
+    }
+}
 
 /* *
  *
@@ -376,6 +424,8 @@ declare module '../../Core/Series/SeriesType' {
 DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
 SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
 
+CircularDataLabels.compose(DependencyWheelSeries as any);
+
 /* *
  *
  *  Default Export
@@ -383,3 +433,95 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  * */
 
 export default DependencyWheelSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.dependencywheel
+ * @exclude   dataSorting
+ * @product   highcharts
+ * @requires  modules/sankey
+ * @requires  modules/dependency-wheel
+ * @apioption series.dependencywheel
+ */
+
+/**
+ * A collection of options for the individual nodes. The nodes in a dependency
+ * diagram are auto-generated instances of `Highcharts.Point`, but options can
+ * be applied here and linked by the `id`.
+ *
+ * @extends   series.sankey.nodes
+ * @type      {Array<*>}
+ * @product   highcharts
+ * @excluding offset
+ * @apioption series.dependencywheel.nodes
+ */
+
+/**
+ * An array of data points for the series. For the `dependencywheel` series
+ * type, points can be given in the following way:
+ *
+ * An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2',
+ *         weight: 2
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3',
+ *         weight: 5
+ *     }]
+ *  ```
+ *
+ * @type      {Array<*>}
+ * @extends   series.sankey.data
+ * @product   highcharts
+ * @excluding outgoing, dataLabels
+ * @apioption series.dependencywheel.data
+ */
+
+/**
+ * Decides how the data label will be rotated relative to the perimeter of the
+ * dependencywheel. Valid values are `auto`, `parallel` and `perpendicular`.
+ * The `perpendicular` option works similar to `auto` and position labels
+ * perpendicularly to the circumference. The `parallel` option fits the labels
+ * inside of the node.
+ *
+ * The `rotation` and `textPath` option takes precedence over `rotationMode`.
+ *
+ * @type       {string}
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-auto
+ *         Auto rotation mode
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-perpendicular
+ *         Perpendicular rotation mode
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-parallel
+ *         Parallel rotation mode
+ * @sample {highcharts} highcharts/series-dependencywheel/datalabels-rotationmode-circular
+ *         Circular rotation mode
+ *
+ * @validvalue ["auto", "perpendicular", "parallel", "circular"]
+ * @since      next
+ * @default    undefined
+ * @apioption  series.dependencywheel.dataLabels.rotationMode
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
+ *
+ * @apioption series.dependencywheel.nodes.dataLabels
+ */
+
+''; // adds doclets above to the transpiled file
