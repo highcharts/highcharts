@@ -194,6 +194,11 @@ abstract class DataStore implements DataEvent.Emitter {
     public metadata: DataStore.Metadata;
 
     /**
+     * Poll timer ID, if active.
+     */
+    public polling?: number;
+
+    /**
      * Table managed by this DataStore instance.
      */
     public table: DataTable;
@@ -354,7 +359,47 @@ abstract class DataStore implements DataEvent.Emitter {
     }
 
     /**
-     * Method for retriving metadata from a single column.
+     * Starts polling new data after the specific timespan in milliseconds.
+     *
+     * @param {number} refreshTime
+     * Refresh time in milliseconds between polls.
+     */
+    public startPolling(
+        refreshTime: number = 1000
+    ): void {
+        const store = this;
+
+        window.clearTimeout(store.polling);
+
+        store.polling = window.setTimeout((): Promise<void> => store
+            .load()['catch'](
+                (error): void => store.emit<DataStore.ErrorEvent>({
+                    type: 'loadError',
+                    error,
+                    table: store.table
+                })
+            )
+            .then((): void => {
+                if (store.polling) {
+                    store.startPolling(refreshTime);
+                }
+            })
+        , refreshTime);
+    }
+
+    /**
+     * Stops polling data.
+     */
+    public stopPolling(): void {
+        const store = this;
+
+        window.clearTimeout(store.polling);
+
+        delete store.polling;
+    }
+
+    /**
+     * Retrieves metadata from a single column.
      *
      * @param {string} name
      * The identifier for the column that should be described
@@ -383,10 +428,25 @@ namespace DataStore {
      * */
 
     /**
+     * The event object that is provided on errors within DataStore
+     */
+    export interface ErrorEvent extends Event {
+        type: ('loadError');
+        error: (string|Error);
+    }
+
+    /**
      * The default event object for a datastore
      */
     export interface Event extends DataEvent {
         readonly table: DataTable;
+    }
+
+    /**
+     * The event object that is provided on load events within DataStore
+     */
+    export interface LoadEvent extends Event {
+        type: ('load'|'afterLoad');
     }
 
     /**
