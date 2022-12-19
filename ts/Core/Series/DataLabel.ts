@@ -629,8 +629,16 @@ namespace DataLabel {
                         };
 
                         if (!chart.styledMode) {
-                            attr.fill = labelOptions.backgroundColor;
-                            attr.stroke = labelOptions.borderColor;
+                            const {
+                                backgroundColor,
+                                borderColor
+                            } = labelOptions;
+                            attr.fill = backgroundColor === 'auto' ?
+                                point.color :
+                                backgroundColor;
+                            attr.stroke = borderColor === 'auto' ?
+                                point.color :
+                                borderColor;
                             attr['stroke-width'] = labelOptions.borderWidth;
                         }
 

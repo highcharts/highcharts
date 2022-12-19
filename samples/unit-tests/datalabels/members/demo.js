@@ -112,6 +112,12 @@ QUnit.test('Series.drawDataLabels', function (assert) {
         'Should align dataLabel after update'
     );
 
+    assert.equal(
+        point.dataLabel.options.borderWidth,
+        0,
+        'Should have dataLabel.options.borderWidth equal to 0 by default #18127'
+    );
+
     point.options.dataLabels = { enabled: false };
     drawDataLabels.call(series);
     assert.strictEqual(

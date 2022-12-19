@@ -985,16 +985,19 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * Options for the point markers of line-like series. Properties like
-     * `fillColor`, `lineColor` and `lineWidth` define the visual appearance
-     * of the markers. Other series types, like column series, don't have
-     * markers, but have visual options on the series level instead.
+     * Options for the point markers of line and scatter-like series. Properties
+     * like `fillColor`, `lineColor` and `lineWidth` define the visual
+     * appearance of the markers. The `symbol` option defines the shape. Other
+     * series types, like column series, don't have markers, but have visual
+     * options on the series level instead.
      *
-     * In styled mode, the markers can be styled with the
-     * `.highcharts-point`, `.highcharts-point-hover` and
-     * `.highcharts-point-select` class names.
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
      *
      * @declare Highcharts.PointMarkerOptionsObject
+     *
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
+     *         Using the mapmarker symbol for points
      *
      * @private
      */
@@ -1108,6 +1111,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Predefined, graphic and custom markers
          * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
          *         Predefined, graphic and custom markers
+         * @sample {highmaps} maps/demo/mappoint-mapmarker
+         *         Using the mapmarker symbol for points
          *
          * @type      {string}
          * @apioption plotOptions.series.marker.symbol
@@ -1458,7 +1463,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
      *         Multiple data labels on a bar series
      * @sample {highcharts} highcharts/css/series-datalabels
-     *         Style mode example
+     *         Styled mode example
+     * @sample {highmaps} maps/demo/color-axis
+     *         Choropleth map with data labels
+     * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+     *         Using data labels as map markers
      *
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
@@ -1467,13 +1476,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
     dataLabels: {
         /**
-         * Enable or disable the initial animation when a series is
-         * displayed for the `dataLabels`. The animation can also be set as
-         * a configuration object. Please note that this option only
-         * applies to the initial animation.
-         * For other animations, see [chart.animation](#chart.animation)
-         * and the animation parameter under the API methods.
-         * The following properties are supported:
+         * Enable or disable the initial animation when a series is displayed
+         * for the `dataLabels`. The animation can also be set as a
+         * configuration object. Please note that this option only applies to
+         * the initial animation.
+         *
+         * For other animations, see [chart.animation](#chart.animation) and the
+         * animation parameter under the API methods. The following properties
+         * are supported:
          *
          * - `defer`: The animation delay time in milliseconds.
          *
@@ -1486,9 +1496,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         animation: {},
         /**
-         * The animation delay time in milliseconds.
-         * Set to `0` renders dataLabel immediately.
-         * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+         * The animation delay time in milliseconds. Set to `0` to render the
+         * data labels immediately. As `undefined` inherits defer time from the
+         * [series.animation.defer](#plotOptions.series.animation.defer).
          *
          * @type      {number}
          * @since     8.2.0
@@ -1496,17 +1506,19 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The alignment of the data label compared to the point. If
-         * `right`, the right side of the label should be touching the
-         * point. For points with an extent, like columns, the alignments
-         * also dictates how to align it inside the box, as given with the
-         * [inside](#plotOptions.column.dataLabels.inside)
-         * option. Can be one of `left`, `center` or `right`.
+         * The alignment of the data label compared to the point. If `right`,
+         * the right side of the label should be touching the point. For points
+         * with an extent, like columns, the alignments also dictates how to
+         * align it inside the box, as given with the
+         * [inside](#plotOptions.column.dataLabels.inside) option. Can be one of
+         * `left`, `center` or `right`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
-         *         Left aligned
-         * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
-         *         Data labels inside the bar
+         * @sample {highcharts}
+         *         highcharts/plotoptions/series-datalabels-align-left/ Left
+         *         aligned
+         * @sample {highcharts}
+         *         highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data
+         *         labels inside the bar
          *
          * @type {Highcharts.AlignValue|null}
          */
@@ -1528,12 +1540,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The background color or gradient for the data label.
+         * The background color or gradient for the data label. Setting it to
+         * `auto` will use the point's color.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+         *         Data labels as map markers
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.2.1
@@ -1541,7 +1556,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The border color for the data label. Defaults to `undefined`.
+         * The border color for the data label. Setting it to `auto` will use
+         * the point's color. Defaults to `undefined`.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
@@ -1576,6 +1592,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderWidth
          */
+        borderWidth: 0,
 
         /**
          * A class name for the data label. Particularly in styled mode,

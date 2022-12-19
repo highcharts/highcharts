@@ -20,6 +20,30 @@ QUnit.test('Load map from TopoJSON', assert => {
         screenReaderInfo = chart.accessibility.components
             .infoRegions.screenReaderSections.before.element.textContent;
 
+    const controller = new TestController(chart);
+
+    // #17925 - Reproduction of the action sequence: zoom, click and pinch
+    chart.mapZoom(0.6);
+
+    controller.click(
+        chart.series[0].data[0].plotX + chart.plotLeft - 20,
+        chart.series[0].data[0].plotY + chart.plotTop - 20,
+        {},
+        false
+    );
+
+    controller.pinch(
+        chart.series[0].data[0].plotX + chart.plotLeft - 20,
+        chart.series[0].data[0].plotY + chart.plotTop - 20,
+        10,
+        false
+    );
+
+    assert.ok(
+        !isNaN(chart.mapView.center[0]),
+        'The center should not be NaN, #17925.'
+    );
+
     assert.ok(
         point.name === 'Nevada' && point.value === 1,
         'TopoJSON should correctly load map and contain data.'
