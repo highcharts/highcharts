@@ -1,0 +1,10 @@
+#container {
+    margin: 0 auto;
+}
+
+.eye {
+    width: 49%;
+    height: 320px;
+    margin: 0;
+    display: inline-block;
+}
