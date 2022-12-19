@@ -1816,7 +1816,11 @@ class Chart {
         const chart = this;
 
         if (typeof ResizeObserver === 'function') {
-            chart;
+            const test = new ResizeObserver((): void => {
+                if (chart.options && chart.hasLoaded) {
+                    chart.reflow();
+                }
+            });
         }
 
         if (reflow !== false && !this.unbindReflow) {
