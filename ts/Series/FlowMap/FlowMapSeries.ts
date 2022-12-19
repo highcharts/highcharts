@@ -311,6 +311,8 @@ class FlowMapSeries extends MapLineSeries {
 
     public greatestWeight?: number = void 0 as any;
 
+    public centerOfPoints?: object = void 0 as any;
+
     /**
      *
      *  Functions
@@ -330,6 +332,16 @@ class FlowMapSeries extends MapLineSeries {
             if (p.options.weight || this.options.weight) {
                 weights.push(p.options.weight || this.options.weight);
             }
+            /* TODO:
+                1) const from = this.chart.get(p.options.from || '');
+                averageX += from.x
+                averageY += from.y
+
+                ...
+                2) After this loop:
+                store the divided result in this.centerOfPoints{x, y}
+                3) use it in autoCurve() params.
+            */
         });
 
         this.smallestWeight = arrayMin(weights);
@@ -354,6 +366,45 @@ class FlowMapSeries extends MapLineSeries {
 
         return (weight - smallestWeight) * (maxWeightLimit - minWeightLimit) /
             ((greatestWeight - smallestWeight) || 1) + minWeightLimit;
+    }
+
+    /**
+     * Automatically calculate the optimal curve based on a reference point.
+     * @private
+     */
+    public autoCurve(
+        fromX: number, fromY: number,
+        toX: number, toY: number,
+        centerX: number, centerY:number): number {
+
+        const linkV = { // Direction of flow link
+                x: (toX - fromX),
+                y: (toY - fromY)
+            },
+            half = { // Point halfway along the link
+                x: (toX - fromX) / 2 + fromX,
+                y: (toY - fromY) / 2 + fromY
+            },
+            centerV = { // Vecter from center to halfway
+                x: half.x - centerX,
+                y: half.y - centerY
+            };
+
+        // Dot product and determinant
+        const dot = linkV.x * centerV.x + linkV.y * centerV.y,
+            det = linkV.x * centerV.y - linkV.y * centerV.x;
+
+        // Calculate the angle and base the curveFactor on it.
+        let angle = Math.atan2(det, dot),
+            angleDeg = angle * 180 / Math.PI;
+
+        if (angleDeg < 0) {
+            angleDeg = 360 + angleDeg;
+        }
+
+        angle = angleDeg * Math.PI / 180;
+
+        return -Math.sin(angle) * 0.7; // Gives a more subtle result.
     }
 
     /**
@@ -471,11 +522,6 @@ class FlowMapSeries extends MapLineSeries {
                 this.options.markerEnd,
                 pointOptions.markerEnd
             ),
-            curveFactor = pick(
-                pointOptions.curveFactor,
-                this.options.curveFactor,
-                0
-            ),
             growTowards = pick(
                 pointOptions.growTowards,
                 this.options.growTowards
@@ -485,8 +531,19 @@ class FlowMapSeries extends MapLineSeries {
 
         let toX = toPoint.plotX || 0,
             toY = toPoint.plotY || 0,
+            curveFactor = pick(
+                pointOptions.curveFactor,
+                this.options.curveFactor
+            ),
             offset = markerEndOptions &&
             markerEndOptions.enabled && markerEndOptions.height || 0;
+
+        if (!defined(curveFactor)) { // Automate the curveFactor value.
+            curveFactor = this.autoCurve(
+                fromX, fromY, toX, toY,
+                this.chart.plotWidth / 2, this.chart.plotHeight / 2
+            );
+        }
 
         // An offset makes room for arrows if they are specified.
         if (offset) {
