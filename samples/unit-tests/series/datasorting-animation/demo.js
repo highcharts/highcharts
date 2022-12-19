@@ -226,7 +226,7 @@ QUnit.test(
             dataLabelDInitPos = dataLabelD.y;
             // Old point
             assert.close(
-                pointC.yAxis.len - pointC.plotY,
+                series.yAxis.len - pointC.plotY,
                 pointC.graphic.getBBox().x,
                 2,
                 'Time 0 - point has not started moving'
@@ -329,7 +329,7 @@ QUnit.test(
                 // New point
                 assert.close(
                     pointD.graphic.getBBox().x,
-                    pointD.yAxis.len - pointD.plotY,
+                    series.yAxis.len - pointD.plotY,
                     2,
                     'Time 600 - new point should be placed in the final position'
                 );
