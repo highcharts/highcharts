@@ -2,6 +2,17 @@
 @import "https://code.highcharts.com/css/datagrid.css";
 @import "https://code.highcharts.com/css/dashboard/gui.css";
 
-#csv {
+.hidden {
     display: none;
+}
+
+.hcd-layout {
+    display: flex;
+    flex-direction: column;
+    flex-basis: auto;
+}
+
+.hcd-row:first-of-type {
+    height: 50vw;
+    overflow: scroll;
 }

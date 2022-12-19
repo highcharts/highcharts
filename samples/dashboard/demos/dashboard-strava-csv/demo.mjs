@@ -193,7 +193,7 @@ function dumpHTMLTable(datatable) {
     return html;
 }
 
-const csvData = document.getElementById('csv').innerText;
+const csvData = document.querySelector('.hidden').innerText;
 
 const store = new CSVStore(undefined, {
     csv: csvData
@@ -607,7 +607,6 @@ const components = state => [
 
 function initDashBoard() {
     return new Dashboard("container", {
-        //editMode,
         gui: gui,
         components: components(state)
     });
