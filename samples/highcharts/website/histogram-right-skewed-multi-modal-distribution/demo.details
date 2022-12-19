@@ -1,6 +1,0 @@
----
- name: Histogram
- authors:
-   - jlbriggs
- js_wrap: b
-...
