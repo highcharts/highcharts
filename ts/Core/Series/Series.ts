@@ -3324,7 +3324,7 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === 'markers' || name === 'series')
+                name === 'series'
             );
 
         // Swap axes for inverted (#2339)

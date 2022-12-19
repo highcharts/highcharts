@@ -1373,7 +1373,7 @@ class Point {
         point.state = state;
 
         if (hasMarkers) {
-            markerAttribs = series.markerAttribs(point, state);
+            markerAttribs = series.markerAttribs(point, state, chart.inverted);
         }
 
         // Apply hover styles to the existing point
