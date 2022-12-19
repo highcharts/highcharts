@@ -2681,13 +2681,7 @@ class Series {
                     );
 
                     const toFlip =
-                        chart.inverted &&
-                        ((
-                            seriesMarkerOptions &&
-                            seriesMarkerOptions.symbol
-                        ) ||
-                            pointMarkerOptions.symbol
-                        );
+                        chart.inverted && !chart.hasParallelCoordinates;
 
                     markerAttribs = series.markerAttribs(
                         point,
