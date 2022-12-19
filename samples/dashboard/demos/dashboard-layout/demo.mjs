@@ -31,15 +31,7 @@ let dashboard = new Dashboard('container', {
         contextMenu: {
             icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: [{
-                id: 'saveLocal',
-                className: 'test-test-test',
-                events: {
-                    click: function () {
-                        console.log('save local');
-                    }
-                }
-            }, 'verticalSeparator', 'editMode', {
+            items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
                 events: {
@@ -139,7 +131,6 @@ let dashboard = new Dashboard('container', {
         },
         lang: {
             editMode: 'My edit mode',
-            saveLocal: 'Save locally 1',
             chartOptions: 'Chart options EN'
         },
         tools: {
@@ -613,15 +604,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         contextMenu: {
             icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: [{
-                id: 'saveLocal',
-                className: 'test-test-test',
-                events: {
-                    click: function() {
-                        console.log('save local');
-                    }
-                }
-            }, 'verticalSeparator', 'editMode', {
+            items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
                 events: {
@@ -721,7 +704,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         },
         lang: {
             editMode: 'My edit mode',
-            saveLocal: 'Save locally 1',
             chartOptions: 'Chart options EN'
         },
         tools: {
