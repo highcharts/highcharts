@@ -35,8 +35,35 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     states?: SeriesStatesOptions<HeatmapSeries>;
 }
 
+declare module '../../Core/Series/StatesOptions' {
+    interface StateHoverOptions {
+        height?: number;
+        heightPlus?: number;
+        width?: number;
+        widthPlus?: number;
+    }
+    interface StateInactiveOptions {
+        height?: number;
+        heightPlus?: number;
+        width?: number;
+        widthPlus?: number;
+    }
+    interface StateSelectOptions {
+        height?: number;
+        heightPlus?: number;
+        width?: number;
+        widthPlus?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
+        brightness?: number;
+    }
+    interface SeriesStateInactiveOptions {
+        brightness?: number;
+    }
+    interface SeriesStateSelectOptions {
         brightness?: number;
     }
 }
