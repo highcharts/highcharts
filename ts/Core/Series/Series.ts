@@ -2682,7 +2682,7 @@ class Series {
 
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any,
+                        (point.selected && 'select') as any
                     );
 
                     // Set starting position for point sliding animation.
@@ -2795,7 +2795,7 @@ class Series {
      */
     public markerAttribs(
         point: Point,
-        state?: StatesOptionsKey,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
