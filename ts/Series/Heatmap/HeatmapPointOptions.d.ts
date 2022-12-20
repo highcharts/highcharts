@@ -14,6 +14,7 @@
  *
  * */
 
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -22,8 +23,12 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  *
  * */
 
+export interface HeatmapPointMarkerOptions extends PointMarkerOptions {
+}
+
 export interface HeatmapPointOptions extends ScatterPointOptions {
     borderWidth?: number;
+    marker?: HeatmapPointMarkerOptions;
     pointPadding?: number;
     value?: (number|null);
 }

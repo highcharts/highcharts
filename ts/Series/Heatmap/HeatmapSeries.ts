@@ -530,17 +530,11 @@ class HeatmapSeries extends ScatterSeries {
      */
     public markerAttribs(
         point: HeatmapPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
-        let pointMarkerOptions = point.marker || {},
-            seriesMarkerOptions = this.options.marker || {},
-            seriesStateOptions: PointStateHoverOptions,
-            pointStateOptions: PointStateHoverOptions,
-            shapeArgs = point.shapeArgs || {},
-            hasImage = point.hasImage,
-            attribs: SVGAttributes = {};
+        const shapeArgs = point.shapeArgs || {};
 
-        if (hasImage) {
+        if (point.hasImage) {
             return {
                 x: point.plotX,
                 y: point.plotY
@@ -549,35 +543,49 @@ class HeatmapSeries extends ScatterSeries {
 
         // Setting width and height attributes on image does not affect on its
         // dimensions.
-        if (state) {
-            seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
+        if (state && state !== 'normal') {
+            const pointMarkerOptions = point.options.marker || {},
+                seriesMarkerOptions = this.options.marker || {},
+                seriesStateOptions = (
+                    seriesMarkerOptions.states &&
+                    seriesMarkerOptions.states[state]
+                ) || {},
+                pointStateOptions = (
+                    pointMarkerOptions.states &&
+                    pointMarkerOptions.states[state]
+                ) || {};
+
+            // Set new width and height basing on state options.
+            const width = (
+                pointStateOptions.width ||
+                seriesStateOptions.width ||
+                shapeArgs.width ||
+                0
+            ) + (
+                pointStateOptions.widthPlus ||
+                seriesStateOptions.widthPlus ||
+                0
             );
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state] || {};
 
-            [['width', 'x'], ['height', 'y']].forEach(function (
-                dimension
-            ): void {
-                // Set new width and height basing on state options.
-                (attribs as any)[dimension[0]] = (
-                    (pointStateOptions as any)[dimension[0]] ||
-                    (seriesStateOptions as any)[dimension[0]] ||
-                    (shapeArgs as any)[dimension[0]]
-                ) + (
-                    (pointStateOptions as any)[dimension[0] + 'Plus'] ||
-                    (seriesStateOptions as any)[dimension[0] + 'Plus'] || 0
-                );
+            const height = (
+                pointStateOptions.height ||
+                seriesStateOptions.height ||
+                shapeArgs.height ||
+                0
+            ) + (
+                pointStateOptions.heightPlus ||
+                seriesStateOptions.heightPlus ||
+                0
+            );
 
-                // Align marker by a new size.
-                (attribs as any)[dimension[1]] =
-                    (shapeArgs as any)[dimension[1]] +
-                    ((shapeArgs as any)[dimension[0]] -
-                    (attribs as any)[dimension[0]]) / 2;
-            });
+            // Align marker by the new size.
+            const x = (shapeArgs.x || 0) + ((shapeArgs.width || 0) - width) / 2,
+                y = (shapeArgs.y || 0) + ((shapeArgs.height || 0) - height) / 2;
+
+            return { x, y, width, height };
         }
 
-        return state ? attribs : shapeArgs;
+        return shapeArgs;
     }
 
     /**
