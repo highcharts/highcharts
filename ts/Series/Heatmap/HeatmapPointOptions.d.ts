@@ -24,6 +24,7 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * */
 
 export interface HeatmapPointMarkerOptions extends PointMarkerOptions {
+    r?: number;
 }
 
 export interface HeatmapPointOptions extends ScatterPointOptions {

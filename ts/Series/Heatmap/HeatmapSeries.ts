@@ -21,7 +21,6 @@ import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
-import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -210,7 +209,7 @@ class HeatmapSeries extends ScatterSeries {
             /**
              * @ignore-option
              */
-            overflow: false as any,
+            overflow: 'allow',
             padding: 0 // #3837
         },
         /**
@@ -428,17 +427,17 @@ class HeatmapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
 
-        // In styled mode, use CSS, otherwise the fill used in the style
-        // sheet will take precedence over the fill attribute.
+        // In styled mode, use CSS, otherwise the fill used in the style sheet
+        // will take precedence over the fill attribute.
         const seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
                 if (point.graphic) {
-                    (point.graphic as any)[
+                    point.graphic[
                         this.chart.styledMode ? 'css' : 'animate'
-                    ](this.colorAttribs(point));
+                    ](this.colorAttribs(point) as any);
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
@@ -498,11 +497,10 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public init(): void {
-        let options;
+        Series.prototype.init.apply(this, arguments);
 
-        Series.prototype.init.apply(this, arguments as any);
+        const options = this.options;
 
-        options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
         // general point range
@@ -521,7 +519,7 @@ class HeatmapSeries extends ScatterSeries {
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
         if (options.marker) {
-            (options.marker as any).r = options.borderRadius;
+            options.marker.r = options.borderRadius;
         }
     }
 
@@ -601,7 +599,6 @@ class HeatmapSeries extends ScatterSeries {
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},
             heatmapPlotOptions = plotOptions.heatmap || {},
-            stateOptions,
             brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
@@ -626,23 +623,32 @@ class HeatmapSeries extends ScatterSeries {
         // Apply old borderWidth property if exists.
         attr['stroke-width'] = borderWidth;
 
-        if (state) {
-            stateOptions =
-                merge(
-                    (seriesOptions.states as any)[state],
+        if (state && state !== 'normal') {
+            const stateOptions = merge(
+                (
+                    seriesOptions.states &&
+                    seriesOptions.states[state]
+                ),
+                (
                     seriesOptions.marker &&
-                    (seriesOptions.marker.states as any)[state],
+                    seriesOptions.marker.states &&
+                    seriesOptions.marker.states[state]
+                ),
+                (
                     point &&
                     point.options.states &&
-                    (point.options.states as any)[state] || {}
-                );
+                    point.options.states[state] || {}
+                )
+            );
             brightness = stateOptions.brightness;
 
             attr.fill =
                 stateOptions.color ||
                 Color.parse(attr.fill).brighten(brightness || 0).get();
 
-            attr.stroke = stateOptions.lineColor || attr.stroke; // #17896
+            (attr as any).stroke = (
+                stateOptions.lineColor || attr.stroke
+            ); // #17896
         }
 
         return attr;
@@ -652,17 +658,18 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public setClip(animation?: (boolean|AnimationOptions)): void {
-        const series = this,
-            chart = series.chart;
+        const { chart, markerGroup } = this;
 
-        Series.prototype.setClip.apply(series, arguments);
-        if (series.options.clip !== false || animation) {
-            (series.markerGroup as any)
-                .clip(
-                    (animation || series.clipBox) && series.sharedClipKey ?
-                        chart.sharedClips[series.sharedClipKey] :
-                        chart.clipRect
-                );
+        Series.prototype.setClip.apply(this, arguments);
+        if (
+            markerGroup &&
+            (this.options.clip !== false || animation)
+        ) {
+            markerGroup.clip(
+                (animation || this.clipBox) && this.sharedClipKey ?
+                    chart.sharedClips[this.sharedClipKey] :
+                    chart.clipRect
+            );
         }
     }
 
