@@ -24,6 +24,11 @@ const {
         prototype: {
             pointClass: CandlestickPoint
         }
+    },
+    hlc: {
+        prototype: {
+            pointClass: HLCPoint
+        }
     }
 } = SeriesRegistry.seriesTypes;
 
@@ -35,6 +40,9 @@ const {
 
 class HeikinAshiPoint extends CandlestickPoint {
     // clone inheritence
+    public resolveColor(): void {
+        HLCPoint.prototype.resolveColor.call(this);
+    }
 }
 
 /* *
