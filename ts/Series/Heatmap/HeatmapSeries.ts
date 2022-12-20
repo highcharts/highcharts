@@ -437,7 +437,7 @@ class HeatmapSeries extends ScatterSeries {
                 if (point.graphic) {
                     point.graphic[
                         this.chart.styledMode ? 'css' : 'animate'
-                    ](this.colorAttribs(point) as any);
+                    ](this.colorAttribs(point));
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
