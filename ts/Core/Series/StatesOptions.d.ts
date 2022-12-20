@@ -32,11 +32,21 @@ export type StateGenericOptions<T extends { options: AnyRecord }> = (
 export interface StateHoverOptions {
     color?: ColorType;
     dashStyle?: DashStyleValue;
+    // Heatmap
+    height?: number;
+    heightPlus?: number;
+    width?: number;
+    widthPlus?: number;
 }
 
 export interface StateInactiveOptions {
     color?: ColorType;
     dashStyle?: DashStyleValue;
+    // Heatmap
+    height?: number;
+    heightPlus?: number;
+    width?: number;
+    widthPlus?: number;
 }
 
 export interface StateNormalOptions {
@@ -47,6 +57,11 @@ export interface StateNormalOptions {
 export interface StateSelectOptions extends StateHoverOptions {
     color?: ColorType;
     dashStyle?: DashStyleValue;
+    // Heatmap
+    height?: number;
+    heightPlus?: number;
+    width?: number;
+    widthPlus?: number;
 }
 
 export interface StatesOptions {

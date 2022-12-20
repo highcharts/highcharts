@@ -16,6 +16,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type HeatmapSeries from './HeatmapSeries';
+import type { HeatmapPointMarkerOptions } from './HeatmapPointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -27,6 +28,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     colsize?: number;
+    marker?: HeatmapPointMarkerOptions;
     nullColor?: ColorType;
     pointPadding?: number;
     rowsize?: number;
