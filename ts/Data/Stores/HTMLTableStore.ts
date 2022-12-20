@@ -116,26 +116,6 @@ class HTMLTableStore extends DataStore {
     public tableID?: string;
 
     /**
-     * Handles retrieving the HTML table by ID if an ID is provided
-     */
-    private fetchTable(): void {
-        const store = this,
-            { table: tableHTML } = store.options;
-
-        let tableElement: (HTMLElement|null);
-
-        if (typeof tableHTML === 'string') {
-            store.tableID = tableHTML;
-            tableElement = win.document.getElementById(tableHTML);
-        } else {
-            tableElement = tableHTML;
-            store.tableID = tableElement.id;
-        }
-
-        store.tableElement = tableElement || void 0;
-    }
-
-    /**
      * Initiates creating the datastore from the HTML table
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -150,8 +130,6 @@ class HTMLTableStore extends DataStore {
     ): Promise<this> {
         const store = this;
 
-        store.fetchTable();
-
         // If already loaded, clear the current rows
         store.table.deleteColumns();
 
@@ -161,6 +139,20 @@ class HTMLTableStore extends DataStore {
             table: store.table,
             tableElement: store.tableElement
         });
+
+        const { table: tableHTML } = store.options;
+
+        let tableElement: (HTMLElement|null);
+
+        if (typeof tableHTML === 'string') {
+            store.tableID = tableHTML;
+            tableElement = win.document.getElementById(tableHTML);
+        } else {
+            tableElement = tableHTML;
+            store.tableID = tableElement.id;
+        }
+
+        store.tableElement = tableElement || void 0;
 
         if (!store.tableElement) {
             const error =
@@ -220,10 +212,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on errors within HTMLTableDataStore
      */
-    export interface ErrorEvent extends DataStore.Event {
-        type: 'loadError';
-        error: (string|Error);
-    }
+    export type ErrorEvent = DataStore.ErrorEvent;
 
     /**
      * Options for exporting the store as an HTML table
@@ -241,8 +230,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
-    export interface LoadEvent extends DataStore.Event {
-        type: ('load'|'afterLoad');
+    export interface LoadEvent extends DataStore.LoadEvent {
         tableElement?: (HTMLElement|null);
     }
 
