@@ -2683,7 +2683,6 @@ class Series {
                     markerAttribs = series.markerAttribs(
                         point,
                         (point.selected && 'select') as any,
-                        chart.inverted
                     );
 
                     // Set starting position for point sliding animation.
@@ -2797,7 +2796,6 @@ class Series {
     public markerAttribs(
         point: Point,
         state?: StatesOptionsKey,
-        flip?: boolean
     ): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
@@ -2843,9 +2841,9 @@ class Series {
             attribs.x = plotX - radius;
             attribs.y = plotY - radius;
 
-            if (flip) {
-                attribs.x = (this.yAxis.len - (plotY + radius));
-                attribs.y = (this.xAxis.len - (plotX + radius));
+            if (this.chart.inverted) {
+                attribs.x = ((this.yAxis.len - plotY) - radius);
+                attribs.y = ((this.xAxis.len - plotX) - radius);
             }
 
             if (seriesOptions.crisp) {
