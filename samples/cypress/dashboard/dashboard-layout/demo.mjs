@@ -29,17 +29,8 @@ let dashboard = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: [{
-                id: 'saveLocal',
-                className: 'test-test-test',
-                events: {
-                    click: function() {
-                        console.log('save local');
-                    }
-                }
-            }, 'verticalSeparator', 'editMode', {
+            items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
                 events: {
@@ -93,65 +84,6 @@ let dashboard = new Dashboard('container-nested-layout', {
                 }
             }]
         },
-        toolbars: {
-            cell: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    },
-                    // {
-                    //     id: 'my-option-1',
-                    //     text: 't1',
-                    //     events: {
-                    //         click: function() {
-                    //             console.log('hello world!');
-                    //         }
-                    //     }
-                    // },
-                    {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            row: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    }, {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            settings: {
-                closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
-                dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-            }
-        },
-        lang: {
-            editMode: 'My edit mode',
-            saveLocal: 'Save locally 1',
-            chartOptions: 'Chart options EN'
-        },
-        tools: {
-            addComponentBtn: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
-            }
-        },
-        confirmationPopup: {
-            close: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
-            }
-        },
         resize: {
             enabled: true,
             styles: {
@@ -167,18 +99,6 @@ let dashboard = new Dashboard('container-nested-layout', {
     },
     gui: {
         enabled: true,
-        // layoutOptions: {
-        //     resize: {
-        //         cells: {
-        //             enabled: true,
-        //             minSize: 70
-        //         },
-        //         rows: {
-        //             enabled: true,
-        //             minSize: 70
-        //         }
-        //     }
-        // },
         layouts: [{
             id: 'layout-in-1', // mandatory
             rows: [{
