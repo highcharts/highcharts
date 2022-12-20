@@ -219,6 +219,8 @@ addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
 
     // stop hovering while drilling down
     point.series.isDrilling = true;
+    // stop duplicating and overriding animations
+    point.series.options.inactiveOtherPoints = true;
 
     if (
         chart.options.drilldown &&
@@ -313,7 +315,6 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
                         animOptions,
                         function (): void {
                             series.remove(false);
-                            series.isDrilling = false;
 
                             // We have a reset zoom button. Hide it and detatch
                             // it from the chart. It is preserved to the layer
@@ -341,12 +342,6 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
         });
     }
     return false; // to prevent default function from fireEvent
-});
-
-addEvent(MapChart, 'beforeDrillUp', function (): void {
-    this.series.forEach((series): void => {
-        series.isDrilling = true;
-    });
 });
 
 // to prevent default function from fireEvent
@@ -405,7 +400,7 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
                 if (series.colorAxis) {
                     series.isDirtyData = true;
                 }
-                series.isDrilling = false;
+                series.options.inactiveOtherPoints = false;
             });
             chart.redraw();
         };

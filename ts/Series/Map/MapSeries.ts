@@ -490,10 +490,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrilldown(init?: boolean): void {
-        const chart = this.chart,
+        const series = this,
+            chart = this.chart,
             group = this.group;
-
-        chart.disableTransform = true;
 
         if (chart.renderer.isSVG) {
             // Initialize the animation
@@ -501,12 +500,21 @@ class MapSeries extends ScatterSeries {
                 group.attr({
                     opacity: 0.01
                 });
+                chart.disableTransform = true;
+                // stop duplicating and overriding animations
+                series.options.inactiveOtherPoints = true;
+                series.options.enableMouseTracking = false;
 
             // Run the animation
             } else {
                 group.animate({
                     opacity: 1
-                }, (this.chart.options.drilldown as any).animation);
+                }, (this.chart.options.drilldown as any).animation,
+                function (): void {
+                    series.options.inactiveOtherPoints = false;
+                    series.options.enableMouseTracking =
+                        pick(series.userOptions.enableMouseTracking, true);
+                });
 
                 if (chart.drilldown) {
                     chart.drilldown.fadeInGroup(this.dataLabelsGroup);
@@ -522,9 +530,12 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrillupFrom(): void {
-        const chart = this.chart;
+        const series = this,
+            chart = this.chart;
 
         chart.disableTransform = true;
+        // stop duplicating and overriding animations
+        series.options.inactiveOtherPoints = true;
     }
 
     /**
@@ -533,7 +544,8 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public animateDrillupTo(init?: boolean): void {
-        const chart = this.chart,
+        const series = this,
+            chart = this.chart,
             group = this.group;
 
         if (chart.renderer.isSVG) {
@@ -543,6 +555,8 @@ class MapSeries extends ScatterSeries {
                 group.attr({
                     opacity: 0.01
                 });
+                // stop duplicating and overriding animations
+                series.options.inactiveOtherPoints = true;
 
             // Run the animation
             } else {
