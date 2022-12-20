@@ -69,7 +69,6 @@ const EditGlobals: EditGlobals = {
     },
     lang: {
         editMode: 'Edit mode',
-        saveLocal: 'Save locally',
         style: 'Styles',
         chartOptions: 'Chart options',
         id: 'Id',
@@ -155,7 +154,6 @@ namespace EditGlobals {
 
     export interface LangOptions {
         editMode?: string;
-        saveLocal?: string;
         style?: string;
         chartOptions?: string;
         id?: string;
@@ -170,7 +168,7 @@ namespace EditGlobals {
         cancelButton?: string;
     }
 
-    export type TLangKeys = 'editMode'|'saveLocal'|'verticalSeparator';
+    export type TLangKeys = 'editMode'|'verticalSeparator';
 }
 
 export default EditGlobals;
