@@ -1797,32 +1797,34 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const chart = this.chart,
-            options = this.options,
+        const {
+                chart,
+                distance,
+                options
+            } = this,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            chartPosition = pointer.getChartPosition(),
+            { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
                 point
             );
-        let anchorX = (point.plotX as any) + chart.plotLeft,
-            anchorY = (point.plotY as any) + chart.plotTop,
+        let anchorX = (point.plotX || 0) + chart.plotLeft,
+            anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            // Corrects positions, occurs with tooltip positioner. #16944
+            // Corrects positions, occurs with tooltip positioner (#16944)
             if (options.positioner) {
-                this.distance = 0;
-                pos.x += chartPosition.left;
-                pos.y += chartPosition.top;
+                pos.x += left - distance;
+                pos.y += top - distance;
             }
 
-            pad = options.borderWidth + 2 * this.distance;
+            pad = options.borderWidth + 2 * distance;
 
             (this.renderer as any).setSize(
                 label.width + pad,
@@ -1832,19 +1834,15 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
+            if (scaleX !== 1 || scaleY !== 1) {
                 css(this.container, {
-                    transform: `scale(${
-                        chartPosition.scaleX
-                    }, ${
-                        chartPosition.scaleY
-                    })`
+                    transform: `scale(${scaleX}, ${scaleY})`
                 });
-                anchorX *= chartPosition.scaleX;
-                anchorY *= chartPosition.scaleY;
+                anchorX *= scaleX;
+                anchorY *= scaleY;
             }
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
+            anchorX += left - pos.x;
+            anchorY += top - pos.y;
         }
 
         // do the move
