@@ -28,13 +28,44 @@ import type JSON from '../../Core/JSON';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import HU from '../../Core/HttpUtilities.js';
-const { ajax } = HU;
 import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface GoogleError {
+    error: {
+        code: number;
+        message: string;
+        status: string;
+        details?: unknown;
+    }
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function isGoogleError(
+    json: AnyRecord
+): json is GoogleError {
+    return (
+        typeof json === 'object' && json &&
+        typeof json.error === 'object' && json.error &&
+        typeof json.error.code === 'number' &&
+        typeof json.error.message === 'string' &&
+        typeof json.error.status === 'string'
+    );
+}
 
 /* *
  *
@@ -152,46 +183,52 @@ class GoogleSheetsStore extends DataStore {
             url
         });
 
-        ajax({
-            url,
-            dataType: 'json',
-            success: (json): void => {
-                store.converter.parse({
-                    firstRowAsNames,
-                    json: json as GoogleSheetsConverter.GoogleSpreadsheetJSON
-                });
-                store.table.setColumns(store.converter.getTable().getColumns());
+        return fetch(url)
+            .then((response): Promise<void> => response
+                .json()
+                .then((json): void => {
 
-                store.emit<GoogleSheetsStore.Event>({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table: store.table,
-                    url
-                });
+                    if (isGoogleError(json)) {
+                        throw new Error(json.error.message);
+                    }
 
-                // Polling
-                if (enablePolling) {
-                    setTimeout(
-                        (): Promise<this> => store.load(),
-                        dataRefreshRate * 1000
+                    store.converter.parse({
+                        firstRowAsNames,
+                        json:
+                            json as GoogleSheetsConverter.GoogleSpreadsheetJSON
+                    });
+
+                    store.table.setColumns(
+                        store.converter.getTable().getColumns()
                     );
-                }
-            },
-            error: (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void => {
+
+                    store.emit<GoogleSheetsStore.Event>({
+                        type: 'afterLoad',
+                        detail: eventDetail,
+                        table: store.table,
+                        url
+                    });
+
+                    // Polling
+                    if (enablePolling) {
+                        setTimeout(
+                            (): Promise<this> => store.load(),
+                            dataRefreshRate * 1000
+                        );
+                    }
+                })
+            )['catch']((error): Promise<void> => {
                 store.emit<GoogleSheetsStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table: store.table,
-                    xhr
+                    table: store.table
                 });
-            }
-        });
-
-        return Promise.resolve(this);
+                return Promise.reject(error);
+            })
+            .then((): this =>
+                store
+            );
     }
 
 }
@@ -212,11 +249,7 @@ namespace GoogleSheetsStore {
 
     export type Event = (ErrorEvent|LoadEvent);
 
-    export interface ErrorEvent extends DataStore.Event {
-        readonly type: 'loadError';
-        readonly error: (string|Error);
-        readonly xhr: XMLHttpRequest;
-    }
+    export type ErrorEvent = DataStore.ErrorEvent;
 
     export interface FetchURLOptions {
         onlyColumnNames?: boolean;

@@ -338,7 +338,6 @@ test('Export as HTML', function (assert) {
 
     // Export with default settings (multiline and rowspan should be enabled)
     let htmlString = htmlconverter.export(htmlstore);
-    console.log(htmlconverter.options, htmlString);
     const HTMLElement = createElement('div');
     HTMLElement.innerHTML = htmlString;
 

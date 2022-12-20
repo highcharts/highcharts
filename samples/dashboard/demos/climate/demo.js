@@ -79,6 +79,7 @@ async function buildDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
+                    backgroundColor: '#567',
                     map: topology,
                     spacing: [0, 0, 0, 0],
                 },
@@ -90,7 +91,6 @@ async function buildDashboard() {
                 },*/
                 legend: {
                     enabled: false,
-                    margin: 0,
                 },
                 mapView: {
                     maxZoom: 1.4,
@@ -103,6 +103,8 @@ async function buildDashboard() {
                 series: [{
                     type: 'map',
                     name: 'World Map',
+                    borderColor: '#986',
+                    nullColor: '#C93',
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
@@ -145,6 +147,8 @@ async function buildDashboard() {
                         }
                     },
                     marker: {
+                        lineColor: '#FFF',
+                        lineWidth: 1,
                         radius: 6,
                     },
                     tooltip: {

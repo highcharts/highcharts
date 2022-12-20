@@ -47,6 +47,29 @@ require.config({
     }
 });
 
+// Fetch
+
+(function (window) {
+    const fetch = window.fetch;
+
+    window.fetch = function (url) {
+        const data = window.JSONSources['' + url];
+
+        if (typeof data !== 'undefined') {
+            return Promise.resolve({
+                status: 200,
+                statusText: 'OK',
+                type: 'basic',
+                url,
+                json: () => Promise.resolve(data),
+                text: () => Promise.resolve(data),
+            });
+        }
+
+        return fetch.apply(this, arguments);
+    };
+}(window));
+
 // QUnit
 
 var currentTests = [];

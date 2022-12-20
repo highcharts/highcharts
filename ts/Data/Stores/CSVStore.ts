@@ -28,8 +28,6 @@ import type JSON from '../../Core/JSON';
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import HU from '../../Core/HttpUtilities.js';
-const { ajax } = HU;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -200,8 +198,9 @@ class CSVStore extends DataStore {
                     });
 
                     return Promise.reject(error);
-                }).then(
-                    (): this => store
+                })
+                .then((): this =>
+                    store
                 );
         } else {
             store.emit<CSVStore.Event>({
