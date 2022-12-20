@@ -1576,6 +1576,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderWidth
          */
+        borderWidth: 0,
 
         /**
          * A class name for the data label. Particularly in styled mode,

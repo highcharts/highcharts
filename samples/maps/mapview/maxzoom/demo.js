@@ -27,7 +27,7 @@
             },
 
             mapView: {
-                maxZoom: 16
+                maxZoom: 4
             },
 
             legend: {
