@@ -678,57 +678,51 @@ class HeatmapSeries extends ScatterSeries {
 
         series.generatePoints();
         series.points.forEach(function (point): void {
-            let pointAttr,
-                sizeDiff,
-                hasImage,
-                cellAttr = point.getCellAttributes(),
-                shapeArgs: SVGAttributes = {};
+            const cellAttr = point.getCellAttributes();
 
-            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
-            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
-            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
-            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
+            let x = Math.min(cellAttr.x1, cellAttr.x2),
+                y = Math.min(cellAttr.y1, cellAttr.y2),
+                width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
+                height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
 
-            hasImage = point.hasImage =
-                (point.marker && point.marker.symbol || symbol || '')
-                    .indexOf('url') === 0;
+            point.hasImage = (
+                point.marker && point.marker.symbol || symbol || ''
+            ).indexOf('url') === 0;
 
-            // If marker shape is regular (symetric), find shorter
-            // cell's side.
+            // If marker shape is regular (square), find the shorter cell's
+            // side.
             if (hasRegularShape) {
-                sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
-                shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
-                    (shapeArgs.width < shapeArgs.height ? 0 : sizeDiff / 2);
-                shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
-                    (shapeArgs.width < shapeArgs.height ? sizeDiff / 2 : 0);
-                shapeArgs.width = shapeArgs.height =
-                    Math.min(shapeArgs.width, shapeArgs.height);
+                const sizeDiff = Math.abs(width - height);
+                x = Math.min(cellAttr.x1, cellAttr.x2) +
+                    (width < height ? 0 : sizeDiff / 2);
+                y = Math.min(cellAttr.y1, cellAttr.y2) +
+                    (width < height ? sizeDiff / 2 : 0);
+                width = height = Math.min(width, height);
             }
 
-            pointAttr = {
-                plotX: (cellAttr.x1 + cellAttr.x2) / 2,
-                plotY: (cellAttr.y1 + cellAttr.y2) / 2,
-                clientX: (cellAttr.x1 + cellAttr.x2) / 2,
-                shapeType: 'path',
-                shapeArgs: merge(true, shapeArgs, {
+
+            if (point.hasImage) {
+                point.marker = { width, height };
+            }
+
+            point.plotX = point.clientX = (cellAttr.x1 + cellAttr.x2) / 2;
+            point.plotY = (cellAttr.y1 + cellAttr.y2) / 2;
+
+            point.shapeType = 'path';
+            point.shapeArgs = merge<SVGAttributes>(
+                true,
+                { x, y, width, height },
+                {
                     d: symbols[shape](
-                        shapeArgs.x,
-                        shapeArgs.y,
-                        shapeArgs.width,
-                        shapeArgs.height,
+                        x,
+                        y,
+                        width,
+                        height,
                         { r: options.borderRadius }
                     )
-                })
-            };
+                }
+            );
 
-            if (hasImage) {
-                point.marker = {
-                    width: shapeArgs.width,
-                    height: shapeArgs.height
-                };
-            }
-
-            extend(point, pointAttr);
         });
 
         fireEvent(series, 'afterTranslate');

@@ -66,6 +66,9 @@ Highcharts.chart('container', {
         },
         accessibility: {
             enabled: false
+        },
+        marker: {
+            symbol: 'circle'
         }
     }]
 });
