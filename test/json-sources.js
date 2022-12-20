@@ -8,7 +8,7 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
-    "https://raw.githubusercontent.com/u-raza/highcharts_broken_area/master/_data/sorted_data.csv": [
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv": [
         "ProductType,NumSold,Year,AvgDaysToShip,%ReturnedOnAverage",
         "BluetoothHeadset,500,2013,5,15",
         "BluetoothHeadset,2400,2014,5,10",
