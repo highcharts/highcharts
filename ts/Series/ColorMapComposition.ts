@@ -16,10 +16,11 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type Point from '../Core/Series/Point';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
@@ -36,6 +37,13 @@ const {
  *  Declarations
  *
  * */
+
+interface ColorAttribsType {
+    dashstyle?: DashStyleValue;
+    fill?: ColorType;
+    stroke?: ColorType;
+    'stroke-width'?: number;
+}
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -66,13 +74,13 @@ namespace ColorMapComposition {
     }
 
     export declare class SeriesComposition extends ScatterSeries {
-        colorProp?: string;
+        colorProp?: 'fill'|'stroke';
         data: Array<PointComposition>;
         parallelArrays: Array<string>;
         pointArrayMap: Array<string>;
         points: Array<PointComposition>;
         trackerGroups: Array<string>;
-        colorAttribs(point: PointComposition): SVGAttributes;
+        colorAttribs(point: PointComposition): ColorAttribsType;
     }
 
     /* *
@@ -167,14 +175,14 @@ namespace ColorMapComposition {
     function seriesColorAttribs(
         this: SeriesComposition,
         point: PointComposition
-    ): SVGAttributes {
-        const ret: SVGAttributes = {};
+    ): ColorAttribsType {
+        const ret: ColorAttribsType = {};
 
         if (
             defined(point.color) &&
             (!point.state || point.state === 'normal') // #15746
         ) {
-            (ret as any)[this.colorProp || 'fill'] = point.color;
+            ret[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }
