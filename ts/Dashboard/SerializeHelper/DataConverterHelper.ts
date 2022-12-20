@@ -54,7 +54,7 @@ function jsonSupportFor(obj: unknown): obj is DataConverter {
 
 /**
  * JSON object as a base.
- * @param json Serialied object
+ * @param json Serialized object
  * @return {DataConverter} New Data Converter object created from serialized object
  */
 function fromJSON(json: DataConverterHelper.JSON): DataConverter {
@@ -65,7 +65,7 @@ function fromJSON(json: DataConverterHelper.JSON): DataConverter {
     );
 }
 
-/* slac
+/*
  *
  *  Namespace
  *
