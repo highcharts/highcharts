@@ -155,18 +155,37 @@ if (window.$) {
     };
 }
 */
+(function (window) {
+    const fetch = window.fetch;
 
+    window.fetch = function (url) {
+        const data = window.JSONSources['' + url];
+
+        if (typeof data !== 'undefined') {
+            return Promise.resolve({
+                status: 200,
+                statusText: 'OK',
+                type: 'basic',
+                url,
+                json: () => Promise.resolve(data),
+                text: () => Promise.resolve(data),
+            });
+        }
+
+        return fetch.apply(this, arguments);
+    };
+}(window));
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
 var send = XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.open = function (type, url) {
-	this.requestURL = url;
+    this.requestURL = url;
     return open.apply(this, arguments);
 }
 
 XMLHttpRequest.prototype.send = function () {
     var localData = this.requestURL && window.JSONSources[this.requestURL];
-	if (localData) {
+    if (localData) {
         Object.defineProperty(this, 'readyState', {
             get: function () { return 4; }
         });
@@ -262,7 +281,7 @@ if (window.QUnit) {
         !Number.prototype._toString
     ) {
         Number.prototype._toString = Number.prototype.toString;
-        Number.prototype.toString = function(radix) {
+        Number.prototype.toString = function (radix) {
             if (radix) {
                 return Number.prototype._toString.apply(this, arguments);
             } else {
@@ -530,7 +549,7 @@ function getSVG(chart) {
             );
         }
 
-    // Renderer samples
+        // Renderer samples
     } else {
         if (document.getElementsByTagName('svg').length) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
@@ -572,7 +591,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 function xhrLoad(url, callback) {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             callback(xhr);
         }
@@ -697,10 +716,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-            ['catch'](function (error) { // to avoid IE8 failure
-                console.log(error && error.message);
-                resolve(error && error.message); // skip and continue processing
-            });
+        ['catch'](function (error) { // to avoid IE8 failure
+            console.log(error && error.message);
+            resolve(error && error.message); // skip and continue processing
+        });
 
     });
 }
