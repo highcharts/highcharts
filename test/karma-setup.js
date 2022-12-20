@@ -2,6 +2,7 @@
 /* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
+
 /**
  * This file runs in the browser as setup for the karma tests.
  */
@@ -155,26 +156,7 @@ if (window.$) {
     };
 }
 */
-(function (window) {
-    const fetch = window.fetch;
 
-    window.fetch = function (url) {
-        const data = window.JSONSources['' + url];
-
-        if (typeof data !== 'undefined') {
-            return Promise.resolve({
-                status: 200,
-                statusText: 'OK',
-                type: 'basic',
-                url,
-                json: () => Promise.resolve(data),
-                text: () => Promise.resolve(data),
-            });
-        }
-
-        return fetch.apply(this, arguments);
-    };
-}(window));
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
 var send = XMLHttpRequest.prototype.send;
@@ -211,7 +193,14 @@ if (window.Promise) {
                 // Fake the return
                 resolve({
                     ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    type: 'basic',
+                    url,
                     json: function () {
+                        return localData;
+                    },
+                    text: function () {
                         return localData;
                     }
                 });
