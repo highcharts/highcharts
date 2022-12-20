@@ -696,6 +696,8 @@ class Axis {
             axis.softThreshold = !axis.isXAxis;
 
             if (axis.stacking) {
+                // #17314 clear stacks before new build
+                axis.stacking.cleanStacks();
                 axis.stacking.buildStacks();
             }
 
