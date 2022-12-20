@@ -193,9 +193,10 @@ function dumpHTMLTable(datatable) {
     return html;
 }
 
-const dataURL = 'https://gist.githubusercontent.com/goransle/f294f045f0bd294780fb1643ae977602/raw/777089958f80250072c8d1110d78ca54a5c69709/activities.csv';
+const csvData = document.querySelector('.hidden').innerText;
+
 const store = new CSVStore(undefined, {
-    csvURL: dataURL
+    csv: csvData
 });
 
 
@@ -606,7 +607,6 @@ const components = state => [
 
 function initDashBoard() {
     return new Dashboard("container", {
-        editMode,
         gui: gui,
         components: components(state)
     });
@@ -640,15 +640,7 @@ const editMode = {
     contextMenu: {
         icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
         enabled: true,
-        items: [{
-            id: 'saveLocal',
-            className: 'test-test-test',
-            events: {
-                click: function () {
-                    console.log('save local');
-                }
-            }
-        }, 'verticalSeparator', 'editMode', {
+        items: ['editMode', {
             id: 'export-dashboard',
             text: 'Export dashboard',
             events: {
@@ -746,7 +738,6 @@ const editMode = {
     },
     lang: {
         editMode: 'My edit mode',
-        saveLocal: 'Save locally 1',
         chartOptions: 'Chart options EN'
     },
     tools: {

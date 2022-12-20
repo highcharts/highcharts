@@ -52,7 +52,10 @@ class Bindings {
         // add elements to containers
         if (compontentContainer) {
             const ComponentClass = Component.getComponent(options.type);
+<<<<<<< HEAD
+=======
 
+>>>>>>> 637a7d54b9bc437197b4370aafc83b2cb91818f6
             switch (options.type) {
                 case 'html':
                     component = new HTMLComponent(merge(
@@ -63,8 +66,17 @@ class Bindings {
                         })
                     );
                     break;
+<<<<<<< HEAD
+                // case 'group':
+                //     component = bindings.groupComponent(
+                //         compontentContainer,
+                //         options.config
+                //     );
+                //     break;
+                default:
+=======
                 case 'Highcharts':
-
+>>>>>>> 637a7d54b9bc437197b4370aafc83b2cb91818f6
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -161,7 +173,6 @@ class Bindings {
         const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
     }
-
 }
 
 namespace Bindings {

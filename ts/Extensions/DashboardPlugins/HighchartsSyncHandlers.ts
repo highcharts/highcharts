@@ -78,7 +78,7 @@ function findMatchingPoint(
             for (let j = 0; j < points.length; j++) {
                 const point = points[j];
 
-                if (point.visible && point.series.visible && point.x === x && point.y === y) {
+                if (point.visible && point.series.visible && point.x === x) {
                     return point;
                 }
             }

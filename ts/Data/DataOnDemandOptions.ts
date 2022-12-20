@@ -32,10 +32,10 @@ import type {
  * */
 
 export interface DataOnDemandOptions extends JSON.Object {
-    sources: Array<DataOnDemandSourceOptions>;
+    stores: Array<DataOnDemandStoreOptions>;
 }
 
-export interface DataOnDemandSourceOptions extends JSON.Object {
+export interface DataOnDemandStoreOptions extends JSON.Object {
     name: string;
     storeOptions: StoreType['prototype']['options'];
     storeType: keyof StoreTypeRegistry;
