@@ -3,17 +3,17 @@
 const fs = require('fs');
 const path = require('path');
 
-function sineData (_request, response, _next) {
-    const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
+// function sineData (_request, response, _next) {
+//     const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
 
-    for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
-        x = 3184606 + Math.random();
-        csv.push([x, Math.sin(x), Math.sin(-x)]);
-    }
+//     for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
+//         x = 3184606 + Math.random();
+//         csv.push([x, Math.sin(x), Math.sin(-x)]);
+//     }
 
-    response.end(csv.map(line => line.join(',')).join('\n'));
-}
-sineData.url = '/data/sine-data.csv';
+//     response.end(csv.map(line => line.join(',')).join('\n'));
+// }
+// sineData.url = '/data/sine-data.csv';
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -162,7 +162,7 @@ module.exports = function (config) {
     let options = {
         basePath: '../../', // Root relative to this file
         frameworks: ['qunit'],
-        middleware: ['data'],
+        // middleware: ['data'],
         files: [].concat([
             // Set up
             'vendor/require.js',
@@ -193,20 +193,20 @@ module.exports = function (config) {
         reportSlowerThan: 3000,
         plugins: [
             'karma-*',
-            {
-                'middleware:data': [
-                    'factory',
-                    function (config) {
-                        return function (request, response, next) {
-                            if (request.url === sineData.url) {
-                                sineData(request, response, next);
-                            } else {
-                                next();
-                            }
-                        }
-                    }
-                ]
-            }
+            // {
+            //     'middleware:data': [
+            //         'factory',
+            //         function (config) {
+            //             return function (request, response, next) {
+            //                 if (request.url === sineData.url) {
+            //                     sineData(request, response, next);
+            //                 } else {
+            //                     next();
+            //                 }
+            //             }
+            //         }
+            //     ]
+            // }
         ],
 
         formatError: function (s) {

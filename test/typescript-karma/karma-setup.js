@@ -49,26 +49,36 @@ require.config({
 
 // Fetch
 
-(function (window) {
-    const fetch = window.fetch;
-
+if (window.Promise) {
     window.fetch = function (url) {
-        const data = window.JSONSources['' + url];
+        let data = window.JSONSources['' + url];
+
+        if (typeof data === 'function') {
+            data = data();
+        }
 
         if (typeof data !== 'undefined') {
             return Promise.resolve({
+                ok: true,
                 status: 200,
                 statusText: 'OK',
                 type: 'basic',
                 url,
-                json: () => Promise.resolve(data),
-                text: () => Promise.resolve(data),
+                json: function () {
+                    return Promise.resolve(data);
+                },
+                text: function () {
+                    return Promise.resolve('' + data);
+                },
             });
         }
 
-        return fetch.apply(this, arguments);
+        return Promise.reject(
+            'Sample error, URL "' + url +
+            '" missing in JSONSources (karma-fetch.js)'
+        );
     };
-}(window));
+}
 
 // QUnit
 
