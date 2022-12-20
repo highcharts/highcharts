@@ -593,13 +593,12 @@ class HeatmapSeries extends ScatterSeries {
         point?: HeatmapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let series = this,
+        const series = this,
             attr = Series.prototype.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},
             heatmapPlotOptions = plotOptions.heatmap || {},
-            brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
                 (point && point.options.borderColor) ||
@@ -640,11 +639,12 @@ class HeatmapSeries extends ScatterSeries {
                     point.options.states[state] || {}
                 )
             );
-            brightness = stateOptions.brightness;
 
             attr.fill =
                 stateOptions.color ||
-                Color.parse(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(
+                    stateOptions.brightness || 0
+                ).get();
 
             (attr as any).stroke = (
                 stateOptions.lineColor || attr.stroke
