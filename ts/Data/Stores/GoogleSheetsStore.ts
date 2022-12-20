@@ -255,8 +255,7 @@ namespace GoogleSheetsStore {
         onlyColumnNames?: boolean;
     }
 
-    export interface LoadEvent extends DataStore.Event {
-        readonly type: ('load'|'afterLoad');
+    export interface LoadEvent extends DataStore.LoadEvent {
         readonly url: string;
     }
 
