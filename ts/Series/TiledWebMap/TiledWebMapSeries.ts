@@ -149,7 +149,15 @@ class TiledWebMapSeries extends MapSeries {
             if (!tiles[`${zoom},${x},${y}`]) {
                 let url: string;
 
-                if (provider.type === 'OpenStreetMap') {
+                const s: string = provider.subdomain || '';
+
+                if (provider.url) {
+                    url = provider.url
+                        .replace("{x}", x.toString())
+                        .replace("{y}", y.toString())
+                        .replace("{zoom}", zoom.toString())
+                        .replace("{s}", s);
+                } else if (provider.type === 'OpenStreetMap') {
                     const s = pick(provider.subdomain, 'a');
 
                     if (provider.theme === 'bicycle') {
