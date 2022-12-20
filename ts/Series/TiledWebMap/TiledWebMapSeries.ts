@@ -153,10 +153,10 @@ class TiledWebMapSeries extends MapSeries {
 
                 if (provider.url) {
                     url = provider.url
-                        .replace("{x}", x.toString())
-                        .replace("{y}", y.toString())
-                        .replace("{zoom}", zoom.toString())
-                        .replace("{s}", s);
+                        .replace('{x}', x.toString())
+                        .replace('{y}', y.toString())
+                        .replace('{zoom}', zoom.toString())
+                        .replace('{s}', s);
                 } else if (provider.type === 'OpenStreetMap') {
                     const s = pick(provider.subdomain, 'a');
 
