@@ -254,7 +254,8 @@ class Cell extends GUIElement {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
                 mountedComponentJSON: cell.mountedComponent?.toJSON(),
-                style: cell.options.style
+                layout: cell.nestedLayout?.toJSON(),
+                style: cell.options.style,
             }
         };
     }

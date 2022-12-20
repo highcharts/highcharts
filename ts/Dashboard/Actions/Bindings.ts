@@ -47,6 +47,7 @@ class Bindings {
 
         // add elements to containers
         if (compontentContainer) {
+            const ComponentClass = Component.getComponent(options.type);
             switch (options.type) {
                 case 'html':
                     component = Bindings.htmlComponent(
@@ -61,7 +62,6 @@ class Bindings {
                 //     );
                 //     break;
                 default:
-                    const ComponentClass = Component.getComponent(options.type);
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,

@@ -240,7 +240,7 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Custom parsing function used instead of build-in parseDate method.
      */
-    protected parseDateFn?: DataConverter.ParseDateFunction;
+    public parseDateFn?: DataConverter.ParseDateFunction;
 
     /* *
      *
