@@ -17,6 +17,7 @@
 
 import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 
 const {
     seriesTypes: {
@@ -83,12 +84,71 @@ class TiledWebMapSeries extends MapSeries {
     public options: TiledWebMapSeriesOptions = void 0 as any;
     tiles: any;
 
-
     /**
      *
      *  Functions
      *
      */
+
+    /**
+     * Convert map coordinates in longitude/latitude to tile
+     *
+     * @function Highcharts.MapView#lonLatToTile
+     * @since  next
+     * @param  {Highcharts.MapLonLatObject} lonLat
+     *         The map coordinates
+     * @return {Highcharts.PositionObject}
+     *         Array of x and y positions of the tile
+     */
+
+    public lonLatToTile(
+        lonLat: Highcharts.MapLonLatObject,
+        zoom: number
+    ): PositionObject {
+        const { lon, lat } = lonLat,
+            xTile = Math.floor(
+                (lon + 180) / 360 * Math.pow(2, zoom)
+            ),
+            yTile = Math.floor(
+                (
+                    1 - Math.log(
+                        Math.tan(lat * Math.PI / 180) +
+                        1 / Math.cos(lat * Math.PI / 180)
+                    ) / Math.PI
+                ) /
+                2 * Math.pow(2, zoom)
+            );
+        return { x: xTile, y: yTile };
+    }
+
+    /**
+     * Convert tile to map coordinates in longitude/latitude
+     *
+     * @function Highcharts.MapView#tileToLonLat
+     * @since  next
+     * @param  xTile
+     *         Position x of the tile
+     * @param  yTile
+     *         Position y of the tile
+     * @param  zTile
+     *         Zoom of the tile
+     * @return {Highcharts.MapLonLatObject}
+     *         The map coordinates
+     */
+
+    public tileToLonLat(
+        xTile: number,
+        yTile: number,
+        zTile: number
+    ): Highcharts.MapLonLatObject {
+        const lon = xTile / Math.pow(2, zTile) * 360 - 180,
+            n = Math.PI - 2 * Math.PI * yTile / Math.pow(2, zTile),
+            lat = (
+                180 /
+                Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+            );
+        return { lon, lat };
+    }
 
     public drawPoints(): any {
         if (!this.tiles) {
@@ -120,30 +180,6 @@ class TiledWebMapSeries extends MapSeries {
             translateX: origin.x,
             translateY: origin.y
         });
-
-        const lon2tile = (lon: any, zoom: any): any => Math.floor(
-            (lon + 180) / 360 * Math.pow(2, zoom)
-        );
-
-        const lat2tile = (lat: any, zoom: any): any => Math.floor(
-            (
-                1 - Math.log(
-                    Math.tan(lat * Math.PI / 180) +
-                    1 / Math.cos(lat * Math.PI / 180)
-                ) / Math.PI
-            ) /
-            2 * Math.pow(2, zoom)
-        );
-
-        const tile2lon = (x: number, z: number): number =>
-            x / Math.pow(2, z) * 360 - 180;
-        const tile2lat = (y: number, z: number): number => {
-            const n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
-            return (
-                180 /
-                Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
-            );
-        };
 
         const addTile = (x: number, y: number, zoom: any): void => {
             if (!tiles[`${zoom},${x},${y}`]) {
@@ -214,14 +250,11 @@ class TiledWebMapSeries extends MapSeries {
                 y: chart.plotHeight
             });
 
-        let xStart = lon2tile(topLeft.lon, zoom),
-            xEnd = lon2tile(bottomRight.lon, zoom),
-            yStart = lat2tile(topLeft.lat, zoom),
-            yEnd = lat2tile(bottomRight.lat, zoom),
-            pos;
+        const startPos = this.lonLatToTile(topLeft, zoom),
+            endPos = this.lonLatToTile(bottomRight, zoom);
 
-        for (let x = xStart; x <= xEnd; x++) {
-            for (let y = yStart; y <= yEnd; y++) {
+        for (let x = startPos.x; x <= endPos.x; x++) {
+            for (let y = startPos.y; y <= endPos.y; y++) {
                 addTile(x, y, zoom);
             }
         }
