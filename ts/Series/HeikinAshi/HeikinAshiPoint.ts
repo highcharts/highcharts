@@ -40,9 +40,7 @@ const {
 
 class HeikinAshiPoint extends CandlestickPoint {
     // clone inheritence
-    public resolveColor(): void {
-        HLCPoint.prototype.resolveColor.call(this);
-    }
+    public resolveColor = HLCPoint.prototype.resolveColor;
 }
 
 /* *
