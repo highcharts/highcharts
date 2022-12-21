@@ -246,7 +246,7 @@ class ItemSeries extends PieSeries {
 
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
-                graphics: Array<SVGElement>,
+                graphics: Array<SVGElement|undefined>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
                 symbol: SymbolKey = (
@@ -317,14 +317,16 @@ class ItemSeries extends PieSeries {
                         attr.r = r;
                     }
 
-                    if (graphics[val]) {
-                        graphics[val].animate(attr);
+                    let graphic = graphics[val];
+
+                    if (graphic) {
+                        graphic.animate(attr);
                     } else {
                         if (pointAttr) {
                             extend(attr, pointAttr);
                         }
 
-                        graphics[val] = renderer
+                        graphic = renderer
                             .symbol(
                                 symbol,
                                 void 0,
@@ -338,12 +340,16 @@ class ItemSeries extends PieSeries {
                             .attr(attr)
                             .add(point.graphic);
                     }
-                    graphics[val].isActive = true;
-
+                    graphic.isActive = true;
+                    graphics[val] = graphic;
                     i++;
                 }
             }
             graphics.forEach((graphic, i): void => {
+                if (!graphic) {
+                    return;
+                }
+
                 if (!graphic.isActive) {
                     graphic.destroy();
                     graphics.splice(i, 1);

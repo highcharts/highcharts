@@ -1,0 +1,10 @@
+---
+name: Data labels as map markers
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

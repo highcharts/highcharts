@@ -133,7 +133,7 @@ class Point {
 
     public graphic?: SVGElement;
 
-    public graphics?: Array<SVGElement>;
+    public graphics?: Array<SVGElement|undefined>;
 
     public id: string = void 0 as any;
 
@@ -466,7 +466,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
+                if (item && item.element) {
                     item.destroy();
                 }
             });

@@ -57,6 +57,10 @@ class MapLineSeries extends MapSeries {
      *
      * @sample maps/demo/mapline-mappoint/
      *         Mapline and map-point chart
+     * @sample maps/demo/animated-mapline/
+     *         Mapline with CSS keyframe animation
+     * @sample maps/demo/flight-routes
+     *         Flight routes
      *
      * @extends      plotOptions.map
      * @product      highmaps
@@ -129,7 +133,7 @@ class MapLineSeries extends MapSeries {
  * */
 
 interface MapLineSeries {
-    colorProp: string;
+    colorProp: 'stroke';
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof MapLinePoint;
 }
