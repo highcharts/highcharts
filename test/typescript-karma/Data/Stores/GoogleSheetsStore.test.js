@@ -11,7 +11,7 @@ test('GoogleDataStore', function (assert) {
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     });
 
-    const done = assert.async(2);
+    const done = assert.async(2); // event + promise
 
     registerStoreEvents(datastore, registeredEvents, assert);
 
@@ -64,7 +64,7 @@ test('GoogleDataStore, bad spreadsheetkey', function (assert) {
         googleSpreadsheetKey: 'thisisnotaworkingspreadsheet'
     });
 
-    const done = assert.async(2);
+    const done = assert.async(2); // event + promise
 
     registerStoreEvents(datastore, registeredEvents, assert);
 
