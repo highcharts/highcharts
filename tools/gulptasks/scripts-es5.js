@@ -23,7 +23,7 @@ const gulp = require('gulp');
 function task() {
 
     const argv = require('yargs').argv;
-    const buildTool = require('../build-es5');
+    const buildTool = require('../build');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
@@ -38,7 +38,7 @@ function task() {
                     null
             ),
             type: (argv.type || null),
-            output: './code/es5'
+            output: './code/es5/'
         });
 
         logLib.message('Generating code...');
