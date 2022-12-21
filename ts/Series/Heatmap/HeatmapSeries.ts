@@ -497,7 +497,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public init(): void {
-        Series.prototype.init.apply(this, arguments);
+        super.init.apply(this, arguments);
 
         const options = this.options;
 
@@ -660,7 +660,7 @@ class HeatmapSeries extends ScatterSeries {
     public setClip(animation?: (boolean|AnimationOptions)): void {
         const { chart, markerGroup } = this;
 
-        Series.prototype.setClip.apply(this, arguments);
+        super.setClip();
         if (
             markerGroup &&
             (this.options.clip !== false || animation)

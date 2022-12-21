@@ -85,7 +85,7 @@ class HeatmapPoint extends ScatterPoint {
             delete this.color;
         }
 
-        super.applyOptions.call(this, options, x);
+        super.applyOptions(options, x);
 
         this.formatPrefix = this.isNull || this.value === null ?
             'null' : 'point';
