@@ -213,7 +213,7 @@ class GoogleSheetsStore extends DataStore {
                     if (enablePolling) {
                         setTimeout(
                             (): Promise<this> => store.load(),
-                            dataRefreshRate * 1000
+                            Math.max(dataRefreshRate || 0, 1) * 1000
                         );
                     }
                 })

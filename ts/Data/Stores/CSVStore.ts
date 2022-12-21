@@ -90,7 +90,7 @@ class CSVStore extends DataStore {
         this.converter = converter || new CSVConverter(options);
 
         if (options.enablePolling) {
-            this.startPolling((options.dataRefreshRate || 1) * 1000);
+            this.startPolling(Math.max(options.dataRefreshRate || 0, 1) * 1000);
         }
     }
 
