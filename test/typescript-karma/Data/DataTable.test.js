@@ -164,7 +164,7 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return cell values of deleted column.'
     );
 
-    assert.ok(
+    assert.strictEqual(
         typeof table.getColumn('population'),
         'undefined',
         'Table should have removed column "population".'
@@ -558,6 +558,26 @@ QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
         isNaN(table.getColumnAsNumbers('test7', true)[0]),
         'Table should return column "test7" after conversion. (#2)'
     );
+
+});
+
+QUnit.test('DataTable.getRows', function (assert) {
+    const table = new DataTable();
+
+    try {
+        table.getRowObject(undefined, undefined, ['Non-Existing-Column']);
+        table.getRows(undefined, undefined, ['Non-Existing-Column']);
+        assert.ok(
+            true,
+            'Table should not break when accessing non-existing column'
+        );
+    }
+    catch (error) {
+        assert.notOk(
+            true,
+            'Table should not break when accessing non-existing column'
+        );
+    }
 
 });
 

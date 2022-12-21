@@ -989,6 +989,7 @@ class DataTable implements DataEvent.Emitter {
                     table.rowCount,
                     (rowIndex + rowCount)
                 ),
+                column: DataTable.Column,
                 row: DataTable.RowObject;
             i < iEnd;
             ++i, ++i2
@@ -1003,9 +1004,11 @@ class DataTable implements DataEvent.Emitter {
                 ++j
             ) {
                 columnName = columnNamesOrAliases[j];
-                row[columnName] = columns[
-                    (aliasMap[columnName] || columnName)
-                ][i];
+                column = columns[(aliasMap[columnName] || columnName)];
+
+                if (column) {
+                    row[columnName] = column[i];
+                }
             }
         }
 
@@ -1050,6 +1053,7 @@ class DataTable implements DataEvent.Emitter {
                     table.rowCount,
                     (rowIndex + rowCount)
                 ),
+                column: DataTable.Column,
                 columnName: string,
                 row: DataTable.Row;
             i < iEnd;
@@ -1058,7 +1062,11 @@ class DataTable implements DataEvent.Emitter {
             row = rows[i2] = new Array(columnNamesLength);
             for (let j = 0; j < columnNamesLength; ++j) {
                 columnName = columnNamesOrAliases[j];
-                row[j] = columns[(aliasMap[columnName] || columnName)][i];
+                column = columns[(aliasMap[columnName] || columnName)];
+
+                if (column) {
+                    row[j] = column[i];
+                }
             }
         }
 
