@@ -2631,10 +2631,7 @@ class Series {
             chart = series.chart,
             options = series.options,
             seriesMarkerOptions = options.marker,
-            markerGroup = (
-                (series as any)[series.specialGroup as any] ||
-                series.markerGroup
-            ),
+            markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
                 (seriesMarkerOptions as any).enabled,

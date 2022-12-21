@@ -52,10 +52,13 @@ declare module '../Core/Series/PointLike' {
 
 namespace ColorMapComposition {
 
+    // These properties can be set as both attributes and CSS properties
     interface ColorAttribsType {
         dashstyle?: DashStyleValue;
         fill?: ColorType;
         stroke?: ColorType;
+        'stroke-linecap'?: 'butt'|'round'|'square';
+        'stroke-linejoin'?: 'butt'|'round'|'square';
         'stroke-width'?: number;
     }
 
