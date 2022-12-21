@@ -24,7 +24,6 @@ import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type JSON from '../Core/JSON';
 
-import DataPromise from './DataPromise.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -1449,10 +1448,10 @@ class DataTable implements DataEvent.Emitter {
     public setModifier(
         modifier?: DataModifier,
         eventDetail?: DataEvent.Detail
-    ): DataPromise<this> {
+    ): Promise<this> {
         const table = this;
 
-        let promise: DataPromise<this>;
+        let promise: Promise<this>;
 
         table.emit({
             type: 'setModifier',
@@ -1466,7 +1465,7 @@ class DataTable implements DataEvent.Emitter {
         if (modifier) {
             promise = modifier.modify(table);
         } else {
-            promise = DataPromise
+            promise = Promise
                 .resolve(table)
                 .then((table): this => {
                     table.modified = table;

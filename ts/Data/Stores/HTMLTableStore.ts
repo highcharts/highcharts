@@ -25,17 +25,13 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -85,9 +81,6 @@ class HTMLTableStore extends DataStore {
     ) {
         super(table);
 
-        this.tableElement = null;
-
-
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.converter = converter || new HTMLTableConverter(
             this.options,
@@ -118,29 +111,9 @@ class HTMLTableStore extends DataStore {
      * The table element to create the store from. Is either supplied directly
      * or is fetched by an ID.
      */
-    public tableElement: (HTMLElement|null);
+    public tableElement?: HTMLElement;
 
     public tableID?: string;
-
-    /**
-     * Handles retrieving the HTML table by ID if an ID is provided
-     */
-    private fetchTable(): void {
-        const store = this,
-            { table: tableHTML } = store.options;
-
-        let tableElement: (HTMLElement|null);
-
-        if (typeof tableHTML === 'string') {
-            store.tableID = tableHTML;
-            tableElement = win.document.getElementById(tableHTML);
-        } else {
-            tableElement = tableHTML;
-            store.tableID = tableElement.id;
-        }
-
-        store.tableElement = tableElement;
-    }
 
     /**
      * Initiates creating the datastore from the HTML table
@@ -154,10 +127,8 @@ class HTMLTableStore extends DataStore {
      */
     public load(
         eventDetail?: DataEvent.Detail
-    ): DataPromise<this> {
+    ): Promise<this> {
         const store = this;
-
-        store.fetchTable();
 
         // If already loaded, clear the current rows
         store.table.deleteColumns();
@@ -168,6 +139,20 @@ class HTMLTableStore extends DataStore {
             table: store.table,
             tableElement: store.tableElement
         });
+
+        const { table: tableHTML } = store.options;
+
+        let tableElement: (HTMLElement|null);
+
+        if (typeof tableHTML === 'string') {
+            store.tableID = tableHTML;
+            tableElement = win.document.getElementById(tableHTML);
+        } else {
+            tableElement = tableHTML;
+            store.tableID = tableElement.id;
+        }
+
+        store.tableElement = tableElement || void 0;
 
         if (!store.tableElement) {
             const error =
@@ -180,7 +165,7 @@ class HTMLTableStore extends DataStore {
                 table: store.table
             });
 
-            return DataPromise.reject(new Error(error));
+            return Promise.reject(new Error(error));
         }
 
         store.converter.parse(
@@ -197,7 +182,7 @@ class HTMLTableStore extends DataStore {
             tableElement: store.tableElement
         });
 
-        return DataPromise.resolve(this);
+        return Promise.resolve(this);
     }
 
 }
@@ -227,10 +212,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on errors within HTMLTableDataStore
      */
-    export interface ErrorEvent extends DataStore.Event {
-        type: 'loadError';
-        error: (string|Error);
-    }
+    export type ErrorEvent = DataStore.ErrorEvent;
 
     /**
      * Options for exporting the store as an HTML table
@@ -248,8 +230,7 @@ namespace HTMLTableStore {
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
-    export interface LoadEvent extends DataStore.Event {
-        type: ('load'|'afterLoad');
+    export interface LoadEvent extends DataStore.LoadEvent {
         tableElement?: (HTMLElement|null);
     }
 

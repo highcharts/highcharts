@@ -25,17 +25,47 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataPromise from '../DataPromise.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import HU from '../../Core/HttpUtilities.js';
-const { ajax } = HU;
 import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface GoogleError {
+    error: {
+        code: number;
+        message: string;
+        status: string;
+        details?: unknown;
+    }
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function isGoogleError(
+    json: AnyRecord
+): json is GoogleError {
+    return (
+        typeof json === 'object' && json &&
+        typeof json.error === 'object' && json.error &&
+        typeof json.error.code === 'number' &&
+        typeof json.error.message === 'string' &&
+        typeof json.error.status === 'string'
+    );
+}
 
 /* *
  *
@@ -120,20 +150,24 @@ class GoogleSheetsStore extends DataStore {
      * */
 
     /**
+     * Loads data from a Google Spreadsheet.
+     *
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
+     *
+     * @return {Promise<this>}
+     * Same store instance with modified table.
      */
-    public load(eventDetail?: DataEvent.Detail): DataPromise<this> {
+    public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const store = this,
             {
                 dataRefreshRate,
                 enablePolling,
                 firstRowAsNames,
                 googleAPIKey,
-                googleSpreadsheetKey,
-                worksheet
+                googleSpreadsheetKey
             } = store.options,
-            url = GoogleSheetsStore.getFetchURL(
+            url = GoogleSheetsStore.buildFetchURL(
                 googleAPIKey,
                 googleSpreadsheetKey,
                 store.options
@@ -149,46 +183,52 @@ class GoogleSheetsStore extends DataStore {
             url
         });
 
-        ajax({
-            url,
-            dataType: 'json',
-            success: (json): void => {
-                store.converter.parse({
-                    firstRowAsNames,
-                    json: json as GoogleSheetsConverter.GoogleSpreadsheetJSON
-                });
-                store.table.setColumns(store.converter.getTable().getColumns());
+        return fetch(url)
+            .then((response): Promise<void> => response
+                .json()
+                .then((json): void => {
 
-                // Polling
-                if (enablePolling) {
-                    setTimeout(
-                        (): DataPromise<this> => store.load(),
-                        dataRefreshRate * 1000
+                    if (isGoogleError(json)) {
+                        throw new Error(json.error.message);
+                    }
+
+                    store.converter.parse({
+                        firstRowAsNames,
+                        json:
+                            json as GoogleSheetsConverter.GoogleSpreadsheetJSON
+                    });
+
+                    store.table.setColumns(
+                        store.converter.getTable().getColumns()
                     );
-                }
 
-                store.emit<GoogleSheetsStore.Event>({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table: store.table,
-                    url
-                });
-            },
-            error: (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void => {
+                    store.emit<GoogleSheetsStore.Event>({
+                        type: 'afterLoad',
+                        detail: eventDetail,
+                        table: store.table,
+                        url
+                    });
+
+                    // Polling
+                    if (enablePolling) {
+                        setTimeout(
+                            (): Promise<this> => store.load(),
+                            Math.max(dataRefreshRate || 0, 1) * 1000
+                        );
+                    }
+                })
+            )['catch']((error): Promise<void> => {
                 store.emit<GoogleSheetsStore.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table: store.table,
-                    xhr
+                    table: store.table
                 });
-            }
-        });
-
-        return DataPromise.resolve(this);
+                return Promise.reject(error);
+            })
+            .then((): this =>
+                store
+            );
     }
 
 }
@@ -209,18 +249,13 @@ namespace GoogleSheetsStore {
 
     export type Event = (ErrorEvent|LoadEvent);
 
-    export interface ErrorEvent extends DataStore.Event {
-        readonly type: 'loadError';
-        readonly error: (string|Error);
-        readonly xhr: XMLHttpRequest;
-    }
+    export type ErrorEvent = DataStore.ErrorEvent;
 
     export interface FetchURLOptions {
         onlyColumnNames?: boolean;
     }
 
-    export interface LoadEvent extends DataStore.Event {
-        readonly type: ('load'|'afterLoad');
+    export interface LoadEvent extends DataStore.LoadEvent {
         readonly url: string;
     }
 
@@ -255,7 +290,7 @@ namespace GoogleSheetsStore {
     /**
      * @private
      */
-    export function getFetchURL(
+    export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
         options: Partial<(FetchURLOptions|Options)> = {}
@@ -265,7 +300,7 @@ namespace GoogleSheetsStore {
             (
                 options.onlyColumnNames ?
                     'A1:Z1' :
-                    getRange(options)
+                    buildQueryRange(options)
             ) +
             '?alt=json' +
             (
@@ -283,7 +318,7 @@ namespace GoogleSheetsStore {
     /**
      * @private
      */
-    export function getRange(
+    export function buildQueryRange(
         options: Partial<Options> = {}
     ): string {
         const {

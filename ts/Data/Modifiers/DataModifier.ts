@@ -25,7 +25,6 @@ import type DataTable from '../DataTable';
 import type JSON from '../../Core/JSON';
 import type ModifierType from './ModifierType';
 
-import DataPromise from '../DataPromise.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -263,9 +262,9 @@ abstract class DataModifier implements DataEvent.Emitter {
     public modify<T extends DataTable>(
         table: T,
         eventDetail?: DataEvent.Detail
-    ): DataPromise<T> {
+    ): Promise<T> {
         const modifier = this;
-        return new DataPromise((resolve, reject): void => {
+        return new Promise((resolve, reject): void => {
             if (table.modified === table) {
                 table.modified = table.clone(false, eventDetail);
             }

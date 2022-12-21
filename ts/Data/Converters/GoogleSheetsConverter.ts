@@ -211,6 +211,9 @@ namespace GoogleSheetsConverter {
         json?: GoogleSpreadsheetJSON;
     }
 
+    /**
+     * Googles Spreasheet format
+     */
     export interface GoogleSpreadsheetJSON extends JSON.Object {
         majorDimension: ('COLUMNS'|'ROWS');
         values: Array<Array<JSON.Primitive>>;

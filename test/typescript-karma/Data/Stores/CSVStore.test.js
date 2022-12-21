@@ -1,6 +1,5 @@
-import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js'
-import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import { registerStoreEvents, testExportedDataTable } from './utils.js';
 
 const { test, only } = QUnit;
 
@@ -148,7 +147,6 @@ test('CSVStore from URL', function (assert) {
         enablePolling: true
     });
 
-
     registerStoreEvents(datastore, registeredEvents, assert)
 
     let pollNumber = 0;
@@ -182,8 +180,8 @@ test('CSVStore from URL', function (assert) {
         pollNumber++;
 
         // Stop polling
-        if (pollNumber > 1) {
-            datastore.options.enablePolling = false;
+        if (pollNumber > 2) {
+            datastore.stopPolling();
         }
 
         function getExpectedEvents(){
@@ -200,8 +198,7 @@ test('CSVStore from URL', function (assert) {
         assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
         assert.ok(e.csv, 'AfterLoad event has CSV attached')
 
-        doneLoading()
-        ;
+        doneLoading();
     });
 
     datastore.on('load', (e) => {
@@ -221,9 +218,6 @@ test('CSVStore from URL', function (assert) {
 
 // TODO: test amount of retries, event orders
 test('CSVStore error', function(assert){
-
-    const registeredEvents = [];
-
     const datastore = new CSVStore(undefined, {
         csvURL: ''
     });
