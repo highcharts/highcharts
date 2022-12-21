@@ -38,13 +38,6 @@ const {
  *
  * */
 
-interface ColorAttribsType {
-    dashstyle?: DashStyleValue;
-    fill?: ColorType;
-    stroke?: ColorType;
-    'stroke-width'?: number;
-}
-
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         dataLabelOnNull?: boolean;
@@ -58,6 +51,13 @@ declare module '../Core/Series/PointLike' {
  * */
 
 namespace ColorMapComposition {
+
+    interface ColorAttribsType {
+        dashstyle?: DashStyleValue;
+        fill?: ColorType;
+        stroke?: ColorType;
+        'stroke-width'?: number;
+    }
 
     /* *
      *

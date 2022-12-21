@@ -327,8 +327,6 @@ const displayTime = time => {
     };
     setUpInputs();
 
-    if (!window.karma) { // CI tests
-        play();
-    }
+    setTimeout(play, 100);
 
 })();
