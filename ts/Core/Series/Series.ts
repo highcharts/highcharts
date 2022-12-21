@@ -2636,10 +2636,7 @@ class Series {
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
-            markerGroup = (
-                (series as any)[series.specialGroup as any] ||
-                series.markerGroup
-            ),
+            markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
                 (seriesMarkerOptions as any).enabled,
