@@ -196,7 +196,7 @@ if (window.Promise) {
                     status: 200,
                     statusText: 'OK',
                     type: 'basic',
-                    url,
+                    url: url,
                     json: function () {
                         return localData;
                     },
