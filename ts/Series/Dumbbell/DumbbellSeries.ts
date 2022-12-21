@@ -231,9 +231,9 @@ class DumbbellSeries extends AreaRangeSeries {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
 
-        if ((pointTop as any) < 0) {
+        if (pointTop < 0) {
             pointTop = 0;
-        } else if ((pointTop as any) >= yAxis.len) {
+        } else if (pointTop >= yAxis.len) {
             pointTop = yAxis.len;
         }
 
@@ -280,7 +280,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 'L',
                 point.plotX,
                 pointBottom
-            ]] as any, connectorWidth, 'ceil')
+            ]], connectorWidth, 'ceil')
         };
 
         if (!chart.styledMode) {
