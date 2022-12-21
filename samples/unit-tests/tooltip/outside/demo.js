@@ -30,27 +30,27 @@ QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
     );
 });
 
-QUnit.test('Outside tooltip styling', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            width: 400,
-            height: 400,
-            style: {
-                fontFamily: 'Papyrus',
-                zIndex: 1334
-            }
-        },
-        tooltip: {
-            outside: true
-        },
-        series: [
-            {
-                data: [1, 3, 2, 4]
-            }
-        ]
-    });
-
-    var point = chart.series[0].points[0];
+QUnit.test('Outside tooltip styling and correct position', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                width: 400,
+                height: 400,
+                style: {
+                    fontFamily: 'Papyrus',
+                    zIndex: 1334
+                }
+            },
+            tooltip: {
+                outside: true
+            },
+            series: [
+                {
+                    data: [1, 3, 2, 4]
+                }
+            ]
+        }),
+        point = chart.series[0].points[0],
+        tooltip = chart.tooltip;
 
     // Set hoverPoint
     point.onMouseOver();
@@ -80,40 +80,6 @@ QUnit.test('Outside tooltip styling', function (assert) {
         '1881',
         '#11494: Setting tooltip.style.zIndex should also work'
     );
-});
-
-QUnit.test('Tooltip with default positioner and set outside true on correct position (#16944)', assert => {
-    const chart = Highcharts.chart('container', {
-            chart: {
-                width: 400,
-                height: 400
-            },
-            tooltip: {
-                padding: 0,
-                borderWidth: 0
-            },
-            series: [{
-                data: [5, 3, 4, 7, 2]
-            }]
-        }),
-        point = chart.series[0].points[1],
-        tooltip = chart.tooltip;
-
-    tooltip.refresh(point);
-
-    assert.strictEqual(
-        Math.round(chart.plotLeft + point.plotX - tooltip.label.width / 2),
-        Math.round(tooltip.now.anchorX - tooltip.label.width / 2),
-        'Tooltip position should appear at point with default positioner'
-    );
-
-    chart.update({
-        tooltip: {
-            outside: true
-        }
-    });
-
-    tooltip.refresh(point);
 
     const tooltipAbsolute = tooltip.now.x + tooltip.now.anchorX,
         pointerLeft = chart.pointer.getChartPosition().left,
@@ -122,7 +88,7 @@ QUnit.test('Tooltip with default positioner and set outside true on correct posi
     assert.strictEqual(
         Math.round(tooltipAbsolute),
         Math.round(pointX),
-        'Tooltip position should appear at point with outside true'
+        '#16944: Tooltip position should appear at point with outside true'
     );
 
     chart.update({
