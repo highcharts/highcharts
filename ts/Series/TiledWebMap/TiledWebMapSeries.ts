@@ -169,6 +169,11 @@ class TiledWebMapSeries extends MapSeries {
             { zoom } = mapView,
             zoomCeil = Math.ceil(zoom);
 
+        if (mapView.projection) {
+            // Always true for tile maps
+            mapView.projection.hasCoordinates = true;
+        }
+
         if (!transformGroups[zoomCeil]) {
             transformGroups[zoomCeil] = chart.renderer.g().add(this.group);
         }
@@ -185,7 +190,8 @@ class TiledWebMapSeries extends MapSeries {
             if (!tiles[`${zoom},${x},${y}`]) {
                 let url: string;
 
-                const s: string = provider.subdomain || '';
+                const s: string = provider.subdomain || '',
+                    apiKey = provider.apiKey || '';
 
                 if (provider.url) {
                     url = provider.url
