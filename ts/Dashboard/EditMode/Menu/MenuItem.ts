@@ -185,7 +185,8 @@ class MenuItem {
 namespace MenuItem {
     export interface Options {
         id: string;
-        type?: string;
+        type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
+        'toggle'|'text'|'textarea'|'verticalSeparator';
         text?: string;
         className?: string;
         events?: Record<Event['type'], Function>;

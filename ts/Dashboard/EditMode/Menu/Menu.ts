@@ -4,6 +4,7 @@ import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
+import MenuItemBindings from './MenuItemBindings.js';
 
 const {
     createElement,
@@ -17,20 +18,7 @@ class Menu {
     *
     * */
 
-    public static items: Record<string, MenuItem.Options> = {
-        horizontalSeparator: {
-            id: 'horizontalSeparator',
-            type: 'horizontalSeparator',
-            text: '',
-            className: EditGlobals.classNames.menuHorizontalSeparator
-        },
-        verticalSeparator: {
-            id: 'verticalSeparator',
-            type: 'verticalSeparator',
-            text: '',
-            className: EditGlobals.classNames.menuVerticalSeparator
-        }
-    };
+    public static items = MenuItemBindings;
 
     /* *
     *
@@ -86,7 +74,7 @@ class Menu {
 
     // itemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, MenuItem.Options>,
+        itemsSchemas: any,
         activeItems?: boolean
     ): void {
         const menu = this,

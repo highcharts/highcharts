@@ -65,7 +65,8 @@ const EditGlobals: EditGlobals = {
         sidebarCloseButton: PREFIX + 'close-btn',
         editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper',
         editSidebarRight: PREFIX + 'sidebar-right',
-        editSidebarRightShow: PREFIX + 'sidebar-right-show'
+        editSidebarRightShow: PREFIX + 'sidebar-right-show',
+        viewFullscreen: PREFIX + 'view-fullscreen'
     },
     lang: {
         editMode: 'Edit mode',
@@ -80,7 +81,8 @@ const EditGlobals: EditGlobals = {
         confirmDestroyRow: 'Do you want to destroy the row?',
         confirmDestroyCell: 'Do you want to destroy the cell?',
         confirmButton: 'Confirm',
-        cancelButton: 'Cancel'
+        cancelButton: 'Cancel',
+        viewFullscreen: 'View in full screen'
     }
 };
 
@@ -166,6 +168,7 @@ namespace EditGlobals {
         confirmDestroyCell?: string;
         confirmButton?: string;
         cancelButton?: string;
+        viewFullscreen?: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';

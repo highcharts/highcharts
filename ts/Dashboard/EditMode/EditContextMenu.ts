@@ -25,13 +25,13 @@ class EditContextMenu extends Menu {
         items: ['editMode']
     };
 
-    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
+    public static items = merge(Menu.items, {
         editMode: {
             id: 'editMode',
             type: 'toggle',
             text: 'Edit mode',
             events: {
-                click: function (this: MenuItem, e: any): void {
+                click: function (this: MenuItem): void {
                     (this.menu as EditContextMenu).editMode.onEditModeToggle();
                 }
             }
