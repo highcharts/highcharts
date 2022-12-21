@@ -327,6 +327,8 @@ const displayTime = time => {
     };
     setUpInputs();
 
-    setTimeout(play, 100);
+    if (!window.karma) {
+        setTimeout(play, 100);
+    }
 
 })();
