@@ -56,6 +56,8 @@ namespace ColorMapComposition {
         dashstyle?: DashStyleValue;
         fill?: ColorType;
         stroke?: ColorType;
+        'stroke-linecap'?: 'butt'|'round'|'square';
+        'stroke-linejoin'?: 'butt'|'round'|'square';
         'stroke-width'?: number;
     }
 
