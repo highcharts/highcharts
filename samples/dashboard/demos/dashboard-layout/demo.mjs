@@ -449,82 +449,6 @@ console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
-/* ==== DASHBOARD BUTTONS ==== */
-/*
-  Bind export dashboard btn
-*/
-/*Highcharts.addEvent(
-    document.getElementById('export-dashboard'),
-    'click',
-    function () {
-        dashboard.exportLocal();
-    }
-);*/
-
-/*
-  Bind delete dashboard btn
-*/
-/*Highcharts.addEvent(
-    document.getElementById('delete-dashboard'),
-    'click',
-    function () {
-        dashboard.destroy();
-    }
-);*/
-
-/*
-  Bind import dashboard btn
-*/
-/*Highcharts.addEvent(
-    document.getElementById('import-dashboard'),
-    'click',
-    function () {
-        dashboard = Dashboard.importLocal();
-        console.log('Imported dashboard: ', dashboard);
-    }
-);*/
-
-/* ==== LAYOUTS BUTTONS ==== */
-/*
-  Bind export layout btn
-*/
-/*
-Highcharts.addEvent(
-    document.getElementById('export-layout'),
-    'click',
-    function () {
-        console.log('Export layout');
-        exportedLayoutId = dashboard.layouts[0].options.id;
-        dashboard.layouts[0].exportLocal();
-    }
-);*/
-
-/*
-  Bind delete layout btn
-*/
-/*
-Highcharts.addEvent(
-    document.getElementById('delete-layout'),
-    'click',
-    function () {
-        console.log('Delete layout');
-        dashboard.layouts[0].destroy();
-    }
-);*/
-
-/*
-  Bind import layout btn
-*/
-/*
-Highcharts.addEvent(
-    document.getElementById('import-layout'),
-    'click',
-    function () {
-        const layout = dashboard.importLayoutLocal(exportedLayoutId);
-        console.log('Imported layout: ', layout);
-    }
-);*/
-
 
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
@@ -593,25 +517,3 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         ...chartDemo
     }]
 });
-
-// console.log(dashboardBootstrap);
-
-// console.log(dashboardLayout);
-
-/*
- * Destroy resizer
- */
-/*Highcharts.addEvent(
-    document.getElementById('destroy-resizer'),
-    'click',
-    function () {
-        dashboard.layouts.forEach(layout => {
-            layout.resizer.destroy();
-            console.log(layout.resizer);
-        });
-        dashboardLayout.layouts.forEach(layout => {
-            layout.resizer.destroy();
-            console.log(layout.resizer);
-        });
-    }
-);*/
