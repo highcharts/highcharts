@@ -31,6 +31,7 @@ Gulp.task(
         'scripts-js',
         'scripts-code',
         'scripts-compile',
+        'scripts-es5',
         'dist-clean',
         'dist-copy',
         'dist-examples',
