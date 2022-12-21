@@ -207,13 +207,16 @@ namespace Serializable {
      * @param {Serializable} classPrototype
      * Class to register.
      */
-    export function registerClassPrototype<T extends AnyRecord, TJSON extends JSON<string>>(
+    export function registerClassPrototype<
+        T extends AnyRecord, TJSON extends JSON<string>>(
         $class: TJSON['$class'],
         classPrototype: Serializable<T, TJSON>
     ): void {
 
         if (classRegistry[$class]) {
-            throw new Error(`A serializer for '${$class}' is already registered.`);
+            throw new Error(
+                'A serializer for \'' + $class + '\' is already registered.'
+            );
         }
 
         classRegistry[$class] = classPrototype;
@@ -222,24 +225,24 @@ namespace Serializable {
     /**
      * Registers helper functions for the given JSON $class.
      *
-     * @function Serializable.registerSerializer
-     *
-     * @param {string} $class
-     * JSON $class to register for.
+     * @function Serializable.registerHelper
      *
      * @param {Helper} helperFunctions
      * Helper functions to register.
      */
-    export function registerSerializer<T extends AnyRecord, TJSON extends JSON<string>>(
-        $class: TJSON['$class'],
+    export function registerHelper<
+        T extends AnyRecord, TJSON extends JSON<string>>(
         helperFunctions: Helper<T, TJSON>
     ): void {
 
-        if (helperRegistry[$class]) {
-            throw new Error(`A serializer for '${$class}' is already registered.`);
+        if (helperRegistry[helperFunctions.$class]) {
+            throw new Error(
+                'A serializer for \'' + helperFunctions.$class +
+                '\' is already registered.'
+            );
         }
 
-        helperRegistry[$class] = helperFunctions;
+        helperRegistry[helperFunctions.$class] = helperFunctions;
     }
 
     export function toJSON<T extends AnyRecord, TJSON extends JSON<string>>(

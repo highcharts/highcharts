@@ -64,6 +64,7 @@ class Bindings {
                     );
                     break;
                 case 'Highcharts':
+
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -160,6 +161,7 @@ class Bindings {
         const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
     }
+
 }
 
 namespace Bindings {

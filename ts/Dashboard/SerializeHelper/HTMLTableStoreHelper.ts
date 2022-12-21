@@ -21,8 +21,10 @@
 
 import type DataConverter from '../../Data/Converters/DataConverter';
 import type DataStore from '../../Data/Stores/DataStore';
+import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
+import DataConverterHelper from './DataConverterHelper.js';
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
 import U from '../../Core/Utilities.js';
@@ -46,8 +48,10 @@ const { merge } = U;
 function fromJSON(
     json: HTMLTableStoreHelper.JSON
 ): HTMLTableStore {
-    const table = DataTableHelper.fromJSON(json.table),
-        store = new HTMLTableStore(table, json.options);
+    const converter = // HTMLTableConverterHelper.fromJSON(json.converter),
+            DataConverterHelper.fromJSON(json.converter) as any,
+        table = DataTableHelper.fromJSON(json.table),
+        store = new HTMLTableStore(table, json.options, converter);
 
     merge(true, store.metadata, json.metadata);
 
@@ -84,6 +88,7 @@ function toJSON(
 ): HTMLTableStoreHelper.JSON {
     const json: HTMLTableStoreHelper.JSON = {
             $class: 'Data.HTMLTableStore',
+            converter: DataConverterHelper.toJSON(obj.converter),
             metadata: obj.metadata,
             options: {},
             table: DataTableHelper.toJSON(obj.table)
@@ -126,12 +131,13 @@ namespace HTMLTableStoreHelper {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.HTMLTableStore'> {
+        converter: DataConverterHelper.JSON;
         metadata: DataStore.Metadata;
         options: OptionsJSON;
         table: DataTableHelper.JSON;
     }
 
-    export interface OptionsJSON extends Partial<DataConverter.Options> {
+    export interface OptionsJSON extends JSON.Object, Partial<HTMLTableStore.Options> {
         table?: string;
     }
 
