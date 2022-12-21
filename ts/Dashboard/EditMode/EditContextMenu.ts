@@ -44,12 +44,15 @@ class EditContextMenu extends Menu {
     *
     * */
     constructor(
+        parentElement: HTMLElement,
+        options: EditContextMenu.Options,
         editMode: EditMode,
-        options?: EditContextMenu.Options|undefined
+        parent?: any
     ) {
         super(
             editMode.dashboard.container,
-            merge(EditContextMenu.defaultOptions, options || {})
+            merge(EditContextMenu.defaultOptions, options || {}),
+            editMode
         );
 
         this.editMode = editMode;

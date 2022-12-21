@@ -73,7 +73,7 @@ class Fullscreen {
     public open(): void {
         // eslint-disable-next-line no-console
         console.log('open');
-        this.isOpen = false;
+        this.isOpen = true;
     }
     /**
      * Stops displaying the dashboard in fullscreen mode.
@@ -81,7 +81,7 @@ class Fullscreen {
     public close(): void {
         // eslint-disable-next-line no-console
         console.log('close');
-        this.isOpen = true;
+        this.isOpen = false;
     }
 
 }

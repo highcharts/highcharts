@@ -480,6 +480,7 @@ class Sidebar {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: contentItems
                 },
+                this.editMode,
                 sidebar
             );
 
@@ -844,6 +845,7 @@ class Sidebar {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: items
                 },
+                this.editMode,
                 sidebar
             );
 

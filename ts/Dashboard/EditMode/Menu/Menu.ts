@@ -1,4 +1,5 @@
 import type CSSJSONObject from '../../CSSJSONObject';
+import type EditMode from '../EditMode';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
@@ -28,6 +29,7 @@ class Menu {
     constructor(
         parentElement: HTMLDOMElement,
         options: Menu.Options,
+        editMode: EditMode,
         parent?: any
     ) {
         this.parentElement = parentElement;
@@ -35,6 +37,7 @@ class Menu {
         this.activeItems = [];
         this.options = options;
         this.items = {};
+        this.editMode = editMode;
 
         if (parent) {
             this.parent = parent;
@@ -49,6 +52,7 @@ class Menu {
     *
     * */
     public parentElement: HTMLDOMElement;
+    public editMode: EditMode;
     public options: Menu.Options;
     public container: HTMLDOMElement;
     public isVisible: boolean;
