@@ -43,6 +43,14 @@ body {
     /* transition: 0.5s; */
 }
 
+.hd-cell img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
 .highcharts-dashboard.hd-edit-enabled.hd-edit-cell-highlight-active {
     pointer-events: none;
 
