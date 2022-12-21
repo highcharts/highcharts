@@ -203,13 +203,6 @@ class HTMLTableConverter extends DataConverter {
                 column = columns[columnName],
                 columnLength = column.length;
 
-            // const columnMeta = store.whatIs(columnName);
-            // let columnDataType;
-
-            // if (columnMeta) {
-            //     columnDataType = columnMeta.dataType;
-            // }
-
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
                 let cellValue = column[rowIndex];
 
@@ -217,10 +210,8 @@ class HTMLTableConverter extends DataConverter {
                     rowArray[rowIndex] = [];
                 }
 
-                // Handle datatype
-                // if(columnDataType && typeof cellValue !== columnDataType) {
-                //     do something?
-                // }
+                // Alternative: Datatype from HTML attribute with
+                // store.whatIs(columnName)
                 if (
                     !(
                         typeof cellValue === 'string' ||
