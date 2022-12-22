@@ -43,7 +43,8 @@ const {
     pick,
     addEvent,
     arrayMax,
-    arrayMin
+    arrayMin,
+    relativeLength
 } = U;
 
 /* *
@@ -236,19 +237,19 @@ class FlowMapSeries extends MapLineSeries {
         topCorner: [number, number],
         options: MarkerEndOptions
     ): SVGPath {
-        let width = options.width || 0;
+        let width = relativeLength(
+            options.width || 0,
+            this.getLength(
+                rCorner[0] - lCorner[0],
+                rCorner[1] - lCorner[1]
+            )
+        );
+
         const type = options.markerType || 'arrow',
             [edgeX, edgeY] = this.normalize(
                 rCorner[0] - lCorner[0],
                 rCorner[1] - lCorner[1]
             );
-
-        if (typeof width === 'string') {
-            const percentage = parseInt(width, 10);
-            width = this.getLength(
-                rCorner[0] - lCorner[0],
-                rCorner[1] - lCorner[1]) * percentage / 100;
-        }
 
         let path: SVGPath = [];
 
@@ -548,11 +549,10 @@ class FlowMapSeries extends MapLineSeries {
         // An offset makes room for arrows if they are specified.
         if (offset) {
             // Prepare offset if it's a percentage by converting to number.
-            if (typeof offset === 'string') {
-                const percentage = parseInt(offset, 10);
-
-                offset = scaledWeight * percentage * 4 / 100;
-            }
+            offset = relativeLength(
+                offset,
+                scaledWeight * 4
+            );
 
             let dX = toX - fromX,
                 dY = toY - fromY;
