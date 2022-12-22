@@ -26,6 +26,7 @@ import type JSON from '../Core/JSON';
 
 export interface CSSJSONObject extends CSSObject, JSON.Object {
     fill?: ColorString;
+    stroke?: string;
 }
 
 /* *

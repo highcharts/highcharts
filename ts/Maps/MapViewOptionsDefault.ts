@@ -76,8 +76,13 @@ const defaultOptions: MapViewOptions = {
      * number signifies pixels, and a percentage is relative to the plot area
      * size.
      *
+     * An array sets individual padding for the sides in the order [top, right,
+     * bottom, left].
+     *
      * @sample {highmaps} maps/chart/plotbackgroundcolor-color
      *         Visible plot area and percentage padding
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
+     *         Padding for individual sides
      * @type  {number|string|Array<number|string>}
      */
     padding: 0,

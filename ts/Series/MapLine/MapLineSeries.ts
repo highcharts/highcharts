@@ -133,7 +133,7 @@ class MapLineSeries extends MapSeries {
  * */
 
 interface MapLineSeries {
-    colorProp: string;
+    colorProp: 'stroke';
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof MapLinePoint;
 }
