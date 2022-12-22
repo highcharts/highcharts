@@ -1206,7 +1206,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    borderColor: Palette.highlightColor80,
+    borderColor: Palette.highlightColor60,
 
     /**
      * The pixel width of the outer chart border.
@@ -1280,7 +1280,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @see In styled mode, a plot background image can be set with the
      *      `.highcharts-plot-background` class and a [custom pattern](
-     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+     *      https://www.highcharts.com/docs/chart-design-and-style/
+     *      gradients-shadows-and-patterns).
      *
      * @sample {highcharts} highcharts/chart/plotbackgroundimage/
      *         Skies
@@ -1306,7 +1307,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    plotBorderColor: Palette.neutralColor20
+    plotBorderColor: Palette.neutralColor10
 
 };
 

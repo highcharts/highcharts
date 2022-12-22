@@ -874,7 +874,7 @@ const navigation: NavigationOptions = {
      */
     menuStyle: {
         /** @ignore-option */
-        border: `1px solid ${Palette.neutralColor40}`,
+        border: `1px solid ${Palette.neutralColor10}`,
         /** @ignore-option */
         background: Palette.backgroundColor,
         /** @ignore-option */
@@ -922,12 +922,12 @@ const navigation: NavigationOptions = {
      *         Bold text on hover
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"background": "#335cad", "color": "#ffffff"}
+     * @default {"background": "#050b74", "color": "#ffffff"}
      * @since   2.0
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: Palette.highlightColor80,
+        background: Palette.highlightColor100,
         /** @ignore-option */
         color: Palette.backgroundColor
     }

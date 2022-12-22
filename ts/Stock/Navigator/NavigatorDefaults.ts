@@ -198,7 +198,7 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: Palette.neutralColor40
+        borderColor: Palette.neutralColor60
     },
 
     /**
@@ -214,9 +214,9 @@ const NavigatorDefaults: NavigatorOptions = {
      *         Blue, semi transparent mask
      *
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default rgba(102,133,194,0.3)
+     * @default rgba(122,133,194,0.2)
      */
-    maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
+    maskFill: color(Palette.highlightColor80).setOpacity(0.2).get(),
 
     /**
      * The color of the line marking the currently zoomed area in the
@@ -228,7 +228,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #cccccc
      */
-    outlineColor: Palette.neutralColor20,
+    outlineColor: Palette.neutralColor40,
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -472,7 +472,7 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: Palette.neutralColor40
+                color: Palette.neutralColor60
             },
 
             x: 3,

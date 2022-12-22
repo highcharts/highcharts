@@ -401,7 +401,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
-    maxColor: Palette.highlightColor100,
+    maxColor: Palette.highlightColor60,
 
     /**
      * Color stops for the gradient of a scalar color axis. Use this in

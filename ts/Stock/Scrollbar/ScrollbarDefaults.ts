@@ -79,7 +79,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      */
-    buttonBorderRadius: 0,
+    buttonBorderRadius: 2,
 
     /**
      * Enable or disable the scrollbar.
@@ -160,7 +160,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBorderColor: Palette.neutralColor20,
+    barBorderColor: Palette.neutralColor40,
 
     /**
      * The color of the small arrow inside the scrollbar buttons.

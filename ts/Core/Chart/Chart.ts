@@ -1190,10 +1190,11 @@ class Chart {
 
         // Default style
         const style = name === 'title' ? {
-            color: Palette.neutralColor80,
+            color: Palette.neutralColor100,
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
-            color: Palette.neutralColor60
+            color: Palette.neutralColor80,
+            fontWeight: 'normal'
         };
 
         // Merge default options with explicit options
@@ -1291,7 +1292,7 @@ class Chart {
                 ),
                 verticalAlign = titleOptions.verticalAlign || 'top',
                 offset = key === 'title' ?
-                    verticalAlign === 'top' ? -3 : 0 :
+                    verticalAlign === 'top' ? -1 : 0 :
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 

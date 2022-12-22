@@ -48,6 +48,7 @@ export interface CSSObject {
     borderRadius?: number|string;
     borderWidth?: number;
     border?: string|0;
+    borderTop?: string|0;
     'border-radius'?: string;
     bottom?: string;
     boxShadow?: string;
@@ -89,7 +90,7 @@ export interface CSSObject {
     position?: 'absolute'|'fixed'|'relative';
     right?: string;
     rotation?: number;
-    stroke?: ColorType;
+    stroke?: ColorString;
     'stroke-width'?: (number|string);
     strokeWidth?: CSSObject['stroke-width'];
     'text-align'?: AlignValue;

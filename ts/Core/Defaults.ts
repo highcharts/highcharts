@@ -1284,7 +1284,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: Palette.neutralColor40,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The border corner radius of the legend.
@@ -1296,7 +1296,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          */
-        borderRadius: 0,
+        borderRadius: 2,
 
         /**
          * Options for the paging or navigation appearing when the legend is
@@ -1495,7 +1495,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            fontWeight: 'bold',
+            fontWeight: 'normal',
             /**
              * @ignore
              */
@@ -1522,7 +1522,11 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor100
+            color: Palette.neutralColor100,
+            /**
+             * @ignore
+             */
+            fontWeight: 'bold'
         },
 
         /**
@@ -2297,7 +2301,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          */
-        borderRadius: 3,
+        borderRadius: 2,
 
         /**
          * For series on datetime axes, the date format in the tooltip's
@@ -2523,7 +2527,7 @@ const defaultOptions: Options = {
          */
         backgroundColor: color(Palette.neutralColor3)
             // @todo: Disallow undefined as input for colors
-            .setOpacity(0.85).get() as any,
+            .setOpacity(1).get() as any,
 
         /**
          * The pixel width of the tooltip border.
@@ -2712,7 +2716,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: Palette.neutralColor40,
+            color: Palette.neutralColor20,
             /** @internal */
             fontSize: '9px'
         },

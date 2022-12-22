@@ -1056,7 +1056,7 @@ namespace AxisDefaults {
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '11px'
+                fontSize: '12px'
             }
         },
 
@@ -1945,7 +1945,9 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60
+                color: Palette.neutralColor60,
+                /** @internal */
+                fontWeight: 'normal'
             }
         },
 
@@ -2094,9 +2096,9 @@ namespace AxisDefaults {
          *         Black tick marks on Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #999999
+         * @default #F0F0F0
          */
-        minorTickColor: Palette.neutralColor40,
+        minorTickColor: Palette.neutralColor5,
 
         /**
          * The color of the line marking the axis itself.
@@ -2116,9 +2118,9 @@ namespace AxisDefaults {
          *         A red line on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
+         * @default #DEDEDE
          */
-        lineColor: Palette.highlightColor20,
+        lineColor: Palette.highlightColor10,
 
         /**
          * The width of the line marking the axis itself.
@@ -2155,9 +2157,9 @@ namespace AxisDefaults {
          *         Green lines
          *
          * @type    {Highcharts.ColorType}
-         * @default #e6e6e6
+         * @default #f0f0f2
          */
-        gridLineColor: Palette.neutralColor10,
+        gridLineColor: Palette.neutralColor5,
 
         /**
          * The width of the grid lines extending the ticks across the plot area.
@@ -2217,9 +2219,9 @@ namespace AxisDefaults {
          *         Formatted ticks on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
+         * @default #dedede
          */
-        tickColor: Palette.highlightColor20
+        tickColor: Palette.highlightColor10
 
         // tickWidth: 1
     };
@@ -3078,7 +3080,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor100,
+                color: Palette.neutralColor80,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */

@@ -787,9 +787,9 @@ namespace Exporting {
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend<CSSObject>({
-                    MozBoxShadow: '3px 3px 10px #888',
-                    WebkitBoxShadow: '3px 3px 10px #888',
-                    boxShadow: '3px 3px 10px #888'
+                    MozBoxShadow: '3px 3px 10px rgba(0,0,0,0.2)',
+                    WebkitBoxShadow: '3px 3px 10px rgba(0,0,0,0.2)',
+                    boxShadow: '3px 3px 10px rgba(0,0,0,0.2)'
                 }, navOptions.menuStyle as any));
             }
 
@@ -848,7 +848,10 @@ namespace Exporting {
                         element = createElement(
                             'hr',
                             void 0,
-                            void 0,
+                            {
+                                border: 0,
+                                borderTop: '1px solid #dedede'
+                            },
                             innerMenu
                         );
 

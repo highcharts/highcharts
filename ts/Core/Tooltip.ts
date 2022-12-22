@@ -364,16 +364,6 @@ class Tooltip {
 
         points = splat(points);
 
-        // If reversedStacks are false the tooltip position should be taken from
-        // the last point (#17948)
-        if (
-            points[0].series &&
-            points[0].series.yAxis &&
-            !points[0].series.yAxis.options.reversedStacks
-        ) {
-            points = points.slice().reverse();
-        }
-
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
             if (typeof mouseEvent.chartX === 'undefined') {
@@ -1156,14 +1146,24 @@ class Tooltip {
                     label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
-                        label.attr({
-                            stroke: (
-                                options.borderColor ||
-                                point.color ||
-                                currentSeries.color ||
-                                Palette.neutralColor60
-                            )
-                        });
+                        if (this.shared) {
+                            label.attr({
+                                stroke: (
+                                    Palette.neutralColor20
+                                )
+                            });
+                        } else {
+                            label.attr({
+                                stroke: (
+                                    // options.borderColor ||
+                                    // point.color ||
+                                    // currentSeries.color ||
+                                    Palette.neutralColor20
+                                )
+                            });
+
+                        }
+
                     }
 
                     tooltip.updatePosition({
@@ -1405,10 +1405,10 @@ class Tooltip {
                     .shadow(options.shadow)
                     .attr({
                         stroke: (
-                            options.borderColor ||
-                            point.color ||
-                            series.color ||
-                            Palette.neutralColor80
+                            // options.borderColor ||
+                            // point.color ||
+                            // series.color ||
+                            Palette.neutralColor20
                         )
                     });
             }
@@ -1807,35 +1807,25 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const {
-                chart,
-                distance,
-                options
-            } = this,
+        const chart = this.chart,
+            options = this.options,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            { left, top, scaleX, scaleY } = pointer.getChartPosition(),
+            chartPosition = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
                 point
             );
-        let anchorX = (point.plotX || 0) + chart.plotLeft,
-            anchorY = (point.plotY || 0) + chart.plotTop,
+        let anchorX = (point.plotX as any) + chart.plotLeft,
+            anchorY = (point.plotY as any) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            // Corrects positions, occurs with tooltip positioner (#16944)
-            if (options.positioner) {
-                pos.x += left - distance;
-                pos.y += top - distance;
-            }
-
-            pad = options.borderWidth + 2 * distance;
-
+            pad = options.borderWidth + 2 * this.distance;
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
@@ -1844,15 +1834,20 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            if (scaleX !== 1 || scaleY !== 1) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
-                    transform: `scale(${scaleX}, ${scaleY})`
+                    transform: `scale(${
+                        chartPosition.scaleX
+                    }, ${
+                        chartPosition.scaleY
+                    })`
                 });
-                anchorX *= scaleX;
-                anchorY *= scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
-            anchorX += left - pos.x;
-            anchorY += top - pos.y;
+
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move

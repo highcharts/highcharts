@@ -326,6 +326,7 @@ const rangeSelector: RangeSelectorOptions = {
         padding: 2,
         /** @ignore */
         zIndex: 7 // #484, #852
+
     },
 
     /**
@@ -545,9 +546,11 @@ const rangeSelector: RangeSelectorOptions = {
      */
     inputStyle: {
         /** @ignore */
-        color: Palette.highlightColor80,
+        color: Palette.highlightColor60,
         /** @ignore */
-        cursor: 'pointer'
+        cursor: 'pointer',
+        /** @ignore */
+        fontWeight: 'bold'
     },
 
     /**

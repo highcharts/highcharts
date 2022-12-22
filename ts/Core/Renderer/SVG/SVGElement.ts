@@ -88,6 +88,7 @@ const {
  */
 declare module '../CSSObject' {
     interface CSSObject {
+        stroke?: ColorString;
         strokeWidth?: (number|string);
     }
 }
@@ -2076,7 +2077,7 @@ class SVGElement implements SVGElementLike {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        Palette.neutralColor100
+                        Palette.neutralColor60
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,

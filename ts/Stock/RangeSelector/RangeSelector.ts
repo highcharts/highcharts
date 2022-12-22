@@ -999,7 +999,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: Palette.neutralColor80
+                color: Palette.neutralColor60
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({
@@ -1318,7 +1318,7 @@ class RangeSelector {
                 padding: options.buttonTheme.padding,
                 height: options.buttonTheme.height,
                 paddingLeft: 0,
-                paddingRight: 0
+                paddingRight: 2
             })
             .add(this.buttonGroup);
 

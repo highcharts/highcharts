@@ -482,7 +482,7 @@ class SVGRenderer implements SVGRendererLike {
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
 
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
+            fontFamily: '"Trebuchet MS", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
             fontSize: '12px'
 
@@ -721,7 +721,7 @@ class SVGRenderer implements SVGRendererLike {
         let normalState = AST.filterUserAttributes(theme);
 
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState));
+        label.attr(merge({ padding: 8, r: 1 }, normalState));
 
         // Presentational. The string type is a mistake, it is just for
         // compliance with SVGAttribute and is not used in button theme.
@@ -733,21 +733,21 @@ class SVGRenderer implements SVGRendererLike {
 
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: Palette.neutralColor3,
+                fill: Palette.neutralColor5,
                 stroke: Palette.neutralColor20,
                 'stroke-width': 1
             }, normalState);
 
             // Hover state
             hoverState = merge(normalState, {
-                fill: Palette.neutralColor10
+                fill: Palette.neutralColor20
             }, AST.filterUserAttributes(hoverState || states.hover || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
             selectState = merge(normalState, {
-                fill: Palette.highlightColor10,
+                fill: Palette.highlightColor40,
                 style: {
                     color: Palette.neutralColor100,
                     fontWeight: 'bold'
