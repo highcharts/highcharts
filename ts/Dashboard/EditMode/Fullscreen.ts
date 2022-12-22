@@ -1,4 +1,7 @@
 import Dashboard from '../Dashboard.js';
+import U from '../../Core/Utilities.js';
+
+const { addEvent } = U;
 
 class Fullscreen {
     /* *
@@ -32,9 +35,6 @@ class Fullscreen {
     constructor(DashboardClass: Dashboard) {
         this.isOpen = false;
         this.dashboard = DashboardClass;
-
-        // eslint-disable-next-line no-console
-        console.log('Constructor of fullscreen');
     }
 
     /* *
@@ -45,6 +45,7 @@ class Fullscreen {
 
     public dashboard: Dashboard;
     public isOpen: boolean;
+    public unbindFullscreenEvent?: Function;
 
 
     /* *
@@ -71,17 +72,54 @@ class Fullscreen {
      * Display dashboard in fullscreen.
      */
     public open(): void {
-        // eslint-disable-next-line no-console
-        console.log('open');
-        this.isOpen = true;
+        const fullscreen = this,
+            dashboard = fullscreen.dashboard;
+
+        // Handle exitFullscreen() method when user clicks 'Escape' button.
+        const unbindChange = addEvent(
+            dashboard.container.ownerDocument, // dashboard's document
+            'fullscreenchange',
+            function (): void {
+                if (fullscreen.isOpen) {
+                    fullscreen.isOpen = false;
+                    fullscreen.close();
+                } else {
+                    fullscreen.isOpen = true;
+                }
+            }
+        );
+
+        fullscreen.unbindFullscreenEvent = (): void => {
+            unbindChange();
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        dashboard.container.requestFullscreen()['catch']((): void => {
+            throw new Error('Full screen is not supported.');
+        });
     }
     /**
      * Stops displaying the dashboard in fullscreen mode.
      */
     public close(): void {
-        // eslint-disable-next-line no-console
-        console.log('close');
-        this.isOpen = false;
+        const fullscreen = this,
+            dashboard = fullscreen.dashboard;
+
+        // Don't fire exitFullscreen() when user exited using 'Escape' button.
+        if (
+            fullscreen.isOpen &&
+            dashboard.container.ownerDocument instanceof Document
+        ) {
+            void dashboard.container.ownerDocument.exitFullscreen();
+        }
+
+        // Unbind event as it's necessary only before exiting from fullscreen.
+        if (fullscreen.unbindFullscreenEvent) {
+            fullscreen.unbindFullscreenEvent =
+                fullscreen.unbindFullscreenEvent();
+        }
+
+        fullscreen.isOpen = false;
     }
 
 }
