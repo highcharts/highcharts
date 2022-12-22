@@ -88,7 +88,7 @@ const {
  */
 declare module '../CSSObject' {
     interface CSSObject {
-        stroke?: ColorString;
+        stroke?: ColorType;
         strokeWidth?: (number|string);
     }
 }
