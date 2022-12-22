@@ -22,7 +22,6 @@
 import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
 import CSVConverter from '../../Data/Converters/CSVConverter.js';
-import options from '../../Extensions/Sonification/Options.js';
 const { merge } = U;
 
 /* *
@@ -30,12 +29,12 @@ const { merge } = U;
  *  Functions
  *
  * */
+
 /**
  * Change the obj of CSVConverter to its Serialized form.
  * @param obj Object to serialize
- * @return Serialized object
+ * @return {CSVConverterHelper.JSON} Serialized object
  */
-
 function toJSON(obj: CSVConverter): CSVConverterHelper.JSON {
     return {
         $class: 'Data.CSVConverter',
