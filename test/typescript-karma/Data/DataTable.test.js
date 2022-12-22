@@ -562,22 +562,25 @@ QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
 });
 
 QUnit.test('DataTable.getRows', function (assert) {
-    const table = new DataTable();
+    const table = new DataTable({ 'a': [ 0 ] });
 
-    try {
-        table.getRowObject(undefined, undefined, ['Non-Existing-Column']);
-        table.getRows(undefined, undefined, ['Non-Existing-Column']);
-        assert.ok(
-            true,
-            'Table should not break when accessing non-existing column'
-        );
-    }
-    catch (error) {
-        assert.notOk(
-            true,
-            'Table should not break when accessing non-existing column'
-        );
-    }
+    const rowObject = table
+        .getRowObject(undefined, ['Non-Existing Column']);
+
+    assert.deepEqual(
+        Object.keys(rowObject),
+        ['Non-Existing Column'],
+        'Table should return row with non-existing column.'
+    );
+
+    const cellArray = table
+        .getRow(undefined, ['Non-Existing Column']);
+
+    assert.deepEqual(
+        cellArray,
+        [ undefined ],
+        'Table should return row with non-existing column.'
+    );
 
 });
 
