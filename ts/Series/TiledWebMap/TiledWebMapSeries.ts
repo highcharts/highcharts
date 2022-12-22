@@ -29,6 +29,7 @@ import U from '../../Core/Utilities.js';
 
 const {
     extend,
+    error,
     merge,
     pick
 } = U;
@@ -83,6 +84,41 @@ class TiledWebMapSeries extends MapSeries {
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
     tiles: any;
+    providersData: any = {
+        'OpenStreetMap': {
+            subdomains: ['a', 'b', 'c'],
+            'default': {
+                url: 'https://{s}.tile.openstreetmap.org/{zoom}/{x}/{y}.png'
+            },
+            'bicycle': {
+                url: 'http://{s}.tile.thunderforest.com/cycle/{zoom}/{x}/{y}.png'
+            }
+        },
+        'Google': {
+            subdomains: [''],
+            'default': {
+                url: 'https://www.google.com/maps/vt?pb=!1m5!1m4!1i{zoom}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2sen-US!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965'
+            }
+        },
+        'Carto': {
+            subdomains: ['a', 'b', 'c', 'd', 'e'],
+            'default': {
+                url: 'http://{s}.basemaps.cartocdn.com/light_all/{zoom}/{x}/{y}.png'
+            },
+            'dark': {
+                url: 'http://{s}.basemaps.cartocdn.com/dark_all/{zoom}/{x}/{y}.png'
+            }
+        },
+        'Gaode': {
+            subdomains: ['01', '02', '03', '04'],
+            'default': {
+                url: 'http://webrd{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={zoom}'
+            },
+            'satelite': {
+                url: 'http://webst{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={zoom}'
+            }
+        }
+    };
 
     /**
      *
@@ -183,58 +219,50 @@ class TiledWebMapSeries extends MapSeries {
 
         const addTile = (x: number, y: number, zoom: any): void => {
             if (!tiles[`${zoom},${x},${y}`]) {
-                let url: string;
+                const providersData = this.providersData;
 
-                const s: string = provider.subdomain || '';
+                let url: string = providersData['OpenStreetMap']['default'].url,
+                    s: string = '';
 
                 if (provider.url) {
-                    url = provider.url
-                        .replace('{x}', x.toString())
-                        .replace('{y}', y.toString())
-                        .replace('{zoom}', zoom.toString())
-                        .replace('{s}', s);
-                } else if (provider.type === 'OpenStreetMap') {
-                    const s = pick(provider.subdomain, 'a');
+                    url = provider.url;
+                    s = pick(provider.subdomain, '');
+                } else if (provider.type) {
+                    const chosenProvider = providersData[provider.type],
+                        chosenTheme = pick(provider.theme, 'default');
 
-                    if (provider.theme === 'bicycle') {
-                        url = `http://${s}.tile.thunderforest.com/cycle/${zoom}/${x}/${y}.png`;
+                    url = chosenProvider[chosenTheme].url;
+
+                    if (
+                        provider.subdomain &&
+                        chosenProvider.subdomains.inludes(provider.subdomain)
+                    ) {
+                        error(13); // TO DO add new error if subdomain is wrong
                     } else {
-                        url = `https://${s}.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+                        s = pick(provider.subdomain,
+                            chosenProvider.subdomains[0]);
                     }
-
-                } else if (provider.type === 'Google') {
-
-                    url = `https://www.google.com/maps/vt?pb=!1m5!1m4!1i${zoom}!2i${x}!3i${y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2sen-US!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965`;
-
-                } else if (provider.type === 'Carto') {
-                    const s = pick(provider.subdomain, 'a');
-
-                    if (provider.theme === 'dark') {
-                        url = `http://${s}.basemaps.cartocdn.com/dark_all/${zoom}/${x}/${y}.png`;
-                    } else {
-                        url = `http://${s}.basemaps.cartocdn.com/light_all/${zoom}/${x}/${y}.png`;
-                    }
-
-                } else if (provider.type === 'Gaode') {
-                    const s = pick(provider.subdomain, '01');
-
-                    if (provider.theme === 'Satelite') {
-                        url = `http://webst${s}.is.autonavi.com/appmaptile?style=6&x=${x}&y=${y}&z=${zoom}`;
-                    } else {
-                        url = `http://webrd${s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${x}&y=${y}&z=${zoom}`;
-                    }
-
-                } else {
-                    url = 'empty';
                 }
+
+                url = url.replace('{x}', x.toString())
+                    .replace('{y}', y.toString())
+                    .replace('{zoom}', zoom.toString())
+                    .replace('{s}', s);
 
                 tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                     url,
                     x * 256,
-                    y * 256
+                    y * 256,
+                    void 0,
+                    void 0
                 )
                     .attr({
                         zIndex: 2
+                    })
+                    .on('load', function (this: SVGElement): void {
+                        if (provider.onload) {
+                            provider.onload.apply(this);
+                        }
                     })
                     .add(transformGroups[zoomCeil]);
             }

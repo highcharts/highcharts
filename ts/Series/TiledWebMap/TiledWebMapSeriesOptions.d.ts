@@ -30,7 +30,8 @@ interface ProviderOptions {
     type: string,
     theme?: string,
     subdomain?: string,
-    url?: string
+    url?: string,
+    onload?: Function
 }
 
 /* *
