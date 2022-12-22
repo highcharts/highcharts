@@ -980,8 +980,6 @@ class DataTable implements DataEvent.Emitter {
 
         columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
 
-        const columnNamesLength = columnNamesOrAliases.length;
-
         for (
             let i = rowIndex,
                 i2 = 0,
@@ -989,23 +987,16 @@ class DataTable implements DataEvent.Emitter {
                     table.rowCount,
                     (rowIndex + rowCount)
                 ),
+                column: DataTable.Column,
                 row: DataTable.RowObject;
             i < iEnd;
             ++i, ++i2
         ) {
             row = rows[i2] = {};
 
-            for (
-                let j = 0,
-                    jEnd = columnNamesLength,
-                    columnName: string;
-                j < jEnd;
-                ++j
-            ) {
-                columnName = columnNamesOrAliases[j];
-                row[columnName] = columns[
-                    (aliasMap[columnName] || columnName)
-                ][i];
+            for (const columnName of columnNamesOrAliases) {
+                column = columns[(aliasMap[columnName] || columnName)];
+                row[columnName] = (column ? column[i] : void 0);
             }
         }
 
@@ -1041,8 +1032,6 @@ class DataTable implements DataEvent.Emitter {
 
         columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
 
-        const columnNamesLength = columnNamesOrAliases.length;
-
         for (
             let i = rowIndex,
                 i2 = 0,
@@ -1050,15 +1039,16 @@ class DataTable implements DataEvent.Emitter {
                     table.rowCount,
                     (rowIndex + rowCount)
                 ),
-                columnName: string,
+                column: DataTable.Column,
                 row: DataTable.Row;
             i < iEnd;
             ++i, ++i2
         ) {
-            row = rows[i2] = new Array(columnNamesLength);
-            for (let j = 0; j < columnNamesLength; ++j) {
-                columnName = columnNamesOrAliases[j];
-                row[j] = columns[(aliasMap[columnName] || columnName)][i];
+            row = rows[i2] = [];
+
+            for (const columnName of columnNamesOrAliases) {
+                column = columns[(aliasMap[columnName] || columnName)];
+                row.push(column ? column[i] : void 0);
             }
         }
 
