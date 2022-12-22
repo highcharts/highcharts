@@ -31,7 +31,8 @@ interface ProviderOptions {
     theme?: string,
     subdomain?: string,
     url?: string,
-    onload?: Function
+    onload?: Function,
+    apiKey?: string
 }
 
 /* *
