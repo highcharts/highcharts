@@ -82,6 +82,7 @@ class Fullscreen {
                     fullscreen.close();
                 } else {
                     fullscreen.isOpen = true;
+                    fullscreen.setButtonText();
                 }
             }
         );
@@ -97,6 +98,7 @@ class Fullscreen {
             throw new Error('Full screen is not supported.');
         });
     }
+
     /**
      * Stops displaying the dashboard in fullscreen mode.
      */
@@ -119,8 +121,24 @@ class Fullscreen {
         }
 
         fullscreen.isOpen = false;
+        this.setButtonText();
     }
 
+    /**
+     * Set the correct text depending of the fullscreen is on or of.
+     */
+    public setButtonText(): void {
+        const editMode = this.dashboard.editMode,
+            contextMenu = editMode && editMode.tools.contextMenu,
+            button = contextMenu && contextMenu.items['viewFullscreen'];
+
+        if (button && button.innerElement) {
+            const lang = editMode.lang;
+
+            button.innerElement.innerHTML =
+                (this.isOpen ? lang.exitFullscreen : lang.viewFullscreen) || '';
+        }
+    }
 }
 
 namespace Fullscreen {

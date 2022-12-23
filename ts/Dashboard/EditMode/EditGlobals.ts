@@ -82,7 +82,8 @@ const EditGlobals: EditGlobals = {
         confirmDestroyCell: 'Do you want to destroy the cell?',
         confirmButton: 'Confirm',
         cancelButton: 'Cancel',
-        viewFullscreen: 'View in full screen'
+        viewFullscreen: 'View in full screen',
+        exitFullscreen: 'Exit full screen'
     }
 };
 
@@ -169,6 +170,7 @@ namespace EditGlobals {
         confirmButton?: string;
         cancelButton?: string;
         viewFullscreen?: string;
+        exitFullscreen?: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
