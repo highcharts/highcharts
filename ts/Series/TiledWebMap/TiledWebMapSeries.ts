@@ -64,8 +64,6 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
-    // public static compose = MapBubbleSeries.compose;
-
     public static defaultOptions: TiledWebMapSeriesOptions = merge(MapSeries.defaultOptions, {
         states: {
             inactive: {
@@ -160,6 +158,9 @@ class TiledWebMapSeries extends MapSeries {
         if (!this.transformGroups) {
             this.transformGroups = [];
         }
+        if (!this.chart.mapView) {
+            return;
+        }
 
         const {
                 chart,
@@ -222,9 +223,7 @@ class TiledWebMapSeries extends MapSeries {
                 tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                     url,
                     x * 256,
-                    y * 256,
-                    void 0,
-                    void 0
+                    y * 256
                 )
                     .attr({
                         zIndex: 2
