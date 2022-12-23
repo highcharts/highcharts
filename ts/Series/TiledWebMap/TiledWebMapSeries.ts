@@ -18,6 +18,7 @@
 import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
 
 const {
     seriesTypes: {
@@ -84,41 +85,7 @@ class TiledWebMapSeries extends MapSeries {
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
     tiles: any;
-    providersData: any = {
-        'OpenStreetMap': {
-            subdomains: ['a', 'b', 'c'],
-            'default': {
-                url: 'https://{s}.tile.openstreetmap.org/{zoom}/{x}/{y}.png'
-            },
-            'bicycle': {
-                url: 'http://{s}.tile.thunderforest.com/cycle/{zoom}/{x}/{y}.png'
-            }
-        },
-        'Google': {
-            subdomains: [''],
-            'default': {
-                url: 'https://www.google.com/maps/vt?pb=!1m5!1m4!1i{zoom}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2sen-US!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965'
-            }
-        },
-        'Carto': {
-            subdomains: ['a', 'b', 'c', 'd', 'e'],
-            'default': {
-                url: 'http://{s}.basemaps.cartocdn.com/light_all/{zoom}/{x}/{y}.png'
-            },
-            'dark': {
-                url: 'http://{s}.basemaps.cartocdn.com/dark_all/{zoom}/{x}/{y}.png'
-            }
-        },
-        'Gaode': {
-            subdomains: ['01', '02', '03', '04'],
-            'default': {
-                url: 'http://webrd{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={zoom}'
-            },
-            'satelite': {
-                url: 'http://webst{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={zoom}'
-            }
-        }
-    };
+    public static TilesProvidersRegistry = TilesProvidersRegistry;
 
     /**
      *
@@ -222,39 +189,35 @@ class TiledWebMapSeries extends MapSeries {
             translateY: origin.y
         });
 
-        const addTile = (x: number, y: number, zoom: any): void => {
+        const replaceVariables = (
+            url: string,
+            x: number,
+            y: number,
+            zoom: number
+        ): string => url
+            .replace('{x}', x.toString())
+            .replace('{y}', y.toString())
+            .replace('{zoom}', zoom.toString());
+
+        const addTile = (x: number, y: number, zoom: number): void => {
             if (!tiles[`${zoom},${x},${y}`]) {
-                const providersData = this.providersData;
-
-                let url: string = providersData['OpenStreetMap']['default'].url,
-                    s: string = provider.subdomain || '';
-
-                const apiKey = provider.apiKey || '';
+                let url: string;
 
                 if (provider.url) {
-                    url = provider.url;
-                    s = pick(provider.subdomain, '');
-                } else if (provider.type) {
-                    const chosenProvider = providersData[provider.type],
-                        chosenTheme = pick(provider.theme, 'default');
+                    url = replaceVariables(provider.url, x, y, zoom);
+                } else {
+                    const ProviderDefinition =
+                    TiledWebMapSeries.TilesProvidersRegistry[provider.type];
 
-                    url = chosenProvider[chosenTheme].url;
+                    const def = new ProviderDefinition(),
+                        defURL = def.getURL(
+                            provider.subdomain,
+                            provider.theme,
+                            provider.apiKey
+                        );
 
-                    if (
-                        provider.subdomain &&
-                        chosenProvider.subdomains.inludes(provider.subdomain)
-                    ) {
-                        error(13); // TO DO add new error if subdomain is wrong
-                    } else {
-                        s = pick(provider.subdomain,
-                            chosenProvider.subdomains[0]);
-                    }
+                    url = replaceVariables(defURL, x, y, zoom);
                 }
-
-                url = url.replace('{x}', x.toString())
-                    .replace('{y}', y.toString())
-                    .replace('{zoom}', zoom.toString())
-                    .replace('{s}', s);
 
                 tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                     url,
