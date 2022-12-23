@@ -1,9 +1,12 @@
-import type Dashboard from '../../Dashboard';
-
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from './MenuItem.js';
 
-const MenuItemBindings: MenuItemBindings = {
+const MenuItemBindings: Record<string, MenuItem.Options> = {
+    /* *
+    *
+    *  Context menu
+    *
+    * */
     horizontalSeparator: {
         id: 'horizontalSeparator',
         type: 'horizontalSeparator',
@@ -28,11 +31,5 @@ const MenuItemBindings: MenuItemBindings = {
         }
     }
 };
-
-export interface MenuItemBindings {
-    horizontalSeparator: MenuItem.Options;
-    verticalSeparator: MenuItem.Options;
-    viewFullscreen: MenuItem.Options;
-}
 
 export default MenuItemBindings;

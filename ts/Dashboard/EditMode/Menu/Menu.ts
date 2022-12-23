@@ -78,7 +78,7 @@ class Menu {
 
     // itemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: any,
+        itemsSchemas: Record<string, MenuItem.Options>,
         activeItems?: boolean
     ): void {
         const menu = this,

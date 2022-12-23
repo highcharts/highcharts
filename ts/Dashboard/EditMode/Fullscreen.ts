@@ -59,13 +59,10 @@ class Fullscreen {
      * Toggles displaying the dashboard in fullscreen mode.
      */
     public toggle(): void {
-        const fullscreen = this;
+        const fullscreen = this,
+            isOpen = this.isOpen;
 
-        if (!fullscreen.isOpen) {
-            fullscreen.open();
-        } else {
-            fullscreen.close();
-        }
+        fullscreen[isOpen ? 'close' : 'open']();
     }
 
     /**
@@ -93,8 +90,10 @@ class Fullscreen {
             unbindChange();
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        dashboard.container.requestFullscreen()['catch']((): void => {
+        const promise = dashboard.container.requestFullscreen();
+
+        // eslint-disable-next-line highcharts/quote-members
+        promise.catch((): void => {
             throw new Error('Full screen is not supported.');
         });
     }
