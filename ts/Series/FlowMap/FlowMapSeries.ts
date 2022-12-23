@@ -330,8 +330,8 @@ class FlowMapSeries extends MapLineSeries {
         let weights: Array<number|undefined> = [];
 
         this.points.forEach((p): void => {
-            if (p.options.weight || this.options.weight) {
-                weights.push(p.options.weight || this.options.weight);
+            if (pick(p.options.weight, this.options.weight)) {
+                weights.push(pick(p.options.weight, this.options.weight));
             }
             /* TODO:
                 1) const from = this.chart.get(p.options.from || '');
