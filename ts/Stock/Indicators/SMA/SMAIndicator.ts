@@ -372,15 +372,15 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public recalculateValues(): void {
-        let indicator = this,
+        const indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
                 yData: []
-            },
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
+            };
+        let processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
             croppedDataValues = [],
             overwriteData = true,
             oldFirstPointIndex,
@@ -395,7 +395,9 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        processedData = indicator.linkedParent.options ?
+        processedData = indicator.linkedParent.options &&
+            indicator.linkedParent.yData && // #18176, #18177 indicators should
+            indicator.linkedParent.yData.length ? // work with empty dataset
             (
                 indicator.getValues(
                     indicator.linkedParent,
