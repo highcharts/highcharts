@@ -369,7 +369,10 @@ function getMappingParameterValue(
                     max: axis.dataMax
                 };
             }
-        } else if (within === 'series' || useSeriesExtremes) {
+        } else if (
+            (within === 'series' || useSeriesExtremes) &&
+            context.point.series
+        ) {
             extremes = propMetrics.seriesExtremes[context.point.series.index][
                 useContextValue ? contextValueProp : mapTo
             ];
