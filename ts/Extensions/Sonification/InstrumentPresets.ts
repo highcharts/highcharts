@@ -68,6 +68,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // FLUTE ----------------------------
     flute: {
         masterVolume: 0.95,
+        midiInstrument: 74,
         noteGlideDuration: 30,
         masterAttackEnvelope: [
             { t: 0, vol: 0 },
@@ -135,6 +136,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // VIBRAPHONE -----------------------
     vibraphone: {
         masterVolume: 1,
+        midiInstrument: 12,
         masterAttackEnvelope: [
             { t: 1, vol: 0 },
             { t: 10, vol: 0.63 },
@@ -209,6 +211,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // SAXOPHONE ------------------------
     saxophone: {
         masterVolume: 1,
+        midiInstrument: 67,
         noteGlideDuration: 10,
         masterAttackEnvelope: [
             { t: 1, vol: 0.57 },
@@ -289,6 +292,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // TRUMPET ------------------------
     trumpet: {
         masterVolume: 0.3,
+        midiInstrument: 57,
         noteGlideDuration: 40,
         masterAttackEnvelope: [
             { t: 1, vol: 0 },
@@ -359,6 +363,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // SAWSYNTH --------------------------
     sawsynth: {
         masterVolume: 0.3,
+        midiInstrument: 51,
         noteGlideDuration: 40,
         masterAttackEnvelope: [
             { t: 0, vol: 0.6 },
@@ -415,6 +420,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // SAWTOOTH -------------------------
     sawtooth: {
         masterVolume: 0.25,
+        midiInstrument: 82,
         oscillators: [{
             type: 'sawtooth',
             volume: 0.3,
@@ -425,6 +431,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // SQUARE ---------------------------
     square: {
         masterVolume: 0.3,
+        midiInstrument: 81,
         oscillators: [{
             type: 'square',
             volume: 0.2,
@@ -435,6 +442,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // PERCUSSION INSTRUMENTS ----------
     chop: {
         masterVolume: 1,
+        midiInstrument: 116,
         masterAttackEnvelope: [{ t: 1, vol: 1 }, { t: 44, vol: 0 }],
         oscillators: [{
             type: 'whitenoise',
@@ -446,6 +454,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     shaker: {
         masterVolume: 0.4,
+        midiInstrument: 116,
         masterAttackEnvelope: [{ t: 1, vol: 1 }, { t: 44, vol: 0 }],
         oscillators: [{
             type: 'whitenoise',
@@ -457,6 +466,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     step: {
         masterVolume: 1,
+        midiInstrument: 116,
         masterAttackEnvelope: [{ t: 1, vol: 1 }, { t: 44, vol: 0 }],
         eq: [
             { frequency: 200, gain: -1 },
@@ -478,6 +488,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     shortnote: {
         masterVolume: 0.8,
+        midiInstrument: 116,
         masterAttackEnvelope: [
             { t: 1, vol: 1 },
             { t: 15, vol: 0 }
@@ -515,6 +526,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // NOISE ----------------------------
     noise: {
         masterVolume: 0.3,
+        midiInstrument: 122,
         oscillators: [{
             type: 'whitenoise'
         }]
@@ -523,6 +535,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // FILTERED NOISE -------------------
     filteredNoise: {
         masterVolume: 0.3,
+        midiInstrument: 122,
         eq: [
             { frequency: 1600, gain: -8 },
             { frequency: 2200, gain: -4 }
@@ -545,6 +558,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
     // WIND -------------------------------
     wind: {
         masterVolume: 0.75,
+        midiInstrument: 122,
         noteGlideDuration: 150,
         masterReleaseEnvelope: [
             { t: 0, vol: 1 },

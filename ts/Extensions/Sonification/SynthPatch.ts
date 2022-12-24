@@ -66,6 +66,7 @@ namespace SynthPatch {
         masterVolume?: number;
         noteGlideDuration?: number;
         oscillators?: Array<OscOptions>;
+        midiInstrument?: number;
     }
 }
 
@@ -564,6 +565,7 @@ class Oscillator {
  */
 class SynthPatch {
     static stopRampTime = 0.012; // Ramp time to 0 when stopping sound
+    readonly midiInstrument: number;
     private outputNode: GainNode;
     private eqNodes: Array<BiquadFilterNode> = [];
     private oscillators: Array<Oscillator>;
@@ -572,6 +574,7 @@ class SynthPatch {
         private audioContext: AudioContext,
         private options: SynthPatch.SynthPatchOptions
     ) {
+        this.midiInstrument = options.midiInstrument || 1;
         this.outputNode = new GainNode(audioContext, { gain: 0 });
         this.createEqChain(this.outputNode);
 

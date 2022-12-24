@@ -76,6 +76,7 @@ declare global {
         interface BaseTrackOptions {
             pointGrouping?: PointGroupingOptions;
             activeWhen?: TrackPredicateCallback|ValueConstraints;
+            midiName?: string;
         }
 
         interface InstrumentTrackMappingOptions {

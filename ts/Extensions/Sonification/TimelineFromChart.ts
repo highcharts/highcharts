@@ -520,7 +520,8 @@ function addTimelineChannelFromTrack(
                             instrMappingOpts.lowpass
                         )
                     },
-                    synthPatch: options.instrument
+                    synthPatch: options.instrument,
+                    midiTrackName: options.midiName
                 });
 
     return timeline.addChannel(options.type || 'instrument', engine);
@@ -906,7 +907,10 @@ function timelineFromChart(
             // Add events for the mapped tracks
             mainTracks.forEach((trackOpts): void => {
                 const mergedOpts = merge(
-                        { pointGrouping: defaultPointGroupOpts },
+                        {
+                            pointGrouping: defaultPointGroupOpts,
+                            midiName: trackOpts.midiName || series.name
+                        },
                         trackOpts.type === 'speech' ?
                             defaultSpeechOpts : defaultInstrOpts,
                         trackOpts

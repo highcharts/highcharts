@@ -120,29 +120,65 @@ const freqToNote = (f: number): number => Math.round(
         });
         return res;
     },
+    getMetaEvents = (
+        midiTrackName?: string,
+        midiInstrument?: number
+    ): number[] => {
+        const events: number[] = [];
+        if (midiInstrument) {
+            // Program Change MIDI event
+            events.push(0, 0xC0, midiInstrument & 0x7F);
+        }
+        if (midiTrackName) {
+            // Track name meta event
+            const textArr: number[] = [];
+            for (let i = 0; i < midiTrackName.length; ++i) {
+                const code = midiTrackName.charCodeAt(i);
+                if (code < 128) { // Keep ASCII only
+                    textArr.push(code);
+                }
+            }
+            return events.concat(
+                [0, 0xFF, 0x03],
+                varLenEnc(textArr.length),
+                textArr
+            );
+        }
+        return events;
+    },
     getTrackChunk = (
-        events: Sonification.TimelineEvent[], addTimeInfo: boolean
+        events: Sonification.TimelineEvent[], addTimeInfo: boolean,
+        midiTrackName?: string, midiInstrument?: number
     ): number[] => {
         let prevTime = 0;
-        const trackEvents = toMIDIEvents(events).reduce((data, e): number[] => {
-            const t = varLenEnc(e.timeMS - prevTime);
-            prevTime = e.timeMS;
-            return data.concat(t, e.data);
-        }, [] as number[]);
+        const metaEvents = getMetaEvents(midiTrackName, midiInstrument),
+            trackEvents = toMIDIEvents(events).reduce((data, e): number[] => {
+                const t = varLenEnc(e.timeMS - prevTime);
+                prevTime = e.timeMS;
+                return data.concat(t, e.data);
+            }, [] as number[]);
 
-        // size = time info + track data + sysex end event
-        const size = (addTimeInfo ? timeInfo.length : 0) +
-            trackEvents.length + 4;
+        const trackEnd = [0, 0xFF, 0x2F, 0],
+            size = (addTimeInfo ? timeInfo.length : 0) +
+                metaEvents.length +
+                trackEvents.length + trackEnd.length;
         return [
             0x4D, 0x54, 0x72, 0x6B, // TRK_TYPE
             b(3, size), b(2, size), // TRK_SIZE
             b(1, size), b(0, size)
-        ].concat(addTimeInfo ? timeInfo : [], trackEvents,
-            [0, 0xFF, 0x2F, 0]); // SYSEX_TRACK_END
+        ].concat(
+            addTimeInfo ? timeInfo : [],
+            metaEvents,
+            trackEvents,
+            trackEnd // SYSEX_TRACK_END
+        );
     };
 
 /**
  * Get MIDI data from a set of Timeline instrument channels.
+ *
+ * Outputs multi-track MIDI for Timelines with multiple channels.
+ *
  * @private
  */
 function toMIDI(channels: TimelineChannel[]): Uint8Array {
@@ -152,9 +188,11 @@ function toMIDI(channels: TimelineChannel[]): Uint8Array {
     return new Uint8Array(
         getHeader(multiCh ? numCh + 1 : numCh).concat(
             multiCh ? getTrackChunk([], true) : [], // Time info only
-            channelsToAdd.reduce((chunks, channel): number[] => (
-                chunks.concat(getTrackChunk(channel.events, !multiCh))
-            ), [] as number[])));
+            channelsToAdd.reduce((chunks, channel): number[] => {
+                const engine = channel.engine as SonificationInstrument;
+                return chunks.concat(getTrackChunk(channel.events, !multiCh,
+                    engine.midiTrackName, engine.midiInstrument));
+            }, [] as number[])));
 }
 
 export default toMIDI;

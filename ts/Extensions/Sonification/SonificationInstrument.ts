@@ -29,6 +29,7 @@ interface SonificationInstrumentCapabilitiesOptions {
 interface SonificationInstrumentOptions {
     synthPatch: keyof typeof InstrumentPresets|SynthPatch.SynthPatchOptions;
     capabilities?: SonificationInstrumentCapabilitiesOptions;
+    midiTrackName?: string;
 }
 
 namespace SonificationInstrument {
@@ -51,6 +52,8 @@ namespace SonificationInstrument {
  * @private
  */
 class SonificationInstrument {
+    readonly midiTrackName?: string;
+    readonly midiInstrument: number;
     private static rampTime = SynthPatch.stopRampTime / 4;
     private masterVolNode: GainNode;
     private volumeNode: GainNode;
@@ -67,6 +70,8 @@ class SonificationInstrument {
         outputNode: AudioNode,
         options: SonificationInstrumentOptions
     ) {
+        this.midiTrackName = options.midiTrackName;
+
         this.masterVolNode = new GainNode(audioContext);
         this.masterVolNode.connect(outputNode);
         this.volumeNode = new GainNode(audioContext);
@@ -82,6 +87,7 @@ class SonificationInstrument {
             typeof options.synthPatch === 'string' ?
                 InstrumentPresets[options.synthPatch] : options.synthPatch
         );
+        this.midiInstrument = this.synthPatch.midiInstrument || 1;
         this.synthPatch.startSilently();
         this.synthPatch.connect(this.volumeNode);
     }

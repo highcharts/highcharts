@@ -11,7 +11,8 @@ function makeTimeline1() {
     var ctx = new AudioContext(),
         instr = new Instrument(ctx, ctx.destination, {
             synthPatch: 'piano',
-            capabilities: { pan: false }
+            capabilities: { pan: false },
+            midiTrackName: 'First track'
         }),
         timeline = new Timeline();
 
@@ -53,11 +54,13 @@ function makeTimeline2() {
     var ctx = new AudioContext(),
         instr1 = new Instrument(ctx, ctx.destination, {
             synthPatch: 'piano',
-            capabilities: { pan: false }
+            capabilities: { pan: false },
+            midiTrackName: 'First track'
         }),
         instr2 = new Instrument(ctx, ctx.destination, {
             synthPatch: 'saxophone',
-            capabilities: { pan: false }
+            capabilities: { pan: false },
+            midiTrackName: 'Second track'
         }),
         timeline = new Timeline();
 
@@ -120,13 +123,15 @@ function makeTimeline3() {
             capabilities: {
                 tremolo: true,
                 filters: true
-            }
+            },
+            midiTrackName: 'First track'
         }),
         instr2 = new Instrument(ctx, ctx.destination, {
             synthPatch: 'vibraphone',
             capabilities: {
                 tremolo: true
-            }
+            },
+            midiTrackName: 'Second track'
         }),
         timeline = new Timeline();
 
