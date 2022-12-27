@@ -989,42 +989,69 @@ class Axis {
             return x;
         }
 
-        const evt: Event = {
+        const evt: Partial<Event&Axis.PlotLinePathOptions> = {
             value: value,
             lineWidth: lineWidth,
             old: old,
             force: force,
             acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
-        } as any;
-        fireEvent(this, 'getPlotLinePath', evt, function (e: Event): void {
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (
+            e:(Event&Axis.PlotLinePathOptions)
+        ): void {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, void 0, void 0, old)
+                axis.translate(value as number, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round((cHeight as any) - translatedValue - transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
             if (!isNumber(translatedValue)) { // no min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
-                y1 = axisTop as any;
-                y2 = (cHeight as any) - (axis.bottom as any);
-                x1 = x2 = between(
-                    x1, axisLeft as any, (axisLeft as any) + axis.width
-                );
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+
+                if (
+                    e.force !== 'pass' &&
+                    (x1 < axisLeft || x1 > axisLeft + axis.width)
+                ) {
+                    if (force) {
+                        x1 = x2 = clamp(
+                            x1,
+                            axisLeft,
+                            axisLeft + axis.width
+                        );
+                    } else {
+                        skip = true;
+                    }
+                }
+
             } else {
-                x1 = axisLeft as any;
-                x2 = (cWidth as any) - (axis.right as any);
-                y1 = y2 = between(
-                    y1, axisTop as any, (axisTop as any) + axis.height
-                );
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+                y2 = y1;
+                if (
+                    e.force !== 'pass' &&
+                    (y1 < axisTop || y1 > axisTop + axis.height)
+                ) {
+                    if (e.force) {
+                        y1 = y2 = clamp(
+                            y1,
+                            axisTop,
+                            axisTop + axis.height
+                        );
+                    } else {
+                        skip = true;
+                    }
+                }
             }
             (e as any).path = skip && !force ?
                 null :
