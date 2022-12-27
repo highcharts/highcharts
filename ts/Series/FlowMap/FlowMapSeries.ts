@@ -85,7 +85,7 @@ class FlowMapSeries extends MapLineSeries {
      * is drawing a link between two mappoints.
      *
      * @extends      plotOptions.mapline
-     * @excluding    allAreas, allowPointSelect, boostBlending, boostThreshold,
+     * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
      * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy,
      * mapData, negativeColor, onPoint, shadow, showCheckbox
      * @product      highmaps
@@ -775,7 +775,7 @@ export default FlowMapSeries;
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flowmap
- * @excluding allAreas, allowPointSelect, boostBlending, boostThreshold,
+ * @excluding affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
  * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
  * negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
