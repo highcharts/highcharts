@@ -916,7 +916,8 @@ class Tick {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
                     force: 'pass',
-                    old: old
+                    old: old,
+                    acrossPanes: false // #18025
                 }
             );
 
