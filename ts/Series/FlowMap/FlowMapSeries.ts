@@ -21,6 +21,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import FlowMapPoint from './FlowMapPoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import { LonLatArray } from '../..//Maps/MapViewOptions';
 
 const {
     series: {
@@ -37,13 +39,14 @@ import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
 const {
-    defined,
-    extend,
-    merge,
-    pick,
     addEvent,
     arrayMax,
     arrayMin,
+    defined,
+    extend,
+    isArray,
+    merge,
+    pick,
     relativeLength
 } = U;
 
@@ -441,62 +444,93 @@ class FlowMapSeries extends MapLineSeries {
     }
 
     /**
-     * Run translation operations for one link.
+     * Draw shapeArgs based on from/to options. Run translation operations.
      * @private
      */
-    public drawPoints(): void {
+    public translate(): void {
+        if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
+            this.processData();
+            this.generatePoints();
+        }
+
         this.points.forEach((point): void => {
             const chart = this.chart,
-                fromPoint = chart.get(point.options.from || ''),
-                toPoint = chart.get(point.options.to || '');
+                mapView = chart.mapView,
+                options = point.options;
 
-            // Connect to the linked parent point (in mappoint) to trigger
-            // series redraw for the linked point (in flow).
-            if (
-                !(fromPoint instanceof Point) ||
-                !(toPoint instanceof Point) ||
-                // Don't draw point if weight is not valid.
-                !this.scaleWeight(point)
-            ) {
+            let fromPos: PositionObject | undefined,
+                toPos: PositionObject | undefined;
+
+            const dirtySeries = (): void => {
+                point.series.isDirty = true;
+            };
+
+            const getPointXY = (
+                pointId: string
+            ): PositionObject | undefined => {
+                const foundPoint = chart.get(pointId);
+                // Connect to the linked parent point (in mappoint) to trigger
+                // series redraw for the linked point (in flow).
+                if (
+                    (foundPoint instanceof Point) &&
+                    foundPoint.plotX &&
+                    foundPoint.plotY
+                ) {
+                    // after linked point update flowmap point should be also
+                    // updated
+                    addEvent(foundPoint, 'update', dirtySeries);
+
+                    return {
+                        x: foundPoint.plotX,
+                        y: foundPoint.plotY
+                    };
+                }
+            };
+
+            const getLonLatXY = (
+                lonLat: LonLatArray | Highcharts.MapLonLatObject
+            ): Highcharts.MapLonLatObject => {
+                if (isArray(lonLat)) {
+                    return {
+                        lon: lonLat[0],
+                        lat: lonLat[1]
+                    };
+                }
+                return lonLat;
+            };
+
+            if (typeof options.from === 'string') {
+                fromPos = getPointXY(options.from);
+            } else if (typeof options.from === 'object' && mapView) {
+                fromPos = mapView.lonLatToPixels(getLonLatXY(options.from));
+            }
+
+            if (typeof options.to === 'string') {
+                toPos = getPointXY(options.to);
+            } else if (typeof options.to === 'object' && mapView) {
+                toPos = mapView.lonLatToPixels(getLonLatXY(options.to));
+            }
+
+            // Don't draw point if weight is not valid.
+            if (!this.scaleWeight(point)) {
+                point.shapeArgs = {
+                    d: []
+                };
                 return;
             }
 
-            function dirtySeries(): void {
-                point.series.isDirty = true;
-            }
-
-            // We have from and to & before the proceed.
-            if (toPoint !== point.oldToPoint || !point.oldToPoint) {
-                if (point.removeEventForToPoint) {
-                    point.removeEventForToPoint();
-                }
-
-                point.removeEventForToPoint = addEvent(
-                    toPoint, 'update', dirtySeries
-                );
-            }
-
-            if (fromPoint !== point.oldFromPoint || !point.oldFromPoint) {
-                if (point.removeEventForFromPoint) {
-                    point.removeEventForFromPoint();
-                }
-
-                point.removeEventForFromPoint = addEvent(
-                    fromPoint, 'update', dirtySeries
-                );
-            }
-
             // Save original point location.
-            point.oldFromPoint = fromPoint;
-            point.oldToPoint = toPoint;
+            point.oldFrom = fromPos;
+            point.oldTo = toPos;
 
             // Calculate point shape
             point.shapeType = 'path';
             point.shapeArgs = this.getPointShapeArgs(point);
 
-            // plotX and plotY need to be defined for dataLabels. (#15863)
-            point.y = point.plotY = 1;
-            point.x = point.plotX = 1;
+            if (fromPos) {
+                point.plotX = fromPos.x;
+                point.plotY = fromPos.y;
+            }
 
             // When updating point from null to normal value, set a real color
             // (don't keep nullColor).
@@ -505,18 +539,15 @@ class FlowMapSeries extends MapLineSeries {
                 point.series.color
             );
         });
-
-        // Draw the points.
-        ColumnSeries.prototype.drawPoints.apply(this);
     }
 
     public getPointShapeArgs(point: FlowMapPoint): SVGAttributes {
-        const fromPoint = point.oldFromPoint,
-            toPoint = point.oldToPoint,
+        const fromPos = point.oldFrom,
+            toPos = point.oldTo,
             // Get a new rescaled weight.
             scaledWeight = this.scaleWeight(point);
 
-        if (!fromPoint || !toPoint) {
+        if (!fromPos || !toPos) {
             return {};
         }
 
@@ -529,11 +560,11 @@ class FlowMapSeries extends MapLineSeries {
                 pointOptions.growTowards,
                 this.options.growTowards
             ),
-            fromX = fromPoint.plotX || 0,
-            fromY = fromPoint.plotY || 0;
+            fromX = fromPos.x || 0,
+            fromY = fromPos.y || 0;
 
-        let toX = toPoint.plotX || 0,
-            toY = toPoint.plotY || 0,
+        let toX = toPos.x || 0,
+            toY = toPos.y || 0,
             curveFactor = pick(
                 pointOptions.curveFactor,
                 this.options.curveFactor
@@ -681,7 +712,7 @@ class FlowMapSeries extends MapLineSeries {
             const marker: SVGPath = FlowMapSeries.markerEndPath(
                 [toX - toXToArc, toY - toYToArc],
                 [toX + toXToArc, toY + toYToArc],
-                [toPoint.plotX as number, toPoint.plotY as number],
+                [toPos.x as number, toPos.y as number],
                 markerEndOptions
             );
 
@@ -702,10 +733,12 @@ class FlowMapSeries extends MapLineSeries {
 
 interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
+    drawPoints: typeof ColumnSeries.prototype['drawPoints'];
 }
 
 extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
+    drawPoints: ColumnSeries.prototype.drawPoints,
     // Make it work on zoom or pan.
     useMapGeometry: true
 });
@@ -804,18 +837,26 @@ export default FlowMapSeries;
  */
 
 /**
- * ID referencing a map point holding coordinates of the link origin.
+ * ID referencing a map point holding coordinates of the link origin or
+ * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
+ * and `lat` properties.
  *
  *
- * @type      {string}
+ * @type      {string | Highcharts.LonLatArray | Highcharts.MapLonLatObject}
+ * @sample    {highmaps} maps/demo/flowmap-from-to-lon-lat
+ *            Flowmap point using lonlat coordinates
  * @apioption series.flowmap.data.from
  */
 
 /**
- * ID referencing a map point holding coordinates of the link destination.
+ * ID referencing a map point holding coordinates of the link origin or
+ * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
+ * and `lat` properties.
  *
  *
- * @type      {string}
+ * @type      {string | Highcharts.LonLatArray | Highcharts.MapLonLatObject}
+ * @sample    {highmaps} maps/demo/flowmap-from-to-lon-lat
+ *            Flowmap point using lonlat coordinates
  * @apioption series.flowmap.data.to
  */
 

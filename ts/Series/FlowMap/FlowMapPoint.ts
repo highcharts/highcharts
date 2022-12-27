@@ -19,6 +19,7 @@
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
 import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 
 import ColorMapComposition from '../ColorMapComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -51,15 +52,11 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
-    public oldFromPoint?: Point;
+    public oldFrom?: PositionObject;
 
-    public oldToPoint?: Point;
+    public oldTo?: Point | PositionObject;
 
     public options: FlowMapPointOptions = void 0 as any;
-
-    public removeEventForFromPoint: Function = void 0 as any;
-
-    public removeEventForToPoint: Function = void 0 as any;
 
     public series: FlowMapSeries = void 0 as any;
 
