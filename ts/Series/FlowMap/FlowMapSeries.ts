@@ -97,6 +97,8 @@ class FlowMapSeries extends MapLineSeries {
          * If the value is 0 the link will be straight.
          *
          * @type      {number}
+         * @sample    {highmaps} maps/demo/flowmap-curve-factor
+         *            Setting different values for curveFactor
          */
         curveFactor: void 0,
 
