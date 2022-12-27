@@ -130,7 +130,7 @@ class Fullscreen {
     public setButtonText(): void {
         const editMode = this.dashboard.editMode,
             contextMenu = editMode && editMode.tools.contextMenu,
-            button = contextMenu && contextMenu.items['viewFullscreen'];
+            button = contextMenu && contextMenu.items.viewFullscreen;
 
         if (button && button.innerElement) {
             const lang = editMode.lang;

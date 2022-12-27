@@ -47,7 +47,7 @@ class EditContextMenu extends Menu {
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
         editMode: EditMode,
-        parent?: any
+        parent?: HTMLElement
     ) {
         super(
             editMode.dashboard.container,
