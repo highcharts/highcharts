@@ -104,7 +104,6 @@ class EditableOptions {
         const record: EditableOptions.getOptionsType = {};
 
         [
-            ...Object.keys(Component.defaultOptions.editableOptions),
             ...options.editableOptions
         ].forEach((optionName: string): void => {
             const type = getType(optionName, options);
