@@ -216,7 +216,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default rgba(102,133,194,0.3)
      */
-    maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
+    maskFill: color(Palette.highlightColor60).setOpacity(0.2).get(),
 
     /**
      * The color of the line marking the currently zoomed area in the

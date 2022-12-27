@@ -482,7 +482,7 @@ class SVGRenderer implements SVGRendererLike {
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
 
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
+            fontFamily: 
                 'Arial, Helvetica, sans-serif',
             fontSize: '12px'
 
@@ -733,7 +733,7 @@ class SVGRenderer implements SVGRendererLike {
 
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: Palette.neutralColor3,
+                fill: Palette.neutralColor5,
                 stroke: Palette.neutralColor20,
                 'stroke-width': 1
             }, normalState);

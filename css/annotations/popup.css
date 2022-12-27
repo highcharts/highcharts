@@ -1,13 +1,13 @@
 /* Colors, using same names and values as in highcharts.css */
 :root {
     --highcharts-background-color: #ffffff;
-    --highcharts-neutral-color-100: #000000;
-    --highcharts-neutral-color-80: #333333;
-    --highcharts-neutral-color-60: #666666;
-    --highcharts-neutral-color-20: #cccccc;
-    --highcharts-neutral-color-10: #e6e6e6;
+    --highcharts-neutral-color-100: #20202c;
+    --highcharts-neutral-color-80: #32323c;
+    --highcharts-neutral-color-60: #646479;
+    --highcharts-neutral-color-20: #e2e2e2;
+    --highcharts-neutral-color-10: #f0f0f0;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-highlight-color-80: #335cad;
+    --highcharts-highlight-color-80: #5749ad;
 }
 
 .highcharts-popup.highcharts-annotation-toolbar {

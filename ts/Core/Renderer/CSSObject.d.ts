@@ -48,6 +48,7 @@ export interface CSSObject {
     borderRadius?: number|string;
     borderWidth?: number;
     border?: string|0;
+    borderTop?: string;
     'border-radius'?: string;
     bottom?: string;
     boxShadow?: string;

@@ -1146,14 +1146,23 @@ class Tooltip {
                     label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
-                        label.attr({
-                            stroke: (
-                                options.borderColor ||
-                                point.color ||
-                                currentSeries.color ||
-                                Palette.neutralColor60
-                            )
-                        });
+                        if (this.shared) {
+                            label.attr({
+                                stroke: (
+                                    Palette.neutralColor20
+                                )
+                            });
+                        } else {
+                            label.attr({
+                                stroke: (
+                                    options.borderColor ||
+                                    point.color ||
+                                    currentSeries.color ||
+                                    Palette.neutralColor20
+                                )
+                            });
+                        }
+                        
                     }
 
                     tooltip.updatePosition({

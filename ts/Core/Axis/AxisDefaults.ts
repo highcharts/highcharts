@@ -1052,11 +1052,13 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60,
+                color: Palette.neutralColor40,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '11px'
+                fontSize: '11px',
+                /** @internal */
+                fontWeight: 'normal'
             }
         },
 
@@ -1945,7 +1947,11 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60
+                color: Palette.neutralColor60,
+                /** @internal */
+                fontWeight: 'normal',
+                /** @internal */
+                fontSize: '11px'
             }
         },
 
@@ -2096,7 +2102,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: Palette.neutralColor40,
+        minorTickColor: Palette.neutralColor10,
 
         /**
          * The color of the line marking the axis itself.
@@ -2118,7 +2124,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        lineColor: Palette.highlightColor20,
+        lineColor: Palette.neutralColor20,
 
         /**
          * The width of the line marking the axis itself.
@@ -2219,7 +2225,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        tickColor: Palette.highlightColor20
+        tickColor: Palette.neutralColor20
 
         // tickWidth: 1
     };
@@ -3078,7 +3084,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor100,
+                color: Palette.neutralColor80,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */

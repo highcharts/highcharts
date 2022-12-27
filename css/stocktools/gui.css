@@ -1,7 +1,8 @@
 /* Colors for buttons. */
 :root {
     --highcharts-button-background-color: #f7f7f7;
-    --highcharts-button-hover-color: #e6ebf5;
+    --highcharts-button-hover-color: #f0f0f0;
+    --highcharts-button-active-color: #dddbef;
 }
 
 .chart:-webkit-full-screen {
@@ -245,13 +246,16 @@
     width: 100%;
 }
 
-.highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn,
 .highcharts-bindings-wrapper li > span.highcharts-menu-item-btn:hover,
 .highcharts-bindings-wrapper .highcharts-arrow-wrapper > div:hover,
-.highcharts-bindings-wrapper li.highcharts-active,
 .highcharts-toggle-toolbar:hover {
     background-color: var(--highcharts-button-hover-color);
     transition: background-color 100ms;
+}
+
+.highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn,
+.highcharts-bindings-wrapper li.highcharts-active {
+    background-color: var(--highcharts-button-active-color);
 }
 
 .highcharts-toggle-toolbar {

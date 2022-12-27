@@ -545,9 +545,11 @@ const rangeSelector: RangeSelectorOptions = {
      */
     inputStyle: {
         /** @ignore */
-        color: Palette.highlightColor80,
+        color: Palette.highlightColor100,
         /** @ignore */
-        cursor: 'pointer'
+        cursor: 'pointer',
+        /** @ignore */
+        fontWeight: 'bold'
     },
 
     /**
@@ -563,7 +565,9 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60
+        color: Palette.highlightColor100,
+        /** @ignore */
+        fontWeight: 'bold'
     }
 };
 

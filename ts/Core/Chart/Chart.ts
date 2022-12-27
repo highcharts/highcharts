@@ -1191,7 +1191,7 @@ class Chart {
         // Default style
         const style = name === 'title' ? {
             color: Palette.neutralColor100,
-            fontWeigth: 'bold',
+            fontWeight: 'bold',
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
             color: Palette.neutralColor80

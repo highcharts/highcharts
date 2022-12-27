@@ -876,6 +876,8 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         border: `1px solid ${Palette.neutralColor40}`,
         /** @ignore-option */
+        borderRadius: '2px',
+        /** @ignore-option */
         background: Palette.backgroundColor,
         /** @ignore-option */
         padding: '5px 0'
