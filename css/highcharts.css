@@ -8,16 +8,16 @@
 
 :root {
     /* Colors for data series and points. */
-    --highcharts-color-0: #7cb5ec;
-    --highcharts-color-1: #434348;
-    --highcharts-color-2: #90ed7d;
-    --highcharts-color-3: #f7a35c;
-    --highcharts-color-4: #8085e9;
-    --highcharts-color-5: #f15c80;
-    --highcharts-color-6: #e4d354;
-    --highcharts-color-7: #2b908f;
-    --highcharts-color-8: #f45b5b;
-    --highcharts-color-9: #91e8e1;
+    --highcharts-color-0: #4caffe;
+    --highcharts-color-1: #5352be;
+    --highcharts-color-2: #ff8d64;
+    --highcharts-color-3: #43d376;
+    --highcharts-color-4: #708ab9;
+    --highcharts-color-5: #c771f3;
+    --highcharts-color-6: #6cddca;
+    --highcharts-color-7: #dd437f;
+    --highcharts-color-8: #fab776;
+    --highcharts-color-9: #404e89;
 
     /* Chart background, point stroke for markers and columns etc */
     --highcharts-background-color: #ffffff;
@@ -29,51 +29,51 @@
     */
 
     /* Strong text. */
-    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-100: #20202c;
 
     /* Main text and some strokes. */
-    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-80: #32323c;
 
     /* Axis labels, axis title, connector fallback. */
-    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-60: #646479;
 
     /* Credits text, export menu stroke. */
-    --highcharts-neutral-color-40: #999999;
+    --highcharts-neutral-color-40: #bcbcc1;
 
     /* Disabled texts, button strokes, crosshair etc. */
-    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-20: #e2e2e2;
 
     /* Grid lines etc. */
-    --highcharts-neutral-color-10: #e6e6e6;
+    --highcharts-neutral-color-10: #f0f0f0;
 
     /* Minor grid lines etc. */
-    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-5: #f7f7f7;
 
     /* Tooltip backgroud, button fills, map null points. */
-    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-3: #fafafa;
 
     /*
     Highlights, shades of blue by default
     */
 
     /* Drilldown clickable labels, color axis max color. */
-    --highcharts-highlight-color-100: #003399;
+    --highcharts-highlight-color-100: #413782;
 
     /* Selection marker, menu hover, button hover, chart border, navigator
     series. */
-    --highcharts-highlight-color-80: #335cad;
+    --highcharts-highlight-color-80: #5749ad;
 
     /* Navigator mask fill. */
-    --highcharts-highlight-color-60: #6685c2;
+    --highcharts-highlight-color-60: #796dbd;
 
     /* Ticks and axis line. */
-    --highcharts-highlight-color-20: #ccd6eb;
+    --highcharts-highlight-color-20: #9a92ce;
 
     /* Pressed button, color axis min color. */
-    --highcharts-highlight-color-10: #e6ebf5;
+    --highcharts-highlight-color-10: #dddbef;
 
     /* Fonts */
-    --highcharts-font-family: "Lucida Grande", "Lucida Sans Unicode", arial, helvetica, sans-serif;
+    --highcharts-font-family: Arial, Helvetica, sans-serif;
     --highcharts-title-font-size: 1.5em;
     --highcharts-subtitle-font-size: 1em;
     --highcharts-legend-font-size: 1em;

@@ -1296,7 +1296,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          */
-        borderRadius: 0,
+        borderRadius: 2,
 
         /**
          * Options for the paging or navigation appearing when the legend is
@@ -2521,9 +2521,9 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color(Palette.neutralColor3)
+        backgroundColor: color(Palette.neutralColor5)
             // @todo: Disallow undefined as input for colors
-            .setOpacity(0.85).get() as any,
+            .setOpacity(1).get() as any,
 
         /**
          * The pixel width of the tooltip border.
@@ -2546,7 +2546,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          */
-        borderWidth: 1,
+        borderWidth: 2,
 
         /**
          * Whether to apply a drop shadow to the tooltip.
