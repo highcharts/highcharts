@@ -327,7 +327,7 @@ const displayTime = time => {
     };
     setUpInputs();
 
-    if (!window.karma) { // CI tests
+    if (!window.__karma__) { // CI tests
         // Wait a bit for Visual review tool
         setTimeout(() => play(), 100);
     }
