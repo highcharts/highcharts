@@ -979,7 +979,7 @@ class Axis {
          * @private
          */
         function between(x: number, a: number, b: number): number {
-            if (force !== 'pass' && x < a || x > b) {
+            if (force !== 'pass' && (x < a || x > b)) {
                 if (force) {
                     x = clamp(x, a, b);
                 } else {
@@ -989,7 +989,7 @@ class Axis {
             return x;
         }
 
-        const evt: Partial<Event&Axis.PlotLinePathOptions> = {
+        const evt: Partial<Axis.PlotLinePathOptions> = {
             value: value,
             lineWidth: lineWidth,
             old: old,
@@ -998,7 +998,7 @@ class Axis {
             translatedValue: translatedValue
         };
         fireEvent(this, 'getPlotLinePath', evt, function (
-            e:(Event&Axis.PlotLinePathOptions)
+            e:(Axis.PlotLinePathOptions)
         ): void {
 
             translatedValue = pick(
@@ -1019,39 +1019,13 @@ class Axis {
                 y1 = axisTop;
                 y2 = cHeight - axis.bottom;
 
-                if (
-                    e.force !== 'pass' &&
-                    (x1 < axisLeft || x1 > axisLeft + axis.width)
-                ) {
-                    if (force) {
-                        x1 = x2 = clamp(
-                            x1,
-                            axisLeft,
-                            axisLeft + axis.width
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 
             } else {
                 x1 = axisLeft;
                 x2 = cWidth - axis.right;
-                y2 = y1;
-                if (
-                    e.force !== 'pass' &&
-                    (y1 < axisTop || y1 > axisTop + axis.height)
-                ) {
-                    if (e.force) {
-                        y1 = y2 = clamp(
-                            y1,
-                            axisTop,
-                            axisTop + axis.height
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
+
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
             (e as any).path = skip && !force ?
                 null :
