@@ -163,21 +163,23 @@ class FlowMapSeries extends MapLineSeries {
         },
 
         /**
-         * Maximum weight of a link. The weight of a link is mapped between
-         * `maxWeight` and `minWeight`.
+         * Maximum width of a link expressed in pixels. The weight of a link
+         * is mapped between `maxWidth` and `minWidth`.
          *
          * @since   next
+         * @type    {number}
          */
-        maxWeight: 25,
+        maxWidth: 25,
 
         /**
-         * Minimum weight of a link. The weight of a link is mapped between
-         * `maxWeight` and `minWeight`.
+         * Minimum width of a link expressed in pixels. The weight of a link
+         * is mapped between `maxWidth` and `minWidth`.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          * @since   next
+         * @type    {number}
          */
-        minWeight: 5,
+        minWidth: 5,
 
         tooltip: {
             /**
@@ -402,11 +404,11 @@ class FlowMapSeries extends MapLineSeries {
             return 0;
         }
 
-        const minWeightLimit = this.options.minWeight,
-            maxWeightLimit = this.options.maxWeight;
+        const minWidthLimit = this.options.minWidth,
+            maxWidthLimit = this.options.maxWidth;
 
-        return (weight - smallestWeight) * (maxWeightLimit - minWeightLimit) /
-            ((greatestWeight - smallestWeight) || 1) + minWeightLimit;
+        return (weight - smallestWeight) * (maxWidthLimit - minWidthLimit) /
+            ((greatestWeight - smallestWeight) || 1) + minWidthLimit;
     }
 
     /**

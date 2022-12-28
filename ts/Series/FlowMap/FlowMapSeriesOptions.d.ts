@@ -27,8 +27,8 @@ import type { MarkerEndOptions } from './FlowMapPointOptions';
 interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
-    maxWeight: number;
-    minWeight: number;
+    maxWidth: number;
+    minWidth: number;
     weight?: number;
     curveFactor?: number;
 }
