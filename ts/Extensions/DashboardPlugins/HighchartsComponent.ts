@@ -90,9 +90,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             chartConstructor: '',
             editableOptions: [
                 ...Component.defaultOptions.editableOptions,
-                'chartOptions',
-                'chartClassName',
-                'chartID'
+                'chartOptions'
+                // 'chartClassName',
+                // 'chartID'
             ],
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
