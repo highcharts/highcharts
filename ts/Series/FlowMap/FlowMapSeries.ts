@@ -116,6 +116,8 @@ class FlowMapSeries extends MapLineSeries {
          *
          * @type      {number}
          * @default   0.5
+         * @sample    {highmaps} maps/demo/flowmap-fill-opacity
+         *            Setting different values for fillOpacity
          */
         fillOpacity: 0.5,
 

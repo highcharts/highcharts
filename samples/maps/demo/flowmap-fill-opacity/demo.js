@@ -9,7 +9,7 @@
         },
 
         title: {
-            text: 'Highmaps flowmap demo with curveFactor'
+            text: 'Highmaps flowmap demo with fillColor and fillOpacity'
         },
 
         subtitle: {
@@ -26,18 +26,7 @@
                 inactive: {
                     enabled: false
                 }
-            },
-            data: [
-                ['pl', 1],
-                ['es', 1],
-                ['fr', 1],
-                ['it', 1],
-                ['bg', 1],
-                ['fi', 1],
-                ['no', 1],
-                ['hu', 1],
-                ['ie', 1]
-            ]
+            }
         }, {
             type: 'mappoint',
             id: 'europe',
@@ -86,26 +75,19 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            minWeight: 1,
-            maxWeight: 1,
+            minWeight: 5,
+            maxWeight: 15,
+            growTowards: true,
             markerEnd: {
-                enabled: false
+                enabled: true,
+                markerType: 'arrow',
+                width: '50%',
+                height: '50%'
             },
-            color: '#0000FF',
+            fillColor: '#31c2cc',
             fillOpacity: 0.2,
+            color: '#0000FF',
             data: [{
-                from: 'Oslo',
-                to: 'Helsinki',
-                curveFactor: 1,
-                weight: 20
-            },
-            {
-                from: 'Oslo',
-                to: 'Dublin',
-                weight: 70,
-                curveFactor: -0.2
-            },
-            {
                 from: 'Warszawa',
                 to: 'Helsinki',
                 weight: 10,
@@ -133,13 +115,54 @@
                 to: 'Sofia',
                 weight: 60,
                 curveFactor: 1,
+                growTowards: true,
                 fillColor: '#1cd635',
-                fillOpacity: 0.4
+                fillOpacity: 0.4,
+                opacity: 0.2
             }, {
                 from: 'Warszawa',
                 to: 'Roma',
                 weight: 2,
-                curveFactor: -0.3
+                curveFactor: -0.3,
+                markerEnd: {
+                    enabled: true,
+                    markerType: 'arrow',
+                    width: 14,
+                    height: 24
+                }
+            }
+            ]
+        }, {
+            type: 'flowmap',
+            linkedTo: 'europe',
+            color: 'black',
+            fillColor: 'rgb(255, 0, 0)',
+            fillOpacity: 1,
+            growTowards: true,
+            data: [{
+                from: 'Oslo',
+                to: 'Helsinki',
+                curveFactor: 1,
+                weight: 20,
+                markerEnd: {
+                    enabled: true,
+                    width: '70%',
+                    height: '70%'
+                }
+            }, {
+                from: 'Oslo',
+                to: 'Dublin',
+                weight: 70,
+                curveFactor: -0.2,
+                opacity: 0.2
+            }, {
+                from: 'Oslo',
+                to: 'Warszawa',
+                weight: 2,
+                markerEnd: {
+                    width: 20,
+                    height: '100%'
+                }
             }]
         }]
     });
