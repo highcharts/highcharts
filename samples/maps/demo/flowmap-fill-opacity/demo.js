@@ -92,20 +92,17 @@
                 to: 'Helsinki',
                 weight: 10,
                 curveFactor: -0.2
-            },
-            {
+            }, {
                 from: 'Warszawa',
                 to: 'Paris',
                 weight: 5,
                 curveFactor: -0.5
-            },
-            {
+            }, {
                 from: 'Warszawa',
                 to: 'Madrid',
                 weight: 20,
                 curveFactor: 0
-            },
-            {
+            }, {
                 from: 'Warszawa',
                 to: 'Budapest',
                 weight: 0.1,
@@ -130,8 +127,7 @@
                     width: 14,
                     height: 24
                 }
-            }
-            ]
+            }]
         }, {
             type: 'flowmap',
             linkedTo: 'europe',

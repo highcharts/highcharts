@@ -50,18 +50,6 @@ const {
     relativeLength
 } = U;
 
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-
-    }
-}
-
 /**
  * The flowmap series type
  *
@@ -142,8 +130,10 @@ class FlowMapSeries extends MapLineSeries {
             /**
              * Enable or disable the `markerEnd`.
              *
-             * @since next
-             * @type  {boolean}
+             * @since     next
+             * @type      {boolean}
+             * @sample    {highmaps} maps/demo/flowmap-marker-end
+             *            Setting different markerType for markerEnd
              */
             enabled: true,
             /**
