@@ -9,7 +9,7 @@
         },
 
         title: {
-            text: 'Highmaps basic lat/lon demo'
+            text: 'Highmaps flowmap demo with curvFactor'
         },
 
         subtitle: {

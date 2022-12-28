@@ -82,7 +82,7 @@ class FlowMapSeries extends MapLineSeries {
     /**
      * A flowmap series is a series laid out on top of a map series allowing to
      * display route paths (e.g. flights or ships routes) or flows on a map. It
-     * is drawing a link between two mappoints.
+     * creates a link between two mappoints.
      *
      * @extends      plotOptions.mapline
      * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
