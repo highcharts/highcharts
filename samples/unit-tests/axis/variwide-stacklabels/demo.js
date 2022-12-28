@@ -46,6 +46,14 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
     var series = chart.series,
         yAxis = chart.yAxis[0];
 
+    chart.update({
+        yAxis: {
+            stackLabels: {
+                align: 'left'
+            }
+        }
+    });
+
     assert.strictEqual(
         series[0].points[4].plotX >
             yAxis.stacking.stacks[series[0].stackKey][4].label.alignAttr.x,

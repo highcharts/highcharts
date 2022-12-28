@@ -335,8 +335,10 @@ class StackItem {
         };
     }
     /**
+     * Get the bbox of the stack.
      * @private
      * @function Highcharts.StackItem#getStackBox
+     * @return {BBoxObject} The x,y, height, width of the stack.
      */
     public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
         const stackItem = this,
