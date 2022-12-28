@@ -107,6 +107,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     private tableEvents: Function[] = [];
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
+    protected shouldRedraw: boolean;
 
     protected syncHandlers: Sync.OptionsRecord;
 
@@ -159,6 +160,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
+        this.shouldRedraw = true;
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
 
@@ -322,6 +324,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public setStore(store: Component.StoreTypes | undefined): this {
+        // Clean up old event listeners
+        if (this.tableEvents.length) {
+            while (this.tableEvents.length) {
+                const eventCallback = this.tableEvents.pop();
+                if (typeof eventCallback === 'function') {
+                    eventCallback();
+                }
+            }
+        }
+
         this.store = store;
         if (this.store) {
             // Set up event listeners
@@ -341,26 +353,17 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     }
                 }
             );
-        }
 
-        // Clean up old event listeners
-        if (!store && this.tableEvents.length) {
-            while (this.tableEvents.length) {
-                const eventCallback = this.tableEvents.pop();
-                if (typeof eventCallback === 'function') {
-                    eventCallback();
-                }
-            }
-        }
 
-        // Add the component to a group based on the store table id by default
-        // TODO: make this configurable
-        if (this.store) {
+            // Add the component to a group based on the
+            // store table id by default
+            // TODO: make this configurable
             const tableID = this.store.table.id;
 
             if (!ComponentGroup.getComponentGroup(tableID)) {
                 ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
             }
+
             const group = ComponentGroup.getComponentGroup(tableID);
             if (group) {
                 group.addComponents([this.id]);
@@ -489,27 +492,41 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    * @return {this}
    * The component for chaining
    */
-    public update(newOptions: Partial<Component.ComponentOptions>): this {
+    public update(newOptions: Partial<Component.ComponentOptions>, redraw = true): this {
         // Update options
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
             options: newOptions
         });
 
+        if (redraw) {
+            this.redraw();
+        }
+
         return this;
     }
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
+        if (this.titleElement) {
+            this.titleElement.remove();
+        }
+
         const titleElement =
             Component.createTextElement('h1', 'title', titleOptions);
+
         if (titleElement) {
             this.titleElement = titleElement;
         }
     }
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
+        if (this.captionElement) {
+            this.captionElement.remove();
+        }
+
         const captionElement =
             Component.createTextElement('div', 'caption', captionOptions);
+
         if (captionElement) {
             this.captionElement = captionElement;
         }
@@ -565,24 +582,24 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             }
         });
 
+        // TODO: should cleanup this event listener
         window.addEventListener(
             'resize',
             (): void => this.resizeTo(this.parentElement)
         );
 
         this.hasLoaded = true;
+        this.shouldRedraw = false;
 
         return this;
     }
 
     /**
-   * @todo make this call load on initial render
-   *
-   * @return {this}
-   * The component for chaining
-   */
+     * @return {this}
+     * The component for chaining
+     */
     public render(): this {
-        if (!this.hasLoaded) {
+        if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
             // Call resize to fit to the cell. Only for non HTML elements.
             // There is no need to set a fixed height for the HTML element
@@ -604,8 +621,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         const e = {
             component: this
         };
+
         fireEvent(this, 'redraw', e);
-        return e.component;
+
+        this.shouldRedraw = true; // set to make render call load as well
+
+        return this.render();
     }
 
     /**

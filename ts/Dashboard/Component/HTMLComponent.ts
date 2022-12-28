@@ -203,7 +203,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         super.redraw();
         this.constructTree();
 
-        this.render();
         this.emit({ type: 'afterRedraw' });
         return this;
     }
@@ -228,6 +227,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     // Could probably use the serialize function moved on
     // the exportdata branch
     private constructTree(): void {
+        // Remove old tree if redrawing
+        while (this.contentElement.firstChild) {
+            this.contentElement.firstChild.remove();
+        }
+
         const parser = new AST(this.elements);
         parser.addToDOM(this.contentElement);
     }

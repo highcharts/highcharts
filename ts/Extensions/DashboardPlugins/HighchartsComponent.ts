@@ -231,8 +231,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     public redraw(): this {
-        super.redraw();
-        return this.render();
+        return super.redraw();
+        // return this.render();
     }
 
     public resize(
