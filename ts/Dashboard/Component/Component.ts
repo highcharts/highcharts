@@ -507,28 +507,30 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
-        if (this.titleElement) {
-            this.titleElement.remove();
-        }
-
+        const old = this.titleElement;
         const titleElement =
             Component.createTextElement('h1', 'title', titleOptions);
 
         if (titleElement) {
             this.titleElement = titleElement;
+
+            if (old) {
+                old.replaceWith(this.titleElement);
+            }
         }
     }
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
-        if (this.captionElement) {
-            this.captionElement.remove();
-        }
-
+        const old = this.captionElement;
         const captionElement =
             Component.createTextElement('div', 'caption', captionOptions);
 
         if (captionElement) {
             this.captionElement = captionElement;
+
+            if (old) {
+                old.replaceWith(this.captionElement);
+            }
         }
     }
 
