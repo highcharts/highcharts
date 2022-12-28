@@ -93,6 +93,8 @@ class FlowMapSeries extends MapLineSeries {
      * @optionparent plotOptions.flowmap
      */
     public static defaultOptions: FlowMapSeriesOptions = merge(MapLineSeries.defaultOptions, {
+        animation: true,
+
         /**
          * The `curveFactor` for all links if not specified.
          * A `curveFactor` with a higher value than 0 will curve the link clockwise.
@@ -324,6 +326,47 @@ class FlowMapSeries extends MapLineSeries {
      *  Functions
      *
      */
+
+    /**
+     * Animate the flowmap point one by one from 'fromPoint'.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flowmap#animate
+     *
+     * @param {boolean} init
+     *        Whether to initialize the animation or run it
+     */
+    public animate(init: boolean): void {
+        const series = this,
+            points = series.points;
+
+        if (!init) { // run the animation
+            points.forEach((point: FlowMapPoint): void => {
+                const path = (point.shapeArgs as any).d,
+                    x = path[0][1],
+                    y = path[0][2];
+
+                // to animate SVG path the initial path array needs to be same
+                // as target, but element should be visible, so we insert array
+                // elements with start (M) values
+                const start = path.map((
+                    pos: Array<string | number>
+                ): Array<string | number> => (
+                    pos.map((el, i): (string | number) => {
+                        if (i > 0) {
+                            return i % 2 ? x : y;
+                        }
+                        return el;
+                    })
+                ));
+
+                if (point.graphic) {
+                    point.graphic.attr({ d: start }); // init
+                    point.graphic.animate({ d: path });
+                }
+            });
+        }
+    }
 
     /**
      *
