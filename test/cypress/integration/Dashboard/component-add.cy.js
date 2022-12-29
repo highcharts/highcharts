@@ -77,8 +77,8 @@ describe('Add component through UI', () => {
             );
             assert.closeTo(
                 component.dimensions.width,
-                273.5,
-                1,
+                272,
+                3,
                 'Width of the element should be equal to given value.'
                 // Any better way of getting width?
             );
