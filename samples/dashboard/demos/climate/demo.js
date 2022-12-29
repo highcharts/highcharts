@@ -10,25 +10,23 @@ let cityGrid;
 let citySeries;
 let dataScope = 'TX';
 let worldCities;
-let worldTime = new Date(Date.UTC(2010, 11, 25)); 
+let worldDate = new Date(Date.UTC(2010, 11, 25)); 
 
 async function buildDashboard() {
-    const topology = await Promise
-        .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
-        .then(fetch)
-        .then(response => response.json());
 
     citiesData = await buildCitiesData();
 
-    const cityClimate = await dataPool.getStore('Tokyo');
-
+    const defaultCity = await dataPool.getStore('Tokyo');
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '100px',
+                    height: '60px',
+                },
+                credits: {
+                    enabled: false
                 },
                 series: [{
                     type: 'scatter',
@@ -36,7 +34,7 @@ async function buildDashboard() {
                     data: buildDates(),
                     events: {
                         click: async function (e) {
-                            worldTime = new Date(e.point.x);
+                            worldDate = new Date(e.point.x);
                             worldCities.setData(await buildCitiesMap());
                         }
                     },
@@ -48,15 +46,13 @@ async function buildDashboard() {
                 }],
                 title: {
                     margin: 0,
-                    text: 'Timeline 2010'
+                    text: ''
                 },
                 xAxis: {
-                    tickPositions: buildDateTicks(),
-                    // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
                     labels: {
-                        format: '{value:%m-%d}'
+                        format: '{value:%Y}'
                     }
                 },
                 yAxis: {
@@ -73,7 +69,10 @@ async function buildDashboard() {
             chartOptions: {
                 chart: {
                     backgroundColor: '#567',
-                    map: topology,
+                    map: await fetch(
+                        'https://code.highcharts.com/mapdata/' +
+                        'custom/world.topo.json'
+                    ).then(response => response.json()),
                     spacing: [0, 0, 0, 0],
                 },
                 /*colorAxis: {
@@ -198,7 +197,7 @@ async function buildDashboard() {
                 },
                 series: [{
                     name: 'Tokyo',
-                    data: cityClimate.table.modified.getRows(
+                    data: defaultCity.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -220,8 +219,6 @@ async function buildDashboard() {
                     enabled: true
                 },
                 xAxis: {
-                    // tickPositions: buildDateTicks(),
-                    // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
                     labels: {
@@ -237,7 +234,7 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: cityClimate,
+            store: defaultCity,
             editable: true,
             // syncEvents: ['tooltip'],
             title: 'Selection Grid',
@@ -404,7 +401,7 @@ async function buildCitiesMap() {
             const table = data.store.table.modified;
             const scopeValue = table.getCellAsNumber(
                 dataScope,
-                table.getRowIndexBy('time', worldTime.getTime()),
+                table.getRowIndexBy('time', worldDate.getTime()),
                 true
             );
 
