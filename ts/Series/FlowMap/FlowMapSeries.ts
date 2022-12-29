@@ -313,7 +313,7 @@ class FlowMapSeries extends MapLineSeries {
 
     public greatestWeight?: number = void 0 as any;
 
-    public centerOfPoints?: object = void 0 as any;
+    public centerOfPoints: PositionObject = void 0 as any;
 
     /**
      *
@@ -366,35 +366,6 @@ class FlowMapSeries extends MapLineSeries {
                 }
             });
         }
-    }
-
-    /**
-     *
-     * @private
-     */
-    public generatePoints(): void {
-        super.generatePoints.call(this);
-
-        let weights: Array<number|undefined> = [];
-
-        this.points.forEach((p): void => {
-            if (pick(p.options.weight, this.options.weight)) {
-                weights.push(pick(p.options.weight, this.options.weight));
-            }
-            /* TODO:
-                1) const from = this.chart.get(p.options.from || '');
-                averageX += from.x
-                averageY += from.y
-
-                ...
-                2) After this loop:
-                store the divided result in this.centerOfPoints{x, y}
-                3) use it in autoCurve() params.
-            */
-        });
-
-        this.smallestWeight = arrayMin(weights);
-        this.greatestWeight = arrayMax(weights);
     }
 
     /**
@@ -488,6 +459,9 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Draw shapeArgs based on from/to options. Run translation operations.
+     * We need two loops: first loop to calculate data, like smallest/greatest
+     * weights and centerOfPoints, which needs the calculated positions, second
+     * loop for calculating shapes of points based on previous calculations.
      * @private
      */
     public translate(): void {
@@ -495,6 +469,10 @@ class FlowMapSeries extends MapLineSeries {
             this.processData();
             this.generatePoints();
         }
+
+        let weights: Array<number|undefined> = [],
+            averageX = 0,
+            averageY = 0;
 
         this.points.forEach((point): void => {
             const chart = this.chart,
@@ -554,6 +532,28 @@ class FlowMapSeries extends MapLineSeries {
                 toPos = mapView.lonLatToPixels(getLonLatXY(options.to));
             }
 
+            // Save original point location.
+            point.fromPos = fromPos;
+            point.toPos = toPos;
+
+            if (fromPos && toPos) {
+                averageX += (fromPos.x + toPos.x) / 2;
+                averageY += (fromPos.y + toPos.y) / 2;
+            }
+
+            if (pick(point.options.weight, this.options.weight)) {
+                weights.push(pick(point.options.weight, this.options.weight));
+            }
+        });
+
+        this.smallestWeight = arrayMin(weights);
+        this.greatestWeight = arrayMax(weights);
+        this.centerOfPoints = {
+            x: averageX / this.points.length,
+            y: averageY / this.points.length
+        };
+
+        this.points.forEach((point): void => {
             // Don't draw point if weight is not valid.
             if (!this.scaleWeight(point)) {
                 point.shapeArgs = {
@@ -562,18 +562,14 @@ class FlowMapSeries extends MapLineSeries {
                 return;
             }
 
-            // Save original point location.
-            point.oldFrom = fromPos;
-            point.oldTo = toPos;
+            if (point.fromPos) {
+                point.plotX = point.fromPos.x;
+                point.plotY = point.fromPos.y;
+            }
 
             // Calculate point shape
             point.shapeType = 'path';
             point.shapeArgs = this.getPointShapeArgs(point);
-
-            if (fromPos) {
-                point.plotX = fromPos.x;
-                point.plotY = fromPos.y;
-            }
 
             // When updating point from null to normal value, set a real color
             // (don't keep nullColor).
@@ -585,8 +581,10 @@ class FlowMapSeries extends MapLineSeries {
     }
 
     public getPointShapeArgs(point: FlowMapPoint): SVGAttributes {
-        const fromPos = point.oldFrom,
-            toPos = point.oldTo,
+        const {
+                fromPos,
+                toPos
+            } = point,
             // Get a new rescaled weight.
             scaledWeight = this.scaleWeight(point);
 
@@ -618,7 +616,7 @@ class FlowMapSeries extends MapLineSeries {
         if (!defined(curveFactor)) { // Automate the curveFactor value.
             curveFactor = this.autoCurve(
                 fromX, fromY, toX, toY,
-                this.chart.plotWidth / 2, this.chart.plotHeight / 2
+                this.centerOfPoints.x, this.centerOfPoints.y
             );
         }
 

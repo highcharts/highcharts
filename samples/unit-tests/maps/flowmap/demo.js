@@ -52,11 +52,34 @@ QUnit.test('Flowmap API options.', assert => {
         horizontal (curved).`
     );
 
-    // Test weight
+    series.points[0].update({
+        curveFactor: void 0
+    }, false);
 
     series.addPoint({
         from: 'B',
-        to: 'C'
+        to: 'C',
+        weight: 1
+    });
+
+    assert.notStrictEqual(
+        series.points[0].shapeArgs.d[0][2],
+        series.points[0].shapeArgs.d[1][2],
+        `When curveFactor is not specified there should be calculated an
+        automated curve based on center of mass of all flowmap points (curved).`
+    );
+
+    assert.notStrictEqual(
+        series.points[1].shapeArgs.d[0][2],
+        series.points[1].shapeArgs.d[1][2],
+        `When curveFactor is not specified there should be calculated an
+        automated curve based on center of mass of all flowmap points (curved).`
+    );
+
+    // Test weight
+
+    series.points[1].update({
+        weight: void 0
     });
 
     assert.strictEqual(
