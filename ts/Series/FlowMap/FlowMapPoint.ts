@@ -54,7 +54,7 @@ class FlowMapPoint extends MapLinePoint {
 
     public fromPos?: PositionObject;
 
-    public toPos?: Point | PositionObject;
+    public toPos?: PositionObject;
 
     public options: FlowMapPointOptions = void 0 as any;
 
