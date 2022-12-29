@@ -56,7 +56,7 @@ components.push(
                 const component = e.target;
                 component.contentElement
                     .querySelector('#csvedit')
-                    .addEventListener('change', () => {
+                    .addEventListener('change', e => {
                         component.store.table.columns = [];
                         component.store.options.csv = e.target.value;
                         component.store.load();
