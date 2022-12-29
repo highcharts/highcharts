@@ -336,27 +336,33 @@ class FlowMapSeries extends MapLineSeries {
 
         if (!init) { // run the animation
             points.forEach((point: FlowMapPoint): void => {
-                const path = (point.shapeArgs as any).d,
-                    x = path[0][1],
-                    y = path[0][2];
+                if (
+                    point.shapeArgs &&
+                    isArray(point.shapeArgs.d) &&
+                    point.shapeArgs.d.length
+                ) {
+                    const path = point.shapeArgs.d,
+                        x = path[0][1],
+                        y = path[0][2];
 
-                // to animate SVG path the initial path array needs to be same
-                // as target, but element should be visible, so we insert array
-                // elements with start (M) values
-                const start = path.map((
-                    pos: Array<string | number>
-                ): Array<string | number> => (
-                    pos.map((el, i): (string | number) => {
-                        if (i > 0) {
-                            return i % 2 ? x : y;
+                    // to animate SVG path the initial path array needs to be
+                    // same as target, but element should be visible, so we
+                    // insert array elements with start (M) values
+                    if (x && y) {
+                        let start: SVGPath = [];
+
+                        for (let i = 0; i < path.length; i++) {
+                            start.push([...path[i]]);
+                            for (let j = 1; j < path[i].length; j++) {
+                                start[i][j] = j % 2 ? x : y;
+                            }
                         }
-                        return el;
-                    })
-                ));
 
-                if (point.graphic) {
-                    point.graphic.attr({ d: start }); // init
-                    point.graphic.animate({ d: path });
+                        if (point.graphic) {
+                            point.graphic.attr({ d: start }); // init
+                            point.graphic.animate({ d: path });
+                        }
+                    }
                 }
             });
         }
