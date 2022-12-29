@@ -91,8 +91,8 @@
             fillOpacity: 0.4,
             opacity: 0.7,
             color: '#ab1521',
-            minWeight: 4,
-            maxWeight: 10,
+            minWidth: 4,
+            maxWidth: 10,
             growTowards: true,
             markerEnd: {
                 width: '50%',

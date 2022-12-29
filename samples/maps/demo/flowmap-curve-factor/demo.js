@@ -86,8 +86,8 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            minWeight: 1,
-            maxWeight: 1,
+            minWidth: 1,
+            maxWidth: 1,
             markerEnd: {
                 enabled: false
             },

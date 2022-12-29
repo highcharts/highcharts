@@ -20,6 +20,14 @@
             enabled: true
         },
 
+        plotOptions: {
+            flowmap: {
+                minWidth: 5,
+                maxWidth: 15,
+                growTowards: true
+            }
+        },
+
         series: [{
             name: 'Basemap',
             states: {
@@ -75,9 +83,6 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            minWeight: 5,
-            maxWeight: 15,
-            growTowards: true,
             markerEnd: {
                 enabled: true,
                 markerType: 'arrow',
@@ -112,7 +117,6 @@
                 to: 'Sofia',
                 weight: 60,
                 curveFactor: 1,
-                growTowards: true,
                 fillColor: '#1cd635',
                 fillOpacity: 0.4,
                 opacity: 0.2
@@ -134,7 +138,6 @@
             color: 'black',
             fillColor: 'rgb(255, 0, 0)',
             fillOpacity: 1,
-            growTowards: true,
             data: [{
                 from: 'Oslo',
                 to: 'Helsinki',

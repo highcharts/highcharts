@@ -100,8 +100,8 @@
             type: 'flowmap',
             linkedTo: 'cities',
             name: 'From Lerwick',
-            minWeight: 2,
-            maxWeight: 2,
+            minWidth: 2,
+            maxWidth: 2,
             weight: 2,
             markerEnd: {
                 enabled: false
@@ -134,8 +134,8 @@
             type: 'flowmap',
             linkedTo: 'cities',
             name: 'From London',
-            minWeight: 2,
-            maxWeight: 2,
+            minWidth: 2,
+            maxWidth: 2,
             weight: 2,
             fillColor: '#faa243',
             fillOpacity: 0.5,

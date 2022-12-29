@@ -79,8 +79,8 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            minWeight: 5,
-            maxWeight: 15,
+            minWidth: 5,
+            maxWidth: 15,
             growTowards: true,
             markerEnd: {
                 width: '50%',
