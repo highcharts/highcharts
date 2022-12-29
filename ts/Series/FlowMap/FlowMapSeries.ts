@@ -70,7 +70,7 @@ class FlowMapSeries extends MapLineSeries {
     /**
      * A flowmap series is a series laid out on top of a map series allowing to
      * display route paths (e.g. flights or ships routes) or flows on a map. It
-     * creates a link between two mappoints.
+     * creates a link between two points on a map chart.
      *
      * @extends      plotOptions.mapline
      * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
@@ -84,10 +84,10 @@ class FlowMapSeries extends MapLineSeries {
         animation: true,
 
         /**
-         * The `curveFactor` for all links if not specified.
-         * A `curveFactor` with a higher value than 0 will curve the link clockwise.
-         * A negative value will curve the link counter clockwise.
-         * If the value is 0 the link will be straight.
+         * The `curveFactor` option for all links.
+         * Value higher than 0 will curve the link clockwise.
+         * A negative value will curve it counter clockwise.
+         * If the value is 0 the link will be a straight line.
          *
          * @type      {number}
          * @sample    {highmaps} maps/demo/flowmap-curve-factor
@@ -183,11 +183,11 @@ class FlowMapSeries extends MapLineSeries {
 
         tooltip: {
             /**
-             * The HTML of the flowmaps's route description in the tooltip.
+             * The HTML for the flowmaps' route description in the tooltip.
              * It consists of the `headerFormat` and `pointFormat`, which can be
              * edited. Variables are enclosed by curly brackets. Available
              * variables are `series.name`, `point.options.from`,
-             * `point.options.to`, `point.weight` and other properties on the
+             * `point.options.to`, `point.weight` and other properties in the
              * same form.
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
@@ -196,7 +196,7 @@ class FlowMapSeries extends MapLineSeries {
 
         /**
          * The weight of the link determines how thick it will be compared to
-         * other weights.
+         * other links weight.
          *
          * @type    {number}
          * @since   next
@@ -405,7 +405,7 @@ class FlowMapSeries extends MapLineSeries {
                 x: (toX - fromX) / 2 + fromX,
                 y: (toY - fromY) / 2 + fromY
             },
-            centerV = { // Vecter from center to halfway
+            centerV = { // Vector from center to halfway
                 x: half.x - centerX,
                 y: half.y - centerY
             };
@@ -831,7 +831,7 @@ export default FlowMapSeries;
  *     the values correspond to `from, to, weight`. Example:
  *     ```js
  *     data: [
- *         ["Point 1", "Point 2", 4],
+ *         ['Point 1', 'Point 2', 4]
  *     ]
  *     ```
  *
@@ -839,19 +839,29 @@ export default FlowMapSeries;
  *     few settings, see the complete options set below.
  *
  *     ```js
- *         data: [{
- *             from: "Point 1",
- *             to: "Point 2",
- *             curveFactor: 0.4,
- *             weight: 5,
- *             growTowards: true,
- *             markerEnd: {
- *                 enabled: true,
- *                 height: 15,
- *                 width: 8
- *             }
- *         }]
+ *     data: [{
+ *         from: 'Point 1',
+ *         to: 'Point 2',
+ *         curveFactor: 0.4,
+ *         weight: 5,
+ *         growTowards: true,
+ *         markerEnd: {
+ *             enabled: true,
+ *             height: 15,
+ *             width: 8
+ *         }
+ *     }]
  *     ```
+ *
+ * 3.   For objects with named values, instead of using the `mappoint` `id`, you can
+ *      use `[longitude, latitude]` arrays.
+ *
+ *      ```js
+ *      data: [{
+ *          from: [longitude, latitude],
+ *          to: [longitude, latitude]
+ *      }]
+ *      ```
  *
  * @type      {Array<number|null|*>}
  * @apioption series.flowmap.data
@@ -921,7 +931,7 @@ export default FlowMapSeries;
 /**
  * Specifying a `markerEnd` here will create an arrow symbol
  * indicating the direction of flow at the destination of one individual link.
- * If one has been previously speficied at the higher level option it will be
+ * If one has been previously specified at the higher level option it will be
  * overridden for the current link.
  *
  * @sample {highmaps} maps/demo/flowmap-ship-route/
