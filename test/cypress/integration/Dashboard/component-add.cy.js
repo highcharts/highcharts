@@ -51,6 +51,8 @@ describe('Add component through UI', () => {
                 `New component's type should be HTML`
             );
         });
+        cy.get('#dashboard-col-0').children().click()
+        cy.get('.hd-edit-menu.hd-edit-toolbar-cell').children().should('be.visible')
     });
 
     it('should be able to add a chart component and resize it', function() {
@@ -75,8 +77,8 @@ describe('Add component through UI', () => {
             );
             assert.closeTo(
                 component.dimensions.width,
-                270,
-                1,
+                272,
+                3,
                 'Width of the element should be equal to given value.'
                 // Any better way of getting width?
             );

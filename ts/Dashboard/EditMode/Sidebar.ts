@@ -890,7 +890,7 @@ class Sidebar {
             // Drag drop new component.
             (gridElement.onmousedown as any) = (e: PointerEvent): void => {
                 if (sidebar.editMode.dragDrop) {
-                    sidebar.hide(false, false);
+                    sidebar.hide(false, true);
                     sidebar.editMode.dragDrop.onDragStart(
                         e,
                         void 0,
