@@ -27,13 +27,10 @@ import type JSON from '../Core/JSON';
 import Bindings from './Actions/Bindings.js';
 import Globals from './Globals.js';
 import EditMode from './EditMode/EditMode.js';
-import H from '../Core/Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
-import U from '../Core/Utilities.js';
 import Fullscreen from './EditMode/Fullscreen.js';
-
-const { doc } = H;
+import U from '../Core/Utilities.js';
 const {
     merge,
     addEvent,
@@ -113,7 +110,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         this.initEvents();
 
         // Add fullscreen support.
-        Fullscreen.compose(this);
+        this.fullscreen = new Fullscreen(this);
 
         this.index = Globals.dashboards.length;
         Globals.dashboards.push(this);
@@ -164,7 +161,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         if (isString(renderTo)) {
             dashboard.container = renderTo =
-                doc.getElementById(renderTo as any) as any;
+                window.document.getElementById(renderTo as any) as any;
         }
 
         // Display an error if the renderTo is wrong

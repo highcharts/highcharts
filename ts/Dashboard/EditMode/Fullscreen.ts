@@ -4,34 +4,13 @@ import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
 class Fullscreen {
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Prepares the dashboard class to support fullscreen.
-     * @param {typeof_Dashboard} DashboardClass
-     *        The dashboard class to decorate with fullscreen support.
-     */
-    public static compose(DashboardClass: Dashboard): void {
-        // Initialize fullscreen
-        DashboardClass.fullscreen = new Fullscreen(DashboardClass);
-    }
-
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-
 
     /* *
     *
     *  Constructor
     *
     * */
+
     constructor(DashboardClass: Dashboard) {
         this.isOpen = false;
         this.dashboard = DashboardClass;
@@ -45,7 +24,7 @@ class Fullscreen {
 
     public dashboard: Dashboard;
     public isOpen: boolean;
-    public unbindFullscreenEvent?: Function;
+    private unbindFullscreenEvent?: Function;
 
 
     /* *
@@ -53,7 +32,6 @@ class Fullscreen {
     *  Functions
     *
     * */
-
 
     /**
      * Toggles displaying the dashboard in fullscreen mode.
@@ -69,6 +47,9 @@ class Fullscreen {
      * Display dashboard in fullscreen.
      */
     public open(): void {
+        if (this.isOpen) {
+            return;
+        }
         const fullscreen = this,
             dashboard = fullscreen.dashboard;
 
