@@ -112,23 +112,19 @@
             data: [{
                 from: 'Lerwick',
                 to: 'Glasgow',
-                weight: 10,
-                curveFactor: -0.2
+                weight: 10
             }, {
                 from: 'Lerwick',
                 to: 'Belfast',
-                weight: 5,
-                curveFactor: -0.7
+                weight: 5
             }, {
                 from: 'Lerwick',
                 to: 'Leeds',
-                weight: 20,
-                curveFactor: 0.2
+                weight: 20
             }, {
                 from: 'Lerwick',
                 to: 'Liverpool',
-                weight: 0.1,
-                curveFactor: -0.3
+                weight: 0.1
             }]
         }, {
             type: 'flowmap',
@@ -145,32 +141,25 @@
             },
             data: [{
                 from: 'London',
-                to: 'Glasgow',
-                curveFactor: 1
+                to: 'Glasgow'
             }, {
                 from: 'London',
-                to: 'Belfast',
-                curveFactor: 1
+                to: 'Belfast'
             }, {
                 from: 'London',
-                to: 'Leeds',
-                curveFactor: -1.0
+                to: 'Leeds'
             }, {
                 from: 'London',
-                to: 'Liverpool',
-                curveFactor: 1
+                to: 'Liverpool'
             }, {
                 from: 'London',
-                to: 'Sheffield',
-                curveFactor: -0.3
+                to: 'Sheffield'
             }, {
                 from: 'London',
-                to: 'Birmingham',
-                curveFactor: -0.2
+                to: 'Birmingham'
             }, {
                 from: 'London',
-                to: 'Bristol',
-                curveFactor: 1
+                to: 'Bristol'
             }]
         }]
     });

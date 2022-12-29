@@ -72,10 +72,6 @@
                 lat: 40.69,
                 lon: -74.04
             }, {
-                id: 'Abu Dhabi',
-                lat: 24.49,
-                lon: 54.41
-            }, {
                 id: 'Pagudpud',
                 lat: 18.59,
                 lon: 120.82
@@ -140,8 +136,7 @@
             }, {
                 from: 'Brasilia',
                 to: 'Brazzaville',
-                weight: 16,
-                curveFactor: 0.4
+                weight: 16
             }, {
                 from: 'Brasilia',
                 to: 'Sydney',

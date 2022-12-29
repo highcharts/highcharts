@@ -105,13 +105,11 @@
             data: [{
                 from: 'Houston',
                 to: 'Miami',
-                weight: 5,
-                curveFactor: -0.5
+                weight: 5
             }, {
                 from: 'Miami',
                 to: 'Algeciras',
                 weight: 22,
-                curveFactor: -0.15,
                 markerEnd: {
                     height: 30,
                     width: 15
@@ -119,23 +117,19 @@
             }, {
                 from: 'Algeciras',
                 to: 'Malta',
-                weight: 2,
-                curveFactor: 0.3
+                weight: 2
             }, {
                 from: 'Malta',
                 to: 'Beirut',
-                weight: 4,
-                curveFactor: -0.4
+                weight: 4
             }, {
                 from: 'Beirut',
                 to: 'Jeddah',
-                weight: 4,
-                curveFactor: -0.4
+                weight: 4
             }, {
                 from: 'Jeddah',
                 to: 'Singapore',
                 weight: 10,
-                curveFactor: -0.4,
                 markerEnd: {
                     height: 20,
                     width: 12
@@ -149,7 +143,6 @@
                 from: 'Vung Tao',
                 to: 'Hong Kong',
                 weight: 3,
-                curveFactor: -0.4,
                 markerEnd: {
                     height: 15,
                     width: 8

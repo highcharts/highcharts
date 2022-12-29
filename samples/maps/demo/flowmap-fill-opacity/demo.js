@@ -95,28 +95,23 @@
             data: [{
                 from: 'Warszawa',
                 to: 'Helsinki',
-                weight: 10,
-                curveFactor: -0.2
+                weight: 10
             }, {
                 from: 'Warszawa',
                 to: 'Paris',
-                weight: 5,
-                curveFactor: -0.5
+                weight: 5
             }, {
                 from: 'Warszawa',
                 to: 'Madrid',
-                weight: 20,
-                curveFactor: 0
+                weight: 20
             }, {
                 from: 'Warszawa',
                 to: 'Budapest',
-                weight: 0.1,
-                curveFactor: 0.2
+                weight: 0.1
             }, {
                 from: 'Warszawa',
                 to: 'Sofia',
                 weight: 60,
-                curveFactor: 1,
                 fillColor: '#1cd635',
                 fillOpacity: 0.4,
                 opacity: 0.2
@@ -124,7 +119,6 @@
                 from: 'Warszawa',
                 to: 'Roma',
                 weight: 2,
-                curveFactor: -0.3,
                 markerEnd: {
                     enabled: true,
                     markerType: 'arrow',
@@ -141,7 +135,6 @@
             data: [{
                 from: 'Oslo',
                 to: 'Helsinki',
-                curveFactor: 1,
                 weight: 20,
                 markerEnd: {
                     enabled: true,
@@ -152,7 +145,6 @@
                 from: 'Oslo',
                 to: 'Dublin',
                 weight: 70,
-                curveFactor: -0.2,
                 opacity: 0.2
             }, {
                 from: 'Oslo',
