@@ -24,6 +24,15 @@
             enabled: false
         },
 
+        plotOptions: {
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
+            }
+        },
+
         series: [{
             name: 'Basemap',
             showInLegend: false,

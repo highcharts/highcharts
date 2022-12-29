@@ -20,6 +20,15 @@
             enabled: true
         },
 
+        plotOptions: {
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
+            }
+        },
+
         series: [{
             topology,
             states: {

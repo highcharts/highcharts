@@ -191,7 +191,7 @@ class FlowMapSeries extends MapLineSeries {
              * same form.
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
-            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b><br/>'
+            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b>'
         },
 
         /**

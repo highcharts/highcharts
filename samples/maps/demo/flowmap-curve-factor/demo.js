@@ -20,6 +20,22 @@
             enabled: true
         },
 
+        plotOptions: {
+            flowmap: {
+                tooltip: {
+                    headerFormat: null,
+                    pointFormat: `{point.options.from} \u2192 
+                        {point.options.to}: <b>{point.weight}</b>`
+                }
+            },
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
+            }
+        },
+
         series: [{
             name: 'Basemap',
             states: {

@@ -25,6 +25,12 @@
                 minWidth: 5,
                 maxWidth: 15,
                 growTowards: true
+            },
+            mappoint: {
+                tooltip: {
+                    headerFormat: '{point.point.id}<br>',
+                    pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                }
             }
         },
 
