@@ -11,11 +11,13 @@ const dataScopes = {
     'TN' : 'Average temperature',
     'TX' : 'Maximal temperature'
 };
+const defaultCity = 'New York';
+const defaultData = 'TN';
 
 let citiesData;
 let cityGrid;
 let citySeries;
-let dataScope = 'TX';
+let dataScope = defaultData;
 let worldCities;
 let worldDate = new Date(Date.UTC(2010, 11, 25)); 
 
@@ -23,7 +25,7 @@ async function buildDashboard() {
 
     citiesData = await buildCitiesData();
 
-    const defaultCity = await dataPool.getStore('Tokyo');
+    const defaultCityStore = await dataPool.getStore(defaultCity);
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -76,45 +78,36 @@ async function buildDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    backgroundColor: '#567',
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
                     ).then(response => response.json()),
-                    spacing: [0, 0, 0, 0],
+                    styledMode: true
                 },
-                /*colorAxis: {
-                    max: 325,
-                    maxColor: '#F93',
-                    min: 225,
-                    minColor: '#39F',
-                },*/
                 legend: {
                     enabled: false,
                 },
+                mapNavigation: {
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    },
+                    enabled: true,
+                    enableMouseWheelZoom: false
+                },
                 mapView: {
-                    maxZoom: 1.8,
+                    maxZoom: 3.6,
                     padding: 0,
-                    /*projection: {
-                        name: 'Miller',
-                    },*/
                     zoom: 1.8,
                 },
                 series: [{
                     type: 'map',
                     name: 'World Map',
-                    borderColor: '#986',
-                    nullColor: '#C93',
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
                     data: await buildCitiesMap(),
-                    color: '#000',
                     dataLabels: {
-                        align: 'left',
-                        padding: 7,
-                        verticalAlign: 'middle',
-                        y: -1,
+                        crop: false
                     },
                     events: {
                         click: function (e) {
@@ -144,13 +137,11 @@ async function buildDashboard() {
                         }
                     },
                     marker: {
-                        lineColor: '#FFF',
-                        lineWidth: 1,
-                        radius: 6,
+                        symbol: 'mapmarker'
                     },
                     tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
+                        footerFormat: '',
+                        headerFormat: '',
                         pointFormatter: function () {
                             const point = this;
 
@@ -162,7 +153,6 @@ async function buildDashboard() {
                     }
                 }],
                 title: {
-                    margin: 0,
                     text: void 0,
                 },
             },
@@ -201,8 +191,8 @@ async function buildDashboard() {
                     }
                 },
                 series: [{
-                    name: 'Tokyo',
-                    data: defaultCity.table.modified.getRows(
+                    name: defaultCity,
+                    data: defaultCityStore.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -218,7 +208,7 @@ async function buildDashboard() {
                     }
                 }],
                 title: {
-                    text: 'Tokyo'
+                    text: defaultCity
                 },
                 tooltip: {
                     enabled: true
@@ -239,7 +229,7 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: defaultCity,
+            store: defaultCityStore,
             editable: true,
             // syncEvents: ['tooltip'],
             title: 'Selection Grid',

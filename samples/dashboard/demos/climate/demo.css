@@ -1,0 +1,20 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+/* *
+ *
+ *  World Map
+ *
+ * */
+
+#world-map .highcharts-background {
+    fill: #567;
+}
+
+#world-map .highcharts-series-0 .highcharts-null-point {
+    fill: #f0f; /* test */
+}
+
+#world-map .highcharts-series-0 .highcharts-point {
+    fill: #c93 !important;
+    stroke: #986;
+}
