@@ -315,7 +315,8 @@ class VariwideSeries extends ColumnSeries {
                         pointWidth || 0,
                         void 0,
                         void 0,
-                        point.plotX
+                        point.plotX,
+                        series.xAxis
                     );
                 }
             }
