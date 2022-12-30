@@ -5,7 +5,19 @@
 
     Highcharts.mapChart('container', {
         chart: {
-            map: topology
+            map: topology,
+            plotBackgroundColor: {
+                radialGradient: {
+                    cx: 0.5,
+                    cy: 0.5,
+                    r: 1
+                },
+                stops: [
+                    [0, 'lightblue'],
+                    [1, 'white']
+                ]
+            },
+            margin: [65, 1, 1, 1]
         },
 
         title: {
@@ -17,13 +29,30 @@
             days between cities`
         },
 
+        credits: {
+            style: {
+                color: 'black'
+            }
+        },
+
         mapNavigation: {
-            enabled: true
+            enabled: false
         },
 
         mapView: {
-            center: [10, 20],
-            zoom: 2.2
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Top left
+                    [-125, 50],
+                    // Bottom right
+                    [130, -20]
+                ]
+            }
+        },
+
+        legend: {
+            enabled: false
         },
 
         plotOptions: {
@@ -49,10 +78,27 @@
                     enabled: false
                 }
             },
-            showInLegend: false
+            nullColor: '#8C8F8D',
+            borderColor: '#8C8F8D'
         }, {
+            zIndex: 2,
             type: 'mappoint',
             name: 'Cities',
+            tooltip: {
+                pointFormat: '{name}'
+            },
+            color: 'rgba(255,255,255,0.4)',
+            dataLabels: {
+                enabled: true,
+                format: '{point.id}',
+                y: -20
+            },
+            marker: {
+                radius: 8,
+                lineWidth: 1,
+                lineColor: '#fff',
+                symbol: 'mapmarker'
+            },
             data: [{
                 id: 'Houston',
                 lat: 29.75,
@@ -91,33 +137,32 @@
                 lon: 114.11
             }]
         }, {
+            zIndex: 1,
             type: 'flowmap',
             linkedTo: ':previous',
-            fillColor: '#b37e24',
-            fillOpacity: 0.2,
-            color: '#7d4015',
+            fillColor: Highcharts.getOptions().colors[0],
+            color: '#000',
             name: 'Ship Routes',
-            growTowards: true,
+            curveFactor: -0.4,
             markerEnd: {
-                height: 10,
-                width: 5
+                height: '42%',
+                width: 0
             },
             data: [{
                 from: 'Houston',
                 to: 'Miami',
-                weight: 5
+                weight: 5,
+                curveFactor: -0.5
             }, {
                 from: 'Miami',
                 to: 'Algeciras',
                 weight: 22,
-                markerEnd: {
-                    height: 30,
-                    width: 15
-                }
+                curveFactor: -0.15
             }, {
                 from: 'Algeciras',
                 to: 'Malta',
-                weight: 2
+                weight: 2,
+                curveFactor: 0.3
             }, {
                 from: 'Malta',
                 to: 'Beirut',
@@ -125,28 +170,19 @@
             }, {
                 from: 'Beirut',
                 to: 'Jeddah',
-                weight: 4
+                weight: 4,
             }, {
                 from: 'Jeddah',
                 to: 'Singapore',
-                weight: 10,
-                markerEnd: {
-                    height: 20,
-                    width: 12
-                }
+                weight: 10
             }, {
                 from: 'Singapore',
                 to: 'Vung Tao',
                 weight: 3
-
             }, {
                 from: 'Vung Tao',
                 to: 'Hong Kong',
-                weight: 3,
-                markerEnd: {
-                    height: 15,
-                    width: 8
-                }
+                weight: 3
             }]
         }]
     });
