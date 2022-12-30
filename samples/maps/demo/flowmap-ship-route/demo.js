@@ -78,8 +78,8 @@
                     enabled: false
                 }
             },
-            nullColor: '#BD935D',
-            borderColor: '#BD935D'
+            nullColor: '#8C8F8D',
+            borderColor: '#8C8F8D'
         }, {
             zIndex: 2,
             type: 'mappoint',
