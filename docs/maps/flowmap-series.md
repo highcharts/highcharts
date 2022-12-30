@@ -20,7 +20,7 @@ chart: {
 }
 ```
 
-Then we need to add the [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series which will be the base series responsible for connecting the flowmap to specific coordinates (nodes):
+Then you can add the [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series which will be the base series responsible for connecting the flowmap to specific map points (nodes):
 ```js
 series: [{
     type: 'mappoint',
@@ -40,17 +40,32 @@ series: [{
 }]
 ```
 
-Last step is to add our flow map series config. The [series.type](https://api.highcharts.com/highmaps/series.flowmap.type) has to be set to `'flowmap'` and the data points will be connected with [id](https://api.highcharts.com/highmaps/series.mappoint.id). The important options that you may notice in the example below are [curveFactor](https://api.highcharts.com/highmaps/series.flowmap.data.curveFactor) and [markerEnd](https://api.highcharts.com/highmaps/series.flowmap.data.markerEnd):
+Last step is to add our flow map series config with [series.type](https://api.highcharts.com/highmaps/series.flowmap.type) set to `'flowmap'`. If you choose to use the data points from [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series, they will be connected by their [id](https://api.highcharts.com/highmaps/series.mappoint.id). The important options that you may notice in the example below are [curveFactor](https://api.highcharts.com/highmaps/series.flowmap.data.curveFactor) and [markerEnd](https://api.highcharts.com/highmaps/series.flowmap.data.markerEnd):
 ```js
 series: [{
     type: 'flowmap',
-    name: 'Export',
+    name: 'Flowmap with mappoint series',
     data: [
         ['Warszawa', 'Oslo', 0, 5, true, {
             enabled: true,
             height: 15,
             width: 10
         }],
+        ...
+    ],
+    ...
+}]
+```
+
+Alternatively, you can omit the creation of [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series, and create the flows directly with `[longitude, latitude]` coordinates specified in from/to properties.
+```js
+series: [{
+    type: 'flowmap',
+    name: 'Flowmap with lon/lat coordinates',
+    data: [{
+        from: [52.2662, 20.9969],
+        to: [59.9170, 10.7511]
+        },
         ...
     ],
     ...
