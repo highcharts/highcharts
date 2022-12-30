@@ -665,3 +665,173 @@ QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', ass
         );
     });
 });
+
+QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'bar',
+            scrollablePlotArea: {
+                minHeight: 600
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        series: [{
+            data: [6, 11, 3, 4, 2, 9, 7, 7, 5, 5, 4, 2, 2, 1]
+        }, {
+            data: [29, 8, 11, 8, 6, 0, 0, 0, 0, 0, 1, 1, 0, 0]
+        }]
+    });
+    assert.ok(true);
+});
+
+QUnit.test('Stack labels - Axis left set', assert => {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        xAxis: [
+            { width: '50%' },
+            {
+                left: '50%',
+                width: '50%',
+                offset: 0
+            }
+        ],
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        series: [
+            {
+                data: [133, 156, 947, 408],
+                xAxis: 1
+            },
+            {
+                data: [973, 914, 1054, 732],
+                xAxis: 1
+            }
+        ]
+    });
+    assert.ok(true);
+});
+
+
+QUnit.test('Stack labels - center in category', assert => {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                centerInCategory: true
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        series: [
+            {
+                stack: 0,
+                data: [15, 0, 0]
+            },
+            {
+                stack: 0,
+                data: [22, 14, 17]
+            },
+            {
+                stack: 1,
+                data: [2, null, 0]
+            },
+            {
+                stack: 1,
+                data: [0, null, 6]
+            },
+            {
+                stack: 2,
+                data: [44, 7, null]
+            }
+        ]
+    });
+    assert.ok(true);
+});
+
+QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
+    const getOptions = (inverted, reversed) => ({
+        chart: {
+            inverted,
+            type: 'column'
+        },
+        title: {
+            text: `chart.inverted: ${inverted}, yAxis.reversed: ${reversed}`,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        xAxis: {
+            categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            },
+            reversed,
+            minPadding: 0,
+            maxPadding: 0
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            bar: {
+                /* pointPadding:0 */
+            },
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'normal',
+                        textOutline: 'none',
+                        color: '#888'
+                    }
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            data: [1, 2, 3, -1, -2, -3]
+        }, {
+            data: [1, 2, 3, -1, -2, -3]
+        }]
+    });
+
+    const chart = Highcharts.chart('container', getOptions(false, true));
+    assert.ok(true);
+    chart.update(getOptions(true, true));
+    assert.ok(true);
+    chart.update(getOptions(true, false));
+    assert.ok(true);
+});

@@ -38,7 +38,7 @@ declare module '../../Core/Series/PointLike' {
         low?: number;
         negative?: boolean;
         options: PointOptions;
-        stackTotal?: number;
+        stackTotal: number|null;
         stackY?: (number|null);
         yBottom?: number;
         zone?: SeriesZonesOptions;

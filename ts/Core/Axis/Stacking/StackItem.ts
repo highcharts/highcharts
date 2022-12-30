@@ -220,7 +220,8 @@ class StackItem {
         xWidth: number,
         boxBottom?: number,
         boxTop?: number,
-        defaultX?: number
+        defaultX?: number,
+        xAxis?: Axis
     ): void {
         const axis = this.axis,
             chart = axis.chart,
@@ -229,7 +230,8 @@ class StackItem {
                 width: xWidth,
                 boxBottom,
                 boxTop,
-                defaultX
+                defaultX,
+                xAxis
             }),
             label = this.label,
             textAlign = this.textAlign,
@@ -355,7 +357,7 @@ class StackItem {
                 100 :
                 pick(boxTop, this.total, 0),
             y = axis.toPixels(totalStackValue),
-            xAxis = chart.xAxis[0], // TODO: Better way of getting xAxis?
+            xAxis = stackBoxProps.xAxis || chart.xAxis[0],
             x = pick(defaultX, xAxis.toPixels(this.x)) + xOffset,
             yZero = axis.toPixels(boxBottom ? boxBottom : 0),
             height = Math.abs(y - yZero),
@@ -383,6 +385,7 @@ export interface StackBoxProps {
     boxBottom?: number;
     boxTop?: number;
     defaultX?: number;
+    xAxis?: Axis;
 }
 
 export interface AdjustStackPositionProps {
