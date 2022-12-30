@@ -194,7 +194,7 @@ class Point {
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
      */
-    public percentage?: number = void 0;
+    public percentage?: number|null = null;
 
     public selected?: boolean = false;
 
@@ -229,7 +229,7 @@ class Point {
      * @name Highcharts.Point#total
      * @type {number|undefined}
      */
-    public total?: number = void 0;
+    public total: number|null = null;
 
     /**
      * For certain series types, like pie charts, where individual points can
@@ -622,7 +622,7 @@ class Point {
             series: this.series,
             point: this as any,
             percentage: this.percentage,
-            total: this.total || (this as any).stackTotal
+            total: this.total || this.stackTotal
         };
     }
 
@@ -1605,8 +1605,8 @@ namespace Point {
         key?: number|string;
         series: Series;
         point: Point;
-        percentage?: number;
-        total?: number;
+        percentage?: number|null;
+        total: number|null;
     }
     export interface SeriesPointsOptions {
         events?: Highcharts.PointEventsOptionsObject;

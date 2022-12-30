@@ -2235,60 +2235,62 @@ class Series {
             if (stacking &&
                 series.visible &&
                 stack &&
-                stack[xValue as any]
+                stack[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
-                    xValue as any,
-                    series.index as any
+                    xValue,
+                    series.index
                 );
 
-                if (!point.isNull) {
-                    pointStack = stack[xValue as any];
-                    stackValues =
-                        pointStack.points[stackIndicator.key as any];
-                }
-            }
-
-            if (isArray(stackValues)) {
-                yBottom = stackValues[0];
-                yValue = stackValues[1];
-
-                if (yBottom === stackThreshold &&
-                    (stackIndicator as any).key ===
-                        (stack as any)[xValue as any].base
-                ) {
-                    yBottom = pick<number|undefined, number>(
-                        (isNumber(threshold) && threshold) as any,
-                        yAxis.min as any
-                    );
+                if (!point.isNull && stackIndicator.key) {
+                    pointStack = stack[xValue];
+                    stackValues = pointStack.points[stackIndicator.key];
                 }
 
-                // #1200, #1232
-                if (yAxis.positiveValuesOnly && yBottom <= 0) {
-                    yBottom = null as any;
+                if (pointStack && isArray(stackValues)) {
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
+
+                    if (yBottom === stackThreshold &&
+                        stackIndicator.key === stack[xValue].base
+                    ) {
+                        yBottom = pick(
+                            isNumber(threshold) ? threshold : yAxis.min,
+                            0
+                        );
+                    }
+
+                    // #1200, #1232
+                    if (yAxis.positiveValuesOnly && yBottom <= 0) {
+                        yBottom = null as any;
+                    }
+
+                    point.total = point.stackTotal = pointStack.total;
+                    point.percentage =
+                        point.y && pointStack.total &&
+                        (point.y / pointStack.total * 100);
+                    point.stackY = yValue;
+
+                    // Place the stack label
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        pointStack.setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0,
+                            void 0,
+                            void 0,
+                            void 0,
+                            series.xAxis
+                        );
+                    }
+
                 }
-
-                point.total = point.stackTotal = (pointStack as any).total;
-                point.percentage =
-                    (pointStack as any).total &&
-                    ((point.y as any) / (pointStack as any).total * 100);
-                point.stackY = yValue;
-
-                // Place the stack label
-
-                // in case of variwide series (where widths of points are
-                // different in most cases), stack labels are positioned
-                // wrongly, so the call of the setOffset is omited here and
-                // labels are correctly positioned later, at the end of the
-                // variwide's translate function (#10962)
-                if (!(series as any).irregularWidths) {
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
-                }
-
             }
 
             // Set translated yBottom or remove it

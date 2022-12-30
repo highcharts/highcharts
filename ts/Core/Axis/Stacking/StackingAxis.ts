@@ -102,7 +102,7 @@ interface StackerFunction {
     ): void;
 }
 
-interface StackItemIndicatorObject {
+export interface StackItemIndicatorObject {
     index: number;
     key?: string;
     stackKey?: string;
