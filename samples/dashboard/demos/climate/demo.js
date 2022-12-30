@@ -4,6 +4,13 @@ const color1 = Highcharts.Color.parse('#39F');
 const color2 = Highcharts.Color.parse('#6C0');
 const color3 = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
+const dataScopes = {
+    'FD' : 'Days with fog',
+    'ID' : 'Days with ice',
+    'RR1' : 'Days with rain',
+    'TN' : 'Average temperature',
+    'TX' : 'Maximal temperature'
+};
 
 let citiesData;
 let cityGrid;
@@ -17,6 +24,7 @@ async function buildDashboard() {
     citiesData = await buildCitiesData();
 
     const defaultCity = await dataPool.getStore('Tokyo');
+
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
@@ -146,13 +154,10 @@ async function buildDashboard() {
                         pointFormatter: function () {
                             const point = this;
 
-                            let scopeValue = point.custom.scopeValue;
-
-                            if (dataScope[0] === 'T') {
-                                scopeValue = temperatureFormatter(scopeValue);
-                            }
-
-                            return `<b>${point.name}</b><br>${scopeValue}`;
+                            return (
+                                `<b>${point.name}</b><br>` +
+                                tooltipFormatter(point.custom.scopeValue)
+                            );
                         }
                     }
                 }],
@@ -208,7 +213,7 @@ async function buildDashboard() {
                         footerFormat: void 0,
                         headerFormat: void 0,
                         pointFormatter: function () {
-                            return temperatureFormatter(this.y);
+                            return tooltipFormatter(this.y);
                         },
                     }
                 }],
@@ -406,7 +411,7 @@ async function buildCitiesMap() {
             );
 
             return {
-                color: temperatureColor(scopeValue),
+                color: scopeColor(scopeValue),
                 custom: { scopeValue },
                 lat: data.lat,
                 lon: data.lon,
@@ -457,26 +462,55 @@ function buildDateTicks() {
     return dates;
 }
 
-function temperatureColor(value) {
-    const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+function scopeColor(value) {
 
-    return (
-        factor < 0.5 ?
-            color1.tweenTo(color2, factor * 2) :
-            color2.tweenTo(color3, (factor - 0.5) * 2)
-    );
+    // temperature
+    if (dataScope[0] === 'T') {
+        const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+
+        return (
+            factor < 0.5 ?
+                color1.tweenTo(color2, factor * 2) :
+                color2.tweenTo(color3, (factor - 0.5) * 2)
+        );
+    }
+
+    // fallback to days
+    return color3.tweenTo(color1, value / 10); 
 }
 
-function temperatureFormatter(value) {
-    return [
-        Highcharts.correctFloat(value, 4) + '˚K',
-        Highcharts.correctFloat(
-            (value - 273.15), 3
-        ) + '˚C',
-        Highcharts.correctFloat(
-            (value * 1.8 - 459.67), 3
-        ) + '˚F'
-    ].join('<br>');
+function tooltipFormatter(value) {
+
+    // temperature values
+    if (dataScope[0] === 'T') {
+        return [
+            Highcharts.correctFloat(value, 4) + '˚K',
+            Highcharts.correctFloat(
+                (value - 273.15), 3
+            ) + '˚C',
+            Highcharts.correctFloat(
+                (value * 1.8 - 459.67), 3
+            ) + '˚F'
+        ].join('<br>');
+    }
+
+    // rain days
+    if (dataScope === 'RR1') {
+        return Highcharts.correctFloat(value, 0) + ' rainy days'
+    }
+
+    // ice days
+    if (dataScope === 'ID') {
+        return Highcharts.correctFloat(value, 0) + ' icy days'
+    }
+
+    // fog days
+    if (dataScope === 'FD') {
+        return Highcharts.correctFloat(value, 0) + ' foggy days'
+    }
+
+    // fallback
+    return '' + Highcharts.correctFloat(value, 4);
 }
 
 /**
