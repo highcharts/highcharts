@@ -4352,11 +4352,18 @@ class Series {
                 kinds.dataLabel = 1;
             } else if (!series._hasPointLabels) {
                 const { marker, dataLabels } = seriesOptions;
+                const { marker: oldMarker } = oldOptions;
+                // if marker got disabled, changed it's symbol, width or height
+                // - destroy
                 if (
                     marker && (
                         marker.enabled === false ||
-                        (oldOptions.marker && oldOptions.marker.symbol) !==
-                            marker.symbol // #10870, #15946
+                        (oldMarker && oldMarker.symbol) !==
+                            marker.symbol || // #10870, #15946
+                        (oldMarker && oldMarker.height) !==
+                            marker.height || // #16274
+                        (oldMarker && oldMarker.width) !==
+                            marker.width // #16274
                     )
                 ) {
                     kinds.graphic = 1;
