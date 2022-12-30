@@ -16,6 +16,10 @@ body {
     min-height: 500px;
     transition: 0.5s;
     overflow-x: scroll;
+
+    &:fullscreen {
+        overflow: scroll;
+    }
 }
 
 .main-title {

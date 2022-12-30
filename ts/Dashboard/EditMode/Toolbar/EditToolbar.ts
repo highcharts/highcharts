@@ -37,6 +37,7 @@ abstract class EditToolbar {
         this.menu = new Menu(
             this.container,
             options.menu,
+            editMode,
             this
         );
 

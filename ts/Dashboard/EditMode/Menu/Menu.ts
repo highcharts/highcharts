@@ -1,9 +1,11 @@
 import type CSSJSONObject from '../../CSSJSONObject';
+import type EditMode from '../EditMode';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
+import MenuItemBindings from './MenuItemBindings.js';
 
 const {
     createElement,
@@ -17,20 +19,7 @@ class Menu {
     *
     * */
 
-    public static items: Record<string, MenuItem.Options> = {
-        horizontalSeparator: {
-            id: 'horizontalSeparator',
-            type: 'horizontalSeparator',
-            text: '',
-            className: EditGlobals.classNames.menuHorizontalSeparator
-        },
-        verticalSeparator: {
-            id: 'verticalSeparator',
-            type: 'verticalSeparator',
-            text: '',
-            className: EditGlobals.classNames.menuVerticalSeparator
-        }
-    };
+    public static items = MenuItemBindings;
 
     /* *
     *
@@ -40,6 +29,7 @@ class Menu {
     constructor(
         parentElement: HTMLDOMElement,
         options: Menu.Options,
+        editMode: EditMode,
         parent?: any
     ) {
         this.parentElement = parentElement;
@@ -47,6 +37,7 @@ class Menu {
         this.activeItems = [];
         this.options = options;
         this.items = {};
+        this.editMode = editMode;
 
         if (parent) {
             this.parent = parent;
@@ -61,6 +52,7 @@ class Menu {
     *
     * */
     public parentElement: HTMLDOMElement;
+    public editMode: EditMode;
     public options: Menu.Options;
     public container: HTMLDOMElement;
     public isVisible: boolean;
