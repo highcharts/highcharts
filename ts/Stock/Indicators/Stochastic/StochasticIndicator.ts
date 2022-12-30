@@ -206,7 +206,7 @@ class StochasticIndicator extends SMAIndicator {
             K = CL / HL * 100;
 
             xData.push(xVal[i]);
-            yData.push([K, null]);
+            yData.push([isNaN(K) ? yData[yData.length - 1][0] : K, null]);
 
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
