@@ -249,13 +249,11 @@ class StackItem {
             this.alignOptions.y = pick(this.options.y, 0);
 
             // Calculate the adjusted Stack position, to take into consideration
-            // The size if the labelBox and vertical/horiziontal alignment, as
+            // The size if the labelBox and vertical alignment as
             // well as the text alignment. It's need to be done to work with
             // default SVGLabel.align/justify methods.
             const { x, y } = this.adjustStackPosition({
-                stackBox,
                 labelBox: bBox,
-                align: align as AlignValue,
                 vAlign: verticalAlign as VerticalAlignValue,
                 textAlign
             });
@@ -318,21 +316,19 @@ class StackItem {
      * Adjust the stack BBox position, to take into consideration the alignment
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
-     * @param stackPositionParams
+     * @param AdjustStackPositionProps
      * @return {{x: number, y: number}} Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
-        stackBox,
         labelBox,
-        align,
         vAlign,
         textAlign
     }: AdjustStackPositionProps): {x: number, y: number} {
-        const alignFactor = this.factorMap[align],
-            verticalAlignFactor = this.factorMap[vAlign];
+        const verticalAlignFactor = this.factorMap[vAlign],
+            textAlignFactor = this.factorMap[textAlign] - 1;
 
         return {
-            x: (labelBox.width / 2) * alignFactor,
+            x: (labelBox.width / 2) + (labelBox.width / 2) * textAlignFactor,
             y: (labelBox.height / 2) * verticalAlignFactor
         };
     }
@@ -389,9 +385,7 @@ export interface StackBoxProps {
 }
 
 export interface AdjustStackPositionProps {
-    stackBox: BBoxObject;
     labelBox: BBoxObject;
-    align: AlignValue;
     vAlign: VerticalAlignValue;
     textAlign: AlignValue;
 }
