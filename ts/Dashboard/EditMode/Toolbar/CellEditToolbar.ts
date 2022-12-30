@@ -31,7 +31,7 @@ class CellEditToolbar extends EditToolbar {
         }
     };
 
-    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
+    public static items = merge(Menu.items, {
         drag: {
             id: 'drag',
             type: 'icon',
