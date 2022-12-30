@@ -115,7 +115,7 @@ class StackItem {
 
         this.textAlign =
             options.textAlign ||
-            (inverted ? (isNegative ? 'left' : 'right') : 'center');
+            (inverted ? (!isNegative ? 'left' : 'right') : 'center');
     }
 
     public alignOptions: AlignObject;
@@ -136,14 +136,6 @@ class StackItem {
     public total: number | null;
     public touched?: number;
     public x: number;
-    public factorMap = {
-        top: 2,
-        middle: 1,
-        bottom: 0,
-        left: 2,
-        center: 1,
-        right: 0
-    };
 
     /**
      * @private
@@ -324,11 +316,19 @@ class StackItem {
         vAlign,
         textAlign
     }: AdjustStackPositionProps): {x: number, y: number} {
-        const verticalAlignFactor = this.factorMap[vAlign],
-            textAlignFactor = this.factorMap[textAlign] - 1;
+        const factorMap = {
+                bottom: 0,
+                middle: 1,
+                top: 2,
+                right: 1,
+                center: 0,
+                left: -1
+            },
+            verticalAlignFactor = factorMap[vAlign],
+            textAlignFactor = factorMap[textAlign];
 
         return {
-            x: (labelBox.width / 2) + (labelBox.width / 2) * textAlignFactor,
+            x: labelBox.width / 2 + (labelBox.width / 2) * textAlignFactor,
             y: (labelBox.height / 2) * verticalAlignFactor
         };
     }
