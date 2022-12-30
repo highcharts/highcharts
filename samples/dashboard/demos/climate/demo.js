@@ -15,13 +15,13 @@ const defaultCity = 'New York';
 const defaultData = 'TN';
 
 let citiesData;
+let citiesMap;
 let cityGrid;
 let citySeries;
 let dataScope = defaultData;
-let worldCities;
 let worldDate = new Date(Date.UTC(2010, 11, 25)); 
 
-async function buildDashboard() {
+async function setupDashboard() {
 
     citiesData = await buildCitiesData();
 
@@ -45,7 +45,7 @@ async function buildDashboard() {
                     events: {
                         click: async function (e) {
                             worldDate = new Date(e.point.x);
-                            worldCities.setData(await buildCitiesMap());
+                            citiesMap.setData(await buildCitiesMap());
                         }
                     },
                     tooltip: {
@@ -84,19 +84,16 @@ async function buildDashboard() {
                     ).then(response => response.json()),
                     styledMode: true
                 },
+                colorAxis: buildColorAxis(),
                 legend: {
                     enabled: false,
                 },
                 mapNavigation: {
-                    buttonOptions: {
-                        verticalAlign: 'bottom'
-                    },
                     enabled: true,
                     enableMouseWheelZoom: false
                 },
                 mapView: {
                     maxZoom: 3.6,
-                    padding: 0,
                     zoom: 1.8,
                 },
                 series: [{
@@ -137,6 +134,7 @@ async function buildDashboard() {
                         }
                     },
                     marker: {
+                        enabled: true,
                         symbol: 'mapmarker'
                     },
                     tooltip: {
@@ -147,7 +145,7 @@ async function buildDashboard() {
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.custom.scopeValue)
+                                tooltipFormatter(point.y)
                             );
                         }
                     }
@@ -159,7 +157,7 @@ async function buildDashboard() {
             events: {
                 mount: function () {
                     // call action
-                    worldCities = this.chart.series[1];
+                    citiesMap = this.chart.series[1];
                     console.log('map mount event', this);
                 },
                 // unmount: function () {
@@ -283,7 +281,7 @@ async function buildDashboard() {
 
 }
 
-async function main() {
+async function setupDataPool() {
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
@@ -326,8 +324,11 @@ async function main() {
     }
 
     console.log(dataPool);
+}
 
-    await buildDashboard();
+async function main() {
+    await setupDataPool();
+    await setupDashboard();
 }
 
 main().catch(e => console.error(e));
@@ -394,20 +395,47 @@ async function buildCitiesMap() {
         .map(city => {
             const data = citiesData[city];
             const table = data.store.table.modified;
-            const scopeValue = table.getCellAsNumber(
+            const y = table.getCellAsNumber(
                 dataScope,
                 table.getRowIndexBy('time', worldDate.getTime()),
                 true
             );
 
             return {
-                color: scopeColor(scopeValue),
-                custom: { scopeValue },
+                // color: scopeColor(y),
                 lat: data.lat,
                 lon: data.lon,
                 name: data.name,
+                y
             };
         });
+}
+
+function buildColorAxis() {
+
+    // temperature
+    if (dataScope[0] === 'T') {
+        return {
+            max: 325,
+            min: 275,
+            stops: [
+                [0.0, '#39F'],
+                [0.5, '#6C0'],
+                [1.0, '#F00'],
+            ]
+        };
+    }
+
+    // days
+    return {
+        max: 10,
+        min: 0,
+        stops: [
+            [0.0, '#F00'],
+            [0.5, '#6C0'],
+            [1.0, '#39F']
+        ]
+    };
 }
 
 function buildDates() {
