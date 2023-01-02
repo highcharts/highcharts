@@ -11,13 +11,14 @@ const dataScopes = {
     'TN' : 'Average temperature',
     'TX' : 'Maximal temperature'
 };
+const initialMin = Date.UTC(2000);
 
 let citiesData;
 let cityGrid;
 let citySeries;
 let dataScope = 'TX';
 let worldCities;
-let worldDate = new Date(Date.UTC(2010, 11, 25)); 
+let worldDate = new Date(Date.UTC(2010, 11, 25));
 
 async function buildDashboard() {
 
@@ -36,38 +37,46 @@ async function buildDashboard() {
                 credits: {
                     enabled: false
                 },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    enabled: false
+                },
                 series: [{
                     type: 'scatter',
                     name: 'Timeline',
                     data: buildDates(),
-                    events: {
-                        click: async function (e) {
-                            worldDate = new Date(e.point.x);
-                            worldCities.setData(await buildCitiesMap());
-                        }
+                    showInNavigator: false,
+                    marker: {
+                        enabled: false
                     },
-                    tooltip: {
-                        footerFormat: '',
-                        headerFormat: '',
-                        pointFormat: '{point.x:%Y-%m-%d}'
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 }],
-                title: {
-                    margin: 0,
-                    text: ''
+                navigator: {
+                    enabled: true,
+                    series: [{
+                        name: 'Tokyo',
+                        data: defaultCity.table.modified.getRows(
+                            void 0,
+                            void 0,
+                            ['time', dataScope]
+                        )
+                    }]
                 },
                 xAxis: {
-                    type: 'datetime',
-                    visible: true,
-                    labels: {
-                        format: '{value:%Y}'
-                    }
+                    visible: false,
+                    min: initialMin
                 },
                 yAxis: {
                     visible: false
-                },
-                legend: {
-                    enabled: false
                 }
             }
         }, {
