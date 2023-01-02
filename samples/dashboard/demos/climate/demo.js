@@ -1,26 +1,29 @@
 /* eslint-disable */
 
-const color1 = Highcharts.Color.parse('#39F');
-const color2 = Highcharts.Color.parse('#6C0');
-const color3 = Highcharts.Color.parse('#F00');
+const colorBlue = Highcharts.Color.parse('#39F');
+const colorGreen = Highcharts.Color.parse('#6C0');
+const colorRed = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
+const dataScopes = {
+    'FD' : 'Days with fog',
+    'ID' : 'Days with ice',
+    'RR1' : 'Days with rain',
+    'TN' : 'Average temperature',
+    'TX' : 'Maximal temperature'
+};
 
+let citiesData;
 let cityGrid;
 let citySeries;
 let dataScope = 'TX';
-let worldTime = new Date(2010, 12, 25); 
+let worldCities;
+let worldDate = new Date(Date.UTC(2010, 11, 25)); 
 
 async function buildDashboard() {
-    const topology = await Promise
-        .resolve('https://code.highcharts.com/mapdata/custom/world.topo.json')
-        .then(fetch)
-        .then(response => response.json());
 
-    const citiesTable = await dataPool.getStoreTable('cities');
-    const cityClimate = await dataPool.getStore('Tokyo');
+    citiesData = await buildCitiesData();
 
-    let citiesMap;
-    let worldTable = await dataPool.getStoreTable(1262649600000);
+    const defaultCity = await dataPool.getStore('Tokyo');
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -28,42 +31,36 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '100px',
+                    height: '60px',
+                },
+                credits: {
+                    enabled: false
                 },
                 series: [{
                     type: 'scatter',
                     name: 'Timeline',
                     data: buildDates(),
                     events: {
-                        click: function (e) {
-                            dataPool
-                                .getStoreTable(e.point.x)
-                                .then(table => {
-                                    worldTable = table;
-                                    citiesMap.setData(buildCitiesMap(
-                                        worldTable,
-                                        citiesTable
-                                    ));
-                                });
+                        click: async function (e) {
+                            worldDate = new Date(e.point.x);
+                            worldCities.setData(await buildCitiesMap());
                         }
                     },
                     tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
+                        footerFormat: '',
+                        headerFormat: '',
                         pointFormat: '{point.x:%Y-%m-%d}'
                     }
                 }],
                 title: {
                     margin: 0,
-                    text: 'Timeline 2010'
+                    text: ''
                 },
                 xAxis: {
-                    tickPositions: buildDateTicks(),
-                    // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
                     labels: {
-                        format: '{value:%m-%d}'
+                        format: '{value:%Y}'
                     }
                 },
                 yAxis: {
@@ -80,7 +77,10 @@ async function buildDashboard() {
             chartOptions: {
                 chart: {
                     backgroundColor: '#567',
-                    map: topology,
+                    map: await fetch(
+                        'https://code.highcharts.com/mapdata/' +
+                        'custom/world.topo.json'
+                    ).then(response => response.json()),
                     spacing: [0, 0, 0, 0],
                 },
                 /*colorAxis: {
@@ -93,12 +93,12 @@ async function buildDashboard() {
                     enabled: false,
                 },
                 mapView: {
-                    maxZoom: 1.4,
+                    maxZoom: 1.8,
                     padding: 0,
-                    projection: {
+                    /*projection: {
                         name: 'Miller',
-                    },
-                    zoom: 1.4,
+                    },*/
+                    zoom: 1.8,
                 },
                 series: [{
                     type: 'map',
@@ -108,10 +108,7 @@ async function buildDashboard() {
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: buildCitiesMap(
-                        worldTable,
-                        citiesTable
-                    ),
+                    data: await buildCitiesMap(),
                     color: '#000',
                     dataLabels: {
                         align: 'left',
@@ -156,9 +153,10 @@ async function buildDashboard() {
                         headerFormat: void 0,
                         pointFormatter: function () {
                             const point = this;
+
                             return (
                                 `<b>${point.name}</b><br>` +
-                                temperatureFormatter(point.custom.t)
+                                tooltipFormatter(point.custom.scopeValue)
                             );
                         }
                     }
@@ -171,7 +169,7 @@ async function buildDashboard() {
             events: {
                 mount: function () {
                     // call action
-                    citiesMap = this.chart.series[1];
+                    worldCities = this.chart.series[1];
                     console.log('map mount event', this);
                 },
                 // unmount: function () {
@@ -204,7 +202,7 @@ async function buildDashboard() {
                 },
                 series: [{
                     name: 'Tokyo',
-                    data: cityClimate.table.modified.getRows(
+                    data: defaultCity.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -215,7 +213,7 @@ async function buildDashboard() {
                         footerFormat: void 0,
                         headerFormat: void 0,
                         pointFormatter: function () {
-                            return temperatureFormatter(this.y);
+                            return tooltipFormatter(this.y);
                         },
                     }
                 }],
@@ -226,8 +224,6 @@ async function buildDashboard() {
                     enabled: true
                 },
                 xAxis: {
-                    // tickPositions: buildDateTicks(),
-                    // tickWidth: 0,
                     type: 'datetime',
                     visible: true,
                     labels: {
@@ -243,7 +239,7 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: cityClimate,
+            store: defaultCity,
             editable: true,
             // syncEvents: ['tooltip'],
             title: 'Selection Grid',
@@ -382,38 +378,65 @@ async function ajaxAll(requests) {
     return Promise.all(promises);
 }
 
-function buildCitiesMap(worldTable, citiesTable) {
-    return citiesTable.modified
-        .getRows(void 0, void 0, ['lat2', 'lon2', 'city'])
-        .map(row => ({
-            lat: row[0],
-            lon: row[1],
-            name: row[2],
-            custom: {
-                t: worldTable.getCellAsNumber(
-                    dataScope,
-                    worldTable.getRowIndexBy('lon', row[1],
-                        worldTable.getRowIndexBy('lat', row[0])
-                    ),
-                    true
-                )
-            },
-        }))
-        .map(row => {
-            row.color = temperatureColor(row.custom.t);
-            return row;
+async function buildCitiesData() {
+    const cities = await dataPool.getStoreTable('cities');
+    const tables = {};
+
+    await Promise.all(
+        cities.modified
+            .getRows(void 0, void 0, ['lat', 'lon', 'city'])
+            .map(async function (row) {
+                tables[row[2]] = {
+                    lat: row[0],
+                    lon: row[1],
+                    name: row[2],
+                    store: await dataPool.getStore(row[2])
+                };
+            })
+    );
+
+    return tables;
+}
+
+async function buildCitiesMap() {
+    return Object
+        .keys(citiesData)
+        .map(city => {
+            const data = citiesData[city];
+            const table = data.store.table.modified;
+            const scopeValue = table.getCellAsNumber(
+                dataScope,
+                table.getRowIndexBy('time', worldDate.getTime()),
+                true
+            );
+
+            return {
+                color: scopeColor(scopeValue),
+                custom: { scopeValue },
+                lat: data.lat,
+                lon: data.lon,
+                name: data.name,
+            };
         });
 }
 
 function buildDates() {
     const dates = [];
 
-    for (let date = new Date(Date.UTC(2010, 0, 5)),
+    for (let date = new Date(Date.UTC(1951, 0, 5)),
             dateEnd = new Date(Date.UTC(2010, 11, 25));
         date <= dateEnd;
         date = date.getUTCDate() >= 25 ?
-            new Date(Date.UTC(2010, date.getUTCMonth() + 1, 5)) :
-            new Date(Date.UTC(2010, date.getUTCMonth(), date.getUTCDate() + 10))
+            new Date(Date.UTC(
+                date.getFullYear(),
+                date.getUTCMonth() + 1,
+                5
+            )) :
+            new Date(Date.UTC(
+                date.getFullYear(),
+                date.getUTCMonth(),
+                date.getUTCDate() + 10
+            ))
     ) {
         dates.push([date.getTime(), 0]);
     }
@@ -424,10 +447,14 @@ function buildDates() {
 function buildDateTicks() {
     const dates = [];
 
-    for (let date = new Date(Date.UTC(2010, 0, 15)),
+    for (let date = new Date(Date.UTC(1951, 0, 15)),
             dateEnd = new Date(Date.UTC(2010, 11, 15));
         date <= dateEnd;
-        date = new Date(Date.UTC(2010, date.getUTCMonth() + 1, 15))
+        date = new Date(Date.UTC(
+            date.getFullYear(),
+            date.getUTCMonth() + 1,
+            15
+        ))
     ) {
         dates.push(date.getTime());
     }
@@ -435,26 +462,55 @@ function buildDateTicks() {
     return dates;
 }
 
-function temperatureColor(value) {
-    const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+function scopeColor(value) {
 
-    return (
-        factor < 0.5 ?
-            color1.tweenTo(color2, factor * 2) :
-            color2.tweenTo(color3, (factor - 0.5) * 2)
-    );
+    // temperature
+    if (dataScope[0] === 'T') {
+        const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
+
+        return (
+            factor < 0.5 ?
+                colorBlue.tweenTo(colorGreen, factor * 2) :
+                colorGreen.tweenTo(colorRed, (factor - 0.5) * 2)
+        );
+    }
+
+    // fallback to days
+    return colorRed.tweenTo(colorBlue, value / 10); 
 }
 
-function temperatureFormatter(value) {
-    return [
-        Highcharts.correctFloat(value, 4) + '˚K',
-        Highcharts.correctFloat(
-            (value - 273.15), 3
-        ) + '˚C',
-        Highcharts.correctFloat(
-            (value * 1.8 - 459.67), 3
-        ) + '˚F'
-    ].join('<br>');
+function tooltipFormatter(value) {
+
+    // temperature values
+    if (dataScope[0] === 'T') {
+        return [
+            Highcharts.correctFloat(value, 4) + '˚K',
+            Highcharts.correctFloat(
+                (value - 273.15), 3
+            ) + '˚C',
+            Highcharts.correctFloat(
+                (value * 1.8 - 459.67), 3
+            ) + '˚F'
+        ].join('<br>');
+    }
+
+    // rain days
+    if (dataScope === 'RR1') {
+        return Highcharts.correctFloat(value, 0) + ' rainy days'
+    }
+
+    // ice days
+    if (dataScope === 'ID') {
+        return Highcharts.correctFloat(value, 0) + ' icy days'
+    }
+
+    // fog days
+    if (dataScope === 'FD') {
+        return Highcharts.correctFloat(value, 0) + ' foggy days'
+    }
+
+    // fallback
+    return '' + Highcharts.correctFloat(value, 4);
 }
 
 /**
