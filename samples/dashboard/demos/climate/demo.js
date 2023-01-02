@@ -1,8 +1,8 @@
 /* eslint-disable */
 
-const color1 = Highcharts.Color.parse('#39F');
-const color2 = Highcharts.Color.parse('#6C0');
-const color3 = Highcharts.Color.parse('#F00');
+const colorBlue = Highcharts.Color.parse('#39F');
+const colorGreen = Highcharts.Color.parse('#6C0');
+const colorRed = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
     'FD' : 'Days with fog',
@@ -479,13 +479,13 @@ function scopeColor(value) {
 
         return (
             factor < 0.5 ?
-                color1.tweenTo(color2, factor * 2) :
-                color2.tweenTo(color3, (factor - 0.5) * 2)
+                colorBlue.tweenTo(colorGreen, factor * 2) :
+                colorGreen.tweenTo(colorRed, (factor - 0.5) * 2)
         );
     }
 
     // fallback to days
-    return color3.tweenTo(color1, value / 10); 
+    return colorRed.tweenTo(colorBlue, value / 10); 
 }
 
 function tooltipFormatter(value) {
