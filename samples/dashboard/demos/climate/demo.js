@@ -16,6 +16,7 @@ const defaultData = 'TN';
 let citiesData;
 let citiesMap;
 let cityGrid;
+let cityScope = defaultCity;
 let citySeries;
 let dataScope = defaultData;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
@@ -118,6 +119,7 @@ async function setupDashboard() {
                     type: 'mappoint',
                     name: 'Cities',
                     data: await buildCitiesMap(),
+                    allowPointSelect: true,
                     dataLabels: {
                         crop: false
                         // y: -13, // mapmarker fix
@@ -132,6 +134,7 @@ async function setupDashboard() {
                             const point = e.point;
                             const city = point.name;
 
+                            cityScope = city;
                             dataPool
                                 .getStore(city)
                                 .then(store => {
@@ -151,7 +154,15 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
-                        radius: 6
+                        radius: 6,
+                        states: {
+                            hover: {
+                                radius: 4
+                            },
+                            select: {
+                                radius: 9
+                            }
+                        }
                         // symbol: 'mapmarker'
                     },
                     tooltip: {
@@ -418,6 +429,7 @@ async function buildCitiesMap() {
                 lat: data.lat,
                 lon: data.lon,
                 name: data.name,
+                selected: city === cityScope,
                 y
             };
         });

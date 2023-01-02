@@ -10,10 +10,6 @@
     fill: #567;
 }
 
-#world-map .highcharts-series-0 .highcharts-null-point {
-    fill: #f0f; /* test */
-}
-
 #world-map .highcharts-series-0 .highcharts-point {
     fill: #c93 !important;
     stroke: #986;
@@ -27,4 +23,8 @@
 
 #world-map .highcharts-series-1 .highcharts-point {
     stroke: #fff;
+}
+
+#world-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 3px;
 }
