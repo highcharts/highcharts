@@ -1,29 +1,31 @@
-/* eslint-disable */
-
+/* eslint-disable prefer-const, jsdoc/require-description */
 const colorBlue = Highcharts.Color.parse('#39F');
 const colorGreen = Highcharts.Color.parse('#6C0');
 const colorRed = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
-    'FD' : 'Days with fog',
-    'ID' : 'Days with ice',
-    'RR1' : 'Days with rain',
-    'TN' : 'Average temperature',
-    'TX' : 'Maximal temperature'
+    FD: 'Days with fog',
+    ID: 'Days with ice',
+    RR1: 'Days with rain',
+    TN: 'Average temperature',
+    TX: 'Maximal temperature'
 };
+const defaultCity = 'New York';
+const defaultData = 'TN';
 
 let citiesData;
+let citiesMap;
 let cityGrid;
+let cityScope = defaultCity;
 let citySeries;
-let dataScope = 'TX';
-let worldCities;
-let worldDate = new Date(Date.UTC(2010, 11, 25)); 
+let dataScope = defaultData;
+let worldDate = new Date(Date.UTC(2010, 11, 25));
 
-async function buildDashboard() {
+async function setupDashboard() {
 
     citiesData = await buildCitiesData();
 
-    const defaultCity = await dataPool.getStore('Tokyo');
+    const defaultCityStore = await dataPool.getStore(defaultCity);
 
     console.log('defaultCity', defaultCity);
 
@@ -33,7 +35,7 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '60px',
+                    height: '60px'
                 },
                 credits: {
                     enabled: false
@@ -45,7 +47,7 @@ async function buildDashboard() {
                     events: {
                         click: async function (e) {
                             worldDate = new Date(e.point.x);
-                            worldCities.setData(await buildCitiesMap());
+                            citiesMap.setData(await buildCitiesMap());
                         }
                     },
                     tooltip: {
@@ -78,45 +80,51 @@ async function buildDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    backgroundColor: '#567',
+                    events: {
+                        render: function () {
+
+                            if (!this.styledMode) {
+                                return;
+                            }
+
+                            // force point colors
+                            for (const point of this.series[1].points) {
+                                if (point.graphic && point.color) {
+                                    point.graphic.element.style.fill =
+                                        point.color;
+                                }
+                            }
+                        }
+                    },
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
                     ).then(response => response.json()),
-                    spacing: [0, 0, 0, 0],
+                    styledMode: true
                 },
-                /*colorAxis: {
-                    max: 325,
-                    maxColor: '#F93',
-                    min: 225,
-                    minColor: '#39F',
-                },*/
+                colorAxis: buildColorAxis(),
                 legend: {
-                    enabled: false,
+                    enabled: false
+                },
+                mapNavigation: {
+                    enabled: true,
+                    enableMouseWheelZoom: false
                 },
                 mapView: {
-                    maxZoom: 1.8,
-                    padding: 0,
-                    /*projection: {
-                        name: 'Miller',
-                    },*/
-                    zoom: 1.8,
+                    maxZoom: 4,
+                    zoom: 1.7
                 },
                 series: [{
                     type: 'map',
-                    name: 'World Map',
-                    borderColor: '#986',
-                    nullColor: '#C93',
+                    name: 'World Map'
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
                     data: await buildCitiesMap(),
-                    color: '#000',
+                    allowPointSelect: true,
                     dataLabels: {
-                        align: 'left',
-                        padding: 7,
-                        verticalAlign: 'middle',
-                        y: -1,
+                        crop: false
+                        // y: -13, // mapmarker fix
                     },
                     events: {
                         click: function (e) {
@@ -128,6 +136,7 @@ async function buildDashboard() {
                             const point = e.point;
                             const city = point.name;
 
+                            cityScope = city;
                             dataPool
                                 .getStore(city)
                                 .then(store => {
@@ -146,37 +155,41 @@ async function buildDashboard() {
                         }
                     },
                     marker: {
-                        lineColor: '#FFF',
-                        lineWidth: 1,
+                        enabled: true,
                         radius: 6,
+                        states: {
+                            hover: {
+                                radius: 4
+                            },
+                            select: {
+                                radius: 9
+                            }
+                        }
+                        // symbol: 'mapmarker'
                     },
                     tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
+                        // distance: 6, // mapmarker fix
+                        footerFormat: '',
+                        headerFormat: '',
                         pointFormatter: function () {
                             const point = this;
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.custom.scopeValue)
+                                tooltipFormatter(point.y)
                             );
                         }
                     }
                 }],
                 title: {
-                    margin: 0,
-                    text: void 0,
-                },
+                    text: void 0
+                }
             },
             events: {
                 mount: function () {
                     // call action
-                    worldCities = this.chart.series[1];
-                    console.log('map mount event', this);
-                },
-                // unmount: function () {
-                //     console.log('map unmount event', this);
-                // }
+                    citiesMap = this.chart.series[1];
+                }
             }
         },
         {
@@ -241,8 +254,8 @@ async function buildDashboard() {
                     }
                 },
                 series: [{
-                    name: 'Tokyo',
-                    data: defaultCity.table.modified.getRows(
+                    name: defaultCity,
+                    data: defaultCityStore.table.modified.getRows(
                         void 0, void 0,
                         ['time', dataScope]
                     ),
@@ -254,11 +267,11 @@ async function buildDashboard() {
                         headerFormat: void 0,
                         pointFormatter: function () {
                             return tooltipFormatter(this.y);
-                        },
+                        }
                     }
                 }],
                 title: {
-                    text: 'Tokyo'
+                    text: defaultCity
                 },
                 tooltip: {
                     enabled: true
@@ -268,8 +281,8 @@ async function buildDashboard() {
                     visible: true,
                     labels: {
                         format: '{value:%Y-%m-%d}'
-                    },
-                },
+                    }
+                }
             },
             events: {
                 mount: function () {
@@ -279,16 +292,15 @@ async function buildDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: defaultCity,
+            store: defaultCityStore,
             editable: true,
             // syncEvents: ['tooltip'],
             title: 'Selection Grid',
             events: {
                 mount: function () {
                     // call action
-                    console.log('grid mount event', this);
                     cityGrid = this.dataGrid;
-                },
+                }
             }
         }],
         editMode: {
@@ -297,8 +309,8 @@ async function buildDashboard() {
                 enabled: true,
                 icon: (
                     'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
-                ),
-            },
+                )
+            }
         },
         gui: {
             enabled: true,
@@ -358,7 +370,7 @@ async function buildDashboard() {
 
 }
 
-async function main() {
+async function setupDataPool() {
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
@@ -380,9 +392,9 @@ async function main() {
 
     for (const row of csvReferences.getRowObjects()) {
         dataPool.setStoreOptions({
-            name: row['city'],
+            name: row.city,
             storeOptions: {
-                csvURL: row['csv'],
+                csvURL: row.csv
             },
             storeType: 'CSVStore'
         });
@@ -392,17 +404,20 @@ async function main() {
 
     for (const row of csvReferences.getRowObjects()) {
         dataPool.setStoreOptions({
-            name: row['time'],
+            name: row.time,
             storeOptions: {
-                csvURL: row['csv'],
+                csvURL: row.csv
             },
             storeType: 'CSVStore'
         });
     }
 
     console.log(dataPool);
+}
 
-    await buildDashboard();
+async function main() {
+    await setupDataPool();
+    await setupDashboard();
 }
 
 main().catch(e => console.error(e));
@@ -421,11 +436,11 @@ function ajax(request) {
             headers: request.headers,
             type: request.type,
             url: request.url,
-            success: (result) => {
+            success: result => {
                 request.success = result;
                 resolve(request);
             },
-            error: (error) => {
+            error: error => {
                 request.error = error;
                 reject(request);
             }
@@ -469,27 +484,54 @@ async function buildCitiesMap() {
         .map(city => {
             const data = citiesData[city];
             const table = data.store.table.modified;
-            const scopeValue = table.getCellAsNumber(
+            const y = table.getCellAsNumber(
                 dataScope,
                 table.getRowIndexBy('time', worldDate.getTime()),
                 true
             );
 
             return {
-                color: scopeColor(scopeValue),
-                custom: { scopeValue },
                 lat: data.lat,
                 lon: data.lon,
                 name: data.name,
+                selected: city === cityScope,
+                y
             };
         });
+}
+
+function buildColorAxis() {
+
+    // temperature
+    if (dataScope[0] === 'T') {
+        return {
+            max: 325,
+            min: 275,
+            stops: [
+                [0.0, '#39F'],
+                [0.5, '#6C0'],
+                [1.0, '#F00']
+            ]
+        };
+    }
+
+    // days
+    return {
+        max: 10,
+        min: 0,
+        stops: [
+            [0.0, '#F00'],
+            [0.5, '#6C0'],
+            [1.0, '#39F']
+        ]
+    };
 }
 
 function buildDates() {
     const dates = [];
 
     for (let date = new Date(Date.UTC(1951, 0, 5)),
-            dateEnd = new Date(Date.UTC(2010, 11, 25));
+        dateEnd = new Date(Date.UTC(2010, 11, 25));
         date <= dateEnd;
         date = date.getUTCDate() >= 25 ?
             new Date(Date.UTC(
@@ -513,7 +555,7 @@ function buildDateTicks() {
     const dates = [];
 
     for (let date = new Date(Date.UTC(1951, 0, 15)),
-            dateEnd = new Date(Date.UTC(2010, 11, 15));
+        dateEnd = new Date(Date.UTC(2010, 11, 15));
         date <= dateEnd;
         date = new Date(Date.UTC(
             date.getFullYear(),
@@ -541,7 +583,7 @@ function scopeColor(value) {
     }
 
     // fallback to days
-    return colorRed.tweenTo(colorBlue, value / 10); 
+    return colorRed.tweenTo(colorBlue, value / 10);
 }
 
 function tooltipFormatter(value) {
@@ -561,17 +603,17 @@ function tooltipFormatter(value) {
 
     // rain days
     if (dataScope === 'RR1') {
-        return Highcharts.correctFloat(value, 0) + ' rainy days'
+        return Highcharts.correctFloat(value, 0) + ' rainy days';
     }
 
     // ice days
     if (dataScope === 'ID') {
-        return Highcharts.correctFloat(value, 0) + ' icy days'
+        return Highcharts.correctFloat(value, 0) + ' icy days';
     }
 
     // fog days
     if (dataScope === 'FD') {
-        return Highcharts.correctFloat(value, 0) + ' foggy days'
+        return Highcharts.correctFloat(value, 0) + ' foggy days';
     }
 
     // fallback
