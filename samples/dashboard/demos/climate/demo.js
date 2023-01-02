@@ -11,7 +11,7 @@ const dataScopes = {
     'TN' : 'Average temperature',
     'TX' : 'Maximal temperature'
 };
-const initialMin = Date.UTC(2000);
+const initialMin = Date.UTC(2010);
 
 let citiesData;
 let cityGrid;
@@ -33,6 +33,7 @@ async function buildDashboard() {
             chartOptions: {
                 chart: {
                     height: '60px',
+                    styledMode: true
                 },
                 credits: {
                     enabled: false
@@ -73,7 +74,27 @@ async function buildDashboard() {
                 },
                 xAxis: {
                     visible: false,
-                    min: initialMin
+                    min: initialMin,
+                    events: {
+                        afterSetExtremes(e) {
+                            const { min, max} = e,
+                                city = citySeries.chart.title.textStr;
+
+                            dataPool
+                                .getStore(city)
+                                .then(store => {
+                                    citySeries.update({
+                                        data: store.table.modified.getRows(
+                                            void 0 ,
+                                            void 0,
+                                            ['time', dataScope]
+                                        ).filter(el =>{
+                                            return el[0] >= min && el[0] <= max;
+                                        })
+                                    });
+                                });
+                        }
+                    }
                 },
                 yAxis: {
                     visible: false
@@ -485,7 +506,7 @@ function scopeColor(value) {
     }
 
     // fallback to days
-    return colorRed.tweenTo(colorBlue, value / 10); 
+    return colorRed.tweenTo(colorBlue, value / 10);
 }
 
 function tooltipFormatter(value) {
