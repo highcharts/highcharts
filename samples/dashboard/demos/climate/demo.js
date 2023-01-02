@@ -12,6 +12,8 @@ const dataScopes = {
     'TX' : 'Maximal temperature'
 };
 const initialMin = Date.UTC(2010);
+const minRange = 30 * 24 * 3600 * 1000;
+const maxRange = 365 * 24 * 3600 * 1000;
 
 let citiesData;
 let cityGrid;
@@ -32,7 +34,7 @@ async function buildDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '60px',
+                    height: '80px',
                     styledMode: true
                 },
                 credits: {
@@ -72,9 +74,24 @@ async function buildDashboard() {
                         )
                     }]
                 },
+                scrollbar: {
+                    enabled: true,
+                    barBackgroundColor: 'gray',
+                    barBorderRadius: 7,
+                    barBorderWidth: 0,
+                    buttonBackgroundColor: 'gray',
+                    buttonBorderWidth: 0,
+                    buttonBorderRadius: 7,
+                    trackBackgroundColor: 'none',
+                    trackBorderWidth: 1,
+                    trackBorderRadius: 8,
+                    trackBorderColor: '#CCC'
+                },
                 xAxis: {
                     visible: false,
                     min: initialMin,
+                    minRange: minRange,
+                    maxRange: maxRange,
                     events: {
                         afterSetExtremes(e) {
                             const { min, max} = e,

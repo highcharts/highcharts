@@ -1,1 +1,30 @@
 @import "https://code.highcharts.com/css/highcharts.css";
+
+/* Navigator */
+.highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke: #df8fa1;
+}
+
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-navigator-xaxis {
+    fill: white;
+}
+
+.highcharts-navigator-series {
+    fill: #c3c6ed;
+    stroke: #df8fa1;
+    fill-opacity: 1;
+}
+
+.highcharts-navigator-series .highcharts-area {
+    fill-opacity: 1;
+}
+
+.highcharts-navigator-mask-inside {
+    fill: black;
+    fill-opacity: 0.5;
+    stroke-width: 0;
+}
+
+.highcharts-navigator-outline {
+    display: none;
+}
