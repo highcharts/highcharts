@@ -345,13 +345,12 @@ class PlotLineOrBand {
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
-
         if (!label.alignValue || label.alignValue === 'left') {
             label.css({
                 width: (
                     label.rotation === 90 ?
                         axis.height - (label.alignAttr.y - axis.top) :
-                        axis.width - (label.alignAttr.x - axis.left)
+                        axis.chart.chartWidth - (label.alignAttr.x - axis.left)
                 ) + 'px'
             });
         }
