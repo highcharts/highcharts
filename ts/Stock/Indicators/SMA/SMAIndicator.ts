@@ -480,7 +480,8 @@ class SMAIndicator extends LineSeries {
             indicator.isDirty = true;
             indicator.redraw();
         }
-        indicator.isDirtyData = false;
+
+        indicator.isDirtyData = !!indicator.linkedSeries;
     }
 
     /**
