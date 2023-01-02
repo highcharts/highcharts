@@ -120,10 +120,27 @@ async function setupDashboard() {
                     name: 'Cities',
                     data: await buildCitiesMap(),
                     allowPointSelect: true,
-                    dataLabels: {
-                        crop: false
-                        // y: -13, // mapmarker fix
-                    },
+                    dataLabels: [{
+                        align: 'left',
+                        crop: false,
+                        enabled: true,
+                        format: '{point.name}',
+                        padding: 0,
+                        verticalAlign: 'top',
+                        x: 5,
+                        y: -10
+                    }, {
+                        crop: false,
+                        enabled: true,
+                        formatter: function () {
+                            const point = this;
+
+                            return labelFormatter(point.y, true);
+                        },
+                        padding: 0,
+                        verticalAlign: 'top',
+                        y: -35
+                    }],
                     events: {
                         click: function (e) {
 
@@ -154,19 +171,18 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
-                        radius: 6,
-                        states: {
+                        radius: 14,
+                        symbol: 'mapmarker',
+                        state: {
                             hover: {
-                                radius: 4
+                                radius: 14
                             },
                             select: {
-                                radius: 9
+                                radius: 16
                             }
                         }
-                        // symbol: 'mapmarker'
                     },
                     tooltip: {
-                        // distance: 6, // mapmarker fix
                         footerFormat: '',
                         headerFormat: '',
                         pointFormatter: function () {
@@ -181,6 +197,9 @@ async function setupDashboard() {
                 }],
                 title: {
                     text: void 0
+                },
+                tooltip: {
+                    enabled: true
                 }
             },
             events: {
@@ -502,6 +521,16 @@ function buildDateTicks() {
     }
 
     return dates;
+}
+
+function labelFormatter(value) {
+
+    // temperature values
+    if (dataScope[0] === 'T') {
+        return '' + Math.round(value);
+    }
+
+    return Highcharts.correctFloat(value, 0);
 }
 
 function scopeColor(value) {
