@@ -240,7 +240,9 @@ async function buildDashboard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             store: defaultCity,
-            editable: true,
+            dataGridOptions: {
+                editable: false
+            },
             // syncEvents: ['tooltip'],
             title: 'Selection Grid',
             events: {
