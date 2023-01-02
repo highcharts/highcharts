@@ -20,14 +20,13 @@ let cityScope = defaultCity;
 let citySeries;
 let dataScope = defaultData;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
+let kpi = {};
 
 async function setupDashboard() {
 
     citiesData = await buildCitiesData();
 
     const defaultCityStore = await dataPool.getStore(defaultCity);
-
-    console.log('defaultCity', defaultCity);
 
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
@@ -150,7 +149,21 @@ async function setupDashboard() {
                                             ['time', dataScope]
                                         )
                                     });
+
+                                    // update datagrid
                                     cityGrid.update({ store });
+
+                                    // update KPI
+                                    const table =
+                                        citiesData[city].store.table.modified;
+
+                                    for (
+                                        const [key, ind] of Object.entries(kpi)
+                                    ) {
+                                        ind.update({
+                                            value: table.getCellAsNumber(key, table.getRowIndexBy('time', worldDate.getTime()), true)
+                                        });
+                                    }
                                 });
                         }
                     },
@@ -196,54 +209,92 @@ async function setupDashboard() {
             cell: 'kpi-temperature',
             type: 'kpi',
             title: 'Temperature',
-            value: 13,
-            valueFormatter: v => `${v}°`
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v.toFixed(0)}°`,
             // threshold: [20000, 200000],
             // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        }, 
+            events: {
+                mount: function () {
+                    kpi.TN = this;
+                }
+            }
+        },
         {
             cell: 'kpi-humidity',
             type: 'kpi',
-            title: 'Humidity',
-            value: 133,
-            valueFormatter: v => `${v}%`
+            title: 'Fog',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v}%`,
             // threshold: [20000, 200000],
             // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        },{
-            cell: 'kpi-percipitation',
-            type: 'kpi',
-            title: 'Percipitation',
-            value: 1337,
-            subtitle: {
-                type: 'diff'
-            },
-            valueFormatter: v => `${v}mm`
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        },{
+            events: {
+                mount: function () {
+                    kpi.FD = this;
+                }
+            }
+        },
+        // {
+        //     cell: 'kpi-percipitation',
+        //     type: 'kpi',
+        //     title: 'Percipitation',
+        //     value: 1337,
+        //     subtitle: {
+        //         type: 'diff'
+        //     },
+        //     valueFormatter: v => `${v}mm`
+        //     // threshold: [20000, 200000],
+        //     // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
+        // },
+        {
             cell: 'kpi-wind',
             type: 'kpi',
-            title: 'Wind Speed',
-            value: 13,
-            valueFormatter: v => `${v}mph`
+            title: 'Ice',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v}mm`,
             // threshold: [20000, 200000],
             // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        },{
+            events: {
+                mount: function () {
+                    kpi.ID = this;
+                }
+            }
+        },
+        {
             cell: 'kpi-snow',
             type: 'kpi',
-            title: 'Snow Cover',
-            value: 13,
+            title: 'Rain',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v}mm`,
             // threshold: [20000, 200000],
             // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        },{
-            cell: 'kpi-ppm',
-            type: 'kpi',
-            title: 'PPM',
-            value: 13,
-            valueFormat: '{value:,.1f}'
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
-        }, {
+            events: {
+                mount: function () {
+                    kpi.RR1 = this;
+                }
+            }
+        },
+        // {
+        //     cell: 'kpi-ppm',
+        //     type: 'kpi',
+        //     title: 'PPM',
+        //     value: 13,
+        //     valueFormat: '{value:,.1f}'
+        //     // threshold: [20000, 200000],
+        //     // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
+        // },
+        {
             cell: 'kpi-chart',
             type: 'Highcharts',
             chartOptions: {
@@ -337,25 +388,33 @@ async function setupDashboard() {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-temperature',
-                                    width: '33.333%'
-                                },{
+                                    width: '50%'
+                                    // width: '33.333%'
+                                }, {
                                     id: 'kpi-humidity',
-                                    width: '33.333%'
-                                },{
-                                    id: 'kpi-percipitation',
-                                    width: '33.333%'
-                                }]
-                            },{
+                                    width: '50%'
+                                    // width: '33.333%'
+                                }
+                                // {
+                                //     id: 'kpi-percipitation',
+                                //     width: '33.333%'
+                                // }
+                                ]
+                            }, {
                                 cells: [{
                                     id: 'kpi-wind',
-                                    width: '33.333%'
-                                },{
+                                    width: '50%'
+                                    // width: '33.333%'
+                                }, {
                                     id: 'kpi-snow',
-                                    width: '33.333%'
-                                },{
-                                    id: 'kpi-ppm',
-                                    width: '33.333%'
-                                }]
+                                    width: '50%'
+                                    // width: '33.333%'
+                                }
+                                // {
+                                //     id: 'kpi-ppm',
+                                //     width: '33.333%'
+                                // }
+                            ]
                             }]
                         }
                     }, {
