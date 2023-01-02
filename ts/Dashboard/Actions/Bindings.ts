@@ -12,6 +12,7 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
+import KPIComponent from '../Component/KPIComponent.js';
 
 const {
     fireEvent,
@@ -64,7 +65,6 @@ class Bindings {
                     );
                     break;
                 case 'Highcharts':
-
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -86,11 +86,21 @@ class Bindings {
                         ) as DataGridComponent;
                     }
                     break;
+                case 'kpi':
+                    component = new KPIComponent(merge(
+                        options,
+                        {
+                            parentElement: compontentContainer as HTMLDOMElement
+                        })
+                    )
+                    break;
                 default:
                     return;
             }
 
-            component?.render();
+            if (component) {
+                component.render();
+            }
 
             // update cell size (when component is wider, cell should adjust)
             // this.updateSize();

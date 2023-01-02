@@ -25,6 +25,8 @@ async function buildDashboard() {
 
     const defaultCity = await dataPool.getStore('Tokyo');
 
+    console.log('defaultCity', defaultCity);
+
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
@@ -176,66 +178,58 @@ async function buildDashboard() {
                 //     console.log('map unmount event', this);
                 // }
             }
-        }, {
+        },
+        {
             cell: 'kpi-temperature',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
-        },{
+            type: 'kpi',
+            title: 'Temperature',
+            value: 13,
+            valueFormatter: v => `${v}°`
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
+        }, 
+        {
             cell: 'kpi-humidity',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
+            type: 'kpi',
+            title: 'Humidity',
+            value: 133,
+            valueFormatter: v => `${v}%`
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
         },{
             cell: 'kpi-percipitation',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
+            type: 'kpi',
+            title: 'Percipitation',
+            value: 1337,
+            subtitle: {
+                type: 'diff'
+            },
+            valueFormatter: v => `${v}mm`
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
         },{
             cell: 'kpi-wind',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
+            type: 'kpi',
+            title: 'Wind Speed',
+            value: 13,
+            valueFormatter: v => `${v}mph`
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
         },{
             cell: 'kpi-snow',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
+            type: 'kpi',
+            title: 'Snow Cover',
+            value: 13,
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
         },{
             cell: 'kpi-ppm',
-            type: 'html',
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
-                }
-            }],
-            title: 'KPI 1'
+            type: 'kpi',
+            title: 'PPM',
+            value: 13,
+            valueFormat: '{value:,.1f}'
+            // threshold: [20000, 200000],
+            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
         }, {
             cell: 'kpi-chart',
             type: 'Highcharts',
