@@ -177,12 +177,58 @@ async function buildDashboard() {
                 // }
             }
         }, {
-            cell: 'kpi-1',
+            cell: 'kpi-temperature',
             type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        },{
+            cell: 'kpi-humidity',
+            type: 'html',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        },{
+            cell: 'kpi-percipitation',
+            type: 'html',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        },{
+            cell: 'kpi-wind',
+            type: 'html',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        },{
+            cell: 'kpi-snow',
+            type: 'html',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: placeholder()
+                }
+            }],
+            title: 'KPI 1'
+        },{
+            cell: 'kpi-ppm',
+            type: 'html',
             elements: [{
                 tagName: 'img',
                 attributes: {
@@ -272,17 +318,42 @@ async function buildDashboard() {
                 }, {
                     cells: [{
                         id: 'world-map',
-                        width: '100%'
+                        width: '60%'
+                    }, {
+                        id: 'selection-grid',
+                        width: '40%'
                     }]
                 }, {
                     cells: [{
-                        id: 'kpi-1',
-                        width: '20%'
+                        id: 'kpi-layout',
+                        width: '60%',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'kpi-temperature',
+                                    width: '33.333%'
+                                },{
+                                    id: 'kpi-humidity',
+                                    width: '33.333%'
+                                },{
+                                    id: 'kpi-percipitation',
+                                    width: '33.333%'
+                                }]
+                            },{
+                                cells: [{
+                                    id: 'kpi-wind',
+                                    width: '33.333%'
+                                },{
+                                    id: 'kpi-snow',
+                                    width: '33.333%'
+                                },{
+                                    id: 'kpi-ppm',
+                                    width: '33.333%'
+                                }]
+                            }]
+                        }
                     }, {
                         id: 'kpi-chart',
-                        width: '40%'
-                    }, {
-                        id: 'selection-grid',
                         width: '40%'
                     }]
                 }]
