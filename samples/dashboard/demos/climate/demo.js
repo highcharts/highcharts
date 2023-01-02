@@ -78,6 +78,24 @@ async function setupDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
+                    events: {
+                        render: function () {
+
+                            if (!this.styledMode) {
+                                return;
+                            }
+
+                            // force point colors
+                            for (const point of this.series[1].points) {
+                                if (point.graphic && point.color) {
+                                    point.graphic.element.style.fill =
+                                        point.color;
+                                }
+                            }
+
+                            console.log('redraw', this.series[1].points);
+                        }
+                    },
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
@@ -104,7 +122,9 @@ async function setupDashboard() {
                     name: 'Cities',
                     data: await buildCitiesMap(),
                     dataLabels: {
-                        crop: false
+                        crop: false,
+                        x: -2,
+                        y: -13,
                     },
                     events: {
                         click: function (e) {
@@ -135,9 +155,11 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
+                        radius: 6,
                         symbol: 'mapmarker'
                     },
                     tooltip: {
+                        distance: 6,
                         footerFormat: '',
                         headerFormat: '',
                         pointFormatter: function () {
@@ -402,7 +424,6 @@ async function buildCitiesMap() {
             );
 
             return {
-                // color: scopeColor(y),
                 lat: data.lat,
                 lon: data.lon,
                 name: data.name,
