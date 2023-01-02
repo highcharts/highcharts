@@ -111,8 +111,8 @@ async function setupDashboard() {
                     enableMouseWheelZoom: false
                 },
                 mapView: {
-                    maxZoom: 3.6,
-                    zoom: 1.8,
+                    maxZoom: 4,
+                    zoom: 1.7,
                 },
                 series: [{
                     type: 'map',
@@ -123,8 +123,7 @@ async function setupDashboard() {
                     data: await buildCitiesMap(),
                     dataLabels: {
                         crop: false,
-                        x: -2,
-                        y: -13,
+                        // y: -13, // mapmarker fix
                     },
                     events: {
                         click: function (e) {
@@ -156,10 +155,10 @@ async function setupDashboard() {
                     marker: {
                         enabled: true,
                         radius: 6,
-                        symbol: 'mapmarker'
+                        // symbol: 'mapmarker'
                     },
                     tooltip: {
-                        distance: 6,
+                        // distance: 6, // mapmarker fix
                         footerFormat: '',
                         headerFormat: '',
                         pointFormatter: function () {
