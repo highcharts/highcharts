@@ -2147,9 +2147,14 @@ class SVGElement implements SVGElementLike {
         key: 'stroke-width',
         element: SVGDOMElement
     ): void {
-        // Record it for quick access in getter
-        this[key] = value;
-        element.setAttribute(key, value);
+        if (!defined(value)) {
+            delete this[key];
+            element.removeAttribute(key);
+        } else {
+            // Record it for quick access in getter
+            this[key] = value;
+            element.setAttribute(key, value);
+        }
     }
 
     /**

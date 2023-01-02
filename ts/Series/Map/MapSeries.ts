@@ -985,11 +985,7 @@ class MapSeries extends ScatterSeries {
             attr.fill = this.options.nullColor;
         }
 
-        if (defined(pointStrokeWidth)) {
-            attr['stroke-width'] = pointStrokeWidth;
-        } else {
-            delete attr['stroke-width'];
-        }
+        attr['stroke-width'] = pointStrokeWidth;
         attr['stroke-linecap'] = attr['stroke-linejoin'] = this.options.linecap;
 
         return attr;
