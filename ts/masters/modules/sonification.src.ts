@@ -28,7 +28,8 @@ G.sonification = {
     SynthPatch,
     SonificationInstrument,
     SonificationSpeaker,
-    SonificationTimeline
+    SonificationTimeline,
+    Sonification
 };
 
 Sonification.compose(G.Chart, G.Series, G.Point);

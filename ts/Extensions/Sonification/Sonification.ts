@@ -22,6 +22,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type { Options } from '../../Core/Options';
+import type { PropMetrics } from './TimelineFromChart';
 
 /* *
  *
@@ -80,6 +81,8 @@ declare module '../../Core/Series/PointLike' {
  * @private
  */
 class Sonification {
+    forceReady?: boolean; // Used for testing (when working audio is not needed)
+    propMetrics?: PropMetrics; // Used for testing, updated on timeline creation
     timeline?: SonificationTimeline;
     audioContext?: AudioContext;
     unbindKeydown: Function;
@@ -296,7 +299,7 @@ class Sonification {
         ) {
             return false;
         }
-        if (this.audioContext.state === 'suspended') {
+        if (this.audioContext.state === 'suspended' && !this.forceReady) {
             if (this.retryContextCounter++ < 20) {
                 setTimeout((): void => {
                     if (

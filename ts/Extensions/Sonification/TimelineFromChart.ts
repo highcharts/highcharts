@@ -46,7 +46,7 @@ interface ExtremesCache {
     globalExtremes: PropExtremesCache;
     seriesExtremes: Array<PropExtremesCache>;
 }
-interface PropMetrics extends ExtremesCache {
+export interface PropMetrics extends ExtremesCache {
     seriesTimeProps: Array<Record<string, boolean>>;
 }
 
@@ -363,7 +363,7 @@ function getMappingParameterValue(
     if (context.point) {
         if (within === 'xAxis' || within === 'yAxis') {
             const axis = context.point.series[within];
-            if (defined(axis.dataMin) && defined(axis.dataMax)) {
+            if (axis && defined(axis.dataMin) && defined(axis.dataMax)) {
                 extremes = {
                     min: axis.dataMin,
                     max: axis.dataMax
@@ -889,6 +889,11 @@ function timelineFromChart(
             showCrosshairOnly: options.showCrosshairOnly,
             showPlayMarker: options.showPlayMarker
         }, chart);
+
+    // Expose PropMetrics for tests
+    if (chart.sonification) {
+        chart.sonification.propMetrics = propMetrics;
+    }
 
     let startTime = 0;
     chart.series.forEach((series, seriesIx): void => {
