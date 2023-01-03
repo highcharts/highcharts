@@ -16,6 +16,7 @@ import KPIComponent from '../Component/KPIComponent.js';
 
 const {
     fireEvent,
+    addEvent,
     merge
 } = U;
 class Bindings {
@@ -111,16 +112,21 @@ class Bindings {
             fireEvent(component, 'mount');
         }
 
-            if (cell && component) {
-                component.setCell(cell);
-                cell.mountedComponent = component;
+        if (cell && component) {
+            component.setCell(cell);
+            cell.mountedComponent = component;
 
-                cell.row.layout.dashboard.mountedComponents.push({
-                    options: options,
-                    component: component,
-                    cell: cell
-                });
+            cell.row.layout.dashboard.mountedComponents.push({
+                options: options,
+                component: component,
+                cell: cell
+            });
+
+            if (options.events && options.events.click) {
+                addEvent(compontentContainer, 'click', options.events.click);
             }
+        }
+
         return component;
     }
 
@@ -143,6 +149,9 @@ class Bindings {
             case 'DataGrid': 
                 component = DataGridComponent.fromJSON(json as DataGridComponent.ClassJSON);
                 break;
+            // case 'kpi': 
+            //     component = KPIComponent.fromJSON(json as KPIComponent.ClassJSON);
+            //     break;
             default:
                 return;
         }
