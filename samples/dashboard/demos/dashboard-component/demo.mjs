@@ -1,6 +1,6 @@
 import Highcharts from 'https://code.highcharts.com/es-modules/masters/highmaps.src.js';
 import HighchartsComponent from 'https://code.highcharts.com/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
-import DOMComponent from 'https://code.highcharts.com/es-modules/Dashboard/Component/HTMLComponent.js';
+import HTMLComponent from 'https://code.highcharts.com/es-modules/Dashboard/Component/HTMLComponent.js';
 import CSVStore from 'https://code.highcharts.com/es-modules/Data/Stores/CSVStore.js';
 
 Highcharts.AST.allowedAttributes.push('rows');
@@ -16,7 +16,8 @@ const store = new CSVStore(undefined, {
     csv: '',
     firstRowAsNames: true
 });
-//store.load();
+
+store.load();
 
 store.table.setColumns({
     Country: ['Norway', 'Sweden', 'Denmark'],
@@ -27,7 +28,7 @@ store.table.setColumns({
 
 const components = [];
 components.push(
-    new DOMComponent({
+    new HTMLComponent({
         store,
         parentElement: target,
         elements: [
@@ -41,24 +42,21 @@ components.push(
                     id: 'csvedit',
                     rows: 10
                 },
-                textContent: store.save({})
+                textContent: store.converter.export(
+                    store,
+                    {
+                        usePresentationOrder: true,
+                        lineDelimiter: '\n'
+                    }
+                )
             }
         ],
         events: {
-            redraw: (e) => {
-                // Insert the updated store data to the textArea
-                e.component.elements = e.component.elements.map((el) => {
-                    if (el.tagName === 'textarea') {
-                        el.textContent = e.component.store.save({});
-                    }
-                    return el;
-                });
-            },
             afterRender: (e) => {
                 const component = e.target;
                 component.contentElement
                     .querySelector('#csvedit')
-                    .addEventListener('change', (e) => {
+                    .addEventListener('change', e => {
                         component.store.table.columns = [];
                         component.store.options.csv = e.target.value;
                         component.store.load();

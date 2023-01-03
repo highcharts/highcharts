@@ -57,7 +57,6 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             dataGridID: 'dataGrid-' + uniqueKey(),
             dataGridOptions: {},
             editableOptions: [
-                ...Component.defaultOptions.editableOptions,
                 'dataGridClassName',
                 'dataGridID'
             ],

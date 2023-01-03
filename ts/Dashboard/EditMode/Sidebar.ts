@@ -224,7 +224,7 @@ class Sidebar {
         }
     }];
 
-    public static items: Record<string, MenuItem.Options> = merge(Menu.items, {
+    public static items = merge(Menu.items, {
         componentSettings: {
             id: 'componentSettings',
             type: 'componentSettings',
@@ -323,14 +323,13 @@ class Sidebar {
         }
     });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> = merge({}, {
+    public static itemsGeneralOptions: Record<string, MenuItem.Options> = {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
             events: {
-                update: function (): void {
-                    ((this as MenuItem).menu.parent as Sidebar)
-                        .getLayoutOptions();
+                update: function (this: MenuItem): void {
+                    (this.menu.parent as Sidebar).getLayoutOptions();
                 }
             }
         },
@@ -338,12 +337,12 @@ class Sidebar {
             id: 'addComponent',
             type: 'addComponent',
             events: {
-                update: function (): void {
-                    ((this as MenuItem).menu.parent as Sidebar).getComponents();
+                update: function (this: MenuItem): void {
+                    (this.menu.parent as Sidebar).getComponents();
                 }
             }
         }
-    });
+    };
 
     /* *
     *
@@ -481,6 +480,7 @@ class Sidebar {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: contentItems
                 },
+                this.editMode,
                 sidebar
             );
 
@@ -845,6 +845,7 @@ class Sidebar {
                     itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: items
                 },
+                this.editMode,
                 sidebar
             );
 
@@ -890,7 +891,7 @@ class Sidebar {
             // Drag drop new component.
             (gridElement.onmousedown as any) = (e: PointerEvent): void => {
                 if (sidebar.editMode.dragDrop) {
-                    sidebar.hide(false, false);
+                    sidebar.hide(false, true);
                     sidebar.editMode.dragDrop.onDragStart(
                         e,
                         void 0,

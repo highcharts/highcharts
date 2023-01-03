@@ -31,7 +31,7 @@ let dashboard = new Dashboard('container', {
         contextMenu: {
             icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            items: ['editMode', {
+            items: ['editMode', 'viewFullscreen', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
                 events: {

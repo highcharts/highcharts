@@ -144,7 +144,9 @@ class EditMode {
         // Init contextMenu if doesn't exist.
         if (!editMode.tools.contextMenu) {
             editMode.tools.contextMenu = new EditContextMenu(
-                editMode, editMode.options.contextMenu || {}
+                editMode.dashboard.container,
+                editMode.options.contextMenu || {},
+                editMode
             );
         }
 
