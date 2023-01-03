@@ -228,12 +228,13 @@ class SVGLabel extends SVGElement {
                 isFontStyle = (
                     'fontSize' in textStyles ||
                     'fontWeight' in textStyles
-                );
+                ),
+                isOverflow = 'textOverflow' in textStyles;
 
-            // Update existing text, box (#9400, #12163)
+            // Update existing text, box (#9400, #12163, #18212)
             if (isFontStyle) {
                 this.updateTextPadding();
-            } else if (isWidth) {
+            } else if (isWidth || isOverflow) {
                 this.updateBoxSize();
             }
 
