@@ -1,4 +1,3 @@
-dashboard/demos/climate/demo.js
 data/**/*.js
 data-grid/basic/simple/demo.js
 highcharts/common-js/browserify/demo.js
