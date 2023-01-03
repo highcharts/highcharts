@@ -19,12 +19,10 @@
  *
  * */
 
-import type DataConverter from '../../Data/Converters/DataConverter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
-import DataConverterHelper from './DataConverterHelper.js';
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
 import U from '../../Core/Utilities.js';

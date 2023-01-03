@@ -19,7 +19,7 @@
  *
  * */
 
-import HTMLTableConverter from '../../Data/Converters/HTMLTableConverter';
+import HTMLTableConverter from '../../Data/Converters/HTMLTableConverter.js';
 import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -29,6 +29,7 @@ const { merge } = U;
  *  Functions
  *
  * */
+
 /**
  * Change the obj of HTMLTableConverter to its Serialized form.
  * @param obj Object to serialize
@@ -40,7 +41,7 @@ function toJSON(obj: HTMLTableConverter): HTMLTableConverterHelper.JSON {
         $class: 'Data.HTMLTableConverter',
         options: merge(obj.options)
 
-        // tableElement: TO be added?
+        // tableElement: TODO: be added?
     };
 }
 
@@ -62,7 +63,7 @@ function fromJSON(json: HTMLTableConverterHelper.JSON): HTMLTableConverter {
     return new HTMLTableConverter(json.options);
 }
 
-/*
+/* *
  *
  *  Namespace
  *

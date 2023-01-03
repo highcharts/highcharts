@@ -1,4 +1,4 @@
-import DataGrid from '/base/js/DataGrid/DataGrid.js';
+import DataGrid from '/base/code/es-modules/DataGrid/DataGrid.js';
 
 QUnit.test('DataGrid constructor', function (assert) {
 
