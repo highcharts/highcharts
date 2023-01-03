@@ -87,8 +87,8 @@ async function setupDashboard() {
 
                             // force point colors
                             for (const point of this.series[1].points) {
-                                if (point.graphic && point.color) {
-                                    point.graphic.element.style.fill =
+                                if (point.dataLabels && point.color) {
+                                    point.dataLabels[1].box.element.style.fill =
                                         point.color;
                                 }
                             }
@@ -110,7 +110,7 @@ async function setupDashboard() {
                 },
                 mapView: {
                     maxZoom: 4,
-                    zoom: 1.7
+                    zoom: 1.6
                 },
                 series: [{
                     type: 'map',
@@ -125,7 +125,6 @@ async function setupDashboard() {
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
-                        padding: 0,
                         verticalAlign: 'top'
                     }, {
                         crop: false,
@@ -133,9 +132,10 @@ async function setupDashboard() {
                         formatter: function () {
                             return labelFormatter(this.y);
                         },
-                        padding: 0,
-                        verticalAlign: 'top',
-                        y: -35
+                        inside: true,
+                        shape: 'mapmarker',
+                        verticalAlign: 'bottom',
+                        y: -12
                     }],
                     events: {
                         click: function (e) {
@@ -166,17 +166,8 @@ async function setupDashboard() {
                         }
                     },
                     marker: {
-                        enabled: true,
-                        radius: 14,
-                        symbol: 'mapmarker',
-                        state: {
-                            hover: {
-                                radius: 14
-                            },
-                            select: {
-                                radius: 16
-                            }
-                        }
+                        enabled: false,
+                        radius: 0
                     },
                     tooltip: {
                         footerFormat: '',
@@ -391,36 +382,6 @@ main().catch(e => console.error(e));
  *
  * */
 
-function ajax(request) {
-    return new Promise((resolve, reject) => {
-        Highcharts.ajax({
-            data: request.data,
-            dataType: request.dataType,
-            headers: request.headers,
-            type: request.type,
-            url: request.url,
-            success: result => {
-                request.success = result;
-                resolve(request);
-            },
-            error: error => {
-                request.error = error;
-                reject(request);
-            }
-        });
-    });
-}
-
-async function ajaxAll(requests) {
-    const promises = [];
-
-    for (const request of requests) {
-        promises.push(ajax(request));
-    }
-
-    return Promise.all(promises);
-}
-
 async function buildCitiesData() {
     const cities = await dataPool.getStoreTable('cities');
     const tables = {};
@@ -514,49 +475,14 @@ function buildDates() {
     return dates;
 }
 
-function buildDateTicks() {
-    const dates = [];
-
-    for (let date = new Date(Date.UTC(1951, 0, 15)),
-        dateEnd = new Date(Date.UTC(2010, 11, 15));
-        date <= dateEnd;
-        date = new Date(Date.UTC(
-            date.getFullYear(),
-            date.getUTCMonth() + 1,
-            15
-        ))
-    ) {
-        dates.push(date.getTime());
-    }
-
-    return dates;
-}
-
 function labelFormatter(value) {
 
     // temperature values
     if (dataScope[0] === 'T') {
-        return '' + Math.round(value);
+        return '' + Math.round((value - 273.15));
     }
 
     return Highcharts.correctFloat(value, 0);
-}
-
-function scopeColor(value) {
-
-    // temperature
-    if (dataScope[0] === 'T') {
-        const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
-
-        return (
-            factor < 0.5 ?
-                colorBlue.tweenTo(colorGreen, factor * 2) :
-                colorGreen.tweenTo(colorRed, (factor - 0.5) * 2)
-        );
-    }
-
-    // fallback to days
-    return colorRed.tweenTo(colorBlue, value / 10);
 }
 
 function tooltipFormatter(value) {

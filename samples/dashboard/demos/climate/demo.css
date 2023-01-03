@@ -25,10 +25,12 @@
     fill: #fff;
 }
 
-#world-map .highcharts-series-1 .highcharts-point {
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) .highcharts-data-label-box {
+    paint-order: stroke;
     stroke: #fff;
+    stroke-width: 2px;
 }
 
-#world-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 3px;
+#world-map .highcharts-series-1 .highcharts-point {
+    stroke: #fff;
 }
