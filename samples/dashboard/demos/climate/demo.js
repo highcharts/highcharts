@@ -121,21 +121,17 @@ async function setupDashboard() {
                     data: await buildCitiesMap(),
                     allowPointSelect: true,
                     dataLabels: [{
-                        align: 'left',
+                        align: 'center',
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
                         padding: 0,
-                        verticalAlign: 'top',
-                        x: 5,
-                        y: -10
+                        verticalAlign: 'top'
                     }, {
                         crop: false,
                         enabled: true,
                         formatter: function () {
-                            const point = this;
-
-                            return labelFormatter(point.y, true);
+                            return labelFormatter(this.y);
                         },
                         padding: 0,
                         verticalAlign: 'top',
@@ -199,7 +195,20 @@ async function setupDashboard() {
                     text: void 0
                 },
                 tooltip: {
-                    enabled: true
+                    enabled: true,
+                    positioner: function (width, _height, axisInfo) {
+                        return {
+                            x: (
+                                axisInfo.plotX -
+                                width / 2 +
+                                this.options.padding
+                            ),
+                            y: (
+                                axisInfo.plotY +
+                                this.options.padding * 2
+                            )
+                        };
+                    }
                 }
             },
             events: {
