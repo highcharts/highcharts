@@ -7,6 +7,9 @@ const dataScopes = {
     TN: 'Average temperature',
     TX: 'Maximal temperature'
 };
+const initialMin = Date.UTC(2010);
+const minRange = 30 * 24 * 3600 * 1000;
+const maxRange = 365 * 24 * 3600 * 1000;
 const defaultCity = 'New York';
 const defaultData = 'TX';
 
@@ -15,6 +18,8 @@ let citiesMap;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
+let navigatorSeries;
+let worldCities;
 let dataScope = defaultData;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 
@@ -30,43 +35,93 @@ async function setupDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '60px'
+                    height: '80px',
+                    styledMode: true
                 },
                 credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
                     enabled: false
                 },
                 series: [{
                     type: 'scatter',
                     name: 'Timeline',
                     data: buildDates(),
-                    events: {
-                        click: async function (e) {
-                            worldDate = new Date(e.point.x);
-                            citiesMap.setData(await buildCitiesMap());
-                        }
+                    showInNavigator: false,
+                    marker: {
+                        enabled: false
                     },
-                    tooltip: {
-                        footerFormat: '',
-                        headerFormat: '',
-                        pointFormat: '{point.x:%Y-%m-%d}'
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 }],
-                title: {
-                    margin: 0,
-                    text: ''
+                navigator: {
+                    enabled: true,
+                    series: [{
+                        name: defaultCity,
+                        data: defaultCityStore.table.modified.getRows(
+                            void 0,
+                            void 0,
+                            ['time', dataScope]
+                        )
+                    }]
+                },
+                scrollbar: {
+                    enabled: true,
+                    barBackgroundColor: 'gray',
+                    barBorderRadius: 7,
+                    barBorderWidth: 0,
+                    buttonBackgroundColor: 'gray',
+                    buttonBorderWidth: 0,
+                    buttonBorderRadius: 7,
+                    trackBackgroundColor: 'none',
+                    trackBorderWidth: 1,
+                    trackBorderRadius: 8,
+                    trackBorderColor: '#CCC'
                 },
                 xAxis: {
-                    type: 'datetime',
-                    visible: true,
-                    labels: {
-                        format: '{value:%Y}'
+                    visible: false,
+                    min: initialMin,
+                    minRange: minRange,
+                    maxRange: maxRange,
+                    events: {
+                        afterSetExtremes(e) {
+                            const min = e.min || e.target.min,
+                                max = e.max || e.target.max,
+                                city = citySeries.chart.title.textStr;
+
+                            dataPool
+                                .getStore(city)
+                                .then(store => {
+                                    citySeries.update({
+                                        data: store.table.modified.getRows(
+                                            void 0,
+                                            void 0,
+                                            ['time', dataScope]
+                                        ).filter(el =>
+                                            el[0] >= min && el[0] <= max
+                                        )
+                                    });
+                                });
+                        }
                     }
                 },
                 yAxis: {
                     visible: false
-                },
-                legend: {
-                    enabled: false
+                }
+            },
+            events: {
+                mount: function () {
+                    navigatorSeries = this.chart.series[1];
                 }
             }
         }, {
@@ -135,16 +190,29 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
+                                    const data = store.table.modified.getRows(
+                                        void 0, void 0,
+                                        ['time', dataScope]
+                                    );
+
                                     citySeries.chart.update({
                                         title: { text: city }
                                     });
                                     citySeries.update({
                                         name: city,
-                                        data: store.table.modified.getRows(
-                                            void 0, void 0,
-                                            ['time', dataScope]
-                                        )
+                                        data
                                     });
+                                    navigatorSeries.update({
+                                        name: city,
+                                        data
+                                    });
+
+                                    // Update the main chart.
+                                    Highcharts.fireEvent(
+                                        navigatorSeries.chart.xAxis[0],
+                                        'afterSetExtremes'
+                                    );
+
                                     cityGrid.update({ store });
                                 });
                         }
@@ -258,6 +326,9 @@ async function setupDashboard() {
                     ),
                     legend: {
                         enabled: false
+                    },
+                    marker: {
+                        enabledThreshold: 0.5
                     },
                     tooltip: {
                         footerFormat: '',
