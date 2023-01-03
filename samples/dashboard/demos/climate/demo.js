@@ -1,7 +1,4 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
-const colorBlue = Highcharts.Color.parse('#39F');
-const colorGreen = Highcharts.Color.parse('#6C0');
-const colorRed = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
     FD: 'Days with fog',
@@ -11,7 +8,7 @@ const dataScopes = {
     TX: 'Maximal temperature'
 };
 const defaultCity = 'New York';
-const defaultData = 'TN';
+const defaultData = 'TX';
 
 let citiesData;
 let citiesMap;
@@ -204,16 +201,56 @@ async function setupDashboard() {
             }],
             title: 'KPI 1'
         }, {
-            cell: 'kpi-chart',
+            cell: 'city-chart',
             type: 'Highcharts',
+            chartConstructor: 'stockChart',
             chartOptions: {
                 chart: {
-                    type: 'line',
+                    events: {
+                        render: function () {
+
+                            if (!this.styledMode) {
+                                return;
+                            }
+
+                            // force point colors
+                            for (const point of this.series[0].points) {
+                                if (point.graphic && point.color) {
+                                    point.graphic.element.style.fill =
+                                        point.color;
+                                }
+                            }
+                        }
+                    },
+                    styledMode: true,
                     zooming: {
                         type: 'x'
                     }
                 },
+                colorAxis: buildColorAxis(),
+                navigator: {
+                    enabled: false
+                },
+                rangeSelector: {
+                    buttons: [{
+                        type: 'year',
+                        count: 1,
+                        text: '1y',
+                        title: 'View 1 year'
+                    }, {
+                        type: 'year',
+                        count: 10,
+                        text: '10y',
+                        title: 'View 10 years'
+                    }, {
+                        type: 'all',
+                        text: 'All',
+                        title: 'View all'
+                    }],
+                    selected: 0
+                },
                 series: [{
+                    type: 'scatter',
                     name: defaultCity,
                     data: defaultCityStore.table.modified.getRows(
                         void 0, void 0,
@@ -223,8 +260,8 @@ async function setupDashboard() {
                         enabled: false
                     },
                     tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
+                        footerFormat: '',
+                        headerFormat: '',
                         pointFormatter: function () {
                             return tooltipFormatter(this.y);
                         }
@@ -291,7 +328,7 @@ async function setupDashboard() {
                         id: 'kpi-1',
                         width: '20%'
                     }, {
-                        id: 'kpi-chart',
+                        id: 'city-chart',
                         width: '40%'
                     }, {
                         id: 'selection-grid',
@@ -363,36 +400,6 @@ main().catch(e => console.error(e));
  *
  * */
 
-function ajax(request) {
-    return new Promise((resolve, reject) => {
-        Highcharts.ajax({
-            data: request.data,
-            dataType: request.dataType,
-            headers: request.headers,
-            type: request.type,
-            url: request.url,
-            success: result => {
-                request.success = result;
-                resolve(request);
-            },
-            error: error => {
-                request.error = error;
-                reject(request);
-            }
-        });
-    });
-}
-
-async function ajaxAll(requests) {
-    const promises = [];
-
-    for (const request of requests) {
-        promises.push(ajax(request));
-    }
-
-    return Promise.all(promises);
-}
-
 async function buildCitiesData() {
     const cities = await dataPool.getStoreTable('cities');
     const tables = {};
@@ -444,8 +451,8 @@ function buildColorAxis() {
             min: 275,
             stops: [
                 [0.0, '#39F'],
-                [0.5, '#6C0'],
-                [1.0, '#F00']
+                [0.4, '#6C0'],
+                [0.8, '#F00']
             ]
         };
     }
@@ -456,8 +463,8 @@ function buildColorAxis() {
         min: 0,
         stops: [
             [0.0, '#F00'],
-            [0.5, '#6C0'],
-            [1.0, '#39F']
+            [0.4, '#6C0'],
+            [0.8, '#39F']
         ]
     };
 }
@@ -484,41 +491,6 @@ function buildDates() {
     }
 
     return dates;
-}
-
-function buildDateTicks() {
-    const dates = [];
-
-    for (let date = new Date(Date.UTC(1951, 0, 15)),
-        dateEnd = new Date(Date.UTC(2010, 11, 15));
-        date <= dateEnd;
-        date = new Date(Date.UTC(
-            date.getFullYear(),
-            date.getUTCMonth() + 1,
-            15
-        ))
-    ) {
-        dates.push(date.getTime());
-    }
-
-    return dates;
-}
-
-function scopeColor(value) {
-
-    // temperature
-    if (dataScope[0] === 'T') {
-        const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
-
-        return (
-            factor < 0.5 ?
-                colorBlue.tweenTo(colorGreen, factor * 2) :
-                colorGreen.tweenTo(colorRed, (factor - 0.5) * 2)
-        );
-    }
-
-    // fallback to days
-    return colorRed.tweenTo(colorBlue, value / 10);
 }
 
 function tooltipFormatter(value) {
