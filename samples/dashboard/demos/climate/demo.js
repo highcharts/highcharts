@@ -290,6 +290,9 @@ async function setupDashboard() {
                     legend: {
                         enabled: false
                     },
+                    marker: {
+                        enabledThreshold: 0.5
+                    },
                     tooltip: {
                         footerFormat: void 0,
                         headerFormat: void 0,
