@@ -10,7 +10,7 @@
 }
 
 .highcharts-axis-labels.highcharts-xaxis-labels.highcharts-navigator-xaxis {
-    fill: white;
+    fill: #fff;
 }
 
 .highcharts-navigator-series {
@@ -24,7 +24,7 @@
 }
 
 .highcharts-navigator-mask-inside {
-    fill: black;
+    fill: #000;
     fill-opacity: 0.5;
     stroke-width: 0;
 }
