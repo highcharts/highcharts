@@ -21,6 +21,7 @@ let citiesMap;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
+let navigatorSeries;
 let worldCities;
 let dataScope = defaultData;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
@@ -97,7 +98,8 @@ async function setupDashboard() {
                     maxRange: maxRange,
                     events: {
                         afterSetExtremes(e) {
-                            const { min, max } = e,
+                            const min = e.min || e.target.min,
+                                max = e.max || e.target.max,
                                 city = citySeries.chart.title.textStr;
 
                             dataPool
@@ -118,6 +120,11 @@ async function setupDashboard() {
                 },
                 yAxis: {
                     visible: false
+                }
+            },
+            events: {
+                mount: function () {
+                    navigatorSeries = this.chart.series[1];
                 }
             }
         }, {
@@ -186,16 +193,29 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
+                                    const data = store.table.modified.getRows(
+                                        void 0, void 0,
+                                        ['time', dataScope]
+                                    );
+
                                     citySeries.chart.update({
                                         title: { text: city }
                                     });
                                     citySeries.update({
                                         name: city,
-                                        data: store.table.modified.getRows(
-                                            void 0, void 0,
-                                            ['time', dataScope]
-                                        )
+                                        data
                                     });
+                                    navigatorSeries.update({
+                                        name: city,
+                                        data
+                                    });
+
+                                    // Update the main chart.
+                                    Highcharts.fireEvent(
+                                        navigatorSeries.chart.xAxis[0],
+                                        'afterSetExtremes'
+                                    );
+
                                     cityGrid.update({ store });
                                 });
                         }
