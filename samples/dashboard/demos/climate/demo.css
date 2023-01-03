@@ -2,6 +2,23 @@
 
 /* *
  *
+ *  City chart
+ *
+ * */
+#city-chart .highcharts-background {
+    fill: #46475d;
+}
+
+#city-chart .highcharts-title {
+    fill: #fff;
+}
+
+#city-chart .highcharts-axis-labels {
+    fill: #fff;
+}
+
+/* *
+ *
  *  Navigator
  *
  * */
@@ -39,7 +56,7 @@
  *
  * */
 #world-map .highcharts-background {
-    fill: #567;
+    fill: #46475d;
 }
 
 #world-map .highcharts-series-0 .highcharts-point {

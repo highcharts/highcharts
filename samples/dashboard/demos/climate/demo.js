@@ -271,7 +271,6 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
-            chartConstructor: 'stockChart',
             chartOptions: {
                 chart: {
                     events: {
@@ -290,38 +289,19 @@ async function setupDashboard() {
                             }
                         }
                     },
-                    styledMode: true,
-                    zooming: {
-                        type: 'x'
-                    }
+                    spacing: 40,
+                    styledMode: true
                 },
-                colorAxis: buildColorAxis(),
-                navigator: {
+                credits: {
                     enabled: false
                 },
-                rangeSelector: {
-                    buttons: [{
-                        type: 'year',
-                        count: 1,
-                        text: '1y',
-                        title: 'View 1 year'
-                    }, {
-                        type: 'year',
-                        count: 10,
-                        text: '10y',
-                        title: 'View 10 years'
-                    }, {
-                        type: 'all',
-                        text: 'All',
-                        title: 'View all'
-                    }],
-                    selected: 0
-                },
+                colorAxis: buildColorAxis(),
                 series: [{
                     type: 'scatter',
                     name: defaultCity,
                     data: defaultCityStore.table.modified.getRows(
-                        void 0, void 0,
+                        void 0,
+                        void 0,
                         ['time', dataScope]
                     ),
                     legend: {
@@ -346,9 +326,14 @@ async function setupDashboard() {
                 },
                 xAxis: {
                     type: 'datetime',
-                    visible: true,
+                    visible: false,
                     labels: {
                         format: '{value:%Y-%m-%d}'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: ''
                     }
                 }
             },
@@ -520,6 +505,7 @@ function buildColorAxis() {
         return {
             max: 325,
             min: 275,
+            visible: false,
             stops: [
                 [0.0, '#39F'],
                 [0.4, '#6C0'],
@@ -532,6 +518,7 @@ function buildColorAxis() {
     return {
         max: 10,
         min: 0,
+        visible: false,
         stops: [
             [0.0, '#F00'],
             [0.4, '#6C0'],
