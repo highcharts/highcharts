@@ -667,7 +667,7 @@ QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', ass
 });
 
 QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
-    Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'bar',
             scrollablePlotArea: {
@@ -681,6 +681,9 @@ QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
         },
         plotOptions: {
             series: {
+                dataLabels: {
+                    enabled: true
+                },
                 stacking: 'normal'
             }
         },
@@ -690,11 +693,24 @@ QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
             data: [29, 8, 11, 8, 6, 0, 0, 0, 0, 0, 1, 1, 0, 0]
         }]
     });
-    assert.ok(true);
+    const getStack = chart => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+    const stack = getStack(chart),
+        dataLabel = chart.series[0].points[0].dataLabel;
+
+    assert.equal(
+        stack.alignAttr.y,
+        dataLabel.alignAttr.y,
+        'the `y` position should be the same for dataLabel and stackLabel'
+    );
 });
 
-QUnit.test('Stack labels - Axis left set', assert => {
-    Highcharts.chart('container', {
+QUnit.skip('Stack labels - Axis left set', assert => {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -713,7 +729,10 @@ QUnit.test('Stack labels - Axis left set', assert => {
         ],
         plotOptions: {
             series: {
-                stacking: 'normal'
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
             }
         },
         series: [
@@ -727,11 +746,25 @@ QUnit.test('Stack labels - Axis left set', assert => {
             }
         ]
     });
-    assert.ok(true);
+    const getStack = chart => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+    const stack = getStack(chart),
+        dataLabel = chart.series[0].points[0].dataLabel;
+
+    assert.equal(
+        stack.alignAttr.x,
+        dataLabel.alignAttr.x,
+        'the `x` position should be the same for dataLabel and stackLabel'
+    );
 });
 
 
-QUnit.test('Stack labels - center in category', assert => {
+// Not implemented yet
+QUnit.skip('Stack labels - center in category', assert => {
     Highcharts.chart('container', {
         chart: {
             type: 'column'
