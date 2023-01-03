@@ -72,10 +72,11 @@ class FlowMapSeries extends MapLineSeries {
      * display route paths (e.g. flights or ships routes) or flows on a map. It
      * creates a link between two points on a map chart.
      *
+     * @since        next
      * @extends      plotOptions.mapline
-     * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
-     * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy,
-     * mapData, negativeColor, onPoint, shadow, showCheckbox
+     * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending,
+     * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels,
+     * dragDrop, joinBy, mapData, negativeColor, onPoint, shadow, showCheckbox
      * @product      highmaps
      * @requires     modules/flowmap
      * @optionparent plotOptions.flowmap
@@ -89,23 +90,32 @@ class FlowMapSeries extends MapLineSeries {
          * A negative value will curve it counter clockwise.
          * If the value is 0 the link will be a straight line.
          *
+         * @sample {highmaps} maps/demo/flowmap-curve-factor
+         *         Setting different values for curveFactor
+         *
          * @type      {number}
-         * @sample    {highmaps} maps/demo/flowmap-curve-factor
-         *            Setting different values for curveFactor
+         * @apioption plotOptions.flowmap.curveFactor
          */
-        curveFactor: void 0,
 
         dataLabels: {
             enabled: false
         },
 
         /**
+         * The fill color of all the links. If not set, the series color will be
+         * used with the opacity set in
+         * [fillOpacity](#plotOptions.flowmap.fillOpacity).
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.flowmap.fillColor
+         */
+
+        /**
          * The opacity of the color fill for all links.
          *
-         * @type      {number}
-         * @default   0.5
-         * @sample    {highmaps} maps/demo/flowmap-fill-opacity
-         *            Setting different values for fillOpacity
+         * @type   {number}
+         * @sample {highmaps} maps/demo/flowmap-fill-opacity
+         *         Setting different values for fillOpacity
          */
         fillOpacity: 0.5,
 
@@ -119,28 +129,37 @@ class FlowMapSeries extends MapLineSeries {
         keys: ['from', 'to', 'weight'],
 
         /**
+         * The [id](#series.id) of another series to link to. Additionally,
+         * the value can be ":previous" to link to the previous series. When
+         * two series are linked, only the first one appears in the legend.
+         * Toggling the visibility of this also toggles the linked series,
+         * which is necessary for operations such as zoom or updates on the
+         * flowmap series.
+         *
+         * @type      {string}
+         * @apioption plotOptions.flowmap.linkedTo
+         */
+
+        /**
          * A `markerEnd` creates an arrow symbol
          * indicating the direction of flow at the destination. Specifying a
          * `markerEnd` here will create one for each link.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @since   next
          */
         markerEnd: {
             /**
              * Enable or disable the `markerEnd`.
              *
-             * @since     next
-             * @type      {boolean}
-             * @sample    {highmaps} maps/demo/flowmap-marker-end
-             *            Setting different markerType for markerEnd
+             * @type   {boolean}
+             * @sample {highmaps} maps/demo/flowmap-marker-end
+             *         Setting different markerType for markerEnd
              */
             enabled: true,
             /**
              * Height of the `markerEnd`. Can be a number in pixels
              * or a percentage based on the weight of the link.
              *
-             * @since next
              * @type  {number|string}
              */
             height: '40%',
@@ -148,7 +167,6 @@ class FlowMapSeries extends MapLineSeries {
              * Width of the `markerEnd`. Can be a number in pixels
              * or a percentage based on the weight of the link.
              *
-             * @since next
              * @type  {number|string}
              */
             width: '40%',
@@ -156,8 +174,7 @@ class FlowMapSeries extends MapLineSeries {
              * Change the shape of the `markerEnd`.
              * Can be `arrow` or `mushroom`.
              *
-             * @type      {string}
-             * @default arrow
+             * @type {string}
              */
             markerType: 'arrow'
         },
@@ -166,8 +183,7 @@ class FlowMapSeries extends MapLineSeries {
          * Maximum width of a link expressed in pixels. The weight of a link
          * is mapped between `maxWidth` and `minWidth`.
          *
-         * @since   next
-         * @type    {number}
+         * @type  {number}
          */
         maxWidth: 25,
 
@@ -175,11 +191,28 @@ class FlowMapSeries extends MapLineSeries {
          * Minimum width of a link expressed in pixels. The weight of a link
          * is mapped between `maxWidth` and `minWidth`.
          *
-         * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
-         * @since   next
-         * @type    {number}
+         * @type  {number}
          */
         minWidth: 5,
+
+        /**
+         * The opacity of all the links.
+         *
+         * @apioption plotOptions.flowmap.opacity
+         */
+
+        /**
+         * The weight for all links with unspecified weights.
+         * The weight of a link determines its thickness compared to
+         * other links.
+         *
+         * @sample {highmaps} maps/demo/flowmap-ship-route/
+         *         Example ship route
+         *
+         * @type      {number}
+         * @product   highmaps
+         * @apioption plotOptions.flowmap.weight
+         */
 
         tooltip: {
             /**
@@ -189,20 +222,12 @@ class FlowMapSeries extends MapLineSeries {
              * variables are `series.name`, `point.options.from`,
              * `point.options.to`, `point.weight` and other properties in the
              * same form.
+             *
+             * @product   highmaps
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b>'
-        },
-
-        /**
-         * The weight of the link determines how thick it will be compared to
-         * other links weight.
-         *
-         * @type    {number}
-         * @since   next
-         */
-        weight: void 0
-
+        }
     } as FlowMapSeriesOptions);
 
     /* *
@@ -262,7 +287,8 @@ class FlowMapSeries extends MapLineSeries {
             y -= edgeY * width;
             path.push(['L', x, y]);
 
-            path.push(['L', topCorner[0], topCorner[1]]); // Tip of arrow head.
+            // Tip of arrow head.
+            path.push(['L', topCorner[0], topCorner[1]]);
 
             // Right side of arrow head.
             [x, y] = rCorner;
@@ -278,7 +304,8 @@ class FlowMapSeries extends MapLineSeries {
             const [xTop, yTop] = topCorner,
                 xMid = (xRight - xLeft) / 2 + xLeft,
                 yMid = (yRight - yLeft) / 2 + yLeft,
-                xControl = (xTop - xMid) * 2 + xMid, // control point for curve.
+                // Control point for curve.
+                xControl = (xTop - xMid) * 2 + xMid,
                 yControl = (yTop - yMid) * 2 + yMid;
 
             // Left side of arrow head.
@@ -304,15 +331,10 @@ class FlowMapSeries extends MapLineSeries {
      * */
 
     public data: Array<FlowMapPoint> = void 0 as any;
-
     public options: FlowMapSeriesOptions = void 0 as any;
-
     public points: Array<FlowMapPoint> = void 0 as any;
-
     public smallestWeight?: number = void 0 as any;
-
     public greatestWeight?: number = void 0 as any;
-
     public centerOfPoints: PositionObject = void 0 as any;
 
     /**
@@ -359,7 +381,7 @@ class FlowMapSeries extends MapLineSeries {
                         }
 
                         if (point.graphic) {
-                            point.graphic.attr({ d: start }); // init
+                            point.graphic.attr({ d: start });
                             point.graphic.animate({ d: path });
                         }
                     }
@@ -393,9 +415,13 @@ class FlowMapSeries extends MapLineSeries {
      * @private
      */
     public autoCurve(
-        fromX: number, fromY: number,
-        toX: number, toY: number,
-        centerX: number, centerY:number): number {
+        fromX: number,
+        fromY: number,
+        toX: number,
+        toY: number,
+        centerX: number,
+        centerY:number
+    ): number {
 
         const linkV = { // Direction of flow link
                 x: (toX - fromX),
@@ -424,7 +450,8 @@ class FlowMapSeries extends MapLineSeries {
 
         angle = angleDeg * Math.PI / 180;
 
-        return -Math.sin(angle) * 0.7; // Gives a more subtle result.
+        // A more subtle result.
+        return -Math.sin(angle) * 0.7;
     }
 
     /**
@@ -477,48 +504,45 @@ class FlowMapSeries extends MapLineSeries {
         this.points.forEach((point): void => {
             const chart = this.chart,
                 mapView = chart.mapView,
-                options = point.options;
+                options = point.options,
+                dirtySeries = (): void => {
+                    point.series.isDirty = true;
+                },
+                getPointXY = (
+                    pointId: string
+                ): PositionObject | undefined => {
+                    const foundPoint = chart.get(pointId);
+                    // Connect to the linked parent point (in mappoint) to
+                    // trigger series redraw for the linked point (in flow).
+                    if (
+                        (foundPoint instanceof Point) &&
+                        foundPoint.plotX &&
+                        foundPoint.plotY
+                    ) {
+                        // after linked point update flowmap point should
+                        // be also updated
+                        addEvent(foundPoint, 'update', dirtySeries);
+
+                        return {
+                            x: foundPoint.plotX,
+                            y: foundPoint.plotY
+                        };
+                    }
+                },
+                getLonLatXY = (
+                    lonLat: LonLatArray | Highcharts.MapLonLatObject
+                ): Highcharts.MapLonLatObject => {
+                    if (isArray(lonLat)) {
+                        return {
+                            lon: lonLat[0],
+                            lat: lonLat[1]
+                        };
+                    }
+                    return lonLat;
+                };
 
             let fromPos: PositionObject | undefined,
                 toPos: PositionObject | undefined;
-
-            const dirtySeries = (): void => {
-                point.series.isDirty = true;
-            };
-
-            const getPointXY = (
-                pointId: string
-            ): PositionObject | undefined => {
-                const foundPoint = chart.get(pointId);
-                // Connect to the linked parent point (in mappoint) to trigger
-                // series redraw for the linked point (in flow).
-                if (
-                    (foundPoint instanceof Point) &&
-                    foundPoint.plotX &&
-                    foundPoint.plotY
-                ) {
-                    // after linked point update flowmap point should be also
-                    // updated
-                    addEvent(foundPoint, 'update', dirtySeries);
-
-                    return {
-                        x: foundPoint.plotX,
-                        y: foundPoint.plotY
-                    };
-                }
-            };
-
-            const getLonLatXY = (
-                lonLat: LonLatArray | Highcharts.MapLonLatObject
-            ): Highcharts.MapLonLatObject => {
-                if (isArray(lonLat)) {
-                    return {
-                        lon: lonLat[0],
-                        lat: lonLat[1]
-                    };
-                }
-                return lonLat;
-            };
 
             if (typeof options.from === 'string') {
                 fromPos = getPointXY(options.from);
@@ -581,18 +605,14 @@ class FlowMapSeries extends MapLineSeries {
     }
 
     public getPointShapeArgs(point: FlowMapPoint): SVGAttributes {
-        const {
-                fromPos,
-                toPos
-            } = point,
-            // Get a new rescaled weight.
-            scaledWeight = this.scaleWeight(point);
+        const { fromPos, toPos } = point;
 
         if (!fromPos || !toPos) {
             return {};
         }
 
-        const pointOptions = point.options,
+        const scaledWeight = this.scaleWeight(point), // New rescaled weight.
+            pointOptions = point.options,
             markerEndOptions = merge(
                 this.options.markerEnd,
                 pointOptions.markerEnd
@@ -610,8 +630,8 @@ class FlowMapSeries extends MapLineSeries {
                 pointOptions.curveFactor,
                 this.options.curveFactor
             ),
-            offset = markerEndOptions &&
-            markerEndOptions.enabled && markerEndOptions.height || 0;
+            offset = markerEndOptions && markerEndOptions.enabled &&
+                markerEndOptions.height || 0;
 
         if (!defined(curveFactor)) { // Automate the curveFactor value.
             curveFactor = this.autoCurve(
@@ -628,17 +648,21 @@ class FlowMapSeries extends MapLineSeries {
                 scaledWeight * 4
             );
 
+            // Vector between the points.
             let dX = toX - fromX,
                 dY = toY - fromY;
 
+            // Vector is halved.
             dX *= 0.5;
             dY *= 0.5;
 
+            // Vector points exactly between the points.
             let mX = fromX + dX,
                 mY = fromY + dY;
 
+            // Rotating the halfway distance by 90 anti-clockwise.
+            // We can then use this to create an arc.
             let tmp = dX;
-
             dX = dY;
             dY = -tmp;
 
@@ -816,9 +840,9 @@ export default FlowMapSeries;
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flowmap
- * @excluding affectsMapView, allAreas, allowPointSelect, boostBlending, boostThreshold,
- * borderColor, borderWidth, dashStyle, dataLabels, dragDrop, joinBy, mapData,
- * negativeColor, onPoint, shadow, showCheckbox
+ * @excluding affectsMapView, allAreas, allowPointSelect, boostBlending,
+ * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels, dragDrop,
+ * joinBy, mapData, negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
  * @apioption series.flowmap
  */
@@ -853,8 +877,8 @@ export default FlowMapSeries;
  *     }]
  *     ```
  *
- * 3.   For objects with named values, instead of using the `mappoint` `id`, you can
- *      use `[longitude, latitude]` arrays.
+ * 3.   For objects with named values, instead of using the `mappoint` `id`,
+ *      you can use `[longitude, latitude]` arrays.
  *
  *      ```js
  *      data: [{
@@ -882,8 +906,7 @@ export default FlowMapSeries;
 /**
  * The fill color of an individual link.
  *
- *
- * @type      {string}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @apioption series.flowmap.data.fillColor
  */
 
@@ -892,10 +915,10 @@ export default FlowMapSeries;
  * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
  * and `lat` properties.
  *
+ * @sample {highmaps} maps/demo/flowmap-from-to-lon-lat
+ *         Flowmap point using lonlat coordinates
  *
- * @type      {string | Highcharts.LonLatArray | Highcharts.MapLonLatObject}
- * @sample    {highmaps} maps/demo/flowmap-from-to-lon-lat
- *            Flowmap point using lonlat coordinates
+ * @type      {string|Highcharts.LonLatArray|Highcharts.MapLonLatObject}
  * @apioption series.flowmap.data.from
  */
 
@@ -904,10 +927,10 @@ export default FlowMapSeries;
  * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
  * and `lat` properties.
  *
+ * @sample {highmaps} maps/demo/flowmap-from-to-lon-lat
+ *         Flowmap point using lonlat coordinates
  *
- * @type      {string | Highcharts.LonLatArray | Highcharts.MapLonLatObject}
- * @sample    {highmaps} maps/demo/flowmap-from-to-lon-lat
- *            Flowmap point using lonlat coordinates
+ * @type      {string|Highcharts.LonLatArray|Highcharts.MapLonLatObject}
  * @apioption series.flowmap.data.to
  */
 
@@ -987,46 +1010,6 @@ export default FlowMapSeries;
  *
  * @type      {number}
  * @apioption series.flowmap.data.weight
- */
-
-/**
- * The fill color of all the links
- *
- *
- * @type      {string}
- * @apioption series.flowmap.fillColor
- */
-
-/**
- * The [id](#series.id) of another series to link to. Additionally,
- * the value can be ":previous" to link to the previous series. When
- * two series are linked, only the first one appears in the legend.
- * Toggling the visibility of this also toggles the linked series,
- * which is necessary for operations such as zoom or updates on the
- * flowmap series.
- *
- * @type      {string}
- * @apioption series.flowmap.linkedTo
- */
-
-/**
- * The opacity of all the links.
- *
- *
- * @type      {number}
- * @apioption series.flowmap.opacity
- */
-
-/**
- * The weight for all links with unspecified weights.
- * The weight of a link determines its thickness compared to
- * other links.
- *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
- *         Example ship route
- *
- * @type      {number}
- * @apioption series.flowmap.weight
  */
 
 ''; // adds doclets above to transpiled file
