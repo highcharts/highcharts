@@ -170,7 +170,7 @@
             }, {
                 from: 'Beirut',
                 to: 'Jeddah',
-                weight: 4,
+                weight: 4
             }, {
                 from: 'Jeddah',
                 to: 'Singapore',

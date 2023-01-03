@@ -87,6 +87,7 @@
             }]
         }, {
             type: 'flowmap',
+            name: 'Flow route',
             linkedTo: ':previous',
             minWidth: 5,
             maxWidth: 15,

@@ -90,7 +90,7 @@ class FlowMapSeries extends MapLineSeries {
          * A negative value will curve it counter clockwise.
          * If the value is 0 the link will be a straight line.
          *
-         * @sample {highmaps} maps/demo/flowmap-curve-factor
+         * @sample {highmaps} maps/series-flowmap/flowmap-curve-factor
          *         Setting different values for curveFactor
          *
          * @type      {number}
@@ -114,7 +114,7 @@ class FlowMapSeries extends MapLineSeries {
          * The opacity of the color fill for all links.
          *
          * @type   {number}
-         * @sample {highmaps} maps/demo/flowmap-fill-opacity
+         * @sample {highmaps} maps/series-flowmap/flowmap-fill-opacity
          *         Setting different values for fillOpacity
          */
         fillOpacity: 0.5,
@@ -152,7 +152,7 @@ class FlowMapSeries extends MapLineSeries {
              * Enable or disable the `markerEnd`.
              *
              * @type   {boolean}
-             * @sample {highmaps} maps/demo/flowmap-marker-end
+             * @sample {highmaps} maps/series-flowmap/flowmap-marker-end
              *         Setting different markerType for markerEnd
              */
             enabled: true,
@@ -206,7 +206,7 @@ class FlowMapSeries extends MapLineSeries {
          * The weight of a link determines its thickness compared to
          * other links.
          *
-         * @sample {highmaps} maps/demo/flowmap-ship-route/
+         * @sample {highmaps} maps/series-flowmap/flowmap-ship-route/
          *         Example ship route
          *
          * @type      {number}
@@ -896,7 +896,7 @@ export default FlowMapSeries;
  * A negative value will curve the link counter clockwise.
  * If the value is 0 the link will be straight.
  *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
+ * @sample {highmaps} maps/series-flowmap/flowmap-ship-route/
  *         Example ship route
  *
  * @type      {number}
@@ -915,8 +915,10 @@ export default FlowMapSeries;
  * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
  * and `lat` properties.
  *
- * @sample {highmaps} maps/demo/flowmap-from-to-lon-lat
+ * @sample {highmaps} maps/series-flowmap/flowmap-from-to-lon-lat
  *         Flowmap point using lonlat coordinates
+ * @sample {highmaps} maps/series-flowmap/flowmap-flight-routes
+ *         Highmaps basic flight routes demo
  *
  * @type      {string|Highcharts.LonLatArray|Highcharts.MapLonLatObject}
  * @apioption series.flowmap.data.from
@@ -927,8 +929,10 @@ export default FlowMapSeries;
  * coordinates in terms of array of `[longitude, latitude]` or object with `lon`
  * and `lat` properties.
  *
- * @sample {highmaps} maps/demo/flowmap-from-to-lon-lat
+ * @sample {highmaps} maps/series-flowmap/flowmap-from-to-lon-lat
  *         Flowmap point using lonlat coordinates
+ * @sample {highmaps} maps/series-flowmap/flowmap-flight-routes
+ *         Highmaps basic flight routes demo
  *
  * @type      {string|Highcharts.LonLatArray|Highcharts.MapLonLatObject}
  * @apioption series.flowmap.data.to
@@ -944,7 +948,7 @@ export default FlowMapSeries;
 /**
  * If set to `true`, the line will grow towards its end.
  *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
+ * @sample {highmaps} maps/series-flowmap/flowmap-ship-route/
  *         Example ship route
  *
  * @type      {boolean}
@@ -957,7 +961,7 @@ export default FlowMapSeries;
  * If one has been previously specified at the higher level option it will be
  * overridden for the current link.
  *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
+ * @sample {highmaps} maps/series-flowmap/flowmap-ship-route/
  *         Example ship route
  *
  * @type      {*|null}
@@ -1005,7 +1009,7 @@ export default FlowMapSeries;
  * The weight of a link determines its thickness compared to
  * other links.
  *
- * @sample {highmaps} maps/demo/flowmap-ship-route/
+ * @sample {highmaps} maps/series-flowmap/flowmap-ship-route/
  *         Example ship route
  *
  * @type      {number}
