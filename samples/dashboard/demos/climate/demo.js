@@ -214,7 +214,7 @@ async function setupDashboard() {
                                         data
                                     });
 
-                                    // // Update the main chart.
+                                    // Update the main chart.
                                     Highcharts.fireEvent(
                                         navigatorSeries.chart.xAxis[0],
                                         'afterSetExtremes'
@@ -239,7 +239,7 @@ async function setupDashboard() {
                                         });
                                     }
 
-                                    // // update KPI data
+                                    // update KPI data
                                     kpi.data.update({
                                         value: city +
                                             '<br>lat: ' + citiesData[city].lat +
@@ -298,8 +298,6 @@ async function setupDashboard() {
             events: {
                 mount: function () {
                     kpi.TN = this;
-                    // console.log('mount', this);
-                    // this.parentCell.setActiveState(); // set active cell
                 },
                 click: function () {
                     dataScope = 'TN';
