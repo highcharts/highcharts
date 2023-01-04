@@ -2629,7 +2629,8 @@ class Series {
     public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
             chart = series.chart,
-            options = series.options,
+            styledMode = chart.styledMode,
+            { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
             markerGroup = (
                 (series as any)[series.specialGroup as any] ||
@@ -2750,12 +2751,10 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && (!chart.styledMode || series.colorAxis)) {
+                    if (graphic && (!styledMode || colorAxis)) {
                         graphic[
                             // #14114
-                            chart.styledMode && series.colorAxis ?
-                                'css' :
-                                verb
+                            styledMode && colorAxis ? 'css' : verb
                         ](
                             series.pointAttribs(
                                 point,
