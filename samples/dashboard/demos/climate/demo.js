@@ -455,7 +455,7 @@ async function buildCitiesData() {
     };
 
     // lazy promise without leading await for the rest
-    Promise.all([(async function () {
+    (async function () {
         const rows = cities.getRows(void 0, void 0, ['lat', 'lon', 'city']);
 
         for (const row of rows) {
@@ -473,7 +473,7 @@ async function buildCitiesData() {
                 }
             }
         }
-    }())]);
+    }());
 
     return tables;
 }
