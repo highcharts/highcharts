@@ -282,13 +282,13 @@ class StackItem {
                 );
             }
 
-            // add attr to aviod the default animation of justifyDataLabel.
+            // Add attr to aviod the default animation of justifyDataLabel.
             label.attr({
                 x: label.alignAttr.x,
                 y: label.alignAttr.y
             });
 
-            // check if the dataLabel should be visible.
+            // Check if the dataLabel should be visible.
             if (pick(!isJustify && this.options.crop, true)) {
                 visible =
                     isNumber(label.x) &&
