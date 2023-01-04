@@ -1,7 +1,4 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
-const colorBlue = Highcharts.Color.parse('#39F');
-const colorGreen = Highcharts.Color.parse('#6C0');
-const colorRed = Highcharts.Color.parse('#F00');
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
     FD: 'Days with fog',
@@ -10,14 +7,19 @@ const dataScopes = {
     TN: 'Average temperature',
     TX: 'Maximal temperature'
 };
+const initialMin = Date.UTC(2010);
+const minRange = 30 * 24 * 3600 * 1000;
+const maxRange = 365 * 24 * 3600 * 1000;
 const defaultCity = 'New York';
-const defaultData = 'TN';
+const defaultData = 'TX';
 
 let citiesData;
 let citiesMap;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
+let navigatorSeries;
+let worldCities;
 let dataScope = defaultData;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 let kpi = {};
@@ -34,43 +36,93 @@ async function setupDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    height: '60px'
+                    height: '80px',
+                    styledMode: true
                 },
                 credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
                     enabled: false
                 },
                 series: [{
                     type: 'scatter',
                     name: 'Timeline',
                     data: buildDates(),
-                    events: {
-                        click: async function (e) {
-                            worldDate = new Date(e.point.x);
-                            citiesMap.setData(await buildCitiesMap());
-                        }
+                    showInNavigator: false,
+                    marker: {
+                        enabled: false
                     },
-                    tooltip: {
-                        footerFormat: '',
-                        headerFormat: '',
-                        pointFormat: '{point.x:%Y-%m-%d}'
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 }],
-                title: {
-                    margin: 0,
-                    text: ''
+                navigator: {
+                    enabled: true,
+                    series: [{
+                        name: defaultCity,
+                        data: defaultCityStore.table.modified.getRows(
+                            void 0,
+                            void 0,
+                            ['time', dataScope]
+                        )
+                    }]
+                },
+                scrollbar: {
+                    enabled: true,
+                    barBackgroundColor: 'gray',
+                    barBorderRadius: 7,
+                    barBorderWidth: 0,
+                    buttonBackgroundColor: 'gray',
+                    buttonBorderWidth: 0,
+                    buttonBorderRadius: 7,
+                    trackBackgroundColor: 'none',
+                    trackBorderWidth: 1,
+                    trackBorderRadius: 8,
+                    trackBorderColor: '#CCC'
                 },
                 xAxis: {
-                    type: 'datetime',
-                    visible: true,
-                    labels: {
-                        format: '{value:%Y}'
+                    visible: false,
+                    min: initialMin,
+                    minRange: minRange,
+                    maxRange: maxRange,
+                    events: {
+                        afterSetExtremes(e) {
+                            const min = e.min || e.target.min,
+                                max = e.max || e.target.max,
+                                city = citySeries.chart.title.textStr;
+
+                            dataPool
+                                .getStore(city)
+                                .then(store => {
+                                    citySeries.update({
+                                        data: store.table.modified.getRows(
+                                            void 0,
+                                            void 0,
+                                            ['time', dataScope]
+                                        ).filter(el =>
+                                            el[0] >= min && el[0] <= max
+                                        )
+                                    });
+                                });
+                        }
                     }
                 },
                 yAxis: {
                     visible: false
-                },
-                legend: {
-                    enabled: false
+                }
+            },
+            events: {
+                mount: function () {
+                    navigatorSeries = this.chart.series[1];
                 }
             }
         }, {
@@ -139,18 +191,35 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
+                                    const data = store.table.modified.getRows(
+                                        void 0, void 0,
+                                        ['time', dataScope]
+                                    );
+
+                                    // update chart
                                     citySeries.chart.update({
-                                        title: { text: city + ' - ' + dataScopes.TN }
-                                    });
+                                        title: {
+                                            text: city
+                                        }
+                                    }, false);
+
                                     citySeries.update({
                                         name: city,
-                                        data: store.table.modified.getRows(
-                                            void 0, void 0,
-                                            ['time', dataScope]
-                                        )
+                                        data
                                     });
 
-                                    // update datagrid
+                                    // update navigator
+                                    navigatorSeries.update({
+                                        name: city,
+                                        data
+                                    });
+
+                                    // // Update the main chart.
+                                    Highcharts.fireEvent(
+                                        navigatorSeries.chart.xAxis[0],
+                                        'afterSetExtremes'
+                                    );
+
                                     cityGrid.update({ store });
 
                                     // update KPI indicators
@@ -164,7 +233,7 @@ async function setupDashboard() {
                                         });
                                     }
 
-                                    // update KPI data
+                                    // // update KPI data
                                     kpi.data.update({
                                         value: city +
                                             '<br>lat: ' + citiesData[city].lat +
@@ -214,7 +283,7 @@ async function setupDashboard() {
         {
             cell: 'kpi-temperature',
             type: 'kpi',
-            title: 'Temperature',
+            title: 'Average temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
@@ -225,18 +294,29 @@ async function setupDashboard() {
                     kpi.TN = this;
                 },
                 click: function () {
+                    const data =
+                        citiesData[cityScope].store.table.modified.getRows(
+                            void 0, void 0,
+                            ['time', 'TN']
+                        );
+                    // update navigator
+                    navigatorSeries.update({
+                        name: cityScope,
+                        data
+                    });
+
+                    // update chart
                     citySeries.chart.update({
-                        title: { text: cityScope + ' - ' +  dataScopes.TN }
+                        title: {
+                            text: cityScope
+                        }
                     }, false);
 
                     citySeries.update({
-                        data:
-                            citiesData[cityScope].store.table.modified.getRows(
-                                void 0, void 0,
-                                ['time', 'TN']
-                            )
+                        data: data
                     });
                 }
+
             }
         },
         {
@@ -253,16 +333,27 @@ async function setupDashboard() {
                     kpi.TX = this;
                 },
                 click: function () {
+                    const data =
+                        citiesData[cityScope].store.table.modified.getRows(
+                            void 0, void 0,
+                            ['time', 'TX']
+                        );
+
+                    // update navigator
+                    navigatorSeries.update({
+                        name: cityScope,
+                        data
+                    });
+
+                    // update chart
                     citySeries.chart.update({
-                        title: { text: cityScope + ' - ' +  dataScopes.TX }
+                        title: {
+                            text: cityScope
+                        }
                     }, false);
 
                     citySeries.update({
-                        data:
-                            citiesData[cityScope].store.table.modified.getRows(
-                                void 0, void 0,
-                                ['time', 'TX']
-                            )
+                        data: data
                     });
                 }
             }
@@ -281,16 +372,26 @@ async function setupDashboard() {
                     kpi.FD = this;
                 },
                 click: function () {
+                    const data =
+                        citiesData[cityScope].store.table.modified.getRows(
+                            void 0, void 0,
+                            ['time', 'FD']
+                        );
+                    // update navigator
+                    navigatorSeries.update({
+                        name: cityScope,
+                        data
+                    });
+
+                    // update chart
                     citySeries.chart.update({
-                        title: { text: cityScope + ' - ' +  dataScopes.FD }
+                        title: {
+                            text: cityScope
+                        }
                     }, false);
 
                     citySeries.update({
-                        data:
-                            citiesData[cityScope].store.table.modified.getRows(
-                                void 0, void 0,
-                                ['time', 'FD']
-                            )
+                        data: data
                     });
                 }
             }
@@ -309,15 +410,26 @@ async function setupDashboard() {
                     kpi.ID = this;
                 },
                 click: function () {
+                    const data =
+                        citiesData[cityScope].store.table.modified.getRows(
+                            void 0, void 0,
+                            ['time', 'ID']
+                        );
+                    // update navigator
+                    navigatorSeries.update({
+                        name: cityScope,
+                        data
+                    });
+
+                    // update chart
                     citySeries.chart.update({
-                        title: { text: cityScope + ' - ' + dataScopes.ID }
+                        title: {
+                            text: cityScope
+                        }
                     }, false);
+
                     citySeries.update({
-                        data:
-                            citiesData[cityScope].store.table.modified.getRows(
-                                void 0, void 0,
-                                ['time', 'ID']
-                            )
+                        data: data
                     });
                 }
             }
@@ -336,16 +448,26 @@ async function setupDashboard() {
                     kpi.RR1 = this;
                 },
                 click: function () {
+                    const data =
+                        citiesData[cityScope].store.table.modified.getRows(
+                            void 0, void 0,
+                            ['time', 'RR1']
+                        );
+                    // update navigator
+                    navigatorSeries.update({
+                        name: cityScope,
+                        data
+                    });
+
+                    // update chart
                     citySeries.chart.update({
-                        title: { text: cityScope + ' - ' + dataScopes.RR1 }
+                        title: {
+                            text: cityScope
+                        }
                     }, false);
 
                     citySeries.update({
-                        data:
-                            citiesData[cityScope].store.table.modified.getRows(
-                                void 0, void 0,
-                                ['time', 'RR1']
-                            )
+                        data: data
                     });
                 }
             }
@@ -363,45 +485,72 @@ async function setupDashboard() {
                     kpi.data = this;
                 }
             }
-        },
-        {
-            cell: 'kpi-chart',
+        }, {
+            cell: 'city-chart',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    type: 'line',
-                    zooming: {
-                        type: 'x'
-                    }
+                    events: {
+                        render: function () {
+
+                            if (!this.styledMode) {
+                                return;
+                            }
+
+                            // force point colors
+                            for (const point of this.series[0].points) {
+                                if (point.graphic && point.color) {
+                                    point.graphic.element.style.fill =
+                                        point.color;
+                                }
+                            }
+                        }
+                    },
+                    spacing: 40,
+                    styledMode: true
                 },
+                credits: {
+                    enabled: false
+                },
+                colorAxis: buildColorAxis(),
                 series: [{
+                    type: 'scatter',
                     name: defaultCity,
                     data: defaultCityStore.table.modified.getRows(
-                        void 0, void 0,
+                        void 0,
+                        void 0,
                         ['time', dataScope]
                     ),
                     legend: {
                         enabled: false
                     },
+                    marker: {
+                        enabledThreshold: 0.5
+                    },
                     tooltip: {
-                        footerFormat: void 0,
-                        headerFormat: void 0,
+                        footerFormat: '',
+                        headerFormat: '',
                         pointFormatter: function () {
                             return tooltipFormatter(this.y);
                         }
                     }
                 }],
                 title: {
-                    text: defaultCity + ' - ' + dataScopes.TN
+                    text: defaultCity
                 },
                 tooltip: {
                     enabled: true
                 },
                 xAxis: {
                     type: 'datetime',
-                    visible: true,
+                    visible: false,
                     labels: {
                         format: '{value:%Y-%m-%d}'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: ''
                     }
                 }
             },
@@ -410,7 +559,8 @@ async function setupDashboard() {
                     citySeries = this.chart.series[0];
                 }
             }
-        }, {
+        },
+        {
             cell: 'selection-grid',
             type: 'DataGrid',
             store: defaultCityStore,
@@ -484,7 +634,7 @@ async function setupDashboard() {
                             }]
                         }
                     }, {
-                        id: 'kpi-chart',
+                        id: 'city-chart',
                         width: '40%'
                     }]
                 }]
@@ -553,36 +703,6 @@ main().catch(e => console.error(e));
  *
  * */
 
-function ajax(request) {
-    return new Promise((resolve, reject) => {
-        Highcharts.ajax({
-            data: request.data,
-            dataType: request.dataType,
-            headers: request.headers,
-            type: request.type,
-            url: request.url,
-            success: result => {
-                request.success = result;
-                resolve(request);
-            },
-            error: error => {
-                request.error = error;
-                reject(request);
-            }
-        });
-    });
-}
-
-async function ajaxAll(requests) {
-    const promises = [];
-
-    for (const request of requests) {
-        promises.push(ajax(request));
-    }
-
-    return Promise.all(promises);
-}
-
 async function buildCitiesData() {
     const cities = await dataPool.getStoreTable('cities');
     const tables = {};
@@ -632,10 +752,11 @@ function buildColorAxis() {
         return {
             max: 325,
             min: 275,
+            visible: false,
             stops: [
                 [0.0, '#39F'],
-                [0.5, '#6C0'],
-                [1.0, '#F00']
+                [0.4, '#6C0'],
+                [0.8, '#F00']
             ]
         };
     }
@@ -644,10 +765,11 @@ function buildColorAxis() {
     return {
         max: 10,
         min: 0,
+        visible: false,
         stops: [
             [0.0, '#F00'],
-            [0.5, '#6C0'],
-            [1.0, '#39F']
+            [0.4, '#6C0'],
+            [0.8, '#39F']
         ]
     };
 }
@@ -674,41 +796,6 @@ function buildDates() {
     }
 
     return dates;
-}
-
-function buildDateTicks() {
-    const dates = [];
-
-    for (let date = new Date(Date.UTC(1951, 0, 15)),
-        dateEnd = new Date(Date.UTC(2010, 11, 15));
-        date <= dateEnd;
-        date = new Date(Date.UTC(
-            date.getFullYear(),
-            date.getUTCMonth() + 1,
-            15
-        ))
-    ) {
-        dates.push(date.getTime());
-    }
-
-    return dates;
-}
-
-function scopeColor(value) {
-
-    // temperature
-    if (dataScope[0] === 'T') {
-        const factor = (Math.round(value) - 275) / 50; // 275 Kelvin - 325 Kelvin
-
-        return (
-            factor < 0.5 ?
-                colorBlue.tweenTo(colorGreen, factor * 2) :
-                colorGreen.tweenTo(colorRed, (factor - 0.5) * 2)
-        );
-    }
-
-    // fallback to days
-    return colorRed.tweenTo(colorBlue, value / 10);
 }
 
 function tooltipFormatter(value) {
