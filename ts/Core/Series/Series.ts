@@ -2801,8 +2801,6 @@ class Series {
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
             ),
-            plotX = point.plotX,
-            plotY = point.plotY,
             attribs: SVGAttributes = {};
 
         let seriesStateOptions: SeriesStateHoverOptions,
@@ -2834,14 +2832,10 @@ class Series {
             radius = 0; // and subsequently width and height is not set
         }
 
-        if (isNumber(radius) && isNumber(plotX) && isNumber(plotY)) {
-            attribs.x = plotX - radius;
-            attribs.y = plotY - radius;
-
-            if (this.chart.inverted) {
-                attribs.x = ((this.yAxis.len - plotY) - radius);
-                attribs.y = ((this.xAxis.len - plotX) - radius);
-            }
+        const pos = point.pos();
+        if (isNumber(radius) && pos) {
+            attribs.x = pos[0] - radius;
+            attribs.y = pos[1] - radius;
 
             if (seriesOptions.crisp) {
                 // Math.floor for #1843:

@@ -814,6 +814,20 @@ class Point {
     }
 
     /**
+     * Get the pixel position of the point relative to the plot area.
+     * @private
+     * @function Highcharts.Point#pos
+     */
+    public pos(): [number, number]|undefined {
+        const { plotX, plotY, series } = this;
+        if (isNumber(plotX) && isNumber(plotY)) {
+            return this.series.chart.inverted ?
+                [series.yAxis.len - plotY, series.xAxis.len - plotX] :
+                [plotX, plotY];
+        }
+    }
+
+    /**
      * @private
      * @function Highcharts.Point#resolveColor
      */
@@ -1563,26 +1577,14 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        const series = this.series,
-            seriesMarkerOptions = series.options.marker || {},
-            pointMarkerOptions = this.options.marker || {},
-            chart = series.chart;
+        const pos = this.pos();
 
-        const haloPos = !chart.inverted ?
-            {
-                x: this.plotX as any,
-                y: this.plotY as any
-            } : {
-                x: series.yAxis.len - (this.plotY as any),
-                y: series.xAxis.len - (this.plotX as any)
-            };
-
-        return chart.renderer.symbols.circle(
-            Math.floor(haloPos.x) - size,
-            haloPos.y - size,
+        return pos ? this.series.chart.renderer.symbols.circle(
+            Math.floor(pos[0]) - size,
+            pos[1] - size,
             size * 2,
             size * 2
-        );
+        ) : [];
     }
 
 }
