@@ -108,9 +108,10 @@ class SonificationInstrument {
     ): void {
         const mergedParams = extend(this.curParams, params),
             audioTime = this.audioContext.currentTime + time,
-            freq = defined(params.note) ?
-                SonificationInstrument.musicalNoteToFrequency(params.note) :
-                params.frequency;
+            freq = defined(params.frequency) ?
+                params.frequency : defined(params.note) ?
+                    SonificationInstrument.musicalNoteToFrequency(params.note) :
+                    220;
 
         if (defined(freq)) {
             this.synthPatch.playFreqAtTime(
