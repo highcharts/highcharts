@@ -1,76 +1,76 @@
 /* Colors */
-var liberal = "#EE696B",
-    conservative = "#5A98EA",
-    newDemocratic = "#F8A166",
-    blocQuebecios = "#80D0F8",
-    green = "#99C85F";
+var liberal = '#EE696B',
+    conservative = '#5A98EA',
+    newDemocratic = '#F8A166',
+    blocQuebecios = '#80D0F8',
+    green = '#99C85F';
 
 var parties = [{
-        name: "Liberal",
+        name: 'Liberal',
         color: liberal
     }, {
-        name: "Conservative",
+        name: 'Conservative',
         color: conservative
     }, {
-        name: "NewDemocratic",
+        name: 'NewDemocratic',
         color: newDemocratic
     }, {
-        name: "Bloc Québécois",
+        name: 'Bloc Québécois',
         color: blocQuebecios
     }, {
-        name: "Green",
+        name: 'Green',
         color: green
     }],
     seats = [{
-        bc: "<b>Number of seats per party</b> <br/>",
+        bc: '<b>Number of seats per party</b> <br/>',
         data: [17, 10, 14, 0, 1]
     },
     {
-        ab: "<b>Number of seats per party</b>  <br/>",
+        ab: '<b>Number of seats per party</b>  <br/>',
         data: [4, 29, 1, 0, 0]
     },
     {
-        sk: "<b>Number of seats per party</b>  <br/>",
+        sk: '<b>Number of seats per party</b>  <br/>',
         data: [1, 10, 3, 0, 0]
     },
     {
-        mb: "<b>Number of seats per party</b>  <br/>",
+        mb: '<b>Number of seats per party</b>  <br/>',
         data: [7, 5, 2, 0, 0]
     },
     {
-        on: "<b>Number of seats per party</b>  <br/>",
+        on: '<b>Number of seats per party</b>  <br/>',
         data: [80, 33, 8, 0, 0]
     },
     {
-        qc: "<b>Number of seats per party</b>  <br/>",
+        qc: '<b>Number of seats per party</b>  <br/>',
         data: [40, 12, 16, 10, 0]
     },
     {
-        nb: "<b>Number of seats per party</b>  <br/>",
+        nb: '<b>Number of seats per party</b>  <br/>',
         data: [10, 0, 0, 0, 0]
     },
     {
-        ns: "<b>Number of seats per party</b>  <br/>",
+        ns: '<b>Number of seats per party</b>  <br/>',
         data: [11, 0, 0, 0, 0]
     },
     {
-        pe: "<b>Number of seats per party</b>  <br/>",
+        pe: '<b>Number of seats per party</b>  <br/>',
         data: [4, 0, 0, 0, 0]
     },
     {
-        nl: "<b>Number of seats per party</b>  <br/>",
+        nl: '<b>Number of seats per party</b>  <br/>',
         data: [7, 0, 0, 0, 0]
     },
     {
-        yt: "<b>Number of seats per party</b>  <br/>",
+        yt: '<b>Number of seats per party</b>  <br/>',
         data: [1, 0, 0, 0, 0]
     },
     {
-        nt: "<b>Number of seats per party</b>  <br/>",
+        nt: '<b>Number of seats per party</b>  <br/>',
         data: [1, 0, 0, 0, 0]
     },
     {
-        nu: "<b>Number of seats per party</b>  <br/>",
+        nu: '<b>Number of seats per party</b>  <br/>',
         data: [1, 0, 0, 0, 0]
     }
     ];
@@ -90,10 +90,10 @@ var bc = 0,
 
 for (let i = 0; i < seats.length; i++) {
     for (let j = 0; j < seats[i].data.length; j++) {
-        seats[i][Object.keys(seats[i])[0]] = seats[i][Object.keys(seats[i])[0]] + '<span style="color:' + parties[j].color + '">\u25CF</span>' + parties[j].name + " " + seats[i].data[j] + "<br>";
+        seats[i][Object.keys(seats[i])[0]] = seats[i][Object.keys(seats[i])[0]] + '<span style="color:' + parties[j].color + '">\u25CF</span>' + parties[j].name + ' ' + seats[i].data[j] + '<br>';
     }
 }
-var titleStyle = "14px";
+var titleStyle = '14px';
 
 Highcharts.mapChart('nl', {
     chart: {

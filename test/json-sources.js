@@ -8,6 +8,449 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2d63d6eef882260cb6/samples/data/worldbank-norway.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 30,
+                "total": 30,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2021",
+                    "value": 3.92266520973057,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2020",
+                    "value": -0.717182669244792,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2019",
+                    "value": 0.745798219243483,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2018",
+                    "value": 1.11882847945122,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2017",
+                    "value": 2.32329020838249,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2016",
+                    "value": 1.07155897720727,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2015",
+                    "value": 1.96712843821408,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2014",
+                    "value": 1.9695443007939,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2013",
+                    "value": 1.03407291353631,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2012",
+                    "value": 2.70310947059309,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2011",
+                    "value": 0.981434478585356,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2010",
+                    "value": 0.701833823862358,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2009",
+                    "value": -1.72702030948713,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2008",
+                    "value": 0.476345013071636,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2007",
+                    "value": 2.99428771442589,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2006",
+                    "value": 2.39982842629603,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2005",
+                    "value": 2.62541993829724,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2004",
+                    "value": 3.96941456013641,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2003",
+                    "value": 0.910105664307537,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2002",
+                    "value": 1.44625413960414,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2001",
+                    "value": 2.07479039388386,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2000",
+                    "value": 3.20497922225218,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1999",
+                    "value": 2.01286328876013,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1998",
+                    "value": 2.62442622196583,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1997",
+                    "value": 5.28459298480296,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1996",
+                    "value": 5.02794717187143,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1995",
+                    "value": 4.15549133419204,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1994",
+                    "value": 5.05542738771337,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1993",
+                    "value": 2.84532436675762,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1992",
+                    "value": 3.57439553891901,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv": [
+        "ProductType,NumSold,Year,AvgDaysToShip,%ReturnedOnAverage",
+        "BluetoothHeadset,500,2013,5,15",
+        "BluetoothHeadset,2400,2014,5,10",
+        "BluetoothHeadset,4000,2015,5,2",
+        "BluetoothHeadset,4500,2016,5,2",
+        "BodyCamera,50,2013,1,25",
+        "BodyCamera,150,2014,1,20",
+        "BodyCamera,300,2015,1,15",
+        "BodyCamera,400,2016,1,15",
+        "ChestStrap,80,2013,7,15",
+        "ChestStrap, 80, 2014, 7, 10",
+        "ChestStrap, 50, 2015, 7, 10",
+        "ChestStrap, 50, 2016, 7, 10",
+        "HeadMountedDisplay, 50, 2013, 10, 30",
+        "HeadMountedDisplay, 50, 2014, 10, 25",
+        "HeadMountedDisplay, 50, 2015, 10, 20",
+        "HeadMountedDisplay, 100, 2016, 10, 10",
+        " Other, 100, 2013, 5, 35",
+        "Other, 950, 2014, 5, 35",
+        "Other, 900, 2015, 5, 15",
+        "Other, 1000, 2016, 5, 5",
+        "SmartGlasses, 50, 2013, 15, 10",
+        "SmartGlasses, 50, 2014, 15, 10",
+        " SmartGlasses, 50, 2015, 15, 5",
+        "SmartGlasses, 50, 2016, 15, 5",
+        " Smartwatch, 1000, 2013, 20, 35",
+        "SmartWatch, 2000, 2014, 20, 20",
+        "SmartWatch, 6500, 2015, 20, 10",
+        "SmartWatch, 7200, 2016, 20, 10",
+        "SportsWatch, 100, 2013, 10, 30",
+        "SportsWatch, 400, 2014, 10, 20",
+        "SportsWatch, 1000, 2015, 10, 15",
+        "SportsWatch, 1100, 2016, 10, 10",
+        "Wristband, 1000, 2013, 1, 20",
+        "Wristband, 3000, 2014, 1, 10",
+        "Wristband, 3200, 2015, 1, 5",
+        "Wristband, 3300, 2016, 1, 5"
+    ].join('\n'),
     "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank2.json":
         [
             {
