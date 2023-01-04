@@ -317,6 +317,14 @@ async function setupDashboard() {
                     });
                 }
 
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
             }
         },
         {
@@ -356,6 +364,14 @@ async function setupDashboard() {
                         data: data
                     });
                 }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
             }
         },
         {
@@ -393,6 +409,14 @@ async function setupDashboard() {
                     citySeries.update({
                         data: data
                     });
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
                 }
             }
         },
@@ -432,6 +456,14 @@ async function setupDashboard() {
                         data: data
                     });
                 }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
             }
         },
         {
@@ -469,6 +501,14 @@ async function setupDashboard() {
                     citySeries.update({
                         data: data
                     });
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
                 }
             }
         },

@@ -77,3 +77,14 @@
 #world-map .highcharts-series-1 .highcharts-point-select {
     stroke-width: 3px;
 }
+
+/* *
+ *
+ * KPI 
+ *
+ */
+.hd-cell-state-hover:hover > .hd-component {
+    background-color: #46475d;
+    color: #fff;
+}
+

@@ -13,6 +13,7 @@ import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
 import KPIComponent from '../Component/KPIComponent.js';
+import Globals from '../Globals.js';
 
 const {
     fireEvent,
@@ -122,8 +123,16 @@ class Bindings {
                 cell: cell
             });
 
+            // events
             if (options.events && options.events.click) {
                 addEvent(compontentContainer, 'click', options.events.click);
+            }
+
+            // states
+            if (compontentContainer && options.states) {
+                if (options.states.hover) {
+                    compontentContainer.classList.add(Globals.classNames.cellHover);
+                }
             }
         }
 
@@ -196,6 +205,7 @@ namespace Bindings {
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;
+        states?: any;
     }
     export interface MountedComponentsOptions {
         options: any;

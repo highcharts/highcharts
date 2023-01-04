@@ -56,6 +56,7 @@ namespace Globals {
     export const classNames = {
         layout: classNamePrefix + 'layout',
         cell: classNamePrefix + 'cell',
+        cellHover: classNamePrefix + 'cell-state-hover',
         row: classNamePrefix + 'row',
         layoutsWrapper: classNamePrefix + 'layouts-wrapper'
     };
