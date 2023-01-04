@@ -118,9 +118,7 @@ async function setupDashboard() {
                                     buildCitiesMap(
                                         new Date(chartData[0][0])
                                     ).then(data => {
-                                        citiesMap.update({
-                                            data
-                                        });
+                                        citiesMap.setData(data);
                                     });
                                 });
                         }
