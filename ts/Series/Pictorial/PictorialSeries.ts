@@ -101,9 +101,10 @@ class PictorialSeries extends ColumnSeries {
      * @since        next
      * @product      highcharts
      * @excluding    allAreas, borderRadius,
-     *               centerInCategory, colorAxis, connectEnds, connectNulls,
-     *               crisp, compare, compareBase, dataSorting, dashStyle,
-     *               dataAsColumns, linecap, lineWidth, shadow, onPoint
+     *               centerInCategory, colorAxis, colorKey, connectEnds,
+     *               connectNulls, crisp, compare, compareBase, dataSorting,
+     *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
+     *               onPoint
      * @requires     modules/pictorial
      * @optionparent plotOptions.pictorial
      */
@@ -570,10 +571,12 @@ export default PictorialSeries;
  * @extends   series,plotOptions.pictorial
  * @since     next
  * @product   highcharts
- * @excluding dataParser, borderRadius,
- *            centerInCategory, connectEnds, connectNulls, crisp,
- *            dataURL, dataAsColumns, edgeColor, linecap, lineWidth,  marker,
- *            dataSorting, dashStyle, onPoint, shadow
+ * @excluding dataParser, borderRadius, boostBlending, boostThreshold,
+ *            borderColor, borderWidth, centerInCategory, connectEnds,
+ *            connectNulls, crisp, colorKey, dataURL, dataAsColumns, depth,
+ *            dragDrop, edgeColor, edgeWidth, linecap, lineWidth,  marker,
+ *            dataSorting, dashStyle, onPoint, relativeXValue, shadow, zoneAxis,
+ *            zones
  * @requires  modules/pictorial
  * @apioption series.pictorial
  */
