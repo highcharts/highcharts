@@ -13,6 +13,7 @@
  * */
 
 'use strict';
+
 /* *
  *
  *  Import
@@ -29,12 +30,12 @@ const { merge } = U;
  *  Functions
  *
  * */
+
 /**
  * Change the obj of GoogleSheetsConverter its Serialized form.
  * @param obj Object to serialize
- * @return Serialized object
+ * @return {GoogleSheetsConverterHelper.JSON} Serialized object
  */
-
 function toJSON(obj: GoogleSheetsConverter): GoogleSheetsConverterHelper.JSON {
     return {
         $class: 'Data.GoogleSheetsConverter',
@@ -79,7 +80,6 @@ namespace GoogleSheetsConverterHelper {
 
     export interface JSON extends Serializable.JSON<'Data.GoogleSheetsConverter'>{
         options: GoogleSheetsConverter.Options;
-        parseDateFn?: string;
     }
 
 }
