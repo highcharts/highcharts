@@ -438,21 +438,42 @@ main().catch(e => console.error(e));
  * */
 
 async function buildCitiesData() {
-    const cities = await dataPool.getStoreTable('cities');
+    const cities = (await dataPool.getStoreTable('cities')).modified;
+    const initialCity = defaultCity;
     const tables = {};
 
-    await Promise.all(
-        cities.modified
-            .getRows(void 0, void 0, ['lat', 'lon', 'city'])
-            .map(async function (row) {
+    const initialRow = await cities.getRow(
+        cities.getRowIndexBy('city', defaultCity),
+        ['lat', 'lon', 'city']
+    );
+
+    tables[initialCity] = {
+        lat: initialRow[0],
+        lon: initialRow[1],
+        name: initialRow[2],
+        store: await dataPool.getStore(initialRow[2])
+    };
+
+    // lazy promise without leading await for the rest
+    Promise.all([(async function () {
+        const rows = cities.getRows(void 0, void 0, ['lat', 'lon', 'city']);
+
+        for (const row of rows) {
+            if (typeof tables[row[2]] === 'undefined') {
+
                 tables[row[2]] = {
                     lat: row[0],
                     lon: row[1],
                     name: row[2],
                     store: await dataPool.getStore(row[2])
                 };
-            })
-    );
+
+                if (citiesMap) {
+                    citiesMap.setData(await buildCitiesMap());
+                }
+            }
+        }
+    }())]);
 
     return tables;
 }
