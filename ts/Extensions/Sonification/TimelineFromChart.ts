@@ -234,16 +234,36 @@ function getPropMetrics(chart: Chart): PropMetrics {
                 seriesTimeProps[series.index] = merge(commonTimeProps);
             }
             if (sOpts) {
+                const defaultInstrMapping = (
+                        sOpts.defaultInstrumentOptions || {}
+                    ).mapping,
+                    defaultSpeechMapping = (
+                        sOpts.defaultSpeechOptions || {}
+                    ).mapping;
+
+                if (defaultInstrMapping) {
+                    addPropsFromMappingOptions(
+                        defaultInstrMapping, series.index
+                    );
+                }
+                if (defaultSpeechMapping) {
+                    addPropsFromMappingOptions(
+                        defaultSpeechMapping, series.index
+                    );
+                }
+
                 addPropsFromContextTracks(sOpts.contextTracks || []);
-                (sOpts.tracks || []).concat(sOpts.contextTracks || []).forEach(
-                    (trackOpts): void => {
-                        if (trackOpts.mapping) {
-                            addPropsFromMappingOptions(
-                                trackOpts.mapping, series.index
-                            );
+                (sOpts.tracks || [])
+                    .concat(sOpts.contextTracks || [])
+                    .forEach(
+                        (trackOpts): void => {
+                            if (trackOpts.mapping) {
+                                addPropsFromMappingOptions(
+                                    trackOpts.mapping, series.index
+                                );
+                            }
                         }
-                    }
-                );
+                    );
             }
         }
     });
@@ -880,14 +900,12 @@ function timelineFromChart(
             {} as Sonification.ChartSonificationOptions,
         defaultInstrOpts = options.defaultInstrumentOptions,
         defaultSpeechOpts = options.defaultSpeechOptions,
-        defaultPointGroupOpts = {
+        defaultPointGroupOpts = merge({
             enabled: true,
-            groupTimespan: 10,
+            groupTimespan: 15,
             algorithm: 'minmax',
             prop: 'y'
-        },
-        groupingOffGlobally = options.pointGrouping &&
-            options.pointGrouping.enabled === false,
+        }, options.pointGrouping),
         globalTracks = options.globalTracks || [],
         globalContextTracks = options.globalContextTracks || [],
         isSequential = options.order === 'sequential',
@@ -916,7 +934,13 @@ function timelineFromChart(
             const seriesDuration = isSequential ? getAvailableDurationForSeries(
                     series, totalDuration, propMetrics, afterSeriesWait
                 ) : totalDuration,
-                mainTracks = (sOptions.tracks || [defaultInstrOpts])
+                seriesDefaultInstrOpts = merge(
+                    defaultInstrOpts, sOptions.defaultInstrumentOptions
+                ),
+                seriesDefaultSpeechOpts = merge(
+                    defaultSpeechOpts, sOptions.defaultSpeechOptions
+                ),
+                mainTracks = (sOptions.tracks || [seriesDefaultInstrOpts])
                     .concat(globalTracks),
                 contextTracks = seriesIx ? sOptions.contextTracks || [] :
                     (sOptions.contextTracks || []).concat(globalContextTracks),
@@ -933,7 +957,7 @@ function timelineFromChart(
                             midiName: trackOpts.midiName || series.name
                         },
                         trackOpts.type === 'speech' ?
-                            defaultSpeechOpts : defaultInstrOpts,
+                            seriesDefaultSpeechOpts : seriesDefaultInstrOpts,
                         trackOpts
                     ),
                     pointGroupOpts = mergedOpts.pointGrouping,
@@ -982,7 +1006,7 @@ function timelineFromChart(
                     updateLastPropValue(point);
 
                     // Add the events
-                    if (!pointGroupOpts.enabled || groupingOffGlobally) {
+                    if (!pointGroupOpts.enabled) {
                         add(context);
                     } else {
                         const dT = time - pointGroupTime,

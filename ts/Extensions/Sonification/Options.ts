@@ -154,9 +154,6 @@ declare global {
             pointGrouping: PointGroupingOptions;
             globalTracks?: TrackOptions;
             globalContextTracks?: ContextTrackOptions;
-            /**
-             * Used to create a track for series without options
-             */
             defaultInstrumentOptions: InstrumentTrackOptions;
             defaultSpeechOptions: SpeechTrackOptions;
         }
@@ -168,16 +165,12 @@ declare global {
         }
 
         interface SeriesSonificationOptions {
+            contextTracks?: ContextTrackOptions;
+            defaultInstrumentOptions?: InstrumentTrackOptions;
+            defaultSpeechOptions?: SpeechTrackOptions;
             enabled?: boolean;
             pointGrouping?: SonificationGroupingOptions;
-            /**
-             * Map data points to sounds
-             */
             tracks?: TrackOptions;
-            /**
-             * Continuously play context sounds
-             */
-            contextTracks?: ContextTrackOptions;
         }
     }
 }
@@ -207,6 +200,12 @@ const Options: DeepPartial<OptionsType> = {
         masterVolume: 0.6,
         order: 'sequential',
         showPlayMarker: true,
+        pointGrouping: {
+            enabled: true,
+            groupTimespan: 15,
+            algorithm: 'minmax',
+            prop: 'y'
+        },
         defaultInstrumentOptions: {
             instrument: 'piano',
             mapping: {
@@ -219,12 +218,6 @@ const Options: DeepPartial<OptionsType> = {
                     max: 'c6',
                     within: 'yAxis'
                 }
-            },
-            pointGrouping: {
-                enabled: true,
-                groupTimespan: 15,
-                algorithm: 'minmax',
-                prop: 'y'
             }
         },
         defaultSpeechOptions: {
@@ -234,10 +227,7 @@ const Options: DeepPartial<OptionsType> = {
                 rate: 1.3
             },
             pointGrouping: {
-                enabled: true,
-                groupTimespan: 10,
-                algorithm: 'last',
-                prop: 'y'
+                algorithm: 'last'
             }
         }
     },
