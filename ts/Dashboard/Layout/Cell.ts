@@ -430,6 +430,28 @@ class Cell extends GUIElement {
             }
         }
     }
+
+    public setActiveState(): void {
+        // reset other boxes
+        const cell = this;
+
+        cell.row.layout.dashboard.mountedComponents.forEach(
+            mountedComponent => {
+                if (mountedComponent.cell.container) {
+                    mountedComponent.cell.container.classList.remove(
+                        Globals.classNames.cellActive
+                    );
+                }
+            }
+        );
+        
+        // apply class
+        if (cell.container) {
+            cell.container.classList.add(
+                Globals.classNames.cellActive
+            );
+        }
+    }
 }
 
 namespace Cell {

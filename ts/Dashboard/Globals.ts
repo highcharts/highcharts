@@ -57,6 +57,7 @@ namespace Globals {
         layout: classNamePrefix + 'layout',
         cell: classNamePrefix + 'cell',
         cellHover: classNamePrefix + 'cell-state-hover',
+        cellActive: classNamePrefix + 'cell-state-active',
         row: classNamePrefix + 'row',
         layoutsWrapper: classNamePrefix + 'layouts-wrapper'
     };

@@ -48,6 +48,8 @@ class Bindings {
         cell?: Cell
     ): ComponentTypes | undefined {
         const compontentContainer = document.getElementById(options.cell);
+        const optionsStates = options.states;
+        const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
         let component: ComponentTypes|undefined;
@@ -124,16 +126,36 @@ class Bindings {
             });
 
             // events
-            if (options.events && options.events.click) {
-                addEvent(compontentContainer, 'click', options.events.click);
+            if (optionsEvents && optionsEvents.click) {
+                addEvent(compontentContainer, 'click', () => {
+                    optionsEvents.click();
+
+                    if (
+                        cell &&
+                        component &&
+                        compontentContainer &&
+                        optionsStates &&
+                        optionsStates.active
+                    ) {
+                        cell.setActiveState();
+                    }
+                });
             }
 
             // states
-            if (compontentContainer && options.states) {
-                if (options.states.hover) {
-                    compontentContainer.classList.add(Globals.classNames.cellHover);
-                }
+            if (
+                compontentContainer &&
+                optionsStates &&
+                optionsStates.hover
+            ) {
+                compontentContainer.classList.add(
+                    Globals.classNames.cellHover
+                );
             }
+        }
+
+        if (component) {
+            fireEvent(component, 'afterLoad');
         }
 
         return component;

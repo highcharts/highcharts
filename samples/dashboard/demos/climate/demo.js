@@ -225,9 +225,15 @@ async function setupDashboard() {
                                     // update KPI indicators
                                     const table =
                                         citiesData[city].store.table.modified;
+
                                     for (
                                         const [key, ind] of Object.entries(kpi)
                                     ) {
+                                        // set active state on current temperature KPI
+                                        if (key === 'TN') {
+                                            ind.parentCell.setActiveState();
+                                        }
+
                                         ind.update({
                                             value: table.getCellAsNumber(key, table.getRowIndexBy('time', worldDate.getTime()), true)
                                         });
@@ -292,6 +298,8 @@ async function setupDashboard() {
             events: {
                 mount: function () {
                     kpi.TN = this;
+                    // console.log('mount', this);
+                    // this.parentCell.setActiveState(); // set active cell
                 },
                 click: function () {
                     const data =
@@ -315,8 +323,10 @@ async function setupDashboard() {
                     citySeries.update({
                         data: data
                     });
+                },
+                afterLoad: function () {
+                    this.parentCell.setActiveState();
                 }
-
             },
             states: {
                 active: {
