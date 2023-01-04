@@ -4351,19 +4351,17 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else if (!series._hasPointLabels) {
-                const { marker, dataLabels } = seriesOptions;
-                const { marker: oldMarker } = oldOptions;
-                // if marker got disabled, changed it's symbol, width or height
-                // - destroy
+                const { marker, dataLabels } = seriesOptions,
+                    oldMarker = oldOptions.marker || {};
+
+                // If the  marker got disabled or changed its symbol, width or
+                // height - destroy
                 if (
                     marker && (
                         marker.enabled === false ||
-                        (oldMarker && oldMarker.symbol) !==
-                            marker.symbol || // #10870, #15946
-                        (oldMarker && oldMarker.height) !==
-                            marker.height || // #16274
-                        (oldMarker && oldMarker.width) !==
-                            marker.width // #16274
+                        oldMarker.symbol !== marker.symbol || // #10870, #15946
+                        oldMarker.height !== marker.height || // #16274
+                        oldMarker.width !== marker.width // #16274
                     )
                 ) {
                     kinds.graphic = 1;
