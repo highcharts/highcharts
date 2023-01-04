@@ -3,7 +3,15 @@
 <script src="https://code.highcharts.com/modules/sonification.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<div id="container"></div>
-<button id="withinChart">Within chart</button>
-<button id="withinYAxis">Within yAxis</button>
-<button id="withinSeries">Within series</button>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        By default, pitch is mapped within each Y-axis. In this chart, the first series is assigned to the left Y-axis, while the second and third series are assigned to the right Y-axis. With pitch mapped within Y-axis, the first series will get its own pitch mapping, while Series 2 and Series 3 will be mapped together. If the pitch range goes from the notes C2 to C5, Series 1 will be mapped with its lowest value to C2, and its highest to C5. For the other series, C2 will be mapped to whichever value is lowest among Series 2 and Series 3, and C5 will be mapped to whichever value is highest within both series.
+    </p>
+</figure>
+
+<div id="buttons">
+    <button id="withinChart">Within chart</button>
+    <button id="withinYAxis">Within yAxis</button>
+    <button id="withinSeries">Within series</button>
+</div>

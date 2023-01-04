@@ -1,6 +1,10 @@
 var chart = Highcharts.chart('container', {
     title: {
-        text: 'Change relative sonification target'
+        text: 'Change mapping.pitch.within'
+    },
+
+    subtitle: {
+        text: 'Are we mapping within the chart, the yAxis, or each series?'
     },
 
     sonification: {
