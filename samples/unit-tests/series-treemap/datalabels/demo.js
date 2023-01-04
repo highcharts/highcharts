@@ -987,9 +987,8 @@ QUnit.test(
 // Highcharts 4.1.1, Issue 3844
 // treemap - colorByPoint is not working
 QUnit.test(
-    'Treemap: useHTML causes that data label is misplaced (#8159)',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
+    'Treemap: useHTML causes that data label is misplaced (#8159)', assert => {
+        const chart = Highcharts.chart('container', {
                 chart: {
                     width: 400,
                     height: 200
@@ -1011,7 +1010,8 @@ QUnit.test(
                                 colorValue: 1
                             },
                             {
-                                name: 'Bbbbbbbbbbbbb bbbbbbbbbbbbb',
+                                name: `Bbbbbbbbbbbbb bbbbbbbbbbbbb Bbbbbbbbbbbbb
+                                    bbbbbbbbbbbbb Bbbbbbbbbbbbb bbbbbbbbbbbbb`,
                                 value: 6,
                                 colorValue: 2
                             },
@@ -1025,20 +1025,31 @@ QUnit.test(
                 ]
             }),
             series = chart.series[0],
-            point1dataLabel = series.points[1].dataLabel,
-            point2dataLabel = series.points[2].dataLabel;
+            point1Box = series.points[1].graphic.getBBox(),
+            point1DL = series.points[1].dataLabel,
+            point1DLabsBox = point1DL.absoluteBox,
+            point2DL = series.points[2].dataLabel;
 
         assert.notStrictEqual(
-            point2dataLabel.visibility,
+            point2DL.visibility,
             'hidden',
-            'The second point\'s data label shouldn\'t overlap (and hide) the third point\'s datalabel.'
+            `The second point's data label shouldn't overlap (and hide) the
+                third point's datalabel.`
         );
 
         assert.strictEqual(
-            point1dataLabel.getBBox(true).height >
-                point1dataLabel.text.getBBox(true).height,
+            point1DL.getBBox(true).height >
+                point1DL.text.getBBox(true).height,
             true,
             'Data label text (second point) should fit in its box.'
+        );
+
+        assert.close(
+            point1DLabsBox.y + (point1DLabsBox.height / 2),
+            point1Box.y + (point1Box.height / 2) + chart.plotTop,
+            1,
+            `Long data labels with useHTML: true should be middle-aligned
+                (#18212).`
         );
     }
 );
