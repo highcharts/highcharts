@@ -514,7 +514,8 @@ async function buildCitiesMap() {
                 selected: city === cityScope,
                 y
             };
-        });
+        })
+        .sort(city => city.lat);
 }
 
 function buildColorAxis() {
