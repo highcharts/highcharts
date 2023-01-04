@@ -102,14 +102,23 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    citySeries.update({
-                                        data: store.table.modified.getRows(
+                                    const chartData = store.table.modified
+                                        .getRows(
                                             void 0,
                                             void 0,
                                             ['time', dataScope]
                                         ).filter(el =>
                                             el[0] >= min && el[0] <= max
-                                        )
+                                        );
+
+                                    citySeries.update({
+                                        data: chartData
+                                    });
+
+                                    buildCitiesMap(
+                                        new Date(chartData[0][0])
+                                    ).then(data => {
+                                        citiesMap.setData(data);
                                     });
                                 });
                         }
@@ -170,7 +179,7 @@ async function setupDashboard() {
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: await buildCitiesMap(),
+                    data: await buildCitiesMap(worldDate),
                     allowPointSelect: true,
                     dataLabels: {
                         crop: false
@@ -476,7 +485,7 @@ async function buildCitiesData() {
     return tables;
 }
 
-async function buildCitiesMap() {
+async function buildCitiesMap(date) {
     return Object
         .keys(citiesData)
         .map(city => {
@@ -484,7 +493,7 @@ async function buildCitiesMap() {
             const table = data.store.table.modified;
             const y = table.getCellAsNumber(
                 dataScope,
-                table.getRowIndexBy('time', worldDate.getTime()),
+                table.getRowIndexBy('time', date.getTime()),
                 true
             );
 
