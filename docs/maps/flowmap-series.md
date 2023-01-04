@@ -1,7 +1,7 @@
 Flow map
 ===============
 
-A flow map is a series type that allows to display route paths (e.g. flights or ships routes) or flows on a map.
+A flow map is a series type that allows to display route paths (e.g. flights or ships routes) or flows (e.g. import/export between regions) on a map.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/flowmap" allow="fullscreen"></iframe>
 
@@ -26,7 +26,7 @@ series: [{
     type: 'mappoint',
     name: 'Cities',
     data: [{
-          id: "Oslo",
+          id: 'Oslo',
           lat: 60.1975501,
           lon: 11.1004152,
         }, {
@@ -40,7 +40,7 @@ series: [{
 }]
 ```
 
-Last step is to add our flow map series config with [series.type](https://api.highcharts.com/highmaps/series.flowmap.type) set to `'flowmap'`. If you choose to use the data points from [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series, they will be connected by their [id](https://api.highcharts.com/highmaps/series.mappoint.id). The important options that you may notice in the example below are [curveFactor](https://api.highcharts.com/highmaps/series.flowmap.data.curveFactor) and [markerEnd](https://api.highcharts.com/highmaps/series.flowmap.data.markerEnd):
+The last step is to add our flow map series configuration with [series.type](https://api.highcharts.com/highmaps/series.flowmap.type) set to `'flowmap'`. If you choose to use the data points from [mappoint](https://api.highcharts.com/highmaps/series.mappoint) series, they will be connected by their [id](https://api.highcharts.com/highmaps/series.mappoint.id), otherwise simple `[longitude, latitude]` coordinates can be used for the end points. The important options that you may notice in the example below are [curveFactor](https://api.highcharts.com/highmaps/series.flowmap.data.curveFactor) and [markerEnd](https://api.highcharts.com/highmaps/series.flowmap.data.markerEnd):
 ```js
 series: [{
     type: 'flowmap',
@@ -62,9 +62,10 @@ Alternatively, you can omit the creation of [mappoint](https://api.highcharts.co
 series: [{
     type: 'flowmap',
     name: 'Flowmap with lon/lat coordinates',
-    data: [{
-        from: [52.2662, 20.9969],
-        to: [59.9170, 10.7511]
+    data: [
+        {
+            from: [52.2662, 20.9969],
+            to: [59.9170, 10.7511]
         },
         ...
     ],

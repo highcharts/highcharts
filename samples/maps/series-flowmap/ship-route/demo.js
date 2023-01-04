@@ -6,7 +6,7 @@
     Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            plotBackgroundColor: {
+            backgroundColor: {
                 radialGradient: {
                     cx: 0.5,
                     cy: 0.5,
@@ -17,16 +17,18 @@
                     [1, 'white']
                 ]
             },
-            margin: [65, 1, 1, 1]
+            margin: 1
         },
 
         title: {
-            text: 'Example route of a ship from USA to China'
+            text: 'Example route of a ship from USA to China',
+            align: 'left'
         },
 
         subtitle: {
-            text: `The route through the Suez Canal with the number of travel
-            days between cities`
+            text: `The route through the Suez Canal. Arrow width represents the
+            number of travel days between cities.`,
+            align: 'left'
         },
 
         credits: {
@@ -44,9 +46,9 @@
                 type: 'MultiPoint',
                 coordinates: [
                     // Top left
-                    [-125, 50],
+                    [-150, 70],
                     // Bottom right
-                    [130, -20]
+                    [130, -10]
                 ]
             }
         },
@@ -59,7 +61,7 @@
             flowmap: {
                 tooltip: {
                     headerFormat: null,
-                    pointFormat: `{point.options.from} \u2192 
+                    pointFormat: `{point.options.from} \u2192
                         {point.options.to}: <b>{point.weight}</b><br/>`
                 }
             },

@@ -20,7 +20,7 @@
             flowmap: {
                 tooltip: {
                     headerFormat: null,
-                    pointFormat: `{point.options.from} \u2192 
+                    pointFormat: `{point.options.from} \u2192
                         {point.options.to}`
                 }
             },
