@@ -709,7 +709,7 @@ QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
     );
 });
 
-QUnit.skip('Stack labels - Axis left set', assert => {
+QUnit.test('Stack labels - Axis left set', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -746,19 +746,24 @@ QUnit.skip('Stack labels - Axis left set', assert => {
             }
         ]
     });
+
     const getStack = chart => {
         const stacks = chart.yAxis[0].stacking.stacks,
             stackKey = Object.keys(stacks)[0];
 
         return stacks[stackKey][0].label;
     };
-    const stack = getStack(chart),
-        dataLabel = chart.series[0].points[0].dataLabel;
 
-    assert.equal(
-        stack.alignAttr.x,
-        dataLabel.alignAttr.x,
-        'the `x` position should be the same for dataLabel and stackLabel'
+    const stack = getStack(chart),
+        dataLabel = chart.series[0].points[0].dataLabel,
+        stackX = stack.absoluteBox.x + stack.absoluteBox.width / 2,
+        dataLabelX = dataLabel.absoluteBox.x + dataLabel.absoluteBox.width / 2;
+
+    assert.close(
+        stackX,
+        dataLabelX,
+        1,
+        'the middle of stackLabel and dataLabel should be similar.'
     );
 });
 
@@ -862,9 +867,75 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
     });
 
     const chart = Highcharts.chart('container', getOptions(false, true));
-    assert.ok(true);
+    let alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    let alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'center',
+        'positive value not inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'bottom',
+        'positive value not inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'center',
+        'negative value not inverted chart, reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'top',
+        'negative value not inverted chart, reversed axis'
+    );
     chart.update(getOptions(true, true));
-    assert.ok(true);
+    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'left',
+        'positive value inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'middle',
+        'positive value inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'right',
+        'negative value inverted chart, reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'middle',
+        'negative value inverted chart, reversed axis'
+    );
     chart.update(getOptions(true, false));
-    assert.ok(true);
+    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'right',
+        'positive value inverted chart not reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'middle',
+        'positive value inverted chart not reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'left',
+        'negative value inverted chart not reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'middle',
+        'negative value inverted chart not reversed axis'
+    );
 });
