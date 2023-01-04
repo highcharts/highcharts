@@ -399,19 +399,12 @@ async function setupDashboard() {
 }
 
 async function setupDataPool() {
+
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
             googleSpreadsheetKey: '1gIScpvn6aO8jeN_fxOkJKJWA1KTVzQUQZUsZr0V8TOY'
-        },
-        storeType: 'GoogleSheetsStore'
-    });
-    dataPool.setStoreOptions({
-        name: 'climate',
-        storeOptions: {
-            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-            googleSpreadsheetKey: '1N4GofXxFOxXtteYj2H9nwWCHELegv_kozChV-D33iUc'
         },
         storeType: 'GoogleSheetsStore'
     });
@@ -421,18 +414,6 @@ async function setupDataPool() {
     for (const row of csvReferences.getRowObjects()) {
         dataPool.setStoreOptions({
             name: row.city,
-            storeOptions: {
-                csvURL: row.csv
-            },
-            storeType: 'CSVStore'
-        });
-    }
-
-    csvReferences = await dataPool.getStoreTable('climate');
-
-    for (const row of csvReferences.getRowObjects()) {
-        dataPool.setStoreOptions({
-            name: row.time,
             storeOptions: {
                 csvURL: row.csv
             },
