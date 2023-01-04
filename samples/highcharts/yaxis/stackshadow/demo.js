@@ -71,5 +71,32 @@ Highcharts.chart('container', {
         name: 'Bone',
         data: [12, 15]
     }
-    ]
+    ],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    padding: 8,
+                    margin: 12,
+                    itemMarginTop: 0,
+                    itemMarginBottom: 0,
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal'
+                }
+            }
+        }, {
+            condition: {
+                maxWidth: 400
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'vertical'
+                }
+            }
+        }]
+    }
 });
