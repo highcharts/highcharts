@@ -139,22 +139,6 @@ async function setupDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    events: {
-                        render: function () {
-
-                            if (!this.styledMode) {
-                                return;
-                            }
-
-                            // force point colors
-                            for (const point of this.series[1].points) {
-                                if (point.dataLabels && point.color) {
-                                    point.dataLabels[1].box.element.style.fill =
-                                        point.color;
-                                }
-                            }
-                        }
-                    },
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
@@ -240,8 +224,7 @@ async function setupDashboard() {
                         }
                     },
                     marker: {
-                        enabled: false,
-                        radius: 0
+                        enabled: true
                     },
                     tooltip: {
                         footerFormat: '',
@@ -301,22 +284,6 @@ async function setupDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    events: {
-                        render: function () {
-
-                            if (!this.styledMode) {
-                                return;
-                            }
-
-                            // force point colors
-                            for (const point of this.series[0].points) {
-                                if (point.graphic && point.color) {
-                                    point.graphic.element.style.fill =
-                                        point.color;
-                                }
-                            }
-                        }
-                    },
                     spacing: 40,
                     styledMode: true
                 },

@@ -5,6 +5,7 @@
  *  City chart
  *
  * */
+
 #city-chart .highcharts-background {
     fill: #46475d;
 }
@@ -22,6 +23,7 @@
  *  Navigator
  *
  * */
+
 .highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
     stroke: #df8fa1;
 }
@@ -55,6 +57,7 @@
  *  World Map
  *
  * */
+
 #world-map .highcharts-background {
     fill: #46475d;
 }
@@ -75,6 +78,7 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) .highcharts-data-label-box {
+    fill: #f0f;
     paint-order: stroke;
     stroke: #fff;
     stroke-width: 2px;
