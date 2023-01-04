@@ -691,52 +691,6 @@ class MapSeries extends ScatterSeries {
                             ) as any
                         );
                     }
-
-                    graphic.animate = function (params,
-                        options, complete): SVGElement {
-
-                        let switchBack = false;
-                        // When strokeWidth is animating
-                        if (params['stroke-width']) {
-
-                            const strokeWidth = pick(
-                                    series.getStrokeWidth(series.options),
-                                    1 // Styled mode
-                                ),
-                                inheritedStrokeWidth = (
-                                    strokeWidth /
-                                    (
-                                        chart.mapView &&
-                                        chart.mapView.getScale() ||
-                                        1
-                                    )
-                                );
-                            // For animating from inherit,
-                            // .attr() reads the property as the starting point
-                            if (graphic['stroke-width'] === 'inherit') {
-                                graphic['stroke-width'] = inheritedStrokeWidth;
-                            }
-                            // For animating to inherit
-                            if (params['stroke-width'] === ('inherit' as any)) {
-                                params['stroke-width'] = inheritedStrokeWidth;
-                                switchBack = true;
-                            }
-                        }
-                        const ret = animate.call(
-                            graphic, params, options,
-                            switchBack ? function (this: SVGElement): void {
-                                // Switch back to "inherit" for zooming
-                                // to work with the existing logic + complete
-                                graphic.attr({
-                                    'stroke-width': ('inherit' as any)
-                                });
-                                // Proceed
-                                if (complete) {
-                                    complete.apply(this, arguments);
-                                }
-                            } : complete);
-                        return ret;
-                    };
                 }
             });
         }
@@ -954,12 +908,16 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                (this.options as any).states[state],
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
-            );
-            pointStrokeWidth = this.getStrokeWidth(stateOptions);
+                    (this.options as any).states[state],
+                    point.options.states &&
+                    (point.options.states as any)[state] ||
+                    {}
+                ),
+                stateStrokeWidth = this.getStrokeWidth(stateOptions);
+
+            if (defined(stateStrokeWidth)) {
+                pointStrokeWidth = stateStrokeWidth;
+            }
         }
 
         if (pointStrokeWidth && mapView) {
