@@ -1,5 +1,5 @@
 ---
- name: World with Palestine areas, low resolution - Highmaps
- description: Highmaps demo
+ name: World with Palestine areas, low resolution - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

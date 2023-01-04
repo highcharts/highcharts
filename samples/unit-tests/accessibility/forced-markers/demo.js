@@ -115,6 +115,13 @@ QUnit.test('Markers enabled, point marker off', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+
+    // Force redraw
+    chart.update({
+        yAxis: { visible: false }
+    });
+    assert.strictEqual(hasMarker(pointB), true, 'Point marker exists after update');
+    assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden after update');
 });
 
 QUnit.test('Markers disabled, point marker off', function (assert) {
@@ -224,4 +231,39 @@ QUnit.test('Dynamic markers on update', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+});
+
+// #16624
+QUnit.test('Hover after disabling a11y', function (assert) {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [1, 2, 3, 4],
+            marker: {
+                enabled: false
+            }
+        }]
+    });
+
+    chart.update({
+        accessibility: {
+            enabled: false
+        }
+    });
+
+    const point0 = chart.series[0].points[0];
+    assert.strictEqual(
+        hasVisibleMarker(point0) || hasMarker(point0), false,
+        'Point should not have marker after disabling a11y'
+    );
+
+    point0.onMouseOver();
+    point0.onMouseOut();
+    chart.series[0].points[1].onMouseOver();
+    assert.strictEqual(
+        hasVisibleMarker(point0) || hasMarker(point0), false,
+        'Point should not have marker after hovering series'
+    );
 });

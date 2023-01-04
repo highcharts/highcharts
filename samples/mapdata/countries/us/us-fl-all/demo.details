@@ -1,5 +1,5 @@
 ---
- name: Florida - Highmaps
- description: Highmaps demo
+ name: Florida - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -15,7 +15,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type HLCPointOptions from '../HLC/HLCPointOptions';
 
 /* *
  *
@@ -23,7 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *
  * */
 
-export interface OHLCPointOptions extends ColumnPointOptions {
+export interface OHLCPointOptions extends HLCPointOptions {
     upColor?: ColorType;
 }
 

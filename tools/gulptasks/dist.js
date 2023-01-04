@@ -10,7 +10,6 @@ const Gulp = require('gulp');
  *
  * */
 
-require('./dist-ant');
 require('./dist-clean');
 require('./dist-copy');
 require('./dist-examples');
@@ -36,7 +35,6 @@ Gulp.task(
         'dist-copy',
         'dist-examples',
         'dist-productsjs',
-        'dist-api',
         'jsdoc-dts',
         'lint-dts',
         'dist-compress'

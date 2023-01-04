@@ -1,19 +1,19 @@
 .container {
-  width: 100%;
-	height: 100%;
-	margin-bottom: 15px;
-	float: left;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 15px;
+    float: left;
 }
 
 .highcharts-description {
-  font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
 }
 
-@media (min-width: 768px){
-  .container {
-    width: 50%;
-    height: 400px;
-    margin-bottom: 15px;
-    float: left;
-  }
+@media (min-width: 768px) {
+    .container {
+        width: 50%;
+        height: 400px;
+        margin-bottom: 15px;
+        float: left;
+    }
 }

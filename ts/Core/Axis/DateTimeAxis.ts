@@ -16,11 +16,11 @@
  *
  * */
 
+import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time.js';
+import type Time from '../Time';
 
-import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -43,8 +43,8 @@ declare module './AxisComposition' {
 
 declare module './AxisOptions' {
     interface AxisOptions {
-        dateTimeLabelFormats?: DateTimeAxis.LabelFormatOptions;
-        units?: Array<[DateTimeAxis.LabelFormatsKey, (Array<number>|null)]>;
+        dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
+        units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
     }
 }
 
@@ -62,7 +62,7 @@ declare module '../Series/SeriesOptions' {
 }
 
 declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends DateTimeAxis.NormalizedObject {
+    interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
         // nothing to add
     }
 }
@@ -87,30 +87,15 @@ namespace DateTimeAxis{
         dateTime: Additions;
     }
 
-    export type LabelFormatsKey = keyof LabelFormatOptions;
-
-    export interface LabelFormatOptions {
-        day?: (string|LabelFormatOptionsObject);
-        hour?: (string|LabelFormatOptionsObject);
-        millisecond?: (string|LabelFormatOptionsObject);
-        minute?: (string|LabelFormatOptionsObject);
-        month?: (string|LabelFormatOptionsObject);
-        second?: (string|LabelFormatOptionsObject);
-        week?: (string|LabelFormatOptionsObject);
-        year?: (string|LabelFormatOptionsObject);
-    }
-
-    export interface LabelFormatOptionsObject {
-        list?: Array<string>;
-        main?: string;
-        range?: boolean;
-    }
-
-    export interface NormalizedObject extends Time.TimeNormalizedObject {
-        unitName: LabelFormatsKey;
-    }
-
     export type PointIntervalUnitValue = ('day'|'month'|'year');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -122,59 +107,66 @@ namespace DateTimeAxis{
      * Extends axis class with date and time support.
      * @private
      */
-    export function compose<T extends typeof Axis>(AxisClass: T): (typeof Composition&T) {
+    export function compose<T extends typeof Axis>(
+        AxisClass: T
+    ): (typeof Composition&T) {
 
-        AxisClass.keepProps.push('dateTime');
+        if (composedClasses.indexOf(AxisClass) === -1) {
+            composedClasses.push(AxisClass);
 
-        const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
+            AxisClass.keepProps.push('dateTime');
 
-        /**
-         * Set the tick positions to a time unit that makes sense, for example
-         * on the first of each month or on every Monday. Return an array with
-         * the time positions. Used in datetime axes as well as for grouping
-         * data on a datetime axis.
-         *
-         * @private
-         * @function Highcharts.Axis#getTimeTicks
-         *
-         * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-         * The interval in axis values (ms) and thecount.
-         *
-         * @param {number} min
-         * The minimum in axis values.
-         *
-         * @param {number} max
-         * The maximum in axis values.
-         *
-         * @param {number} startOfWeek
-         *
-         * @return {Highcharts.AxisTickPositionsArray}
-         */
-        axisProto.getTimeTicks = function (): TickPositionsArray {
-            return this.chart.time.getTimeTicks.apply(
-                this.chart.time, arguments as any
-            );
-        };
+            const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
 
-        /* eslint-disable no-invalid-this */
+            axisProto.getTimeTicks = getTimeTicks;
 
-        addEvent(AxisClass, 'init', function (e: { userOptions: Axis['userOptions'] }): void {
-            const axis = this;
-            const options = e.userOptions;
-
-            if (options.type !== 'datetime') {
-                axis.dateTime = void 0;
-                return;
-            }
-
-            if (!axis.dateTime) {
-                axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
-            }
-        });
-
-        /* eslint-enable no-invalid-this */
+            addEvent(AxisClass, 'init', onInit);
+        }
 
         return AxisClass as (typeof Composition&T);
+    }
+
+    /**
+     * Set the tick positions to a time unit that makes sense, for example
+     * on the first of each month or on every Monday. Return an array with
+     * the time positions. Used in datetime axes as well as for grouping
+     * data on a datetime axis.
+     *
+     * @private
+     * @function Highcharts.Axis#getTimeTicks
+     * @param {Highcharts.TimeNormalizeObject} normalizedInterval
+     * The interval in axis values (ms) and thecount.
+     * @param {number} min
+     * The minimum in axis values.
+     * @param {number} max
+     * The maximum in axis values.
+     */
+    function getTimeTicks(
+        this: Axis
+    ): TickPositionsArray {
+        return this.chart.time.getTimeTicks.apply(
+            this.chart.time, arguments
+        );
+    }
+
+    /**
+     * @private
+     */
+    function onInit(
+        this: Axis,
+        e: { userOptions: Axis['userOptions'] }
+    ): void {
+        const axis = this;
+        const options = e.userOptions;
+
+        if (options.type !== 'datetime') {
+            axis.dateTime = void 0;
+            return;
+        }
+
+        if (!axis.dateTime) {
+            axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
+        }
     }
 
     /* *
@@ -222,11 +214,13 @@ namespace DateTimeAxis{
         public normalizeTimeTickInterval(
             tickInterval: number,
             unitsOption?: AxisOptions['units']
-        ): DateTimeAxis.NormalizedObject {
+        ): Time.TimeNormalizedObject {
             const units = (
                 unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                    // unit name
+                    'millisecond',
+                    // allowed multiples
+                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
                     [1, 2, 5, 10, 15, 30]
@@ -301,6 +295,30 @@ namespace DateTimeAxis{
             };
         }
 
+        /**
+         * Get the best date format for a specific X value based on the closest
+         * point range on the axis.
+         *
+         * @private
+         */
+        public getXDateFormat(
+            x: number,
+            dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
+        ): string {
+            const { axis } = this,
+                time = axis.chart.time;
+
+            return axis.closestPointRange ?
+                time.getDateFormat(
+                    axis.closestPointRange,
+                    x,
+                    axis.options.startOfWeek,
+                    dateTimeLabelFormats
+                ) ||
+                // #2546, 2581
+                time.resolveDTLFormat(dateTimeLabelFormats.year).main :
+                time.resolveDTLFormat(dateTimeLabelFormats.day).main;
+        }
     }
 
 }

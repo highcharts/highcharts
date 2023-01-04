@@ -1,0 +1,35 @@
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+
+
+<div class="wrapper">
+  <div id="date-picker"></div>
+  <div class="custom-tooltip">
+    <div id="tooltip-header"></div>
+    <div id="tooltip-values">
+      <div class="col-left">
+        <div id="open-value" class="info-cell">
+          <div>Opening Price</div>
+          <strong id="openCell"></strong>
+        </div>
+        <div id="low-value" class="info-cell">
+          <div>Day's High</div>
+          <strong id="highCell"></strong>
+        </div>
+      </div>
+      <div class="col-right">
+        <div id="high-value" class="info-cell">
+          <div>Day's Low</div>
+          <strong id="lowCell"></strong>
+        </div>
+        <div id="close-value" class="info-cell">
+          <div>Closing Price</div>
+          <strong id="closeCell"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="chart-container" class="chart"></div>
+</div>

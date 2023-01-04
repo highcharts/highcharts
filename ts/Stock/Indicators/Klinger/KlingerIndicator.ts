@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     KlingerOptions,
     KlingerParamsOptions
@@ -15,15 +21,13 @@ import type {
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator,
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -32,6 +36,12 @@ const {
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Klinger oscillator series type.
@@ -43,6 +53,13 @@ const {
  * @augments Highcharts.Series
  */
 class KlingerIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
@@ -105,9 +122,13 @@ class KlingerIndicator extends SMAIndicator {
             approximation: 'averages'
         },
         tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
-                '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.signalLine.styles.lineColor}">Signal</span>' +
+            pointFormat: '<span style="color: {point.color}">\u25CF</span>' +
+                '<b> {series.name}</b><br/>' +
+                '<span style="color: {point.color}">Klinger</span>: ' +
+                '{point.y}<br/>' +
+                '<span style="color: ' +
+                '{point.series.options.signalLine.styles.lineColor}">' +
+                    'Signal</span>' +
                     ': {point.signal}<br/>'
         }
     } as KlingerOptions);
@@ -128,22 +149,6 @@ class KlingerIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-
-    init(this: KlingerIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        // Check if the EMA module is added.
-        RequiredIndicatorMixin.isParentLoaded(
-            (EMAIndicator as any),
-            'ema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public calculateTrend(
         this: KlingerIndicator,
@@ -367,39 +372,29 @@ class KlingerIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface KlingerIndicator {
+interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-
+    pointArrayMap: Array<keyof KlingerPoint>;
     pointClass: typeof KlingerPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    pointValKey: string;
 }
-
 extend(KlingerIndicator.prototype, {
+    areaLinesNames: [],
     linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],
     pointArrayMap: ['y', 'signal'],
     parallelArrays: ['x', 'y', 'signal'],
-    pointValKey: 'y',
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(KlingerIndicator);
 
 /* *
  *
@@ -412,7 +407,6 @@ declare module '../../../Core/Series/SeriesType' {
         klinger: typeof KlingerIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
 
 /* *
@@ -423,6 +417,12 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
 
 export default KlingerIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A Klinger oscillator. If the [type](#series.klinger.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -431,7 +431,6 @@ export default KlingerIndicator;
  * @since 9.1.0
  * @product   highstock
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ema
  * @requires  stock/indicators/klinger
  * @apioption series.klinger
  */

@@ -1,18 +1,26 @@
 QUnit.module('Color axis for series types', function () {
-    Object.keys(Highcharts.seriesTypes)
+    Object.keys(Highcharts.Series.types)
         .sort()
         .forEach(function (type) {
             if (
                 !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
-                type !== 'gauge' &&
-                type !== 'solidgauge' &&
-                type !== 'networkgraph' &&
-                type !== 'organization' &&
-                type !== 'sunburst' &&
-                type !== 'sankey' &&
-                type !== 'dependencywheel' &&
-                type !== 'venn' &&
-                type !== 'wordcloud'
+                ![
+                    'gauge',
+                    'solidgauge',
+                    'map', // Needs a map for coordinates
+                    'mapline', // Needs a map for coordinates
+                    'mapbubble', // Needs a map for coordinates
+                    'mappoint', // Needs a map for coordinates
+                    'networkgraph',
+                    'organization',
+                    'sunburst',
+                    'sankey',
+                    'dependencywheel',
+                    'treegraph',
+                    'arcdiagram',
+                    'venn',
+                    'wordcloud'
+                ].includes(type)
             ) {
                 QUnit.test('Color axis for ' + type, function (assert) {
                     var cfg = {

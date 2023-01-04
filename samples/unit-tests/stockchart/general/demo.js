@@ -53,7 +53,7 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     $('#container').highcharts('StockChart', {
         rangeSelector: {
             buttons: buttons
-            //allButtonsEnabled: true //or false - doesn't matter
+            // allButtonsEnabled: true //or false - doesn't matter
         },
         xAxis: {
             minRange: 1
@@ -177,4 +177,25 @@ QUnit.test('Default options for stock chart', function (assert) {
         'datetime',
         '#8603: Axis should have stock forced options applied'
     );
+});
+
+QUnit.test('The stock chart in hidden div, #16901.', function (assert) {
+    document.querySelector('#container').style.visibility = 'hidden';
+    Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-navigator')).visibility,
+        'hidden',
+        'Navigator should be hidden.'
+    );
+
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-button-box')).visibility,
+        'hidden',
+        'Elements of range selector should be hidden.'
+    );
+    document.querySelector('#container').style.visibility = 'unset';
 });

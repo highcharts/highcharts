@@ -94,4 +94,16 @@ QUnit.test('Axis events', function (assert) {
     );
 
     unbindClass();
+
+    chart.xAxis[0].update({
+        events: {
+            afterSetExtremes: void 0
+        }
+    });
+    chart.xAxis[0].setExtremes(3, 7);
+    assert.deepEqual(
+        [calls.afterSetExtremesOptions, calls.afterSetExtremesOptionsUpdated],
+        [2, 1],
+        'Event handler should be removed after updating to undefined (#15983)'
+    );
 });

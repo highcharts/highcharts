@@ -22,7 +22,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         'Visibility is hidden'
     );
 
-    label.show(true);
+    label.show();
     assert.strictEqual(
         label.div.style.visibility,
         'inherit',
@@ -36,7 +36,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         'Visibility is hidden'
     );
 
-    label.show();
+    label.show(false);
     assert.strictEqual(
         label.div.style.visibility,
         'visible',
@@ -44,7 +44,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
     );
 });
 
-QUnit.test('Left trim (#5261)', function (assert) {
+QUnit.test('Whitespace trimming', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
@@ -92,6 +92,51 @@ QUnit.test('Left trim (#5261)', function (assert) {
         null,
         'Ending break should have no dy'
     );
+
+    label = ren
+        .label('<span>Hello</span> <span>World</span>', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.text.element.childNodes.length,
+        3,
+        '#15235: Whitespace between spans should not be removed'
+    );
+
+    let html = '<div><span>Space</span> <span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
+    html = '<div><span>Space</span><span> </span><span>expected</span></div>';
+    label = ren
+        .text(html, 100, 50, true)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.innerHTML,
+        html,
+        '#15235: Nested whitespace between spans should not be removed'
+    );
+
 });
 
 QUnit.test('Image labels should have no fill (#4324)', function (assert) {
@@ -462,6 +507,19 @@ QUnit.test('Labels with useHTML', assert => {
         '200px',
         'The span width should adapt to shorter text (#10009)'
     );
+
+    const g = ren.g('parent')
+        .attr({
+            visibility: 'hidden'
+        })
+        .add();
+    ren.label('Foo', 0, 0, void 0, 0, 0, true).add(g);
+
+    assert.strictEqual(
+        g.div.style.visibility,
+        'hidden',
+        'Visibility should be set on parent group div'
+    );
 });
 
 QUnit.test('Change of label alignment after add (#4652)', function (assert) {
@@ -474,7 +532,7 @@ QUnit.test('Change of label alignment after add (#4652)', function (assert) {
     var lbl = ren
         .label('Hello World', 100, 100)
         .attr({
-            //align: 'right',
+            // align: 'right',
             fill: 'silver'
         })
         .add();

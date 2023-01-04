@@ -11,8 +11,8 @@ Highcharts.chart('container', {
     series: [{
         name: 'Highsoft',
         data: [{
-            from: "CO",
-            to: "DIV01"
+            from: 'CO',
+            to: 'DIV01'
         }, {
             from: 'CO',
             to: 'DIV02'
@@ -33,7 +33,7 @@ Highcharts.chart('container', {
             id: 'DIV01',
             title: 'Div Hd 1',
             name: 'Div. 1',
-            drilldown: "DIV01"
+            drilldown: 'DIV01'
         }, {
             id: 'DIV02',
             title: 'Div Hd 2',
@@ -62,18 +62,19 @@ Highcharts.chart('container', {
         }]
     }],
     drilldown: {
-        drillUpButton: {
+        breadcrumbs: {
             relativeTo: 'spacingBox',
             position: {
-                y: 0
-            }
+                align: 'right'
+            },
+            showFullPath: false
         },
         activeDataLabelStyle: {
             color: 'contrast'
         },
         series: [{
-            id: "DIV01",
-            name: "DIV01",
+            id: 'DIV01',
+            name: 'DIV01',
             keys: ['from', 'to'],
             data: [
                 ['DIV01', 'DEP01']
@@ -85,8 +86,8 @@ Highcharts.chart('container', {
                 layout: 'hanging'
             }]
         }, {
-            id: "DIV02",
-            name: "DIV02",
+            id: 'DIV02',
+            name: 'DIV02',
             keys: ['from', 'to'],
             data: [
                 ['DIV02', 'DEP02']
@@ -98,8 +99,8 @@ Highcharts.chart('container', {
                 layout: 'hanging'
             }]
         }, {
-            id: "DIV03",
-            name: "DIV03",
+            id: 'DIV03',
+            name: 'DIV03',
             keys: ['from', 'to'],
             data: [
                 ['DIV03', 'DEP03']
@@ -111,8 +112,8 @@ Highcharts.chart('container', {
                 layout: 'hanging'
             }]
         }, {
-            id: "DIV04",
-            name: "DIV04",
+            id: 'DIV04',
+            name: 'DIV04',
             keys: ['from', 'to'],
             data: [
                 ['DIV04', 'DEP04']
@@ -124,8 +125,8 @@ Highcharts.chart('container', {
                 layout: 'hanging'
             }]
         }, {
-            id: "DIV05",
-            name: "DIV05",
+            id: 'DIV05',
+            name: 'DIV05',
             keys: ['from', 'to'],
             data: [
                 ['DIV05', 'DEP05']
@@ -137,8 +138,8 @@ Highcharts.chart('container', {
                 layout: 'hanging'
             }]
         }, {
-            id: "DIV06",
-            name: "DIV06",
+            id: 'DIV06',
+            name: 'DIV06',
             keys: ['from', 'to'],
             data: [
                 ['DIV06', 'DEP06']

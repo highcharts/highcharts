@@ -317,7 +317,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length -
-            chart.series[1].options.params.periodSenkouSpanB,
+            chart.series[1].options.params.periodSenkouSpanB + 2,
         'Initial number of Ichimoku points is correct'
     );
 
@@ -333,7 +333,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length -
-            chart.series[1].options.params.periodSenkouSpanB,
+            chart.series[1].options.params.periodSenkouSpanB + 2,
         'After addPoint number of Ichimoku points is correct'
     );
 
@@ -465,12 +465,14 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Line color changed'
     );
 
-    chart.series[0].points[27].remove();
+    const dataPoints = chart.series[0].points;
+
+    dataPoints[dataPoints.length - 1].remove();
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[1].points.length -
-            chart.series[1].options.params.periodSenkouSpanB,
+        dataPoints.length,
+        chart.series[1].yData.length -
+            chart.series[1].options.params.periodSenkouSpanB + 2,
         'After removePoint number of Ichimoku points is correct'
     );
 

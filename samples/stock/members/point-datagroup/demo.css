@@ -1,0 +1,14 @@
+#container {
+    height: 400px;
+    max-width: 800px;
+}
+
+.data-table {
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid silver;
+    padding: 0.5em;
+}

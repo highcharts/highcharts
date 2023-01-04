@@ -1,22 +1,11 @@
-// Load the data from a Google Spreadsheet
-// https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
-Highcharts.data({
-    googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
+(async () => {
 
-    // custom handler when the spreadsheet is parsed
-    parsed: function (columns) {
-        // Read the columns into the data array
-        const data = [];
-        columns[0].forEach((code, i) => {
-            data.push({
-                code: code.toUpperCase(),
-                value: parseFloat(columns[2][i]),
-                name: columns[1][i]
-            });
-        });
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        // Initiate the chart
-        Highcharts.mapChart('container', {
+    function drawChart(data) {
+        return Highcharts.mapChart('container', {
             chart: {
                 borderWidth: 1
             },
@@ -72,7 +61,7 @@ Highcharts.data({
 
             series: [{
                 data: data,
-                mapData: Highcharts.maps['custom/world'],
+                mapData: topology,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
@@ -87,4 +76,34 @@ Highcharts.data({
             }]
         });
     }
-});
+
+
+    // Load the data from a Google Spreadsheet
+    // https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
+    Highcharts.data({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
+
+        // custom handler when the spreadsheet is parsed
+        parsed: function (columns) {
+            // Read the columns into the data array
+            const data = [];
+            columns[0].forEach((code, i) => {
+                data.push({
+                    code: code.toUpperCase(),
+                    value: parseFloat(columns[2][i]),
+                    name: columns[1][i]
+                });
+            });
+
+            drawChart(data);
+        },
+
+        error: function (html, xhr) {
+            const chart = drawChart();
+            chart.showLoading('Error loading sample data: ' + xhr.status);
+        }
+
+    });
+
+})();

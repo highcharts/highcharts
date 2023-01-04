@@ -1,0 +1,114 @@
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 500px;
+    height: 500px;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+#support {
+    width: 250px;
+    height: 250px;
+}
+
+#support .title-container {
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+#support .title-container h1 {
+    margin: 2px 0 0 -90px;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+#support .title-container p {
+    margin: 2px 2px 2px -30px;
+    padding-left: 0;
+}
+
+#support .title-container p:nth-of-type(2) {
+    font-size: 18px;
+    padding-left: 130px;
+    margin-top: -20px;
+}
+
+#support .tip {
+    padding: 10px;
+    border-radius: 2px;
+    font-size: 16px;
+    background-color: #ffefec;
+    color: #b73c28;
+}
+
+@media screen  and (min-width: 300px) {
+    #support {
+        width: 300px;
+        height: 300px;
+    }
+
+    .title-container h1 {
+        margin: 2px 0 0 -70px;
+    }
+
+    .title-container p {
+        margin: 2px 2px 2px 0;
+        padding-left: 0;
+    }
+
+    .title-container p:nth-of-type(2) {
+        margin-top: -20px;
+    }
+}
+
+@media screen  and (min-width: 400px) {
+    #support {
+        width: 400px;
+        height: 400px;
+    }
+
+    .title-container {
+        padding: 10px;
+        width: 300px;
+        text-align: center;
+        color: #fff;
+        font-size: 18px;
+        font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    }
+
+    .title-container h1 {
+        line-height: 36px;
+        margin: 8px 0 0 -90px;
+        font-weight: bold;
+        font-size: 46px;
+    }
+
+    .title-container p {
+        margin: 2px;
+        padding-left: 20px;
+    }
+
+    .title-container p:nth-of-type(2) {
+        font-size: 24px;
+        padding-left: 230px;
+        margin-top: -30px;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    #support {
+        width: 500px;
+        height: 500px;
+    }
+}

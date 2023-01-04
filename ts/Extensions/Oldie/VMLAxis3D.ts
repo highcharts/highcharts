@@ -94,7 +94,11 @@ class VMLAxis3D {
         if (vml) {
             let el: (Highcharts.VMLElement|undefined);
 
-            (['backFrame', 'bottomFrame', 'sideFrame'] as Array<('backFrame'|'bottomFrame'|'sideFrame')>).forEach(
+            ([
+                'backFrame',
+                'bottomFrame',
+                'sideFrame'
+            ] as Array<('backFrame'|'bottomFrame'|'sideFrame')>).forEach(
                 function (prop): void {
                     el = vml[prop];
                     if (el) {

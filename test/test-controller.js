@@ -130,10 +130,10 @@ var TestController = /** @class */ (function () {
         this.triggerEvent('click', chartX, chartY, extra, debug);
     };
     TestController.prototype.createEvent = function (type, chartX, chartY, extra) {
+        var _a, _b;
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
         if (extra === void 0) { extra = void 0; }
-        var _a, _b;
         var chartOffset = Highcharts.offset(this.chart.container);
         var evt;
         if (document.createEvent) {

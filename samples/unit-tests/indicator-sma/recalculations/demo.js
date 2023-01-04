@@ -149,23 +149,38 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.xAxis[0].setExtremes(0, 30);
     const yBefore = chart.series[1].points[0].y;
 
-    chart.series[0].update({
-        type: 'ohlc',
-        data: [
-            [20, 30, 10, 125],
-            [20, 30, 10, 123],
-            [20, 30, 10, 121],
-            [20, 30, 10, 125],
-            [20, 30, 10, 126],
-            [20, 30, 10, 123],
-            [20, 30, 10, 127],
-            [20, 30, 10, 122],
-            [20, 30, 10, 122],
-            [20, 30, 10, 123],
-            [20, 30, 10, 125],
-            [20, 30, 10, 126]
-        ]
-    });
+    chart.series[1].update(
+        { name: 'TEST', dataGrouping: { } },
+        false
+    );
+
+    chart.series[0].update(
+        {
+            type: 'ohlc',
+            data: [
+                [20, 30, 10, 125],
+                [20, 30, 10, 123],
+                [20, 30, 10, 121],
+                [20, 30, 10, 125],
+                [20, 30, 10, 126],
+                [20, 30, 10, 123],
+                [20, 30, 10, 127],
+                [20, 30, 10, 122],
+                [20, 30, 10, 122],
+                [20, 30, 10, 123],
+                [20, 30, 10, 125],
+                [20, 30, 10, 126]
+            ]
+        },
+        false
+    );
+
+    assert.ok(
+        true,
+        '#16670: Update without redraw should not throw errors.'
+    );
+
+    chart.redraw();
 
     assert.notStrictEqual(
         chart.series[1].points[0].y,
@@ -282,5 +297,36 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             secondChart.series[1].processedXData.length - 1
         ],
         'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
+    );
+});
+
+QUnit.test('Order of series and indicators, #15892.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        navigator: {
+            enabled: false
+        },
+        series: [{
+            id: 'main',
+            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
+        },
+        {
+            type: 'sma',
+            linkedTo: 'main',
+            params: {
+                period: 4
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series.length,
+        2, // main, sma
+        `When an indicator is declared before the main series,
+        both should be initialized.`
+    );
+    assert.ok(
+        chart.series[0].processedXData.length,
+        `When an indicator is declared before the main series,
+        indicator data should be procesed.`
     );
 });

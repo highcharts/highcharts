@@ -1,0 +1,35 @@
+
+<script>
+/* Optional: IE polyfill
+if (typeof CustomEvent !== 'function') {
+    function CustomEvent(event, params) {
+        params = params || { bubbles: false, cancelable: false, detail: undefined }
+        var evt = document.createEvent("CustomEvent")
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail)
+        return evt
+    }
+    CustomEvent.prototype = window.Event.prototype;
+    window.CustomEvent = CustomEvent;
+}
+*/
+
+// This event is attached to the window object before loading Highcharts, and
+// will fire immediately after loading each module. Thus allowing mutation of
+// members before they are loaded into subsequent modules.
+window.addEventListener('HighchartsModuleLoaded', function(e) {
+    if (e.detail.path === 'Core/FormatUtilities.js') {
+        // The original function
+        const numberFormat = e.detail.module.numberFormat;
+
+        // A stupid proof of concept - modify all formatted numbers
+        e.detail.module.numberFormat = function () {
+            const n = numberFormat.apply(this, arguments);
+            return '~' + n;
+        }
+    }
+});
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container"></div>

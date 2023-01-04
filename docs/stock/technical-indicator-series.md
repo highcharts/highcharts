@@ -86,10 +86,12 @@ All Overlay type technical indicators (the ones listed in the left column of the
 ```js
 yAxis: [{
   // Main series yAxis:
-  height: '50%'}, {
+  height: '50%'
+}, {
   // yAxis for Stochastic technical indicator:
   top: '50%',
-  height: '50%'}]
+  height: '50%'
+}]
 ```
 
 2. Bind indicator to this yAxis:
@@ -113,6 +115,7 @@ Some of the technical indicators require two series for calculations. Here is a 
 *   Accumulation/Distribution
 *   Chaikin Oscillator
 *   CMF
+*   Klinger oscillator
 *   MFI
 *   OBV (On Balance Volume)
 *   Volume by Price

@@ -1,0 +1,7 @@
+---
+ name: Highcharts Arc Diagram with fixed link weight
+ authors:
+   - Piotr Madej
+   - Grzegorz Blachliński
+ js_wrap: b
+...

@@ -1,5 +1,5 @@
 ---
- name: Senegal - Highmaps
- description: Highmaps demo
+ name: Senegal - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -223,4 +223,50 @@ QUnit.test('Set min/max size', function (assert) {
         15,
         'Bubble size is minSize for highest value, despite maxSize being computed smaller'
     );
+
+    // Reset options after the above tests
+    chart.series[0].update({
+        minSize: null,
+        maxSize: null
+    });
+
+    const initialBubbleZExtremes = chart.bubbleZExtremes,
+        initialWidth = chart.series[0].points[5].graphic.attr('width');
+
+    // Add the biggest bubble
+    chart.series[0].addPoint([2, 2, 100]);
+
+    assert.notStrictEqual(
+        initialWidth,
+        chart.series[0].points[5].graphic.attr('width'),
+        'After adding a new big point, other points should adjust size.'
+    );
+
+    chart.series[0].remove(false);
+
+    chart.addSeries({
+        type: 'bubble',
+        data: [
+            [0, 0, 0],
+            [1, 0, 1],
+            [2, 0, 2],
+            [3, 0, 3],
+            [4, 0, 4],
+            [5, 0, 5]
+        ]
+    });
+
+    assert.strictEqual(
+        initialWidth,
+        chart.series[0].points[5].graphic.attr('width'),
+        `After reseting a series, the bubble size should be the same as initial
+        size (chart.bubbleZExtremes should be recalculated), #17486.`
+    );
+
+    assert.deepEqual(
+        initialBubbleZExtremes,
+        chart.bubbleZExtremes,
+        `Newly added series and the chart bubbleZExtremes should not be polluted
+        by the previous series that has been removed, #17486.`
+    );
 });

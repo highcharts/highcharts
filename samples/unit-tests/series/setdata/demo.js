@@ -585,7 +585,7 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
 });
 
 QUnit.test(
-    "Hidden series after setData should call 'updatedData' callback just once. #6012",
+    'Hidden series after setData should call \'updatedData\' callback just once. #6012',
     function (assert) {
         var iterator = 0,
             chart = Highcharts.chart(
@@ -619,7 +619,7 @@ QUnit.test(
         chart.series[1].hide();
         chart.series[1].show();
 
-        assert.deepEqual(iterator, 1, "Just one 'updatedData' call");
+        assert.deepEqual(iterator, 1, 'Just one \'updatedData\' call');
     }
 );
 
@@ -648,3 +648,158 @@ QUnit.test('#8795: Hovering after zooming in and using setData with redraw set t
 
     assert.ok(true, 'It should not throw');
 });
+
+QUnit.test(
+    `The setData method with the allowMutatingData property set to false
+    should not mutate the data, #4259.`,
+    assert => {
+        const oriData = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            referenceArray = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            newData = [0, 2, 4, 6, 8],
+            chart = Highcharts.chart('container', {
+                chart: {
+                    allowMutatingData: false
+                },
+                series: [{
+                    data: oriData
+                }]
+            });
+
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Original data array should not be modified after initial render.'
+        );
+
+        chart.series[0].setData(newData);
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'The setData should not mutate the original data array.'
+        );
+
+        chart.series[0].points[0].remove();
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Removing point should not mutate the original data array.'
+        );
+
+        chart.series[0].points[0].update({
+            x: -1,
+            y: -1
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Updating point should not mutate the original data array.'
+        );
+
+        chart.series[0].addPoint({
+            x: 10,
+            y: 10
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Adding point should not mutate the original data array.'
+        );
+
+        chart.series[0].update({
+            data: [5, 4, 3, 2, 1]
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Updating series should not mutate the original data array.'
+        );
+
+        chart.update({
+            series: [{
+                data: [8, 9, 8, 9, 8, 9, 8]
+            }]
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Updating chart should not mutate the original data array.'
+        );
+
+        chart.series[0].remove();
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Removing series should not mutate the original data array.'
+        );
+    }
+);
+
+QUnit.test(
+    `Updating the allowMutatingData property to false and setting data
+    should not mutate the original data, #4259.`,
+    assert => {
+        const oriData = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            referenceArray = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            newData = [0, 2, 4, 6, 8],
+            chart = Highcharts.chart('container', {
+                series: [{
+                    data: oriData
+                }]
+            });
+
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            'Original data array should not be modified after initial render.'
+        );
+
+        chart.update({
+            chart: {
+                allowMutatingData: false
+            }
+        });
+        chart.series[0].setData(newData);
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `After updating the allowMutatingData property to false,
+            setData should not mutate the original data.`
+        );
+    }
+);

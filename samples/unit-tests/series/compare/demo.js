@@ -34,7 +34,7 @@ QUnit.test('Compare in candlesticks', function (assert) {
         yAxis = chart.yAxis[0];
 
     assert.strictEqual(
-        chart.series[0].compareValue,
+        chart.series[0].dataModify.compareValue,
         points[0].close,
         'Compare by close'
     );
@@ -113,7 +113,7 @@ QUnit.test('Compare with the correct compareValue', function (assert) {
     var series = chart.series[0];
 
     assert.strictEqual(
-        series.compareValue,
+        series.dataModify.compareValue,
         series.points[0][series.options.pointValKey],
         'compareValue is correct'
     );
@@ -149,7 +149,7 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[1].compareValue,
+        chart.series[1].dataModify.compareValue,
         13,
         'compareValue is correct'
     );
@@ -180,5 +180,43 @@ QUnit.test('Compare with one single value', assert => {
         chart.yAxis[0].tickPositions,
         [0],
         'The Y axis should have one tick at 0 (#12058)'
+    );
+});
+
+QUnit.test('Compare multi line indicators, #15867.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
+        },
+        series: [{
+            type: 'line',
+            id: 'aapl',
+            name: 'AAPL Stock Price',
+            data: [1, 2, 3, 4, 5]
+        }, {
+            type: 'bb',
+            linkedTo: 'aapl',
+            params: {
+                period: 3
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(0) - chart.plotTop,
+        chart.series[1].points[0].plotMiddle,
+        'The first point of the main line should be located at 0 on yAxis.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(2) - chart.plotTop,
+        chart.series[1].points[0].plotTop,
+        'The first point of the top line should be located at 2 on yAxis.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(-2) - chart.plotTop,
+        chart.series[1].points[0].plotBottom,
+        'The first point of the bottom line should be located at -2 on yAxis.'
     );
 });

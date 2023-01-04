@@ -1,80 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['fr-t', 0],
-    ['fr-h', 1],
-    ['fr-e', 2],
-    ['fr-r', 3],
-    ['fr-u', 4],
-    ['fr-n', 5],
-    ['fr-p', 6],
-    ['fr-o', 7],
-    ['fr-v', 8],
-    ['fr-s', 9],
-    ['fr-g', 10],
-    ['fr-k', 11],
-    ['fr-a', 12],
-    ['fr-c', 13],
-    ['fr-f', 14],
-    ['fr-l', 15],
-    ['fr-d', 16],
-    ['fr-b', 17],
-    ['fr-i', 18],
-    ['fr-q', 19],
-    ['fr-j', 20],
-    ['fr-m', 21],
-    ['fr-re', 22],
-    ['fr-yt', 23],
-    ['fr-gf', 24],
-    ['fr-mq', 25],
-    ['fr-gp', 26]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/fr-2015/fr-all-2015'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-all-2015.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['fr-t', 10], ['fr-h', 11], ['fr-e', 12], ['fr-r', 13], ['fr-u', 14],
+        ['fr-n', 15], ['fr-p', 16], ['fr-o', 17], ['fr-v', 18], ['fr-s', 19],
+        ['fr-g', 20], ['fr-k', 21], ['fr-a', 22], ['fr-c', 23], ['fr-f', 24],
+        ['fr-l', 25], ['fr-d', 26], ['fr-b', 27], ['fr-i', 28], ['fr-q', 29],
+        ['fr-j', 30], ['fr-m', 31], ['fr-re', 32], ['fr-yt', 33], ['fr-gf', 34],
+        ['fr-mq', 35], ['fr-gp', 36]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-all-2015.js">France (2015)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-all-2015.topo.json">France (2015)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }, {
-        name: 'Separators',
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['historical/countries/fr-2015/fr-all-2015'], 'mapline'),
-        color: 'silver',
-        nullColor: 'silver',
-        showInLegend: false,
-        enableMouseTracking: false
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

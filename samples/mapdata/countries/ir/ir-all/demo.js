@@ -1,77 +1,61 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ir-5428', 0],
-    ['ir-hg', 1],
-    ['ir-bs', 2],
-    ['ir-kb', 3],
-    ['ir-fa', 4],
-    ['ir-es', 5],
-    ['ir-sm', 6],
-    ['ir-go', 7],
-    ['ir-mn', 8],
-    ['ir-th', 9],
-    ['ir-mk', 10],
-    ['ir-ya', 11],
-    ['ir-cm', 12],
-    ['ir-kz', 13],
-    ['ir-lo', 14],
-    ['ir-il', 15],
-    ['ir-ar', 16],
-    ['ir-qm', 17],
-    ['ir-hd', 18],
-    ['ir-za', 19],
-    ['ir-qz', 20],
-    ['ir-wa', 21],
-    ['ir-ea', 22],
-    ['ir-bk', 23],
-    ['ir-gi', 24],
-    ['ir-kd', 25],
-    ['ir-kj', 26],
-    ['ir-kv', 27],
-    ['ir-ks', 28],
-    ['ir-sb', 29],
-    ['ir-ke', 30],
-    ['ir-al', 31]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ir/ir-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ir/ir-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ir-5428', 10], ['ir-hg', 11], ['ir-bs', 12], ['ir-kb', 13],
+        ['ir-fa', 14], ['ir-es', 15], ['ir-sm', 16], ['ir-go', 17],
+        ['ir-mn', 18], ['ir-th', 19], ['ir-mk', 20], ['ir-ya', 21],
+        ['ir-cm', 22], ['ir-kz', 23], ['ir-lo', 24], ['ir-il', 25],
+        ['ir-ar', 26], ['ir-qm', 27], ['ir-hd', 28], ['ir-za', 29],
+        ['ir-qz', 30], ['ir-wa', 31], ['ir-ea', 32], ['ir-bk', 33],
+        ['ir-gi', 34], ['ir-kd', 35], ['ir-kj', 36], ['ir-kv', 37],
+        ['ir-ks', 38], ['ir-sb', 39], ['ir-ke', 40], ['ir-al', 41]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ir/ir-all.js">Iran</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ir/ir-all.topo.json">Iran</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

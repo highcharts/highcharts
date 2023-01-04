@@ -1,141 +1,291 @@
-// Morph an SVG element into a different type of element
-Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
-    const getPath = shape => {
-        const totalLength = shape.element.getTotalLength();
-        const count = 100;
-        const step = totalLength / count;
-        const points = [];
-        for (let i = 0; i < count; i++) {
-            points.push(shape.element.getPointAtLength(i * step));
-        }
-        const path = points.reduce((path, point) => {
-            path.push(path.length === 0 ? 'M' : 'L');
-            path.push(point.x, point.y);
+(function (H) {
+
+    const {
+        addEvent,
+        animObject,
+        Chart,
+        extend,
+        Series,
+        seriesTypes,
+        SVGElement,
+        Tick,
+        wrap
+    } = H;
+
+    class Morpher extends Highcharts.SVGElement {}
+
+    // Morph an SVG element into a different type of element
+    Highcharts.SVGElement.prototype.morph = function () {
+        // Return the point that is closest to an imaginary point directly above the
+        // shape. To avoid rotation when morphing.
+        const alignToTopPoint = (points, bBox) => {
+            // Find the point that is closest to an imaginary point directly above
+            // the bBox.
+            const topPoint = {
+                x: bBox.x + bBox.width / 2,
+                y: bBox.y - 100
+            };
+            let closestIdx;
+            let closestDist = Infinity;
+            for (let i = 0; i < points.length; i++) {
+                const dist = Math.pow(points[i].x - topPoint.x, 2) +
+                    Math.pow(points[i].y - topPoint.y, 2);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestIdx = i;
+                }
+            }
+            // Remove the points before the top point
+            const head = points.splice(0, closestIdx);
+            // And apply them at the end
+            points.push(...head);
+        };
+
+        const getPath = element => {
+            const totalLength = element.getTotalLength(),
+                count = 100,
+                points = [];
+            for (let i = 0; i < count; i++) {
+                points.push(
+                    element.getPointAtLength(i * totalLength / count)
+                );
+            }
+            alignToTopPoint(points, element.getBBox());
+            const path = points.map((point, i) => ([
+                i === 0 ? 'M' : 'L',
+                point.x,
+                point.y
+            ]));
+            path.push(['Z']);
             return path;
-        }, []);
-        return path.concat('z');
+        };
+
+        // The element is not yet given a layout, skip it for now
+        try {
+            if (!this.element || this.element.getTotalLength() === 0) {
+                return false;
+            }
+        } catch {
+            return false;
+        }
+
+        // Unset
+        const morphFrom = this.morphFrom;
+        delete this.morphFrom;
+
+        this.element.style.opacity = 0;
+
+        // Add a temporary morpher path element next to this element
+        setTimeout(() => {
+            const morpher = new Morpher();
+            morpher.init(this.renderer, 'path');
+            morpher
+                .attr({
+                    d: getPath(morphFrom),
+                    fill: this.element.getAttribute('fill'),
+                    stroke: this.element.getAttribute('stroke'),
+                    'stroke-width': this.element.getAttribute('stroke-width')
+                })
+                .add(this.parentGroup);
+
+            morpher.animate({
+                d: getPath(this.element)
+            }, extend(
+                animObject(this.renderer.globalAnimation),
+                {
+                    complete: () => {
+                        this.element.style.opacity = 1;
+                        morpher.destroy();
+                        morphFrom.remove();
+                    }
+                }
+            ));
+
+
+            morphFrom.style.opacity = 0;
+        }, 0);
     };
 
-    const newShape = this.renderer[shapeType](shapeArgs)
-        .attr({
-            fill: 'none'
-        })
-        .add();
-
-    const attribs = {
-        fill: this.element.getAttribute('fill'),
-        stroke: this.element.getAttribute('stroke'),
-        'stroke-width': this.element.getAttribute('stroke-width')
+    SVGElement.prototype.sleep = function (key) {
+        this.renderer.sleeping[key] = this.element;
     };
-    const interrim = this.renderer.path(getPath(this))
-        .attr(attribs)
-        .add();
 
-    this.element.remove();
-    this.element = interrim.element;
-    this.d = interrim.d; // For animation
+    const getSleepKey = point => [
+        'point',
+        point.series.name || point.series.index,
+        point.x
+    ].join(',');
 
-    this.animate({
-        d: getPath(newShape)
-    }, {
-        complete: () => {
-            newShape.attr(attribs);
-            this.element = newShape.element;
-            interrim.destroy();
-            delete newShape.element;
-            newShape.destroy();
+    addEvent(Chart, 'afterGetContainer', e => {
+        e.target.renderer.sleeping = {};
+        e.target.renderer.sleepKeyQueue = [];
+    });
+
+    addEvent(SVGElement, 'afterInit', function () {
+        if (!(this instanceof Morpher) && this.renderer.sleepKeyQueue) {
+            const sleepKey = this.renderer.sleepKeyQueue.shift();
+
+            // Wake up existing element with the same key
+            if (sleepKey) {
+                this.morphFrom = this.renderer.sleeping[sleepKey];
+            }
         }
     });
 
-    // Chainable
-    return this;
-};
+    wrap(SVGElement.prototype, 'afterSetters', function (proceed) {
+        proceed.call(this);
+        if (this.element && this.morphFrom && this.morph) {
+            this.morph();
+        }
+    });
 
-
-const ren = new Highcharts.Renderer(
-    document.getElementById('container'),
-    600,
-    400
-);
-
-const shape = ren.circle(100, 100, 50)
-    .attr({
-        stroke: 'rgb(255,0,0)',
-        'stroke-width': '2px',
-        fill: 'rgba(255,0,0,0.3)'
-    })
-    .add();
-
-document.getElementById('circle').addEventListener('click', () => {
-    shape
-        .morph('circle', {
-            x: 100,
-            y: 100,
-            r: 50
-        })
-        .animate({
-            stroke: 'rgb(255,0,0)',
-            fill: 'rgba(255,0,0,0.3)'
+    // Points
+    const wrapDrawPoints = function (proceed) {
+        this.points.forEach(point => {
+            this.chart.renderer.sleepKeyQueue.push(getSleepKey(point));
         });
-});
 
-document.getElementById('column').addEventListener('click', () => {
-    shape
-        .morph('rect', {
-            x: 100,
-            y: 100,
-            width: 10,
-            height: 100
-        })
-        .animate({
-            stroke: 'rgb(0,0,255)',
-            fill: 'rgba(0,0,255,0.3)'
-        });
-});
+        proceed.call(this);
 
-document.getElementById('bar').addEventListener('click', () => {
-    shape
-        .morph('rect', {
-            x: 150,
-            y: 50,
-            width: 100,
-            height: 20
-        })
-        .animate({
-            stroke: 'rgb(0,0,255)',
-            fill: 'rgba(0,0,255,0.3)'
-        });
-});
-
-document.getElementById('marker').addEventListener('click', () => {
-    shape
-        .morph('circle', {
-            x: 200,
-            y: 300,
-            r: 3
-        })
-        .animate({
-            stroke: 'rgb(0,255,0)',
-            fill: 'rgba(0,255,0,0.3)'
-        });
-});
-
-document.getElementById('arc').addEventListener('click', () => {
-    shape
-        .morph('path', Highcharts.SVGRenderer.prototype.symbols.arc(
-            200,
-            50,
-            100,
-            100,
-            {
-                innerR: 0,
-                r: 100,
-                start: 0.2,
-                end: 0.9
+        this.points.forEach(point => {
+            const { graphic } = point;
+            if (graphic) {
+                graphic.destroy = () => {
+                    graphic.sleep(getSleepKey(point));
+                    delete graphic.element;
+                    SVGElement.prototype.destroy.call(graphic);
+                };
             }
-        ))
-        .animate({
-            stroke: 'rgb(0,128,128)',
-            fill: 'rgba(0,128,128,0.3)'
         });
+    };
+    wrap(seriesTypes.column.prototype, 'drawPoints', wrapDrawPoints);
+    wrap(seriesTypes.pie.prototype, 'drawPoints', wrapDrawPoints);
+    wrap(Series.prototype, 'drawPoints', wrapDrawPoints);
+
+    // Ticks
+    /*
+    wrap(Tick.prototype, 'renderGridLine', function (proceed) {
+        const axis = this.axis,
+            chart = axis.chart,
+            index = chart[axis.coll].indexOf(axis),
+            sleepKey = `gridline-${this.axis.coll}-${index}-${this.pos}`;
+
+        this.axis.chart.renderer.sleepKeyQueue.push(sleepKey);
+
+        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        const svgElement = this.gridLine;
+        if (svgElement) {
+            svgElement.destroy = () => {
+                svgElement.sleep(sleepKey);
+                delete svgElement.element;
+                SVGElement.prototype.destroy.call(svgElement);
+            };
+        }
+    });
+    wrap(Tick.prototype, 'renderMark', function (proceed) {
+        const axis = this.axis,
+            chart = axis.chart,
+            index = chart[axis.coll].indexOf(axis),
+            sleepKey = `tickmark-${this.axis.coll}-${index}-${this.pos}`;
+
+        this.axis.chart.renderer.sleepKeyQueue.push(sleepKey);
+
+        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        const svgElement = this.mark;
+        if (svgElement) {
+            svgElement.destroy = () => {
+                svgElement.sleep(sleepKey);
+                delete svgElement.element;
+                SVGElement.prototype.destroy.call(svgElement);
+            };
+        }
+    });
+    */
+
+    addEvent(Chart, 'redraw', e => {
+        const sleeping = e.target.renderer.sleeping;
+        Object.keys(sleeping).forEach(key => {
+            delete sleeping[key];
+        });
+        e.target.renderer.sleepKeyQueue.length = 0;
+
+    });
+}(Highcharts));
+
+// /////////////////////////////////////////////////////////////////////////////
+
+const chart = Highcharts.chart('chart-container', {
+    chart: {
+        animation: {
+            duration: 1000
+        }
+    },
+    title: {
+        text: 'Morphed chart'
+    },
+    accessibility: {
+        enabled: false
+    },
+    colors: ['#cad2c5', '#84a98c', '#52796f', '#354f52'],
+    xAxis: {
+        showEmpty: false
+    },
+    yAxis: {
+        showEmpty: false
+    },
+    series: [{
+        type: 'column',
+        data: [1, 3, 2, 4],
+        colorByPoint: true
+    }]
 });
+
+document
+    .querySelector('#button-group-types')
+    .querySelectorAll('button')
+    .forEach(button => {
+        button.addEventListener('click', () => {
+            chart.series[0].update({ type: button.dataset.type }, false);
+            chart.redraw();
+        });
+    });
+
+document.getElementById('non-inverted')
+    .addEventListener('click', () => {
+        chart.update({
+            chart: {
+                inverted: false
+            }
+        });
+    });
+
+
+document.getElementById('inverted')
+    .addEventListener('click', () => {
+        chart.update({
+            chart: {
+                inverted: true
+            }
+        });
+    });
+
+document.getElementById('non-polar')
+    .addEventListener('click', () => {
+        chart.update({
+            chart: {
+                polar: false
+            }
+        });
+    });
+
+
+document.getElementById('polar')
+    .addEventListener('click', () => {
+        chart.update({
+            chart: {
+                polar: true
+            }
+        });
+    });

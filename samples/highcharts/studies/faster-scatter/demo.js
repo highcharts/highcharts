@@ -12,6 +12,7 @@
             this.series = series;
             this.x = options[0];
             this.y = options[1];
+            this.options = options;
             return this;
         },
         pointAttr: {}
@@ -162,7 +163,7 @@ for (var i = 0; i < 50000; i += 1) {
 }
 
 var start = +new Date();
-//console.profile('scatter');
+// console.profile('scatter');
 Highcharts.chart('container', {
 
     xAxis: {
@@ -204,7 +205,7 @@ Highcharts.chart('container', {
     }]
 
 }, function (chart) {
-    //console.profileEnd('scatter');
+    // console.profileEnd('scatter');
     chart.setTitle(null, {
         text: 'Rendered in ' + (new Date() - start) + ' ms by Highcharts'
     });

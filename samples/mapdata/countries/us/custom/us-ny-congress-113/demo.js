@@ -1,72 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['us-ny-11', 0],
-    ['us-ny-21', 1],
-    ['us-ny-01', 2],
-    ['us-ny-07', 3],
-    ['us-ny-05', 4],
-    ['us-ny-24', 5],
-    ['us-ny-16', 6],
-    ['us-ny-17', 7],
-    ['us-ny-15', 8],
-    ['us-ny-23', 9],
-    ['us-ny-08', 10],
-    ['us-ny-12', 11],
-    ['us-ny-18', 12],
-    ['us-ny-02', 13],
-    ['us-ny-10', 14],
-    ['us-ny-25', 15],
-    ['us-ny-04', 16],
-    ['us-ny-13', 17],
-    ['us-ny-09', 18],
-    ['us-ny-19', 19],
-    ['us-ny-20', 20],
-    ['us-ny-22', 21],
-    ['us-ny-03', 22],
-    ['us-ny-26', 23],
-    ['us-ny-27', 24],
-    ['us-ny-14', 25],
-    ['us-ny-06', 26]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/us/custom/us-ny-congress-113'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/custom/us-ny-congress-113.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['us-ny-11', 10], ['us-ny-21', 11], ['us-ny-01', 12], ['us-ny-07', 13],
+        ['us-ny-05', 14], ['us-ny-24', 15], ['us-ny-16', 16], ['us-ny-17', 17],
+        ['us-ny-15', 18], ['us-ny-23', 19], ['us-ny-08', 20], ['us-ny-12', 21],
+        ['us-ny-18', 22], ['us-ny-02', 23], ['us-ny-10', 24], ['us-ny-25', 25],
+        ['us-ny-04', 26], ['us-ny-13', 27], ['us-ny-09', 28], ['us-ny-19', 29],
+        ['us-ny-20', 30], ['us-ny-22', 31], ['us-ny-03', 32], ['us-ny-26', 33],
+        ['us-ny-27', 34], ['us-ny-14', 35], ['us-ny-06', 36]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ny-congress-113.js">New York congressional districts</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ny-congress-113.topo.json">New York congressional districts</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

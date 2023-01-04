@@ -1,59 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['no-vf-701', 0],
-    ['no-vf-723', 1],
-    ['no-vf-706', 2],
-    ['no-vf-722', 3],
-    ['no-vf-711', 4],
-    ['no-vf-709', 5],
-    ['no-vf-714', 6],
-    ['no-vf-720', 7],
-    ['no-vf-716', 8],
-    ['no-vf-704', 9],
-    ['no-vf-713', 10],
-    ['no-vf-728', 11],
-    ['no-vf-702', 12],
-    ['no-vf-719', 13]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/no-2019/no-vf-all-2019'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/no-2019/no-vf-all-2019.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['no-vf-701', 10], ['no-vf-723', 11], ['no-vf-706', 12],
+        ['no-vf-722', 13], ['no-vf-711', 14], ['no-vf-709', 15],
+        ['no-vf-714', 16], ['no-vf-720', 17], ['no-vf-716', 18],
+        ['no-vf-704', 19], ['no-vf-713', 20], ['no-vf-728', 21],
+        ['no-vf-702', 22], ['no-vf-719', 23]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-vf-all-2019.js">Vestfold (2019)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-vf-all-2019.topo.json">Vestfold (2019)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

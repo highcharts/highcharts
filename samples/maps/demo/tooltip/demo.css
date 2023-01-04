@@ -1,10 +1,10 @@
 #container {
-    height: 500px; 
-    width: 800px; 
-    margin: 0 auto; 
+    height: 500px;
+    width: 800px;
+    margin: 0 auto;
 }
 
-.highcharts-tooltip>span {
+.highcharts-tooltip > span {
     padding: 10px;
     white-space: normal !important;
     width: 200px;

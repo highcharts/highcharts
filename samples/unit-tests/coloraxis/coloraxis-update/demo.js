@@ -57,6 +57,26 @@ QUnit.test('Color axis updates', function (assert) {
         undefined,
         'No extra undefined properties after update'
     );
+
+    chart.update({
+        legend: {
+            enabled: false
+        }
+    });
+    assert.notOk(
+        chart.colorAxis[0].visible,
+        '#16053: Color axis should be hidden after hiding legend'
+    );
+
+    chart.update({
+        legend: {
+            enabled: true
+        }
+    });
+    assert.ok(
+        chart.colorAxis[0].visible,
+        '#16053: Color axis should be visible after showing legend again'
+    );
 });
 
 QUnit.test('Color axis update with responsive rules', function (assert) {
@@ -155,7 +175,7 @@ QUnit.test('Adding color axis', function (assert) {
 
     assert.notOk(
         chart.series[0].legendItem,
-        '#15436: Series legendItem should have been destroyed'
+        '#15436: Series legendItem.label should have been destroyed'
     );
 
     chart.addColorAxis({});

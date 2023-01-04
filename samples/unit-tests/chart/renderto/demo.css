@@ -1,12 +1,14 @@
 #container {
-	display: none;
-	height: 300px;
-	width: 300px;
+    display: none;
+    height: 300px;
+    width: 300px;
 }
+
 #outer {
-	visibility: hidden;
+    visibility: hidden;
 }
+
 #outer-outer {
-	visibility: hidden;
-	display: none;
+    visibility: hidden;
+    display: none;
 }

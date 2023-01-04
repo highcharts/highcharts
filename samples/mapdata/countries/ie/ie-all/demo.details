@@ -1,5 +1,5 @@
 ---
- name: Ireland - Highmaps
- description: Highmaps demo
+ name: Ireland - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

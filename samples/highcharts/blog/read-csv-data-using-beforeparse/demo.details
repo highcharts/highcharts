@@ -1,0 +1,6 @@
+---
+ name: Read CSV data using beforeParse (RDA of B1, B2, and B3 for men and women)
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

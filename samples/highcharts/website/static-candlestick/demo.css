@@ -1,0 +1,395 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+body {
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+
+.hero-container {
+    background: transparent;
+    width: 100%;
+    height: 450px;
+}
+
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    opacity: 100%;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+#hero {
+    width: 100%;
+}
+
+#hero .highcharts-background {
+    fill: #1f1836;
+    fill: transparent;
+}
+
+#hero .highcharts-axis-labels {
+    fill: #999;
+    font-size: 1em;
+}
+
+#hero .highcharts-label text {
+    fill: #fff;
+}
+
+#hero .highcharts-range-selector-buttons {
+    opacity: 0%;
+}
+
+#hero .highcharts-range-selector-buttons .highcharts-button.highcharts-button-pressed {
+    font-weight: bold;
+    fill: #a3edba;
+    stroke: #a3edba;
+    stroke-width: 3px;
+}
+
+#hero .highcharts-area-series.cover {
+    fill: url("#bg-gradient");
+    fill-opacity: 1;
+    opacity: 0%;
+    stroke: transparent;
+}
+
+#hero .highcharts-area-series.cover .highcharts-area {
+    fill-opacity: 1;
+}
+
+#hero .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+#hero .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+#hero .highcharts-tooltip {
+    filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
+}
+
+#hero .highcharts-tooltip-box {
+    stroke-width: 0;
+    fill: #fff;
+    fill-opacity: 1;
+}
+
+#hero .highcharts-tooltip .highcharts-header {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#hero .highcharts-tooltip text {
+    fill: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.transparent,
+#hero .highcharts-data-label-color-0 {
+    fill: transparent;
+    stroke: transparent;
+}
+
+#hero .highcharts-bubble-legend-symbol {
+    fill: #e4d354;
+}
+
+#hero .highcharts-bubble-legend-connectors {
+    stroke-width: 2;
+}
+
+#hero #hero .highcharts-bubble-legend-labels {
+    font-size: 14px;
+}
+
+#hero .highcharts-title {
+    fill: #fff;
+    font-size: 2em;
+    font-weight: 700;
+    opacity: 100%;
+}
+
+#hero .highcharts-point {
+    fill: #e4d354;
+    stroke-width: 1;
+}
+
+#hero .highcharts-plot-line {
+    fill: none;
+    stroke: #3f3e57;
+    stroke-width: 1px;
+    opacity: 0%;
+    transform-origin: top;
+    transition: transform 1s;
+    transform: rotate(0deg);
+}
+
+#hero .highcharts-data-label text {
+    fill: #fff;
+    font-weight: 300;
+}
+
+#hero .highcharts-candlestick-series .highcharts-point {
+    stroke: #8187e2;
+    fill: #8187e2;
+    fill-opacity: 0;
+}
+
+#hero .highcharts-candlestick-series .highcharts-point-up {
+    stroke: #da6d85;
+    fill: #da6d85;
+    fill-opacity: 0;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-green {
+    fill: #a3edba;
+    fill-opacity: 0.5;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-purple {
+    fill: #8087e8;
+    fill-opacity: 0.8;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-dpurple {
+    fill: #8087e8;
+    fill-opacity: 0.3;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-black {
+    fill: #fff;
+    fill-opacity: 0.1;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-gray {
+    fill: #ceced4;
+    fill-opacity: 0.6;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-brown {
+    fill: #cd8519;
+    fill-opacity: 0.3;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble-orange {
+    fill: #cd8519;
+    fill-opacity: 1;
+    stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
+}
+
+#hero .highcharts-bubble-series.bubble2-gray .highcharts-point.transparent,
+#hero .highcharts-bubble-series.bubble2-dgray .highcharts-point.transparent {
+    fill: transparent;
+    stroke: transparent;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-green {
+    fill: #a3edba;
+    fill-opacity: 0.5;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-purple {
+    fill: #8087e8;
+    fill-opacity: 0.8;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-dpurple {
+    fill: #8087e8;
+    fill-opacity: 0.3;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-yellow {
+    fill: #e1d369;
+    fill-opacity: 0.7;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series.bubble2-gray .highcharts-point {
+    fill: #ceced4;
+    fill-opacity: 0.6;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series.bubble2-dgray .highcharts-point {
+    fill: #ceced4;
+    fill-opacity: 0.3;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-white {
+    fill: #fff;
+    fill-opacity: 0.8;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-brown {
+    fill: #cd8519;
+    fill-opacity: 0.3;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-orange {
+    fill: #cd8519;
+    fill-opacity: 0.8;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-blue {
+    fill: #87b4e7;
+    fill-opacity: 0.8;
+    stroke: #fff;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-gray {
+    fill: #ceced4;
+    fill-opacity: 0.6;
+    stroke: #fff;
+}
+
+#hero .highcharts-link.highcharts-color-0,
+#hero .highcharts-link.highcharts-color-1,
+#hero .highcharts-link.highcharts-color-2,
+#hero .highcharts-link.highcharts-color-3,
+#hero .highcharts-link.highcharts-color-4,
+#hero .highcharts-link.highcharts-color-5,
+#hero .highcharts-link.highcharts-color-6,
+#hero .highcharts-link.highcharts-color-7,
+#hero .highcharts-link.highcharts-color-8,
+#hero .highcharts-link.highcharts-color-9 {
+    fill: url("#sankey-gradient");
+    stroke: transparent;
+    transition: opacity 2s;
+    opacity: 100%;
+}
+
+#hero .highcharts-node {
+    fill: #364b63;
+    stroke: transparent;
+}
+
+#hero .highcharts-node:nth-of-type(4),
+#hero .highcharts-node:nth-of-type(6) {
+    fill: #005195;
+}
+
+#hero .highcharts-node:nth-of-type(5) {
+    fill: #006bb8;
+}
+
+#hero .highcharts-node:nth-of-type(7) {
+    fill: #39a0ff;
+}
+
+#hero .highcharts-node:nth-of-type(8) {
+    fill: #8dc6ff;
+}
+
+#hero .highcharts-node:nth-of-type(11) {
+    fill: #c7e3ff;
+}
+
+#hero .highcharts-node:nth-of-type(2) {
+    fill: #0d8a6a;
+}
+
+#hero .highcharts-node:nth-of-type(9) {
+    fill: #00b081;
+}
+
+#hero .highcharts-node:nth-of-type(12) {
+    fill: #90e8e0;
+}
+
+#hero .highcharts-node:nth-of-type(13) {
+    fill: #43e7c6;
+}
+
+#hero .highcharts-node:nth-of-type(14) {
+    fill: #acf3e3;
+}
+
+#hero .highcharts-sankey-series .highcharts-data-label text {
+    fill: white;
+    text-shadow: none;
+    font-size: 1.4em;
+    transform: translateX(30px);
+}
+
+#hero .highcharts-data-label {
+    font-size: 1.2em;
+}
+
+#hero .highcharts-button {
+    transition: none;
+}
+
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(2) text,
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(9) text,
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(12) text,
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(13) text,
+#hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(14) text {
+    fill: white;
+    text-shadow: none;
+    font-size: 1.4em;
+    transform: translateX(-30px);
+}
+
+#hero .highcharts-navigator-series {
+    fill: #acf3e3;
+    stroke: #acf3e3;
+}
+
+#hero .highcharts-candlestick-series.candlestick {
+    transform-origin: center;
+    transform: scaleX(20) rotate(90deg);
+    transition: transform 1s;
+}
+
+#hero .highcharts-candlestick-series.candlestick.h {
+    transform: rotate(0deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #hero .highcharts-candlestick-series.candlestick {
+        transform-origin: center;
+        transform: none;
+        transition: transform 1s !important;
+    }
+}

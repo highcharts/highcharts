@@ -16,20 +16,15 @@
  *
  * */
 
-import type Chart from '../Chart/Chart';
 import type Series from './Series.js';
-import type SeriesOptions from './SeriesOptions';
-import type {
-    SeriesTypeOptions,
-    SeriesTypeRegistry
-} from './SeriesType';
+import type { SeriesTypeRegistry } from './SeriesType';
+
 import H from '../Globals.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
-    error,
     extendClass,
     merge
 } = U;
@@ -44,7 +39,7 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Properties
+     *  Properties
      *
      * */
 
@@ -59,42 +54,9 @@ namespace SeriesRegistry {
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Internal function to initialize an individual series.
-     * @private
-     */
-    export function getSeries(
-        chart: Chart,
-        options: DeepPartial<SeriesTypeOptions> = {}
-    ): Series {
-        const optionsChart = chart.options.chart,
-            type = (
-                options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType ||
-                ''
-            ),
-            SeriesClass: typeof Series = seriesTypes[type] as any;
-
-        // No such series type
-        if (!SeriesRegistry) {
-            error(17, true, chart as any, { missingModuleFor: type });
-        }
-
-        const series = new SeriesClass();
-
-        if (typeof series.init === 'function') {
-            series.init(chart, options);
-        }
-
-        return series;
-    }
 
     /**
      * Registers class pattern of a series.
@@ -103,22 +65,23 @@ namespace SeriesRegistry {
      */
     export function registerSeriesType(
         seriesType: string,
-        seriesClass: typeof Series
+        SeriesClass: typeof Series
     ): void {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
-            seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
+            seriesOptions = SeriesClass.defaultOptions,
+            seriesProto = SeriesClass.prototype;
 
-        if (!seriesClass.prototype.pointClass) {
-            seriesClass.prototype.pointClass = Point;
+        seriesProto.type = seriesType;
+
+        if (!seriesProto.pointClass) {
+            seriesProto.pointClass = Point;
         }
-
-        seriesClass.prototype.type = seriesType;
 
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
         }
 
-        seriesTypes[seriesType] = seriesClass;
+        seriesTypes[seriesType] = SeriesClass;
     }
 
     /**
@@ -174,28 +137,20 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass =
-                extendClass(Point, pointProto);
+            seriesTypes[type].prototype.pointClass = extendClass(
+                Point,
+                pointProto
+            ) as any;
         }
 
         return seriesTypes[type] as unknown as T;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-(H as AnyRecord).seriesType = SeriesRegistry.seriesType;
-
-/* *
- *
- *  Export
+ *  Default Export
  *
  * */
 

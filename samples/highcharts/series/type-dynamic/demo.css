@@ -9,6 +9,7 @@
     text-align: right;
     font-size: 0;
 }
+
 #button-row button {
     background: #eee;
     transition: background 150ms;
@@ -19,15 +20,19 @@
     margin-left: -1px;
     color: #555;
 }
+
 #button-row button:first-child {
     border-top-left-radius: 0.3em;
     border-bottom-left-radius: 0.3em;
 }
+
 #button-row button:last-child {
     border-top-right-radius: 0.3em;
     border-bottom-right-radius: 0.3em;
 }
-#button-row button:focus, #button-row button:hover {
+
+#button-row button:focus,
+#button-row button:hover {
     background: #ccc;
     outline: none;
 }

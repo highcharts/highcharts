@@ -17,7 +17,6 @@
  * */
 
 import type GlobalsLike from './GlobalsLike';
-import type Options from './Options';
 
 /* *
  *
@@ -26,14 +25,23 @@ import type Options from './Options';
  * */
 
 declare global {
+
     type AnyRecord = Record<string, any>;
+
+    type ArrowFunction = (...args: any) => any;
+
     type DeepPartial<T> = {
-        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
-    }
-    type DeepRecord<K extends keyof any, T> = {
-        [P in K]: (T|DeepRecord<K, T>);
-    }
+        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
+    };
+
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
+
+    type FunctionNamesOf<T> = keyof FunctionsOf<T>;
+
+    type FunctionsOf<T> = {
+        [K in keyof T as T[K] extends Function ? K : never]: T[K];
+    };
+
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
@@ -41,6 +49,7 @@ declare global {
             args?: (TArguments|IArguments)
         ): TReturn;
     }
+
     interface Element {
         /**
          * @private
@@ -57,12 +66,15 @@ declare global {
             value: (boolean|number|string)
         ): void;
     }
+
     interface HTMLElement {
         parentNode: HTMLElement;
     }
+
     interface Math {
         easeInOutSine(pos: number): number;
     }
+
     interface ObjectConstructor {
         /**
          * Sets the prototype of a specified object o to object proto or null.
@@ -72,6 +84,7 @@ declare global {
          */
         setPrototypeOf?<T>(o: T, proto: object | null): T;
     }
+
     interface SVGElement {
         /**
          * @private
@@ -80,36 +93,23 @@ declare global {
         cutHeight?: number;
         parentNode: SVGElement;
     }
+
     interface TouchList {
         changedTouches: Array<Touch>;
     }
-    /**
-     * @private
-     * @deprecated
-     * @todo: Rename UMD argument `win` to `window`
-     */
-    const win: Window|undefined;
+
+    namespace Intl {
+
+        interface DateTimeFormat {
+            formatRange(
+                startDate: Date,
+                endDate: Date
+            ): string;
+        }
+
+    }
+
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-/**
- * @private
- * @deprecated
- * @todo Rename UMD argument `win` to `window`; move code to `Globals.win`
- */
-const w = (
-    typeof win !== 'undefined' ?
-        win :
-        typeof window !== 'undefined' ?
-            window :
-            {}
-// eslint-disable-next-line node/no-unsupported-features/es-builtins
-) as (Window&typeof globalThis);
 
 /* *
  *
@@ -119,6 +119,7 @@ const w = (
 
 /**
  * Shared Highcharts properties.
+ * @private
  */
 namespace Globals {
 
@@ -131,12 +132,18 @@ namespace Globals {
     export const SVG_NS = 'http://www.w3.org/2000/svg',
         product = 'Highcharts',
         version = '@product.version@',
-        win = w,
+        win = (
+            typeof window !== 'undefined' ?
+                window :
+                {}
+        ) as (Window&typeof globalThis), // eslint-disable-line node/no-unsupported-features/es-builtins
         doc = win.document,
         svg = (
             doc &&
             doc.createElementNS &&
-            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
+            !!(
+                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
+            ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,
@@ -223,17 +230,8 @@ namespace Globals {
      *
      * */
 
+    // eslint-disable-next-line prefer-const
     export let chartCount = 0;
-
-    /**
-     * Theme options that should get applied to the chart. In module mode it
-     * might not be possible to change this property because of read-only
-     * restrictions, instead use {@link Highcharts.setOptions}.
-     *
-     * @name Highcharts.theme
-     * @type {Highcharts.Options}
-     */
-    export let theme: (Options|undefined);
 
 }
 
@@ -244,3 +242,21 @@ namespace Globals {
  * */
 
 export default Globals as unknown as GlobalsLike;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Theme options that should get applied to the chart. In module mode it
+ * might not be possible to change this property because of read-only
+ * restrictions, instead use {@link Highcharts.setOptions}.
+ *
+ * @deprecated
+ * @name Highcharts.theme
+ * @type {Highcharts.Options}
+ */
+
+(''); // keeps doclets above in JS file

@@ -1,0 +1,54 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+input:focus {
+    outline: 3px solid red;
+}
+
+caption {
+    padding-bottom: 5px;
+    font-family: Verdana, sans-serif;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #555;
+}
+
+table {
+    font-family: Verdana, sans-serif;
+    font-size: 12pt;
+    color: #555;
+    border-collapse: collapse;
+    border: 3px solid #ccc;
+    margin: 2px auto;
+}
+
+tr {
+    border-bottom: 2px solid #eee;
+}
+
+th {
+    border-left: 2px solid #eee;
+    border-right: 2px solid #eee;
+    padding: 12px 15px;
+    border-collapse: collapse;
+}
+
+th[scope="col"] {
+    background-color: #ffe;
+}
+
+th[scope="row"] {
+    background-color: #f0fcff;
+    text-align: left;
+}
+
+td {
+    border-left: 2px solid #eee;
+    border-right: 2px solid #eee;
+    padding: 12px 15px;
+    border-collapse: collapse;
+}

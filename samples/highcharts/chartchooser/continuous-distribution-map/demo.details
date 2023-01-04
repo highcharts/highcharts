@@ -1,0 +1,6 @@
+---
+ name: "Continuous data distribution (US Counties unemployment rates, January 2018)"
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

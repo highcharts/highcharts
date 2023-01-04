@@ -1,3 +1,4 @@
+// Data retrieved from https://yearbook.enerdata.net/electricity/world-electricity-production-statistics.html
 Highcharts.chart('container', {
     chart: {
         type: 'column',
@@ -11,11 +12,11 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Total fruit consumption, grouped by gender'
+        text: ' Electricity production in countries, grouped by continent',
+        align: 'left'
     },
 
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas'],
         labels: {
             skew3d: true,
             style: {
@@ -28,8 +29,11 @@ Highcharts.chart('container', {
         allowDecimals: false,
         min: 0,
         title: {
-            text: 'Number of fruits',
-            skew3d: true
+            text: 'TWh',
+            skew3d: true,
+            style: {
+                fontSize: '16px'
+            }
         }
     },
 
@@ -39,6 +43,9 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
+        series: {
+            pointStart: 2016
+        },
         column: {
             stacking: 'normal',
             depth: 40
@@ -46,20 +53,20 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2],
-        stack: 'male'
+        name: 'South Korea',
+        data: [563, 567, 590, 582, 571],
+        stack: 'Asia'
     }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5],
-        stack: 'male'
+        name: 'Germany',
+        data: [650, 654, 643, 612, 572],
+        stack: 'Europe'
     }, {
-        name: 'Jane',
-        data: [2, 5, 6, 2, 1],
-        stack: 'female'
+        name: 'Saudi Arabia',
+        data: [368, 378, 378, 367, 363],
+        stack: 'Asia'
     }, {
-        name: 'Janet',
-        data: [3, 0, 4, 4, 3],
-        stack: 'female'
+        name: 'France',
+        data: [564, 562, 582, 571, 533],
+        stack: 'Europe'
     }]
 });

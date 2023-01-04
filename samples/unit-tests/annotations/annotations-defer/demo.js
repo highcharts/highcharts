@@ -35,7 +35,7 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
 
         annotations: [
             {
-                //animation object is not defined - defer value is inherited from series.animation
+                // animation object is not defined - defer value is inherited from series.animation
                 labels: [
                     {
                         point: 'max',
@@ -76,13 +76,13 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
 
     assert.strictEqual(
         chart.annotations[0].animationConfig.defer,
-        chart.userOptions.plotOptions.series.animation.duration - 500, //500 is an animObject default value for duration
+        chart.userOptions.plotOptions.series.animation.duration - 500, // 500 is an animObject default value for duration
         'For this annotations the duration time should be the same as set in plotOptions.'
     );
 
     assert.strictEqual(
         chart.annotations[1].graphic.visibility,
-        'visible',
+        'inherit',
         'Annotation should be render immediately.'
     );
 

@@ -23,7 +23,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -75,11 +75,14 @@ class BoxPlotSeries extends ColumnSeries {
 
     public static defaultOptions: BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
-        threshold: null as any,
+        /**
+         * @type {number|null}
+         */
+        threshold: null,
 
         tooltip: {
             pointFormat:
-                '<span style="color:{point.color}">\u25CF</span> <b> ' +
+                '<span style="color:{point.color}">\u25CF</span> <b>' +
                 '{series.name}</b><br/>' +
                 'Maximum: {point.high}<br/>' +
                 'Upper quartile: {point.q3}<br/>' +
@@ -116,7 +119,7 @@ class BoxPlotSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        fillColor: palette.backgroundColor,
+        fillColor: Palette.backgroundColor,
 
         /**
          * The width of the line surrounding the box. If any of
@@ -181,6 +184,7 @@ class BoxPlotSeries extends ColumnSeries {
                 brightness: -0.3
             }
         },
+        */
 
         /**
          * The color of the stem, the vertical line extending from the box to
@@ -603,7 +607,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype Properties
+ * Class Prototype
  *
  * */
 interface BoxPlotSeries extends ColumnSeries {

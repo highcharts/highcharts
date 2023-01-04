@@ -1,5 +1,5 @@
 ---
- name: Costa Rica - Highmaps
- description: Highmaps demo
+ name: Costa Rica - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

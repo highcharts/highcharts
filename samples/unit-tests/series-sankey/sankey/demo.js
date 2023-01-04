@@ -219,6 +219,23 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         -1,
         'Tooltip ok'
     );
+
+    series.nodes[0].update({
+        color: 'red'
+    });
+
+    // After update, nodes should still use nodeFormat etc
+    assert.strictEqual(
+        series.nodes[0].dataLabel.text.textStr,
+        'Nodez',
+        'Explicit nodeFormat'
+    );
+    series.nodes[0].onMouseOver();
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('Nodez'),
+        -1,
+        'Tooltip ok'
+    );
 });
 
 QUnit.test('Sankey column option', function (assert) {
@@ -527,6 +544,18 @@ QUnit.test('Sankey and circular data', function (assert) {
         numberOfCurves > 4,
         'The link should have a complex, circular structure, ' +
             'not direct (#12882)'
+    );
+
+    chart.series[0].setData([
+        ['a', 'a', 1]
+    ]);
+    chart.series[0].redraw();
+
+    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    assert.deepEqual(
+        [shapeArgs.x, shapeArgs.y],
+        [0, 0],
+        '#16080: Node should still be in top left corner after redraw'
     );
 });
 
@@ -852,5 +881,88 @@ QUnit.test('#14584: Sankey overlapping datalabels', assert => {
     assert.ok(
         chart.series[0].points.some(p => p.dataLabel.attr('opacity') === 0),
         'Some of the point datalabels should be hidden'
+    );
+});
+
+QUnit.test('Sankey and point updates', assert => {
+    const linkConfig = { from: 'A', to: 'B', weight: 1 },
+        chart = Highcharts.chart('container', {
+            series: [{
+                data: [Highcharts.merge(linkConfig)], // use a shallow copy
+                type: 'sankey',
+                nodes: [{
+                    id: 'A',
+                    color: 'red'
+                }]
+            }]
+        }),
+        series = chart.series[0];
+
+    // Test 1:
+    // Uodate a node that exists in a config
+    series.nodes[0].update({
+        color: 'black'
+    });
+
+    assert.strictEqual(
+        series.nodes[0].graphic.attr('fill'),
+        'black',
+        'After an update, node defined in options should use new color.'
+    );
+
+    assert.deepEqual(
+        series.options.nodes[0].color,
+        'black',
+        `After an update,
+        node defined in options should have correct color in options.`
+    );
+
+    assert.deepEqual(
+        series.options.data[0],
+        linkConfig,
+        `Updating a node defined in options
+        should not replace a link config (#11712).`
+    );
+
+    // Test 2:
+    // Uodate a node that DOES NOT exist in a config
+    series.nodes[1].update({
+        color: 'green'
+    });
+
+    assert.strictEqual(
+        series.options.nodes.length,
+        2,
+        `Updating a node without options,
+        should create a new entry in options.`
+    );
+
+    assert.strictEqual(
+        series.nodes[1].graphic.attr('fill'),
+        'green',
+        'After an update, node without config should use new color.'
+    );
+
+    assert.deepEqual(
+        series.options.nodes[1].color,
+        'green',
+        `After an update,
+        node without config should have correct color in options.`
+    );
+
+    assert.deepEqual(
+        series.options.data[0],
+        linkConfig,
+        `Updating a node without config
+        should not replace a link config (#11712).`
+    );
+
+    assert.strictEqual(
+        series.options.data.length,
+        1,
+        `
+        Udpating a node with higher index than available in series.options.data
+        should not add any elements to the series.options.data
+        `
     );
 });

@@ -6,36 +6,16 @@ QUnit.test('Categorized', function (assert) {
 
         xAxis: {
             categories: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec'
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
             ]
         },
 
         series: [
             {
                 data: [
-                    29.9,
-                    0,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 0, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -379,9 +359,9 @@ QUnit.test('Pie chart, multiple', function (assert) {
 
     var csv = [
         '"Category","Categories","Subcategories"',
-        '"Animals",2',
+        '"Animals",2,',
         '"Cats",,1',
-        '"Plants",2',
+        '"Plants",2,',
         '"Dogs",,1',
         '"Potatoes",,1',
         '"Trees",,1'
@@ -646,14 +626,16 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
         ]
     });
 
-    assert.equal(
+    assert.deepEqual(
         chart
             .getTable()
             // Remove the extra attributes and caption tag that the
             // accessibility module added.
             .replace(/<table[^>]+>/g, '<table>')
-            .replace('<caption>Chart title</caption>', ''),
-        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Drop 2</th><th class=\"text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"empty\"></td><td class=\"number\">2</td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">3</td><td class=\"number\">3</td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">4</td><td class=\"number\">4</td></tr></tbody></table>',
+            .replace('<caption>Chart title</caption>', '')
+            .replace(/>/g, '>\n'),
+        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\">Category</th><th class=\"highcharts-text\" scope=\"col\">Drop 2</th><th class=\"highcharts-text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
+            .replace(/>/g, '>\n'),
         'Empty data in table'
     );
 
@@ -1103,8 +1085,8 @@ QUnit.test('Point name (#13293)', function (assert) {
         }),
         csv =
             '"Category","Series 1 (x)","Series 1 (y)","Series 2"\n' +
-            '"Point2",1,9\n' +
-            '"Point1",2,6\n' +
+            '"Point2",1,9,\n' +
+            '"Point1",2,6,\n' +
             '20,,,9\n' +
             '30,,,6';
 
@@ -1154,8 +1136,8 @@ QUnit.test('Point name with category (#13293)', function (assert) {
         }),
         csv =
             '"Category","Series 1","Series 2"\n' +
-            '"Point2",9\n' +
-            '"Point1",6\n' +
+            '"Point2",9,\n' +
+            '"Point1",6,\n' +
             '20,,9\n' +
             '30,,6';
 
@@ -1170,7 +1152,7 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [
             {
-                data: [2, 5, 1, 6, 7, 8, 5]
+                data: [2, 5, 1, 6, 7]
             }
         ]
     });
@@ -1186,6 +1168,35 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
         'none',
         'Table should not be visible again.'
     );
+
+    chart.viewData();
+    const csv = '"Category","Series 1"\n' +
+        '0,2\n' +
+        '1,5\n' +
+        '2,1\n' +
+        '3,6\n' +
+        '4,7';
+    assert.strictEqual(
+        csv,
+        chart.getCSV(),
+        'The table should show the values.'
+    );
+
+    chart.series[0].update({
+        data: [7, 6, 5, 4, 3]
+    });
+    const csvUpdated = '"Category","Series 1"\n' +
+        '0,7\n' +
+        '1,6\n' +
+        '2,5\n' +
+        '3,4\n' +
+        '4,3';
+    assert.strictEqual(
+        csvUpdated,
+        chart.getCSV(),
+        'The table should re-render after a data update, #14320.'
+    );
+    chart.hideData();
 });
 
 QUnit.test('Point without y data, but with value (#13785)', function (assert) {
@@ -1231,5 +1242,276 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
         chart.getCSV(),
         csv,
         'The table should render category name and value (#13785)'
+    );
+});
+
+QUnit.test('Sortable table (#16972)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            categories: ['NL', 'ES', 'DE', 'BE', 'NO']
+        },
+        series: [{
+            name: 'Import',
+            data: [100, 80, 60, 50, 70]
+        },
+        {
+            name: 'Export',
+            data: [20, 10, 30, 40, 50]
+        }
+        ],
+        exporting: {
+            showTable: true,
+            allowTableSorting: false
+        }
+    });
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[2].children[0].children[0]
+            .innerText,
+        'NL',
+        `Data order in table should not change when allowTableSorting equals
+        false, #18007.`
+    );
+
+    chart.update({
+        exporting: {
+            allowTableSorting: true
+        }
+    });
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[0].innerText,
+        'BE',
+        'After clicking on the row header, table content should be sorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[1].innerText,
+        '50',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[0].innerText,
+        'DE',
+        'After clicking on the row header, table content should be sorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[1].innerText,
+        '60',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+
+    chart.dataTableDiv.children[0].children[1].children[0].children[0].click();
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[0].innerText,
+        'NO',
+        'After clicking on the row header, table content should be resorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[3].children[1].innerText,
+        '70',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[0].innerText,
+        'NL',
+        'After clicking on the row header, table content should be resorted.'
+    );
+    assert.strictEqual(
+        chart.dataTableDiv.children[0].children[4].children[1].innerText,
+        '100',
+        'After sorting, values should correspond to the one on the chart.'
+    );
+});
+
+QUnit.test('Exporting duplicated points (#17639)', function (assert) {
+    function getSeriesFromDataRows(dataRows, isCategoryType = false) {
+        const series = [];
+        dataRows.forEach((row, i) => {
+            if (i > 0) { // ommit names of series
+                row.seriesIndices.forEach(sIdx => {
+                    if (!series[sIdx]) {
+                        series[sIdx] = {
+                            data: []
+                        };
+                    }
+                    if (!isCategoryType) {
+                        series[sIdx].data.push([row[0], row[sIdx + 1]]);
+                    } else {
+                        series[sIdx].data.push(row[sIdx + 1]);
+                    }
+                });
+            }
+        });
+        return series;
+    }
+
+    let series = [{
+        data: [[1, 1], [2, 3], [3, 4], [4, 3]]
+    }];
+
+    const chart = Highcharts.chart('container', {
+        series: series
+    });
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series,
+        'Exported data of one series should be same as actual, #17639.'
+    );
+
+    series = [{
+        data: [[1, 1], [2, 3], [3, 4], [4, 3]]
+    }, {
+        data: [[1, 4], [2, 3], [3, 2], [4, 1]]
+    }, {
+        data: [[1, 5], [2, 8], [3, 2], [4, 13]]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.redraw();
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series,
+        'Exported data of multiple series should be same as actual, #17639.'
+    );
+
+    series = [{
+        data: [[1, 1], [2, 3], [3, 4], [4, 3]]
+    }, {
+        data: [[5, 4], [8, 3], [13, 2], [20, 1]]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.redraw();
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series,
+        `Exported data of multiple series with different x-values should be same
+        as actual, #17639.`
+    );
+
+    series = [{
+        data: [[1, 1], [2, 3], [2, 6], [2, 1], [3, 4], [4, 3]]
+    }, {
+        data: [[1, 1], [2, 3], [3, 4], [3, 10], [3, -4], [3, 15], [4, 3]]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.redraw();
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series,
+        `Exported data of multiple series with some duplicated x-values should
+        be same as actual, #17639.`
+    );
+
+    series = [{
+        data: [[5, 1], [5, 3], [5, 6], [5, 1]]
+    }, {
+        data: [[5, 1], [5, 3], [5, 4], [5, 10], [5, -4]]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.redraw();
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series,
+        `Exported data of multiple series with only duplicated x-values should
+        be same as actual, #17639.`
+    );
+
+    series = [{
+        data: [
+            [Date.UTC(2022, 0, 1), 1], [Date.UTC(2022, 0, 1), 2],
+            [Date.UTC(2022, 0, 1), 3], [Date.UTC(2022, 0, 1), 4]
+        ]
+    }, {
+        data: [
+            [Date.UTC(2022, 0, 2), 1], [Date.UTC(2022, 0, 2), 2],
+            [Date.UTC(2022, 0, 2), 3], [Date.UTC(2022, 0, 2), 4]
+        ]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.xAxis[0].update({
+        type: 'datetime'
+    });
+
+    const time = chart.time,
+        csvOptions = (
+            (chart.options.exporting && chart.options.exporting.csv) || {}
+        );
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows()),
+        series.map(series => // set the same date format as in exported data
+            ({
+                data: series.data.map(el =>
+                    [time.dateFormat(csvOptions.dateFormat, el[0]), el[1]]
+                )
+            })
+        ),
+        `Exported data of multiple datetime series with duplicated x-values
+        should be same as actual, #17639.`
+    );
+
+    series = [{
+        data: [7, 13, -28, 4, 11]
+    }, {
+        data: [5, 1, -8, 12, -3]
+    }];
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    series.forEach(series => {
+        chart.addSeries(series, false);
+    });
+    chart.xAxis[0].update({
+        type: 'category',
+        categories: ['A', 'B', 'C', 'D', 'E']
+    });
+
+    assert.deepEqual(
+        getSeriesFromDataRows(chart.getDataRows(), true),
+        series,
+        `Exported data of multiple series with xAxis type set to category
+        should be same as actual, #17639.`
     );
 });

@@ -12,8 +12,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
 import type Options from '../Core/Options';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
@@ -21,7 +33,13 @@ declare module '../Core/Series/DataLabelOptions' {
     }
 }
 
-const theme: Options = {
+/* *
+ *
+ *  Theme
+ *
+ * */
+
+const theme: DeepPartial<Options> = {
     chart: {
         backgroundColor: 'window'
     },
@@ -219,5 +237,11 @@ const theme: Options = {
         trackBorderColor: 'windowText'
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default theme;

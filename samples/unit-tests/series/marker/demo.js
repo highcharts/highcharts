@@ -181,6 +181,31 @@ QUnit.test('Marker size and position', function (assert) {
         series.stateMarkerGraphic.attr('class'),
         '#5430: State marker should have class set'
     );
+
+    series.update({
+        marker: {
+            enabled: true,
+            width: 25,
+            height: 25
+        }
+    });
+
+    series.update({
+        marker: {
+            width: 50,
+            height: 50
+        }
+    });
+
+    assert.deepEqual(
+        [
+            series.points[0].graphic.attr('width'),
+            series.points[0].graphic.attr('height')
+        ],
+        [50, 50],
+        'Markers should update their width and height on series update.'
+    );
+
 });
 
 QUnit.test('visibility', assert => {
@@ -239,7 +264,7 @@ QUnit.test('visibility', assert => {
     );
     assert.strictEqual(
         series1.stateMarkerGraphic.visibility,
-        'visible',
+        'inherit',
         'Should have stateMarkerGraphic on Series 1 with visibility "visible"'
     );
     assert.ok(

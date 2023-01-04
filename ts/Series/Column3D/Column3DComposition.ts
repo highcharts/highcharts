@@ -33,10 +33,10 @@ const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { svg } = H;
 import Series from '../../Core/Series/Series.js';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import StackItem from '../../Extensions/Stacking.js';
+import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -103,7 +103,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * Chart with stacks
  * @param {string} stacking
  * Stacking option
- * @return {Highcharts.Stack3DDictionary}
  */
 function retrieveStacks(
     chart: Chart,
@@ -165,7 +164,7 @@ columnProto.translate3dShapes = function (): void {
             series.index, // #4743
         z = (stack as any) * (depth + (seriesOptions.groupZPadding || 1)),
         borderCrisp = series.borderWidth % 2 ? 0.5 : 0,
-        point2dPos; // Position of point in 2D, used for 3D position calculation.
+        point2dPos; // Position of point in 2D, used for 3D position calculation
 
     if (chart.inverted && !series.yAxis.reversed) {
         borderCrisp *= -1;
@@ -223,7 +222,8 @@ columnProto.translate3dShapes = function (): void {
                 ) {
                     // Set args to 0 if column is outside the chart.
                     for (const key in shapeArgs) { // eslint-disable-line guard-for-in
-                        (shapeArgs as any)[key] = 0;
+                        // #13840
+                        (shapeArgs as any)[key] = key === 'y' ? -9999 : 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
                     // currently outside of plot.
@@ -320,7 +320,11 @@ wrap(columnProto, 'animate', function (
                         (point.shapeArgs as any).y = point.shapey; // #2968
                         // null value do not have a graphic
                         if (point.graphic) {
-                            point.graphic.animate(
+                            point.graphic[
+                                point.outside3dPlot ?
+                                    'attr' :
+                                    'animate'
+                            ](
                                 point.shapeArgs as any,
                                 series.options.animation
                             );
@@ -577,10 +581,10 @@ wrap(Series.prototype, 'alignDataLabel', function (
 
 // Added stackLabels position calculation for 3D charts.
 wrap(StackItem.prototype, 'getStackBox', function (
-    this: Highcharts.StackItem,
+    this: StackItem,
     proceed: Function,
     chart: Chart,
-    stackItem: Highcharts.StackItem,
+    stackItem: StackItem,
     x: number,
     y: number,
     xWidth: number,

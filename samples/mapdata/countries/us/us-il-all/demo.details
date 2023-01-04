@@ -1,5 +1,5 @@
 ---
- name: Illinois - Highmaps
- description: Highmaps demo
+ name: Illinois - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

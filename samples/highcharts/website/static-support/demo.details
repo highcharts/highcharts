@@ -1,0 +1,6 @@
+---
+ name: Static Support Chart for Highcharts
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+...

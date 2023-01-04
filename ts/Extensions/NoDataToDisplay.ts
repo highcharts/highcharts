@@ -19,9 +19,9 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { getOptions } = D;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -40,13 +40,10 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/Options'{
     interface LangOptions {
         noData?: string;
     }
-}
-
-declare module '../Core/Options'{
     interface Options {
         noData?: Highcharts.NoDataOptions;
     }
@@ -181,7 +178,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: palette.neutralColor60
+        color: Palette.neutralColor60
     }
 
 };
@@ -198,7 +195,7 @@ defaultOptions.noData = {
 chartPrototype.showNoData = function (str?: string): void {
     const chart = this,
         options = chart.options,
-        text = str || (options && (options.lang as any).noData),
+        text = str || (options && options.lang.noData) || '',
         noDataOptions: Highcharts.NoDataOptions =
             options && (options.noData || {});
 

@@ -57,6 +57,10 @@ class MapLineSeries extends MapSeries {
      *
      * @sample maps/demo/mapline-mappoint/
      *         Mapline and map-point chart
+     * @sample maps/demo/animated-mapline/
+     *         Mapline with CSS keyframe animation
+     * @sample maps/demo/flight-routes
+     *         Flight routes
      *
      * @extends      plotOptions.map
      * @product      highmaps
@@ -98,12 +102,8 @@ class MapLineSeries extends MapSeries {
 
     /**
      * Get presentational attributes
-     *
      * @private
      * @function Highcharts.seriesTypes.mapline#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
      */
     public pointAttribs(
         point: MapLinePoint,
@@ -128,12 +128,12 @@ class MapLineSeries extends MapSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface MapLineSeries {
-    colorProp: string;
+    colorProp: 'stroke';
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof MapLinePoint;
 }
@@ -230,8 +230,27 @@ export default MapLineSeries;
  *  ```
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @extends   series.map.data
+ * @excluding drilldown
  * @product   highmaps
  * @apioption series.mapline.data
+ */
+
+/**
+ * Pixel width of the mapline line.
+ *
+ * @type      {number}
+ * @since 10.2.0
+ * @product   highmaps
+ * @apioption plotOptions.mapline.states.hover.lineWidth
+ */
+
+/**
+ *
+ * @type      {number}
+ * @product   highmaps
+ * @excluding borderWidth
+ * @apioption plotOptions.mapline.states.hover
  */
 
 ''; // adds doclets above to transpiled file

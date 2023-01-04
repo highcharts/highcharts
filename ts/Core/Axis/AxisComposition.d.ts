@@ -14,7 +14,7 @@
  *
  * */
 
-import type AxisLike from 'AxisLike';
+import type AxisLike from './AxisLike';
 
 /* *
  *

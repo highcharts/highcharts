@@ -1,24 +1,28 @@
-var H = Highcharts,
-    map = H.maps['countries/us/us-all'],
-    chart;
+(async () => {
 
-// Add series with state capital bubbles
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json', function (json) {
-    var data = [];
-    json.forEach(function (p) {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    ).then(response => response.json());
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json'
+    ).then(response => response.json());
+
+    data.forEach(p => {
         p.z = p.population;
-        data.push(p);
     });
 
-    chart = Highcharts.mapChart('container', {
+    const H = Highcharts;
+
+    const chart = Highcharts.mapChart('container', {
         title: {
-            text: 'Highcharts Maps lat/lon demo'
+            text: 'Highcharts Maps lon/lat demo'
         },
 
         tooltip: {
             pointFormat: '{point.capital}, {point.parentState}<br>' +
-                'Lat: {point.lat}<br>' +
                 'Lon: {point.lon}<br>' +
+                'Lat: {point.lat}<br>' +
                 'Population: {point.population}'
         },
 
@@ -42,16 +46,12 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
         series: [{
             name: 'Basemap',
-            mapData: map,
+            mapData: topology,
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
             borderColor: '#606060',
             nullColor: 'rgba(200, 200, 200, 0.2)',
-            showInLegend: false
-        }, {
-            name: 'Separators',
-            type: 'mapline',
-            data: H.geojson(map, 'mapline'),
-            color: '#101010',
-            enableMouseTracking: false,
             showInLegend: false
         }, {
             type: 'mapbubble',
@@ -59,20 +59,22 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                 enabled: true,
                 format: '{point.capital}'
             },
-            name: 'Cities',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{point.capital}, {point.parentState}. Population {point.population}. Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
+                }
+            },
+            name: 'State capital cities',
             data: data,
             maxSize: '12%',
             color: H.getOptions().colors[0]
         }]
     });
-});
 
-// Display custom label with lat/lon next to crosshairs
-document.getElementById('container').addEventListener('mousemove', function (e) {
-    var position;
-    if (chart) {
-        if (!chart.lab) {
-            chart.lab = chart.renderer.text('', 0, 0)
+    // Display custom label with lat/lon next to crosshairs
+    document.getElementById('container').addEventListener('mousemove', e => {
+        if (!chart.lbl) {
+            chart.lbl = chart.renderer.text('', 0, 0)
                 .attr({
                     zIndex: 5
                 })
@@ -83,22 +85,12 @@ document.getElementById('container').addEventListener('mousemove', function (e) 
         }
 
         e = chart.pointer.normalize(e);
-        position = chart.fromPointToLatLon({
-            x: chart.xAxis[0].toValue(e.chartX),
-            y: chart.yAxis[0].toValue(e.chartY)
-        });
 
-        chart.lab.attr({
+        chart.lbl.attr({
             x: e.chartX + 5,
             y: e.chartY - 22,
-            text: 'Lat: ' + position.lat.toFixed(2) + '<br>Lon: ' + position.lon.toFixed(2)
+            text: 'Lat: ' + e.lat.toFixed(2) + '<br>Lon: ' + e.lon.toFixed(2)
         });
-    }
-});
+    });
 
-document.getElementById('container').addEventListener('mouseout', function () {
-    if (chart && chart.lab) {
-        chart.lab.destroy();
-        chart.lab = null;
-    }
-});
+})();

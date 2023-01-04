@@ -14,14 +14,14 @@ series: [{
 
 Note: The series object is an array, meaning it can contain several series.
 
-The name attribute gives the series a name, which show up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
+The name attribute gives the series a name, which shows up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
 
 The data in a series
 --------------------
 
 The actual data is represented as an array, by the data attribute, and can be presented in three ways:
 
-1.  A list of numerical values. In this case, the numerical values will be interpreted as y values and the x values will be automatically calculated, either starting at 0 and incrementing by 1, or from the pointStart and pointInterval options. If the axis is has categories, these will be used. Example:
+1.  A list of numerical values. In this case, the numerical values will be interpreted as `y` values and the `x` values will be automatically calculated, either starting at 0 and incrementing by 1, or from the [pointStart](https://api.highcharts.com/highcharts/series.line.pointStart) and [pointInterval](https://api.highcharts.com/highcharts/series.line.pointInterval) options. If the axis has categories, these will be used. Example:
 
 ```js
 data: [0, 5, 3, 5]
@@ -31,15 +31,15 @@ data: [0, 5, 3, 5]
 
 2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
 
-```js  
+```js
 data: [[5, 2], [6, 3], [8, 2]]
 ```
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-arrays/)
 
-3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
+3.  A list of objects with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
-```js   
+```js
 data: [{
     name: 'Point 1',
     color: '#00FF00',
@@ -50,14 +50,14 @@ data: [{
     y: 5
 }]
 ```
-    
+
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-objects/)
 
 Point and marker
 ----------------
 
-For cartesian charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart the point represents (x, low, high). In an OHLC chart the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
+For cartesian charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart, the point represents (x, low, high). In an OHLC chart, the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
 
 The point option can be applied to all charts. Here is an example showing how to edit the color of a specific point:
 
@@ -67,7 +67,7 @@ series: [{
             { y: 216.4, color: '#BF0B23'}, 194.1, 95.6, 54.4]
 }]
 ```
-    
+
 
 Line, spline, area and areaspline charts have the option to display point markers, these are slightly different from the point option because they enable altering the style and shape of the point marker.
 
@@ -79,11 +79,11 @@ series: [{
     {y: 216.4, marker: { fillColor: '#BF0B23', radius: 10 } }, 194.1, 95.6, 54.4]
 }]
 ```
-    
+
 
 ## Series options
 
-The series options can be defined in two places within the Highchars options structure.
+The series options can be defined in two places within the Highcharts options structure.
 
 *   General options that apply to multiple series are defined in the [plotOptions](https://api.highcharts.com/highcharts/plotOptions). To set general options for all series in the chart, use [plotOptions.series](https://api.highcharts.com/highcharts/plotOptions.series). To set general options for a specific chart type, each chart type has its own collection of plotOptions.
 *   Specific options for each series are defined in the [series](https://api.highcharts.com/highcharts/series) options structure. All options that are listed for the plotOptions structure, can also be set in the specific series definition. Some options, like _data_, _id_ or _name_, only make sense for specific series.
@@ -115,14 +115,14 @@ plotOptions: {
     }
 }
 ```
-    
+
 
 Code to get the selected points:
 
 ```js
 var selectedPoints = chart.getSelectedPoints();
 ```
-    
+
 
 ### Line width
 
@@ -167,11 +167,11 @@ plotOptions: {
     }
 },
 ```
-    
+
 
 Note: You may wish to disable mouse tracking, which highlights the series and points the mouse hovers over (tooltips will not show if mouse tracking is disabled).
 
-The text displayed on datalabels may also be be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
+The text displayed on datalabels may also be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
 
 ### Dash style
 
@@ -181,7 +181,7 @@ Allows to use dashed lines instead of solid, there are several different dash op
 
 [Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle/)
 
-Code to set dashed lines for a individual series (the dashStyle can also be set in plotOptions):
+Code to set dashed lines for an individual series (the dashStyle can also be set in plotOptions):
 
 ```js
 series: [{
@@ -192,21 +192,21 @@ series: [{
 
 ### Zones
 
-In some cases, you would want to display certain sections of the graph different, a common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes.  The settings that can be overwritten for each zone are color, fillColor and dashStyle.
+In some cases, you would want to display certain sections of the graph different. A common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes. The settings that can be overwritten for each zone are color, fillColor and dashStyle.
 
 <iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple allow="fullscreen"></iframe>
 
 Code used for the zoning:
 
 ```js
-zones: [{  
-    value: 0,  
-    color: '#f7a35c'  
-}, {  
-    value: 10,  
-    color: '#7cb5ec'  
-}, {  
-    color: '#90ed7d'  
+zones: [{
+    value: 0,
+    color: '#f7a35c'
+}, {
+    value: 10,
+    color: '#7cb5ec'
+}, {
+    color: '#90ed7d'
 }]
 ```
 

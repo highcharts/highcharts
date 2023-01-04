@@ -267,7 +267,7 @@ QUnit.test('title.reserveSpace', function (assert) {
         }),
         axes = chart.axes;
 
-    Highcharts.each(axes, function (axis) {
+    axes.forEach(axis => {
         var axisName = axis.options.title.text,
             dir = axis.horiz ? 'y' : 'x',
             lessThan =

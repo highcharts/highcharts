@@ -52,6 +52,7 @@ export interface SVGAttributes {
     dashstyle?: DashStyleValue;
     depth?: number;
     display?: ''|'block'|'none';
+    'dominant-baseline'?: string;
     dx?: number;
     dy?: number;
     end?: number;
@@ -84,6 +85,7 @@ export interface SVGAttributes {
     refY?: number;
     rx?: number;
     ry?: number;
+    role?: string;
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
@@ -109,6 +111,7 @@ export interface SVGAttributes {
     tableValues?: string;
     text?: string;
     'text-align'?: 'center'|'left'|'right';
+    'text-anchor'?: string;
     title?: string;
     transform?: string;
     translateX?: number;
@@ -130,7 +133,7 @@ export interface SVGAttributes {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

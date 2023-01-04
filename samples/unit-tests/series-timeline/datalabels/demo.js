@@ -26,7 +26,10 @@ QUnit.test('Timeline: General tests.', function (assert) {
                     },
                     {
                         name: 'Date 3',
-                        label: 'Some label'
+                        label: 'Some label',
+                        dataLabels: {
+                            enabled: false
+                        }
                     }
                 ]
             }
@@ -40,7 +43,31 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         secondDL.absoluteBox.y - firstDL.absoluteBox.y,
         50,
-        "Data label's position is set from point configuration level."
+        'Data label\'s position is set from point configuration level.'
+    );
+
+    assert.notOk(
+        series.points[2].dataLabel,
+        '#16084: dataLabel should be disabled');
+
+    series.points[2].update({
+        dataLabels: {
+            enabled: true
+        }
+    });
+    assert.ok(
+        series.points[2].dataLabel,
+        '#16084: Enabling dataLabel through point.update should work'
+    );
+
+    series.points[2].update({
+        dataLabels: {
+            enabled: false
+        }
+    });
+    assert.notOk(
+        series.points[2].dataLabel,
+        '#16084: Disabling dataLabel through point.update should work'
     );
 
     var oldWidth = firstDL.width;
@@ -55,22 +82,22 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     firstDL = series.points[0].dataLabel;
 
-    assert.notEqual(firstDL.width, oldWidth, "Data label's new width is set.");
+    assert.notEqual(firstDL.width, oldWidth, 'Data label\'s new width is set.');
 
     var connector = series.points[0].connector,
         connectorWidth = connector.strokeWidth(),
-        connectorColor = connector.stroke;
+        connectorColor = connector.attr('stroke');
 
     assert.strictEqual(
         connectorWidth,
         4,
-        "Data label's new connector width is set."
+        'Data label\'s new connector width is set.'
     );
 
     assert.strictEqual(
         connectorColor,
         'green',
-        "Data label's new connector color is set."
+        'Data label\'s new connector color is set.'
     );
 
     // Add normal point to series.

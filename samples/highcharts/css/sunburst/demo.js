@@ -355,7 +355,7 @@ var data = [{
     value: 1367254
 },
 
-/***********/
+/** *********/
 
 /* America */
 {
@@ -654,7 +654,7 @@ var data = [{
     name: 'Montserrat',
     value: 5177
 },
-/***********/
+/** *********/
 
 /* Asia */
 {
@@ -947,7 +947,7 @@ var data = [{
     name: 'Turkmenistan',
     value: 5758075
 },
-/***********/
+/** *********/
 
 /* Europe */
 {
@@ -1226,7 +1226,7 @@ var data = [{
     name: 'Liechtenstein',
     value: 37922
 },
-/***********/
+/** *********/
 
 /* Oceania */
 {
@@ -1390,8 +1390,9 @@ Highcharts.chart('container', {
         text: 'Source <a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
     },
     series: [{
-        type: "sunburst",
+        type: 'sunburst',
         data: data,
+        name: 'Root',
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {

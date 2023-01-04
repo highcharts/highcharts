@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     ATROptions,
     ATRParamsOptions
@@ -15,19 +21,23 @@ import type {
 import type ATRPoint from './ATRPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 
 /**
@@ -82,11 +92,9 @@ function populateAverage(
     return [x, y];
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -100,6 +108,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class ATRIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
@@ -209,7 +224,7 @@ class ATRIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -237,6 +252,12 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  * */
 
 export default ATRIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `ATR` series. If the [type](#series.atr.type) option is not specified, it

@@ -1,18 +1,21 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-xaxis-grid .highcharts-grid-line {
-	stroke-width: 2px;
-	stroke: #d8d8d8;
+    stroke-width: 2px;
+    stroke: #d8d8d8;
 }
+
 .highcharts-xaxis .highcharts-tick {
-	stroke-width: 2px;
-	stroke: #d8d8d8;
+    stroke-width: 2px;
+    stroke: #d8d8d8;
 }
+
 .highcharts-minor-grid-line {
-	stroke-dasharray: 2, 2;
+    stroke-dasharray: 2, 2;
 }

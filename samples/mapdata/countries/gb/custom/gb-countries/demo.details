@@ -1,5 +1,5 @@
 ---
- name: United Kingdom countries - Highmaps
- description: Highmaps demo
+ name: United Kingdom countries - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

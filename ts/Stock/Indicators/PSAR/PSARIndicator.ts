@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -19,19 +25,22 @@ import type {
     PSARParamsOptions
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
     extend
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 
@@ -142,11 +151,9 @@ function getPSAR(
     return pEP;
 }
 
-/* eslint-enable require-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -160,6 +167,13 @@ function getPSAR(
  * @augments Highcharts.Series
  */
 class PSARIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Parabolic SAR. This series requires `linkedTo`
      * option to be set and should be loaded
@@ -236,11 +250,13 @@ class PSARIndicator extends SMAIndicator {
     public data: Array<PSARPoint> = void 0 as any;
     public points: Array<PSARPoint> = void 0 as any;
     public options: PSAROptions = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PSARParamsOptions
@@ -380,7 +396,7 @@ class PSARIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -414,6 +430,12 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  * */
 
 export default PSARIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `PSAR` series. If the [type](#series.psar.type) option is not specified, it
