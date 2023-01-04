@@ -224,17 +224,10 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            const isWidth = 'width' in textStyles,
-                isFontStyle = (
-                    'fontSize' in textStyles ||
-                    'fontWeight' in textStyles
-                ),
-                isOverflow = 'textOverflow' in textStyles;
-
             // Update existing text, box (#9400, #12163, #18212)
-            if (isFontStyle) {
+            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
                 this.updateTextPadding();
-            } else if (isWidth || isOverflow) {
+            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 
