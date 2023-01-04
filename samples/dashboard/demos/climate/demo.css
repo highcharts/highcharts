@@ -89,3 +89,7 @@
     color: #fff;
 }
 
+.hd-cell.hd-cell-state-hover {
+    cursor: pointer;
+}
+

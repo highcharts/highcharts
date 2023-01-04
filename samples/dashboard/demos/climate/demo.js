@@ -302,11 +302,14 @@ async function setupDashboard() {
                     // this.parentCell.setActiveState(); // set active cell
                 },
                 click: function () {
+                    dataScope = 'TN';
+
                     const data =
                         citiesData[cityScope].store.table.modified.getRows(
                             void 0, void 0,
-                            ['time', 'TN']
+                            ['time', dataScope]
                         );
+
                     // update navigator
                     navigatorSeries.update({
                         name: cityScope,
@@ -322,6 +325,11 @@ async function setupDashboard() {
 
                     citySeries.update({
                         data: data
+                    });
+
+                    // update colorAxis
+                    citiesMap.chart.update({
+                        colorAxis: buildColorAxis()
                     });
                 },
                 afterLoad: function () {
@@ -351,10 +359,12 @@ async function setupDashboard() {
                     kpi.TX = this;
                 },
                 click: function () {
+                    dataScope = 'TX';
+
                     const data =
                         citiesData[cityScope].store.table.modified.getRows(
                             void 0, void 0,
-                            ['time', 'TX']
+                            ['time', dataScope]
                         );
 
                     // update navigator
@@ -372,6 +382,11 @@ async function setupDashboard() {
 
                     citySeries.update({
                         data: data
+                    });
+
+                    // update colorAxis
+                    citiesMap.chart.update({
+                        colorAxis: buildColorAxis()
                     });
                 }
             },
@@ -398,11 +413,14 @@ async function setupDashboard() {
                     kpi.FD = this;
                 },
                 click: function () {
+                    dataScope = 'FD';
+
                     const data =
                         citiesData[cityScope].store.table.modified.getRows(
                             void 0, void 0,
-                            ['time', 'FD']
+                            ['time', dataScope]
                         );
+
                     // update navigator
                     navigatorSeries.update({
                         name: cityScope,
@@ -418,6 +436,11 @@ async function setupDashboard() {
 
                     citySeries.update({
                         data: data
+                    });
+
+                    // update colorAxis
+                    citiesMap.chart.update({
+                        colorAxis: buildColorAxis()
                     });
                 }
             },
@@ -444,10 +467,12 @@ async function setupDashboard() {
                     kpi.ID = this;
                 },
                 click: function () {
+                    dataScope = 'ID';
+
                     const data =
                         citiesData[cityScope].store.table.modified.getRows(
                             void 0, void 0,
-                            ['time', 'ID']
+                            ['time', dataScope]
                         );
                     // update navigator
                     navigatorSeries.update({
@@ -464,6 +489,11 @@ async function setupDashboard() {
 
                     citySeries.update({
                         data: data
+                    });
+
+                    // update colorAxis
+                    citiesMap.chart.update({
+                        colorAxis: buildColorAxis()
                     });
                 }
             },
@@ -490,10 +520,12 @@ async function setupDashboard() {
                     kpi.RR1 = this;
                 },
                 click: function () {
+                    dataScope = 'RR1';
+
                     const data =
                         citiesData[cityScope].store.table.modified.getRows(
                             void 0, void 0,
-                            ['time', 'RR1']
+                            ['time', dataScope]
                         );
                     // update navigator
                     navigatorSeries.update({
@@ -510,6 +542,11 @@ async function setupDashboard() {
 
                     citySeries.update({
                         data: data
+                    });
+
+                    // update colorAxis
+                    citiesMap.chart.update({
+                        colorAxis: buildColorAxis()
                     });
                 }
             },
