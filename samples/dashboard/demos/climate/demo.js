@@ -140,7 +140,7 @@ async function setupDashboard() {
                                 .getStore(city)
                                 .then(store => {
                                     citySeries.chart.update({
-                                        title: { text: city + dataScopes.TN }
+                                        title: { text: city + ' - ' + dataScopes.TN }
                                     });
                                     citySeries.update({
                                         name: city,
@@ -153,10 +153,9 @@ async function setupDashboard() {
                                     // update datagrid
                                     cityGrid.update({ store });
 
-                                    // update KPI
+                                    // update KPI indicators
                                     const table =
                                         citiesData[city].store.table.modified;
-
                                     for (
                                         const [key, ind] of Object.entries(kpi)
                                     ) {
@@ -164,6 +163,13 @@ async function setupDashboard() {
                                             value: table.getCellAsNumber(key, table.getRowIndexBy('time', worldDate.getTime()), true)
                                         });
                                     }
+
+                                    // update KPI data
+                                    kpi.data.update({
+                                        value: city +
+                                            '<br>lat: ' + citiesData[city].lat +
+                                            '<br>lon: ' + citiesData[city].lon
+                                    });
                                 });
                         }
                     },
@@ -214,8 +220,6 @@ async function setupDashboard() {
                 return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
             events: {
                 mount: function () {
                     kpi.TN = this;
@@ -226,10 +230,11 @@ async function setupDashboard() {
                     }, false);
 
                     citySeries.update({
-                        data: citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', 'TN']
-                        )
+                        data:
+                            citiesData[cityScope].store.table.modified.getRows(
+                                void 0, void 0,
+                                ['time', 'TN']
+                            )
                     });
                 }
             }
@@ -243,8 +248,6 @@ async function setupDashboard() {
                 return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
             events: {
                 mount: function () {
                     kpi.TX = this;
@@ -255,10 +258,11 @@ async function setupDashboard() {
                     }, false);
 
                     citySeries.update({
-                        data: citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', 'TX']
-                        )
+                        data:
+                            citiesData[cityScope].store.table.modified.getRows(
+                                void 0, void 0,
+                                ['time', 'TX']
+                            )
                     });
                 }
             }
@@ -272,8 +276,6 @@ async function setupDashboard() {
                 return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v} days`,
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
             events: {
                 mount: function () {
                     kpi.FD = this;
@@ -284,10 +286,11 @@ async function setupDashboard() {
                     }, false);
 
                     citySeries.update({
-                        data: citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', 'FD']
-                        )
+                        data:
+                            citiesData[cityScope].store.table.modified.getRows(
+                                void 0, void 0,
+                                ['time', 'FD']
+                            )
                     });
                 }
             }
@@ -301,8 +304,6 @@ async function setupDashboard() {
                 return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v} days`,
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
             events: {
                 mount: function () {
                     kpi.ID = this;
@@ -312,10 +313,11 @@ async function setupDashboard() {
                         title: { text: cityScope + ' - ' + dataScopes.ID }
                     }, false);
                     citySeries.update({
-                        data: citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', 'ID']
-                        )
+                        data:
+                            citiesData[cityScope].store.table.modified.getRows(
+                                void 0, void 0,
+                                ['time', 'ID']
+                            )
                     });
                 }
             }
@@ -329,8 +331,6 @@ async function setupDashboard() {
                 return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v} days`,
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
             events: {
                 mount: function () {
                     kpi.RR1 = this;
@@ -341,10 +341,11 @@ async function setupDashboard() {
                     }, false);
 
                     citySeries.update({
-                        data: citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', 'RR1']
-                        )
+                        data:
+                            citiesData[cityScope].store.table.modified.getRows(
+                                void 0, void 0,
+                                ['time', 'RR1']
+                            )
                     });
                 }
             }
@@ -353,18 +354,13 @@ async function setupDashboard() {
             cell: 'kpi-data',
             type: 'kpi',
             title: 'Data',
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                // const table = defaultCityStore.table.modified;
-                console.log(table);
-                // return table.getRow(table.getRowIndexBy('city', defaultCity), ['lat', 'lon']);
-            })(),
-            // valueFormat: '{value:,.1f}'
-            // threshold: [20000, 200000],
-            // thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d'],
+            value: (() => cityScope +
+                    '<br>lat: ' + citiesData[cityScope].lat +
+                    '<br>lon: ' + citiesData[cityScope].lon
+            )(),
             events: {
                 mount: function () {
-                    // kpi.RR1 = this;
+                    kpi.data = this;
                 }
             }
         },
