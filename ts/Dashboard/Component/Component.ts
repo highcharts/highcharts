@@ -325,12 +325,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setStore(store: Component.StoreTypes | undefined): this {
         // Clean up old event listeners
-        if (this.tableEvents.length) {
-            while (this.tableEvents.length) {
-                const eventCallback = this.tableEvents.pop();
-                if (typeof eventCallback === 'function') {
-                    eventCallback();
-                }
+        while (this.tableEvents.length) {
+            const eventCallback = this.tableEvents.pop();
+            if (typeof eventCallback === 'function') {
+                eventCallback();
             }
         }
 
