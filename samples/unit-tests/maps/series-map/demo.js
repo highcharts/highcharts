@@ -62,6 +62,11 @@ QUnit.test('Mapping of joinBy with data', assert => {
 
 QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     const chart = Highcharts.mapChart('container', {
+            chart: {
+                animation: {
+                    duration: 0
+                }
+            },
             series: [
                 {
                     allowPointSelect: true,
@@ -147,12 +152,19 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     );
 
     series.points[0].setState('hover', false);
+
+    assert.ok(
+        series.points[0].graphic['stroke-width'] > 0,
+        'Map border should be set to hover after changing state to hover(#18137).'
+    );
+
     series.points[0].setState('normal', false);
 
     assert.strictEqual(
         series.points[0].graphic['stroke-width'],
         undefined,
-        'Map border should be set to initial after changing state (#18137).'
+        `Map border should be set to initial after changing state to normal
+            (#18137).`
     );
 });
 
