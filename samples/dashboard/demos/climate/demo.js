@@ -191,34 +191,41 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    const data = store.table.modified.getRows(
-                                        void 0, void 0,
-                                        ['time', dataScope]
+                                    dataScope = 'TN';
+
+                                    syncRefreshCharts(
+                                        store,
+                                        dataScope,
+                                        city
                                     );
+                                    // const data = store.table.modified.getRows(
+                                    //     void 0, void 0,
+                                    //     ['time', dataScope]
+                                    // );
 
-                                    // update chart
-                                    citySeries.chart.update({
-                                        title: {
-                                            text: city
-                                        }
-                                    }, false);
+                                    // // update chart
+                                    // citySeries.chart.update({
+                                    //     title: {
+                                    //         text: city
+                                    //     }
+                                    // }, false);
 
-                                    citySeries.update({
-                                        name: city,
-                                        data
-                                    });
+                                    // citySeries.update({
+                                    //     name: city,
+                                    //     data
+                                    // });
 
-                                    // update navigator
-                                    navigatorSeries.update({
-                                        name: city,
-                                        data
-                                    });
+                                    // // update navigator
+                                    // navigatorSeries.update({
+                                    //     name: city,
+                                    //     data
+                                    // });
 
-                                    // Update the main chart.
-                                    Highcharts.fireEvent(
-                                        navigatorSeries.chart.xAxis[0],
-                                        'afterSetExtremes'
-                                    );
+                                    // // Update the main chart
+                                    // Highcharts.fireEvent(
+                                    //     navigatorSeries.chart.xAxis[0],
+                                    //     'afterSetExtremes'
+                                    // );
 
                                     cityGrid.update({ store });
 
@@ -302,33 +309,11 @@ async function setupDashboard() {
                 click: function () {
                     dataScope = 'TN';
 
-                    const data =
-                        citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', dataScope]
-                        );
-
-                    // update navigator
-                    navigatorSeries.update({
-                        name: cityScope,
-                        data
-                    });
-
-                    // update chart
-                    citySeries.chart.update({
-                        title: {
-                            text: cityScope
-                        }
-                    }, false);
-
-                    citySeries.update({
-                        data: data
-                    });
-
-                    // update colorAxis
-                    citiesMap.chart.update({
-                        colorAxis: buildColorAxis()
-                    });
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
                 },
                 afterLoad: function () {
                     this.parentCell.setActiveState();
@@ -359,33 +344,11 @@ async function setupDashboard() {
                 click: function () {
                     dataScope = 'TX';
 
-                    const data =
-                        citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', dataScope]
-                        );
-
-                    // update navigator
-                    navigatorSeries.update({
-                        name: cityScope,
-                        data
-                    });
-
-                    // update chart
-                    citySeries.chart.update({
-                        title: {
-                            text: cityScope
-                        }
-                    }, false);
-
-                    citySeries.update({
-                        data: data
-                    });
-
-                    // update colorAxis
-                    citiesMap.chart.update({
-                        colorAxis: buildColorAxis()
-                    });
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
                 }
             },
             states: {
@@ -413,33 +376,11 @@ async function setupDashboard() {
                 click: function () {
                     dataScope = 'FD';
 
-                    const data =
-                        citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', dataScope]
-                        );
-
-                    // update navigator
-                    navigatorSeries.update({
-                        name: cityScope,
-                        data
-                    });
-
-                    // update chart
-                    citySeries.chart.update({
-                        title: {
-                            text: cityScope
-                        }
-                    }, false);
-
-                    citySeries.update({
-                        data: data
-                    });
-
-                    // update colorAxis
-                    citiesMap.chart.update({
-                        colorAxis: buildColorAxis()
-                    });
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
                 }
             },
             states: {
@@ -467,32 +408,11 @@ async function setupDashboard() {
                 click: function () {
                     dataScope = 'ID';
 
-                    const data =
-                        citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', dataScope]
-                        );
-                    // update navigator
-                    navigatorSeries.update({
-                        name: cityScope,
-                        data
-                    });
-
-                    // update chart
-                    citySeries.chart.update({
-                        title: {
-                            text: cityScope
-                        }
-                    }, false);
-
-                    citySeries.update({
-                        data: data
-                    });
-
-                    // update colorAxis
-                    citiesMap.chart.update({
-                        colorAxis: buildColorAxis()
-                    });
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
                 }
             },
             states: {
@@ -520,32 +440,11 @@ async function setupDashboard() {
                 click: function () {
                     dataScope = 'RR1';
 
-                    const data =
-                        citiesData[cityScope].store.table.modified.getRows(
-                            void 0, void 0,
-                            ['time', dataScope]
-                        );
-                    // update navigator
-                    navigatorSeries.update({
-                        name: cityScope,
-                        data
-                    });
-
-                    // update chart
-                    citySeries.chart.update({
-                        title: {
-                            text: cityScope
-                        }
-                    }, false);
-
-                    citySeries.update({
-                        data: data
-                    });
-
-                    // update colorAxis
-                    citiesMap.chart.update({
-                        colorAxis: buildColorAxis()
-                    });
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
                 }
             },
             states: {
@@ -915,6 +814,41 @@ function tooltipFormatter(value) {
 
     // fallback
     return '' + Highcharts.correctFloat(value, 4);
+}
+
+function syncRefreshCharts(store, dataScope, cityScope) {
+    const data = store.table.modified.getRows(
+        void 0, void 0,
+        ['time', dataScope]
+    );
+
+    // update navigator
+    navigatorSeries.update({
+        name: cityScope,
+        data
+    });
+
+    // Update the main chart
+    Highcharts.fireEvent(
+        navigatorSeries.chart.xAxis[0],
+        'afterSetExtremes'
+    );
+
+    // update chart
+    citySeries.chart.update({
+        title: {
+            text: cityScope
+        }
+    }, false);
+
+    citySeries.update({
+        data: data
+    });
+
+    // update colorAxis
+    citiesMap.chart.update({
+        colorAxis: buildColorAxis()
+    });
 }
 
 /**
