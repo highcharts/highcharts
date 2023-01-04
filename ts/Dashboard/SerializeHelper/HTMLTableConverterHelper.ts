@@ -13,6 +13,7 @@
  * */
 
 'use strict';
+
 /* *
  *
  *  Import
@@ -33,9 +34,8 @@ const { merge } = U;
 /**
  * Change the obj of HTMLTableConverter to its Serialized form.
  * @param obj Object to serialize
- * @return Serialized object
+ * @return {HTMLTableConverterHelper.JSON} Serialized object
  */
-
 function toJSON(obj: HTMLTableConverter): HTMLTableConverterHelper.JSON {
     return {
         $class: 'Data.HTMLTableConverter',
