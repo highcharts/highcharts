@@ -333,7 +333,8 @@ function applyGrouping(
         if (
             groupPixelWidth &&
             processedXData &&
-            processedXData.length
+            processedXData.length &&
+            plotSizeX
         ) {
             hasGroupedData = true;
 
@@ -350,7 +351,7 @@ function applyGrouping(
                     xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
                 ) || 1,
                 interval =
-                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
+                    (groupPixelWidth * (xMax - xMin) / plotSizeX) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
                     DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(

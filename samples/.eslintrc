@@ -56,3 +56,4 @@ rules:
     jsdoc/require-param-description: 0
     jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+

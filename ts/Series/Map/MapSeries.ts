@@ -169,6 +169,16 @@ class MapSeries extends ScatterSeries {
         },
 
         /**
+         * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
+         * the map borders. Round means that borders are rounded in the ends and
+         * bends.
+         *
+         * @type       {Highcharts.SeriesLinecapValue}
+         * @since      next
+         */
+        linecap: 'butt',
+
+        /**
          * @ignore-option
          *
          * @private
@@ -980,6 +990,7 @@ class MapSeries extends ScatterSeries {
         } else {
             delete attr['stroke-width'];
         }
+        attr['stroke-linecap'] = attr['stroke-linejoin'] = this.options.linecap;
 
         return attr;
     }
