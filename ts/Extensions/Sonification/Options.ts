@@ -124,6 +124,7 @@ declare global {
             playDelay?: MappingParameter;
             rate?: MappingParameter;
             pitch?: MappingParameter;
+            volume?: MappingParameter;
         }
 
         interface SpeechTrackOptions extends BaseTrackOptions {

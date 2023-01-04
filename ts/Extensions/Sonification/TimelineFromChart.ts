@@ -278,14 +278,25 @@ function mapToVirtualAxis(
             value - valueExtremes.min;
 
     let virtualValueDelta = lenVirtualAxis * valueDelta / lenValueAxis;
+
     if (logarithmic) {
-        const log = (x: number): number => (
-            x === 0 ? 0 :
-                x < 0 ? -(Math.log(-x) * Math.LOG10E) :
-                    Math.log(x) * Math.LOG10E
-        );
+        const log = valueExtremes.min > 0 ?
+            // Normal log formula
+            (x: number): number => Math.log(x) / Math.LOG10E :
+            // Negative logarithmic support needed
+            (x: number): number => {
+                let adjustedNum = Math.abs(x);
+                if (adjustedNum < 10) {
+                    adjustedNum += (10 - adjustedNum) / 10;
+                }
+                const res = Math.log(adjustedNum) / Math.LN10;
+                return x < 0 ? -res : res;
+            };
+
+        const logValMin = log(valueExtremes.min);
         virtualValueDelta = lenVirtualAxis *
-            log(virtualValueDelta + 1) / log(lenVirtualAxis + 1);
+            (log(value) - logValMin) /
+            (log(valueExtremes.max) - logValMin);
     }
 
     return clamp(virtualAxisExtremes.min + virtualValueDelta,
@@ -875,6 +886,8 @@ function timelineFromChart(
             algorithm: 'minmax',
             prop: 'y'
         },
+        groupingOffGlobally = options.pointGrouping &&
+            options.pointGrouping.enabled === false,
         globalTracks = options.globalTracks || [],
         globalContextTracks = options.globalContextTracks || [],
         isSequential = options.order === 'sequential',
@@ -969,7 +982,7 @@ function timelineFromChart(
                     updateLastPropValue(point);
 
                     // Add the events
-                    if (!pointGroupOpts.enabled) {
+                    if (!pointGroupOpts.enabled || groupingOffGlobally) {
                         add(context);
                     } else {
                         const dT = time - pointGroupTime,
