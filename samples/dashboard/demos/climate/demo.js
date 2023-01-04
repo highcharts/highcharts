@@ -198,34 +198,6 @@ async function setupDashboard() {
                                         dataScope,
                                         city
                                     );
-                                    // const data = store.table.modified.getRows(
-                                    //     void 0, void 0,
-                                    //     ['time', dataScope]
-                                    // );
-
-                                    // // update chart
-                                    // citySeries.chart.update({
-                                    //     title: {
-                                    //         text: city
-                                    //     }
-                                    // }, false);
-
-                                    // citySeries.update({
-                                    //     name: city,
-                                    //     data
-                                    // });
-
-                                    // // update navigator
-                                    // navigatorSeries.update({
-                                    //     name: city,
-                                    //     data
-                                    // });
-
-                                    // // Update the main chart
-                                    // Highcharts.fireEvent(
-                                    //     navigatorSeries.chart.xAxis[0],
-                                    //     'afterSetExtremes'
-                                    // );
 
                                     cityGrid.update({ store });
 
