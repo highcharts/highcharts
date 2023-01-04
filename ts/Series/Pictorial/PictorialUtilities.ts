@@ -35,7 +35,8 @@ function rescalePatternFill(
         match = fill && fill.match(/url\(([^)]+)\)/);
 
     if (match) {
-        const patternPath = document.querySelector(`${match[1]} path`) as unknown as SVGElement;
+        const patternPath =
+            document.querySelector(`${match[1]} path`) as unknown as SVGElement;
         if (patternPath) {
             const bBox = patternPath.getBBox();
             let scaleX = 1 / (bBox.width + borderWidth),
