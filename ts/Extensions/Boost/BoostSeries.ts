@@ -202,14 +202,6 @@ function compose<T extends typeof Series>(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-    const PointClass = SeriesClass.prototype.pointClass;
-
-    if (composedClasses.indexOf(PointClass) === -1) {
-        composedClasses.push(PointClass);
-
-        wrap(PointClass.prototype, 'haloPath', wrapPointHaloPath);
-    }
-
     if (composedClasses.indexOf(SeriesClass) === -1) {
         composedClasses.push(SeriesClass);
 
@@ -1147,37 +1139,6 @@ function seriesRenderCanvas(this: Series): void {
             doneProcessing
         );
     }
-}
-
-/**
- * For inverted series, we need to swap X-Y values before running base
- * methods.
- * @private
- */
-function wrapPointHaloPath(
-    this: Point,
-    proceed: Function
-): SVGPath {
-    const point = this,
-        series = point.series,
-        chart = series.chart,
-        plotX: number = point.plotX || 0,
-        plotY: number = point.plotY || 0,
-        inverted = chart.inverted;
-
-    if (series.boosted && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    const halo: SVGPath = proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (series.boosted && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return halo;
 }
 
 /**
