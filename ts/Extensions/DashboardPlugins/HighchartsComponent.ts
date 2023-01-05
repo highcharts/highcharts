@@ -230,11 +230,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
-    public redraw(): this {
-        return super.redraw();
-        // return this.render();
-    }
-
     public resize(
         width?: number | string | null,
         height?: number | string | null
