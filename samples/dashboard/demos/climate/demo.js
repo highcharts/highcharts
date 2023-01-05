@@ -104,23 +104,27 @@ async function setupDashboard() {
                                 .getStore(city)
                                 .then(store => {
                                     const chartData = store.table.modified
-                                        .getRows(
-                                            void 0,
-                                            void 0,
-                                            ['time', dataScope]
-                                        ).filter(el =>
-                                            el[0] >= min && el[0] <= max
-                                        );
+                                            .getRows(
+                                                void 0,
+                                                void 0,
+                                                ['time', dataScope]
+                                            ).filter(el =>
+                                                el[0] >= min && el[0] <= max
+                                            ),
+                                        lastPoint =
+                                            chartData[chartData.length - 1];
 
                                     citySeries.update({
                                         data: chartData
                                     });
 
-                                    buildCitiesMap(
-                                        new Date(chartData[0][0])
-                                    ).then(data => {
-                                        citiesMap.setData(data);
-                                    });
+                                    buildCitiesMap(new Date(lastPoint[0]))
+                                        .then(data => {
+                                            citiesMap.setData(data);
+                                        });
+
+                                    updateKPI(store.table, lastPoint[0]);
+                                    updateKPCData(city);
                                 });
                         }
                     }
@@ -210,29 +214,7 @@ async function setupDashboard() {
 
                                     cityGrid.update({ store });
 
-                                    // update KPI indicators
-                                    const table =
-                                        citiesData[city].store.table.modified;
-
-                                    for (
-                                        const [key, ind] of Object.entries(kpi)
-                                    ) {
-                                        // set active state on current temperature KPI
-                                        if (key === 'TN') {
-                                            ind.parentCell.setActiveState();
-                                        }
-
-                                        ind.update({
-                                            value: table.getCellAsNumber(key, table.getRowIndexBy('time', worldDate.getTime()), true)
-                                        });
-                                    }
-
-                                    // update KPI data
-                                    kpi.data.update({
-                                        value: city +
-                                            '<br>lat: ' + citiesData[city].lat +
-                                            '<br>lon: ' + citiesData[city].lon
-                                    });
+                                    updateKPCData(city);
                                 });
                         }
                     },
@@ -797,6 +779,34 @@ function tooltipFormatter(value) {
     return '' + Highcharts.correctFloat(value, 4);
 }
 
+function updateKPI(table, time) {
+    for (
+        const [key, ind] of Object.entries(kpi)
+    ) {
+        // set active state on current temperature KPI
+        if (key === 'TN') {
+            ind.parentCell.setActiveState();
+        }
+
+        ind.update({
+            value: table.getCellAsNumber(
+                key,
+                table.getRowIndexBy('time', time),
+                true
+            )
+        });
+    }
+}
+
+function updateKPCData(city) {
+    // update KPI data
+    kpi.data.update({
+        value: city +
+            '<br>lat: ' + citiesData[city].lat +
+            '<br>lon: ' + citiesData[city].lon
+    });
+}
+
 function syncRefreshCharts(store, dataScope, cityScope) {
     const data = store.table.modified.getRows(
         void 0, void 0,
@@ -820,62 +830,10 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         title: {
             text: cityScope
         }
-    }, false);
-
-    citySeries.update({
-        data: data
     });
 
     // update colorAxis
     citiesMap.chart.update({
         colorAxis: buildColorAxis()
     });
-}
-
-/**
- * @deprecated
- * @todo remove
- */
-function placeholder() {
-    return [
-        'data:image/png;base64,',
-        'iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX///93dY2j7Llkm',
-        'p+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9P',
-        'j3/fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89L',
-        'k+et/g988Unc1SHBAWXuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfOb',
-        'ucSLj+puk7hzj8fv7/xqlbCjp+61uPHH19/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e',
-        '6+Uvqx/hpab0LJ8f8Z5eaNmeqJejZpeYoFOcIpZgZRUeJNRWn2vysyd17WJoaGCjpqgnr',
-        'S1tceFr7ONjKXOztuVwq6wsMM1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djFyEJIw4',
-        'oigZxCVFURInGJSiuaEy+/7dIVVd1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAA',
-        'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P',
-        '8NEOZwJ7waX636KSXJvJly+cKnBPl0JO52LF7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6',
-        'ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqDp3U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBM',
-        'pvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrgvRxje5S8ik9g0nx7M+1LhslDo',
-        'Nc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWbh+kI/fCXZIgN8uljVeGDW',
-        'KEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+zc785pA2dukT8lVm7',
-        'W2O1y7Mt5vHukjjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+dhQmPQ2Abmvi5t',
-        'coRA5qiRyxddN6vtXl1SF3tLEn3k8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF75giV3iZ9',
-        'SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW3kfTphjnEWOTQ0gbMqIgUXvUMi',
-        'H1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960j1HubeBVJVf',
-        'ArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCs',
-        'yrlQS6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRN',
-        'kokMU5WZ3kbOp4vl8tgI/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9m',
-        'tvcFIGvB06G2dm3b6JJ2lYNra+LFUb4xaKQi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+Olz',
-        'LdNPIpmWpTalMRFbm86197f+xZRNKpNgUHRsSolztCzqDf6ve33rNJGirpfF0sPjD0qLD',
-        'Qa3H6bJInTKSqkswf+MsOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTaFNu1+',
-        'LRmh866l0u+3UpFU/sBfZFMWFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cM',
-        'pOmqyajkokk8gf+/AOjLCoirtkVigz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+l',
-        'jRmZ6mMcLcA6M8KjhzOeNjmRF8qltZjP3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci',
-        '79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/e6ZSnYmluFtBekq0ZsF3LHBcfa3MquiphB',
-        'Ys8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSHI2rRaVHB6W/w2ND/X0EkKQcamFaNCK',
-        'Lx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU9OacbytTN4PspzZKSSFY1BVWio',
-        'q5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctTYPtjERaSSHQ7+DiqJjrnf5',
-        'Qf3vDsCm1pJAoB0bhYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4ZeUkiUqMgZIQ8/25K8',
-        'rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtORXd9p1p4x36knhUQeGJZviJbtoqGuGjJfnyzEB',
-        '4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91lPs2fedlFZSD9dUE0KAW9u3c',
-        '/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy7jPf3W9n',
-        'bKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5',
-        'pDgbN4PzsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-        'AAAAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
-    ].join('');
 }
