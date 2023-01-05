@@ -9,7 +9,8 @@
         },
 
         title: {
-            text: '2022 World Cup teams flights to Qatar'
+            text: '2022 World Cup teams flights to Qatar',
+            align: 'left'
         },
 
         mapNavigation: {
@@ -28,7 +29,8 @@
                 tooltip: {
                     headerFormat: '{point.point.id}<br>',
                     pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
-                }
+                },
+                showInLegend: false
             }
         },
 
@@ -187,7 +189,7 @@
             maxWidth: 0.2,
             fillOpacity: 1,
             weight: 0.2,
-            color: '#550d65',
+            color: '#550d6566',
             data: [
                 ['Ecuador', 'Qatar'],
                 ['Senegal', 'Qatar'],

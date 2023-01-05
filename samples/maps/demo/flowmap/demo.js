@@ -13,7 +13,7 @@
         },
 
         subtitle: {
-            text: 'Demo of flowmap series'
+            text: 'Highcharts Maps flow map'
         },
 
         mapNavigation: {

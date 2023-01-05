@@ -45,14 +45,19 @@ The last step is to add our flow map series configuration with [series.type](htt
 series: [{
     type: 'flowmap',
     name: 'Flowmap with mappoint series',
-    data: [
-        ['Warszawa', 'Oslo', 0, 5, true, {
+    data: [{
+        from: 'Warszawa',
+        to: 'Oslo',
+        curveFactor: 0.4,
+        weight: 5,
+        growTorwards: true,
+        markerEnd: {
             enabled: true,
             height: 15,
             width: 10
-        }],
+        }
         ...
-    ],
+    }],
     ...
 }]
 ```
