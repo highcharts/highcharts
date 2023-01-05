@@ -9,11 +9,7 @@
         },
 
         title: {
-            text: 'Highmaps flowmap demo with fillColor and fillOpacity'
-        },
-
-        subtitle: {
-            text: 'Demo of Highcharts map.'
+            text: 'Highcharts Maps flowmap demo with fillColor and fillOpacity'
         },
 
         mapNavigation: {

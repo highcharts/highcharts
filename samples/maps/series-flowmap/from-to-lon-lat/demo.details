@@ -3,8 +3,3 @@ name: Flowmap point using lonlat coordinates
 author:
   - Hubert Kozik
 js_wrap: b
-tags:
-  - Highcharts Maps demo
-categories:
-  - General
-...

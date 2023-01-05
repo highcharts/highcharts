@@ -6,11 +6,7 @@
     Highcharts.mapChart('container', {
 
         title: {
-            text: 'Highmaps basic flight routes demo'
-        },
-
-        subtitle: {
-            text: 'Demo of Highcharts map with flowmap'
+            text: 'Highcharts Maps basic flight routes demo'
         },
 
         mapNavigation: {

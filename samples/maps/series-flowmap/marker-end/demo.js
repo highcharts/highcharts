@@ -9,11 +9,7 @@
         },
 
         title: {
-            text: 'Lines'
-        },
-
-        subtitle: {
-            text: 'Lines between places of the world'
+            text: 'Lines between places of the world with markerEnd'
         },
 
         mapNavigation: {
