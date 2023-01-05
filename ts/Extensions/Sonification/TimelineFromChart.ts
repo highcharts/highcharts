@@ -942,7 +942,8 @@ function timelineFromChart(
                 ),
                 mainTracks = (sOptions.tracks || [seriesDefaultInstrOpts])
                     .concat(globalTracks),
-                contextTracks = seriesIx ? sOptions.contextTracks || [] :
+                contextTracks = seriesIx && !isSequential ?
+                    sOptions.contextTracks || [] :
                     (sOptions.contextTracks || []).concat(globalContextTracks),
                 eventsAdded: Sonification.TimelineEvent[] = [];
 
