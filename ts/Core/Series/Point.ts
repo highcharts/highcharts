@@ -818,12 +818,19 @@ class Point {
      * @private
      * @function Highcharts.Point#pos
      */
-    public pos(): [number, number]|undefined {
-        const { plotX, plotY, series } = this;
+    public pos(chartCoordinates?: boolean): [number, number]|undefined {
+        const { plotX, plotY, series } = this,
+            { chart, xAxis, yAxis } = series;
+        let posX = 0,
+            posY = 0;
         if (isNumber(plotX) && isNumber(plotY)) {
-            return this.series.chart.inverted ?
-                [series.yAxis.len - plotY, series.xAxis.len - plotX] :
-                [plotX, plotY];
+            if (chartCoordinates) {
+                posX = xAxis ? xAxis.pos : chart.plotLeft;
+                posY = yAxis ? yAxis.pos : chart.plotTop;
+            }
+            return chart.inverted && xAxis && yAxis ?
+                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                [plotX + posX, plotY + posY];
         }
     }
 
