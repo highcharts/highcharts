@@ -5,6 +5,16 @@ The data layer provides functionality to load, process and convert data for
 different use cases. Additionally it provides the necessary structure to
 synchronize data changes between different components and network nodes.
 
+Sub-folders:
+
+* Converters - create a table from an input format, and an output format from a
+  table
+
+* Modifiers - modify table data into a second table, accessibile via the
+  `DataTable.modified` property.
+
+* Stores - make data sources accessible via a managed table
+
 
 
 DataTable - Managing Data
@@ -78,12 +88,129 @@ table.on('afterSetRows', function (e) {
     this.getRowCount() === 3;
 });
 table.setRow([2023, 'Gremlins 3']);
+table.deleteRows(table.getRowIndexBy('title', 'Gremlins 3'), 1);
 ```
 
 
 
-Loading Data
-------------
+### Table Modifier
+
+Tables can provide automatic modification of data during their lifetime with the
+help of modifiers. Each table can have only one modifier, but this modifier
+might call additional modifiers.
+
+Modifications usually do not change the table. Instead modifiers produce a
+second table, accessible under `DataTable.modified`. Changes in the original
+table will also result in changes in the second table, unless the modifier
+explicitly dismiss changes.
+
+```TypeScript
+table.setModifier(new RangeModifier({
+    ranges: [{
+        column: 'year',
+        minValue: 1980,
+        maxValue: 1989,
+    }],
+    strict: true
+});
+table.getRowCount() === 2;
+table.modified.getRowCount() === 1;
+
+table.setRows([
+    [1983, 'Gremlins Teaser'],
+    [2023, 'Gremlins 3']
+]);
+table.getRowCount() === 4;
+table.modified.getRowCount() === 2;
+```
+
+
+
+DataStore - Loading And Saving Data
+-----------------------------------
 
 Loading external data is usually done via a DataStore. A DataStore takes either
-an URL or an local source.
+an URL or a local source.
+
+
+
+### Data Converter
+
+Every store needs a specific converter to parse data from and to the source
+format. You can provide your own custom converter or keep the default one.
+
+```TypeScript
+const converter = new CSVConverter({
+    decimalPoint: ',',
+    itemDelimiter: ';',
+});
+const store = new CSVStore({
+    csv: 'a;b\n1,2;3,4\n5,6;7,8'
+});
+await store.load();
+store.table.getRowCount() === 2;
+```
+
+
+
+### Creating A Store And Loading Data
+
+You can create a store without loading any data. In that case you just get
+an empty table, which you can fill up with data to save it later. Or you can
+provide a table with existing data.
+
+```TypeScript
+const store = new CSVStore();
+store.table.getRowCount() === 0;
+const table = new DataTable({ column: [1, 2, 3] });
+const store2 = new CSVStore(table);
+store.table.getRowCount() === 3;
+```
+
+Depending on the store type you have to provide different mandatory options
+to load data. Continue with our example we can provide an URL to a CSV and then
+wait for loading to fulfill.
+
+```TypeScript
+const store = new CSVStore(void 0, {
+    csvURL: 'https://domain.example/source.csv'
+});
+try {
+    await store.load();
+}
+catch (error) {
+    console.error(error);
+}
+store.table.getRowCount() > 0;
+```
+
+
+
+### Saving Data
+
+How to save a table depends on the store type and use case. In a strict
+server-less situation, instead of the save function you usally use the
+related converter.
+
+```TypeScript
+const store = new CSVStore(void 0, {
+    csv: 'column\n1\n2\n3\n'
+});
+store.converter.export(store) === 'column\n1\n2\n3\n';
+```
+
+If your store is based on a external source in the internet or in the HTML, the
+save function can write data back. Please note that an error will be thrown, if
+this is not supported by the store type, or if permissions do now allow this.
+
+```TypeScript
+const store = new HTMLTableStore(void 0, {
+    tableElement: document.getElementById('the_table')
+});
+try {
+    await store.save();
+}
+catch (error) {
+    console.error(error);
+}
+```
