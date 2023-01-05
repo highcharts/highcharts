@@ -54,6 +54,11 @@ const {
     pick
 } = U;
 
+interface AfterSetOffsetEvent {
+    xOffset: number;
+    xWidth: number;
+}
+
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;
@@ -491,13 +496,13 @@ addEvent(Chart, 'render', function (): void {
     forEachStack(this, renderStackShadow);
 });
 
-addEvent(StackItem, 'afterSetOffset', function (e): void {
+addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
         this.shadow.attr({
-            translateX: (e as any).xOffset
+            translateX: e.xOffset
         });
         this.shadow.animate({
-            width: (e as any).xWidth
+            width: e.xWidth
         });
     }
 });
