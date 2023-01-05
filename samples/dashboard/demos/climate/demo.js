@@ -115,11 +115,11 @@ async function setupDashboard() {
                                         data: chartData
                                     });
 
-                                    buildCitiesMap(
-                                        new Date(chartData[0][0])
-                                    ).then(data => {
-                                        citiesMap.setData(data);
-                                    });
+                                    worldDate = chartData[0][0];
+
+                                    buildCitiesMap().then(
+                                        data => citiesMap.setData(data)
+                                    );
                                 });
                         }
                     }
@@ -179,7 +179,7 @@ async function setupDashboard() {
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: await buildCitiesMap(worldDate),
+                    data: await buildCitiesMap(),
                     allowPointSelect: true,
                     dataLabels: {
                         crop: false
@@ -487,7 +487,7 @@ async function buildCitiesData() {
     return tables;
 }
 
-async function buildCitiesMap(date) {
+async function buildCitiesMap() {
     return Object
         .keys(citiesData)
         .map(city => {
@@ -495,7 +495,7 @@ async function buildCitiesMap(date) {
             const table = data.store.table.modified;
             const y = table.getCellAsNumber(
                 dataScope,
-                table.getRowIndexBy('time', date.getTime()),
+                table.getRowIndexBy('time', worldDate),
                 true
             );
 
