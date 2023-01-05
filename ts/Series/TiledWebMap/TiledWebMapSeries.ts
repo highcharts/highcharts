@@ -65,6 +65,18 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
+    /**
+     * A tiledwebmap series allows user to display dynamically joined individual
+     * images (tiles) and join them together to create a map.
+     *
+     * @sample maps/demo/tiledwebmap/
+     *         OpenStreetMap demo
+     *
+     * @extends      plotOptions.map
+     * @product      highmaps
+     * @optionparent plotOptions.tiledwebmap
+     */
+
     public static defaultOptions: TiledWebMapSeriesOptions = merge(MapSeries.defaultOptions, {
         states: {
             inactive: {
@@ -317,5 +329,72 @@ export default TiledWebMapSeries;
  *  API options
  *
  * */
+
+/**
+ * A `tiledwebmap` series. The [type](#series.tiledwebmap.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.tiledwebmap
+ * @excluding dataParser, dataURL, marker
+ * @product   highmaps
+ * @apioption series.tiledwebmap
+ */
+
+/**
+ * Provider options for the series.
+ *
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider
+ */
+
+/**
+ * Provider type to pull data (tiles) from.
+ *
+ * @type      {string}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider.type
+ */
+
+/**
+ * Set a tiles theme. Check the providers documentation for official
+ * list of available themes.
+ *
+ * @type      {string}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider.theme
+ */
+
+/**
+ * Subdomain required by each provider. Check the providers documentation for
+ * available subdomains.
+ *
+ * @type      {string}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider.subdomain
+ */
+
+/**
+ * API key for providers that require using one.
+ *
+ * @type      {string}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider.apiKey
+ */
+
+/**
+ * Custom URL for providers not specified in [providers type](#series.
+ * tiledwebmap.provider.type). Available variables to use in URL are: `{x}`,
+ * `{y}`, `{z}` or `{zoom}`.
+ *
+ * @type      {string}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.tiledwebmap.provider.url
+ */
 
 ''; // adds doclets above to transpiled file
