@@ -1,4 +1,4 @@
-QUnit.test('Tiled Web Map', assert => {
+QUnit.test('Tiled Web Map Providers', assert => {
     const replaceVariables = (url, x, y, zoom) => url
         .replace('{x}', x.toString())
         .replace('{y}', y.toString())
@@ -30,4 +30,85 @@ QUnit.test('Tiled Web Map', assert => {
                 done();
             });
     });
+});
+
+QUnit.test('Tiled Web Map on the chart', assert => {
+    const chart = Highcharts.mapChart('container', {
+            mapView: {
+                projection: {
+                    name: 'WebMercator'
+                },
+                zoom: 4
+            },
+            series: [{
+                type: 'tiledwebmap'
+            }]
+        }),
+        series = chart.series[0];
+
+    assert.strictEqual(
+        Object.keys(series.tiles).length,
+        0,
+        'If the provider is not defined there should not be any tiles.'
+    );
+
+    series.update({
+        provider: {}
+    });
+
+    assert.strictEqual(
+        Object.keys(series.tiles).length,
+        0,
+        `If the provider object is defined but provider type is not defined
+        there should not be any tiles.`
+    );
+
+    series.update({
+        provider: {
+            type: 'BadProvider'
+        }
+    });
+
+    assert.strictEqual(
+        Object.keys(series.tiles).length,
+        0,
+        `If the provider is defined, but it is not supported there should not be
+        any tiles.`
+    );
+
+    series.update({
+        provider: {
+            type: 'OpenStreetMap'
+        }
+    });
+
+    assert.ok(
+        Object.keys(series.tiles).length > 0,
+        'If the provider is defined there should be tiles shown.'
+    );
+
+    series.update({
+        provider: {
+            theme: 'BadTheme'
+        }
+    });
+
+    assert.ok(
+        Object.keys(series.tiles).length > 0,
+        `If the provider theme is defined, but not supported there should be
+        standard tiles shown.`
+    );
+
+    series.update({
+        provider: {
+            theme: void 0,
+            subdomain: 'XXX'
+        }
+    });
+
+    assert.ok(
+        Object.keys(series.tiles).length > 0,
+        `If the provider subdomain is defined, but not supported there should be
+        standard tiles shown.`
+    );
 });

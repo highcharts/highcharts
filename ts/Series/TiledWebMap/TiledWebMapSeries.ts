@@ -29,6 +29,7 @@ const {
 import U from '../../Core/Utilities.js';
 
 const {
+    defined,
     extend,
     error,
     merge,
@@ -69,9 +70,6 @@ class TiledWebMapSeries extends MapSeries {
             inactive: {
                 enabled: true
             }
-        },
-        provider: {
-            type: 'OpenStreetMap'
         }
     });
 
@@ -173,98 +171,113 @@ class TiledWebMapSeries extends MapSeries {
             { zoom } = mapView,
             zoomCeil = Math.ceil(zoom);
 
-        if (mapView.projection) {
-            // Always true for tile maps
-            mapView.projection.hasCoordinates = true;
-        }
-
-        if (!transformGroups[zoomCeil]) {
-            transformGroups[zoomCeil] = chart.renderer.g().add(this.group);
-        }
-        const origin = mapView.lonLatToPixels({
-            lon: -180,
-            lat: 85.0511287798
-        });
-        transformGroups[zoomCeil].attr({
-            translateX: origin.x,
-            translateY: origin.y
-        });
-
-        const replaceVariables = (
-            url: string,
-            x: number,
-            y: number,
-            zoom: number
-        ): string => url
-            .replace('{x}', x.toString())
-            .replace('{y}', y.toString())
-            .replace('{zoom}', zoom.toString());
-
-        const addTile = (x: number, y: number, zoom: number): void => {
-            if (!tiles[`${zoom},${x},${y}`]) {
-                let url: string;
-
-                if (provider.url) {
-                    url = replaceVariables(provider.url, x, y, zoom);
-                } else {
-                    const ProviderDefinition =
-                    TiledWebMapSeries.TilesProvidersRegistry[provider.type];
-
-                    const def = new ProviderDefinition(),
-                        defURL = def.getURL(
-                            provider.subdomain,
-                            provider.theme,
-                            provider.apiKey
-                        );
-
-                    url = replaceVariables(defURL, x, y, zoom);
-                }
-
-                tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                    url,
-                    x * 256,
-                    y * 256
-                )
-                    .attr({
-                        zIndex: 2
-                    })
-                    .on('load', function (this: SVGElement): void {
-                        if (provider.onload) {
-                            provider.onload.apply(this);
-                        }
-                    })
-                    .add(transformGroups[zoomCeil]);
+        if (provider && (provider.type || provider.url)) {
+            if (mapView.projection) {
+                // Always true for tile maps
+                mapView.projection.hasCoordinates = true;
             }
-            tiles[`${zoom},${x},${y}`].isActive = true;
-        };
 
-        const topLeft = mapView.pixelsToLonLat({
-                x: 0,
-                y: 0
-            }),
-            bottomRight = mapView.pixelsToLonLat({
-                x: chart.plotWidth,
-                y: chart.plotHeight
+            if (!transformGroups[zoomCeil]) {
+                transformGroups[zoomCeil] = chart.renderer.g().add(this.group);
+            }
+            const origin = mapView.lonLatToPixels({
+                lon: -180,
+                lat: 85.0511287798
+            });
+            transformGroups[zoomCeil].attr({
+                translateX: origin.x,
+                translateY: origin.y
             });
 
-        const startPos = this.lonLatToTile(topLeft, zoom),
-            endPos = this.lonLatToTile(bottomRight, zoom);
+            const replaceVariables = (
+                url: string,
+                x: number,
+                y: number,
+                zoom: number
+            ): string => url
+                .replace('{x}', x.toString())
+                .replace('{y}', y.toString())
+                .replace('{zoom}', zoom.toString())
+                .replace('{z}', zoom.toString());
 
-        for (let x = startPos.x; x <= endPos.x; x++) {
-            for (let y = startPos.y; y <= endPos.y; y++) {
-                addTile(x, y, zoom);
+            const addTile = (x: number, y: number, zoom: number): void => {
+                if (!tiles[`${zoom},${x},${y}`]) {
+
+                    if (provider.type) {
+                        const ProviderDefinition =
+                        TiledWebMapSeries.TilesProvidersRegistry[provider.type];
+
+                        if (!defined(ProviderDefinition)) {
+                            error(
+                                'Provider cannot be reached.',
+                                false
+                            );
+                            return;
+                        }
+
+                        const def = new ProviderDefinition(),
+                            defURL = def.getURL(
+                                provider.subdomain,
+                                provider.theme,
+                                provider.apiKey
+                            );
+
+                        provider.url = replaceVariables(defURL, x, y, zoom);
+                    }
+
+                    if (provider.url) {
+                        tiles[`${zoom},${x},${y}`] = chart.renderer.image(
+                            provider.url,
+                            x * 256,
+                            y * 256
+                        )
+                            .attr({
+                                zIndex: 2
+                            })
+                            .on('load', function (this: SVGElement): void {
+                                if (provider.onload) {
+                                    provider.onload.apply(this);
+                                }
+                            })
+                            .add(transformGroups[zoomCeil]);
+                    }
+                }
+                tiles[`${zoom},${x},${y}`].isActive = true;
+            };
+
+            const topLeft = mapView.pixelsToLonLat({
+                    x: 0,
+                    y: 0
+                }),
+                bottomRight = mapView.pixelsToLonLat({
+                    x: chart.plotWidth,
+                    y: chart.plotHeight
+                });
+
+            const startPos = this.lonLatToTile(topLeft, zoom),
+                endPos = this.lonLatToTile(bottomRight, zoom);
+
+            for (let x = startPos.x; x <= endPos.x; x++) {
+                for (let y = startPos.y; y <= endPos.y; y++) {
+                    addTile(x, y, zoom);
+                }
             }
+
+            // Destroy old and unused
+            Object.keys(tiles).forEach((key): any => {
+                if (tiles[key].isActive) {
+                    tiles[key].isActive = false;
+                } else {
+                    tiles[key].destroy();
+                    delete tiles[key];
+                }
+            });
+        } else {
+            error(
+                'Provider cannot be reached.',
+                false
+            );
         }
-
-        // Destroy old and unused
-        Object.keys(tiles).forEach((key): any => {
-            if (tiles[key].isActive) {
-                tiles[key].isActive = false;
-            } else {
-                tiles[key].destroy();
-                delete tiles[key];
-            }
-        });
     }
 }
 

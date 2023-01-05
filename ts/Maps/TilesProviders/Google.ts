@@ -30,7 +30,13 @@ export default class Google implements ProviderDefinition {
             (theme && !Object.prototype.hasOwnProperty.call(themes, theme)) ||
             !theme
         ) {
-            error(13); // TO DO add new error that this theme does not exist
+            if (theme) {
+                error(
+                    'Missing option: Tiles provider theme cannot be reached,' +
+                    'using standard provider theme.',
+                    false
+                );
+            }
             chosenTheme = 'standard';
         } else {
             chosenTheme = theme;

@@ -35,7 +35,13 @@ export default class Carto implements ProviderDefinition {
             (theme && !Object.prototype.hasOwnProperty.call(themes, theme)) ||
             !theme
         ) {
-            error(13); // TO DO add new error that this theme does not exist
+            if (theme) {
+                error(
+                    'Missing option: Tiles provider theme cannot be reached,' +
+                    'using standard provider theme.',
+                    false
+                );
+            }
             chosenTheme = 'standard';
         } else {
             chosenTheme = theme;
@@ -45,7 +51,13 @@ export default class Carto implements ProviderDefinition {
         if ((subdomain && subdomains.indexOf(subdomain) === -1) ||
             !subdomain
         ) {
-            error(13); // TO DO add new error that this subdomain does not exist
+            if (subdomain) {
+                error(
+                    'Missing option: Tiles provider subdomain cannot be.' +
+                    'reached, using default provider subdomain.',
+                    false
+                );
+            }
             chosenSubdomain = subdomains[0];
         } else {
             chosenSubdomain = subdomain;

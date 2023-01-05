@@ -23,11 +23,11 @@ import type MapSeriesOptions from '../Map/MapSeriesOptions';
  * */
 
 interface TiledWebMapSeriesOptions extends MapSeriesOptions {
-    provider: ProviderOptions
+    provider?: ProviderOptions
 }
 
 interface ProviderOptions {
-    type: string,
+    type?: string,
     theme?: string,
     subdomain?: string,
     url?: string,
