@@ -181,6 +181,22 @@ class FlowMapSeries extends MapLineSeries {
         },
 
         /**
+         * Maximum width of a link expressed in pixels. The weight of a link
+         * is mapped between `maxWidth` and `minWidth`.
+         *
+         * @type  {number}
+         */
+        maxWidth: 25,
+
+        /**
+         * Minimum width of a link expressed in pixels. The weight of a link
+         * is mapped between `maxWidth` and `minWidth`.
+         *
+         * @type  {number}
+         */
+        minWidth: 5,
+
+        /**
          * The opacity of all the links.
          *
          * @apioption plotOptions.flowmap.opacity
@@ -386,11 +402,6 @@ class FlowMapSeries extends MapLineSeries {
 
         if (!defined(weight) || !smallestWeight || !greatestWeight) {
             return 0;
-        }
-
-        if (!defined(this.options.minWidth) ||
-            !defined(this.options.minWidth)) {
-            return weight;
         }
 
         const minWidthLimit = this.options.minWidth,
@@ -1004,22 +1015,6 @@ export default FlowMapSeries;
  *
  * @type      {number}
  * @apioption series.flowmap.data.weight
- */
-
-/**
- * Maximum width of a link expressed in pixels. The weight of a link
- * is mapped between `maxWidth` and `minWidth`.
- *
- * @type  {number}
- * @apioption series.flowmap.maxWidth
- */
-
-/**
- * Minimum width of a link expressed in pixels. The weight of a link
- * is mapped between `maxWidth` and `minWidth`.
- *
- * @type  {number}
- * @apioption series.flowmap.minWidth
  */
 
 ''; // adds doclets above to transpiled file
