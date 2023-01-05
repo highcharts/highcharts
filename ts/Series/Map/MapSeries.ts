@@ -797,13 +797,25 @@ class MapSeries extends ScatterSeries {
                             ) * fx.pos
                         ),
                         scaleX: scaleStep,
-                        scaleY: scaleStep * flipFactor
+                        scaleY: scaleStep * flipFactor,
+                        'stroke-width': strokeWidth / scaleStep
                     });
 
-                    transformGroup.element.setAttribute(
-                        'stroke-width',
-                        strokeWidth / scaleStep
-                    );
+                    series.points.forEach((point): void => { // #18166
+                        const graphic = point.graphic;
+                        let strokeWidth;
+
+                        if (
+                            graphic &&
+                            graphic['stroke-width'] &&
+                            (strokeWidth = this.getStrokeWidth(point.options))
+                        ) {
+                            graphic.attr({
+                                'stroke-width': strokeWidth / scaleStep
+                            });
+                        }
+                    });
+
                 };
 
                 transformGroup
@@ -812,16 +824,24 @@ class MapSeries extends ScatterSeries {
 
             // When dragging or first rendering, animation is off
             } else {
-                transformGroup.attr(svgTransform);
+                transformGroup.attr(merge(
+                    svgTransform, { 'stroke-width': strokeWidth / scale }
+                ));
 
-                // Set the stroke-width directly on the group element so the
-                // children inherit it. We need to use setAttribute directly,
-                // because the stroke-widthSetter method expects a stroke color
-                // also to be set.
-                transformGroup.element.setAttribute(
-                    'stroke-width',
-                    strokeWidth / scale
-                );
+                series.points.forEach((point): void => { // #18166
+                    const graphic = point.graphic;
+                    let strokeWidth;
+
+                    if (
+                        graphic &&
+                        graphic['stroke-width'] &&
+                        (strokeWidth = this.getStrokeWidth(point.options))
+                    ) {
+                        graphic.attr({
+                            'stroke-width': strokeWidth / scale
+                        });
+                    }
+                });
             }
         });
 
