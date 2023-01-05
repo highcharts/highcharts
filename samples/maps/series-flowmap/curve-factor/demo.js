@@ -20,7 +20,7 @@
             flowmap: {
                 tooltip: {
                     headerFormat: null,
-                    pointFormat: `{point.options.from} \u2192 
+                    pointFormat: `{point.options.from} \u2192
                         {point.options.to}: <b>{point.weight}</b>`
                 }
             },
@@ -98,8 +98,7 @@
         }, {
             type: 'flowmap',
             linkedTo: ':previous',
-            minWidth: 1,
-            maxWidth: 1,
+            weight: 1,
             markerEnd: {
                 enabled: false
             },
@@ -108,49 +107,41 @@
             data: [{
                 from: 'Oslo',
                 to: 'Helsinki',
-                curveFactor: 1,
-                weight: 20
+                curveFactor: 1
             },
             {
                 from: 'Oslo',
                 to: 'Dublin',
-                weight: 70,
                 curveFactor: -0.2
             },
             {
                 from: 'Warszawa',
                 to: 'Helsinki',
-                weight: 10,
                 curveFactor: -0.2
             },
             {
                 from: 'Warszawa',
                 to: 'Paris',
-                weight: 5,
                 curveFactor: -0.5
             },
             {
                 from: 'Warszawa',
                 to: 'Madrid',
-                weight: 20,
                 curveFactor: 0
             },
             {
                 from: 'Warszawa',
                 to: 'Budapest',
-                weight: 0.1,
                 curveFactor: 0.2
             }, {
                 from: 'Warszawa',
                 to: 'Sofia',
-                weight: 60,
                 curveFactor: 1,
                 fillColor: '#1cd635',
                 fillOpacity: 0.4
             }, {
                 from: 'Warszawa',
                 to: 'Roma',
-                weight: 2,
                 curveFactor: -0.3
             }]
         }]
