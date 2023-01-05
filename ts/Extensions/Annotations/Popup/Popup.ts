@@ -309,7 +309,7 @@ class Popup {
                 optionName
             );
 
-        if (!inputName.match(/\d/g)) {
+        if (!optionName.match(/^\d+$/)) {
             // add label
             createElement(
                 'label',
