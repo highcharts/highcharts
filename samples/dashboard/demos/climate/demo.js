@@ -222,7 +222,9 @@ async function setupDashboard() {
                                         'afterSetExtremes'
                                     );
 
-                                    cityGrid.update({ store });
+                                    // Update DataGrid
+                                    cityGrid.dataTable = store.table;
+                                    cityGrid.update(); // force redraw
                                 });
                         }
                     },
