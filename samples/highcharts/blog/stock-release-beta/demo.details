@@ -1,0 +1,6 @@
+---
+ name: Highstock Beta Release
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...
