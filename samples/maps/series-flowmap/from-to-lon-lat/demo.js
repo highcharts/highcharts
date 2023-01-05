@@ -28,7 +28,7 @@
             type: 'flowmap',
             name: 'FlowMap Series',
             growTowards: true,
-            weight: 10,
+            weight: 1,
             data: [{
                 from: [45.1004152, 60.1975501],
                 to: [20.1004152, 52.1975501]

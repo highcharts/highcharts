@@ -201,7 +201,9 @@
         }, {
             type: 'flowmap',
             name: 'Flowmap Series',
-            fillOpacity: 0.2,
+            minWidth: 0.2,
+            maxWidth: 0.2,
+            fillOpacity: 1,
             weight: 0.2,
             color: '#550d6566',
             data: [
