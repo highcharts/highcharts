@@ -85,15 +85,16 @@ class FlowMapSeries extends MapLineSeries {
         animation: true,
 
         /**
-         * The `curveFactor` option for all links.
-         * Value higher than 0 will curve the link clockwise.
-         * A negative value will curve it counter clockwise.
-         * If the value is 0 the link will be a straight line.
+         * The `curveFactor` option for all links. Value higher than 0 will curve the
+         * link clockwise. A negative value will curve it counter clockwise. If
+         * the value is 0 the link will be a straight line. By default undefined
+         * curveFactor get an automatic curve.
          *
          * @sample {highmaps} maps/series-flowmap/curve-factor
          *         Setting different values for curveFactor
          *
          * @type      {number}
+         * @default   undefined
          * @apioption plotOptions.flowmap.curveFactor
          */
 
@@ -141,9 +142,9 @@ class FlowMapSeries extends MapLineSeries {
          */
 
         /**
-         * A `markerEnd` creates an arrow symbol
-         * indicating the direction of flow at the destination. Specifying a
-         * `markerEnd` here will create one for each link.
+         * A `markerEnd` creates an arrow symbol indicating the direction of
+         * flow at the destination. Specifying a `markerEnd` here will create
+         * one for each link.
          *
          * @declare Highcharts.SeriesFlowMapSeriesOptionsObject
          */
