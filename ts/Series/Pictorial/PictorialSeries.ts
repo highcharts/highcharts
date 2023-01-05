@@ -94,8 +94,8 @@ class PictorialSeries extends ColumnSeries {
      * A pictorial chart uses vector images to represents the data.
      * The shape of the data point is taken from the path parameter.
      *
-     * @sample {highcharts} highcharts/demo/pictorial/
-     *         Pictorial chart
+     * @sample       {highcharts} highcharts/demo/pictorial/
+     *               Pictorial chart
      *
      * @extends      plotOptions.column
      * @since        next
@@ -621,6 +621,14 @@ export default PictorialSeries;
  *
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
+ *
+ * @sample {highcharts} highcharts/demo/pictorial/
+ *         Pictorial chart
+ * @sample {highcharts} highcharts/demo/pictorial-stackshadow/
+ *         Pictorial stackShadow option
+ * @sample {highcharts} highcharts/series-pictorial/paths-max/
+ *         Pictorial max option
+ *
  * @excluding borderColor, borderWidth, dashStyle, dragDrop
  * @since     next
  * @product   highcharts
@@ -632,6 +640,10 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.SeriesPictorialPathsOptionsObject
  * @type      {Array<*>}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
  * @since     next
  * @product   highcharts
  * @apioption series.pictorial.paths
@@ -641,6 +653,10 @@ export default PictorialSeries;
  * The definition defines a path to be drawn. It corresponds `d` SVG attribute.
  *
  * @type      {string}
+ *
+ * @sample    {highcharts} highcharts/demo/pictorial/
+ *            Pictorial chart
+ *
  * @product   highcharts
  * @apioption series.pictorial.paths.definition
  */
@@ -649,7 +665,7 @@ export default PictorialSeries;
  * The max option determines height of the image. It is the ratio of
  * `yAxis.max` to the `paths.max`.
  *
- * @sample {highcharts} highcharts\series-pictorial\paths-max
+ * @sample {highcharts} highcharts/series-pictorial/paths-max
  *         Pictorial max option
  *
  * @type      {number}
@@ -661,7 +677,7 @@ export default PictorialSeries;
 /**
  * The `stackShadow` forms the background of stacked points. Requires the `series.stacking` to be defined.
  *
- * @sample {highcharts} highcharts/yaxis/stackshadow/
+ * @sample {highcharts} highcharts/demo/pictorial-stackshadow/
  *         Pictorial stackShadow option
  *
  * @declare   Highcharts.YAxisOptions
