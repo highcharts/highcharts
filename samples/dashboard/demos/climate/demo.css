@@ -2,7 +2,7 @@
 
 /* *
  *
- *  City chart
+ *  City Chart
  *
  * */
 
@@ -75,15 +75,15 @@
 
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
     fill: #fff;
-}
-
-#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) .highcharts-data-label-box {
-    fill: #f0f;
     paint-order: stroke;
-    stroke: #fff;
-    stroke-width: 2px;
+    stroke: #000;
+    stroke-width: 1px;
 }
 
 #world-map .highcharts-series-1 .highcharts-point {
     stroke: #fff;
+}
+
+#world-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 3px;
 }

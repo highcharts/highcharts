@@ -167,20 +167,24 @@ async function setupDashboard() {
                     allowPointSelect: true,
                     dataLabels: [{
                         align: 'center',
+                        animation: false,
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
-                        verticalAlign: 'top'
+                        padding: 0,
+                        verticalAlign: 'top',
+                        y: 2
                     }, {
+                        animation: false,
                         crop: false,
                         enabled: true,
                         formatter: function () {
                             return labelFormatter(this.y);
                         },
                         inside: true,
-                        shape: 'mapmarker',
+                        padding: 0,
                         verticalAlign: 'bottom',
-                        y: -12
+                        y: -16
                     }],
                     events: {
                         click: function (e) {
@@ -224,7 +228,17 @@ async function setupDashboard() {
                         }
                     },
                     marker: {
-                        enabled: true
+                        enabled: true,
+                        radius: 12,
+                        state: {
+                            hover: {
+                                radiusPlus: 0
+                            },
+                            select: {
+                                radius: 12
+                            }
+                        },
+                        symbol: 'mapmarker'
                     },
                     tooltip: {
                         footerFormat: '',
