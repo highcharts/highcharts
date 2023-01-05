@@ -408,19 +408,12 @@ async function setupDashboard() {
 }
 
 async function setupDataPool() {
+
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
             googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
             googleSpreadsheetKey: '1gIScpvn6aO8jeN_fxOkJKJWA1KTVzQUQZUsZr0V8TOY'
-        },
-        storeType: 'GoogleSheetsStore'
-    });
-    dataPool.setStoreOptions({
-        name: 'climate',
-        storeOptions: {
-            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-            googleSpreadsheetKey: '1N4GofXxFOxXtteYj2H9nwWCHELegv_kozChV-D33iUc'
         },
         storeType: 'GoogleSheetsStore'
     });
@@ -430,18 +423,6 @@ async function setupDataPool() {
     for (const row of csvReferences.getRowObjects()) {
         dataPool.setStoreOptions({
             name: row.city,
-            storeOptions: {
-                csvURL: row.csv
-            },
-            storeType: 'CSVStore'
-        });
-    }
-
-    csvReferences = await dataPool.getStoreTable('climate');
-
-    for (const row of csvReferences.getRowObjects()) {
-        dataPool.setStoreOptions({
-            name: row.time,
             storeOptions: {
                 csvURL: row.csv
             },
@@ -466,21 +447,42 @@ main().catch(e => console.error(e));
  * */
 
 async function buildCitiesData() {
-    const cities = await dataPool.getStoreTable('cities');
+    const cities = (await dataPool.getStoreTable('cities')).modified;
+    const initialCity = defaultCity;
     const tables = {};
 
-    await Promise.all(
-        cities.modified
-            .getRows(void 0, void 0, ['lat', 'lon', 'city'])
-            .map(async function (row) {
+    const initialRow = await cities.getRow(
+        cities.getRowIndexBy('city', defaultCity),
+        ['lat', 'lon', 'city']
+    );
+
+    tables[initialCity] = {
+        lat: initialRow[0],
+        lon: initialRow[1],
+        name: initialRow[2],
+        store: await dataPool.getStore(initialRow[2])
+    };
+
+    // lazy promise without leading await for the rest
+    (async function () {
+        const rows = cities.getRows(void 0, void 0, ['lat', 'lon', 'city']);
+
+        for (const row of rows) {
+            if (typeof tables[row[2]] === 'undefined') {
+
                 tables[row[2]] = {
                     lat: row[0],
                     lon: row[1],
                     name: row[2],
                     store: await dataPool.getStore(row[2])
                 };
-            })
-    );
+
+                if (citiesMap) {
+                    citiesMap.setData(await buildCitiesMap());
+                }
+            }
+        }
+    }());
 
     return tables;
 }
