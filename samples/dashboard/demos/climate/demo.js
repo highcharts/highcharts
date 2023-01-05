@@ -200,7 +200,7 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    dataScope = 'TN';
+                                    dataScope = 'TX';
 
                                     syncRefreshCharts(
                                         store,
@@ -218,7 +218,7 @@ async function setupDashboard() {
                                         const [key, ind] of Object.entries(kpi)
                                     ) {
                                         // set active state on current temperature KPI
-                                        if (key === 'TN') {
+                                        if (key === 'TX') {
                                             ind.parentCell.setActiveState();
                                         }
 
@@ -275,20 +275,20 @@ async function setupDashboard() {
             }
         },
         {
-            cell: 'kpi-temperature',
+            cell: 'kpi-max-temperature',
             type: 'kpi',
-            title: 'Average temperature',
+            title: 'Maximum temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TN = this;
+                    kpi.TX = this;
                 },
                 click: function () {
-                    dataScope = 'TN';
+                    dataScope = 'TX';
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -310,20 +310,20 @@ async function setupDashboard() {
             }
         },
         {
-            cell: 'kpi-max-temperature',
+            cell: 'kpi-temperature',
             type: 'kpi',
-            title: 'Maximum temperature',
+            title: 'Average temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TX = this;
+                    kpi.TN = this;
                 },
                 click: function () {
-                    dataScope = 'TX';
+                    dataScope = 'TN';
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -572,11 +572,11 @@ async function setupDashboard() {
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-temperature',
+                                    id: 'kpi-max-temperature',
                                     // width: '50%'
                                     width: '33.333%'
                                 }, {
-                                    id: 'kpi-max-temperature',
+                                    id: 'kpi-temperature',
                                     // width: '50%'
                                     width: '33.333%'
                                 }, {
