@@ -20,7 +20,7 @@ export default class Gaode implements ProviderDefinition {
         satelite: 'https://webst{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={zoom}'
     };
 
-    initialProjection = '';
+    initialProjectionName = 'WebMercator';
 
     getURL(
         subdomain?: string | undefined,
@@ -67,5 +67,9 @@ export default class Gaode implements ProviderDefinition {
             .replace('{s}', chosenSubdomain);
 
         return url;
+    }
+
+    getProjectionName(): String {
+        return this.initialProjectionName;
     }
 }

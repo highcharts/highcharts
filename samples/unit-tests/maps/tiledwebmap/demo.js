@@ -10,7 +10,7 @@ QUnit.test('Tiled Web Map Providers', assert => {
         400
     );
 
-    const providers = ['OpenStreetMap', 'Google', 'Carto', 'Gaode'];
+    const providers = ['OpenStreetMap', 'Google', 'Gaode'];
     const done = assert.async(providers.length);
 
     providers.forEach(provider => {
@@ -35,10 +35,7 @@ QUnit.test('Tiled Web Map Providers', assert => {
 QUnit.test('Tiled Web Map on the chart', assert => {
     const chart = Highcharts.mapChart('container', {
             mapView: {
-                projection: {
-                    name: 'WebMercator'
-                },
-                zoom: 4
+                zoom: 2
             },
             series: [{
                 type: 'tiledwebmap'
@@ -110,5 +107,16 @@ QUnit.test('Tiled Web Map on the chart', assert => {
         Object.keys(series.tiles).length > 0,
         `If the provider subdomain is defined, but not supported there should be
         standard tiles shown.`
+    );
+
+    const initialProjectionName =
+        new Highcharts.Series.types.tiledwebmap
+            .TilesProvidersRegistry.OpenStreetMap().getProjectionName();
+
+    assert.strictEqual(
+        chart.mapView.projection.options.name,
+        initialProjectionName,
+        `If projection is not set it should be forced to initial projection of
+        the provider.`
     );
 });

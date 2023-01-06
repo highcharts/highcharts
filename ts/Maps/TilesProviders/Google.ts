@@ -17,7 +17,7 @@ export default class Google implements ProviderDefinition {
         standard: 'https://www.google.com/maps/vt?pb=!1m5!1m4!1i{zoom}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2sen-US!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965'
     };
 
-    initialProjection = '';
+    initialProjectionName = 'WebMercator';
 
     getURL(
         subdomain?: string | undefined,
@@ -45,5 +45,9 @@ export default class Google implements ProviderDefinition {
         const url = themes[chosenTheme as keyof typeof themes];
 
         return url;
+    }
+
+    getProjectionName(): String {
+        return this.initialProjectionName;
     }
 }

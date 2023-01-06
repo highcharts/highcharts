@@ -184,6 +184,45 @@ class TiledWebMapSeries extends MapSeries {
             zoomCeil = Math.ceil(zoom);
 
         if (provider && (provider.type || provider.url)) {
+            if (provider.type) {
+                const ProviderDefinition =
+                TiledWebMapSeries.TilesProvidersRegistry[provider.type];
+
+                if (!defined(ProviderDefinition)) {
+                    error(
+                        'Provider cannot be reached.',
+                        false
+                    );
+                    return;
+                }
+
+                const def = new ProviderDefinition(),
+                    providerProjection = def.getProjectionName();
+
+                provider.url = def.getURL(
+                    provider.subdomain,
+                    provider.theme,
+                    provider.apiKey
+                );
+
+                // if not set force projection to initial of provider
+                if (!defined(mapView.options.projection)) {
+                    mapView.update({
+                        projection: {
+                            name: providerProjection
+                        }
+                    });
+                } else if (
+                    mapView.projection.options.name !== providerProjection
+                ) {
+                    error(
+                        'The set projection is different than supported by ' +
+                        'provider.',
+                        false
+                    );
+                }
+            }
+
             if (mapView.projection) {
                 // Always true for tile maps
                 mapView.projection.hasCoordinates = true;
@@ -214,32 +253,11 @@ class TiledWebMapSeries extends MapSeries {
 
             const addTile = (x: number, y: number, zoom: number): void => {
                 if (!tiles[`${zoom},${x},${y}`]) {
-
-                    if (provider.type) {
-                        const ProviderDefinition =
-                        TiledWebMapSeries.TilesProvidersRegistry[provider.type];
-
-                        if (!defined(ProviderDefinition)) {
-                            error(
-                                'Provider cannot be reached.',
-                                false
-                            );
-                            return;
-                        }
-
-                        const def = new ProviderDefinition(),
-                            defURL = def.getURL(
-                                provider.subdomain,
-                                provider.theme,
-                                provider.apiKey
-                            );
-
-                        provider.url = replaceVariables(defURL, x, y, zoom);
-                    }
-
                     if (provider.url) {
+                        const url = replaceVariables(provider.url, x, y, zoom);
+
                         tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                            provider.url,
+                            url,
                             x * 256,
                             y * 256
                         )
@@ -252,6 +270,8 @@ class TiledWebMapSeries extends MapSeries {
                                 }
                             })
                             .add(transformGroups[zoomCeil]);
+
+                        tiles[`${zoom},${x},${y}`].originalURL = url;
                     }
                 }
                 tiles[`${zoom},${x},${y}`].isActive = true;

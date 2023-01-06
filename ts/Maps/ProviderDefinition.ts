@@ -23,8 +23,9 @@ interface ProviderGetURL {
 export declare class ProviderDefinition {
     subdomains?: Array<string>;
     themes: Themes;
-    initialProjection: any;
+    initialProjectionName: String;
     getURL: ProviderGetURL;
+    getProjectionName: Function;
 }
 
 export default ProviderDefinition;

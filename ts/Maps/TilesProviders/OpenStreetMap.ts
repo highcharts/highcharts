@@ -20,7 +20,7 @@ export default class OpenStreetMap implements ProviderDefinition {
         bicycle: 'https://{s}.tile.thunderforest.com/cycle/{zoom}/{x}/{y}.png'
     };
 
-    initialProjection = '';
+    initialProjectionName = 'WebMercator';
 
     getURL(
         subdomain?: string | undefined,
@@ -67,5 +67,9 @@ export default class OpenStreetMap implements ProviderDefinition {
             .replace('{s}', chosenSubdomain);
 
         return url;
+    }
+
+    getProjectionName(): String {
+        return this.initialProjectionName;
     }
 }
