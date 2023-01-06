@@ -25,6 +25,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import DumbbellPoint from './DumbbellPoint.js';
+import LollipopPoint from '../Lollipop/LollipopPoint';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -181,7 +182,9 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
-    public getConnectorAttribs(point: DumbbellPoint): SVGAttributes {
+    public getConnectorAttribs(
+        point: DumbbellPoint | LollipopPoint
+    ): SVGAttributes {
         let series = this,
             chart = series.chart,
             pointOptions = point.options,
@@ -228,9 +231,9 @@ class DumbbellSeries extends AreaRangeSeries {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
 
-        if ((pointTop as any) < 0) {
+        if (pointTop < 0) {
             pointTop = 0;
-        } else if ((pointTop as any) >= yAxis.len) {
+        } else if (pointTop >= yAxis.len) {
             pointTop = yAxis.len;
         }
 
@@ -250,7 +253,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 y: point.y,
                 zone: point.zone
             };
-            point.y = point.high;
+            point.y = (point as DumbbellPoint).high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick<
             ColorType|undefined,
@@ -298,7 +301,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @param {Highcharts.Point} point The point to inspect.
      *
      */
-    public drawConnector(point: DumbbellPoint): void {
+    public drawConnector(point: DumbbellPoint | LollipopPoint): void {
         const series = this,
             animationLimit = pick(series.options.animationLimit, 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?

@@ -32,6 +32,23 @@ QUnit.test('Color axis in styled mode (#6049)', function (assert) {
         'Heatmap: color is applied'
     );
 
+    chart.update({
+        chart: {
+            type: 'line'
+        },
+        series: {
+            data: [1, 2, 3]
+        }
+    });
+
+    assert.strictEqual(
+        Highcharts.color(
+            getStyle(chart.series[0].points[1].graphic.element, 'fill')
+        ).get(),
+        'rgb(77,77,255)',
+        '#14114: Line: color is applied'
+    );
+
     // Map chart
     chart = Highcharts.mapChart('container', {
         chart: {
