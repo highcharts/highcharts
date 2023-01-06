@@ -1,4 +1,4 @@
-QUnit.test('Tiled Web Map Providers', assert => {
+QUnit.test('Tiled Web Map loading tiles from providers', assert => {
     const replaceVariables = (url, x, y, zoom) => url
         .replace('{x}', x.toString())
         .replace('{y}', y.toString())
@@ -118,5 +118,17 @@ QUnit.test('Tiled Web Map on the chart', assert => {
         initialProjectionName,
         `If projection is not set it should be forced to initial projection of
         the provider.`
+    );
+
+    chart.series[0].update({
+        provider: {
+            type: '',
+            url: 'https://a.tile.thunderforest.com/cycle/{zoom}/{x}/{y}.png'
+        }
+    });
+
+    assert.ok(
+        Object.keys(series.tiles).length > 0,
+        'Map should be loaded from custom URL entered by user.'
     );
 });

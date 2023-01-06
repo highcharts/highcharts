@@ -1,6 +1,6 @@
 Highcharts.mapChart('container', {
     title: {
-        text: 'Highmaps basic TiledWebMap Series'
+        text: 'Highcharts Maps basic TiledWebMap Series'
     },
 
     mapNavigation: {
