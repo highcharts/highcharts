@@ -18,9 +18,8 @@ let citiesMap;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
-let navigatorSeries;
-let worldCities;
 let dataScope = defaultData;
+let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 
 async function setupDashboard() {
@@ -139,22 +138,6 @@ async function setupDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    events: {
-                        render: function () {
-
-                            if (!this.styledMode) {
-                                return;
-                            }
-
-                            // force point colors
-                            for (const point of this.series[1].points) {
-                                if (point.graphic && point.color) {
-                                    point.graphic.element.style.fill =
-                                        point.color;
-                                }
-                            }
-                        }
-                    },
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
@@ -171,7 +154,7 @@ async function setupDashboard() {
                 },
                 mapView: {
                     maxZoom: 4,
-                    zoom: 1.7
+                    zoom: 1.6
                 },
                 series: [{
                     type: 'map',
@@ -181,10 +164,27 @@ async function setupDashboard() {
                     name: 'Cities',
                     data: await buildCitiesMap(),
                     allowPointSelect: true,
-                    dataLabels: {
-                        crop: false
-                        // y: -13, // mapmarker fix
-                    },
+                    dataLabels: [{
+                        align: 'center',
+                        animation: false,
+                        crop: false,
+                        enabled: true,
+                        format: '{point.name}',
+                        padding: 0,
+                        verticalAlign: 'top',
+                        y: 2
+                    }, {
+                        animation: false,
+                        crop: false,
+                        enabled: true,
+                        formatter: function () {
+                            return labelFormatter(this.y);
+                        },
+                        inside: true,
+                        padding: 0,
+                        verticalAlign: 'bottom',
+                        y: -16
+                    }],
                     events: {
                         click: function (e) {
 
@@ -230,19 +230,18 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
-                        radius: 6,
-                        states: {
+                        radius: 12,
+                        state: {
                             hover: {
-                                radius: 4
+                                radiusPlus: 0
                             },
                             select: {
-                                radius: 9
+                                radius: 12
                             }
-                        }
-                        // symbol: 'mapmarker'
+                        },
+                        symbol: 'mapmarker'
                     },
                     tooltip: {
-                        // distance: 6, // mapmarker fix
                         footerFormat: '',
                         headerFormat: '',
                         pointFormatter: function () {
@@ -257,6 +256,23 @@ async function setupDashboard() {
                 }],
                 title: {
                     text: void 0
+                },
+                tooltip: {
+                    enabled: true,
+                    positioner: function (width, _height, axisInfo) {
+                        return {
+                            x: (
+                                axisInfo.plotX -
+                                width / 2 +
+                                this.options.padding
+                            ),
+                            y: (
+                                axisInfo.plotY +
+                                this.options.padding * 2
+                            )
+                        };
+                    },
+                    useHTML: true
                 }
             },
             events: {
@@ -284,22 +300,6 @@ async function setupDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    events: {
-                        render: function () {
-
-                            if (!this.styledMode) {
-                                return;
-                            }
-
-                            // force point colors
-                            for (const point of this.series[0].points) {
-                                if (point.graphic && point.color) {
-                                    point.graphic.element.style.fill =
-                                        point.color;
-                                }
-                            }
-                        }
-                    },
                     spacing: 40,
                     styledMode: true
                 },
@@ -508,7 +508,8 @@ async function buildCitiesMap() {
                 selected: city === cityScope,
                 y
             };
-        });
+        })
+        .sort(city => city.lat);
 }
 
 function buildColorAxis() {
@@ -564,12 +565,21 @@ function buildDates() {
     return dates;
 }
 
-function tooltipFormatter(value) {
+function labelFormatter(value) {
 
     // temperature values
     if (dataScope[0] === 'T') {
+        return '' + Math.round((value - 273.15));
+    }
+
+    return Highcharts.correctFloat(value, 0);
+}
+
+function tooltipFormatter(value) {
+
+    // temperature values (original Kelvin)
+    if (dataScope[0] === 'T') {
         return [
-            Highcharts.correctFloat(value, 4) + '˚K',
             Highcharts.correctFloat(
                 (value - 273.15), 3
             ) + '˚C',
