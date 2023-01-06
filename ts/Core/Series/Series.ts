@@ -2751,16 +2751,23 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && (!styledMode || colorAxis)) {
-                        graphic[
-                            // #14114
-                            styledMode && colorAxis ? 'css' : verb
-                        ](
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
+                    if (graphic) {
+                        const pointAttr = series.pointAttribs(
+                            point,
+                            (
+                                (styledMode || !point.selected) ?
+                                    void 0 :
+                                    'select'
                             )
                         );
+
+                        if (!styledMode) {
+                            graphic[verb](pointAttr);
+                        } else if (colorAxis) { // #14114
+                            graphic['css']({
+                                fill: pointAttr.fill
+                            });
+                        }
                     }
 
                     if (graphic) {
