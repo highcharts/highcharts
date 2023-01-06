@@ -1,0 +1,79 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+/* *
+ *
+ *  City chart
+ *
+ * */
+#city-chart .highcharts-background {
+    fill: #46475d;
+}
+
+#city-chart .highcharts-title {
+    fill: #fff;
+}
+
+#city-chart .highcharts-axis-labels {
+    fill: #fff;
+}
+
+/* *
+ *
+ *  Navigator
+ *
+ * */
+.highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke: #df8fa1;
+}
+
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-navigator-xaxis {
+    fill: #fff;
+}
+
+.highcharts-navigator-series {
+    fill: #c3c6ed;
+    stroke: #df8fa1;
+    fill-opacity: 1;
+}
+
+.highcharts-navigator-series .highcharts-area {
+    fill-opacity: 1;
+}
+
+.highcharts-navigator-mask-inside {
+    fill: #000;
+    fill-opacity: 0.5;
+    stroke-width: 0;
+}
+
+.highcharts-navigator-outline {
+    display: none;
+}
+
+/* *
+ *
+ *  World Map
+ *
+ * */
+#world-map .highcharts-background {
+    fill: #46475d;
+}
+
+#world-map .highcharts-series-0 .highcharts-point {
+    fill: #c93 !important;
+    stroke: #986;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke: #fff;
+    stroke-width: 2px;
+}
+
+#world-map .highcharts-series-1 .highcharts-point {
+    stroke: #fff;
+}
+
+#world-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 3px;
+}
