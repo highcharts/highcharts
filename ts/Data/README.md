@@ -79,8 +79,8 @@ column[0] === 1984
 ### Change Events
 
 Changing data in the table with setter functions will trigger an event on the
-table. If a change in the table is done via column reference, no event will be
-emitted.
+table. If a change in the table is done indirectly via column reference, no
+event will be emitted.
 
 ```TypeScript
 table.on('afterSetRows', function (e) {
@@ -102,7 +102,7 @@ might call additional modifiers.
 Modifications usually do not change the table. Instead modifiers produce a
 second table, accessible under `DataTable.modified`. Changes in the original
 table will also result in changes in the second table, unless the modifier
-explicitly dismiss changes.
+explicitly dismiss incoming changes.
 
 ```TypeScript
 table.setModifier(new RangeModifier({
@@ -131,6 +131,21 @@ DataStore - Loading And Saving Data
 
 Loading external data is usually done via a DataStore. A DataStore takes either
 an URL or a local source.
+
+
+
+### DataStore Registry
+
+DataStore types can be directly loaded via import. In case of bundles stores can
+also accessed via registry, as the registry gets updated with each bundled type.
+
+```TypeScript
+import CSVStore from 'dashboards/Data/Stores/CSVStore';
+```
+
+```TypeScript
+const CSVStore = Dashboard.DataStore.registry.CSVStore;
+```
 
 
 
