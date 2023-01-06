@@ -118,7 +118,7 @@ class StackItem {
             (inverted ? (!isNegative ? 'left' : 'right') : 'center');
     }
 
-    public alignOptions: AlignObject;
+    public alignOptions: AlignOptions;
     public axis: StackingAxis;
     public base?: string;
     public cumulative: number | null;
@@ -227,10 +227,10 @@ class StackItem {
             }),
             label = this.label,
             textAlign = this.textAlign,
-            { align, verticalAlign } = this.alignOptions;
+            { verticalAlign } = this.alignOptions;
 
         if (label && stackBox) {
-            const bBox = label.getBBox(),
+            const labelBox = label.getBBox(),
                 padding = label.padding;
             let isJustify =
                     pick(this.options.overflow, 'justify') === 'justify',
@@ -245,8 +245,8 @@ class StackItem {
             // well as the text alignment. It's need to be done to work with
             // default SVGLabel.align/justify methods.
             const { x, y } = this.adjustStackPosition({
-                labelBox: bBox,
-                vAlign: verticalAlign as VerticalAlignValue,
+                labelBox,
+                verticalAlign,
                 textAlign
             });
 
@@ -277,7 +277,7 @@ class StackItem {
                     label,
                     this.alignOptions,
                     label.alignAttr,
-                    bBox,
+                    labelBox,
                     stackBox
                 );
             }
@@ -313,7 +313,7 @@ class StackItem {
      */
     public adjustStackPosition({
         labelBox,
-        vAlign,
+        verticalAlign,
         textAlign
     }: AdjustStackPositionProps): {x: number, y: number} {
         const factorMap = {
@@ -324,7 +324,7 @@ class StackItem {
                 center: 0,
                 left: -1
             },
-            verticalAlignFactor = factorMap[vAlign],
+            verticalAlignFactor = factorMap[verticalAlign],
             textAlignFactor = factorMap[textAlign];
 
         return {
@@ -336,7 +336,7 @@ class StackItem {
      * Get the bbox of the stack.
      * @private
      * @function Highcharts.StackItem#getStackBox
-     * @return {BBoxObject} The x,y, height, width of the stack.
+     * @return {BBoxObject} The x, y, height, width of the stack.
      */
     public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
         const stackItem = this,
@@ -375,6 +375,13 @@ class StackItem {
     }
 }
 
+interface AlignOptions {
+    verticalAlign: 'top'|'middle'|'bottom';
+    align: 'left'|'center'|'right';
+    x?: number;
+    y?: number;
+}
+
 export interface StackBoxProps {
     xOffset: number;
     width: number;
@@ -386,7 +393,7 @@ export interface StackBoxProps {
 
 export interface AdjustStackPositionProps {
     labelBox: BBoxObject;
-    vAlign: VerticalAlignValue;
+    verticalAlign: VerticalAlignValue;
     textAlign: AlignValue;
 }
 /* *
