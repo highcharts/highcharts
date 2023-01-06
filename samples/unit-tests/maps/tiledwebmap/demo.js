@@ -2,6 +2,7 @@ QUnit.test('Tiled Web Map loading tiles from providers', assert => {
     const replaceVariables = (url, x, y, zoom) => url
         .replace('{x}', x.toString())
         .replace('{y}', y.toString())
+        .replace('{z}', zoom.toString())
         .replace('{zoom}', zoom.toString());
 
     const renderer = new Highcharts.Renderer(
@@ -10,7 +11,7 @@ QUnit.test('Tiled Web Map loading tiles from providers', assert => {
         400
     );
 
-    const providers = ['OpenStreetMap', 'Google', 'Gaode'];
+    const providers = ['OpenStreetMap', 'Google', 'Gaode', 'Stamen'];
     const done = assert.async(providers.length);
 
     providers.forEach(provider => {
