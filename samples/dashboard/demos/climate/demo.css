@@ -86,3 +86,7 @@
 #world-map .highcharts-series-1 .highcharts-point-select {
     stroke-width: 3px;
 }
+
+#world-map .highcharts-tooltip {
+    text-align: right;
+}

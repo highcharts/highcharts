@@ -18,9 +18,8 @@ let citiesMap;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
-let navigatorSeries;
-let worldCities;
 let dataScope = defaultData;
+let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 
 async function setupDashboard() {
@@ -272,7 +271,8 @@ async function setupDashboard() {
                                 this.options.padding * 2
                             )
                         };
-                    }
+                    },
+                    useHTML: true
                 }
             },
             events: {
@@ -577,10 +577,9 @@ function labelFormatter(value) {
 
 function tooltipFormatter(value) {
 
-    // temperature values
+    // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {
         return [
-            Highcharts.correctFloat(value, 4) + '˚K',
             Highcharts.correctFloat(
                 (value - 273.15), 3
             ) + '˚C',
