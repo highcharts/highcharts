@@ -1,0 +1,18 @@
+#container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 100vw;
+}
+
+.hcd-component {
+    box-shadow: 0 0 0 3px rgb(37 56 111 / 30%);
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0.5em;
+}
+
+#csvedit {
+    width: 600px;
+}

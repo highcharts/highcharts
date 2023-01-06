@@ -74,7 +74,7 @@ export interface NavigationOptions {
     iconsURL?: string;
 }
 
-interface PopupOptions {
+export interface PopupOptions {
     [key: string]: (string | IndicatorAliases | undefined);
     indicatorAliases?: IndicatorAliases;
 }

@@ -14,6 +14,24 @@ Cypress.Commands.add('pan', chartElement => {
         .trigger('mouseup')
 })
 
+Cypress.Commands.add('dashboard', () =>
+    cy.window().then(win => new Cypress.Promise((resolve, reject) => {
+        const D = win.Dashboard;
+        if (D) {
+            if (D.dashboards[0]) {
+                 resolve(D.dashboards[0]);
+            } else {
+                const unbind = D.addEvent(D.Dashboard, 'load', function() {
+                    unbind();
+                    resolve(this);
+                });
+            }
+        } else {
+            reject(new Error('global Dashboard namespace is missing.'));
+        }
+    }))
+);
+
 Cypress.Commands.add('chart', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
         const H = win.Highcharts;

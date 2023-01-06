@@ -182,7 +182,8 @@ const getFile = url => new Promise((resolve, reject) => {
                 Highcharts: 'highcharts',
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
-                'Highcharts Gantt': 'gantt'
+                'Highcharts Gantt': 'gantt',
+                'Highsoft Dashboard': 'dashboard'
             }[name];
 
         log = washPRLog(name, log);

@@ -257,7 +257,8 @@ module.exports = function (config) {
             // Complains on chart.renderer.addPattern
             f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
             // Uses classList extensively
-            f.indexOf('code/modules/stock-tools.src.js') !== 0
+            f.indexOf('code/modules/stock-tools.src.js') !== 0 &&
+            f.indexOf('code/dashboard.src.js') !== 0
         );
         files.splice(0, 0, 'code/modules/oldie-polyfills.src.js');
         files.splice(2, 0, 'code/modules/oldie.src.js');
@@ -422,7 +423,8 @@ module.exports = function (config) {
             '**/maps/*/*/demo.js': ['generic'],
             '**/stock/*/*/demo.js': ['generic'],
             '**/gantt/*/*/demo.js': ['generic'],
-            '**/issues/*/*/demo.js': ['generic']
+            '**/issues/*/*/demo.js': ['generic'],
+            '**/dashboard/*/*/demo.js': ['generic']
         },
 
         /*

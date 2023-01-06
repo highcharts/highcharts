@@ -32,7 +32,7 @@ export interface StoreTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

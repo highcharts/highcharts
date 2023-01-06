@@ -43,7 +43,7 @@ const developerPackageJson = `{
  * @return {Promise<void>}
  * Promise to keep
  */
-function task() {
+function scriptsCode() {
 
     const codeTool = require('../code');
     const fs = require('fs');
@@ -91,4 +91,4 @@ function task() {
     });
 }
 
-gulp.task('scripts-code', task);
+gulp.task('scripts-code', scriptsCode);

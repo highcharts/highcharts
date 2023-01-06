@@ -161,7 +161,7 @@ class Popup {
     ) {
         this.chart = chart;
         this.iconsURL = iconsURL;
-        this.lang = (getOptions().lang.navigation as any).popup;
+        this.lang = (getOptions().lang.navigation || {}).popup as any || {};
 
         // create popup div
         this.container = createElement(

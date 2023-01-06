@@ -1,4 +1,6 @@
+data/**/*.js
+data-grid/basic/simple/demo.js
 highcharts/common-js/browserify/demo.js
 highcharts/esm/async-await/demo.js
-data/**/*.js
+highcharts/esm/extending-members/demo.js
 static/*.js
