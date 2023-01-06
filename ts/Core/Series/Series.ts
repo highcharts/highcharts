@@ -2256,14 +2256,17 @@ class Series {
                         stackIndicator.key === stack[xValue].base
                     ) {
                         yBottom = pick(
-                            isNumber(threshold) ? threshold : yAxis.min,
-                            0
+                            isNumber(threshold) ? threshold : yAxis.min
                         );
                     }
 
                     // #1200, #1232
-                    if (yAxis.positiveValuesOnly && yBottom <= 0) {
-                        yBottom = null as any;
+                    if (
+                        yAxis.positiveValuesOnly &&
+                        defined(yBottom) &&
+                        yBottom <= 0
+                    ) {
+                        yBottom = void 0;
                     }
 
                     point.total = point.stackTotal = pointStack.total;
@@ -2298,7 +2301,7 @@ class Series {
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
                 )) :
-                null as any;
+                void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
             if (series.dataModify) {
