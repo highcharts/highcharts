@@ -178,7 +178,6 @@ class StackItem {
             const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
-                rotation: options.rotation,
                 // set default padding to 5 as it is in datalabels #12308
                 padding: pick(options.padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
@@ -283,9 +282,13 @@ class StackItem {
             }
 
             // Add attr to aviod the default animation of justifyDataLabel.
+            // Also add correct rotation with its rotation origin. #15129
             label.attr({
                 x: label.alignAttr.x,
-                y: label.alignAttr.y
+                y: label.alignAttr.y,
+                rotation: this.options.rotation,
+                rotationOriginX: labelBox.width / 2,
+                rotationOriginY: labelBox.height / 2
             });
 
             // Check if the dataLabel should be visible.
