@@ -326,7 +326,7 @@ const displayTime = time => {
         );
     };
     setUpInputs();
-
+    // eslint-disable-next-line no-underscore-dangle
     if (!window.__karma__) { // CI tests
         // Wait a bit for Visual review tool
         setTimeout(() => play(), 100);
