@@ -166,10 +166,10 @@ class StackItem {
             this.label = chart.renderer.label(
                 str,
                 null as any,
-                null as any,
-                (options as any).shape,
-                null as any,
-                null as any,
+                void 0,
+                options.shape,
+                void 0,
+                void 0,
                 options.useHTML,
                 false,
                 'stack-labels'
@@ -178,9 +178,9 @@ class StackItem {
             const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
-                rotation: (options as any).rotation,
+                rotation: options.rotation,
                 // set default padding to 5 as it is in datalabels #12308
-                padding: pick((options as any).padding, 5),
+                padding: pick(options.padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
 
@@ -188,7 +188,7 @@ class StackItem {
                 attr.fill = options.backgroundColor;
                 attr.stroke = options.borderColor;
                 attr['stroke-width'] = options.borderWidth;
-                this.label.css(options.style as any);
+                this.label.css(options.style || {});
             }
 
             this.label.attr(attr);
