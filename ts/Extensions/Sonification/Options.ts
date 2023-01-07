@@ -54,6 +54,7 @@ declare global {
         interface PitchMappingParameterOptions extends Omit<MappingParameterOptions, 'min'|'max'> {
             min?: number|string;
             max?: number|string;
+            scale?: number[];
         }
 
         interface FilterMappingOptions {

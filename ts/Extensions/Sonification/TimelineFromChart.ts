@@ -347,13 +347,17 @@ function getMappingParameterValue(
         mapFunc = defaultMapping.mapFunction,
         min = defaultMapping.min,
         max = defaultMapping.max,
-        within = defaultMapping.within;
+        within = defaultMapping.within,
+        scale;
     if (typeof mappingOptions === 'object') {
         mapTo = mappingOptions.mapTo;
         mapFunc = mappingOptions.mapFunction || mapFunc;
         min = pick(mappingOptions.min, min);
         max = pick(mappingOptions.max, max);
         within = mappingOptions.within || defaultMapping.within;
+        scale = (
+            mappingOptions as Sonification.PitchMappingParameterOptions
+        ).scale;
     }
 
     if (!mapTo) {
@@ -413,6 +417,28 @@ function getMappingParameterValue(
         extremes = propMetrics.globalExtremes[
             useContextValue ? contextValueProp : mapTo
         ];
+    }
+
+    if (scale) {
+        // Build a musical scale from array
+        const scaleAxis: number[] = [],
+            minOctave = Math.floor(min / 12),
+            maxOctave = Math.ceil(max / 12) + 1,
+            lenScale = scale.length;
+        for (let octave = minOctave; octave < maxOctave; ++octave) {
+            for (let scaleIx = 0; scaleIx < lenScale; ++scaleIx) {
+                const note = 12 * octave + scale[scaleIx];
+                if (note >= min && note <= max) {
+                    scaleAxis.push(note);
+                }
+            }
+        }
+        // Map to the scale
+        const noteNum = mapToVirtualAxis(
+            value as number, extremes, { min: 0, max: scaleAxis.length - 1 },
+            isInverted, mapFunc === 'logarithmic'
+        );
+        return scaleAxis[Math.round(noteNum)];
     }
 
     return mapToVirtualAxis(
