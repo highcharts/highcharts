@@ -126,6 +126,38 @@ table.modified.getRowCount() === 2;
 
 
 
+### DataTable in Highcharts
+
+If the series does support tables, you can use the 'setTable' to connect and
+synchronize table and series. Otherwise you use the data options to provide the
+columns of interest. The most effective way is to retrieve the necessary data
+from the table as two dimensional arrays like Highcharts expects it.
+
+```TypeScript
+const chart = new Highcharts.chart('container', {
+    series: [{
+        type: 'flags',
+        data: table.getRows(0, void 0, ['year', 'title']);
+    }]
+});
+```
+
+In case of a series that only accepts data points as objects, you might need to
+setup column aliases to retrieve the expected structure.
+
+```TypeScript
+tablet.setColumnAlias('name', 'year');
+tablet.setColumnAlias('label', 'title');
+const chart = new Highcharts.chart('container', {
+    series: [{
+        type: 'timeline',
+        data: table.getRowObjects(0, void 0, ['name', 'label']);
+    }]
+});
+```
+
+
+
 DataStore - Loading And Saving Data
 -----------------------------------
 
