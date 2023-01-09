@@ -265,6 +265,7 @@ class PlotLineOrBand {
             // apply defaults
             optionsLabel = merge({
                 align: horiz && isBand && 'center',
+                clip: false,
                 x: horiz ? !isBand && 4 : 10,
                 verticalAlign: !horiz && isBand && 'middle',
                 y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
@@ -346,11 +347,14 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
         if (!label.alignValue || label.alignValue === 'left') {
+            const length = optionsLabel.clip ?
+                axis.width : axis.chart.chartWidth;
+
             label.css({
                 width: (
                     label.rotation === 90 ?
                         axis.height - (label.alignAttr.y - axis.top) :
-                        axis.chart.chartWidth - (label.alignAttr.x - axis.left)
+                        length - (label.alignAttr.x - axis.left)
                 ) + 'px'
             });
         }
@@ -911,6 +915,15 @@ export default PlotLineOrBand;
  * @default    left
  * @since      2.1
  * @apioption  xAxis.plotLines.label.align
+ */
+
+/**
+ * Whether to hide labels that are outside the plot area.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since     next
+ * @apioption xAxis.plotLines.clip
  */
 
 /**
