@@ -52,6 +52,7 @@ function task() {
             .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
                 path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
             ))
+            .then(() => fsLib.deleteDirectory('./code/es5/es-modules', true))
             .then(() => logLib.success('Created code'))
             .then(function (output) {
                 processLib.isRunning('scripts-js', false);
