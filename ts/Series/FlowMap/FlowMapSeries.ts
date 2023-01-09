@@ -546,8 +546,8 @@ class FlowMapSeries extends MapLineSeries {
                 ): Highcharts.MapLonLatObject => {
                     if (isArray(lonLat)) {
                         return {
-                            lon: lonLat[0],
-                            lat: lonLat[1]
+                            lat: lonLat[0],
+                            lon: lonLat[1]
                         };
                     }
                     return lonLat;
