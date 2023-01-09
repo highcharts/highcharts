@@ -214,7 +214,7 @@ class StackItem {
         defaultX?: number,
         xAxis?: Axis
     ): void {
-        const axis = this.axis,
+        const { alignOptions, axis, label, options, textAlign } = this,
             chart = axis.chart,
             stackBox = this.getStackBox({
                 xOffset,
@@ -224,20 +224,17 @@ class StackItem {
                 defaultX,
                 xAxis
             }),
-            label = this.label,
-            textAlign = this.textAlign,
-            { verticalAlign } = this.alignOptions;
+            { verticalAlign } = alignOptions;
 
         if (label && stackBox) {
             const labelBox = label.getBBox(),
                 padding = label.padding;
-            let isJustify =
-                    pick(this.options.overflow, 'justify') === 'justify',
+            let isJustify = pick(options.overflow, 'justify') === 'justify',
                 visible;
 
             // Reset alignOptions property after justify #12337
-            this.alignOptions.x = pick(this.options.x, 0);
-            this.alignOptions.y = pick(this.options.y, 0);
+            alignOptions.x = options.x || 0;
+            alignOptions.y = options.y || 0;
 
             // Calculate the adjusted Stack position, to take into consideration
             // The size if the labelBox and vertical alignment as
@@ -252,17 +249,11 @@ class StackItem {
             stackBox.x -= x;
             stackBox.y -= y;
             // Align the label to the adjusted box.
-            label.align(this.alignOptions, false, stackBox);
+            label.align(alignOptions, false, stackBox);
             // Check if label is inside the plotArea #12294
-            visible = (
-                chart.isInsidePlot(
-                    label.alignAttr.x +
-                        this.alignOptions.x +
-                        x,
-                    label.alignAttr.y +
-                        this.alignOptions.y +
-                        y
-                )
+            visible = chart.isInsidePlot(
+                label.alignAttr.x + alignOptions.x + x,
+                label.alignAttr.y + alignOptions.y + y
             );
 
             if (!visible) {
@@ -272,9 +263,9 @@ class StackItem {
             if (isJustify) {
                 // Justify stackLabel into the stackBox
                 Series.prototype.justifyDataLabel.call(
-                    this.axis,
+                    axis,
                     label,
-                    this.alignOptions,
+                    alignOptions,
                     label.alignAttr,
                     labelBox,
                     stackBox
@@ -286,13 +277,13 @@ class StackItem {
             label.attr({
                 x: label.alignAttr.x,
                 y: label.alignAttr.y,
-                rotation: this.options.rotation,
+                rotation: options.rotation,
                 rotationOriginX: labelBox.width / 2,
                 rotationOriginY: labelBox.height / 2
             });
 
             // Check if the dataLabel should be visible.
-            if (pick(!isJustify && this.options.crop, true)) {
+            if (pick(!isJustify && options.crop, true)) {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
