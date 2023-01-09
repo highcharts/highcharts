@@ -37,12 +37,13 @@ const { merge } = U;
  * @return {HTMLTableConverterHelper.JSON} Serialized object
  */
 function toJSON(obj: HTMLTableConverter): HTMLTableConverterHelper.JSON {
-    return {
+    const json: HTMLTableConverterHelper.JSON = {
         $class: 'Data.HTMLTableConverter',
-        options: merge(obj.options)
-
-        // tableElement: TODO: be added?
+        options: merge(obj.options),
+        tableElementId: obj.tableElement && obj.tableElement.id
     };
+
+    return json;
 }
 
 /**
@@ -60,7 +61,10 @@ function jsonSupportFor(obj: unknown): obj is HTMLTableConverter {
  * @return {HTMLTableConverter} New Data Converter object created from serialized object
  */
 function fromJSON(json: HTMLTableConverterHelper.JSON): HTMLTableConverter {
-    return new HTMLTableConverter(json.options);
+    const id = json.tableElementId,
+        tableElement = id ? document.getElementById(id) : null;
+
+    return new HTMLTableConverter(json.options, tableElement);
 }
 
 /* *
@@ -79,6 +83,7 @@ namespace HTMLTableConverterHelper {
 
     export interface JSON extends Serializable.JSON<'Data.HTMLTableConverter'>{
         options: HTMLTableConverter.Options;
+        tableElementId?: string;
     }
 
 }
