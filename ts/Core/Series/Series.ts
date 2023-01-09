@@ -2269,8 +2269,7 @@ class Series {
                         yBottom = void 0;
                     }
 
-                    point.total = point.stackTotal =
-                        pointStack.total === null ? void 0 : pointStack.total;
+                    point.total = point.stackTotal = pick(pointStack.total);
                     point.percentage = defined(point.y) && pointStack.total ?
                         (point.y / pointStack.total * 100) : void 0;
                     point.stackY = yValue;
