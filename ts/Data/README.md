@@ -229,3 +229,43 @@ catch (error) {
     console.error(error);
 }
 ```
+
+
+
+DataOnDemand
+------------
+
+With DataOnDemand one can "lazy" load stores besides the initial phase. After
+adding store name, store type and store options to DataOnDemand, one can request
+(later on) the store or table under their given name and the class will give a
+promise with the store or table as soon as it has been loaded.
+
+```TypeScript
+const onDemand = new DataOnDemand([{
+    name: 'My Google Spreadsheet',
+    storeType: 'GoogleSheetsStore',
+    storeOptions: {
+        googleAPIKey: 'XXXXX',
+        googleSpreadsheetKey: 'XXXXX',
+    }
+}]);
+onDemand.setStoreOptions({
+    name: 'My CSV',
+    storeType: 'CSVStore',
+    storeOptions: {
+        csvURL: 'https://domain.example/data.csv'
+    }
+});
+const googleStore = await onDemand.getStore('My Google Spreadsheet');
+const csvTable = await onDemand.getStoreTable('My CSV');
+```
+
+DataOnDemand is one of possible way to coordinate and share stores and their
+data between multiple modules. You can request the store multiple times, while
+the class will load each store only ones.
+
+```TypeScript
+const googleStore1 = await onDemand.getStore('My Google Spreadsheet');
+const googleStore2 = await onDemand.getStore('My Google Spreadsheet');
+const googleStore3 = await onDemand.getStore('My Google Spreadsheet');
+```
