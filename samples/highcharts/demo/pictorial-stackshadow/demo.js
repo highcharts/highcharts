@@ -7,6 +7,19 @@ Highcharts.chart('container', {
         text: 'Composition of the human body'
     },
 
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><p>{typeDescription}</p><p>{chartLongdesc}</p>'
+        },
+        point: {
+            valueDescriptionFormat: '{value}.'
+        },
+        series: {
+            descriptionFormat: ''
+        },
+        landmarkVerbosity: 'one'
+    },
+
     xAxis: {
         categories: ['Woman', 'Man'],
         lineWidth: 0,
