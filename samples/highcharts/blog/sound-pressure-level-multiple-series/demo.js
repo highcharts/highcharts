@@ -65,7 +65,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: "{point.series.name}: {point.y:.2f}"
+        pointFormat: '{point.series.name}: {point.y:.2f}'
     },
     plotOptions: {
         scatter: {

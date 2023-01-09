@@ -66,376 +66,376 @@ Highcharts.chart('container', {
     series: [{
         data: [{
             y: 1,
-            USstate: "HI",
-            capital: "Honolulu",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'HI',
+            capital: 'Honolulu',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 16,
             y: 1,
-            USstate: "FL",
-            capital: "Tallahassee",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'FL',
+            capital: 'Tallahassee',
+            color: '#ffab00',
+            region: 'south'
         }]
     }, {
         data: [{
             x: 7,
             y: 2,
-            USstate: "TX",
-            capital: "Austin",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'TX',
+            capital: 'Austin',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 15,
             y: 2,
-            USstate: "GA",
-            capital: "Atlanta",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'GA',
+            capital: 'Atlanta',
+            color: '#ffab00',
+            region: 'south'
         }]
     }, {
         data: [{
             x: 6,
             y: 3,
-            USstate: "NM",
-            capital: "Santa Fe",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'NM',
+            capital: 'Santa Fe',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 8,
             y: 3,
-            USstate: "OK",
-            capital: "Oklahoma City",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'OK',
+            capital: 'Oklahoma City',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 10,
             y: 3,
-            USstate: "LA",
-            capital: "Baton Rouge",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'LA',
+            capital: 'Baton Rouge',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 12,
             y: 3,
-            USstate: "MS",
-            capital: "Jackson",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'MS',
+            capital: 'Jackson',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 14,
             y: 3,
-            USstate: "AL",
-            capital: "Montgomery",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'AL',
+            capital: 'Montgomery',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 16,
             y: 3,
-            USstate: "SC",
-            capital: "Columbia",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'SC',
+            capital: 'Columbia',
+            color: '#ffab00',
+            region: 'south'
         }]
     }, {
         data: [{
             x: 3,
             y: 4,
-            USstate: "CA",
-            capital: "Sacramento",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'CA',
+            capital: 'Sacramento',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 5,
             y: 4,
-            USstate: "AZ",
-            capital: "Phoenix",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'AZ',
+            capital: 'Phoenix',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 7,
             y: 4,
-            USstate: "UT",
-            capital: "Salt Lake City",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'UT',
+            capital: 'Salt Lake City',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 9,
             y: 4,
-            USstate: "KS",
-            capital: "Topeka",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'KS',
+            capital: 'Topeka',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 11,
             y: 4,
-            USstate: "AR",
-            capital: "Little Rock",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'AR',
+            capital: 'Little Rock',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 13,
             y: 4,
-            USstate: "TN",
-            capital: "Nashville",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'TN',
+            capital: 'Nashville',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 15,
             y: 4,
-            USstate: "VA",
-            capital: "Richmond",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'VA',
+            capital: 'Richmond',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 17,
             y: 4,
-            USstate: "NC",
-            capital: "Raleigh",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'NC',
+            capital: 'Raleigh',
+            color: '#ffab00',
+            region: 'south'
         }]
     }, {
         data: [{
             x: 2,
             y: 5,
-            USstate: "OR",
-            capital: "Salem",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'OR',
+            capital: 'Salem',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 4,
             y: 5,
-            USstate: "NV",
-            capital: "Carson City",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'NV',
+            capital: 'Carson City',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 6,
             y: 5,
-            USstate: "CO",
-            capital: "Denver",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'CO',
+            capital: 'Denver',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 8,
             y: 5,
-            USstate: "NE",
-            capital: "Lincoln",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'NE',
+            capital: 'Lincoln',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 10,
             y: 5,
-            USstate: "MO",
-            capital: "Jefferson City",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'MO',
+            capital: 'Jefferson City',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 12,
             y: 5,
-            USstate: "KY",
-            capital: "Frankfort",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'KY',
+            capital: 'Frankfort',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 14,
             y: 5,
-            USstate: "WV",
-            capital: "Charleston",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'WV',
+            capital: 'Charleston',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 16,
             y: 5,
-            USstate: "MD",
-            capital: "Annapolis",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'MD',
+            capital: 'Annapolis',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 18,
             y: 5,
-            USstate: "DE",
-            capital: "Dover",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'DE',
+            capital: 'Dover',
+            color: '#ffab00',
+            region: 'south'
         }, {
             x: 20,
             y: 5,
-            USstate: "DC",
-            capital: "Washington",
-            color: "#ffab00",
-            region: "south"
+            USstate: 'DC',
+            capital: 'Washington',
+            color: '#ffab00',
+            region: 'south'
         }]
     }, {
         data: [{
             x: 3,
             y: 6,
-            USstate: "ID",
-            capital: "Boise",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'ID',
+            capital: 'Boise',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 5,
             y: 6,
-            USstate: "WY",
-            capital: "Cheyenne",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'WY',
+            capital: 'Cheyenne',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 7,
             y: 6,
-            USstate: "SD",
-            capital: "Pierre",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'SD',
+            capital: 'Pierre',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 9,
             y: 6,
-            USstate: "IA",
-            capital: "Des Moines",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'IA',
+            capital: 'Des Moines',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 11,
             y: 6,
-            USstate: "IL",
-            capital: "Springfield",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'IL',
+            capital: 'Springfield',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 13,
             y: 6,
-            USstate: "IN",
-            capital: "Indianapolis",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'IN',
+            capital: 'Indianapolis',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 15,
             y: 6,
-            USstate: "OH",
-            capital: "Columbus",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'OH',
+            capital: 'Columbus',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 17,
             y: 6,
-            USstate: "PA",
-            capital: "Harrisburg",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'PA',
+            capital: 'Harrisburg',
+            color: '#c51162',
+            region: 'northeast'
         }, {
             x: 19,
             y: 6,
-            USstate: "NJ",
-            capital: "Trenton",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'NJ',
+            capital: 'Trenton',
+            color: '#c51162',
+            region: 'northeast'
         }, {
             x: 21,
             y: 6,
-            USstate: "CT",
-            capital: "Hartford",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'CT',
+            capital: 'Hartford',
+            color: '#c51162',
+            region: 'northeast'
         }]
     }, {
         data: [{
             x: 2,
             y: 7,
-            USstate: "WA",
-            capital: "Olympia",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'WA',
+            capital: 'Olympia',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 4,
             y: 7,
-            USstate: "MT",
-            capital: "Helena",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'MT',
+            capital: 'Helena',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 6,
             y: 7,
-            USstate: "ND",
-            capital: "Bismarck",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'ND',
+            capital: 'Bismarck',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 8,
             y: 7,
-            USstate: "MN",
-            capital: "Saint Paul",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'MN',
+            capital: 'Saint Paul',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 10,
             y: 7,
-            USstate: "WI",
-            capital: "Madison",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'WI',
+            capital: 'Madison',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 14,
             y: 7,
-            USstate: "MI",
-            capital: "Lansing",
-            color: "#00c853",
-            region: "midwest"
+            USstate: 'MI',
+            capital: 'Lansing',
+            color: '#00c853',
+            region: 'midwest'
         }, {
             x: 18,
             y: 7,
-            USstate: "NY",
-            capital: "Albany",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'NY',
+            capital: 'Albany',
+            color: '#c51162',
+            region: 'northeast'
         }, {
             x: 20,
             y: 7,
-            USstate: "MA",
-            capital: "Boston",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'MA',
+            capital: 'Boston',
+            color: '#c51162',
+            region: 'northeast'
         }, {
             x: 22,
             y: 7,
-            USstate: "RI",
-            capital: "Providence",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'RI',
+            capital: 'Providence',
+            color: '#c51162',
+            region: 'northeast'
         }]
     }, {
         data: [{
             x: 19,
             y: 8,
-            USstate: "VT",
-            capital: "Montpelier",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'VT',
+            capital: 'Montpelier',
+            color: '#c51162',
+            region: 'northeast'
         }, {
             x: 21,
             y: 8,
-            USstate: "NH",
-            capital: "Concord",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'NH',
+            capital: 'Concord',
+            color: '#c51162',
+            region: 'northeast'
         }]
     }, {
         data: [{
             x: 0,
             y: 9,
-            USstate: "AK",
-            capital: "Juneau",
-            color: "#2962ff",
-            region: "west"
+            USstate: 'AK',
+            capital: 'Juneau',
+            color: '#2962ff',
+            region: 'west'
         }, {
             x: 22,
             y: 9,
-            USstate: "ME",
-            capital: "Augusta",
-            color: "#c51162",
-            region: "northeast"
+            USstate: 'ME',
+            capital: 'Augusta',
+            color: '#c51162',
+            region: 'northeast'
         }]
     }]
 });
