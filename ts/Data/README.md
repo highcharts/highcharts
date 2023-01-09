@@ -146,14 +146,45 @@ In case of a series that only accepts data points as objects, you might need to
 setup column aliases to retrieve the expected structure.
 
 ```TypeScript
-tablet.setColumnAlias('name', 'year');
-tablet.setColumnAlias('label', 'title');
+table.setColumnAlias('name', 'year');
+table.setColumnAlias('label', 'title');
 const chart = new Highcharts.chart('container', {
     series: [{
         type: 'timeline',
         data: table.getRowObjects(0, void 0, ['name', 'label']);
     }]
 });
+```
+
+
+
+
+### DataTable in DataGrid
+
+DataGrid visualizes and optionally modifiesication of cell content in a table.
+DataTable provides only limited information about the original order, therefor
+the store might be needed for the original column order.
+
+```TypeScript
+const dataGrid = new DataGrid('container', {
+    dataTable: new DataTable({
+        Value: [ 12.34, 45.67, 78.90 ],
+        Currency: [ 'EUR', 'DKK', 'NOK' ]
+    }
+});
+```
+
+If a row reference is needed, this index column has to be part of the table.
+
+```TypeScript
+const dataGrid = new DataGrid('container', {
+    dataTable: new DataTable({
+        '': [1, 2, 3],
+        Value: [ 12.34, 45.67, 78.90 ],
+        Currency: [ 'EUR', 'DKK', 'NOK' ]
+    }
+});
+dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
 ```
 
 
