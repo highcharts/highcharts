@@ -181,6 +181,15 @@ class FlowMapSeries extends MapLineSeries {
         },
 
         /**
+         * If no weight has previously been specified, this will set the width
+         * of all the links without being compared to and scaled according to
+         * other weights.
+         *
+         * @type  {number}
+         */
+        width: 1,
+
+        /**
          * Maximum width of a link expressed in pixels. The weight of a link
          * is mapped between `maxWidth` and `minWidth`.
          *
@@ -392,12 +401,20 @@ class FlowMapSeries extends MapLineSeries {
     }
 
     /**
-     * Get a scaled weight.
+     * Get the actual width of a link either as a mapped weight between
+     * `minWidth` and `maxWidth` or a specified width.
      * @private
      */
-    public scaleWeight(point: FlowMapPoint): number {
-        const weight = point.options.weight || this.options.weight,
-            smallestWeight = this.smallestWeight,
+    public getLinkWidth(point: FlowMapPoint): number {
+
+        const width = this.options.width,
+            weight = point.options.weight || this.options.weight;
+
+        if (width && !weight) {
+            return width;
+        }
+
+        const smallestWeight = this.smallestWeight,
             greatestWeight = this.greatestWeight;
 
         if (!defined(weight) || !smallestWeight || !greatestWeight) {
@@ -580,7 +597,7 @@ class FlowMapSeries extends MapLineSeries {
 
         this.points.forEach((point): void => {
             // Don't draw point if weight is not valid.
-            if (!this.scaleWeight(point)) {
+            if (!this.getLinkWidth(point)) {
                 point.shapeArgs = {
                     d: []
                 };
@@ -612,7 +629,7 @@ class FlowMapSeries extends MapLineSeries {
             return {};
         }
 
-        const scaledWeight = this.scaleWeight(point), // New rescaled weight.
+        const finalWidth = this.getLinkWidth(point),
             pointOptions = point.options,
             markerEndOptions = merge(
                 this.options.markerEnd,
@@ -646,7 +663,7 @@ class FlowMapSeries extends MapLineSeries {
             // Prepare offset if it's a percentage by converting to number.
             offset = relativeLength(
                 offset,
-                scaledWeight * 4
+                finalWidth * 4
             );
 
             // Vector between the points.
@@ -704,8 +721,8 @@ class FlowMapSeries extends MapLineSeries {
 
         // The `fineTune` prevents an obvious mismatch along the curve.
         const fineTune = 1 + Math.sqrt(curveFactor * curveFactor) * 0.25;
-        wX *= scaledWeight * fineTune;
-        wY *= scaledWeight * fineTune;
+        wX *= finalWidth * fineTune;
+        wY *= finalWidth * fineTune;
 
         // Calculate the arc strength.
         let arcPointX = (mX + dX * curveFactor),
@@ -722,8 +739,8 @@ class FlowMapSeries extends MapLineSeries {
         fromXToArc = fromYToArc;
         fromYToArc = -tmp;
 
-        fromXToArc *= scaledWeight;
-        fromYToArc *= scaledWeight;
+        fromXToArc *= finalWidth;
+        fromYToArc *= finalWidth;
 
         // Calculate edge vectors in the to-point.
         let [toXToArc, toYToArc] =
@@ -736,14 +753,14 @@ class FlowMapSeries extends MapLineSeries {
         toXToArc = -toYToArc;
         toYToArc = tmp;
 
-        toXToArc *= scaledWeight;
-        toYToArc *= scaledWeight;
+        toXToArc *= finalWidth;
+        toYToArc *= finalWidth;
 
         // Shrink the starting edge and middle thickness to make it grow
         // towards the end.
         if (growTowards) {
-            fromXToArc /= scaledWeight;
-            fromYToArc /= scaledWeight;
+            fromXToArc /= finalWidth;
+            fromYToArc /= finalWidth;
             wX /= 4;
             wY /= 4;
         }

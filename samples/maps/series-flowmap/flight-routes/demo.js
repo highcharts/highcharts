@@ -17,7 +17,7 @@
             flowmap: {
                 tooltip: {
                     headerFormat: null,
-                    pointFormat: `{point.options.from} \u2192 
+                    pointFormat: `{point.options.from} \u2192
                         {point.options.to}`
                 }
             },
@@ -96,9 +96,7 @@
             type: 'flowmap',
             linkedTo: 'cities',
             name: 'From Lerwick',
-            minWidth: 2,
-            maxWidth: 2,
-            weight: 2,
+            width: 2,
             markerEnd: {
                 enabled: false
             },
@@ -107,28 +105,22 @@
             fillOpacity: 0.5,
             data: [{
                 from: 'Lerwick',
-                to: 'Glasgow',
-                weight: 10
+                to: 'Glasgow'
             }, {
                 from: 'Lerwick',
-                to: 'Belfast',
-                weight: 5
+                to: 'Belfast'
             }, {
                 from: 'Lerwick',
-                to: 'Leeds',
-                weight: 20
+                to: 'Leeds'
             }, {
                 from: 'Lerwick',
-                to: 'Liverpool',
-                weight: 0.1
+                to: 'Liverpool'
             }]
         }, {
             type: 'flowmap',
             linkedTo: 'cities',
             name: 'From London',
-            minWidth: 2,
-            maxWidth: 2,
-            weight: 2,
+            width: 2,
             fillColor: '#faa243',
             fillOpacity: 0.5,
             color: '#c2721d',

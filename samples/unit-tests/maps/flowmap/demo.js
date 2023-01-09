@@ -82,10 +82,14 @@ QUnit.test('Flowmap API options.', assert => {
         weight: void 0
     });
 
+    series.update({
+        width: void 0
+    });
+
     assert.strictEqual(
         series.points[1].shapeArgs.d.length,
         0,
-        `The point without a weight defined on a point or series level
+        `The point without a width or weight defined on a point or series level
         should not be drawn.`
     );
 

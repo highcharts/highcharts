@@ -201,10 +201,8 @@
         }, {
             type: 'flowmap',
             name: 'Flowmap Series',
-            minWidth: 0.2,
-            maxWidth: 0.2,
             fillOpacity: 1,
-            weight: 0.2,
+            width: 0.2,
             color: '#550d6566',
             data: [
                 ['Ecuador', 'Qatar'],
