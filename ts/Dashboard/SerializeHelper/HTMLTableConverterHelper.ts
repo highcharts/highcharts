@@ -37,13 +37,11 @@ const { merge } = U;
  * @return {HTMLTableConverterHelper.JSON} Serialized object
  */
 function toJSON(obj: HTMLTableConverter): HTMLTableConverterHelper.JSON {
-    const json: HTMLTableConverterHelper.JSON = {
+    return {
         $class: 'Data.HTMLTableConverter',
         options: merge(obj.options),
         tableElementId: obj.tableElement && obj.tableElement.id
     };
-
-    return json;
 }
 
 /**
