@@ -53,19 +53,12 @@ const {
     objectEach,
     pick
 } = U;
-
-interface AfterSetOffsetEvent {
-    xOffset: number;
-    xWidth: number;
-}
-
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;
     color?: ColorType;
     enabled?: boolean;
 }
-
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         stackShadow?: StackShadowOptions;
@@ -495,6 +488,11 @@ function forEachStack(chart: Chart, callback: Function): void {
 addEvent(Chart, 'render', function (): void {
     forEachStack(this, renderStackShadow);
 });
+
+interface AfterSetOffsetEvent {
+    xOffset: number;
+    xWidth: number;
+}
 
 addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
