@@ -230,7 +230,8 @@ QUnit.test('Defaults', assert => {
 QUnit.test('General tests', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            width: 600
+            width: 600,
+            marginRight: 50
         },
         xAxis: {
             plotBands: [
@@ -252,7 +253,21 @@ QUnit.test('General tests', function (assert) {
                     value: 12500,
                     className: 'my-custom-class',
                     width: 2,
-                    color: 'red'
+                    color: 'red',
+                    label: {
+                        align: 'right',
+                        textAlign: 'left',
+                        text: 'label'
+                    }
+                }, {
+                    value: 15000,
+                    color: 'red',
+                    label: {
+                        align: 'right',
+                        clip: true,
+                        textAlign: 'left',
+                        text: 'label'
+                    }
                 }
             ]
         },
@@ -287,6 +302,18 @@ QUnit.test('General tests', function (assert) {
         line[line.length - 1],
         'Z',
         'Border should be rendered around the shape (#5909)'
+    );
+
+    assert.ok(
+        chart.yAxis[0].plotLinesAndBands[0].label.actualWidth > 0,
+        'Plot line label should be able to render outside plot area #17888.'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].plotLinesAndBands[1].label.actualWidth,
+        0,
+        `Plot label with clip: true should not be able to render outside plot
+        area #15777.`
     );
 
     // Radial Axes plot lines
