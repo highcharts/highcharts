@@ -121,15 +121,6 @@ class FlowMapSeries extends MapLineSeries {
         fillOpacity: 0.5,
 
         /**
-         * An array specifying which option maps to which key in the data point
-         * array. This makes it convenient to work with unstructured data
-         * arrays from different sources.
-         *
-         * @default ['from', 'to', 'weight']
-         */
-        keys: ['from', 'to', 'weight'],
-
-        /**
          * The [id](#series.id) of another series to link to. Additionally,
          * the value can be ":previous" to link to the previous series. When
          * two series are linked, only the first one appears in the legend.
@@ -206,7 +197,10 @@ class FlowMapSeries extends MapLineSeries {
         minWidth: 5,
 
         /**
-         * The opacity of all the links.
+         * The opacity of all the links. Affects the opacity for the entire
+         * link, including stroke. See also
+         * [fillOpacity](#plotOptions.flowmap.fillOpacity), that affects the
+         * opacity of only the fill color.
          *
          * @apioption plotOptions.flowmap.opacity
          */
@@ -813,14 +807,15 @@ class FlowMapSeries extends MapLineSeries {
  *  Prototype properties
  *
  * */
-
 interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
+    pointArrayMap: Array<string>;
     drawPoints: typeof ColumnSeries.prototype['drawPoints'];
 }
 
 extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
+    pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
     // Make it work on zoom or pan.
     useMapGeometry: true
