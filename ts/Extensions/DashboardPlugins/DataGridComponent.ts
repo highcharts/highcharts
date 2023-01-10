@@ -193,6 +193,11 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                     this.store.table.setColumns(e.table.getColumns());
                 }
             });
+
+            // Update the DataGrid when store changed.
+            this.store.table.on('afterSetCell', (): void => {
+                this.update({});
+            });
         }
 
         this.innerResizeTimeouts = [];
