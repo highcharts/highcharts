@@ -106,7 +106,8 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                         table.setCell(
                             columnName,
                             parseInt(dataTableRowIndex, 10),
-                            valueToSet
+                            valueToSet,
+                            { stopPropagation: true }
                         );
                     }
                 }
@@ -195,7 +196,10 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             });
 
             // Update the DataGrid when store changed.
-            this.store.table.on('afterSetCell', (): void => {
+            this.store.table.on('afterSetCell', (e: any): void => {
+                if (e.detail && e.detail.stopPropagation) {
+                    return;
+                }
                 this.update({});
             });
         }
