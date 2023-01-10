@@ -30,6 +30,12 @@ jobs:
         with:
           username:  ${{ secrets.BROWSERSTACK_USER }}
           access-key: ${{ secrets.BROWSERSTACK_KEY }}
+          
+      # set system env variables
+      - name: Set Browserstack system variables
+        run: |
+          echo "BROWSERSTACK_KEY=${{ secrets.BROWSERSTACK_KEY }}" >> $GITHUB_ENV
+          echo "BROWSERSTACK_USER=${{ secrets.BROWSERSTACK_USER }}" >> $GITHUB_ENV
 
       - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
         uses: browserstack/github-actions/setup-local@master
@@ -49,11 +55,7 @@ jobs:
       - name: Install Dependencies
         run: npm i
         
-      # set system env variables
-      #- name: Set Browserstack system variables
-      #  run: |
-      #    echo "BROWSERSTACK_KEY=${{ secrets.BROWSERSTACK_KEY }}" >> $GITHUB_ENV
-      #    echo "BROWSERSTACK_USER=${{ secrets.BROWSERSTACK_USER }}" >> $GITHUB_ENV
+
       
       # tasks
       - name: Build Highcharts
