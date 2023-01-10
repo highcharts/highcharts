@@ -23,9 +23,14 @@ import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
+import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -45,7 +50,8 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick
+    pick,
+    pInt
 } = U;
 
 /* *
@@ -399,8 +405,11 @@ class HeatmapSeries extends ScatterSeries {
      *  Properties
      *
      * */
+    public canvas?: HTMLCanvasElement = void 0 as any;
 
     public colorAxis: ColorAxis = void 0 as any;
+
+    public context?: CanvasRenderingContext2D = void 0 as any;
 
     public data: Array<HeatmapPoint> = void 0 as any;
 
@@ -426,18 +435,69 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
+        // In styled mode, use CSS, otherwise the fill used in the style
+        // sheet will take precedence over the fill attribute.
+        const heatmap = this,
+            seriesMarkerOptions = heatmap.options.marker || {};
 
-        // In styled mode, use CSS, otherwise the fill used in the style sheet
-        // will take precedence over the fill attribute.
-        const seriesMarkerOptions = this.options.marker || {};
+        if (heatmap.options.interpolation) {
+            const ctx = heatmap.getContext(),
+                canvas = heatmap.canvas,
+                pixels = (canvas && ctx) &&
+                    ctx.createImageData(
+                        // Temporary
+                        canvas.width,
+                        heatmap.yAxis && heatmap.yAxis.max || 0
+                    ),
+                colorAxis =
+                    heatmap.chart.colorAxis && heatmap.chart.colorAxis[0];
 
-        if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            Series.prototype.drawPoints.call(this);
-            this.points.forEach((point): void => {
+            if (canvas && ctx && colorAxis && pixels) {
+                let pixelPos = 0;
+                heatmap.data.forEach((p:HeatmapPoint):void => {
+                    const color = colorAxis.toColor(
+                        (p as HeatmapPoint).value || 0, p
+                    );
+                    const rgb = color && color
+                        .toString()
+                        .replace('rgb(', '')
+                        .replace(')', '')
+                        .split(',');
+
+                    if (rgb) {
+                        pixels.data[pixelPos++] = pInt(rgb[0]);
+                        pixels.data[pixelPos++] = pInt(rgb[1]);
+                        pixels.data[pixelPos++] = pInt(rgb[2]);
+                        pixels.data[pixelPos++] = 255;
+                    }
+                });
+
+                ctx.putImageData(pixels, 0, 0);
+                ctx.drawImage(
+                    ctx.canvas, this.chart.plotWidth, this.chart.plotHeight
+                );
+
+                this.image = !this.image ?
+                    this.chart.renderer.image(
+                        canvas.toDataURL(), 0, 0,
+                        this.chart.plotWidth,
+                        this.chart.plotHeight
+                    ).add(this.group) :
+                    this.image.attr({
+                        width: this.chart.plotWidth,
+                        height: this.chart.plotHeight
+                    });
+
+            }
+        } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
+            Series.prototype.drawPoints.call(heatmap);
+            heatmap.points.forEach((point): void => {
                 if (point.graphic) {
-                    point.graphic[
-                        this.chart.styledMode ? 'css' : 'animate'
-                    ](this.colorAttribs(point));
+
+                    (point.graphic as any)[
+                        heatmap.chart.styledMode ? 'css' : 'animate'
+                    ](heatmap.colorAttribs(point));
+
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
@@ -445,6 +505,29 @@ class HeatmapSeries extends ScatterSeries {
                 }
             });
         }
+    }
+
+    public getContext(): CanvasRenderingContext2D | undefined {
+        const series = this,
+            canvas = series.canvas,
+            context = series.context,
+            width = series.chart.plotWidth,
+            height = series.chart.plotHeight;
+
+        if (!canvas) {
+            const chart = series.chart;
+            series.canvas = doc.createElement('canvas');
+            series.canvas.width = width;
+            series.canvas.height = height;
+            series.context = series.canvas.getContext('2d') || void 0;
+            return series.context;
+        }
+
+        if (context) {
+            context.clearRect(0, 0, width, height);
+        }
+
+        return context;
     }
 
     /**
@@ -751,6 +834,7 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
+    image?: SVGElement;
 }
 extend(HeatmapSeries.prototype, {
 
