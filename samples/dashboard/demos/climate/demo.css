@@ -90,3 +90,19 @@
 #world-map .highcharts-tooltip {
     text-align: right;
 }
+
+/* *
+ *
+ * KPI 
+ *
+ */
+
+.hd-cell.hd-cell-state-hover:hover > .hd-component,
+.hd-cell.hd-cell-state-active > .hd-component {
+    background-color: #46475d;
+    color: #fff;
+}
+
+.hd-cell.hd-cell-state-hover {
+    cursor: pointer;
+}
