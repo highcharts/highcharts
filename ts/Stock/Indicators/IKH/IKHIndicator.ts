@@ -239,9 +239,6 @@ class IKHIndicator extends SMAIndicator {
      * @optionparent plotOptions.ikh
      */
 
-    /**
-     * Default options
-     */
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {

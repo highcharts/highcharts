@@ -105,9 +105,6 @@ class SMAIndicator extends LineSeries {
      * @optionparent plotOptions.sma
      */
 
-    /**
-     * Default options
-     */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
