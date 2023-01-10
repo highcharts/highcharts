@@ -104,6 +104,10 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
+
+    /**
+     * Default options
+     */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
@@ -179,8 +183,6 @@ class SMAIndicator extends LineSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -508,9 +510,6 @@ class SMAIndicator extends LineSeries {
 
         return;
     }
-
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
