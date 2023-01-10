@@ -12,9 +12,12 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
+import KPIComponent from '../Component/KPIComponent.js';
+import Globals from '../Globals.js';
 
 const {
     fireEvent,
+    addEvent,
     merge
 } = U;
 class Bindings {
@@ -45,6 +48,8 @@ class Bindings {
         cell?: Cell
     ): ComponentTypes | undefined {
         const compontentContainer = document.getElementById(options.cell);
+        const optionsStates = options.states;
+        const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
         let component: ComponentTypes|undefined;
@@ -64,7 +69,6 @@ class Bindings {
                     );
                     break;
                 case 'Highcharts':
-
                     if (ComponentClass) {
                         component = new ComponentClass(merge(
                             options,
@@ -86,11 +90,21 @@ class Bindings {
                         ) as DataGridComponent;
                     }
                     break;
+                case 'kpi':
+                    component = new KPIComponent(merge(
+                        options,
+                        {
+                            parentElement: compontentContainer as HTMLDOMElement
+                        })
+                    )
+                    break;
                 default:
                     return;
             }
 
-            component?.render();
+            if (component) {
+                component.render();
+            }
 
             // update cell size (when component is wider, cell should adjust)
             // this.updateSize();
@@ -101,16 +115,49 @@ class Bindings {
             fireEvent(component, 'mount');
         }
 
-            if (cell && component) {
-                component.setCell(cell);
-                cell.mountedComponent = component;
+        if (cell && component) {
+            component.setCell(cell);
+            cell.mountedComponent = component;
 
-                cell.row.layout.dashboard.mountedComponents.push({
-                    options: options,
-                    component: component,
-                    cell: cell
+            cell.row.layout.dashboard.mountedComponents.push({
+                options: options,
+                component: component,
+                cell: cell
+            });
+
+            // events
+            if (optionsEvents && optionsEvents.click) {
+                addEvent(compontentContainer, 'click', () => {
+                    optionsEvents.click();
+
+                    if (
+                        cell &&
+                        component &&
+                        compontentContainer &&
+                        optionsStates &&
+                        optionsStates.active
+                    ) {
+                        cell.setActiveState();
+                    }
                 });
             }
+
+            // states
+            if (
+                compontentContainer &&
+                optionsStates &&
+                optionsStates.hover
+            ) {
+                compontentContainer.classList.add(
+                    Globals.classNames.cellHover
+                );
+            }
+        }
+
+        if (component) {
+            fireEvent(component, 'afterLoad');
+        }
+
         return component;
     }
 
@@ -133,6 +180,9 @@ class Bindings {
             case 'DataGrid': 
                 component = DataGridComponent.fromJSON(json as DataGridComponent.ClassJSON);
                 break;
+            // case 'kpi': 
+            //     component = KPIComponent.fromJSON(json as KPIComponent.ClassJSON);
+            //     break;
             default:
                 return;
         }
@@ -177,6 +227,7 @@ namespace Bindings {
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;
+        states?: any;
     }
     export interface MountedComponentsOptions {
         options: any;

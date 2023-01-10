@@ -21,6 +21,7 @@ let citySeries;
 let dataScope = defaultData;
 let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
+let kpi = {};
 
 async function setupDashboard() {
 
@@ -109,7 +110,9 @@ async function setupDashboard() {
                                             ),
                                         chartData = data.filter(el =>
                                             el[0] >= min && el[0] <= max
-                                        );
+                                        ),
+                                        lastPoint =
+                                            chartData[chartData.length - 1];
 
                                     citySeries.update({
                                         data: chartData
@@ -125,6 +128,10 @@ async function setupDashboard() {
                                     buildCitiesMap().then(
                                         data => citiesMap.setData(data)
                                     );
+
+                                    updateKPI(store.table, lastPoint[0]);
+                                    updateKPIData(city);
+
                                 });
                         }
                     }
@@ -205,32 +212,19 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    const data = store.table.modified.getRows(
-                                        void 0, void 0,
-                                        ['time', dataScope]
-                                    );
+                                    dataScope = 'TX';
 
-                                    citySeries.chart.update({
-                                        title: { text: city }
-                                    });
-                                    citySeries.update({
-                                        name: city,
-                                        data
-                                    });
-                                    navigatorSeries.update({
-                                        name: city,
-                                        data
-                                    });
-
-                                    // Update the main chart.
-                                    Highcharts.fireEvent(
-                                        navigatorSeries.chart.xAxis[0],
-                                        'afterSetExtremes'
+                                    syncRefreshCharts(
+                                        store,
+                                        dataScope,
+                                        city
                                     );
 
                                     // Update DataGrid
                                     cityGrid.dataTable = store.table;
                                     cityGrid.update(); // force redraw
+
+                                    updateKPIData(city);
                                 });
                         }
                     },
@@ -287,20 +281,183 @@ async function setupDashboard() {
                     citiesMap = this.chart.series[1];
                 }
             }
-        }, {
-            cell: 'kpi-1',
-            type: 'html',
-            // dimensions: {
-            //     width: 200,
-            //     height: 200
-            // },
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: placeholder()
+        },
+        {
+            cell: 'kpi-max-temperature',
+            type: 'kpi',
+            title: 'Maximum temperature',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v.toFixed(0)}°`,
+            events: {
+                mount: function () {
+                    kpi.TX = this;
+                },
+                click: function () {
+                    dataScope = 'TX';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                },
+                afterLoad: function () {
+                    this.parentCell.setActiveState();
                 }
-            }],
-            title: 'KPI 1'
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        },
+        {
+            cell: 'kpi-temperature',
+            type: 'kpi',
+            title: 'Average temperature',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v.toFixed(0)}°`,
+            events: {
+                mount: function () {
+                    kpi.TN = this;
+                },
+                click: function () {
+                    dataScope = 'TN';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        },
+        {
+            cell: 'kpi-fog',
+            type: 'kpi',
+            title: 'Fog',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v} days`,
+            events: {
+                mount: function () {
+                    kpi.FD = this;
+                },
+                click: function () {
+                    dataScope = 'FD';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        },
+        {
+            cell: 'kpi-ice',
+            type: 'kpi',
+            title: 'Ice',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v} days`,
+            events: {
+                mount: function () {
+                    kpi.ID = this;
+                },
+                click: function () {
+                    dataScope = 'ID';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        },
+        {
+            cell: 'kpi-rain',
+            type: 'kpi',
+            title: 'Rain',
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            valueFormatter: v => `${v} days`,
+            events: {
+                mount: function () {
+                    kpi.RR1 = this;
+                },
+                click: function () {
+                    dataScope = 'RR1';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        },
+        {
+            cell: 'kpi-data',
+            type: 'kpi',
+            title: 'Data',
+            value: (() => cityScope +
+                    '<br>lat: ' + citiesData[cityScope].lat +
+                    '<br>lon: ' + citiesData[cityScope].lon
+            )(),
+            events: {
+                mount: function () {
+                    kpi.data = this;
+                }
+            }
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
@@ -359,7 +516,8 @@ async function setupDashboard() {
                     citySeries = this.chart.series[0];
                 }
             }
-        }, {
+        },
+        {
             cell: 'selection-grid',
             type: 'DataGrid',
             store: defaultCityStore,
@@ -394,17 +552,46 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         id: 'world-map',
-                        width: '100%'
+                        width: '60%'
+                    }, {
+                        id: 'selection-grid',
+                        width: '40%'
                     }]
                 }, {
                     cells: [{
-                        id: 'kpi-1',
-                        width: '20%'
+                        id: 'kpi-layout',
+                        width: '60%',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'kpi-max-temperature',
+                                    // width: '50%'
+                                    width: '33.333%'
+                                }, {
+                                    id: 'kpi-temperature',
+                                    // width: '50%'
+                                    width: '33.333%'
+                                }, {
+                                    id: 'kpi-fog',
+                                    width: '33.333%'
+                                }]
+                            }, {
+                                cells: [{
+                                    id: 'kpi-ice',
+                                    // width: '50%'
+                                    width: '33.333%'
+                                }, {
+                                    id: 'kpi-rain',
+                                    // width: '50%'
+                                    width: '33.333%'
+                                }, {
+                                    id: 'kpi-data',
+                                    width: '33.333%'
+                                }]
+                            }]
+                        }
                     }, {
                         id: 'city-chart',
-                        width: '40%'
-                    }, {
-                        id: 'selection-grid',
                         width: '40%'
                     }]
                 }]
@@ -614,50 +801,61 @@ function tooltipFormatter(value) {
     return '' + Highcharts.correctFloat(value, 4);
 }
 
-/**
- * @deprecated
- * @todo remove
- */
-function placeholder() {
-    return [
-        'data:image/png;base64,',
-        'iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX///93dY2j7Llkm',
-        'p+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9P',
-        'j3/fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89L',
-        'k+et/g988Unc1SHBAWXuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfOb',
-        'ucSLj+puk7hzj8fv7/xqlbCjp+61uPHH19/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e',
-        '6+Uvqx/hpab0LJ8f8Z5eaNmeqJejZpeYoFOcIpZgZRUeJNRWn2vysyd17WJoaGCjpqgnr',
-        'S1tceFr7ONjKXOztuVwq6wsMM1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djFyEJIw4',
-        'oigZxCVFURInGJSiuaEy+/7dIVVd1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAA',
-        'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P',
-        '8NEOZwJ7waX636KSXJvJly+cKnBPl0JO52LF7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6',
-        'ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqDp3U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBM',
-        'pvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrgvRxje5S8ik9g0nx7M+1LhslDo',
-        'Nc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWbh+kI/fCXZIgN8uljVeGDW',
-        'KEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+zc785pA2dukT8lVm7',
-        'W2O1y7Mt5vHukjjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+dhQmPQ2Abmvi5t',
-        'coRA5qiRyxddN6vtXl1SF3tLEn3k8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF75giV3iZ9',
-        'SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW3kfTphjnEWOTQ0gbMqIgUXvUMi',
-        'H1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960j1HubeBVJVf',
-        'ArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCs',
-        'yrlQS6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRN',
-        'kokMU5WZ3kbOp4vl8tgI/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9m',
-        'tvcFIGvB06G2dm3b6JJ2lYNra+LFUb4xaKQi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+Olz',
-        'LdNPIpmWpTalMRFbm86197f+xZRNKpNgUHRsSolztCzqDf6ve33rNJGirpfF0sPjD0qLD',
-        'Qa3H6bJInTKSqkswf+MsOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTaFNu1+',
-        'LRmh866l0u+3UpFU/sBfZFMWFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cM',
-        'pOmqyajkokk8gf+/AOjLCoirtkVigz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+l',
-        'jRmZ6mMcLcA6M8KjhzOeNjmRF8qltZjP3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci',
-        '79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/e6ZSnYmluFtBekq0ZsF3LHBcfa3MquiphB',
-        'Ys8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSHI2rRaVHB6W/w2ND/X0EkKQcamFaNCK',
-        'Lx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU9OacbytTN4PspzZKSSFY1BVWio',
-        'q5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctTYPtjERaSSHQ7+DiqJjrnf5',
-        'Qf3vDsCm1pJAoB0bhYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4ZeUkiUqMgZIQ8/25K8',
-        'rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtORXd9p1p4x36knhUQeGJZviJbtoqGuGjJfnyzEB',
-        '4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91lPs2fedlFZSD9dUE0KAW9u3c',
-        '/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy7jPf3W9n',
-        'bKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5',
-        'pDgbN4PzsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-        'AAAAAAAAAAAAADg3PAfRDWjQM3VeT0AAAAASUVORK5CYII='
-    ].join('');
+function updateKPI(table, time) {
+    for (
+        const [key, ind] of Object.entries(kpi)
+    ) {
+        // set active state on current temperature KPI
+        if (key === 'TN') {
+            ind.parentCell.setActiveState();
+        }
+
+        ind.update({
+            value: table.getCellAsNumber(
+                key,
+                table.getRowIndexBy('time', time),
+                true
+            )
+        });
+    }
+}
+
+function updateKPIData(city) {
+    // update KPI data
+    kpi.data.update({
+        value: city +
+            '<br>lat: ' + citiesData[city].lat +
+            '<br>lon: ' + citiesData[city].lon
+    });
+}
+
+function syncRefreshCharts(store, dataScope, cityScope) {
+    const data = store.table.modified.getRows(
+        void 0, void 0,
+        ['time', dataScope]
+    );
+
+    // update navigator
+    navigatorSeries.update({
+        name: cityScope,
+        data
+    });
+
+    // Update the main chart
+    Highcharts.fireEvent(
+        navigatorSeries.chart.xAxis[0],
+        'afterSetExtremes'
+    );
+
+    // update chart
+    citySeries.chart.update({
+        title: {
+            text: cityScope
+        }
+    });
+
+    // update colorAxis
+    citiesMap.chart.update({
+        colorAxis: buildColorAxis()
+    });
 }
