@@ -90,9 +90,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             chartConstructor: '',
             editableOptions: [
                 ...Component.defaultOptions.editableOptions,
-                'chartOptions',
-                'chartClassName',
-                'chartID'
+                'chartOptions'
+                // 'chartClassName',
+                // 'chartID'
             ],
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
@@ -228,11 +228,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         this.sync.start();
         this.emit({ type: 'afterRender' });
         return this;
-    }
-
-    public redraw(): this {
-        super.redraw();
-        return this.render();
     }
 
     public resize(

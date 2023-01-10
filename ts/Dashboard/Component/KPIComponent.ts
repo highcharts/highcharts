@@ -184,7 +184,7 @@ class KPIComponent extends Component {
     public redraw(): this {
         super.redraw();
         this.updateElements();
-        return this.render();
+        return this;
     }
 
     public update(options: Partial<KPIComponent.ComponentOptions>): this {
@@ -205,18 +205,7 @@ class KPIComponent extends Component {
         } = this.options;
 
         if (this.options.title) {
-            const old = this.titleElement;
             this.setTitle(this.options.title);
-            if (this.titleElement) {
-                if (old) {
-                    this.element.replaceChild(this.titleElement, old);
-                } else {
-                    this.element.insertBefore(
-                        this.titleElement,
-                        this.contentElement
-                    );
-                }
-            }
             if (this.dimensions.width && this.dimensions.height) {
                 this.updateTitleSize(
                     this.dimensions.width,
