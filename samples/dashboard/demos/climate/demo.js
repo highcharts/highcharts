@@ -607,10 +607,9 @@ async function setupDataPool() {
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
-            googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-            googleSpreadsheetKey: '1gIScpvn6aO8jeN_fxOkJKJWA1KTVzQUQZUsZr0V8TOY'
+            csvUrl: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a2ece3d/samples/data/climate-cities.json'
         },
-        storeType: 'GoogleSheetsStore'
+        storeType: 'CSVStore'
     });
 
     let csvReferences = await dataPool.getStoreTable('cities');
