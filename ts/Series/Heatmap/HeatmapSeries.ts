@@ -489,6 +489,9 @@ class HeatmapSeries extends ScatterSeries {
                     });
 
             }
+
+        // In styled mode, use CSS, otherwise the fill used in the style sheet
+        // will take precedence over the fill attribute.
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
             heatmap.points.forEach((point): void => {
