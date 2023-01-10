@@ -256,6 +256,13 @@ class DataGrid {
         return addEvent(this, type, callback);
     }
 
+    /**
+     * Scroll to a given row.
+     * @param  {number} row Row number
+     */
+    public scrollToRow(row: number): void {
+        this.outerContainer.scrollTop = row * this.options.cellHeight;
+    }
 
     // ---------------- Private methods
 
