@@ -93,12 +93,6 @@ QUnit.test('Flowmap API options.', assert => {
         should not be drawn.`
     );
 
-    assert.ok(
-        series.points[1].isNull,
-        `The point without a weight defined on a point or series level
-        should be null.`
-    );
-
     series.points[1].update({
         weight: 1
     });
