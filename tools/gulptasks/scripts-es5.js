@@ -38,22 +38,18 @@ function task() {
                     null
             ),
             type: (argv.type || null),
-            output: './code/es5/'
+            output: './code/es5'
         });
 
-        logLib.message('Generating code...');
+        logLib.message('Generating ES5 code...');
 
         processLib.isRunning('scripts-js', true);
 
         BuildScripts
             // assemble JS files
             .fnFirstBuild()
-            // deleting invalid masters DTS
-            .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
-                path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
-            ))
             .then(() => fsLib.deleteDirectory('./code/es5/es-modules', true))
-            .then(() => logLib.success('Created code'))
+            .then(() => logLib.success('Created ES5 code'))
             .then(function (output) {
                 processLib.isRunning('scripts-js', false);
                 resolve(output);
