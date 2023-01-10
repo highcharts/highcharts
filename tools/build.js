@@ -50,7 +50,7 @@ const getBuildOptions = input => {
     );
     const type = ['classic'];
     const mapTypeToSource = {
-        classic: [output, 'es-modules'].join(''),
+        classic: join(output, 'es-modules'),
         css: './code/js/es-modules'
     };
     return {
