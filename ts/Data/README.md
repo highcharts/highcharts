@@ -158,12 +158,12 @@ const chart = new Highcharts.chart('container', {
 
 
 
-
 ### DataTable in DataGrid
 
-DataGrid visualizes and optionally modifiesication of cell content in a table.
-DataTable provides only limited information about the original order, therefor
-the store might be needed for the original column order.
+DataGrid shows and optionally modifies cell content in a table. DataGrid can
+also change the order of cells, but DataTable provides only limited information
+about the original order of a source. Therefor a DataStore might be needed in
+addition to retrieve the original order.
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
@@ -186,6 +186,14 @@ const dataGrid = new DataGrid('container', {
 });
 dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
 ```
+
+
+
+### DataTable in Dashboards
+
+Some components in Dashboard use DataTable or DataStore to show data. You can
+use a single table or store in multiple components and in that way synchronize
+data.
 
 
 
