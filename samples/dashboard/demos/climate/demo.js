@@ -102,14 +102,15 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    const chartData = store.table.modified
+                                    const data = store.table.modified
                                             .getRows(
                                                 void 0,
                                                 void 0,
                                                 ['time', dataScope]
-                                            ).filter(el =>
-                                                el[0] >= min && el[0] <= max
                                             ),
+                                        chartData = data.filter(el =>
+                                            el[0] >= min && el[0] <= max
+                                        ),
                                         lastPoint =
                                             chartData[chartData.length - 1];
 
@@ -118,7 +119,12 @@ async function setupDashboard() {
                                     });
 
                                     worldDate = chartData[0][0];
+                                    const startIndex = data.indexOf(
+                                        chartData[0]
+                                    );
 
+                                    cityGrid.scrollToRow(startIndex);
+                                    cityGrid.update(); // Force redraw;
                                     buildCitiesMap().then(
                                         data => citiesMap.setData(data)
                                     );
