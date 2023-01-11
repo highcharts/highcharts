@@ -113,7 +113,13 @@ test('HighchartsComponent events', function (assert) {
 
     // Redraws -> should also fire render
     component.redraw();
-    expectedEvents.push('redraw', 'beforeRender', 'afterRender');
+    expectedEvents.push(
+      'redraw', 
+      'beforeRender', 
+      'load', 
+      'afterLoad', 
+      'afterRender'
+    );
 
 
     assert.deepEqual(
@@ -132,7 +138,15 @@ test('HighchartsComponent events', function (assert) {
         }
     });
 
-    expectedEvents.push('update', 'afterUpdate');
+    expectedEvents.push(
+      'update', 
+      'redraw', 
+      'beforeRender', 
+      'load', 
+      'afterLoad', 
+      'afterRender',
+      'afterUpdate'
+    );
     assert.deepEqual(
         registeredEvents,
         expectedEvents
@@ -247,7 +261,15 @@ test('HTMLComponent events', function (assert) {
 
     // Redraws -> should also fire render
     component.redraw();
-    expectedEvents.push('redraw', 'beforeRender', 'afterRender', 'afterRedraw');
+    expectedEvents.push(
+       'redraw', 
+       'beforeRender', 
+       'load', 
+       'afterLoad', 
+       'afterRender',
+       'afterRedraw'
+    );
+
 
 
     assert.deepEqual(
@@ -266,7 +288,16 @@ test('HTMLComponent events', function (assert) {
         }
     });
 
-    expectedEvents.push('update', 'afterUpdate');
+    expectedEvents.push(
+      'update',
+      'redraw', 
+      'beforeRender', 
+      'load', 
+      'afterLoad', 
+      'afterRender',
+      'afterRedraw',
+      'afterUpdate'
+    );
     assert.deepEqual(
         registeredEvents,
         expectedEvents

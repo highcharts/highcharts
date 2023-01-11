@@ -2,9 +2,10 @@
 
 /* *
  *
- *  City chart
+ *  City Chart
  *
  * */
+
 #city-chart .highcharts-background {
     fill: #46475d;
 }
@@ -22,6 +23,7 @@
  *  Navigator
  *
  * */
+
 .highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
     stroke: #df8fa1;
 }
@@ -55,6 +57,7 @@
  *  World Map
  *
  * */
+
 #world-map .highcharts-background {
     fill: #46475d;
 }
@@ -70,10 +73,36 @@
     stroke-width: 2px;
 }
 
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 1px;
+}
+
 #world-map .highcharts-series-1 .highcharts-point {
     stroke: #fff;
 }
 
 #world-map .highcharts-series-1 .highcharts-point-select {
     stroke-width: 3px;
+}
+
+#world-map .highcharts-tooltip {
+    text-align: right;
+}
+
+/* *
+ *
+ * KPI
+ *
+ */
+
+.hd-cell.hd-cell-state-hover:hover > .hd-component,
+.hd-cell.hd-cell-state-active > .hd-component {
+    background-color: #46475d;
+    color: #fff;
+}
+
+.hd-cell.hd-cell-state-hover {
+    cursor: pointer;
 }

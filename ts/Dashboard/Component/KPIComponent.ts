@@ -123,21 +123,27 @@ class KPIComponent extends Component {
 
         this.updateElements();
 
-        this.on('resize', (): void => {
-            if (
-                !this.updatingSize &&
-                this.dimensions.width &&
-                this.dimensions.height
-            ) {
-                this.updateSize(this.dimensions.width, this.dimensions.height);
-            }
+        return this;
+    }
 
-            if (this.chart) {
-                this.chart.reflow();
-            }
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): this {
+        super.resize(width, height);
+        if (
+            !this.updatingSize &&
+            this.dimensions.width &&
+            this.dimensions.height
+        ) {
+            this.updateSize(this.dimensions.width, this.dimensions.height);
+        }
 
-            this.updatingSize = false;
-        });
+        if (this.chart) {
+            this.chart.reflow();
+        }
+
+        this.updatingSize = false;
 
         return this;
     }
@@ -184,7 +190,7 @@ class KPIComponent extends Component {
     public redraw(): this {
         super.redraw();
         this.updateElements();
-        return this.render();
+        return this;
     }
 
     public update(options: Partial<KPIComponent.ComponentOptions>): this {
@@ -205,18 +211,7 @@ class KPIComponent extends Component {
         } = this.options;
 
         if (this.options.title) {
-            const old = this.titleElement;
             this.setTitle(this.options.title);
-            if (this.titleElement) {
-                if (old) {
-                    this.element.replaceChild(this.titleElement, old);
-                } else {
-                    this.element.insertBefore(
-                        this.titleElement,
-                        this.contentElement
-                    );
-                }
-            }
             if (this.dimensions.width && this.dimensions.height) {
                 this.updateTitleSize(
                     this.dimensions.width,

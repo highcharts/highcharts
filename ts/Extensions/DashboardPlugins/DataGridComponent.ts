@@ -56,10 +56,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             dataGridClassName: 'dataGrid-container',
             dataGridID: 'dataGrid-' + uniqueKey(),
             dataGridOptions: {},
-            editableOptions: [
-                'dataGridClassName',
-                'dataGridID'
-            ],
+            editableOptions: [],
             syncHandlers: DataGridSyncHandlers,
             onUpdate: DataGridComponent.onUpdate
         });
