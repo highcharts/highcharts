@@ -22,6 +22,7 @@ let dataScope = defaultData;
 let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 let kpi = {};
+let darkMode = false;
 
 async function setupDashboard() {
 
@@ -537,7 +538,42 @@ async function setupDashboard() {
                 enabled: true,
                 icon: (
                     'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
-                )
+                ),
+                items: [
+                    'editMode',
+                    {
+                        id: 'dark-mode',
+                        type: 'toggle',
+                        text: 'Dark mode',
+                        events: {
+                            click: function () {
+                                const dashboard = this.menu.editMode.dashboard,
+                                    darModeClass = 'dark-mode';
+
+                                darkMode = !darkMode;
+
+                                if (darkMode) {
+                                    dashboard.container.classList
+                                        .add(darModeClass);
+                                } else {
+                                    dashboard.container.classList
+                                        .remove(darModeClass);
+                                }
+                            }
+                        }
+                    }, {
+                        id: 'fahrenheit',
+                        type: 'toggle',
+                        text: 'Fahrenheit',
+                        events: {
+                            click: function () {
+                                const dashboard = this.menu.editMode.dashboard;
+
+                                console.log('switch to Fahrenheit');
+                            }
+                        }
+                    }
+                ]
             }
         },
         gui: {
