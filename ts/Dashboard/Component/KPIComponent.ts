@@ -123,21 +123,27 @@ class KPIComponent extends Component {
 
         this.updateElements();
 
-        this.on('resize', (): void => {
-            if (
-                !this.updatingSize &&
-                this.dimensions.width &&
-                this.dimensions.height
-            ) {
-                this.updateSize(this.dimensions.width, this.dimensions.height);
-            }
+        return this;
+    }
 
-            if (this.chart) {
-                this.chart.reflow();
-            }
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): this {
+        super.resize(width, height);
+        if (
+            !this.updatingSize &&
+            this.dimensions.width &&
+            this.dimensions.height
+        ) {
+            this.updateSize(this.dimensions.width, this.dimensions.height);
+        }
 
-            this.updatingSize = false;
-        });
+        if (this.chart) {
+            this.chart.reflow();
+        }
+
+        this.updatingSize = false;
 
         return this;
     }
