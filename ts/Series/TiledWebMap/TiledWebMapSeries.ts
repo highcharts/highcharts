@@ -19,6 +19,7 @@ import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
+import MapView from '../../Maps/MapView.js';
 
 const {
     seriesTypes: {
@@ -29,6 +30,7 @@ const {
 import U from '../../Core/Utilities.js';
 
 const {
+    addEvent,
     defined,
     extend,
     error,
@@ -205,14 +207,7 @@ class TiledWebMapSeries extends MapSeries {
                     provider.apiKey
                 );
 
-                // if not set force projection to initial of provider
-                if (!defined(mapView.options.projection)) {
-                    mapView.update({
-                        projection: {
-                            name: providerProjection
-                        }
-                    });
-                } else if (
+                if (
                     mapView.projection.options.name !== providerProjection
                 ) {
                     error(
@@ -254,7 +249,12 @@ class TiledWebMapSeries extends MapSeries {
             const addTile = (x: number, y: number, zoom: number): void => {
                 if (!tiles[`${zoom},${x},${y}`]) {
                     if (provider.url) {
-                        const url = replaceVariables(provider.url, x, y, zoom);
+                        const url = replaceVariables(
+                            provider.url,
+                            x,
+                            y,
+                            zoom
+                        );
 
                         tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                             url,
@@ -311,7 +311,57 @@ class TiledWebMapSeries extends MapSeries {
             );
         }
     }
+
+    public update(): any {
+        const series = this,
+            chart = this.chart,
+            mapView = chart.mapView,
+            provider = series.options.provider;
+
+        super.update.apply(series, arguments);
+
+        if (
+            mapView &&
+            !defined(mapView.options.projection) &&
+            provider &&
+            provider.type
+        ) {
+            const ProviderDefinition =
+                TiledWebMapSeries.TilesProvidersRegistry[provider.type];
+
+            if (ProviderDefinition) {
+                const def = new ProviderDefinition(),
+                    providerProjectionName = def.getProjectionName();
+
+                mapView.update({
+                    projection: {
+                        name: providerProjectionName
+                    }
+                });
+            }
+        }
+    }
 }
+
+addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
+    const twm: TiledWebMapSeriesOptions =
+        (e.seriesOptions || []).filter(
+            (s: any): boolean => s.type === 'tiledwebmap')[0];
+
+    if (twm && twm.provider && twm.provider.type) {
+        const ProviderDefinition =
+            TilesProvidersRegistry[twm.provider.type],
+            def = new ProviderDefinition(),
+            providerProjectionName: string = def.getProjectionName();
+
+        this.recommendedProjection = {
+            name: providerProjectionName
+        };
+        return false;
+    }
+
+    return true;
+});
 
 /* *
  *

@@ -141,6 +141,8 @@ class MapView {
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
+    recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
+    recommendedMapView: DeepPartial<MapViewOptions>|undefined;
 
     public chart: Chart;
 
@@ -213,9 +215,6 @@ class MapView {
         chart: Chart,
         options?: DeepPartial<MapViewOptions>
     ) {
-
-        let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
-        let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
 
             // Handle the global map and series-level mapData
@@ -225,15 +224,17 @@ class MapView {
                     (s): (MapDataType|undefined) => s.mapData
                 )
             ]
-                .map((mapData): GeoJSON|undefined => this.getGeoMap(mapData));
+                .map((mapData): GeoJSON|undefined =>
+                    this.getGeoMap(mapData));
 
 
             const allGeoBounds: MapBounds[] = [];
             geoMaps.forEach((geoMap): void => {
                 if (geoMap) {
                     // Use the first geo map as main
-                    if (!recommendedMapView) {
-                        recommendedMapView = geoMap['hc-recommended-mapview'];
+                    if (!this.recommendedMapView) {
+                        this.recommendedMapView =
+                            geoMap['hc-recommended-mapview'];
                     }
 
                     // Combine the bounding boxes of all loaded maps
@@ -244,46 +245,57 @@ class MapView {
                 }
             });
 
-            // Get the composite bounds
-            const geoBounds = (
-                allGeoBounds.length &&
-                MapView.compositeBounds(allGeoBounds)
+            fireEvent(
+                this,
+                'beforeMapViewInit',
+                {
+                    seriesOptions: chart.options.series
+                },
+                function (): void {
+                    // Get the composite bounds
+                    const geoBounds = (
+                        allGeoBounds.length &&
+                        MapView.compositeBounds(allGeoBounds)
+                    );
+
+                    // Provide a best-guess recommended projection if not set in
+                    // the map or in user options
+                    if (geoBounds) {
+
+                        const { x1, y1, x2, y2 } = geoBounds;
+                        this.recommendedProjection =
+                            (x2 - x1 > 180 && y2 - y1 > 90) ?
+                                // Wide angle, go for the world view
+                                {
+                                    name: 'EqualEarth'
+                                } :
+                                // Narrower angle, use a projection better
+                                // suited for local view
+                                {
+                                    name: 'LambertConformalConic',
+                                    parallels: [y1, y2],
+                                    rotation: [-(x1 + x2) / 2]
+                                };
+                    }
+
+                    // Register the main geo map (from options.chart.map) if set
+                    this.geoMap = geoMaps[0];
+                }
             );
-
-            // Provide a best-guess recommended projection if not set in the map
-            // or in user options
-            if (geoBounds) {
-
-                const { x1, y1, x2, y2 } = geoBounds;
-                recommendedProjection = (x2 - x1 > 180 && y2 - y1 > 90) ?
-                    // Wide angle, go for the world view
-                    {
-                        name: 'EqualEarth'
-                    } :
-                    // Narrower angle, use a projection better suited for local
-                    // view
-                    {
-                        name: 'LambertConformalConic',
-                        parallels: [y1, y2],
-                        rotation: [-(x1 + x2) / 2]
-                    };
-            }
-
-            // Register the main geo map (from options.chart.map) if set
-            this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
 
         const o = merge(
             defaultOptions,
-            { projection: recommendedProjection },
-            recommendedMapView,
+            { projection: this.recommendedProjection },
+            this.recommendedMapView,
             options
         );
 
         // Merge the inset collections by id, or index if id missing
-        const recInsets = recommendedMapView && recommendedMapView.insets,
+        const recInsets =
+            this.recommendedMapView && this.recommendedMapView.insets,
             optInsets = options && options.insets;
         if (recInsets && optInsets) {
             (o as any).insets = MapView.mergeInsets(recInsets, optInsets);
