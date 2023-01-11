@@ -607,7 +607,7 @@ async function setupDataPool() {
     dataPool.setStoreOptions({
         name: 'cities',
         storeOptions: {
-            csvUrl: 'https://www.highcharts.com/samples/data/climate-cities.csv'
+            csvURL: 'https://www.highcharts.com/samples/data/climate-cities.csv'
         },
         storeType: 'CSVStore'
     });
