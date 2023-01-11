@@ -2147,14 +2147,9 @@ class SVGElement implements SVGElementLike {
         key: 'stroke-width',
         element: SVGDOMElement
     ): void {
-        if (!defined(value) || (typeof value === 'number' && isNaN(value))) {
-            delete this[key];
-            element.removeAttribute(key);
-        } else {
-            // Record it for quick access in getter
-            this[key] = value;
-            element.setAttribute(key, value);
-        }
+        // Record it for quick access in getter
+        this[key] = value;
+        element.setAttribute(key, value);
     }
 
     /**

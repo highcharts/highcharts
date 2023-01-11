@@ -691,6 +691,57 @@ class MapSeries extends ScatterSeries {
                             ) as any
                         );
                     }
+
+                    graphic.animate = function (params,
+                        options, complete): SVGElement {
+
+                        const animateIn = (
+                                isNumber(params['stroke-width']) &&
+                                !isNumber(graphic['stroke-width'])
+                            ),
+                            animateOut = (
+                                isNumber(graphic['stroke-width']) &&
+                                !isNumber(params['stroke-width'])
+                            );
+                        // When strokeWidth is animating
+                        if (animateIn || animateOut) {
+
+                            const strokeWidth = pick(
+                                    series.getStrokeWidth(series.options),
+                                    1 // Styled mode
+                                ),
+                                inheritedStrokeWidth = (
+                                    strokeWidth /
+                                    (
+                                        chart.mapView &&
+                                        chart.mapView.getScale() ||
+                                        1
+                                    )
+                                );
+                            // For animating from undefined, .attr() reads the
+                            // property as the starting point
+                            if (animateIn) {
+                                graphic['stroke-width'] = inheritedStrokeWidth;
+                            }
+                            // For animating to undefined
+                            if (animateOut) {
+                                params['stroke-width'] = inheritedStrokeWidth;
+                            }
+                        }
+                        const ret = animate.call(
+                            graphic, params, options,
+                            animateOut ? function (this: SVGElement): void {
+                                // Remove the attribute after finished animation
+                                graphic.element.removeAttribute('stroke-width');
+                                delete graphic['stroke-width'];
+
+                                // Proceed
+                                if (complete) {
+                                    complete.apply(this, arguments);
+                                }
+                            } : complete);
+                        return ret;
+                    };
                 }
             });
         }
@@ -943,10 +994,7 @@ class MapSeries extends ScatterSeries {
             attr.fill = this.options.nullColor;
         }
 
-        if (
-            point.graphic &&
-            point.graphic['stroke-width'] !== pointStrokeWidth
-        ) {
+        if (defined(pointStrokeWidth)) {
             attr['stroke-width'] = pointStrokeWidth;
         } else {
             delete attr['stroke-width'];
