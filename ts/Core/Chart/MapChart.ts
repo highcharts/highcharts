@@ -48,6 +48,12 @@ declare module './ChartLike'{
     }
 }
 
+declare module '../Options'{
+    interface Options {
+        isMapChart?: boolean;
+    }
+}
+
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
  *
@@ -107,7 +113,10 @@ class MapChart extends Chart {
                     followTouchMove: false
                 }
             },
-            userOptions // user's options
+            userOptions, // user's options
+            { // forced options
+                isMapChart: true // internal flag
+            }
         );
 
         super.init(options, callback);
@@ -207,7 +216,7 @@ namespace MapChart {
     }
 }
 
-addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
+addEvent(MapChart, 'addSeriesAsDrilldown', function (e): boolean {
     const chart = this,
         {
             point,
@@ -253,7 +262,7 @@ addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
                     }
                 };
             animOptions.complete =
-                function (obj?: { applyDrilldown?: boolean }): void {
+                function (): void {
                     if (userComplete) {
                         userComplete.apply(this, arguments);
                     }
@@ -264,8 +273,7 @@ addEvent(MapChart, 'beforeDrilldown', function (e): boolean {
         point.zoomTo(animOptions);
 
     } else {
-        chart.addSingleSeriesAsDrilldown(point, options);
-        chart.applyDrilldown();
+        return true;
     }
     return false; // to prevent default function from fireEvent
 });
@@ -346,8 +354,7 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
 
 // to prevent default function from fireEvent
 addEvent(MapChart, 'midDrillUp', function (): boolean {
-    // To be considered at code review
-    return (this.constructor as any).name !== 'MapChart';
+    return !this.options.isMapChart;
 });
 
 addEvent(MapChart, 'finishDrillUp', function (e): boolean {
@@ -360,7 +367,10 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
             shouldAnimate: boolean,
             oldSeries: MapSeries,
             newSeries: MapSeries
-        } = e as any;
+        } = e as any,
+        zoomingDrill = chart.options.drilldown &&
+            chart.options.drilldown.animation &&
+            chart.options.drilldown.mapZooming;
 
     if (shouldAnimate) {
         oldSeries.remove(false);
@@ -371,12 +381,9 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
             delete oldSeries.dataLabelsGroup;
         }
 
-        if (
-            chart.options.drilldown &&
-            chart.options.drilldown.animation &&
-            chart.options.drilldown.mapZooming &&
-            chart.mapView
-        ) {
+        if (zoomingDrill && chart.mapView) {
+            // stop hovering while drilling down
+            oldSeries.isDrilling = true;
             chart.redraw(false);
             // Fit to previous bounds
             chart.mapView.fitToBounds(
@@ -405,12 +412,7 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
             chart.redraw();
         };
 
-        if (
-            chart.options.drilldown &&
-            chart.options.drilldown.animation &&
-            chart.options.drilldown.mapZooming &&
-            chart.mapView
-        ) {
+        if (zoomingDrill && chart.mapView) {
             // Fit to natural bounds
             chart.mapView.setView(void 0, 1, true, {
                 complete: function (): void {

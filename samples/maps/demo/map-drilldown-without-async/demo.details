@@ -1,0 +1,11 @@
+---
+name: Map drilldown without async maps loading
+authors:
+  - Hubert Kozik
+requiresManualTesting: true
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Dynamic
+...

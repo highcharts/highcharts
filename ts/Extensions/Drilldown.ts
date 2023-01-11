@@ -623,6 +623,8 @@ defaultOptions.drilldown = {
      * Enable or disable the zooming into the region of clicked map point you
      * want to drill into.
      *
+     * @sample    maps/demo/map-drilldown-without-async/
+     *            Map drilldown without async maps loading
      *
      * @type      {boolean}
      * @default   true
@@ -754,7 +756,7 @@ Chart.prototype.addSeriesAsDrilldown = function (
     const chart = this;
     fireEvent(
         chart,
-        'beforeDrilldown',
+        'addSeriesAsDrilldown',
         { point, options },
         function (): void {
             chart.addSingleSeriesAsDrilldown(point, options);
