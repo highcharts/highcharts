@@ -36,7 +36,7 @@ Highcharts.chart('container', {
         min: 0,
         opposite: true,
         labels: {
-            format: "{value}%"
+            format: '{value}%'
         }
     }],
     series: [{

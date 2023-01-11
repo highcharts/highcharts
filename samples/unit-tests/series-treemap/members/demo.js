@@ -237,12 +237,12 @@ QUnit.module('setRootNode', () => {
         assert.strictEqual(
             series.rootNode,
             '',
-            "Drill to '': Root node updated"
+            'Drill to \'\': Root node updated'
         );
         assert.strictEqual(
             series.chart.redrawed,
             undefined,
-            "Drill to '': Redraw false"
+            'Drill to \'\': Redraw false'
         );
 
         setRootNode.call(series, 'A');
@@ -317,12 +317,12 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     assert.strictEqual(
         series.rootNode,
         '',
-        "On click drill to '': rootNode is updated."
+        'On click drill to \'\': rootNode is updated.'
     );
     assert.strictEqual(
         point.state,
         '',
-        "On click drill to '': point.state is updated."
+        'On click drill to \'\': point.state is updated.'
     );
 });
 

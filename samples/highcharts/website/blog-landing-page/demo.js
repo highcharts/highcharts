@@ -1,7 +1,7 @@
 Math.easeInQuint =  function (pos) {
     return Math.pow(pos, 5);
 };
-/*STUFF FOR DONUT CHART*/
+/* STUFF FOR DONUT CHART*/
 const gases = ['Carbon Dioxide', 'Nitrogen', 'Oxygen', 'Argon', 'Methane',
     'Sodium', 'Hydrogen', 'Helium', 'Other'];
 
@@ -52,7 +52,7 @@ function buildData(atmosphere) {
 }
 buildData('Mars');
 
-//resetting colors
+// resetting colors
 Highcharts.setOptions({
     colors: [
         Highcharts.getOptions().colors[4],
@@ -67,7 +67,7 @@ Highcharts.setOptions({
     ]
 });
 
-/*DONUT*/
+/* DONUT*/
 const donut = Highcharts.chart('donut', {
     chart: {
         plotBackgroundColor: null,
@@ -114,7 +114,7 @@ const donut = Highcharts.chart('donut', {
     }]
 });
 
-/*LINE GRAPH*/
+/* LINE GRAPH*/
 const graph = Highcharts.chart('graph', {
     chart: {
         margin: 0,
@@ -174,7 +174,7 @@ const graph = Highcharts.chart('graph', {
     }]
 });
 
-/*NETWORK GRAPH*/
+/* NETWORK GRAPH*/
 const dirDist50 = '#E8544E';
 const dirDist10 = '#FFD265';
 const dirDistLess10 = '#2AA775';
@@ -350,7 +350,7 @@ const network = Highcharts.chart('network', {
     }]
 });
 
-/*SCATTER*/
+/* SCATTER*/
 const scatter = Highcharts.chart('scatter', {
     chart: {
         type: 'scatter',
@@ -938,7 +938,7 @@ const scatter = Highcharts.chart('scatter', {
     }]
 });
 
-/*SMALL PACKED BUBBLE*/
+/* SMALL PACKED BUBBLE*/
 const bubble = Highcharts.chart('soloBubble', {
     chart: {
         type: 'packedbubble',
@@ -1018,7 +1018,7 @@ const bubble = Highcharts.chart('soloBubble', {
     }]
 });
 
-/*LINE, AREA, COLUMN CHART*/
+/* LINE, AREA, COLUMN CHART*/
 
 Highcharts.chart('lineAreaColumn',  {
     chart: {
@@ -1073,7 +1073,7 @@ Highcharts.chart('lineAreaColumn',  {
 });
 
 function animateCharts() {
-    //donut
+    // donut
     const series = donut.series[0];
     let newData = [];
     let count = 0;
@@ -1089,7 +1089,7 @@ function animateCharts() {
         }
     }, 3000);
 
-    //graph
+    // graph
     setTimeout(function () {
         graph.yAxis[0].update({
             reversed: true
@@ -1101,7 +1101,7 @@ function animateCharts() {
         });
     }, 2000);
 
-    //network
+    // network
     setTimeout(function () {
         network.series[0].nodes[0].update({
             mass: 1000
@@ -1113,7 +1113,7 @@ function animateCharts() {
         });
     }, 1200);
 
-    //scatter
+    // scatter
     const extremes = [
         [159.75, 170, 48, 56],
         [159.75, 173, 60, 120],
@@ -1134,7 +1134,7 @@ function animateCharts() {
         }
     }, 2000);
 
-    //bubble
+    // bubble
     setTimeout(function () {
         bubble.series[0].points[0].update({
             value: 150,
@@ -1148,7 +1148,7 @@ function animateCharts() {
         });
     }, 2000);
 
-    //line, area column
-    //no animation
+    // line, area column
+    // no animation
 }
 animateCharts();

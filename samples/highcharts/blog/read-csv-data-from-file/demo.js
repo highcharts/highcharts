@@ -1,18 +1,18 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "spline"
+        type: 'spline'
     },
     title: {
-        text: "Google searches for vitamin D 2004 - 2022"
+        text: 'Google searches for vitamin D 2004 - 2022'
     },
     legend: {
         enabled: false
     },
     subtitle: {
-        text: "Source:Google trends"
+        text: 'Source:Google trends'
     },
     data: {
-        csvURL: "https://www.highcharts.com/samples/data/google-trends-vitamin-d.csv"
+        csvURL: 'https://www.highcharts.com/samples/data/google-trends-vitamin-d.csv'
     },
 
     tooltip: {
@@ -20,7 +20,7 @@ Highcharts.chart("container", {
     },
 
     xAxis: {
-        type: "datetime"
+        type: 'datetime'
     },
     yAxis: {
         max: 100,

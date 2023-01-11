@@ -51,7 +51,7 @@
     "browserify": "^17.0.0",
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
-    "cypress": "7.7.0",
+    "cypress": "^12.0.2",
     "dtslint": "^4.2.1",
     "eslint": "^8.23.1",
     "eslint-config-eslint": "^7.0.0",

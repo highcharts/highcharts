@@ -166,6 +166,16 @@ class MapSeries extends ScatterSeries {
         },
 
         /**
+         * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
+         * the map borders. Round means that borders are rounded in the ends and
+         * bends.
+         *
+         * @type       {Highcharts.SeriesLinecapValue}
+         * @since      next
+         */
+        linecap: 'butt',
+
+        /**
          * @ignore-option
          *
          * @private
@@ -1027,6 +1037,7 @@ class MapSeries extends ScatterSeries {
         } else {
             delete attr['stroke-width'];
         }
+        attr['stroke-linecap'] = attr['stroke-linejoin'] = this.options.linecap;
 
         return attr;
     }
@@ -1558,9 +1569,14 @@ export default MapSeries;
  * it is recommended to use `mapData` to define the geometry instead
  * of defining it on the data points themselves.
  *
- * The geometry object is compatible to that of a `feature` in geoJSON, so
- * features of geoJSON can be passed directly into the `data`, optionally
+ * The geometry object is compatible to that of a `feature` in GeoJSON, so
+ * features of GeoJSON can be passed directly into the `data`, optionally
  * after first filtering and processing it.
+ *
+ * For pre-projected maps (like GeoJSON maps from our
+ * [map collection](https://code.highcharts.com/mapdata/)), user has to specify
+ * coordinates in `projectedUnits` for geometry type other than `Point`,
+ * instead of `[longitude, latitude]`.
  *
  * @sample maps/series/data-geometry/
  *         Geometry defined in data

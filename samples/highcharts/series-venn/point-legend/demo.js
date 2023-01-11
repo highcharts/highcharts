@@ -39,6 +39,6 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: "A venn diagram with legend enabled"
+        text: 'A venn diagram with legend enabled'
     }
 });

@@ -1,6 +1,6 @@
-var colorLessThan10 = "#1E8449",
-    colorMoreThan10 = "#F9E79F",
-    colorMoreThan50 = "#ec0000";
+var colorLessThan10 = '#1E8449',
+    colorMoreThan10 = '#F9E79F',
+    colorMoreThan50 = '#ec0000';
 (async () => {
 
     const topology = await fetch(
@@ -28,7 +28,7 @@ var colorLessThan10 = "#1E8449",
 
         tooltip: {
             formatter: function () {
-                return "<b>" + this.point.id + "</b>";
+                return '<b>' + this.point.id + '</b>';
             }
         },
 
