@@ -97,28 +97,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 // 'chartClassName',
                 // 'chartID'
             ],
-            onUpdate: HighchartsComponent.onUpdate,
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });
-
-    /**
-     * Update the store, when the point is being dragged.
-     * @param  {any} point Dragged point.
-     * @param  {Component.StoreTypes} store Store to update.
-     */
-    public static onUpdate(
-        point: Point,
-        store: Component.StoreTypes
-    ): void {
-        const table = store.table,
-            columnName = point.series.name,
-            rowNumber = point.x,
-            converter = new DataConverter(),
-            valueToSet = converter.asNumber(point.y);
-
-        table.setCell(columnName, rowNumber, valueToSet);
-    }
 
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
@@ -287,11 +268,29 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             chart.series.forEach((series): void => {
                 series.points.forEach((point): void => {
                     addEvent(point, 'drag', (): void => {
-                        HighchartsComponent.onUpdate(point, store);
+                        this.onChartUpdate(point, store);
                     });
                 });
             });
         }
+    }
+
+    /**
+     * Update the store, when the point is being dragged.
+     * @param  {Point} point Dragged point.
+     * @param  {Component.StoreTypes} store Store to update.
+     */
+    private onChartUpdate(
+        point: Point,
+        store: Component.StoreTypes
+    ): void {
+        const table = store.table,
+            columnName = point.series.name,
+            rowNumber = point.x,
+            converter = new DataConverter(),
+            valueToSet = converter.asNumber(point.y);
+
+        table.setCell(columnName, rowNumber, valueToSet);
     }
 
     public update(options: Partial<HighchartsComponent.ComponentOptions>): this {

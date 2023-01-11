@@ -21,6 +21,7 @@
 
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataTable from '../../Data/DataTable';
 
 import Component from '../../Dashboard/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
@@ -106,8 +107,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                         table.setCell(
                             columnName,
                             parseInt(dataTableRowIndex, 10),
-                            valueToSet,
-                            { stopPropagation: true }
+                            valueToSet
                         );
                     }
                 }
@@ -197,10 +197,28 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
 
             // Update the DataGrid when store changed.
             this.store.table.on('afterSetCell', (e: any): void => {
-                if (e.detail && e.detail.stopPropagation) {
-                    return;
+                const dataGrid = this.dataGrid;
+                let shouldUpdateTheGrid = true;
+
+                if (dataGrid) {
+                    const row = dataGrid.rowElements[e.rowIndex],
+                        cells = Array.prototype.slice.call(row.childNodes);
+
+                    cells.forEach((cell: HTMLElement): void => {
+                        if (cell.childElementCount > 0) {
+                            const input =
+                                cell.childNodes[0] as HTMLInputElement;
+
+                            if (cell.dataset.columnName === e.columnName &&
+                                +input.value === e.cellValue
+                            ) {
+                                shouldUpdateTheGrid = false;
+                            }
+                        }
+                    });
                 }
-                this.update({});
+
+                shouldUpdateTheGrid ? this.update({}) : void 0;
             });
         }
 
