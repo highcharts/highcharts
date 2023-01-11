@@ -523,10 +523,10 @@ async function setupDashboard() {
         {
             cell: 'selection-grid',
             type: 'DataGrid',
-            // store: defaultCity,
             dataGridOptions: {
                 editable: false
             },
+            // dataTable: defaultCityStore.table.modified,
             store: defaultCityStore,
             sync: {
                 tooltip: true
