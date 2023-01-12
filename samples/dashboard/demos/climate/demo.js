@@ -11,7 +11,7 @@ const initialMin = Date.UTC(2010);
 const minRange = 30 * 24 * 3600 * 1000;
 const maxRange = 365 * 24 * 3600 * 1000;
 const defaultCity = 'New York';
-const defaultData = 'TX';
+const defaultData = 'TXC';
 
 let citiesData;
 let citiesMap;
@@ -213,7 +213,7 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    dataScope = 'TX';
+                                    dataScope = 'TXC';
 
                                     syncRefreshCharts(
                                         store,
@@ -289,15 +289,15 @@ async function setupDashboard() {
             title: 'Maximum temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber('TXC', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TX = this;
+                    kpi.TXC = this;
                 },
                 click: function () {
-                    dataScope = 'TX';
+                    dataScope = 'TXC';
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -324,15 +324,15 @@ async function setupDashboard() {
             title: 'Average temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber('TNC', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TN = this;
+                    kpi.TNC = this;
                 },
                 click: function () {
-                    dataScope = 'TN';
+                    dataScope = 'TNC';
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -634,8 +634,6 @@ async function setupDashboard() {
             }]
         }
     });
-    console.log(dashboard);
-
 }
 
 async function setupDataPool() {
@@ -660,7 +658,35 @@ async function setupDataPool() {
         });
     }
 
-    console.log(dataPool);
+    await calculateTemperatures(csvReferences.columns.city);
+}
+
+async function calculateTemperatures(cities) {
+
+    for (const city of cities) {
+        const cityDataTable = (await dataPool.getStoreTable(city)).modified;
+
+        if (!cityDataTable.columns.TXC) {
+            cityDataTable.columns.TXC = cityDataTable.columns.TX.map(el =>
+                Highcharts.correctFloat((el - 273.15), 3)
+            );
+        }
+        if (!cityDataTable.columns.TXF) {
+            cityDataTable.columns.TXF = cityDataTable.columns.TX.map(el =>
+                Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
+            );
+        }
+        if (!cityDataTable.columns.TNC) {
+            cityDataTable.columns.TNC = cityDataTable.columns.TN.map(el =>
+                Highcharts.correctFloat((el - 273.15), 3)
+            );
+        }
+        if (!cityDataTable.columns.TNF) {
+            cityDataTable.columns.TNF = cityDataTable.columns.TN.map(el =>
+                Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
+            );
+        }
+    }
 }
 
 async function main() {
@@ -745,8 +771,8 @@ function buildColorAxis() {
     // temperature
     if (dataScope[0] === 'T') {
         return {
-            max: 325,
-            min: 275,
+            max: 50,
+            min: 0,
             visible: false,
             stops: [
                 [0.0, '#39F'],
@@ -795,11 +821,6 @@ function buildDates() {
 
 function labelFormatter(value) {
 
-    // temperature values
-    if (dataScope[0] === 'T') {
-        return '' + Math.round((value - 273.15));
-    }
-
     return Highcharts.correctFloat(value, 0);
 }
 
@@ -808,11 +829,9 @@ function tooltipFormatter(value) {
     // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {
         return [
+            value + '˚C',
             Highcharts.correctFloat(
-                (value - 273.15), 3
-            ) + '˚C',
-            Highcharts.correctFloat(
-                (value * 1.8 - 459.67), 3
+                (value * (9 / 5) + 32), 3
             ) + '˚F'
         ].join('<br>');
     }
@@ -841,7 +860,7 @@ function updateKPI(table, time) {
         const [key, ind] of Object.entries(kpi)
     ) {
         // set active state on current temperature KPI
-        if (key === 'TN') {
+        if (key === 'TNC') {
             ind.parentCell.setActiveState();
         }
 
