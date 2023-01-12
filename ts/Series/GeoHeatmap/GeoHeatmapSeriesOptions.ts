@@ -23,7 +23,7 @@ import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions';
  *
  * */
 
-export interface GeoHeatmapSeriesOptions extends HeatmapSeriesOptions {
+interface GeoHeatmapSeriesOptions {
     // nothing here yet
 }
 

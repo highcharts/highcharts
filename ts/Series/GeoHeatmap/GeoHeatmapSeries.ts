@@ -18,16 +18,17 @@
  * */
 
 import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions';
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import GeoHeatmapPoint from './GeoHeatmapPoint.js';
+// import GeoHeatmapPoint from './GeoHeatmapPoint.js';
+import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
 import U from '../../Core/Utilities.js';
+import '../Heatmap/HeatmapSeries.js';
 
-const {
-    seriesTypes: {
-        heatmap: HeatmapSeries
-    }
-} = SeriesRegistry;
+// const {
+//     seriesTypes: {
+//         heatmap: HeatmapSeries
+//     }
+// } = SeriesRegistry;
 
 const {
     extend,
@@ -66,9 +67,7 @@ class GeoHeatmapSeries extends HeatmapSeries {
      * */
 
     public static defaultOptions: GeoHeatmapSeriesOptions =
-        merge(HeatmapSeries.defaultOptions, {
-        //
-        } as GeoHeatmapSeriesOptions);
+        HeatmapSeries.defaultOptions;
 
     /* *
      *
@@ -76,11 +75,14 @@ class GeoHeatmapSeries extends HeatmapSeries {
      *
      * */
 
+    public options: GeoHeatmapSeriesOptions = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
+
 
 }
 
@@ -91,7 +93,7 @@ class GeoHeatmapSeries extends HeatmapSeries {
  * */
 
 interface GeoHeatmapSeries {
-    pointClass: typeof GeoHeatmapPoint;
+//    pointClass: typeof GeoHeatmapPoint;
 }
 
 /* *
@@ -126,3 +128,5 @@ export default GeoHeatmapSeries;
  *  API Options
  *
  * */
+
+''; // adds doclets above to transpiled file
