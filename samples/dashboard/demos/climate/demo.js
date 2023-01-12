@@ -26,6 +26,7 @@ let kpi = {};
 async function setupDashboard() {
 
     citiesData = await buildCitiesData();
+    buildSymbols();
 
     const defaultCityStore = await dataPool.getStore(defaultCity);
 
@@ -66,6 +67,12 @@ async function setupDashboard() {
                 }],
                 navigator: {
                     enabled: true,
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    },
                     series: [{
                         name: defaultCity,
                         data: defaultCityStore.table.modified.getRows(
@@ -76,6 +83,7 @@ async function setupDashboard() {
                     }],
                     xAxis: {
                         endOnTick: true,
+                        gridZIndex: 4,
                         labels: {
                             x: 1,
                             y: 22
@@ -96,6 +104,7 @@ async function setupDashboard() {
                     barBorderWidth: 0,
                     buttonBorderWidth: 0,
                     buttonBorderRadius: 0,
+                    height: 14,
                     trackBorderWidth: 0,
                     trackBorderRadius: 0
                 },
@@ -766,6 +775,23 @@ function buildDates() {
     }
 
     return dates;
+}
+
+function buildSymbols() {
+    // left arrow
+    Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
+        'M', x + w / 2 - 1, y,
+        'L', x + w / 2 - 1, y + h,
+        x - w / 2 - 1, y + h / 2,
+        'Z'
+    ];
+    // right arrow
+    Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
+        'M', x + w / 2 + 1, y,
+        'L', x + w / 2 + 1, y + h,
+        x + w + w / 2 + 1, y + h / 2,
+        'Z'
+    ];
 }
 
 function labelFormatter(value) {

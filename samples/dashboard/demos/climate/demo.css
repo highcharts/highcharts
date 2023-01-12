@@ -7,12 +7,12 @@
  * */
 
 #time-range-selector {
-    --color-axis: #4f4a61;
+    --color-axis: #646479;
     --color-background: #fafafa;
-    --color-grid: #dadae1;
+    --color-grid: #fafafb;
     --color-handle: #5352be;
-    --color-mask: #413782;
-    --color-riffles: #fff;
+    --color-handle-line: #dadae2;
+    --color-handle-mask: #41378233;
     --color-scroll: #9295ba;
     --color-series: #5352be;
 }
@@ -23,8 +23,8 @@
         --color-background: #0d0d0d;
         --color-grid: #838393;
         --color-handle: #5352be;
-        --color-mask: #413782;
-        --color-riffles: #dddbef;
+        --color-handle-line: #838394;
+        --color-handle-mask: #dddbef66;
         --color-scroll: #4a4a53;
         --color-series: #5352be;
     }
@@ -70,6 +70,10 @@
  *
  * */
 
+#time-range-selector > div > div {
+    background: var(--color-background);
+}
+
 #time-range-selector .highcharts-background {
     fill: var(--color-background);
 }
@@ -84,9 +88,9 @@
 }
 
 #time-range-selector .highcharts-navigator-mask-inside {
-    fill: var(--color-mask);
-    fill-opacity: 0.2;
-    stroke-width: 0;
+    fill: var(--color-handle-mask);
+    fill-opacity: 1;
+    stroke: var(--color-handle-line);
 }
 
 #time-range-selector .highcharts-navigator-outline {
@@ -99,8 +103,8 @@
 }
 
 #time-range-selector .highcharts-scrollbar-arrow {
-    fill: var(--color-riffles);
-    stroke: var(--color-riffles);
+    fill: var(--color-handle-line);
+    stroke: var(--color-handle-line);
 }
 
 #time-range-selector .highcharts-scrollbar-button {
@@ -113,7 +117,7 @@
 }
 
 #time-range-selector .highcharts-scrollbar-thumb + path {
-    stroke: var(--color-riffles);
+    stroke: var(--color-handle-line);
 }
 
 #time-range-selector .highcharts-scrollbar-track {
