@@ -94,7 +94,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                           'chartOptions'
                           // 'chartClassName',
                           // 'chartID'
-                      ] as any // TODO: remove any cast
+                      ]
                   ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}

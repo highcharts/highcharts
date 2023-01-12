@@ -45,7 +45,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
             editableOptions:
                 Component.defaultOptions.editableOptions.concat([
                     'scaleElements'
-                ] as any // TODO: fix type
+                ]
                 )
         }
     );
