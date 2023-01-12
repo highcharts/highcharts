@@ -73,20 +73,31 @@ async function setupDashboard() {
                             void 0,
                             ['time', dataScope]
                         )
-                    }]
+                    }],
+                    xAxis: {
+                        endOnTick: true,
+                        labels: {
+                            x: 1,
+                            y: 22
+                        },
+                        opposite: true,
+                        showFirstLabel: true,
+                        showLastLabel: true,
+                        startOnTick: true,
+                        tickPosition: 'inside'
+                    },
+                    yAxis: {
+                        maxPadding: 0.5
+                    }
                 },
                 scrollbar: {
                     enabled: true,
-                    barBackgroundColor: 'gray',
-                    barBorderRadius: 7,
+                    barBorderRadius: 0,
                     barBorderWidth: 0,
-                    buttonBackgroundColor: 'gray',
                     buttonBorderWidth: 0,
-                    buttonBorderRadius: 7,
-                    trackBackgroundColor: 'none',
-                    trackBorderWidth: 1,
-                    trackBorderRadius: 8,
-                    trackBorderColor: '#CCC'
+                    buttonBorderRadius: 0,
+                    trackBorderWidth: 0,
+                    trackBorderRadius: 0
                 },
                 xAxis: {
                     visible: false,

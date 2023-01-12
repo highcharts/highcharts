@@ -2,6 +2,36 @@
 
 /* *
  *
+ *  Colors
+ *
+ * */
+
+#time-range-selector {
+    --color-axis: #4f4a61;
+    --color-background: #fafafa;
+    --color-grid: #dadae1;
+    --color-handle: #5352be;
+    --color-mask: #413782;
+    --color-riffles: #fff;
+    --color-scroll: #9295ba;
+    --color-series: #5352be;
+}
+
+@media (prefers-color-scheme: dark) {
+    #time-range-selector {
+        --color-axis: #e7e7ec;
+        --color-background: #0d0d0d;
+        --color-grid: #838393;
+        --color-handle: #5352be;
+        --color-mask: #413782;
+        --color-riffles: #dddbef;
+        --color-scroll: #4a4a53;
+        --color-series: #5352be;
+    }
+}
+
+/* *
+ *
  *  City Chart
  *
  * */
@@ -20,36 +50,79 @@
 
 /* *
  *
+ *  KPI
+ *
+ * */
+
+.hd-cell.hd-cell-state-hover:hover > .hd-component,
+.hd-cell.hd-cell-state-active > .hd-component {
+    background-color: #46475d;
+    color: #fff;
+}
+
+.hd-cell.hd-cell-state-hover {
+    cursor: pointer;
+}
+
+/* *
+ *
  *  Navigator
  *
  * */
 
-.highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
-    stroke: #df8fa1;
+#time-range-selector .highcharts-background {
+    fill: var(--color-background);
 }
 
-.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-navigator-xaxis {
-    fill: #fff;
+#time-range-selector .highcharts-grid-line {
+    stroke: var(--color-grid);
 }
 
-.highcharts-navigator-series {
-    fill: #c3c6ed;
-    stroke: #df8fa1;
-    fill-opacity: 1;
+#time-range-selector .highcharts-navigator-handle {
+    fill: var(--color-handle);
+    stroke: none;
 }
 
-.highcharts-navigator-series .highcharts-area {
-    fill-opacity: 1;
-}
-
-.highcharts-navigator-mask-inside {
-    fill: #000;
-    fill-opacity: 0.5;
+#time-range-selector .highcharts-navigator-mask-inside {
+    fill: var(--color-mask);
+    fill-opacity: 0.2;
     stroke-width: 0;
 }
 
-.highcharts-navigator-outline {
+#time-range-selector .highcharts-navigator-outline {
     display: none;
+}
+
+#time-range-selector .highcharts-navigator-series {
+    fill: none;
+    stroke: var(--color-series);
+}
+
+#time-range-selector .highcharts-scrollbar-arrow {
+    fill: var(--color-riffles);
+    stroke: var(--color-riffles);
+}
+
+#time-range-selector .highcharts-scrollbar-button {
+    fill: var(--color-scroll);
+    stroke: var(--color-scroll);
+}
+
+#time-range-selector .highcharts-scrollbar-thumb {
+    fill: var(--color-handle);
+}
+
+#time-range-selector .highcharts-scrollbar-thumb + path {
+    stroke: var(--color-riffles);
+}
+
+#time-range-selector .highcharts-scrollbar-track {
+    fill: var(--color-scroll);
+    stroke: var(--color-scroll);
+}
+
+#time-range-selector .highcharts-xaxis-labels {
+    fill: var(--color-axis);
 }
 
 /* *
@@ -89,20 +162,4 @@
 
 #world-map .highcharts-tooltip {
     text-align: right;
-}
-
-/* *
- *
- * KPI
- *
- */
-
-.hd-cell.hd-cell-state-hover:hover > .hd-component,
-.hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #46475d;
-    color: #fff;
-}
-
-.hd-cell.hd-cell-state-hover {
-    cursor: pointer;
 }
