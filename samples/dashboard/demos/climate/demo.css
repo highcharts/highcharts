@@ -114,6 +114,7 @@
 
 #time-range-selector .highcharts-scrollbar-thumb {
     fill: var(--color-handle);
+    stroke-width: 0;
 }
 
 #time-range-selector .highcharts-scrollbar-thumb + path {
