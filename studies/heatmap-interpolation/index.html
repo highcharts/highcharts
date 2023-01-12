@@ -3,12 +3,13 @@
 <head>
 
 	<script src="/Users/markusknutsonbarstad/github-work/highcharts/code/highcharts.src.js"></script>
-	<script src="/Users/markusknutsonbarstad/github-work/highcharts/code/modules/heatmap.src.js"></script>
+	<script src="/Users/markusknutsonbarstad/github-work/highcharts/code/modules/map.src.js"></script>
 	<script src="https://code.highcharts.com/maps/modules/data.js"></script>
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Heatmap Interpolation Studies</title>
+
 </head>
 <body>
 <pre id="data" style="display: none;">
@@ -17,8 +18,7 @@
 <div id="container">
 </div>
 <script type="text/javascript">
-	const data = JSON.parse(document.getElementById('data').innerText);
-	const c =Highcharts.chart('container', {
+Highcharts.chart('container', {
 		chart: {
         type: 'heatmap'
     },
@@ -39,11 +39,9 @@
 
     series: [{
     	interpolation: true,
-        data: data
+        data: JSON.parse(document.getElementById('data').innerText)
     }]
 });
-
-
 </script>
 </body>
 </html>

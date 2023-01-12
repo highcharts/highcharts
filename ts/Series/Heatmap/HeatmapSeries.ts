@@ -435,9 +435,9 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        // In styled mode, use CSS, otherwise the fill used in the style
-        // sheet will take precedence over the fill attribute.
         const heatmap = this,
+            // In styled mode, use CSS, otherwise the fill used in the style
+            // sheet will take precedence over the fill attribute.
             seriesMarkerOptions = heatmap.options.marker || {};
 
         if (heatmap.options.interpolation) {
@@ -445,7 +445,6 @@ class HeatmapSeries extends ScatterSeries {
                 canvas = heatmap.canvas,
                 pixels = (canvas && ctx) &&
                     ctx.createImageData(
-                        // Temporary
                         canvas.width,
                         canvas.height
                     ),
@@ -454,6 +453,7 @@ class HeatmapSeries extends ScatterSeries {
 
             if (canvas && ctx && colorAxis && pixels) {
                 let pixelPos = 0;
+
                 heatmap.data.forEach((p: HeatmapPoint): void => {
                     const color = colorAxis.toColor(
                         (p as HeatmapPoint).value || 0, p
@@ -496,7 +496,6 @@ class HeatmapSeries extends ScatterSeries {
                     (point.graphic as any)[
                         heatmap.chart.styledMode ? 'css' : 'animate'
                     ](heatmap.colorAttribs(point));
-
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
