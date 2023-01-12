@@ -1482,6 +1482,42 @@ export default MapSeries;
  */
 
 /**
+ * When using automatic point colors pulled from the global
+ * [colors](colors) or series-specific
+ * [plotOptions.map.colors](series.colors) collections, this option
+ * determines whether the chart should receive one color per series or
+ * one color per point.
+ *
+ * In styled mode, the `colors` or `series.colors` arrays are not
+ * supported, and instead this option gives the points individual color
+ * class names on the form `highcharts-color-{n}`.
+ *
+ * @see [series colors](#plotOptions.map.colors)
+ *
+ * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-false/
+ *         Mapline colorByPoint set to false by default
+ * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-true/
+ *         Mapline colorByPoint set to true
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since     2.0
+ * @product   highmaps
+ * @apioption plotOptions.map.colorByPoint
+ */
+
+/**
+ * A series specific or series type specific color set to apply instead
+ * of the global [colors](#colors) when [colorByPoint](
+ * #plotOptions.map.colorByPoint) is true.
+ *
+ * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+ * @since     3.0
+ * @product   highmaps
+ * @apioption plotOptions.map.colors
+ */
+
+/**
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
