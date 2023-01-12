@@ -447,14 +447,14 @@ class HeatmapSeries extends ScatterSeries {
                     ctx.createImageData(
                         // Temporary
                         canvas.width,
-                        heatmap.yAxis && heatmap.yAxis.max || 0
+                        canvas.height
                     ),
                 colorAxis =
                     heatmap.chart.colorAxis && heatmap.chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis && pixels) {
                 let pixelPos = 0;
-                heatmap.data.forEach((p:HeatmapPoint):void => {
+                heatmap.data.forEach((p: HeatmapPoint): void => {
                     const color = colorAxis.toColor(
                         (p as HeatmapPoint).value || 0, p
                     );
@@ -489,14 +489,10 @@ class HeatmapSeries extends ScatterSeries {
                     });
 
             }
-
-        // In styled mode, use CSS, otherwise the fill used in the style sheet
-        // will take precedence over the fill attribute.
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
             heatmap.points.forEach((point): void => {
                 if (point.graphic) {
-
                     (point.graphic as any)[
                         heatmap.chart.styledMode ? 'css' : 'animate'
                     ](heatmap.colorAttribs(point));
@@ -514,20 +510,20 @@ class HeatmapSeries extends ScatterSeries {
         const series = this,
             canvas = series.canvas,
             context = series.context,
-            width = series.chart.plotWidth,
-            height = series.chart.plotHeight;
+            chart = series.chart,
+            width = series.yAxis && series.yAxis.max || 0,
+            height = series.yAxis.max &&
+                (series.points.length / series.yAxis.max) ||
+                0;
 
-        if (!canvas) {
-            const chart = series.chart;
+        if (canvas && context) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
             series.canvas = doc.createElement('canvas');
             series.canvas.width = width;
             series.canvas.height = height;
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
-        }
-
-        if (context) {
-            context.clearRect(0, 0, width, height);
         }
 
         return context;
