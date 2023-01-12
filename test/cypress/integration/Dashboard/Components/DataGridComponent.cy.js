@@ -21,4 +21,17 @@ describe('layout resize on window changes', () => {
         firstDataGridRow.parent().should('not.have.class', 'hc-dg-row hovered');
         cy.get('.hc-dg-row').eq(1).should('have.class', 'hc-dg-row hovered');
     });
+
+    it('Updating of the store should work by changing chart and datagrid', () =>{
+        cy.get('.hc-dg-row').eq(1).children().eq(1)
+            .type('{backspace}{backspace}{backspace}000');
+
+        cy.chart().then(chart =>{
+            assert.strictEqual(
+                chart.series[0].points[1].y,
+                2000,
+                'After updating the Data Grid the chart should be updated.'
+            )
+        })
+    })
 });
