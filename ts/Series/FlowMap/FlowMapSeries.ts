@@ -45,6 +45,7 @@ const {
     defined,
     extend,
     isArray,
+    isString,
     merge,
     pick,
     relativeLength
@@ -796,6 +797,27 @@ class FlowMapSeries extends MapLineSeries {
             (shapeArgs.d as SVGPath).splice(2, 0,
                 ...marker
             );
+        }
+
+        // Convert objects to array because objects aren't displayed in tooltip.
+        if ((point.options.to && point.options.from)) {
+            if (!isString(point.options.to) &&
+                (point.options.to as Highcharts.MapLonLatObject).lat &&
+                (point.options.to as Highcharts.MapLonLatObject).lon) {
+                point.options.to = [
+                    (point.options.to as Highcharts.MapLonLatObject).lat,
+                    (point.options.to as Highcharts.MapLonLatObject).lon
+                ];
+            }
+
+            if (!isString(point.options.from) &&
+                (point.options.from as Highcharts.MapLonLatObject).lat &&
+                (point.options.from as Highcharts.MapLonLatObject).lon) {
+                point.options.from = [
+                    (point.options.from as Highcharts.MapLonLatObject).lat,
+                    (point.options.from as Highcharts.MapLonLatObject).lon
+                ];
+            }
         }
 
         return shapeArgs;
