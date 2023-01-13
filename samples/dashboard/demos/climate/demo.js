@@ -739,9 +739,11 @@ function buildColorAxis() {
             min: 275,
             visible: false,
             stops: [
-                [0.0, '#39F'],
-                [0.4, '#6C0'],
-                [0.8, '#F00']
+                [0.0, '#4CAFFE'],
+                [0.3, '#53BB6C'],
+                [0.5, '#DDCE16'],
+                [0.6, '#DF7642'],
+                [0.7, '#DD2323']
             ]
         };
     }
