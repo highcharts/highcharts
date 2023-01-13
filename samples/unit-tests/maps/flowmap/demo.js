@@ -346,7 +346,6 @@ QUnit.test('Flowmap API options.', assert => {
 
     assert.notOk(
         chart.series[1].points[2].isNull,
-        `Points with correctly defined data should not be null on the point or
-        series level.`
+        'Points with correctly defined data should not be null.'
     );
 });
