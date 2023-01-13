@@ -198,6 +198,13 @@ class FlowMapSeries extends MapLineSeries {
         minWidth: 5,
 
         /**
+         * Specify the `lineWidth` of the links if they are not specified.
+         *
+         * @type  {number}
+         */
+        lineWidth: void 0,
+
+        /**
          * The opacity of all the links. Affects the opacity for the entire
          * link, including stroke. See also
          * [fillOpacity](#plotOptions.flowmap.fillOpacity), that affects the
@@ -488,6 +495,12 @@ class FlowMapSeries extends MapLineSeries {
         attrs['fill-opacity'] = pick(
             point.options.fillOpacity,
             this.options.fillOpacity
+        );
+
+        attrs['stroke-width'] = pick(
+            point.options.lineWidth,
+            this.options.lineWidth,
+            1
         );
 
         if (point.options.opacity) {
@@ -1045,5 +1058,13 @@ export default FlowMapSeries;
  * @type      {number}
  * @apioption series.flowmap.data.weight
  */
+
+/**
+ * Specify the `lineWidth` of the link.
+ *
+ * @type  {number}
+ * @apioption series.flowmap.data.lineWidth
+ */
+
 
 ''; // adds doclets above to transpiled file

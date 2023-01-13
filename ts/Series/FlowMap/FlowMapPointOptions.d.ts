@@ -34,6 +34,7 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
     opacity?: number;
     to?: string | LonLatArray | Highcharts.MapLonLatObject;
     weight?: number;
+    lineWidth?: number;
 }
 
 export interface MarkerEndOptions {
