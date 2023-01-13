@@ -22,6 +22,14 @@ export default class Gaode implements ProviderDefinition {
 
     initialProjectionName = 'WebMercator';
 
+    credits = {
+        standard: 'Map data \u00a92023 <a href="https://www.gaode.com/">Gaode</a>'
+    };
+
+    getCredits(theme: string | undefined): string {
+        return this.credits.standard;
+    }
+
     getURL(
         subdomain?: string | undefined,
         theme?: string | undefined

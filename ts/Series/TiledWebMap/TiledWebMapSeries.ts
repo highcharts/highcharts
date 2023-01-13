@@ -201,6 +201,16 @@ class TiledWebMapSeries extends MapSeries {
                 const def = new ProviderDefinition(),
                     providerProjection = def.getProjectionName();
 
+                // Add as credits.text, to prevent changing the default mapText
+                const creditsText = pick(
+                    (chart.userOptions.credits as any).text,
+                    'Highcharts.com ' + def.getCredits(provider.theme)
+                );
+
+                chart.addCredits({
+                    text: creditsText
+                });
+
                 provider.url = def.getURL(
                     provider.subdomain,
                     provider.theme,

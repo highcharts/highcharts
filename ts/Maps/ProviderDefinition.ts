@@ -23,9 +23,11 @@ interface ProviderGetURL {
 export declare class ProviderDefinition {
     subdomains?: Array<string>;
     themes: Themes;
+    credits: Themes;
     initialProjectionName: String;
     getURL: ProviderGetURL;
     getProjectionName: Function;
+    getCredits: Function;
 }
 
 export default ProviderDefinition;

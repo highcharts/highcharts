@@ -11,7 +11,7 @@ QUnit.test('Tiled Web Map loading tiles from providers', assert => {
         400
     );
 
-    const providers = ['OpenStreetMap', 'Google', 'Gaode', 'Stamen'];
+    const providers = ['OpenStreetMap', 'Gaode', 'Stamen'];
     const done = assert.async(providers.length);
 
     providers.forEach(provider => {

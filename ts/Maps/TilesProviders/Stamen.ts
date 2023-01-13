@@ -23,6 +23,24 @@ export default class Stamen implements ProviderDefinition {
 
     initialProjectionName = 'WebMercator';
 
+    credits = {
+        watercolor: `\u00a9 Map tiles by <a href="https://stamen.com">Stamen Design</a>,
+        under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+        Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
+        <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>`,
+        standard: `\u00a9 Map tiles by <a href="https://stamen.com">Stamen Design</a>,
+        under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+        Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
+        <a href="https://www.openstreetmap.org/copyright">ODbL</a>`
+    };
+
+    getCredits(theme: string | undefined): string {
+        if (theme === 'watercolor') {
+            return this.credits.watercolor;
+        }
+        return this.credits.standard;
+    }
+
     getURL(
         subdomain?: string | undefined,
         theme?: string | undefined

@@ -22,6 +22,15 @@ export default class OpenStreetMap implements ProviderDefinition {
 
     initialProjectionName = 'WebMercator';
 
+    credits = {
+        standard: `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
+            OpenStreetMap</a>`
+    };
+
+    getCredits(theme: string | undefined): string {
+        return this.credits.standard;
+    }
+
     getURL(
         subdomain?: string | undefined,
         theme?: string | undefined
