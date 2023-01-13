@@ -42,10 +42,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         {
             scaleElements: false,
             elements: [],
-            editableOptions: [
-                ...Component.defaultOptions.editableOptions,
-                'scaleElements'
-            ]
+            editableOptions:
+                Component.defaultOptions.editableOptions.concat([
+                    'scaleElements'
+                ]
+                )
         }
     );
 
