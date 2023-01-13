@@ -792,9 +792,6 @@ namespace Component {
 
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
-    // Type of EditableOptions in options
-    export type EditableOptionsType = string;
-
     export interface ComponentOptions extends EditableOptions {
         parentCell?: Cell;
         parentElement: HTMLElement | string;
@@ -803,7 +800,7 @@ namespace Component {
         // allow overwriting gui elements
         navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
-        editableOptions: Array<EditableOptionsType>;
+        editableOptions: Array<string>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
         sync: SyncOptions;
