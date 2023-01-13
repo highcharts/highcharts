@@ -9,7 +9,7 @@
         },
 
         title: {
-            text: 'Human early migration paths',
+            text: 'Early human migration paths',
             margin: 4
         },
 
@@ -25,10 +25,10 @@
             fitToGeometry: {
                 type: 'MultiPoint',
                 coordinates: [
-                    // Top left
-                    [-20, 68.5],
-                    // Bottom right
-                    [-40, -45]
+                    // Left
+                    [-20, 0],
+                    // right
+                    [-35, 0]
                 ]
             }
         },
@@ -55,8 +55,9 @@
 
         series: [{
             name: 'World',
-            borderColor: '#ada',
-            nullColor: '#ada'
+            borderColor: '#baa',
+            nullColor: '#baa',
+            opacity: 0.7
         }, {
             name: 'Points in time',
             type: 'mappoint',
@@ -112,12 +113,13 @@
             zIndex: 2
         }, {
             name: 'Migrations',
-            color: 'tomato',
+            color: '#cd5b93',
             type: 'flowmap',
             minWidth: 5,
             maxWidth: 15,
             growTowards: false,
-            fillOpacity: 0.75,
+            fillOpacity: 1,
+            opacity: 0.8,
             weight: 1,
             markerEnd: {
                 width: '50%',
@@ -137,7 +139,7 @@
                 to: [135, -25],
                 curveFactor: 0.6
             }, {
-                from: [97, 16],
+                from: [102, 24],
                 to: [156, 66],
                 curveFactor: 0.2
             }, {
