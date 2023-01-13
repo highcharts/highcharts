@@ -478,7 +478,9 @@ class HeatmapSeries extends ScatterSeries {
 
                 heatmap.image = !image ?
                     chart.renderer.image(
-                        canvas.toDataURL(), 0, 0,
+                        canvas.toDataURL(),
+                        0,
+                        0,
                         chart.plotWidth,
                         chart.plotHeight
                     ).add(heatmap.group) :
@@ -486,8 +488,6 @@ class HeatmapSeries extends ScatterSeries {
                         width: chart.plotWidth,
                         height: chart.plotHeight
                     });
-
-                canvas.remove();
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
@@ -508,17 +508,20 @@ class HeatmapSeries extends ScatterSeries {
     public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
             canvas = series.canvas,
-            context = series.context,
-            chart = series.chart;
+            context = series.context;
+
 
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
             series.canvas = doc.createElement('canvas');
-            series.canvas.width =
-                series.yAxis.dataMax && series.yAxis.dataMax + 1 || 0;
-            series.canvas.height =
-                (series.points.length / series.canvas.width);
+            series.canvas.width = ((
+                (series.yAxis.max || 1) - (series.yAxis.min || 1)) *
+                (series.options.colsize || 1)
+            );
+            series.canvas.height = ((series.points.length *
+                (series.options.rowsize || 1) / series.canvas.width));
+
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
         }
