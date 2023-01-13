@@ -557,7 +557,8 @@ async function setupDashboard() {
                         events: {
                             click: function () {
                                 const dashboard = this.menu.editMode.dashboard,
-                                    darModeClass = 'dark-mode';
+                                    darModeClass =
+                                        Dashboard.classNamePrefix + 'dark-mode';
 
                                 darkMode = !darkMode;
 
