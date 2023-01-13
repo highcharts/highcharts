@@ -684,38 +684,34 @@ async function setupDataPool() {
     }
 }
 
-async function calculateTemperatures() {
-    const cities = (await dataPool.getStoreTable('cities')).columns.city;
+// Calculate the average and max temperature in C and F from K.
+async function convertTemperature(city) {
+    const cityDataTable = (await dataPool.getStoreTable(city)).modified;
 
-    for (const city of cities) {
-        const cityDataTable = (await dataPool.getStoreTable(city)).modified;
-
-        if (!cityDataTable.columns.TXC) {
-            cityDataTable.columns.TXC = cityDataTable.columns.TX.map(el =>
-                Highcharts.correctFloat((el - 273.15), 3)
-            );
-        }
-        if (!cityDataTable.columns.TXF) {
-            cityDataTable.columns.TXF = cityDataTable.columns.TX.map(el =>
-                Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
-            );
-        }
-        if (!cityDataTable.columns.TNC) {
-            cityDataTable.columns.TNC = cityDataTable.columns.TN.map(el =>
-                Highcharts.correctFloat((el - 273.15), 3)
-            );
-        }
-        if (!cityDataTable.columns.TNF) {
-            cityDataTable.columns.TNF = cityDataTable.columns.TN.map(el =>
-                Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
-            );
-        }
+    if (!cityDataTable.columns.TXC) {
+        cityDataTable.columns.TXC = cityDataTable.columns.TX.map(el =>
+            Highcharts.correctFloat((el - 273.15), 3)
+        );
+    }
+    if (!cityDataTable.columns.TXF) {
+        cityDataTable.columns.TXF = cityDataTable.columns.TX.map(el =>
+            Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
+        );
+    }
+    if (!cityDataTable.columns.TNC) {
+        cityDataTable.columns.TNC = cityDataTable.columns.TN.map(el =>
+            Highcharts.correctFloat((el - 273.15), 3)
+        );
+    }
+    if (!cityDataTable.columns.TNF) {
+        cityDataTable.columns.TNF = cityDataTable.columns.TN.map(el =>
+            Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
+        );
     }
 }
 
 async function main() {
     await setupDataPool();
-    await calculateTemperatures();
     await setupDashboard();
 }
 
@@ -737,6 +733,8 @@ async function buildCitiesData() {
         ['lat', 'lon', 'city']
     );
 
+    await convertTemperature(defaultCity);
+
     tables[initialCity] = {
         lat: initialRow[0],
         lon: initialRow[1],
@@ -749,13 +747,16 @@ async function buildCitiesData() {
         const rows = cities.getRows(void 0, void 0, ['lat', 'lon', 'city']);
 
         for (const row of rows) {
-            if (typeof tables[row[2]] === 'undefined') {
+            const city = row[2];
 
-                tables[row[2]] = {
+            if (typeof tables[city] === 'undefined') {
+                await convertTemperature(city);
+
+                tables[city] = {
                     lat: row[0],
                     lon: row[1],
-                    name: row[2],
-                    store: await dataPool.getStore(row[2])
+                    name: city,
+                    store: await dataPool.getStore(city)
                 };
 
                 if (citiesMap) {
