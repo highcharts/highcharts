@@ -1,40 +1,40 @@
 Highcharts.theme = {
-    colors: ["#d35400", "#2980b9", "#2ecc71", "#f1c40f", "#2c3e50", "#7f8c8d"],
+    colors: ['#d35400', '#2980b9', '#2ecc71', '#f1c40f', '#2c3e50', '#7f8c8d'],
     chart: {
         style: {
-            fontFamily: "Roboto"
+            fontFamily: 'Roboto'
         }
     },
     title: {
-        align: "left",
+        align: 'left',
         style: {
-            fontFamily: "Roboto Condensed",
-            fontWeight: "bold"
+            fontFamily: 'Roboto Condensed',
+            fontWeight: 'bold'
         }
     },
     subtitle: {
-        align: "left",
+        align: 'left',
         style: {
-            fontFamily: "Roboto Condensed"
+            fontFamily: 'Roboto Condensed'
         }
     },
     legend: {
-        align: "right",
-        verticalAlign: "bottom"
+        align: 'right',
+        verticalAlign: 'bottom'
     },
     xAxis: {
         gridLineWidth: 1,
-        gridLineColor: "#F3F3F3",
-        lineColor: "#F3F3F3",
-        minorGridLineColor: "#F3F3F3",
-        tickColor: "#F3F3F3",
+        gridLineColor: '#F3F3F3',
+        lineColor: '#F3F3F3',
+        minorGridLineColor: '#F3F3F3',
+        tickColor: '#F3F3F3',
         tickWidth: 1
     },
     yAxis: {
-        gridLineColor: "#F3F3F3",
-        lineColor: "#F3F3F3",
-        minorGridLineColor: "#F3F3F3",
-        tickColor: "#F3F3F3",
+        gridLineColor: '#F3F3F3',
+        lineColor: '#F3F3F3',
+        minorGridLineColor: '#F3F3F3',
+        tickColor: '#F3F3F3',
         tickWidth: 1
     },
     plotOptions: {
@@ -105,7 +105,7 @@ Highcharts.chart('container', {
             pointWidth: 4
         },
         treemap: {
-            layoutAlgorithm: "squarified"
+            layoutAlgorithm: 'squarified'
         },
         bubble: {
             minSize: 5,
@@ -119,13 +119,13 @@ Highcharts.chart('container', {
         delayForDisplay: 10,
         shared: true,
         useHTML: true,
-        headerFormat: "<small>\n  {point.x: %b %d}\n  <br/>\n</small>"
+        headerFormat: '<small>\n  {point.x: %b %d}\n  <br/>\n</small>'
     },
     xAxis: {
-        type: "datetime",
+        type: 'datetime',
         showLastLabel: false,
         dateTimeLabelFormats: {
-            month: "%B"
+            month: '%B'
         }
     }
 });

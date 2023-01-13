@@ -493,7 +493,7 @@ QUnit.test('val2lin- unit tests', function (assert) {
     );
 });
 
-QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
+QUnit.test('Ordinal axis, data grouping and boost module, #14055.', assert => {
     const chart = Highcharts.stockChart('container', {
         series: [{
             data: [
@@ -577,5 +577,62 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
         ),
         `Only after explicitly disabling the data grouping
         chart should be boosted.`
+    );
+});
+
+QUnit.test('Circular translation, #17128.', assert => {
+    const chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [
+                    [548935806499, 95.82],
+                    [1548936121889, 95.84],
+                    [1548936895949, 95.75],
+                    [1548937941785, 95.48],
+                    [1548938881593, 95.6],
+                    [1548939834796, 95.37],
+                    [1548940821273, 95.16],
+                    [1548941760541, 95.15],
+                    [1548942617180, 94.9],
+                    [1548943265472, 95.04],
+                    [1548943953574, 94.93],
+                    [1548944604420, 94.94],
+                    [1548945157396, 95.19],
+                    [1548945448867, 94.92],
+                    [1548946059662, 94.98],
+                    [1548946666809, 95.17],
+                    [1548947190658, 95.38]
+                ]
+            }, {
+                type: 'scatter',
+                data: [
+                    [1548936121889, 90],
+                    [1548938881593, 95]
+                ]
+            }]
+        }),
+        x = Date.UTC(2019, 0, 31, 14, 30);
+
+
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `When two series (line and scatter) are visible, circular translation of
+        the date should return the same value.`
+    );
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2019, 0, 31, 14),
+        Date.UTC(2019, 0, 31, 15)
+    );
+
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `After zooming, when the scatterer series is not visible, a circular
+        translation of the date should return the same value.`
     );
 });
