@@ -17,7 +17,31 @@
     --color-series: #5352be;
 }
 
+.highcharts-dashboard.dark-mode #time-range-selector {
+    --color-axis: #e7e7ec;
+    --color-background: #0d0d0d;
+    --color-grid: #838393;
+    --color-handle: #5352be;
+    --color-handle-line: #838394;
+    --color-handle-mask: #dddbef66;
+    --color-scroll: #4a4a53;
+    --color-series: #5352be;
+}
+
+#world-map {
+    --color-background: #5352be;
+    --color-map: #c7d3e9;
+    --color-marker-border: #fff;
+    --color-marker-shadow: #fff6;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-text: #000;
+    --color-text-border: #fff;
+}
+
 @media (prefers-color-scheme: dark) {
+    /* dark mode */
+
     #time-range-selector {
         --color-axis: #e7e7ec;
         --color-background: #0d0d0d;
@@ -28,6 +52,10 @@
         --color-scroll: #4a4a53;
         --color-series: #5352be;
     }
+
+    /* world-map {
+        no custom dark
+    } */
 }
 
 /* *
@@ -136,29 +164,46 @@
  *
  * */
 
+#world-map > div > div {
+    background: var(--color-background);
+}
+
 #world-map .highcharts-background {
-    fill: #46475d;
+    fill: var(--color-background);
+}
+
+#world-map .highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map .highcharts-map-navigation {
+    font-size: 20px;
 }
 
 #world-map .highcharts-series-0 .highcharts-point {
-    fill: #c93 !important;
-    stroke: #986;
+    fill: var(--color-map) !important;
+    stroke: var(--color-background);
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
+    font-size: 9px;
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
     paint-order: stroke;
-    stroke: #fff;
+    stroke: var(--color-text-border);
     stroke-width: 2px;
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
-    fill: #fff;
-    stroke: #000;
+    fill: var(--color-marker-text);
+    stroke: var(--color-marker-text-border);
     stroke-width: 1px;
 }
 
 #world-map .highcharts-series-1 .highcharts-point {
-    stroke: #fff;
+    stroke: var(--color-marker-border);
 }
 
 #world-map .highcharts-series-1 .highcharts-point-select {
@@ -167,4 +212,12 @@
 
 #world-map .highcharts-tooltip {
     text-align: right;
+}
+
+#world-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#world-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
 }

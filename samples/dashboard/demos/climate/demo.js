@@ -182,12 +182,15 @@ async function setupDashboard() {
                     enabled: false
                 },
                 mapNavigation: {
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    },
                     enabled: true,
                     enableMouseWheelZoom: false
                 },
                 mapView: {
                     maxZoom: 4,
-                    zoom: 1.6
+                    zoom: 1.3
                 },
                 series: [{
                     type: 'map',
@@ -253,6 +256,7 @@ async function setupDashboard() {
                         radius: 12,
                         state: {
                             hover: {
+                                radius: 12,
                                 radiusPlus: 0
                             },
                             select: {
