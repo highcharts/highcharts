@@ -29,7 +29,7 @@ import DataGrid from '../../DataGrid/DataGrid';
  * */
 
 /**
- * Connects Highcharts core with the Dashboard plugin.
+ * Connects DataGrid with the Dashboard plugin.
  *
  * @param {Highcharts} dataGrid DataGrid core to connect.
  */

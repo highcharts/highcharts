@@ -24,9 +24,11 @@ import Highcharts from '../../Core/Globals.js';
 import DataGrid from '../../DataGrid/DataGrid.js';
 import HighchartsPlugin from '../../Extensions/DashboardPlugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../Extensions/DashboardPlugins/DataGridPlugin.js';
+import HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent.js';
 
 const G: AnyRecord = Highcharts;
 G.DashboardPlugin = HighchartsPlugin;
+G.win.HighchartsComponent = HighchartsComponent;
 
 if (G.win.Dashboard) {
     HighchartsPlugin.custom.connectHighcharts(Highcharts);

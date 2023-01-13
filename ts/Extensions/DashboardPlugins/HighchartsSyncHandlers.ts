@@ -94,7 +94,7 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof HighchartsComponent) {
+                if (this instanceof (HighchartsComponent || (window as any).HighchartsComponent)) {
                     const { chart, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
