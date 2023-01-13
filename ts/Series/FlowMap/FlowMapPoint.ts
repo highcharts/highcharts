@@ -21,6 +21,7 @@ import type FlowMapSeries from './FlowMapSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import ColorMapComposition from '../ColorMapComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { LonLatArray } from '../..//Maps/MapViewOptions';
 const {
     seriesTypes: {
         mapline: {
@@ -71,13 +72,17 @@ class FlowMapPoint extends MapLinePoint {
     isValid(): boolean {
         let valid = !!(this.options.to && this.options.from);
         [this.options.to, this.options.from]
-            .forEach(function (toOrFrom: any): void {
-                valid = valid && (toOrFrom && (
+            .forEach(function (toOrFrom): void {
+                valid = !!(valid && (toOrFrom && (
                     isString(toOrFrom) || ( // point id or has lat/lon coords
-                        isNumber(pick(toOrFrom[0], toOrFrom.lat)) &&
-                        isNumber(pick(toOrFrom[1], toOrFrom.lon))
+                        isNumber(pick(
+                            (toOrFrom as LonLatArray)[0],
+                            (toOrFrom as Highcharts.MapLonLatObject).lat)) &&
+                        isNumber(pick(
+                            (toOrFrom as LonLatArray)[1],
+                            (toOrFrom as Highcharts.MapLonLatObject).lon))
                     )
-                ));
+                )));
             });
         return valid;
     }

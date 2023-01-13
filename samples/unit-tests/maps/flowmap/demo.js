@@ -332,8 +332,8 @@ QUnit.test('Flowmap API options.', assert => {
 
     chart.series[1].addPoint({
         from: {
-            lon: 25,
-            lat: 45
+            lat: 45,
+            lon: 25
         },
         to: [20, 40]
     });
@@ -342,5 +342,11 @@ QUnit.test('Flowmap API options.', assert => {
         chart.series[1].points[2].graphic,
         `Flowmap point should have possibility to use lonLatArray in from and to
         properties.`
+    );
+
+    assert.notOk(
+        chart.series[1].points[2].isNull,
+        `Points with correctly defined data should not be null on the point or
+        series level.`
     );
 });

@@ -799,25 +799,20 @@ class FlowMapSeries extends MapLineSeries {
             );
         }
 
-        // Convert objects to array because objects aren't displayed in tooltip.
-        if ((point.options.to && point.options.from)) {
-            if (!isString(point.options.to) &&
-                (point.options.to as Highcharts.MapLonLatObject).lat &&
-                (point.options.to as Highcharts.MapLonLatObject).lon) {
-                point.options.to = [
-                    (point.options.to as Highcharts.MapLonLatObject).lat,
-                    (point.options.to as Highcharts.MapLonLatObject).lon
-                ];
-            }
+        // Objects converted to string to be used in tooltip.
+        const fromPoint = point.options.from as Highcharts.MapLonLatObject,
+        toPoint = point.options.to as Highcharts.MapLonLatObject,
+        fromLat = fromPoint.lat,
+        fromLon = fromPoint.lon,
+        toLat = toPoint.lat,
+        toLon = toPoint.lon;
 
-            if (!isString(point.options.from) &&
-                (point.options.from as Highcharts.MapLonLatObject).lat &&
-                (point.options.from as Highcharts.MapLonLatObject).lon) {
-                point.options.from = [
-                    (point.options.from as Highcharts.MapLonLatObject).lat,
-                    (point.options.from as Highcharts.MapLonLatObject).lon
-                ];
-            }
+        if (fromLat && fromLon) {
+            point.options.from = `${+fromLat}, ${+fromLon}`;
+        }
+
+        if (toLat && toLon) {
+            point.options.to = `${+toLat}, ${+toLon}`;
         }
 
         return shapeArgs;
