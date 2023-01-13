@@ -801,11 +801,11 @@ class FlowMapSeries extends MapLineSeries {
 
         // Objects converted to string to be used in tooltip.
         const fromPoint = point.options.from as Highcharts.MapLonLatObject,
-        toPoint = point.options.to as Highcharts.MapLonLatObject,
-        fromLat = fromPoint.lat,
-        fromLon = fromPoint.lon,
-        toLat = toPoint.lat,
-        toLon = toPoint.lon;
+            toPoint = point.options.to as Highcharts.MapLonLatObject,
+            fromLat = fromPoint.lat,
+            fromLon = fromPoint.lon,
+            toLat = toPoint.lat,
+            toLon = toPoint.lon;
 
         if (fromLat && fromLon) {
             point.options.from = `${+fromLat}, ${+fromLon}`;
