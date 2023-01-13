@@ -7,6 +7,10 @@ Highcharts.chart('container', {
         text: 'Highcharts interpolation studies'
     },
 
+    xAxis: {
+        type: 'datetime'
+    },
+
     colorAxis: {
         stops: [
             [0, '#3060cf'],
