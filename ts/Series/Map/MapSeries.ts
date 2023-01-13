@@ -768,8 +768,24 @@ class MapSeries extends ScatterSeries {
             transform properties, it should induce a single updateTransform and
             symbolAttr call.
             */
-            const scale = svgTransform.scaleX;
-            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            const scale = svgTransform.scaleX,
+                flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            const animatePoints = (scale: number): void => { // #18166
+                series.points.forEach((point): void => {
+                    const graphic = point.graphic;
+                    let strokeWidth;
+
+                    if (
+                        graphic &&
+                        graphic['stroke-width'] &&
+                        (strokeWidth = this.getStrokeWidth(point.options))
+                    ) {
+                        graphic.attr({
+                            'stroke-width': strokeWidth / scale
+                        });
+                    }
+                });
+            };
             if (renderer.globalAnimation && chart.hasRendered) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')
@@ -801,20 +817,7 @@ class MapSeries extends ScatterSeries {
                         'stroke-width': strokeWidth / scaleStep
                     });
 
-                    series.points.forEach((point): void => { // #18166
-                        const graphic = point.graphic;
-                        let strokeWidth;
-
-                        if (
-                            graphic &&
-                            graphic['stroke-width'] &&
-                            (strokeWidth = this.getStrokeWidth(point.options))
-                        ) {
-                            graphic.attr({
-                                'stroke-width': strokeWidth / scaleStep
-                            });
-                        }
-                    });
+                    animatePoints(scaleStep); // #18166
 
                 };
 
@@ -828,20 +831,7 @@ class MapSeries extends ScatterSeries {
                     svgTransform, { 'stroke-width': strokeWidth / scale }
                 ));
 
-                series.points.forEach((point): void => { // #18166
-                    const graphic = point.graphic;
-                    let strokeWidth;
-
-                    if (
-                        graphic &&
-                        graphic['stroke-width'] &&
-                        (strokeWidth = this.getStrokeWidth(point.options))
-                    ) {
-                        graphic.attr({
-                            'stroke-width': strokeWidth / scale
-                        });
-                    }
-                });
+                animatePoints(scale); // #18166
             }
         });
 
