@@ -62,7 +62,8 @@ const dashboard = new Dashboard.Dashboard('container', {
                 plotOptions: {
                     series: {
                         dragDrop: {
-                            draggableY: true
+                            draggableY: true,
+                            dragPrecisionY: 1
                         }
                     }
                 }
