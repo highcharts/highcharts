@@ -32,7 +32,7 @@
     --color-background: #5352be;
     --color-map: #c7d3e9;
     --color-marker-border: #fff;
-    --color-marker-shadow: #fff6;
+    --color-marker-shadow: #fff9;
     --color-marker-text: #fff;
     --color-marker-text-border: #000;
     --color-text: #000;
@@ -196,6 +196,10 @@
     stroke-width: 2px;
 }
 
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
+    pointer-events: none;
+}
+
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
     fill: var(--color-marker-text);
     stroke: var(--color-marker-text-border);
@@ -203,11 +207,20 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-point {
+    paint-order: stroke;
     stroke: var(--color-marker-border);
+    stroke-width: 2;
 }
 
-#world-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 3px;
+#world-map .highcharts-series-1 .highcharts-point:hover {
+    stroke-width: 6;
+}
+
+#world-map .highcharts-series-1 .highcharts-point-select,
+#world-map .highcharts-series-1 .highcharts-point-select:hover {
+    paint-order: fill;
+    stroke: var(--color-marker-shadow);
+    stroke-width: 6;
 }
 
 #world-map .highcharts-tooltip {

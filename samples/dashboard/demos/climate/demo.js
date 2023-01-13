@@ -253,14 +253,16 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
+                        lineWidth: 2,
                         radius: 12,
-                        state: {
+                        states: {
                             hover: {
-                                radius: 12,
+                                lineWidthPlus: 4,
                                 radiusPlus: 0
                             },
                             select: {
-                                radius: 12
+                                lineWidthPlus: 4,
+                                radiusPlus: 0
                             }
                         },
                         symbol: 'mapmarker'
