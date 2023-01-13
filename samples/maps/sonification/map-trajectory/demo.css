@@ -1,0 +1,14 @@
+#container {
+    width: 100%;
+    max-width: 700px;
+    margin: 1em auto;
+    height: 600px;
+    border-bottom: 1px solid #ccc;
+}
+
+#play {
+    margin: 30px auto;
+    width: 7rem;
+    height: 1.6rem;
+    display: block;
+}
