@@ -505,11 +505,13 @@ class HeatmapSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * @private
+     */
     public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
             canvas = series.canvas,
             context = series.context;
-
 
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
