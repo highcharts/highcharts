@@ -139,9 +139,6 @@ class Layout extends GUIElement {
             if (options.rowsJSON && !this.rows.length) {
                 this.setRowsFromJSON(options.rowsJSON);
             }
-
-            // init a11y
-            this.addA11y();
         } else {
             // Error
         }
@@ -378,66 +375,6 @@ class Layout extends GUIElement {
                 style: layout.options.style
             }
         };
-    }
-
-    /**
-     * 
-     * Adds focus to cells
-     *
-     */
-    public addA11y(): void {
-        const container = this.dashboard.container;
-        const sortedCells = this.getSortedA11yCells();
-        let currentIndex = 0;
-
-        // add tab indexing
-        if (container) {
-            // tab - tabIndex++
-            container.addEventListener('keydown', (e) => {
-                if (e.keyCode === 9) {
-                    e.preventDefault();
-                    
-                    // console.log('Tab key pressed', e);
-                    
-                    if (
-                        sortedCells[currentIndex] &&
-                        sortedCells[currentIndex].container
-                    ) {
-                        // console.log('select cell', sortedCells[currentIndex].container);
-                        // sortedCells[currentIndex].container?.focus();
-                        (sortedCells[currentIndex].container as HTMLElement).setAttribute('tabIndex', 0);
-                        (sortedCells[currentIndex].container as HTMLElement).focus();
-
-                        currentIndex++;
-                    }
-                } 
-            });
-
-            // tab + shift - tabIndex--
-            // container.addEventListener('keydown', (e) => {
-            //     if (e.keyCode === 9) {
-            //         e.preventDefault();
-            //         // console.log('Tab key pressed', e);
-            //     } 
-            // });
-        }
-    }
-
-    public getSortedA11yCells(): Array<Cell> {
-        const layouts = this.dashboard.layouts;
-        const sortedCells:Array<Cell> = [];
-        let cells, i, j, k, iEnd, jEnd, kEnd;
-
-        for (i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            for (j = 0, jEnd = layouts[i].rows.length; j < jEnd; ++j) {
-                cells = layouts[i].rows[j].cells;
-                for (k = 0, kEnd = cells.length; k < kEnd; ++k) {
-                    sortedCells.push(cells[k]);
-                }
-            }
-        }
-
-        return sortedCells; 
     }
 }
 
