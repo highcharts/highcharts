@@ -63,7 +63,7 @@
                         mapping: {
                             pitch: 'c6',
                             pan: -1,
-                            volume: 0.1
+                            volume: 0.15
                         }
                     }, {
                         valueInterval: 0.5,
@@ -72,7 +72,7 @@
                         mapping: {
                             pitch: 'c3',
                             pan: 1,
-                            volume: 0.3
+                            volume: 0.35
                         }
                     }]
                 }
