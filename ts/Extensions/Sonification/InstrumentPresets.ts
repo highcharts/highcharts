@@ -18,13 +18,15 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // PIANO ----------------------------
     piano: {
-        masterVolume: 0.5,
+        masterVolume: 0.45,
         masterAttackEnvelope: [
             { t: 1, vol: 0.71 },
             { t: 40, vol: 0.79 },
             { t: 82, vol: 0.64 },
-            { t: 149, vol: 0.26 },
-            { t: 425, vol: 0 }
+            { t: 147, vol: 0.29 },
+            { t: 260, vol: 0.15 },
+            { t: 417, vol: 0.05 },
+            { t: 589, vol: 0 }
         ],
         eq: [
             { frequency: 200, Q: 0.7, gain: 6 },
@@ -46,7 +48,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
                 frequencyPitchTrackingMultiplier: 900,
                 Q: -2
             },
-            highpass: { frequency: 370 },
+            highpass: { frequency: 270 },
             attackEnvelope: [{ t: 1, vol: 1 }],
             releaseEnvelope: [
                 { t: 1, vol: 1 },
@@ -55,12 +57,46 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             ]
         }, {
             type: 'whitenoise',
-            volume: 1,
+            volume: 0.8,
             lowpass: { frequency: 400 },
             highpass: { frequency: 300 },
             attackEnvelope: [
                 { t: 1, vol: 1 },
                 { t: 19, vol: 0 }
+            ]
+        }]
+    },
+
+    // PLUCKED --------------------------
+    plucked: {
+        masterVolume: 0.7,
+        midiInstrument: 25,
+        masterAttackEnvelope: [
+            { t: 1, vol: 0.71 },
+            { t: 4, vol: 0.71 },
+            { t: 31, vol: 0.4 },
+            { t: 109, vol: 0.12 },
+            { t: 234, vol: 0.04 },
+            { t: 442, vol: 0 }
+        ],
+        eq: [
+            { frequency: 800, Q: 1, gain: -8 },
+            { frequency: 1400, Q: 4, gain: 4 },
+            { frequency: 1600, Q: 1, gain: -14 },
+            { frequency: 2200, Q: 1, gain: -8 },
+            { frequency: 3600, Q: 1, gain: -2 },
+            { frequency: 6400, Q: 2, gain: -6 },
+            { frequency: 12800, Q: 1, gain: 2 }
+        ],
+        oscillators: [{
+            type: 'sawtooth',
+            volume: 0.9,
+            volumePitchTrackingMultiplier: 0.6,
+            highpass: { frequency: 100 },
+            releaseEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 315, vol: 0.56 },
+                { t: 550, vol: 0 }
             ]
         }]
     },
@@ -129,6 +165,47 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
                 { t: 0, vol: 0 },
                 { t: 26, vol: 1 },
                 { t: 93, vol: 0.8 }
+            ]
+        }]
+    },
+
+    // LEAD -----------------------------
+    lead: {
+        masterVolume: 1,
+        midiInstrument: 20,
+        masterAttackEnvelope: [
+            { t: 1, vol: 0.81 },
+            { t: 98, vol: 0.5 },
+            { t: 201, vol: 0.18 },
+            { t: 377, vol: 0.04 },
+            { t: 586, vol: 0 },
+            { t: 586, vol: 0 }
+        ],
+        eq: [
+            { frequency: 200, Q: 1, gain: -6 },
+            { frequency: 400, Q: 1, gain: -8 },
+            { frequency: 800, Q: 0.5, gain: -10 },
+            { frequency: 1200, Q: 1, gain: 4 },
+            { frequency: 3600, Q: 1, gain: -4 },
+            { frequency: 4200, Q: 1, gain: -12 },
+            { frequency: 7400, Q: 1, gain: -14 },
+            { frequency: 10000, Q: 1, gain: 2 }
+        ],
+        oscillators: [{
+            type: 'triangle',
+            volume: 1.1,
+            volumePitchTrackingMultiplier: 0.6,
+            lowpass: { frequency: 5000 },
+            highpass: { frequency: 100 }
+        }, {
+            type: 'sawtooth',
+            volume: 0.4,
+            lowpass: { frequency: 7000 },
+            highpass: { frequency: 800, Q: 6 },
+            releaseEnvelope: [
+                { t: 0, vol: 0.99 },
+                { t: 200, vol: 0.83 },
+                { t: 495, vol: 0 }
             ]
         }]
     },
