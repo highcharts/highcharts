@@ -518,11 +518,13 @@ class HeatmapSeries extends ScatterSeries {
         } else {
             series.canvas = doc.createElement('canvas');
             series.canvas.width = ((
-                (series.yAxis.max || 1) - (series.yAxis.min || 1)) *
+                (series.xAxis.dataMax || 0) - (series.xAxis.dataMin || 0)) /
                 (series.options.colsize || 1)
-            );
-            series.canvas.height = ((series.points.length *
-                (series.options.rowsize || 1) / series.canvas.width));
+            ) + 1;
+            series.canvas.height = ((
+                (series.yAxis.dataMax || 0) - (series.yAxis.dataMin || 0)) /
+                (series.options.rowsize || 1)
+            ) + 1;
 
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;

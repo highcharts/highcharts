@@ -1,10 +1,10 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'heatmap'
     },
 
     title: {
-        text: 'Highcharts interpolation studies'
+        text: 'Highcharts interpolation study'
     },
 
     xAxis: {
@@ -23,6 +23,19 @@ Highcharts.chart('container', {
 
     series: [{
         interpolation: true,
-        data: JSON.parse(document.getElementById('data').innerText)
+        colsize: 24 * 36e5, // one day
+        data: JSON.parse(document.getElementById('data').innerText),
+        _data: [
+            [0, 0, -5],
+            [0, 1, 0],
+            [1, 0, 5],
+            [1, 1, 10]
+        ]
     }]
+});
+
+document.getElementById('interpolation-toggle').addEventListener('click', e => {
+    chart.series[0].update({
+        interpolation: e.target.checked
+    });
 });
