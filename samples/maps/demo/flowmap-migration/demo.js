@@ -5,16 +5,25 @@
 
     Highcharts.mapChart('container', {
         chart: {
-            map: topology
+            map: topology,
+            margin: 1
         },
 
         title: {
             text: 'Early human migration paths',
-            margin: 4
+            margin: 4,
+            align: 'left',
+            style: {
+                textOutline: '5px contrast'
+            }
         },
 
         subtitle: {
-            text: 'Source: <a href="https://www.nationalgeographic.com/culture/article/migration">National Geographic</a>'
+            text: 'Source: <a href="https://www.nationalgeographic.com/culture/article/migration">National Geographic</a>',
+            align: 'left',
+            style: {
+                textOutline: '5px contrast'
+            }
         },
 
         mapView: {
@@ -26,9 +35,9 @@
                 type: 'MultiPoint',
                 coordinates: [
                     // Left
-                    [-20, 0],
+                    [-20, 20],
                     // right
-                    [-35, 0]
+                    [-35, 20]
                 ]
             }
         },
@@ -113,7 +122,7 @@
             zIndex: 2
         }, {
             name: 'Migrations',
-            color: '#cd5b93',
+            color: 'rgb(205, 91, 147)',
             type: 'flowmap',
             minWidth: 5,
             maxWidth: 15,
@@ -129,23 +138,58 @@
                 from: [20, 0],
                 to: [46, 24],
                 curveFactor: 0,
-                weight: 2
+                weight: 2,
+                color: {
+                    linearGradient: { x1: 0, y1: 1, x2: 1, y2: 0 },
+                    stops: [
+                        [0.25, 'rgba(205, 91, 147, 0)'],
+                        [0.5, 'rgb(205, 91, 147)']
+                    ]
+                }
             }, {
                 from: [46, 24],
                 to: [-3, 40],
-                curveFactor: -1.2
+                curveFactor: -1.2,
+                color: {
+                    linearGradient: { x1: 1, y1: 1, x2: 0, y2: 0 },
+                    stops: [
+                        [0.25, 'rgba(205, 91, 147, 0)'],
+                        [0.5, 'rgb(205, 91, 147)']
+                    ]
+                }
             }, {
                 from: [46, 24],
                 to: [135, -25],
-                curveFactor: 0.6
+                curveFactor: 0.6,
+                color: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+                    stops: [
+                        [0.1, 'rgba(205, 91, 147, 0)'],
+                        [0.2, 'rgb(205, 91, 147)']
+                    ]
+                }
             }, {
                 from: [102, 24],
                 to: [156, 66],
-                curveFactor: 0.2
+                curveFactor: 0.2,
+                color: {
+                    linearGradient: { x1: 0, y1: 1, x2: 1, y2: 0 },
+                    stops: [
+                        [0.05, 'rgba(205, 91, 147, 0)'],
+                        [0.2, 'rgb(205, 91, 147)']
+                    ]
+                }
             }, {
                 from: [165, 66],
                 to: [-65, -20],
-                curveFactor: 0.6
+                curveFactor: 0.6,
+                color: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0.5 },
+                    stops: [
+                        [0.05, 'rgba(205, 91, 147, 0)'],
+                        [0.2, 'rgb(205, 91, 147)']
+                    ]
+                }
             }],
             zIndex: 1
         }, {
