@@ -315,6 +315,13 @@ const NavigatorDefaults: NavigatorOptions = {
         compare: null as any,
 
         /**
+         * @ignore-option
+         */
+        sonification: {
+            enabled: false
+        },
+
+        /**
          * Unless data is explicitly defined, the data is borrowed from the
          * first series in the chart.
          *

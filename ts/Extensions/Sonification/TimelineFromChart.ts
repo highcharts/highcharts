@@ -966,6 +966,9 @@ function timelineFromChart(
                 seriesDefaultSpeechOpts = merge(
                     defaultSpeechOpts, sOptions.defaultSpeechOptions
                 ),
+                seriesPointGroupOpts = merge(
+                    defaultPointGroupOpts, sOptions.pointGrouping
+                ),
                 mainTracks = (sOptions.tracks || [seriesDefaultInstrOpts])
                     .concat(globalTracks),
                 contextTracks = seriesIx && !isSequential ?
@@ -980,7 +983,7 @@ function timelineFromChart(
             mainTracks.forEach((trackOpts): void => {
                 const mergedOpts = merge(
                         {
-                            pointGrouping: defaultPointGroupOpts,
+                            pointGrouping: seriesPointGroupOpts,
                             midiName: trackOpts.midiName || series.name
                         },
                         trackOpts.type === 'speech' ?

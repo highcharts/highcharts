@@ -86,7 +86,9 @@ class Sonification {
     timeline?: SonificationTimeline;
     audioContext?: AudioContext;
     unbindKeydown: Function;
-    private retryContextCounter: number = 0;
+    private retryContextCounter = 0;
+    private lastUpdate = 0;
+    private scheduledUpdate?: number;
     private audioDestination?: AudioDestinationNode;
     private boundaryInstrument?: SynthPatch;
 
@@ -140,9 +142,23 @@ class Sonification {
 
 
     update(): void {
-        if (!this.ready(this.update.bind(this))) {
+        const sOpts = this.chart.options && this.chart.options.sonification;
+        if (!this.ready(this.update.bind(this)) || !sOpts) {
             return;
         }
+
+        // Don't update too often, it gets performance intensive
+        const now = Date.now(),
+            updateInterval = sOpts.updateInterval;
+        if (now - this.lastUpdate < updateInterval && !this.forceReady) {
+            clearTimeout(this.scheduledUpdate);
+            this.scheduledUpdate = setTimeout(
+                this.update.bind(this), updateInterval / 2
+            );
+            return;
+        }
+
+        this.lastUpdate = now;
         if (this.timeline) {
             this.timeline.destroy();
         }

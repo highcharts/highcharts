@@ -157,12 +157,7 @@ declare global {
             globalContextTracks?: ContextTrackOptions;
             defaultInstrumentOptions: InstrumentTrackOptions;
             defaultSpeechOptions: SpeechTrackOptions;
-        }
-
-        interface SonificationGroupingOptions {
-            enabled?: boolean;
-            algorithm?: 'minmax'|'average'|'sum';
-            maxPointsPerSecond?: number;
+            updateInterval: number;
         }
 
         interface SeriesSonificationOptions {
@@ -170,7 +165,7 @@ declare global {
             defaultInstrumentOptions?: InstrumentTrackOptions;
             defaultSpeechOptions?: SpeechTrackOptions;
             enabled?: boolean;
-            pointGrouping?: SonificationGroupingOptions;
+            pointGrouping?: PointGroupingOptions;
             tracks?: TrackOptions;
         }
     }
@@ -198,6 +193,7 @@ const Options: DeepPartial<OptionsType> = {
         enabled: true,
         duration: 6000,
         afterSeriesWait: 700,
+        updateInterval: 1000,
         masterVolume: 0.6,
         order: 'sequential',
         showPlayMarker: true,

@@ -232,7 +232,9 @@ class SonificationTimeline {
                                         find(
                                             chart.hoverPoints,
                                             (p): boolean => p === point
-                                        )
+                                        ) &&
+                                        // Stock issue w/Navigator
+                                        point.onMouseOver
                                     )
                                 ) {
                                     point.onMouseOver();
