@@ -465,6 +465,82 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         }]
     },
 
+    // CHORD -------------------------------
+    chord: {
+        masterVolume: 1,
+        masterAttackEnvelope: [
+            { t: 1, vol: 0.79 },
+            { t: 27, vol: 0.86 },
+            { t: 62, vol: 0.81 },
+            { t: 150, vol: 0.35 },
+            { t: 408, vol: 0.04 },
+            { t: 600, vol: 0 }
+        ],
+        eq: [
+            { frequency: 200, Q: 1, gain: -8 },
+            { frequency: 600, Q: 2, gain: 4 },
+            { frequency: 800, Q: 1, gain: -10 },
+            { frequency: 1600, Q: 1, gain: -2 },
+            { frequency: 2200, Q: 1, gain: -6 },
+            { frequency: 3600, Q: 0.7, gain: -2 },
+            { frequency: 6400, Q: 1, gain: 6 },
+            { frequency: 12800, Q: 1, gain: 6 }
+        ],
+        oscillators: [{
+            type: 'triangle',
+            volume: 1.1,
+            volumePitchTrackingMultiplier: 0.05,
+            lowpass: { frequency: 8000 },
+            highpass: { frequency: 100 },
+            releaseEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 315, vol: 0.56 },
+                { t: 540, vol: 0 }
+            ]
+        }, {
+            type: 'triangle',
+            freqMultiplier: 1.17,
+            volume: 0.4,
+            volumePitchTrackingMultiplier: 0.07,
+            lowpass: { frequency: 5000 },
+            highpass: { frequency: 100 },
+            releaseEnvelope: [
+                { t: 0, vol: 1 },
+                { t: 476, vol: 0 }
+            ]
+        }, {
+            type: 'triangle',
+            freqMultiplier: 1.58333,
+            volume: 0.7,
+            volumePitchTrackingMultiplier: 0.02,
+            highpass: { frequency: 200 },
+            releaseEnvelope: [
+                { t: 0, vol: 1 },
+                { t: 422, vol: 0.56 },
+                { t: 577, vol: 0 }
+            ]
+        }, {
+            type: 'sine',
+            fixedFrequency: 10,
+            volume: 4,
+            fmOscillator: 0,
+            attackEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 157, vol: 0.65 }
+            ]
+        }, {
+            type: 'sine',
+            fixedFrequency: 5,
+            volume: 0.3,
+            vmOscillator: 2,
+            attackEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 155, vol: 0.91 },
+                { t: 289, vol: 0.78 }
+            ]
+        }]
+    },
+
     // SINE -----------------------------
     sine: {
         masterVolume: 1,
