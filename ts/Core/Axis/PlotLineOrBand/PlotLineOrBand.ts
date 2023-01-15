@@ -265,7 +265,6 @@ class PlotLineOrBand {
             // apply defaults
             optionsLabel = merge({
                 align: horiz && isBand && 'center',
-                clip: false,
                 x: horiz ? !isBand && 4 : 10,
                 verticalAlign: !horiz && isBand && 'middle',
                 y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
@@ -347,14 +346,14 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
         if (!label.alignValue || label.alignValue === 'left') {
-            const length = optionsLabel.clip ?
+            const width = optionsLabel.clip ?
                 axis.width : axis.chart.chartWidth;
 
             label.css({
                 width: (
                     label.rotation === 90 ?
                         axis.height - (label.alignAttr.y - axis.top) :
-                        length - (label.alignAttr.x - axis.left)
+                        width - (label.alignAttr.x - axis.left)
                 ) + 'px'
             });
         }
@@ -923,7 +922,7 @@ export default PlotLineOrBand;
  * @type      {boolean}
  * @default   false
  * @since     next
- * @apioption xAxis.plotLines.clip
+ * @apioption xAxis.plotLines.labels.clip
  */
 
 /**
