@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 /**
- * @license Highcharts Dashboards v@dashboard.version@ (@dashboard.date@)
+ * @license Highcharts Dashboards v@dashboards.version@ (@dashboards.date@)
  * @module highcharts/modules/dashboard-component
  * @requires highcharts
  *
