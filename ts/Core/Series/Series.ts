@@ -2541,8 +2541,8 @@ class Series {
                 const markerClipBox = {
                     x: inverted ? -99 : -99,
                     y: inverted ? -99 : -99,
-                    width: inverted ? chart.plotWidth + 99 : 99,
-                    height: inverted ? 99 : chart.plotHeight + 99
+                    width: inverted ? chart.plotWidth + 199 : 99,
+                    height: inverted ? 99 : chart.plotHeight + 199
                 };
 
                 markerAnimationClipRect = chart.renderer.clipRect(
