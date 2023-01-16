@@ -584,7 +584,10 @@ function addTimelineChannelFromTrack(
                     midiTrackName: options.midiName
                 });
 
-    return timeline.addChannel(options.type || 'instrument', engine);
+    return timeline.addChannel(
+        options.type || 'instrument', engine,
+        pick(options.showPlayMarker, true)
+    );
 }
 
 
@@ -943,6 +946,7 @@ function timelineFromChart(
         timeline = new SonificationTimeline({
             onPlay: eventOptions.onPlay,
             onEnd: eventOptions.onEnd,
+            onStop: eventOptions.onStop,
             showCrosshairOnly: options.showCrosshairOnly,
             showPlayMarker: options.showPlayMarker
         }, chart);
@@ -971,7 +975,8 @@ function timelineFromChart(
                 ),
                 mainTracks = (sOptions.tracks || [seriesDefaultInstrOpts])
                     .concat(globalTracks),
-                contextTracks = seriesIx && !isSequential ?
+                hasAddedSeries = !!timeline.channels.length,
+                contextTracks = hasAddedSeries && !isSequential ?
                     sOptions.contextTracks || [] :
                     (sOptions.contextTracks || []).concat(globalContextTracks),
                 eventsAdded: Sonification.TimelineEvent[] = [];

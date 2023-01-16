@@ -42,6 +42,7 @@ class TimelineChannel {
     constructor(
         public type: 'instrument'|'speech',
         public engine: SonificationInstrument|SonificationSpeaker,
+        public showPlayMarker = false,
         events?: Sonification.TimelineEvent[],
         muted?: boolean
     ) {

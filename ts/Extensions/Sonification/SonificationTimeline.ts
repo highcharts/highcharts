@@ -30,6 +30,7 @@ const {
 interface SonificationTimelineOptions {
     onPlay?: Function;
     onEnd?: Function;
+    onStop?: Function;
     showPlayMarker?: boolean;
     showCrosshairOnly?: boolean;
     skipThreshold?: number;
@@ -66,7 +67,7 @@ function filterChannels(
 
     return filtered.map((c): TimelineChannel => (
         new TimelineChannel(
-            c.channel.type, c.channel.engine,
+            c.channel.type, c.channel.engine, c.channel.showPlayMarker,
             c.filteredEvents.map((e): Sonification.TimelineEvent =>
                 merge(e, { time: e.time - minTime })
             ),
@@ -99,6 +100,7 @@ class SonificationTimeline {
     addChannel(
         type: 'instrument'|'speech',
         engine: SonificationInstrument|SonificationSpeaker,
+        showPlayMarker = false,
         events?: Sonification.TimelineEvent[]
     ): TimelineChannel {
         if (
@@ -109,7 +111,9 @@ class SonificationTimeline {
         ) {
             throw new Error('Highcharts Sonification: Invalid channel engine.');
         }
-        const channel = new TimelineChannel(type, engine, events);
+        const channel = new TimelineChannel(
+            type, engine, showPlayMarker, events
+        );
         this.channels.push(channel);
         return channel;
     }
@@ -127,7 +131,9 @@ class SonificationTimeline {
         resetAfter = true,
         onEnd?: Function
     ): void {
-        this.cancel();
+        if (this.isPlaying) {
+            this.cancel();
+        }
         this.playTimestamp = Date.now();
         this.resumeFromTime = 0;
         this.isPaused = false;
@@ -200,9 +206,11 @@ class SonificationTimeline {
 
                 const point = e.relatedPoint,
                     chart = point && point.series && point.series.chart,
-                    needsCallback = e.callback || point &&
-                        (showPlayMarker || showCrosshairOnly) &&
+                    needsCallback = e.callback ||
+                        point && (showPlayMarker || showCrosshairOnly) &&
+                        channel.showPlayMarker !== false &&
                         (e.time - lastCallbackTime > 50 || i === numEvents - 1);
+
                 if (point) {
                     pointsPlayed.push(point);
                 }
@@ -218,10 +226,10 @@ class SonificationTimeline {
                                     showCrosshairOnly
                                 ) {
                                     const s = point.series;
-                                    if (s.xAxis && s.xAxis.crosshair) {
+                                    if (s && s.xAxis && s.xAxis.crosshair) {
                                         s.xAxis.drawCrosshair(void 0, point);
                                     }
-                                    if (s.yAxis && s.yAxis.crosshair) {
+                                    if (s && s.yAxis && s.yAxis.crosshair) {
                                         s.yAxis.drawCrosshair(void 0, point);
                                     }
                                 } else if (
@@ -246,13 +254,17 @@ class SonificationTimeline {
             }
         });
 
-        const onEndOpt = this.options.onEnd;
+        const onEndOpt = this.options.onEnd,
+            onStop = this.options.onStop;
         this.scheduledCallbacks.push(setTimeout(
             (): void => {
                 const chart = this.chart;
                 this.isPlaying = false;
                 if (resetAfter) {
                     this.resetPlayState();
+                }
+                if (onStop) {
+                    onStop({ timeline: this, pointsPlayed });
                 }
                 if (onEndOpt) {
                     onEndOpt(this, pointsPlayed);
@@ -361,6 +373,20 @@ class SonificationTimeline {
     }
 
 
+    // Get timeline events that are related to a certain point.
+    // Note: Point grouping may cause some points not to have a
+    //  related point in the timeline.
+    getEventsForPoint(point: Point): Sonification.TimelineEvent[] {
+        return this.channels.reduce(
+            (events, channel): Sonification.TimelineEvent[] => {
+                const pointEvents = channel.events
+                    .filter((e): boolean => e.relatedPoint === point);
+                return events.concat(pointEvents);
+            }, [] as Sonification.TimelineEvent[]
+        );
+    }
+
+
     // Divide timeline into 100 parts of equal time, and play one of them.
     // Used for scrubbing.
     playSegment(segment: number, onEnd?: Function): void {
@@ -416,12 +442,15 @@ class SonificationTimeline {
 
     // Reset play/pause state so that a later call to resume() will start over
     reset(): void {
-        this.cancel();
+        if (this.isPlaying) {
+            this.cancel();
+        }
         this.resetPlayState();
     }
 
 
     cancel(): void {
+        this.fireStopEvent();
         this.isPlaying = false;
         this.scheduledCallbacks.forEach(clearTimeout);
         this.channels.forEach((c): void => c.cancel());
@@ -432,6 +461,7 @@ class SonificationTimeline {
 
 
     destroy(): void {
+        this.fireStopEvent();
         this.scheduledCallbacks.forEach(clearTimeout);
         if (this.playingChannels && this.playingChannels !== this.channels) {
             this.playingChannels.forEach((c): void => c.destroy());
@@ -475,6 +505,15 @@ class SonificationTimeline {
         this.playTimestamp = this.resumeFromTime = 0;
         this.isPaused = false;
     }
+
+
+    private fireStopEvent(): void {
+        const onStop = this.options.onStop;
+        if (onStop) {
+            onStop({ timeline: this });
+        }
+    }
+
 }
 
 

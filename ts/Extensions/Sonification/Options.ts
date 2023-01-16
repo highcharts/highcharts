@@ -77,6 +77,7 @@ declare global {
         interface BaseTrackOptions {
             pointGrouping?: PointGroupingOptions;
             activeWhen?: TrackPredicateCallback|ValueConstraints;
+            showPlayMarker?: boolean;
             midiName?: string;
         }
 
@@ -137,10 +138,13 @@ declare global {
 
         interface ChartSonificationEventsOptions {
             onPlay?: Function;
+            onStop?: Function;
             onEnd?: Function;
             onSeriesStart?: SeriesCallback;
             onSeriesEnd?: SeriesCallback;
             onBoundaryHit?: Function;
+            beforeUpdate?: Function;
+            afterUpdate?: Function;
         }
 
         interface ChartSonificationOptions {

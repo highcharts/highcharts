@@ -158,6 +158,11 @@ class Sonification {
             return;
         }
 
+        const events = sOpts.events || {};
+        if (events.beforeUpdate) {
+            events.beforeUpdate({ timeline: this.timeline });
+        }
+
         this.lastUpdate = now;
         if (this.timeline) {
             this.timeline.destroy();
@@ -170,6 +175,10 @@ class Sonification {
             this.timeline.setMasterVolume(
                 pick(sOpts && sOpts.masterVolume, 1)
             );
+        }
+
+        if (events.afterUpdate) {
+            events.afterUpdate({ timeline: this.timeline });
         }
     }
 
