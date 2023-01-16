@@ -496,8 +496,14 @@ interface AfterSetOffsetEvent {
 
 addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
+
+        let translateX = this.axis.chart.inverted ?
+                e.xOffset - this.axis.chart.xAxis[0].len : e.xOffset,
+            translateY = this.axis.chart.inverted ? -this.axis.len : 0;
+
         this.shadow.attr({
-            translateX: e.xOffset
+            translateX,
+            translateY
         });
         this.shadow.animate({
             width: e.xWidth

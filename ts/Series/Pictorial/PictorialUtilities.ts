@@ -90,10 +90,12 @@ function invertShadowGroup(
     yAxis: Axis
 ): void {
 
-    if (yAxis.chart.inverted) {
-        shadowGroup.width = yAxis.len;
-        shadowGroup.height = xAxis.len;
-        shadowGroup.invert(true);
+    let inverted = yAxis.chart.inverted;
+    if (inverted) {
+        shadowGroup.attr({
+            rotation: inverted ? 90 : 0,
+            scaleX: inverted ? -1 : 1
+        });
     }
 }
 
