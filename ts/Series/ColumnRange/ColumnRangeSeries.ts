@@ -19,6 +19,7 @@
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
@@ -142,7 +143,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public translate(): void {
         const yAxis = this.yAxis,
             xAxis = this.xAxis,
-            startAngleRad = xAxis.startAngleRad,
+            startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
             chart = this.chart,
             isRadial = this.xAxis.isRadial,
             safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999;
