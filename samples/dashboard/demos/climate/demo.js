@@ -201,13 +201,14 @@ async function setupDashboard() {
                     data: await buildCitiesMap(),
                     allowPointSelect: true,
                     dataLabels: [{
-                        align: 'center',
+                        align: 'left',
                         animation: false,
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
                         padding: 0,
                         verticalAlign: 'top',
+                        x: -2,
                         y: 2
                     }, {
                         animation: false,
