@@ -357,7 +357,7 @@ function renderStackShadow(
             shape
         ) {
             if (!stack.shadowGroup) {
-                stack.shadowGroup = chart.renderer.g('shadowGroup')
+                stack.shadowGroup = chart.renderer.g('shadow-group')
                     .add();
             }
             stack.shadowGroup.attr({
