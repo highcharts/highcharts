@@ -578,13 +578,8 @@ async function setupDashboard() {
                         events: {
                             click: function () {
                                 // Change temperature scale.
-                                if (temperatureScale === 'C') {
-                                    dataScope = 'TXF';
-                                    temperatureScale = 'F';
-                                } else {
-                                    dataScope = 'TXC';
-                                    temperatureScale = 'C';
-                                }
+                                temperatureScale = temperatureScale === 'C' ? 'F' : 'C';
+                                dataScope = 'TX' + temperatureScale;
 
                                 // Update the dashboard.
                                 syncRefreshCharts(
@@ -687,28 +682,26 @@ async function setupDataPool() {
 
 // Calculate the average and max temperature in C and F from K.
 async function convertTemperature(city) {
-    const cityDataTable = (await dataPool.getStoreTable(city)).modified;
+    const cityDataTable = (await dataPool.getStoreTable(city)).modified,
+        columns = ['TN', 'TX'], // Average, Maximal temperature
+        metric = ['C', 'F'];
 
-    if (!cityDataTable.columns.TXC) {
-        cityDataTable.columns.TXC = cityDataTable.columns.TX.map(el =>
-            Highcharts.correctFloat((el - 273.15), 3)
-        );
-    }
-    if (!cityDataTable.columns.TXF) {
-        cityDataTable.columns.TXF = cityDataTable.columns.TX.map(el =>
-            Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
-        );
-    }
-    if (!cityDataTable.columns.TNC) {
-        cityDataTable.columns.TNC = cityDataTable.columns.TN.map(el =>
-            Highcharts.correctFloat((el - 273.15), 3)
-        );
-    }
-    if (!cityDataTable.columns.TNF) {
-        cityDataTable.columns.TNF = cityDataTable.columns.TN.map(el =>
-            Highcharts.correctFloat((el * (9 / 5) - 459.67), 3)
-        );
-    }
+    columns.forEach(column => {
+        metric.forEach(metric => {
+            const newColumn = column + metric;
+            let temperatureColumn = cityDataTable.getColumn(newColumn);
+
+            if (!temperatureColumn) {
+                cityDataTable.setColumns({
+                    [newColumn]: cityDataTable.getColumn(column).map(el => (
+                        Highcharts.correctFloat(
+                            metric === 'C' ? (el - 273.15) : (el * (9 / 5) - 459.67),
+                            3)
+                    ))
+                });
+            }
+        });
+    });
 }
 
 async function main() {
