@@ -64,7 +64,7 @@
 
         series: [{
             name: 'World',
-            borderColor: '#baa',
+            borderWidth: 0,
             nullColor: '#baa',
             opacity: 0.7
         }, {
