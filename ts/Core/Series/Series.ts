@@ -2532,13 +2532,15 @@ class Series {
                 animationClipRect = chart.renderer.clipRect(clipBox);
                 chart.sharedClips[animationClipKey] = animationClipRect;
 
+                // The marker clip box. The number 99 is a safe margin to avoid
+                // markers being clipped during animation.
                 const markerClipBox = {
-                    // Include the width of the first marker
-                    x: inverted ? (chart.plotSizeX || 0) + 99 : -99,
-                    y: inverted ? -chart.plotLeft : -chart.plotTop,
-                    width: 99,
-                    height: inverted ? chart.chartWidth : chart.chartHeight
+                    x: inverted ? -99 : -99,
+                    y: inverted ? -99 : -99,
+                    width: inverted ? chart.plotWidth + 99 : 99,
+                    height: inverted ? 99 : chart.plotHeight + 99
                 };
+
                 markerAnimationClipRect = chart.renderer.clipRect(
                     markerClipBox
                 );
@@ -2576,12 +2578,13 @@ class Series {
                         step.apply(fx, arguments);
                     }
                     if (
+                        fx.prop === 'width' &&
                         markerAnimationClipRect &&
                         markerAnimationClipRect.element
                     ) {
                         markerAnimationClipRect.attr(
-                            fx.prop,
-                            fx.prop === 'width' ? val + 99 : val
+                            inverted ? 'height' : 'width',
+                            val + 99
                         );
                     }
                 };
