@@ -93,12 +93,6 @@ QUnit.test('Flowmap API options.', assert => {
         should not be drawn.`
     );
 
-    assert.ok(
-        series.points[1].isNull,
-        `The point without a weight defined on a point or series level
-        should be null.`
-    );
-
     series.points[1].update({
         weight: 1
     });
@@ -338,8 +332,8 @@ QUnit.test('Flowmap API options.', assert => {
 
     chart.series[1].addPoint({
         from: {
-            lon: 25,
-            lat: 45
+            lat: 45,
+            lon: 25
         },
         to: [20, 40]
     });
@@ -348,5 +342,10 @@ QUnit.test('Flowmap API options.', assert => {
         chart.series[1].points[2].graphic,
         `Flowmap point should have possibility to use lonLatArray in from and to
         properties.`
+    );
+
+    assert.notOk(
+        chart.series[1].points[2].isNull,
+        'Points with correctly defined data should not be null.'
     );
 });

@@ -18,11 +18,10 @@
 
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
-import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-
 import ColorMapComposition from '../ColorMapComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { LonLatArray } from '../..//Maps/MapViewOptions';
 const {
     seriesTypes: {
         mapline: {
@@ -34,8 +33,9 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    defined,
-    isString
+    pick,
+    isString,
+    isNumber
 } = U;
 
 /* *
@@ -69,12 +69,23 @@ class FlowMapPoint extends MapLinePoint {
     /**
      * @private
      */
-    public isValid(): boolean {
-        return isString(this.options.from) &&
-            isString(this.options.to) &&
-            defined(this.options.weight || this.series.options.weight);
+    isValid(): boolean {
+        let valid = !!(this.options.to && this.options.from);
+        [this.options.to, this.options.from]
+            .forEach(function (toOrFrom): void {
+                valid = !!(valid && (toOrFrom && (
+                    isString(toOrFrom) || ( // point id or has lat/lon coords
+                        isNumber(pick(
+                            (toOrFrom as LonLatArray)[0],
+                            (toOrFrom as Highcharts.MapLonLatObject).lat)) &&
+                        isNumber(pick(
+                            (toOrFrom as LonLatArray)[1],
+                            (toOrFrom as Highcharts.MapLonLatObject).lon))
+                    )
+                )));
+            });
+        return valid;
     }
-
 }
 
 /* *

@@ -2629,7 +2629,8 @@ class Series {
     public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
             chart = series.chart,
-            options = series.options,
+            styledMode = chart.styledMode,
+            { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
             markerGroup = (
                 (series as any)[series.specialGroup as any] ||
@@ -2693,13 +2694,8 @@ class Series {
                     }
 
                     const isInside = point.isInside !== false;
-                    if (graphic) { // update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
-                            .animate(markerAttribs);
-
-                    } else if (
+                    if (
+                        !graphic &&
                         isInside &&
                         ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
@@ -2755,13 +2751,23 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && !chart.styledMode) {
-                        graphic[verb](
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
+                    if (graphic) {
+                        const pointAttr = series.pointAttribs(
+                            point,
+                            (
+                                (styledMode || !point.selected) ?
+                                    void 0 :
+                                    'select'
                             )
                         );
+
+                        if (!styledMode) {
+                            graphic[verb](pointAttr);
+                        } else if (colorAxis) { // #14114
+                            graphic['css']({
+                                fill: pointAttr.fill
+                            });
+                        }
                     }
 
                     if (graphic) {

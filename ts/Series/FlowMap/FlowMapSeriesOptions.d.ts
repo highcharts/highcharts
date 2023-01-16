@@ -32,6 +32,7 @@ interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     weight?: number;
     curveFactor?: number;
     width?: number;
+    lineWidth?: number;
 }
 
 /* *

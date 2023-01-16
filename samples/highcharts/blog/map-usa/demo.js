@@ -81,7 +81,7 @@ Highcharts.mapChart('container', {
     },
     tooltip: {
         formatter: function () {
-            return this.key + '<br/>' + this.point["hc-key"];
+            return this.key + '<br/>' + this.point['hc-key'];
         }
     },
 

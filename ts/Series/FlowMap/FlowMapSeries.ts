@@ -45,6 +45,7 @@ const {
     defined,
     extend,
     isArray,
+    isString,
     merge,
     pick,
     relativeLength
@@ -119,15 +120,6 @@ class FlowMapSeries extends MapLineSeries {
          *         Setting different values for fillOpacity
          */
         fillOpacity: 0.5,
-
-        /**
-         * An array specifying which option maps to which key in the data point
-         * array. This makes it convenient to work with unstructured data
-         * arrays from different sources.
-         *
-         * @default ['from', 'to', 'weight']
-         */
-        keys: ['from', 'to', 'weight'],
 
         /**
          * The [id](#series.id) of another series to link to. Additionally,
@@ -206,7 +198,17 @@ class FlowMapSeries extends MapLineSeries {
         minWidth: 5,
 
         /**
-         * The opacity of all the links.
+         * Specify the `lineWidth` of the links if they are not specified.
+         *
+         * @type  {number}
+         */
+        lineWidth: void 0,
+
+        /**
+         * The opacity of all the links. Affects the opacity for the entire
+         * link, including stroke. See also
+         * [fillOpacity](#plotOptions.flowmap.fillOpacity), that affects the
+         * opacity of only the fill color.
          *
          * @apioption plotOptions.flowmap.opacity
          */
@@ -495,6 +497,12 @@ class FlowMapSeries extends MapLineSeries {
             this.options.fillOpacity
         );
 
+        attrs['stroke-width'] = pick(
+            point.options.lineWidth,
+            this.options.lineWidth,
+            1
+        );
+
         if (point.options.opacity) {
             attrs.opacity = point.options.opacity;
         }
@@ -552,8 +560,8 @@ class FlowMapSeries extends MapLineSeries {
                 ): Highcharts.MapLonLatObject => {
                     if (isArray(lonLat)) {
                         return {
-                            lon: lonLat[0],
-                            lat: lonLat[1]
+                            lat: lonLat[0],
+                            lon: lonLat[1]
                         };
                     }
                     return lonLat;
@@ -804,6 +812,22 @@ class FlowMapSeries extends MapLineSeries {
             );
         }
 
+        // Objects converted to string to be used in tooltip.
+        const fromPoint = point.options.from as Highcharts.MapLonLatObject,
+            toPoint = point.options.to as Highcharts.MapLonLatObject,
+            fromLat = fromPoint.lat,
+            fromLon = fromPoint.lon,
+            toLat = toPoint.lat,
+            toLon = toPoint.lon;
+
+        if (fromLat && fromLon) {
+            point.options.from = `${+fromLat}, ${+fromLon}`;
+        }
+
+        if (toLat && toLon) {
+            point.options.to = `${+toLat}, ${+toLon}`;
+        }
+
         return shapeArgs;
     }
 }
@@ -813,14 +837,15 @@ class FlowMapSeries extends MapLineSeries {
  *  Prototype properties
  *
  * */
-
 interface FlowMapSeries {
     pointClass: typeof FlowMapPoint;
+    pointArrayMap: Array<string>;
     drawPoints: typeof ColumnSeries.prototype['drawPoints'];
 }
 
 extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
+    pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
     // Make it work on zoom or pan.
     useMapGeometry: true
@@ -1033,5 +1058,13 @@ export default FlowMapSeries;
  * @type      {number}
  * @apioption series.flowmap.data.weight
  */
+
+/**
+ * Specify the `lineWidth` of the link.
+ *
+ * @type  {number}
+ * @apioption series.flowmap.data.lineWidth
+ */
+
 
 ''; // adds doclets above to transpiled file
