@@ -103,7 +103,7 @@ class DEMAIndicator extends EMAIndicator {
         xVal?: Array<number>
     ): [number, number] {
 
-        return EMAIndicator.prototype.calculateEma(
+        return super.calculateEma(
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
@@ -154,7 +154,7 @@ class DEMAIndicator extends EMAIndicator {
 
         // Accumulate first N-points
         accumulatePeriodPoints =
-            EMAIndicator.prototype.accumulatePeriodPoints(
+            super.accumulatePeriodPoints(
                 period,
                 index,
                 yVal
