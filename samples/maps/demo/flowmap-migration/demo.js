@@ -136,8 +136,8 @@
                 height: '50%'
             },
             data: [{
-                from: [20, 0],
-                to: [46, 24],
+                from: [0, 20],
+                to: [24, 46],
                 curveFactor: 0,
                 weight: 2,
                 color: {
@@ -148,8 +148,8 @@
                     ]
                 }
             }, {
-                from: [46, 24],
-                to: [-3, 40],
+                from: [24, 46],
+                to: [40, -3],
                 curveFactor: -1.2,
                 color: {
                     linearGradient: { x1: 1, y1: 1, x2: 0, y2: 0 },
@@ -159,8 +159,8 @@
                     ]
                 }
             }, {
-                from: [46, 24],
-                to: [135, -25],
+                from: [24, 46],
+                to: [-25, 135],
                 curveFactor: 0.6,
                 color: {
                     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
@@ -170,8 +170,8 @@
                     ]
                 }
             }, {
-                from: [102, 24],
-                to: [156, 66],
+                from: [24, 102],
+                to: [66, 156],
                 curveFactor: 0.2,
                 color: {
                     linearGradient: { x1: 0, y1: 1, x2: 1, y2: 0 },
@@ -181,8 +181,8 @@
                     ]
                 }
             }, {
-                from: [165, 66],
-                to: [-65, -20],
+                from: [66, 165],
+                to: [-20, -65],
                 curveFactor: 0.6,
                 color: {
                     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0.5 },
