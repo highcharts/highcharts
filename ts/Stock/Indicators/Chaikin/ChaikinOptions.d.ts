@@ -27,6 +27,12 @@ export interface ChaikinOptions extends EMAOptions {
     params?: ChaikinParamsOptions;
 }
 
+/* *
+*
+*  Default Export
+*
+* */
+
 export interface ChaikinParamsOptions extends EMAParamsOptions {
     periods?: Array<number>;
     volumeSeriesID?: string;
