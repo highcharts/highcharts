@@ -73,12 +73,19 @@ class EditRenderer {
     }
 
     public static renderSelect(
-        options: Array<string>,
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        options: SelectFormField
     ): HTMLDOMElement|undefined {
         let customSelect;
 
         if (parentElement) {
+            if (options.title) {
+                EditRenderer.renderText(
+                    parentElement,
+                    options.title
+                );
+            }
+
             customSelect = createElement(
                 'select',
                 {
@@ -88,10 +95,13 @@ class EditRenderer {
                 parentElement
             );
 
-            for (let i = 0, iEnd = options.length; i < iEnd; ++i) {
+            for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
                 createElement(
                     'option',
-                    {},
+                    {
+                        value: options.items[i],
+                        textContent: options.items[i]
+                    },
                     {},
                     customSelect
                 );
@@ -312,6 +322,14 @@ export interface FormField {
     callback?: Function;
     title?: string;
     value?: string;
+}
+
+export interface SelectFormField {
+    // id: string;
+    // name: string;
+    title: string;
+    value: string;
+    items: Array<string>;
 }
 
 export default EditRenderer;

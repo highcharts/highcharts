@@ -39,6 +39,7 @@ class EditableOptions {
         keyMap: {
             color: 'colorPicker',
             chartOptions: 'textarea',
+            chartType: 'select',
             title: 'text',
             caption: 'text',
             style: 'textarea'

@@ -94,7 +94,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             editableOptions:
                   Component.defaultOptions.editableOptions.concat(
                       [
-                          'chartOptions'
+                          'chartOptions',
+                          'chartType'
                           // 'chartClassName',
                           // 'chartID'
                       ]
