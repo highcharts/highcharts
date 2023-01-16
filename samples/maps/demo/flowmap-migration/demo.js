@@ -72,7 +72,8 @@
             type: 'mappoint',
             dataLabels: {
                 format: '{point.id}',
-                y: -7
+                y: -7,
+                color: 'contrast'
             },
             marker: {
                 symbol: 'mapmarker'
@@ -201,10 +202,11 @@
             enableMouseTracking: false,
             dataLabels: {
                 allowOverlap: true,
+                color: 'contrast',
                 style: {
-                    color: '#777',
                     textOutline: 'none',
-                    fontStyle: 'italic'
+                    fontStyle: 'italic',
+                    opacity: 0.4
                 }
             },
             keys: ['lon', 'lat', 'name'],
