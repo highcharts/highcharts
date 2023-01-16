@@ -94,7 +94,7 @@ async function setupDashboard() {
                     minRange: minRange,
                     maxRange: maxRange,
                     events: {
-                        afterSetExtremes(e) {
+                        afterSetExtremes: async function (e) {
                             const min = e.min || e.target.min,
                                 max = e.max || e.target.max,
                                 city = citySeries.chart.title.textStr;
@@ -131,7 +131,6 @@ async function setupDashboard() {
 
                                     updateKPI(store.table, lastPoint[0]);
                                     updateKPIData(city);
-
                                 });
                         }
                     }
