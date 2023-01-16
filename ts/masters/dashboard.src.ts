@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v@dashboards.version@ (@dashboards.date@)
+ * @license Highcharts Dashboards v0.0.1 (@product.date@)
  * @module highsoft/dashboard
  * @requires window
  *
