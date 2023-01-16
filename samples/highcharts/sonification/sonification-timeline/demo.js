@@ -35,7 +35,7 @@ function getTimeline() {
             onEnd: onEnd
         });
 
-    timeline.addChannel('speech', speaker, [{
+    timeline.addChannel('speech', speaker, true, [{
         time: 0,
         message: '1'
     }, {
@@ -68,7 +68,7 @@ function getTimeline() {
         speechOptions: { pitch: 2 }
     }]);
 
-    timeline.addChannel('instrument', instr1, [{
+    timeline.addChannel('instrument', instr1, true, [{
         time: 500,
         instrumentEventOptions: {
             note: 'c3',
@@ -112,7 +112,7 @@ function getTimeline() {
         }
     }]);
 
-    timeline.addChannel('instrument', instr2, [{
+    timeline.addChannel('instrument', instr2, true, [{
         time: 1000,
         instrumentEventOptions: {
             note: 'd4',

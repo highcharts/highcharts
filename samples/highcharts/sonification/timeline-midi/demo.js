@@ -16,7 +16,7 @@ function makeTimeline1() {
         }),
         timeline = new Timeline();
 
-    timeline.addChannel('instrument', instr, [{
+    timeline.addChannel('instrument', instr, true, [{
         time: 0,
         instrumentEventOptions: {
             note: 'c3',
@@ -64,7 +64,7 @@ function makeTimeline2() {
         }),
         timeline = new Timeline();
 
-    timeline.addChannel('instrument', instr1, [{
+    timeline.addChannel('instrument', instr1, true, [{
         time: 0,
         instrumentEventOptions: {
             note: 'c3',
@@ -88,7 +88,7 @@ function makeTimeline2() {
         instrumentEventOptions: { note: 'e4', volume: 0.9 }
     }]);
 
-    timeline.addChannel('instrument', instr2, [{
+    timeline.addChannel('instrument', instr2, true, [{
         time: 150,
         instrumentEventOptions: {
             note: 'e3',
@@ -135,7 +135,7 @@ function makeTimeline3() {
         }),
         timeline = new Timeline();
 
-    timeline.addChannel('instrument', instr1, [{
+    timeline.addChannel('instrument', instr1, true, [{
         time: 0,
         instrumentEventOptions: {
             note: 'c3',
@@ -180,7 +180,7 @@ function makeTimeline3() {
         }
     }]);
 
-    timeline.addChannel('instrument', instr2, [{
+    timeline.addChannel('instrument', instr2, true, [{
         time: 600,
         instrumentEventOptions: {
             note: 'd4',
