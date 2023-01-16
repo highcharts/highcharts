@@ -1,0 +1,6 @@
+---
+ name: Using World Bank API and highcharts
+ authors:
+   - Thomas Roca
+ js_wrap: b
+...

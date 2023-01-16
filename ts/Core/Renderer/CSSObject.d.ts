@@ -89,7 +89,7 @@ export interface CSSObject {
     position?: 'absolute'|'fixed'|'relative';
     right?: string;
     rotation?: number;
-    stroke?: ColorString;
+    stroke?: ColorType;
     'stroke-width'?: (number|string);
     strokeWidth?: CSSObject['stroke-width'];
     'text-align'?: AlignValue;

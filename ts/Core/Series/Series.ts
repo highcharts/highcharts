@@ -2235,60 +2235,64 @@ class Series {
             if (stacking &&
                 series.visible &&
                 stack &&
-                stack[xValue as any]
+                stack[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
-                    xValue as any,
-                    series.index as any
+                    xValue,
+                    series.index
                 );
 
-                if (!point.isNull) {
-                    pointStack = stack[xValue as any];
-                    stackValues =
-                        pointStack.points[stackIndicator.key as any];
-                }
-            }
-
-            if (isArray(stackValues)) {
-                yBottom = stackValues[0];
-                yValue = stackValues[1];
-
-                if (yBottom === stackThreshold &&
-                    (stackIndicator as any).key ===
-                        (stack as any)[xValue as any].base
-                ) {
-                    yBottom = pick<number|undefined, number>(
-                        (isNumber(threshold) && threshold) as any,
-                        yAxis.min as any
-                    );
+                if (!point.isNull && stackIndicator.key) {
+                    pointStack = stack[xValue];
+                    stackValues = pointStack.points[stackIndicator.key];
                 }
 
-                // #1200, #1232
-                if (yAxis.positiveValuesOnly && yBottom <= 0) {
-                    yBottom = null as any;
+                if (pointStack && isArray(stackValues)) {
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
+
+                    if (yBottom === stackThreshold &&
+                        stackIndicator.key === stack[xValue].base
+                    ) {
+                        yBottom = pick(
+                            isNumber(threshold) ? threshold : yAxis.min
+                        );
+                    }
+
+                    // #1200, #1232
+                    if (
+                        yAxis.positiveValuesOnly &&
+                        defined(yBottom) &&
+                        yBottom <= 0
+                    ) {
+                        yBottom = void 0;
+                    }
+
+                    point.total = point.stackTotal = pick(pointStack.total);
+                    point.percentage = defined(point.y) && pointStack.total ?
+                        (point.y / pointStack.total * 100) : void 0;
+                    point.stackY = yValue;
+
+                    // Place the stack label
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        pointStack.setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0,
+                            void 0,
+                            void 0,
+                            void 0,
+                            series.xAxis
+                        );
+                    }
+
                 }
-
-                point.total = point.stackTotal = (pointStack as any).total;
-                point.percentage =
-                    (pointStack as any).total &&
-                    ((point.y as any) / (pointStack as any).total * 100);
-                point.stackY = yValue;
-
-                // Place the stack label
-
-                // in case of variwide series (where widths of points are
-                // different in most cases), stack labels are positioned
-                // wrongly, so the call of the setOffset is omited here and
-                // labels are correctly positioned later, at the end of the
-                // variwide's translate function (#10962)
-                if (!(series as any).irregularWidths) {
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
-                }
-
             }
 
             // Set translated yBottom or remove it
@@ -2296,7 +2300,7 @@ class Series {
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
                 )) :
-                null as any;
+                void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
             if (series.dataModify) {
@@ -2629,7 +2633,8 @@ class Series {
     public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
             chart = series.chart,
-            options = series.options,
+            styledMode = chart.styledMode,
+            { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
             markerGroup = (
                 (series as any)[series.specialGroup as any] ||
@@ -2693,13 +2698,8 @@ class Series {
                     }
 
                     const isInside = point.isInside !== false;
-                    if (graphic) { // update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
-                            .animate(markerAttribs);
-
-                    } else if (
+                    if (
+                        !graphic &&
                         isInside &&
                         ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
@@ -2755,13 +2755,23 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && !chart.styledMode) {
-                        graphic[verb](
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
+                    if (graphic) {
+                        const pointAttr = series.pointAttribs(
+                            point,
+                            (
+                                (styledMode || !point.selected) ?
+                                    void 0 :
+                                    'select'
                             )
                         );
+
+                        if (!styledMode) {
+                            graphic[verb](pointAttr);
+                        } else if (colorAxis) { // #14114
+                            graphic['css']({
+                                fill: pointAttr.fill
+                            });
+                        }
                     }
 
                     if (graphic) {
@@ -4351,12 +4361,17 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else if (!series._hasPointLabels) {
-                const { marker, dataLabels } = seriesOptions;
+                const { marker, dataLabels } = seriesOptions,
+                    oldMarker = oldOptions.marker || {};
+
+                // If the  marker got disabled or changed its symbol, width or
+                // height - destroy
                 if (
                     marker && (
                         marker.enabled === false ||
-                        (oldOptions.marker && oldOptions.marker.symbol) !==
-                            marker.symbol // #10870, #15946
+                        oldMarker.symbol !== marker.symbol || // #10870, #15946
+                        oldMarker.height !== marker.height || // #16274
+                        oldMarker.width !== marker.width // #16274
                     )
                 ) {
                     kinds.graphic = 1;
