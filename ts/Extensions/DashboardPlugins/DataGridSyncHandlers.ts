@@ -30,6 +30,18 @@ import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare global {
+    interface Window {
+        DataGridComponent?: typeof DataGridComponent;
+    }
+}
+
 
 const configs: {
     handlers: Record<string, Sync.HandlerConfig>;
@@ -39,7 +51,7 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof DataGridComponent) {
+                if (this instanceof (DataGridComponent || window.DataGridComponent)) {
                     const { dataGrid, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
