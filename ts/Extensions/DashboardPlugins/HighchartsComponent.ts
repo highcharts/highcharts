@@ -91,12 +91,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 series: []
             },
             chartConstructor: '',
-            editableOptions: [
-                ...Component.defaultOptions.editableOptions,
-                'chartOptions'
-                // 'chartClassName',
-                // 'chartID'
-            ],
+            editableOptions:
+                  Component.defaultOptions.editableOptions.concat(
+                      [
+                          'chartOptions'
+                          // 'chartClassName',
+                          // 'chartID'
+                      ]
+                  ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });

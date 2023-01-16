@@ -800,7 +800,7 @@ namespace Component {
         // allow overwriting gui elements
         navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
-        editableOptions: Array<keyof EditableOptions>;
+        editableOptions: Array<string>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
         sync: SyncOptions;
