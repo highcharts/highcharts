@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020 - 2021 Highsoft AS
+ *  (c) 2009 - 2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,8 @@
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
+ *  - Pawel Lysy
+ *  - Karol Kolodziej
  *
  * */
 

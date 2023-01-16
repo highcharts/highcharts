@@ -815,18 +815,33 @@ class Sidebar {
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
+            let chartType = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
                     type = componentSettings[key].type;
+
+                    if (key === 'chartType') {
+                        chartType = {
+                            items: [
+                                'column',
+                                'line',
+                                'scatter',
+                                'spline',
+                                'pie'
+                            ]
+                        };
+                    }
 
                     (menuItems as any)[key] = {
                         id: key,
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
-                        value: componentSettings[key].value
+                        value: componentSettings[key].value,
+                        ...chartType
                     };
+
 
                     items.push(
                         key

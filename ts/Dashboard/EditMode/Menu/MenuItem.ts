@@ -145,6 +145,15 @@ class MenuItem {
                 options.text || '',
                 callback
             );
+        } else if (options.type === 'select') {
+            element = EditRenderer.renderSelect(
+                item.container,
+                {
+                    title: options.text || '',
+                    items: options.items || [],
+                    value: options.value || ''
+                }
+            );
         }
 
         return element;
@@ -186,7 +195,7 @@ namespace MenuItem {
     export interface Options {
         id: string;
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
-        'toggle'|'text'|'textarea'|'verticalSeparator';
+        'toggle'|'text'|'textarea'|'verticalSeparator'|'select';
         text?: string;
         className?: string;
         events?: Record<Event['type'], Function>;
@@ -194,6 +203,7 @@ namespace MenuItem {
         icon?: string;
         isActive?: boolean;
         value?: string;
+        items?: Array<string>
     }
 }
 

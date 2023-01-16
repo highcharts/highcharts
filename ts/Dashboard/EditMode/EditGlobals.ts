@@ -72,6 +72,7 @@ const EditGlobals: EditGlobals = {
         editMode: 'Edit mode',
         style: 'Styles',
         chartOptions: 'Chart options',
+        chartType: 'Chart type',
         id: 'Id',
         title: 'Title',
         caption: 'Caption',
@@ -159,6 +160,7 @@ namespace EditGlobals {
         editMode?: string;
         style?: string;
         chartOptions?: string;
+        chartType?: string;
         id?: string;
         title?: string;
         caption?: string;
