@@ -106,3 +106,13 @@
 .hd-cell.hd-cell-state-hover {
     cursor: pointer;
 }
+
+/* *
+ *
+ * Dark mode
+ *
+ */
+
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
