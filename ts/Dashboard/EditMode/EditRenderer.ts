@@ -41,7 +41,7 @@ class EditRenderer {
 
         if (editMode.options.contextMenu) {
             ctxBtnElement = createElement(
-                'div', {
+                'button', {
                     className: EditGlobals.classNames.contextMenuBtn,
                     onclick: function (): void {
                         editMode.onContextBtnClick(editMode);

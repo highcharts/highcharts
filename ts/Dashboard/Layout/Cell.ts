@@ -125,6 +125,11 @@ class Cell extends GUIElement {
                 );
             }
 
+            // a11y
+            if (this.container) {
+                this.container.setAttribute('tabindex', -1);
+            }
+
             // nested layout
             if (this.options.layout) {
                 const dashboard = this.row.layout.dashboard,
