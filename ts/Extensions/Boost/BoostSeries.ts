@@ -215,7 +215,6 @@ function compose<T extends typeof Series>(
         }
 
         wrap(seriesProto, 'getExtremes', wrapSeriesGetExtremes);
-        wrap(seriesProto, 'markerAttribs', wrapSeriesMarkerAttribs);
         wrap(seriesProto, 'processData', wrapSeriesProcessData);
         wrap(seriesProto, 'searchPoint', wrapSeriesSearchPoint);
 
@@ -1254,36 +1253,6 @@ function wrapSeriesGetExtremes(
         return {};
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
-}
-
-/**
- * @private
- */
-function wrapSeriesMarkerAttribs(
-    this: Series,
-    proceed: Function,
-    point: Point
-): SVGAttributes {
-    const series = this,
-        chart = series.chart,
-        plotX: number = point.plotX || 0,
-        plotY: number = point.plotY || 0,
-        inverted = chart.inverted;
-
-    if (series.boosted && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    const attribs: SVGAttributes =
-        proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (series.boosted && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return attribs;
 }
 
 /**
