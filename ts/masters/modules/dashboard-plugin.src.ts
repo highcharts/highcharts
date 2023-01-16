@@ -29,10 +29,11 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 
 const G: AnyRecord = Highcharts;
 G.DashboardPlugin = HighchartsPlugin;
-G.win.HighchartsComponent = HighchartsComponent;
-G.win.DataGridComponent = DataGridComponent;
 
 if (G.win.Dashboard) {
+    G.win.HighchartsComponent = HighchartsComponent;
+    G.win.DataGridComponent = DataGridComponent;
+
     HighchartsPlugin.custom.connectHighcharts(Highcharts);
     G.win.Dashboard.PluginHandler.addPlugin(HighchartsPlugin);
 
