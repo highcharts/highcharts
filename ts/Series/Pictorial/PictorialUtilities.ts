@@ -86,11 +86,11 @@ function getStackMetrics(
 
 function invertShadowGroup(
     shadowGroup: SVGElement,
-    xAxis: Axis,
     yAxis: Axis
 ): void {
 
     let inverted = yAxis.chart.inverted;
+
     if (inverted) {
         shadowGroup.attr({
             rotation: inverted ? 90 : 0,

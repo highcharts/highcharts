@@ -392,7 +392,6 @@ function renderStackShadow(
 
             invertShadowGroup(
                 stack.shadowGroup,
-                xAxis,
                 stack.axis
             );
 
@@ -438,7 +437,6 @@ function renderStackShadow(
 
             invertShadowGroup(
                 stack.shadowGroup,
-                xAxis,
                 stack.axis
             );
 
@@ -496,17 +494,18 @@ interface AfterSetOffsetEvent {
 
 addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
-
-        let translateX = this.axis.chart.inverted ?
-                e.xOffset - this.axis.chart.xAxis[0].len : e.xOffset,
-            translateY = this.axis.chart.inverted ? -this.axis.len : 0;
+        let { chart, len } = this.axis,
+            { xOffset, xWidth } = e,
+            translateX =
+                chart.inverted ? xOffset - chart.xAxis[0].len : xOffset,
+            translateY = chart.inverted ? -len : 0;
 
         this.shadow.attr({
             translateX,
             translateY
         });
         this.shadow.animate({
-            width: e.xWidth
+            width: xWidth
         });
     }
 });
