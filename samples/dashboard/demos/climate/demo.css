@@ -9,24 +9,40 @@
 #time-range-selector {
     --color-axis: #646479;
     --color-background: #fafafa;
-    --color-grid: #fafafb;
+    --color-grid: #9a92ce;
     --color-handle: #5352be;
-    --color-handle-line: #dadae2;
-    --color-handle-mask: #41378233;
+    --color-mask: #41378233;
+    --color-mask-line: #9a92ce;
     --color-scroll: #9295ba;
     --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #f7f7f7;
+}
+
+.highcharts-dashboard.dark-mode #time-range-selector {
+    --color-axis: #e7e7ec;
+    --color-background: #0d0d0d;
+    --color-grid: #838394;
+    --color-handle: #838394;
+    --color-mask: #dddbef66;
+    --color-mask-line: #838394;
+    --color-scroll: #4a4a53;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #838394;
 }
 
 @media (prefers-color-scheme: dark) {
     #time-range-selector {
         --color-axis: #e7e7ec;
         --color-background: #0d0d0d;
-        --color-grid: #838393;
-        --color-handle: #5352be;
-        --color-handle-line: #838394;
-        --color-handle-mask: #dddbef66;
+        --color-grid: #838394;
+        --color-mask: #dddbef66;
+        --color-mask-line: #838394;
         --color-scroll: #4a4a53;
         --color-series: #5352be;
+        --color-thumb: #5352be;
+        --color-thumb-line: #838394;
     }
 }
 
@@ -83,14 +99,14 @@
 }
 
 #time-range-selector .highcharts-navigator-handle {
-    fill: var(--color-handle);
-    stroke: none;
+    fill: var(--color-thumb);
+    stroke: var(--color-thumb);
 }
 
 #time-range-selector .highcharts-navigator-mask-inside {
-    fill: var(--color-handle-mask);
+    fill: var(--color-mask);
     fill-opacity: 1;
-    stroke: var(--color-handle-line);
+    stroke: var(--color-mask-line);
 }
 
 #time-range-selector .highcharts-navigator-outline {
@@ -103,8 +119,8 @@
 }
 
 #time-range-selector .highcharts-scrollbar-arrow {
-    fill: var(--color-handle-line);
-    stroke: var(--color-handle-line);
+    fill: var(--color-thumb-line);
+    stroke: var(--color-thumb-line);
 }
 
 #time-range-selector .highcharts-scrollbar-button {
@@ -113,12 +129,12 @@
 }
 
 #time-range-selector .highcharts-scrollbar-thumb {
-    fill: var(--color-handle);
+    fill: var(--color-thumb);
     stroke-width: 0;
 }
 
 #time-range-selector .highcharts-scrollbar-thumb + path {
-    stroke: var(--color-handle-line);
+    stroke: var(--color-thumb-line);
 }
 
 #time-range-selector .highcharts-scrollbar-track {
