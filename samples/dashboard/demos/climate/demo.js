@@ -290,15 +290,16 @@ async function setupDashboard() {
                         return {
                             x: (
                                 axisInfo.plotX -
-                                width / 2 +
                                 this.options.padding
                             ),
                             y: (
                                 axisInfo.plotY +
-                                this.options.padding * 2
+                                this.options.padding +
+                                5
                             )
                         };
                     },
+                    shape: 'rect',
                     useHTML: true
                 }
             },

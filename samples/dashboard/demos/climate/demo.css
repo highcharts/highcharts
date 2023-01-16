@@ -186,6 +186,10 @@
     fill: var(--color-map);
 }
 
+#world-map .highcharts-halo {
+    display: none;
+}
+
 #world-map .highcharts-map-navigation {
     fill: var(--color-navigation);
     font-size: 20px;
@@ -233,17 +237,20 @@
     stroke-width: 6;
 }
 
-#world-map .highcharts-tooltip-box {
+#world-map .highcharts-tooltip {
     fill: none;
     filter: none;
     stroke: none;
 }
 
 #world-map div.highcharts-tooltip {
-    fill: var(--color-text);
-    paint-order: stroke;
-    stroke: var(--color-text-border);
-    stroke-width: 2px;
+    color: var(--color-marker-text);
+}
+
+#world-map .highcharts-tooltip-box {
+    fill: var(--color-background);
+    fill-opacity: 1;
+    stroke: none;
 }
 
 #world-map .highcharts-zoom-in text {
