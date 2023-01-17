@@ -12,55 +12,55 @@ export const enum Palette {
     /**
      * Strong text.
      */
-    neutralColor100 = '#000000',
+    neutralColor100 = '#20202c',
     /**
      * Main text and some strokes.
      */
-    neutralColor80 = '#333333',
+    neutralColor80 = '#32323c',
     /**
-     * Axis labels, axis title, connector fallback.
+     * Axis la bels, axis title, connector fallback.
      */
-    neutralColor60 = '#666666',
+    neutralColor60 = '#646479',
     /**
      * Credits text, export menu stroke.
      */
-    neutralColor40 = '#999999',
+    neutralColor40 = '#838394',
     /**
      * Disabled texts, button strokes, crosshair etc.
      */
-    neutralColor20 = '#cccccc',
+    neutralColor20 = '#e2e2e2',
     /**
      * Grid lines etc.
      */
-    neutralColor10 = '#e6e6e6',
+    neutralColor10 = '#f0f0f0',
     /**
      * Minor grid lines etc.
      */
-    neutralColor5 = '#f2f2f2',
+    neutralColor5 = '#f7f7f7',
     /**
      * Tooltip backgroud, button fills, map null points.
      */
-    neutralColor3 = '#f7f7f7',
+    neutralColor3 = '#fafafa',
     /**
      * Drilldown clickable labels, color axis max color.
      */
-    highlightColor100 = '#003399',
+    highlightColor100 = '#413782',
     /**
      * Selection marker, menu hover, button hover, chart border, navigator series.
      */
-    highlightColor80 = '#335cad',
+    highlightColor80 = '#5749ad',
     /**
      * Navigator mask fill.
      */
-    highlightColor60 = '#6685c2',
+    highlightColor60 = '#796dbd',
     /**
      * Ticks and axis line.
      */
-    highlightColor20 = '#ccd6eb',
+    highlightColor20 = '#9a92ce',
     /**
      * Pressed button, color axis min color.
      */
-    highlightColor10 = '#e6ebf5',
+    highlightColor10 = '#dddbef',
     /**
      * Positive indicator color
      */
@@ -79,16 +79,16 @@ const SeriesPalettes = {
      * Colors for data series and points.
      */
     colors: [
-        '#7cb5ec',
-        '#434348',
-        '#90ed7d',
-        '#f7a35c',
-        '#8085e9',
-        '#f15c80',
-        '#e4d354',
-        '#2b908f',
-        '#f45b5b',
-        '#91e8e1'
+        '#4caffe',
+        '#5352be',
+        '#ff8d64',
+        '#43d376',
+        '#708ab9',
+        '#c771f3',
+        '#6cddca',
+        '#dd437f',
+        '#fab776',
+        '#404e89'
     ] as Array<ColorString>,
 };
 export default SeriesPalettes;

@@ -1162,7 +1162,6 @@ class Tooltip {
                                 )
                             });
                         }
-                        
                     }
 
                     tooltip.updatePosition({

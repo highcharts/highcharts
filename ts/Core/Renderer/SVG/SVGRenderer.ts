@@ -481,11 +481,8 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
-
-            fontFamily: 
-                'Arial, Helvetica, sans-serif',
+            fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '12px'
-
         }, style);
         return this.style;
     }
