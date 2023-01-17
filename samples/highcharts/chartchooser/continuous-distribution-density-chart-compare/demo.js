@@ -1764,7 +1764,6 @@ const dataSourceHighway = [3.9,
     20.9];
 const xiData = [];
 const xiDataHighway = [];
-const animationDuration = 1;// 4000;
 const range = 31,
     startPoint = 2;
 let i = 0,
@@ -1800,8 +1799,7 @@ for (i = 0; i < xiData.length; i++) {
 
 Highcharts.chart('container', {
     chart: {
-        type: 'areaspline',
-        animation: true
+        type: 'areaspline'
     },
     title: {
         text: '2022 Car\'s Fuel Consumption Ratings <br/> (City vs Highway Consumption)'
@@ -1809,9 +1807,6 @@ Highcharts.chart('container', {
 
     subtitle: {
         text: 'Source <a href=\'https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64\' target=\'_blank\'>Canada.ca </a>'
-    },
-    xAxis: {
-        title: { text: null }
     },
     yAxis: {
         title: { text: null }
@@ -1827,10 +1822,7 @@ Highcharts.chart('container', {
             },
             dashStyle: 'shortdot',
             color: '#ff8d1e',
-            pointStart: xiData[0],
-            animation: {
-                duration: animationDuration
-            }
+            pointStart: xiData[0]
         }
     },
     series: [
