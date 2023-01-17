@@ -77,6 +77,7 @@ class EditRenderer {
         options: SelectFormField
     ): HTMLDOMElement|undefined {
         let customSelect;
+        let selectOption;
 
         if (parentElement) {
             if (options.title) {
@@ -89,22 +90,29 @@ class EditRenderer {
             customSelect = createElement(
                 'select',
                 {
-                    className: EditGlobals.classNames.customSelect
+                    className: EditGlobals.classNames.customSelect,
+                    value: options.value || 'column'
                 },
                 {},
                 parentElement
             );
 
-            for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
-                createElement(
+            // i from -1 for creating extra empty option selector
+            for (let i = -1, iEnd = options.items.length; i < iEnd; ++i) {
+                selectOption = createElement(
                     'option',
                     {
-                        value: options.items[i],
-                        textContent: options.items[i]
+                        value: options.items[i] || '',
+                        textContent: options.items[i] || ''
                     },
                     {},
                     customSelect
                 );
+
+                // select value if exists
+                if (options.items[i] === options.value) {
+                    selectOption.setAttribute('selected', true);
+                }
             }
         }
 
