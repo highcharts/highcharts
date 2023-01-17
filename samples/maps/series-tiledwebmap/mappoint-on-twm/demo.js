@@ -8,9 +8,6 @@ Highcharts.mapChart('container', {
     },
 
     mapView: {
-        projection: {
-            name: 'WebMercator'
-        },
         zoom: 2
     },
 

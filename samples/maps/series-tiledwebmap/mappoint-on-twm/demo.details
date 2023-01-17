@@ -3,8 +3,4 @@ name: tiledwebmap
 authors:
   - Kamil Musialowski
 js_wrap: b
-tags:
-  - Highcharts Maps demo
-categories:
-  - Series types
 ...
