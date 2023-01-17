@@ -489,13 +489,13 @@ addEvent(Chart, 'render', function (): void {
 
 interface AfterSetOffsetEvent {
     xOffset: number;
-    xWidth: number;
+    width: number;
 }
 
 addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
         let { chart, len } = this.axis,
-            { xOffset, xWidth } = e,
+            { xOffset, width } = e,
             translateX =
                 chart.inverted ? xOffset - chart.xAxis[0].len : xOffset,
             translateY = chart.inverted ? -len : 0;
@@ -504,9 +504,7 @@ addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
             translateX,
             translateY
         });
-        this.shadow.animate({
-            width: xWidth
-        });
+        this.shadow.animate({ width });
     }
 });
 

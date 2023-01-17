@@ -212,7 +212,7 @@ class StackItem {
      */
     public setOffset(
         xOffset: number,
-        xWidth: number,
+        width: number,
         boxBottom?: number,
         boxTop?: number,
         defaultX?: number,
@@ -222,7 +222,7 @@ class StackItem {
             chart = axis.chart,
             stackBox = this.getStackBox({
                 xOffset,
-                width: xWidth,
+                width,
                 boxBottom,
                 boxTop,
                 defaultX,
@@ -301,7 +301,7 @@ class StackItem {
             label[visible ? 'show' : 'hide']();
         }
 
-        fireEvent(this, 'afterSetOffset', { xOffset, xWidth, defaultX });
+        fireEvent(this, 'afterSetOffset', { xOffset, width });
     }
 
     /**
