@@ -56,7 +56,7 @@ export default class Stamen implements ProviderDefinition {
         ) {
             if (theme) {
                 error(
-                    'Missing option: Tiles provider theme cannot be reached,' +
+                    'Missing option: Tiles provider theme cannot be reached, ' +
                     'using standard provider theme.',
                     false
                 );
@@ -72,7 +72,7 @@ export default class Stamen implements ProviderDefinition {
         ) {
             if (subdomain) {
                 error(
-                    'Missing option: Tiles provider subdomain cannot be.' +
+                    'Missing option: Tiles provider subdomain cannot be ' +
                     'reached, using default provider subdomain.',
                     false
                 );
