@@ -7,6 +7,7 @@ module.exports = {
      */
     unlisted: [
         'dashboards/components',
+        'dashboards/types-of-components',
         'dashboards/sync',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
