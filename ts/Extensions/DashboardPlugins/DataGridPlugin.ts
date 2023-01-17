@@ -1,8 +1,10 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -29,7 +31,7 @@ import DataGrid from '../../DataGrid/DataGrid';
  * */
 
 /**
- * Connects Highcharts core with the Dashboard plugin.
+ * Connects DataGrid with the Dashboard plugin.
  *
  * @param {Highcharts} dataGrid DataGrid core to connect.
  */

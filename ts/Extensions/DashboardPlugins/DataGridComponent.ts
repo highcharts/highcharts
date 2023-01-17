@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@
 
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataTable from '../../Data/DataTable';
 
 import Component from '../../Dashboard/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
@@ -192,6 +193,32 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                 if (e.table && this.store) {
                     this.store.table.setColumns(e.table.getColumns());
                 }
+            });
+
+            // Update the DataGrid when store changed.
+            this.store.table.on('afterSetCell', (e: any): void => {
+                const dataGrid = this.dataGrid;
+                let shouldUpdateTheGrid = true;
+
+                if (dataGrid) {
+                    const row = dataGrid.rowElements[e.rowIndex],
+                        cells = Array.prototype.slice.call(row.childNodes);
+
+                    cells.forEach((cell: HTMLElement): void => {
+                        if (cell.childElementCount > 0) {
+                            const input =
+                                cell.childNodes[0] as HTMLInputElement;
+
+                            if (cell.dataset.columnName === e.columnName &&
+                                +input.value === e.cellValue
+                            ) {
+                                shouldUpdateTheGrid = false;
+                            }
+                        }
+                    });
+                }
+
+                shouldUpdateTheGrid ? this.update({}) : void 0;
             });
         }
 
