@@ -304,6 +304,15 @@ class SonificationTimeline {
     }
 
 
+    // Get length of timeline in milliseconds
+    getLength(): number {
+        return this.channels.reduce((maxTime, channel): number => {
+            const lastEvent = channel.events[channel.events.length - 1];
+            return lastEvent ? Math.max(lastEvent.time, maxTime) : maxTime;
+        }, 0);
+    }
+
+
     // Resume from paused
     resume(): void {
         if (this.playingChannels) {

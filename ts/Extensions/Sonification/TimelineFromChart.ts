@@ -293,9 +293,7 @@ function mapToVirtualAxis(
         return virtualAxisExtremes.min;
     }
     const lenVirtualAxis = virtualAxisExtremes.max - virtualAxisExtremes.min,
-        valueDelta = invert ?
-            valueExtremes.max - value :
-            value - valueExtremes.min;
+        valueDelta = value - valueExtremes.min;
 
     let virtualValueDelta = lenVirtualAxis * valueDelta / lenValueAxis;
 
@@ -319,8 +317,10 @@ function mapToVirtualAxis(
             (log(valueExtremes.max) - logValMin);
     }
 
-    return clamp(virtualAxisExtremes.min + virtualValueDelta,
-        virtualAxisExtremes.min, virtualAxisExtremes.max);
+    const val = invert ?
+        virtualAxisExtremes.max - virtualValueDelta :
+        virtualAxisExtremes.min + virtualValueDelta;
+    return clamp(val, virtualAxisExtremes.min, virtualAxisExtremes.max);
 }
 
 
