@@ -1,8 +1,4 @@
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-const { CSVStore, PluginHandler } = Dashboard;
-
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
+const { CSVStore } = Dashboard;
 
 // Set global chart options.
 Highcharts.setOptions({
