@@ -128,8 +128,13 @@
     background-color: rgba(36, 29, 58, 0.2);
 }
 
-.hd-edit-menu-item.hd-edit-toolbar-item {
+.hd-edit-toolbar-cell > .hd-edit-menu-item.hd-edit-toolbar-item {
     background: #241d3a;
+    border-radius: 2px;
+}
+
+.hd-edit-toolbar-row > .hd-edit-menu-item.hd-edit-toolbar-item {
+    background: #646479;
     border-radius: 2px;
 }
 
