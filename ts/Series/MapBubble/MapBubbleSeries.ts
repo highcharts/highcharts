@@ -268,6 +268,8 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points: Array<MapBubblePoint> = void 0 as any;
 
+    public clearBounds = mapProto.clearBounds;
+
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -420,6 +422,8 @@ export default MapBubbleSeries;
 
 /**
  * @excluding enabled, enabledThreshold, height, radius, width
+ * @sample {highmaps} maps/plotoptions/mapbubble-symbol
+ *         Map bubble with mapmarker symbol
  * @apioption series.mapbubble.marker
  */
 

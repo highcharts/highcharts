@@ -161,7 +161,7 @@ class LineSeries extends Series {
 
                 attribs = {
                     'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
+                    'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph
                     'fill': (series.fillGraph && series.color) || 'none'
                 };
@@ -509,7 +509,10 @@ export default LineSeries;
 
 /**
  * An additional, individual class name for the data point's graphic
- * representation.
+ * representation. Changes to a point's color will also be reflected in a
+ * chart's legend and tooltip.
+ *
+ * @sample {highcharts} highcharts/css/point-series-classname
  *
  * @type      {string}
  * @since     5.0.0

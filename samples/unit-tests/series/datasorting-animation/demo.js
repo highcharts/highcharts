@@ -110,7 +110,7 @@ QUnit.test('Data sorting animation', function (assert) {
                 true,
                 'Time 300 - label has continued'
             );
-            //dataLabel
+            // dataLabel
             assert.notEqual(
                 dataLabel.translateX,
                 initialDataLabelsPos,
@@ -132,7 +132,7 @@ QUnit.test('Data sorting animation', function (assert) {
                 targetLabelPos,
                 'Time 600 - label has landed'
             );
-            //dataLabel
+            // dataLabel
             assert.close(
                 Math.round(dataLabel.translateX),
                 Math.round(getCalculatedXPos(pointA) - dataLabel.width / 2),

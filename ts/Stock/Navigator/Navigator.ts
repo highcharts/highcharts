@@ -473,18 +473,27 @@ class Navigator {
         // Create the handlers:
         if (navigatorOptions.handles && navigatorOptions.handles.enabled) {
             const handlesOptions =
-                navigatorOptions.handles as Required<NavigatorHandlesOptions>;
+                navigatorOptions.handles as Required<NavigatorHandlesOptions>,
+                { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
-                handlesOptions.inverted = !!chart.inverted;
                 navigator.handles[index] = renderer.symbol(
                     handlesOptions.symbols[index],
-                    -handlesOptions.width / 2 - 1,
+                    -width / 2 - 1,
                     0,
-                    handlesOptions.width,
-                    handlesOptions.height,
-                    navigatorOptions.handles
+                    width,
+                    height,
+                    handlesOptions
                 );
+
+                if (chart.inverted) {
+                    navigator.handles[index].attr({
+                        rotation: 90,
+                        rotationOriginX: Math.floor(-width / 2),
+                        rotationOriginY: (height + width) / 2
+                    });
+                }
+
                 // zIndex = 6 for right handle, 7 for left.
                 // Can't be 10, because of the tooltip in inverted chart #2908
                 navigator.handles[index].attr({ zIndex: 7 - index })

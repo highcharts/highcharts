@@ -102,7 +102,8 @@ series = cars.map(function (car, i) {
             rentedTo: deal.rentedTo,
             start: deal.from,
             end: deal.to,
-            y: i
+            y: i,
+            name: deal.rentedTo
         };
     });
     return {
@@ -114,6 +115,17 @@ series = cars.map(function (car, i) {
 
 Highcharts.ganttChart('container', {
     series: series,
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                style: {
+                    fontWeight: 'normal'
+                }
+            }
+        }
+    },
     title: {
         text: 'Car Rental Schedule'
     },

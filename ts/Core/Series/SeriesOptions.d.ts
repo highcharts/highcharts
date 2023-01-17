@@ -86,7 +86,7 @@ export interface SeriesEventsOptions {
 
 export type SeriesFindNearestPointByValue = ('x'|'xy');
 
-export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
+export type SeriesLinecapValue = ('butt'|'round'|'square');
 
 /**
  * Helper interface for series types to add options to all series options.

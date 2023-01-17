@@ -683,7 +683,7 @@ class Axis {
      */
     public getSeriesExtremes(): void {
         const axis = this,
-            chart = axis.chart;
+            { chart, stacking } = axis;
 
         let xExtremes;
 
@@ -695,8 +695,10 @@ class Axis {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.stacking) {
-                axis.stacking.buildStacks();
+            if (stacking) {
+                // #17314 clear stacks before new build
+                stacking.cleanStacks();
+                stacking.buildStacks();
             }
 
             // loop through this axis' series
@@ -977,7 +979,7 @@ class Axis {
          * @private
          */
         function between(x: number, a: number, b: number): number {
-            if (force !== 'pass' && x < a || x > b) {
+            if (force !== 'pass' && (x < a || x > b)) {
                 if (force) {
                     x = clamp(x, a, b);
                 } else {
@@ -987,42 +989,43 @@ class Axis {
             return x;
         }
 
-        const evt: Event = {
+        const evt: Partial<Axis.PlotLinePathOptions> = {
             value: value,
             lineWidth: lineWidth,
             old: old,
             force: force,
             acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
-        } as any;
-        fireEvent(this, 'getPlotLinePath', evt, function (e: Event): void {
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (
+            e:(Axis.PlotLinePathOptions)
+        ): void {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, void 0, void 0, old)
+                axis.translate(value as number, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round((cHeight as any) - translatedValue - transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
             if (!isNumber(translatedValue)) { // no min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
-                y1 = axisTop as any;
-                y2 = (cHeight as any) - (axis.bottom as any);
-                x1 = x2 = between(
-                    x1, axisLeft as any, (axisLeft as any) + axis.width
-                );
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+
             } else {
-                x1 = axisLeft as any;
-                x2 = (cWidth as any) - (axis.right as any);
-                y1 = y2 = between(
-                    y1, axisTop as any, (axisTop as any) + axis.height
-                );
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
             (e as any).path = skip && !force ?
                 null :
@@ -3819,7 +3822,7 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = (options as YAxisOptions).stackLabels,
+            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,

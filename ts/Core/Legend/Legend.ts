@@ -1054,7 +1054,7 @@ class Legend {
 
         for (const box of distribute(boxes, chart.plotHeight)) {
             legendItem = box.item.legendItem || {};
-            if (box.pos) {
+            if (isNumber(box.pos)) {
                 legendItem.y = chart.plotTop - chart.spacing[0] + box.pos;
             }
         }
@@ -1832,7 +1832,7 @@ export default Legend;
  * Legend data for the series.
  * @name Highcharts.Series#legendItem
  * @type {Highcharts.LegendItemObject|undefined}
- * @since next
+ * @since 10.3.0
  */
 
 /**

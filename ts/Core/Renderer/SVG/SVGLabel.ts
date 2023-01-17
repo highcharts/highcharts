@@ -224,16 +224,10 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            const isWidth = 'width' in textStyles,
-                isFontStyle = (
-                    'fontSize' in textStyles ||
-                    'fontWeight' in textStyles
-                );
-
-            // Update existing text, box (#9400, #12163)
-            if (isFontStyle) {
+            // Update existing text, box (#9400, #12163, #18212)
+            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
                 this.updateTextPadding();
-            } else if (isWidth) {
+            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 
@@ -308,14 +302,13 @@ class SVGLabel extends SVGElement {
      * box and add it before the text in the DOM.
      */
     public onAdd(): void {
-        const str = this.textStr;
         this.text.add(this);
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (defined(str) ? str : ''),
-            x: this.x,
-            y: this.y
+            text: pick(this.textStr, ''),
+            x: this.x || 0,
+            y: this.y || 0
         });
 
         if (this.box && defined(this.anchorX)) {

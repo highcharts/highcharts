@@ -10,7 +10,11 @@
     z-index: 0;
     margin: 0;
     padding: 0;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#turnover {
+    display: none;
 }
 
 table {
@@ -55,7 +59,7 @@ table th {
 }
 
 #timeline .highcharts-yaxis-labels text:last-of-type {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #timeline .time-1 {
@@ -119,8 +123,10 @@ table th {
     transform: translate(10px, 4px);
 }
 
-#timeline .highcharts-markers.highcharts-series-4.product .highcharts-label:nth-of-type(4) .highcharts-label-box,
-#timeline .highcharts-markers.highcharts-series-2.product .highcharts-label .highcharts-label-box {
+#timeline .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(4) .highcharts-label-box,
+#timeline .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(10) .highcharts-label-box,
+#timeline .highcharts-markers.highcharts-series-2.product .highcharts-label .highcharts-label-box,
+#timeline .highcharts-markers.highcharts-series-6.product .highcharts-label .highcharts-label-box {
     transform: translate(-46px, -88px);
 }
 
@@ -130,7 +136,7 @@ table th {
 }
 
 #timeline .highcharts-flags-series.product .highcharts-label text {
-    transform: translate(-3px, -6px);
+    transform: translate(0, -6px);
 }
 
 #timeline .highcharts-flags-series.cloud .highcharts-label text {
@@ -138,7 +144,9 @@ table th {
 }
 
 #timeline .highcharts-series-2.product .highcharts-label:nth-of-type(1) text,
-#timeline .highcharts-series-4.product .highcharts-label:nth-of-type(4) text {
+#timeline .highcharts-series-3.product .highcharts-label:nth-of-type(4) text,
+#timeline .highcharts-series-3.product .highcharts-label:nth-of-type(10) text,
+#timeline .highcharts-series-6.product .highcharts-label:nth-of-type(1) text {
     transform: translate(-2px, -62px);
 }
 
@@ -148,6 +156,33 @@ table th {
 
 #timeline .award.highcharts-flags-series .highcharts-point .highcharts-label-box {
     transition: fill 250ms;
+}
+
+#timeline .award p {
+    margin-left: 50%;
+}
+
+#timeline .award p.wide {
+    margin-left: 40%;
+}
+
+.tip .tip-box {
+    fill: #46465c;
+    stroke: transparent;
+    color: #f0f0f0;
+    max-width: 200px;
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 1px;
+    fill: #46465c;
+    stroke: #46465c;
+    fill-opacity: 1;
+}
+
+.highcharts-tooltip text {
+    fill: #f0f0f0 !important;
+    white-space: normal;
 }
 
 @media screen  and (min-width: 530px) {
@@ -177,6 +212,18 @@ table th {
 @media screen  and (min-width: 1400px) {
     #timeline .highcharts-plot-band-label:nth-of-type(1) {
         left: 60px !important;
+    }
+
+    #timeline .highcharts-flags-series.product .highcharts-label text {
+        transform: translate(0, -6px);
+    }
+
+    #timeline .award p {
+        margin-left: 50%;
+    }
+
+    #timeline .award p.wide {
+        margin-left: 40%;
     }
 }
 

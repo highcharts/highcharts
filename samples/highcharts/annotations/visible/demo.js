@@ -18,7 +18,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-        //visible: true, by default the annotation is visible
+        // visible: true, by default the annotation is visible
         labels: [{
             point: '0'
         }]

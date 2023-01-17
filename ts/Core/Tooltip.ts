@@ -89,7 +89,9 @@ interface BoxObject extends R.BoxObject {
     anchorX: number;
     anchorY: number;
     boxWidth: number;
+    isHeader?: boolean;
     point: Point;
+    pos?: number;
     tt: SVGElement;
     x: number;
 }
@@ -362,6 +364,16 @@ class Tooltip {
 
         points = splat(points);
 
+        // If reversedStacks are false the tooltip position should be taken from
+        // the last point (#17948)
+        if (
+            points[0].series &&
+            points[0].series.yAxis &&
+            !points[0].series.yAxis.options.reversedStacks
+        ) {
+            points = points.slice().reverse();
+        }
+
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
             if (typeof mouseEvent.chartX === 'undefined') {
@@ -428,6 +440,37 @@ class Tooltip {
     }
 
     /**
+     * Get the CSS class names for the tooltip's label. Styles the label
+     * by `colorIndex` or user-defined CSS.
+     *
+     * @function Highcharts.Tooltip#getClassName
+     *
+     * @return {string}
+     *         The class names.
+     */
+    public getClassName(
+        point: Point,
+        isSplit?: boolean,
+        isHeader?: boolean
+    ): string {
+        const options = this.options,
+            series = point.series,
+            seriesOptions = series.options;
+
+        return [
+            options.className,
+            'highcharts-label',
+            isHeader && 'highcharts-tooltip-header',
+            isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
+            !isHeader && 'highcharts-color-' + pick(
+                point.colorIndex, series.colorIndex
+            ),
+            (seriesOptions && seriesOptions.className)
+        ].filter(isString).join(' ');
+    }
+
+
+    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
@@ -436,24 +479,17 @@ class Tooltip {
      * Tooltip label
      */
     public getLabel(): SVGElement { // getLabel
-
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
             doSplit = this.split && this.allowShared,
-            className = (
-                'tooltip' + (
-                    defined(options.className) ?
-                        ' ' + options.className :
-                        ''
-                )
-            ),
             pointerEvents = (
                 options.style.pointerEvents ||
                 (
                     this.shouldStickOnContact() ? 'auto' : 'none'
                 )
             );
+
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
 
@@ -518,7 +554,7 @@ class Tooltip {
 
             // Create the label
             if (doSplit) {
-                this.label = renderer.g(className);
+                this.label = renderer.g('tooltip');
             } else {
                 this.label = renderer
                     .label(
@@ -530,7 +566,7 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        className
+                        'tooltip'
                     )
                     .attr({
                         padding: options.padding,
@@ -581,7 +617,6 @@ class Tooltip {
                 .attr({ zIndex: 8 })
                 .add();
         }
-
         return this.label;
     }
 
@@ -1015,6 +1050,7 @@ class Tooltip {
         const tooltip = this,
             chart = this.chart,
             options = tooltip.options,
+            pointer = chart.pointer,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
@@ -1047,7 +1083,7 @@ class Tooltip {
 
         // shared tooltip, array is sent over
         if (shared && tooltip.allowShared) {
-            chart.pointer.applyInactiveState(points);
+            pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
             points.forEach(function (item: Point): void {
@@ -1086,7 +1122,7 @@ class Tooltip {
                 let checkX = x;
                 let checkY = y;
 
-                if (mouseEvent && chart.pointer.isDirectTouch) {
+                if (mouseEvent && pointer.isDirectTouch) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
@@ -1096,7 +1132,8 @@ class Tooltip {
                     chart.polar ||
                     currentSeries.options.clip === false ||
                     points.some((p): boolean => // #16004
-                        p.series.shouldShowTooltip(checkX, checkY)
+                        pointer.isDirectTouch || // ##17929
+                            p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
                     const label = tooltip.getLabel();
@@ -1105,7 +1142,7 @@ class Tooltip {
                     // (#6659)
                     if (!options.style.width || styledMode) {
                         label.css({
-                            width: this.chart.spacingBox.width + 'px'
+                            width: chart.spacingBox.width + 'px'
                         });
                     }
 
@@ -1116,14 +1153,7 @@ class Tooltip {
                     });
 
                     // Set the stroke color of the box to reflect the point
-                    label.removeClass(/highcharts-color-[\d]+/g)
-                        .addClass(
-                            'highcharts-color-' +
-                            pick(
-                                point.colorIndex,
-                                currentSeries.colorIndex
-                            )
-                        );
+                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({
@@ -1337,9 +1367,7 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
-            const colorClass = 'highcharts-color-' + pick(
-                point.colorIndex, series.colorIndex, 'none'
-            );
+
             if (!tt) {
 
                 const attribs: SVGAttributes = {
@@ -1351,7 +1379,6 @@ class Tooltip {
                     attribs.fill = options.backgroundColor;
                     attribs['stroke-width'] = options.borderWidth;
                 }
-
                 tt = ren
                     .label(
                         '',
@@ -1363,9 +1390,7 @@ class Tooltip {
                         options.useHTML
                     )
                     .addClass(
-                        (isHeader ? 'highcharts-tooltip-header ' : '') +
-                        'highcharts-tooltip-box ' +
-                        colorClass
+                        tooltip.getClassName(point, true, isHeader)
                     )
                     .attr(attribs)
                     .add(tooltipLabel);
@@ -1517,7 +1542,7 @@ class Tooltip {
         };
 
         // Get the extremes from series tooltips
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const { x, boxWidth, isHeader } = box;
             if (!isHeader) {
                 if (tooltip.outside && chartLeft + x < boxExtremes.left) {
@@ -1533,7 +1558,7 @@ class Tooltip {
             }
         });
 
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const {
                 x,
                 anchorX,
@@ -1543,7 +1568,7 @@ class Tooltip {
                     isHeader
                 }
             } = box;
-            const attributes = {
+            const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
                 /* NOTE: y should equal pos to be consistent with !split
@@ -1551,7 +1576,7 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: pos + distributionBoxTop,
+                y: (pos || 0) + distributionBoxTop,
                 anchorX,
                 anchorY
             };
@@ -1689,7 +1714,9 @@ class Tooltip {
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
-                'class="highcharts-color-{$1.colorIndex}"'
+                'class="highcharts-color-{$1.colorIndex} ' +
+                '{series.options.className} ' +
+                '{point.options.className}"'
             );
     }
 
@@ -1780,25 +1807,35 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const chart = this.chart,
-            options = this.options,
+        const {
+                chart,
+                distance,
+                options
+            } = this,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            chartPosition = pointer.getChartPosition(),
+            { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
                 point
             );
-        let anchorX = (point.plotX as any) + chart.plotLeft,
-            anchorY = (point.plotY as any) + chart.plotTop,
+        let anchorX = (point.plotX || 0) + chart.plotLeft,
+            anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            pad = options.borderWidth + 2 * this.distance;
+            // Corrects positions, occurs with tooltip positioner (#16944)
+            if (options.positioner) {
+                pos.x += left - distance;
+                pos.y += top - distance;
+            }
+
+            pad = options.borderWidth + 2 * distance;
+
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
@@ -1807,20 +1844,15 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
+            if (scaleX !== 1 || scaleY !== 1) {
                 css(this.container, {
-                    transform: `scale(${
-                        chartPosition.scaleX
-                    }, ${
-                        chartPosition.scaleY
-                    })`
+                    transform: `scale(${scaleX}, ${scaleY})`
                 });
-                anchorX *= chartPosition.scaleX;
-                anchorY *= chartPosition.scaleY;
+                anchorX *= scaleX;
+                anchorY *= scaleY;
             }
-
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
+            anchorX += left - pos.x;
+            anchorY += top - pos.y;
         }
 
         // do the move

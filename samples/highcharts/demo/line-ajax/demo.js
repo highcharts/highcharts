@@ -52,7 +52,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Daily sessions at www.highcharts.com'
+        text: 'Daily sessions at www.highcharts.com',
+        align: 'left'
     },
 
     subtitle: {

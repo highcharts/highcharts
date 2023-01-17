@@ -635,19 +635,22 @@ addEvent(Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Series): void {
-            series.points.forEach(function (point: Point): void {
-                const colorOptions = point.options && point.options.color;
 
-                if (
-                    colorOptions &&
-                    (colorOptions as PatternFill.PatternObject).pattern
-                ) {
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._width = 'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._height = 'defer';
-                }
-            });
+            if (series.visible) {
+                series.points.forEach(function (point: Point): void {
+                    const colorOptions = point.options && point.options.color;
+
+                    if (
+                        colorOptions &&
+                        (colorOptions as PatternFill.PatternObject).pattern
+                    ) {
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._width = 'defer';
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._height = 'defer';
+                    }
+                });
+            }
         });
         // Redraw without animation
         this.redraw(false);

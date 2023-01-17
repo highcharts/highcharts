@@ -1,54 +1,54 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     title: {
         text: null
     },
 
     xAxis: {
         categories: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
         ]
     },
 
     yAxis: [
         {
             title: {
-                text: "Price"
+                text: 'Price'
             },
-            type: "logarithmic",
+            type: 'logarithmic',
             labels: {
-                format: "${text}"
+                format: '${text}'
             }
         },
         {
             opposite: true,
             title: {
-                text: "Price"
+                text: 'Price'
             },
             labels: {
-                format: "${text}"
+                format: '${text}'
             }
         }
     ],
 
     tooltip: {
-        valuePrefix: "$"
+        valuePrefix: '$'
     },
 
     series: [
         {
             data: [5, 10, 15, 20, 25, 30, 15],
 
-            name: "Logarithmic"
+            name: 'Logarithmic'
         },
         {
             data: [5, 10, 15, 20, 25, 30, 15],
-            name: "Linear",
+            name: 'Linear',
             yAxis: 1
         }
     ]
