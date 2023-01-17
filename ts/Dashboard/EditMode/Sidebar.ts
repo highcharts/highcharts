@@ -955,6 +955,8 @@ class Sidebar {
             activeTab.contentContainer.querySelectorAll(
                 'input, textarea'
             ) || [];
+        const chartType = activeTab &&
+            activeTab.contentContainer.querySelectorAll('#chartType');
         const updatedSettings = {};
         const mountedComponent = (this.context as Cell).mountedComponent;
         let fieldId;
@@ -967,6 +969,23 @@ class Sidebar {
                     (updatedSettings as any)[fieldId] = JSON.parse(
                         (formFields[i] as HTMLTextAreaElement).value
                     );
+
+                    if (
+                        fieldId === 'chartOptions' &&
+                        (updatedSettings as any).chartOptions &&
+                        chartType &&
+                        chartType[0]
+                    ) {
+                        (updatedSettings as any).chartOptions =
+                            merge(
+                                {
+                                    chart: {
+                                        type: (chartType[0] as any).value
+                                    }
+                                },
+                                (updatedSettings as any).chartOptions
+                            );
+                    }
                 } catch {
                     (updatedSettings as any)[fieldId] =
                         (formFields[i] as (HTMLInputElement)).value;
