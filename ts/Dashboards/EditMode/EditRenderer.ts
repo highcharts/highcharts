@@ -90,6 +90,8 @@ class EditRenderer {
             customSelect = createElement(
                 'select',
                 {
+                    id: options.id || '',
+                    name: options.name || '',
                     className: EditGlobals.classNames.customSelect,
                     value: options.value || 'column'
                 },
@@ -333,8 +335,8 @@ export interface FormField {
 }
 
 export interface SelectFormField {
-    // id: string;
-    // name: string;
+    id: string;
+    name: string;
     title: string;
     value: string;
     items: Array<string>;

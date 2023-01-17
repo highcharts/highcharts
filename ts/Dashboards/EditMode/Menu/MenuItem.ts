@@ -165,6 +165,8 @@ class MenuItem {
             element = EditRenderer.renderSelect(
                 item.container,
                 {
+                    id: options.id,
+                    name: options.id,
                     title: options.text || '',
                     items: options.items || [],
                     value: options.value || ''
