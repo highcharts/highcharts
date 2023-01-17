@@ -831,22 +831,36 @@ class Sidebar {
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
-            let chartType = {};
+            let chartTypes = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
                     type = componentSettings[key].type;
 
                     if (key === 'chartType') {
-                        chartType = {
-                            items: [
-                                'column',
-                                'line',
-                                'scatter',
-                                'spline',
-                                'pie'
-                            ]
-                        };
+                        const chartTypesEnum: Array<string> = [
+                            'column',
+                            'line',
+                            'scatter',
+                            'spline',
+                            'pie'
+                        ];
+
+                        const chartOpts =
+                            (currentComponent as any).chartOptions;
+
+                        const chartType =
+                            (chartOpts.chart && chartOpts.chart.type) ||
+                            (chartOpts.series && chartOpts.series[0].type);
+
+                        if (chartTypesEnum.indexOf(chartType) !== -1) {
+                            chartTypes = {
+                                items: chartTypesEnum,
+                                value: chartType
+                            };
+                        } else {
+                            break;
+                        }
                     }
 
                     (menuItems as any)[key] = {
@@ -855,9 +869,8 @@ class Sidebar {
                         text: (lang as any)[key] || key,
                         isActive: true,
                         value: componentSettings[key].value,
-                        ...chartType
+                        ...chartTypes
                     };
-
 
                     items.push(
                         key
