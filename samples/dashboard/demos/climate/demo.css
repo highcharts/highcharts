@@ -107,6 +107,11 @@
     cursor: pointer;
 }
 
+/* *
+ *
+ *  Edit mode styles
+ *
+ * */
 .hd-edit-button.hd-edit-tools-btn {
     background-position: top left;
     background-color: #e7e7ec;
@@ -123,6 +128,30 @@
     background-color: rgba(36, 29, 58, 0.2);
 }
 
-.hd-cell > .hd-component {
-    margin: 50px 10px;
+.hd-edit-menu-item.hd-edit-toolbar-item {
+    background: #241d3a;
+    border-radius: 2px;
+}
+
+.hd-row.hd-edit-row-context-highlight {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #9491a1,
+            #9895a4 10px,
+            rgb(169 167 188) 10px,
+            rgb(169 167 188) 12px
+        ) !important;
+}
+
+.hd-edit-toolbar > .hd-edit-toolbar-cell-outline {
+    border: 2px solid #241d3a;
+}
+
+.hd-edit-toolbar > .hd-edit-toolbar-row-outline {
+    border: 2px solid #646479;
+}
+
+.hd-edit-menu.hd-edit-toolbar-row {
+    background: #646479;
 }
