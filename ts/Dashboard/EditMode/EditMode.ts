@@ -576,7 +576,7 @@ class EditMode {
             {
                 className: EditGlobals.classNames.editToolsBtn,
                 icon: addIconURL,
-                value: 'Add',
+                value: 'Add Component',
                 callback: (): void => {
                     // sidebar trigger
                     if (editMode.sidebar) {

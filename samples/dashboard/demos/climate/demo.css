@@ -106,3 +106,23 @@
 .hd-cell.hd-cell-state-hover {
     cursor: pointer;
 }
+
+.hd-edit-button.hd-edit-tools-btn {
+    background-position: top left;
+    background-color: #e7e7ec;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.hd-edit-button.hd-edit-tools-btn:hover {
+    background-color: #646479;
+    color: #fff;
+}
+
+.hd-edit-enabled.highcharts-dashboard {
+    background-color: rgba(36, 29, 58, 0.2);
+}
+
+.hd-cell > .hd-component {
+    margin: 50px 10px;
+}
