@@ -3,7 +3,7 @@ var incomeList = ['High income', 'High income: OECD', 'High income: nonOECD', 'L
 var worldList = ['World', 'world', 'WLD'];
 
 // Settings
-var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank2.json';
+var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank2.json';
 
 var arrayRegion = [],
     arrayIncome = [],
@@ -31,7 +31,7 @@ fetch(url).then(function (response) {
                 arrayRegion.push(null);
             }
             // test if country name is in incomeList
-        } else if ($.inArray(data.country.value, incomeList) !== -1) {
+        } else if (incomeList.indexOf(data.country.value) !== -1) {
             // Store Income name
             IncomeName = data.country.value;
             if (data.value !== null) {
@@ -39,7 +39,7 @@ fetch(url).then(function (response) {
             } else {
                 arrayIncome.push(null);
             }
-        } else if ($.inArray(data.country.value, worldList) !== -1) {
+        } else if (worldList.indexOf(data.country.value) !== -1) {
             // fill the Year list array. NB. We choose the World serie to do so, as this serie is the most likely to be complete (i.e. the one with the less missing values)
             YearList.push(data.date);
             // store Indictor Label
