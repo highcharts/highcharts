@@ -637,7 +637,7 @@ class FlowMapSeries extends MapLineSeries {
             return {};
         }
 
-        const finalWidth = this.getLinkWidth(point),
+        const finalWidth = this.getLinkWidth(point) / 2,
             pointOptions = point.options,
             markerEndOptions = merge(
                 this.options.markerEnd,
