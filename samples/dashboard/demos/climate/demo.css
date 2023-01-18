@@ -205,6 +205,10 @@
     stroke: var(--color-background);
 }
 
+#world-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.6;
+}
+
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
     font-size: 9px;
 }
