@@ -13,7 +13,8 @@
     --color-handle: #5352be;
     --color-mask: #41378233;
     --color-mask-line: #9a92ce;
-    --color-scroll: #9295ba;
+    --color-scroll: #f7f7f7;
+    --color-scroll-line: #9a92ce;
     --color-series: #5352be;
     --color-thumb: #5352be;
     --color-thumb-line: #f7f7f7;
@@ -26,7 +27,8 @@
     --color-handle: #838394;
     --color-mask: #dddbef66;
     --color-mask-line: #838394;
-    --color-scroll: #4a4a53;
+    --color-scroll: #20202c;
+    --color-scroll-line: #646479;
     --color-series: #5352be;
     --color-thumb: #5352be;
     --color-thumb-line: #838394;
@@ -39,7 +41,8 @@
         --color-grid: #838394;
         --color-mask: #dddbef66;
         --color-mask-line: #838394;
-        --color-scroll: #4a4a53;
+        --color-scroll: #20202c;
+        --color-scroll-line: #646479;
         --color-series: #5352be;
         --color-thumb: #5352be;
         --color-thumb-line: #838394;
@@ -72,7 +75,7 @@
 
 .hd-cell.hd-cell-state-hover:hover > .hd-component,
 .hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #46475d;
+    background-color: #5352be;
     color: #fff;
 }
 
@@ -107,6 +110,7 @@
     fill: var(--color-mask);
     fill-opacity: 1;
     stroke: var(--color-mask-line);
+    transform: translate(-1px, 0);
 }
 
 #time-range-selector .highcharts-navigator-outline {
@@ -124,13 +128,14 @@
 }
 
 #time-range-selector .highcharts-scrollbar-button {
-    fill: var(--color-scroll);
-    stroke: var(--color-scroll);
+    fill: none;
+    stroke: none;
 }
 
 #time-range-selector .highcharts-scrollbar-thumb {
     fill: var(--color-thumb);
     stroke-width: 0;
+    transform: translate(-1px, 0);
 }
 
 #time-range-selector .highcharts-scrollbar-thumb + path {
@@ -139,7 +144,7 @@
 
 #time-range-selector .highcharts-scrollbar-track {
     fill: var(--color-scroll);
-    stroke: var(--color-scroll);
+    stroke: var(--color-scroll-line);
 }
 
 #time-range-selector .highcharts-xaxis-labels {
