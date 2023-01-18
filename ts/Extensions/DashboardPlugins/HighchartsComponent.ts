@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,14 +27,17 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Options from '../../Core/Options';
+import type Point from '../../Core/Series/Point';
 
 import Component from '../../Dashboard/Component/Component.js';
+import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';
 import G from '../../Core/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     createElement,
     merge,
     uniqueKey
@@ -88,12 +91,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 series: []
             },
             chartConstructor: '',
-            editableOptions: [
-                ...Component.defaultOptions.editableOptions,
-                'chartOptions'
-                // 'chartClassName',
-                // 'chartID'
-            ],
+            editableOptions:
+                  Component.defaultOptions.editableOptions.concat(
+                      [
+                          'chartOptions'
+                          // 'chartClassName',
+                          // 'chartID'
+                      ]
+                  ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });
@@ -227,6 +232,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         this.updateSeries();
         this.sync.start();
         this.emit({ type: 'afterRender' });
+        this.setupStoreUpdate();
+
         return this;
     }
 
@@ -254,6 +261,38 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         }, 33));
 
         return this;
+    }
+
+    private setupStoreUpdate(): void {
+        const { store, chart } = this;
+
+        if (store && chart) {
+            chart.series.forEach((series): void => {
+                series.points.forEach((point): void => {
+                    addEvent(point, 'drag', (): void => {
+                        this.onChartUpdate(point, store);
+                    });
+                });
+            });
+        }
+    }
+
+    /**
+     * Update the store, when the point is being dragged.
+     * @param  {Point} point Dragged point.
+     * @param  {Component.StoreTypes} store Store to update.
+     */
+    private onChartUpdate(
+        point: Point,
+        store: Component.StoreTypes
+    ): void {
+        const table = store.table,
+            columnName = point.series.name,
+            rowNumber = point.x,
+            converter = new DataConverter(),
+            valueToSet = converter.asNumber(point.y);
+
+        table.setCell(columnName, rowNumber, valueToSet);
     }
 
     public update(options: Partial<HighchartsComponent.ComponentOptions>): this {

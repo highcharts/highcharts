@@ -20,7 +20,11 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboard.dark-mode #time-range-selector {
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
+
+.highcharts-dashboard.hd-dark-mode #time-range-selector {
     --color-axis: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
