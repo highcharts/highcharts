@@ -30,7 +30,7 @@
 
 #world-map {
     --color-background: #5352be;
-    --color-map: #c7d3e9;
+    --color-map: #dddbef;
     --color-marker-border: #fff;
     --color-marker-text: #fff;
     --color-marker-text-border: #000;
@@ -94,7 +94,7 @@
 
 .hd-cell.hd-cell-state-hover:hover > .hd-component,
 .hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #46475d;
+    background-color: #5352be;
     color: #fff;
 }
 
@@ -108,7 +108,7 @@
  *
  * */
 
-#time-range-selector > div > div {
+#time-range-selector .hd-component-content {
     background: var(--color-background);
 }
 
@@ -174,7 +174,7 @@
  *
  * */
 
-#world-map > div > div {
+#world-map .hd-component-content {
     background: var(--color-background);
 }
 
