@@ -470,6 +470,7 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
+            store: defaultCityStore,
             sync: {
                 tooltip: true
             },
@@ -535,7 +536,6 @@ async function setupDashboard() {
             dataGridOptions: {
                 editable: false
             },
-            // dataTable: defaultCityStore.table.modified,
             store: defaultCityStore,
             sync: {
                 tooltip: true
