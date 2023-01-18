@@ -1,7 +1,7 @@
-import DataGrid from '../../../../code/es-modules/DataGrid/DataGrid.js';
-import DataTable from '../../../../code/es-modules/Data/DataTable.js';
+const { DataTable } = Dashboard;
 
 const headers = ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Potatoes'];
+
 const columns = (() => {
     const makeRandomRows = () => (new Array(60)).fill('').map(() => (10 * Math.random()).toFixed(2));
     const cols = {};
@@ -11,6 +11,6 @@ const columns = (() => {
     return cols;
 })();
 
-const grid = new DataGrid('container', {
+const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataTable(columns)
 });
