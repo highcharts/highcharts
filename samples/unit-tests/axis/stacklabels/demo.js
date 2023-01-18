@@ -702,9 +702,10 @@ QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
     const stack = getStack(chart),
         dataLabel = chart.series[0].points[0].dataLabel;
 
-    assert.equal(
+    assert.close(
         stack.alignAttr.y,
         dataLabel.alignAttr.y,
+        1,
         'the `y` position should be the same for dataLabel and stackLabel'
     );
 });

@@ -201,7 +201,7 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.oldie) {
         browsers = ['Win.IE8'];
     } else if (argv.browsers === 'all') {
@@ -209,7 +209,7 @@ module.exports = function (config) {
     }
 
     const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
-    if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
+    if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
@@ -219,7 +219,7 @@ module.exports = function (config) {
             }
             return browserInstances;
         }, [])
-        : new Array(browserCount).fill('ChromeHeadless');
+        : new Array(browserCount).fill(browsers[0]);
     } else {
         if (argv.splitbrowsers) {
             browsers = argv.splitbrowsers.split(',');

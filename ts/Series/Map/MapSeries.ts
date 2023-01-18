@@ -771,7 +771,7 @@ class MapSeries extends ScatterSeries {
             const scale = svgTransform.scaleX,
                 flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
             const animatePoints = (scale: number): void => { // #18166
-                series.points.forEach((point): void => {
+                (series.points || []).forEach((point): void => {
                     const graphic = point.graphic;
                     let strokeWidth;
 
