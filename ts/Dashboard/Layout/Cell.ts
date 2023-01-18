@@ -1,3 +1,19 @@
+/* *
+ *
+ *  (c) 2009 - 2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
+
 /* eslint-disable */
 
 'use strict';
@@ -123,6 +139,11 @@ class Cell extends GUIElement {
                     this.options.mountedComponentJSON,
                     this.container
                 );
+            }
+
+            // a11y
+            if (this.container) {
+                this.container.setAttribute('tabindex', -1);
             }
 
             // nested layout

@@ -109,9 +109,19 @@
 
 /* *
  *
- *  Edit mode styles
+ * Dark mode
  *
- * */
+ */
+
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
+
+/* *
+ *
+ * Edit mode
+ *
+ */
 .hd-edit-button.hd-edit-tools-btn {
     background-position: top left;
     background-color: #e7e7ec;
