@@ -17,7 +17,7 @@
     --color-series: #5352be;
 }
 
-.highcharts-dashboard.dark-mode #time-range-selector {
+.highcharts-dashboard.hd-dark-mode #time-range-selector {
     --color-axis: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838393;
@@ -41,7 +41,7 @@
     --color-text-border: #fff;
 }
 
-.highcharts-dashboard.dark-mode #world-map {
+.highcharts-dashboard.hd-dark-mode #world-map {
     --color-navigation: #20202b;
     --color-navigation-line: #646478;
     --color-navigation-text: #838393;

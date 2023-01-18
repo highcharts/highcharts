@@ -15,6 +15,7 @@ const defaultData = 'TX';
 
 let citiesData;
 let citiesMap;
+let citiesTable;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
@@ -276,7 +277,7 @@ async function setupDashboard() {
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.y)
+                                tooltipFormatter(point.name, point.y)
                             );
                         }
                     }
@@ -640,9 +641,9 @@ async function setupDataPool() {
         storeType: 'CSVStore'
     });
 
-    let csvReferences = await dataPool.getStoreTable('cities');
+    citiesTable = await dataPool.getStoreTable('cities');
 
-    for (const row of csvReferences.getRowObjects()) {
+    for (const row of citiesTable.getRowObjects()) {
         dataPool.setStoreOptions({
             name: row.city,
             storeOptions: {
@@ -669,7 +670,7 @@ main().catch(e => console.error(e));
  * */
 
 async function buildCitiesData() {
-    const cities = (await dataPool.getStoreTable('cities')).modified;
+    const cities = citiesTable.modified;
     const initialCity = defaultCity;
     const tables = {};
 
@@ -813,11 +814,18 @@ function labelFormatter(value) {
     return Highcharts.correctFloat(value, 0);
 }
 
-function tooltipFormatter(value) {
+function tooltipFormatter(city, value) {
+    const cities = citiesTable.modified;
+    const elevation = cities.getCell(
+        'elevation',
+        cities.getRowIndexBy('city', city)
+    );
+
+    let tooltip = `Elevation: ${elevation}m<br />`;
 
     // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {
-        return [
+        tooltip += [
             Highcharts.correctFloat(
                 (value - 273.15), 3
             ) + '˚C',
@@ -825,25 +833,25 @@ function tooltipFormatter(value) {
                 (value * 1.8 - 459.67), 3
             ) + '˚F'
         ].join('<br>');
-    }
 
     // rain days
-    if (dataScope === 'RR1') {
-        return Highcharts.correctFloat(value, 0) + ' rainy days';
-    }
+    } else if (dataScope === 'RR1') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' rainy days';
 
     // ice days
-    if (dataScope === 'ID') {
-        return Highcharts.correctFloat(value, 0) + ' icy days';
-    }
+    } else if (dataScope === 'ID') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' icy days';
 
     // fog days
-    if (dataScope === 'FD') {
-        return Highcharts.correctFloat(value, 0) + ' foggy days';
-    }
+    } else if (dataScope === 'FD') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' foggy days';
 
     // fallback
-    return '' + Highcharts.correctFloat(value, 4);
+    } else {
+        tooltip += Highcharts.correctFloat(value, 4);
+    }
+
+    return tooltip;
 }
 
 function updateKPI(table, time) {
