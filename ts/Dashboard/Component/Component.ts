@@ -1,3 +1,19 @@
+/* *
+ *
+ *  (c) 2009 - 2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
+
 /* eslint-disable require-jsdoc */
 
 'use strict';
@@ -800,7 +816,7 @@ namespace Component {
         // allow overwriting gui elements
         navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
-        editableOptions: Array<keyof EditableOptions>;
+        editableOptions: Array<string>;
         editableOptionsBindings?: EditableOptions.BindingsType;
         presentationModifier?: DataModifier;
         sync: SyncOptions;

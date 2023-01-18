@@ -1,3 +1,19 @@
+/* *
+ *
+ *  (c) 2009 - 2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
+
 import EditMode from './EditMode.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import U from '../../Core/Utilities.js';
@@ -41,7 +57,7 @@ class EditRenderer {
 
         if (editMode.options.contextMenu) {
             ctxBtnElement = createElement(
-                'div', {
+                'button', {
                     className: EditGlobals.classNames.contextMenuBtn,
                     onclick: function (): void {
                         editMode.onContextBtnClick(editMode);

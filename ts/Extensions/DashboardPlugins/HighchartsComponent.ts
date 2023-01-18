@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -91,12 +91,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 series: []
             },
             chartConstructor: '',
-            editableOptions: [
-                ...Component.defaultOptions.editableOptions,
-                'chartOptions'
-                // 'chartClassName',
-                // 'chartID'
-            ],
+            editableOptions:
+                  Component.defaultOptions.editableOptions.concat(
+                      [
+                          'chartOptions'
+                          // 'chartClassName',
+                          // 'chartID'
+                      ]
+                  ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });

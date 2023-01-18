@@ -1,17 +1,17 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
+// const dataScopes = {
+//     FD: 'Days with fog',
+//     ID: 'Days with ice',
+//     RR1: 'Days with rain',
+//     TN: 'Average temperature',
+//     TX: 'Maximal temperature'
+// };
 const dataPool = new Dashboard.DataOnDemand();
-const dataScopes = {
-    FD: 'Days with fog',
-    ID: 'Days with ice',
-    RR1: 'Days with rain',
-    TN: 'Average temperature',
-    TX: 'Maximal temperature'
-};
 const initialMin = Date.UTC(2010);
 const minRange = 30 * 24 * 3600 * 1000;
 const maxRange = 365 * 24 * 3600 * 1000;
 const defaultCity = 'New York';
-const defaultData = 'TX';
+const defaultData = 'TXC';
 
 let citiesData;
 let citiesMap;
@@ -23,6 +23,8 @@ let dataScope = defaultData;
 let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
 let kpi = {};
+let darkMode = false;
+let temperatureScale = 'C';
 
 async function setupDashboard() {
 
@@ -115,7 +117,7 @@ async function setupDashboard() {
                     minRange: minRange,
                     maxRange: maxRange,
                     events: {
-                        afterSetExtremes(e) {
+                        afterSetExtremes: async function (e) {
                             const min = e.min || e.target.min,
                                 max = e.max || e.target.max,
                                 city = citySeries.chart.title.textStr;
@@ -152,7 +154,6 @@ async function setupDashboard() {
 
                                     updateKPI(store.table, lastPoint[0]);
                                     updateKPIData(city);
-
                                 });
                         }
                     }
@@ -216,7 +217,7 @@ async function setupDashboard() {
                         crop: false,
                         enabled: true,
                         formatter: function () {
-                            return labelFormatter(this.y);
+                            return Math.round(this.y);
                         },
                         inside: true,
                         padding: 0,
@@ -237,7 +238,6 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    dataScope = 'TX';
 
                                     syncRefreshCharts(
                                         store,
@@ -317,7 +317,11 @@ async function setupDashboard() {
             title: 'Maximum temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TX', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber(
+                    'TX' + temperatureScale,
+                    table.getRowIndexBy('time', worldDate.getTime()),
+                    true
+                );
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -325,7 +329,7 @@ async function setupDashboard() {
                     kpi.TX = this;
                 },
                 click: function () {
-                    dataScope = 'TX';
+                    dataScope = 'TX' + temperatureScale;
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -352,7 +356,11 @@ async function setupDashboard() {
             title: 'Average temperature',
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('TN', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber(
+                    'TN' + temperatureScale,
+                    table.getRowIndexBy('time', worldDate.getTime()),
+                    true
+                );
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -360,7 +368,7 @@ async function setupDashboard() {
                     kpi.TN = this;
                 },
                 click: function () {
-                    dataScope = 'TN';
+                    dataScope = 'TN' + temperatureScale;
 
                     syncRefreshCharts(
                         citiesData[cityScope].store,
@@ -566,7 +574,54 @@ async function setupDashboard() {
                 enabled: true,
                 icon: (
                     'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
-                )
+                ),
+                items: [
+                    'editMode',
+                    {
+                        id: 'dark-mode',
+                        type: 'toggle',
+                        text: 'Dark mode',
+                        events: {
+                            click: function () {
+                                const dashboard = this.menu.editMode.dashboard,
+                                    darModeClass =
+                                        Dashboard.classNamePrefix + 'dark-mode';
+
+                                darkMode = !darkMode;
+
+                                if (darkMode) {
+                                    dashboard.container.classList
+                                        .add(darModeClass);
+                                } else {
+                                    dashboard.container.classList
+                                        .remove(darModeClass);
+                                }
+                            }
+                        }
+                    }, {
+                        id: 'fahrenheit',
+                        type: 'toggle',
+                        text: 'Fahrenheit',
+                        events: {
+                            click: function () {
+                                // Change temperature scale.
+                                temperatureScale = temperatureScale === 'C' ? 'F' : 'C';
+                                dataScope = 'TX' + temperatureScale;
+
+                                // Update the dashboard.
+                                syncRefreshCharts(
+                                    citiesData[cityScope].store,
+                                    dataScope,
+                                    cityScope
+                                );
+                                updateKPI(
+                                    citiesData[cityScope].store.table.modified,
+                                    worldDate
+                                );
+                            }
+                        }
+                    }
+                ]
             }
         },
         gui: {
@@ -627,8 +682,6 @@ async function setupDashboard() {
             }]
         }
     });
-    console.log(dashboard);
-
 }
 
 async function setupDataPool() {
@@ -652,8 +705,30 @@ async function setupDataPool() {
             storeType: 'CSVStore'
         });
     }
+}
 
-    console.log(dataPool);
+// Calculate the average and max temperature in C and F from K.
+async function convertTemperature(city) {
+    const cityDataTable = (await dataPool.getStoreTable(city)).modified,
+        columns = ['TN', 'TX'], // Average, Maximal temperature
+        metric = ['C', 'F'];
+
+    columns.forEach(column => {
+        metric.forEach(metric => {
+            const newColumn = column + metric;
+            let temperatureColumn = cityDataTable.getColumn(newColumn);
+
+            if (!temperatureColumn) {
+                cityDataTable.setColumns({
+                    [newColumn]: cityDataTable.getColumn(column).map(el => (
+                        Highcharts.correctFloat(
+                            metric === 'C' ? (el - 273.15) : (el * (9 / 5) - 459.67),
+                            3)
+                    ))
+                });
+            }
+        });
+    });
 }
 
 async function main() {
@@ -679,6 +754,8 @@ async function buildCitiesData() {
         ['lat', 'lon', 'city']
     );
 
+    await convertTemperature(defaultCity);
+
     tables[initialCity] = {
         lat: initialRow[0],
         lon: initialRow[1],
@@ -691,13 +768,16 @@ async function buildCitiesData() {
         const rows = cities.getRows(void 0, void 0, ['lat', 'lon', 'city']);
 
         for (const row of rows) {
-            if (typeof tables[row[2]] === 'undefined') {
+            const city = row[2];
 
-                tables[row[2]] = {
+            if (typeof tables[city] === 'undefined') {
+                await convertTemperature(city);
+
+                tables[city] = {
                     lat: row[0],
                     lon: row[1],
-                    name: row[2],
-                    store: await dataPool.getStore(row[2])
+                    name: city,
+                    store: await dataPool.getStore(city)
                 };
 
                 if (citiesMap) {
@@ -736,10 +816,22 @@ async function buildCitiesMap() {
 function buildColorAxis() {
 
     // temperature
-    if (dataScope[0] === 'T') {
+    if (dataScope[2] === 'C') {
         return {
-            max: 325,
-            min: 275,
+            max: 50,
+            min: 0,
+            visible: false,
+            stops: [
+                [0.0, '#39F'],
+                [0.4, '#6C0'],
+                [0.8, '#F00']
+            ]
+        };
+    }
+    if (dataScope[2] === 'F') {
+        return {
+            max: 122,
+            min: 32,
             visible: false,
             stops: [
                 [0.0, '#4CAFFE'],
@@ -804,16 +896,6 @@ function buildSymbols() {
     ];
 }
 
-function labelFormatter(value) {
-
-    // temperature values
-    if (dataScope[0] === 'T') {
-        return '' + Math.round((value - 273.15));
-    }
-
-    return Highcharts.correctFloat(value, 0);
-}
-
 function tooltipFormatter(city, value) {
     const cities = citiesTable.modified;
     const elevation = cities.getCell(
@@ -821,18 +903,18 @@ function tooltipFormatter(city, value) {
         cities.getRowIndexBy('city', city)
     );
 
-    let tooltip = `Elevation: ${elevation}m<br />`;
+    let tooltip = `Elevation: ${elevation}m<br>`;
 
     // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {
-        tooltip += [
-            Highcharts.correctFloat(
-                (value - 273.15), 3
-            ) + '˚C',
-            Highcharts.correctFloat(
-                (value * 1.8 - 459.67), 3
-            ) + '˚F'
-        ].join('<br>');
+
+        if (dataScope[2] === 'C') {
+            tooltip += value + '˚C<br>';
+        }
+
+        if (dataScope[2] === 'F') {
+            tooltip += value + '˚F<br>';
+        }
 
     // rain days
     } else if (dataScope === 'RR1') {
@@ -859,13 +941,13 @@ function updateKPI(table, time) {
         const [key, ind] of Object.entries(kpi)
     ) {
         // set active state on current temperature KPI
-        if (key === 'TN') {
+        if (key === 'TNC') {
             ind.parentCell.setActiveState();
         }
 
         ind.update({
             value: table.getCellAsNumber(
-                key,
+                key + (key[0] === 'T' ? temperatureScale : ''),
                 table.getRowIndexBy('time', time),
                 true
             )
@@ -910,5 +992,13 @@ function syncRefreshCharts(store, dataScope, cityScope) {
     // update colorAxis
     citiesMap.chart.update({
         colorAxis: buildColorAxis()
+    });
+
+    citySeries.chart.update({
+        colorAxis: buildColorAxis()
+    });
+
+    buildCitiesMap().then(data => {
+        citiesMap.setData(data);
     });
 }

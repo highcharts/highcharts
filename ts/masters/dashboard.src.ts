@@ -1,11 +1,9 @@
 /**
- * @license "Highsoft Dashboard" v@product.version@ (@product.date@)
+ * @license Highcharts Dashboards v0.0.1 (@product.date@)
  * @module highsoft/dashboard
  * @requires window
  *
- * Highsoft Dashboard
- *
- * (c) 2010-2022 Highsoft AS
+ * (c) 2009-2023 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
