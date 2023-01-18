@@ -15,7 +15,7 @@
  *
  * */
 
-import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions';
+import { HeatmapPointMarkerOptions } from '../Heatmap/HeatmapPointOptions';
 
 /* *
  *
@@ -24,7 +24,8 @@ import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions';
  * */
 
 interface GeoHeatmapSeriesOptions {
-    // nothing here yet
+    marker: HeatmapPointMarkerOptions,
+    borderRadius?: number
 }
 
 export default GeoHeatmapSeriesOptions;

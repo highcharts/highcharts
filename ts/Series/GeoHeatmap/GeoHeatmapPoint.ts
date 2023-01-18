@@ -17,27 +17,26 @@
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type GeoHeatmapPointOptions from './GeoHeatmapPointOptions';
-import type GeoHeatmapSeries from './GeoHeatmapSeries';
+import HeatmapPoint from '../Heatmap/HeatmapPoint.js';
 
-import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 
+
 const {
     seriesTypes: {
-        heatmap: {
+        map: {
             prototype: {
-                pointClass: HeatmapPoint
+                pointClass: {
+                    prototype: mapPointProto
+                }
             }
         }
     }
 } = SeriesRegistry;
 
 const {
-    extend,
-    merge
+    extend
 } = U;
 
 /* *
@@ -60,6 +59,19 @@ class GeoHeatmapPoint extends HeatmapPoint {
      *
      * */
 
+    public getCellAttributes(): HeatmapPoint.CellAttributes {
+        const point = this;
+        return {
+            x1: (point.plotX || 0) - 20,
+
+            x2: (point.plotX || 0) + 20,
+
+            y1: (point.plotY || 0) - 20,
+
+            y2: (point.plotY || 0) + 20
+        };
+    }
+
 }
 
 /* *
@@ -67,6 +79,15 @@ class GeoHeatmapPoint extends HeatmapPoint {
  *  Class Prototype
  *
  * */
+
+interface GeoHeatmapPoint {
+    getProjectedBounds: typeof mapPointProto.getProjectedBounds;
+}
+
+extend(GeoHeatmapPoint.prototype, {
+    applyOptions: mapPointProto.applyOptions as any,
+    getProjectedBounds: mapPointProto.getProjectedBounds
+});
 
 /* *
  *

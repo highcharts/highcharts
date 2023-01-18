@@ -574,7 +574,11 @@ function geojson(
         let pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
 
         if (
-            (hType === 'map' || hType === 'mapbubble') &&
+            (
+                hType === 'map' ||
+                hType === 'mapbubble' ||
+                hType === 'geoheatmap'
+            ) &&
             (type === 'Polygon' || type === 'MultiPolygon')
         ) {
             if (coordinates.length) {
