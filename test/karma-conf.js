@@ -201,6 +201,8 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
+        // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
+        // Chrome 109
         [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.oldie) {
         browsers = ['Win.IE8'];
