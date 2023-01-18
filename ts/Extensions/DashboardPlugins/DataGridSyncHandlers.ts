@@ -29,8 +29,7 @@ import ComponentTypes from '../../Dashboard/Component/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    pick
+    addEvent
 } = U;
 
 /* *
