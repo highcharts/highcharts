@@ -148,7 +148,7 @@
     border-radius: 2px;
 }
 
-.hd-row.hd-edit-row-context-highlight {
+.hd-layout > .hd-row.hd-edit-row-context-highlight {
     background:
         repeating-linear-gradient(
             -45deg,
@@ -156,7 +156,7 @@
             #9895a4 10px,
             rgb(169 167 188) 10px,
             rgb(169 167 188) 12px
-        ) !important;
+        );
 }
 
 .hd-edit-toolbar > .hd-edit-toolbar-cell-outline {
