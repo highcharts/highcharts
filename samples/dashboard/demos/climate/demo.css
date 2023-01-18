@@ -20,10 +20,6 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboard.hd-dark-mode {
-    background-color: #46475d;
-}
-
 .highcharts-dashboard.hd-dark-mode #time-range-selector {
     --color-axis: #e7e7ec;
     --color-background: #0d0d0d;
@@ -36,17 +32,6 @@
     --color-series: #5352be;
     --color-thumb: #5352be;
     --color-thumb-line: #838394;
-}
-
-.highcharts-dashboard.hd-dark-mode #time-range-selector {
-    --color-axis: #e7e7ec;
-    --color-background: #0d0d0d;
-    --color-grid: #838393;
-    --color-handle: #5352be;
-    --color-handle-line: #838394;
-    --color-handle-mask: #dddbef66;
-    --color-scroll: #4a4a53;
-    --color-series: #5352be;
 }
 
 #world-map {
@@ -71,6 +56,10 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
+    .highcharts-dashboard {
+        --color-dashboard: #46475d;
+    }
+
     #time-range-selector {
         --color-axis: #e7e7ec;
         --color-background: #0d0d0d;
@@ -89,6 +78,20 @@
         --color-navigation-line: #646478;
         --color-navigation-text: #838393;
     }
+}
+
+/* *
+ *
+ *  Dashboard
+ *
+ * */
+
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
+
+.highcharts-dashboard.hd-dark-mode .hd-edit-context-menu-btn {
+    filter: invert(1);
 }
 
 /* *
@@ -288,4 +291,10 @@
 
 #world-map .highcharts-zoom-out text {
     transform: translate(2px, -1px);
+}
+
+/* Safari fix for manual dark mode */
+.highcharts-dashboard.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke-width: 2px;
 }
