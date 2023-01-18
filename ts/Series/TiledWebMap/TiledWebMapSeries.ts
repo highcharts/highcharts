@@ -183,7 +183,8 @@ class TiledWebMapSeries extends MapSeries {
             provider = options.provider,
             mapView: any = chart.mapView,
             { zoom } = mapView,
-            zoomCeil = Math.ceil(zoom);
+            zoomCeil = Math.ceil(zoom),
+            maxTile = Math.pow(2, zoom);
 
         if (provider && (provider.type || provider.url)) {
             if (provider.type) {
@@ -257,12 +258,17 @@ class TiledWebMapSeries extends MapSeries {
                 .replace('{z}', zoom.toString());
 
             const addTile = (x: number, y: number, zoom: number): void => {
+                const modX = x % maxTile,
+                    modY = y % maxTile,
+                    tileX = modX < 0 ? modX + maxTile : modX,
+                    tileY = modY < 0 ? modY + maxTile : modY;
+
                 if (!tiles[`${zoom},${x},${y}`]) {
                     if (provider.url) {
                         const url = replaceVariables(
                             provider.url,
-                            x,
-                            y,
+                            tileX,
+                            tileY,
                             zoom
                         );
 
@@ -295,6 +301,37 @@ class TiledWebMapSeries extends MapSeries {
                     x: chart.plotWidth,
                     y: chart.plotHeight
                 });
+
+            // increase range when plotbox is bigger than mappbox
+            // and for support for rotation and center
+            // e.g. rotation: [100], center: [100, 0] and negatives
+            if (
+                topLeft.lon > bottomRight.lon ||
+                Math.abs(topLeft.lon - bottomRight.lon) < 180
+            ) {
+                topLeft.lon -= 360;
+                bottomRight.lon += 360;
+            }
+
+            // support for rotation - looping tiles for Lambda
+            if (
+                mapView &&
+                defined(mapView.projection.options.rotation) &&
+                (mapView.projection.options.rotation[0] > 360 ||
+                mapView.projection.options.rotation[0] < 0)
+            ) {
+                let count = mapView.projection.options.rotation[0] / 360;
+
+                if (
+                    mapView.projection.options.rotation[0] > 360 &&
+                    count % 1 === 0
+                ) {
+                    count--;
+                }
+
+                topLeft.lon += Math.floor(count) * 360;
+                bottomRight.lon += Math.floor(count) * 360;
+            }
 
             const startPos = this.lonLatToTile(topLeft, zoom),
                 endPos = this.lonLatToTile(bottomRight, zoom);
