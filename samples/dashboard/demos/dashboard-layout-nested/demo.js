@@ -1,6 +1,4 @@
-let exportedLayoutId;
-
-const chartDemo = {
+const chartComponentOptions = {
     type: 'Highcharts',
     chartOptions: {
         type: 'line',
@@ -15,7 +13,7 @@ const chartDemo = {
     }
 };
 
-const dashboardLayout = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboard.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -26,7 +24,7 @@ const dashboardLayout = new Dashboard.Dashboard('container', {
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-in-1', // mandatory
+            id: 'layout-in-1',
             rows: [{
                 cells: [{
                     id: 'dashboard-col-nolayout-0'
@@ -75,33 +73,33 @@ const dashboardLayout = new Dashboard.Dashboard('container', {
     },
     components: [{
         cell: 'dashboard-col-nolayout-0',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-1',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-2a',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-2b',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-2c',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-2d',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-3',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-4',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-5',
-        ...chartDemo
+        ...chartComponentOptions
     }, {
         cell: 'dashboard-col-layout-2f',
-        ...chartDemo
+        ...chartComponentOptions
     }]
 });
