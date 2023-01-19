@@ -58,6 +58,14 @@ const exporting: ExportingOptions = {
      */
 
     /**
+     * Allows the end user to sort the data table by clicking on column headers.
+     *
+     * @since next
+     * @apioption exporting.allowTableSorting
+     */
+    allowTableSorting: true,
+
+    /**
      * Additional chart options to be merged into the chart before exporting to
      * an image format. This does not apply to printing the chart via the export
      * menu.
@@ -719,6 +727,8 @@ const navigation: NavigationOptions = {
          *
          * @sample highcharts/exporting/buttons-text/
          *         Full text button
+         * @sample highcharts/exporting/buttons-text-usehtml/
+         *         Icon using CSS font in text
          * @sample highcharts/exporting/buttons-text-symbol/
          *         Combined symbol and text
          *
@@ -726,6 +736,19 @@ const navigation: NavigationOptions = {
          * @default   null
          * @since     3.0
          * @apioption navigation.buttonOptions.text
+         */
+
+        /**
+         * Whether to use HTML for rendering the button. HTML allows for things
+         * like inline CSS or image-based icons.
+         *
+         * @sample highcharts/exporting/buttons-text-usehtml/
+         *         Icon using CSS font in text
+         *
+         * @type      boolean
+         * @default   false
+         * @since 10.3.0
+         * @apioption navigation.buttonOptions.useHTML
          */
 
         /**

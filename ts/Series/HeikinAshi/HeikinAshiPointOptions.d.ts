@@ -23,6 +23,13 @@ import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions
  * */
 
 export interface HeikinAshiPointOptions extends CandlestickPointOptions {
+    // nothing to add
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HeikinAshiPointOptions;

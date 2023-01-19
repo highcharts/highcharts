@@ -6,6 +6,8 @@
 const gulp = require('gulp');
 const log = require('./lib/log');
 const fs = require('fs-extra');
+// const fs = require('fs');
+// const libFS = require('./lib/fs');
 const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
@@ -179,7 +181,11 @@ function copyFiles() {
         } = folder;
         getFilesInFolder(from, true)
             .filter(path => (
-                !(path.startsWith('es-modules') && path.endsWith('.d.ts')) &&
+                (
+                    path.startsWith('es-modules/masters') ||
+                    !path.startsWith('es-modules') ||
+                    !path.endsWith('.d.ts')
+                ) &&
                 path !== 'package.json'
             ))
             .forEach(filename => {
@@ -193,6 +199,7 @@ function copyFiles() {
     // Copy all the files to release repository
     Object.keys(mapFromTo).forEach(from => {
         const to = mapFromTo[from];
+        // libFS.copyAllFiles(from, to);
         fs.copySync(from, to);
     });
     log.message('Files copied successfully!');

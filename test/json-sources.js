@@ -1,5 +1,6 @@
 /* global window */
 /* eslint quotes: 0, quote-props: 0 */
+/* eslint-disable no-loss-of-precision */
 /**
  * This file contains local representations of JSON data used in the samples,
  * making it possible to run the tests offline. The `window.JSONSources` object
@@ -7,7 +8,3686 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
-    "https://sheets.googleapis.com/v4/spreadsheets/1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2d63d6eef882260cb6/samples/data/worldbank-norway.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 30,
+                "total": 30,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2021",
+                    "value": 3.92266520973057,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2020",
+                    "value": -0.717182669244792,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2019",
+                    "value": 0.745798219243483,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2018",
+                    "value": 1.11882847945122,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2017",
+                    "value": 2.32329020838249,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2016",
+                    "value": 1.07155897720727,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2015",
+                    "value": 1.96712843821408,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2014",
+                    "value": 1.9695443007939,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2013",
+                    "value": 1.03407291353631,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2012",
+                    "value": 2.70310947059309,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2011",
+                    "value": 0.981434478585356,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2010",
+                    "value": 0.701833823862358,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2009",
+                    "value": -1.72702030948713,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2008",
+                    "value": 0.476345013071636,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2007",
+                    "value": 2.99428771442589,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2006",
+                    "value": 2.39982842629603,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2005",
+                    "value": 2.62541993829724,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2004",
+                    "value": 3.96941456013641,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2003",
+                    "value": 0.910105664307537,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2002",
+                    "value": 1.44625413960414,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2001",
+                    "value": 2.07479039388386,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "2000",
+                    "value": 3.20497922225218,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1999",
+                    "value": 2.01286328876013,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1998",
+                    "value": 2.62442622196583,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1997",
+                    "value": 5.28459298480296,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1996",
+                    "value": 5.02794717187143,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1995",
+                    "value": 4.15549133419204,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1994",
+                    "value": 5.05542738771337,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1993",
+                    "value": 2.84532436675762,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "NO", "value": "Norway" },
+                    "countryiso3code": "NOR",
+                    "date": "1992",
+                    "value": 3.57439553891901,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv": [
+        "ProductType,NumSold,Year,AvgDaysToShip,%ReturnedOnAverage",
+        "BluetoothHeadset,500,2013,5,15",
+        "BluetoothHeadset,2400,2014,5,10",
+        "BluetoothHeadset,4000,2015,5,2",
+        "BluetoothHeadset,4500,2016,5,2",
+        "BodyCamera,50,2013,1,25",
+        "BodyCamera,150,2014,1,20",
+        "BodyCamera,300,2015,1,15",
+        "BodyCamera,400,2016,1,15",
+        "ChestStrap,80,2013,7,15",
+        "ChestStrap, 80, 2014, 7, 10",
+        "ChestStrap, 50, 2015, 7, 10",
+        "ChestStrap, 50, 2016, 7, 10",
+        "HeadMountedDisplay, 50, 2013, 10, 30",
+        "HeadMountedDisplay, 50, 2014, 10, 25",
+        "HeadMountedDisplay, 50, 2015, 10, 20",
+        "HeadMountedDisplay, 100, 2016, 10, 10",
+        " Other, 100, 2013, 5, 35",
+        "Other, 950, 2014, 5, 35",
+        "Other, 900, 2015, 5, 15",
+        "Other, 1000, 2016, 5, 5",
+        "SmartGlasses, 50, 2013, 15, 10",
+        "SmartGlasses, 50, 2014, 15, 10",
+        " SmartGlasses, 50, 2015, 15, 5",
+        "SmartGlasses, 50, 2016, 15, 5",
+        " Smartwatch, 1000, 2013, 20, 35",
+        "SmartWatch, 2000, 2014, 20, 20",
+        "SmartWatch, 6500, 2015, 20, 10",
+        "SmartWatch, 7200, 2016, 20, 10",
+        "SportsWatch, 100, 2013, 10, 30",
+        "SportsWatch, 400, 2014, 10, 20",
+        "SportsWatch, 1000, 2015, 10, 15",
+        "SportsWatch, 1100, 2016, 10, 10",
+        "Wristband, 1000, 2013, 1, 20",
+        "Wristband, 3000, 2014, 1, 10",
+        "Wristband, 3200, 2015, 1, 5",
+        "Wristband, 3300, 2016, 1, 5"
+    ].join('\n'),
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank2.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 80,
+                "total": 80,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2021",
+                    "value": 3.01390015203684,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2020",
+                    "value": 0.104765269726428,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2019",
+                    "value": 3.82359506554897,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2018",
+                    "value": 3.1140588051592,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2017",
+                    "value": 2.96303550623374,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2016",
+                    "value": 2.36329312458223,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2015",
+                    "value": -0.174958386556341,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2014",
+                    "value": 4.34362891232793,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2013",
+                    "value": 3.24902351596322,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2012",
+                    "value": -4.10673312379164,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2011",
+                    "value": 0.606540017703665,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2010",
+                    "value": 6.77210865062072,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2009",
+                    "value": 3.5428858106368,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2008",
+                    "value": 5.40501396398783,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2007",
+                    "value": 6.17051792165948,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2006",
+                    "value": 5.96012200741995,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2005",
+                    "value": 6.49051449283149,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2004",
+                    "value": 6.01073303501067,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2003",
+                    "value": 4.96919123438531,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2002",
+                    "value": 4.37905646060264,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2021",
+                    "value": 4.12875478881564,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2020",
+                    "value": -1.98675424097242,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2019",
+                    "value": 2.55130199191254,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2018",
+                    "value": 2.69295346020728,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2017",
+                    "value": 2.4484461152791,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2016",
+                    "value": 1.27037043944441,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2015",
+                    "value": 2.85703348816809,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2014",
+                    "value": 4.85394781918036,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2013",
+                    "value": 5.04508794376197,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2012",
+                    "value": 2.75605502911635,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2011",
+                    "value": 4.1814611220403,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2010",
+                    "value": 5.92307065755797,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2009",
+                    "value": 3.0481193816627,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2008",
+                    "value": 5.15613095417145,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2007",
+                    "value": 6.15096103645398,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2006",
+                    "value": 6.05442511026311,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2005",
+                    "value": 6.00099570422772,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2004",
+                    "value": 6.56015722560106,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2003",
+                    "value": 4.09192015182927,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": {
+                        "id": "ZF",
+                        "value": "Sub-Saharan Africa (excluding high income)"
+                    },
+                    "countryiso3code": "SSA",
+                    "date": "2002",
+                    "value": 6.28476186432432,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2021",
+                    "value": 5.80205675748027,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2020",
+                    "value": -3.27121883332505,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2019",
+                    "value": 2.61488211866134,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2018",
+                    "value": 3.27664633561841,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2017",
+                    "value": 3.37948986402805,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2016",
+                    "value": 2.79889611375958,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2015",
+                    "value": 3.08105934971097,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2014",
+                    "value": 3.05591987112651,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2013",
+                    "value": 2.81983804269656,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2012",
+                    "value": 2.70716192149985,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2011",
+                    "value": 3.32102422120026,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2010",
+                    "value": 4.5322791954228,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2009",
+                    "value": -1.32583191395517,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2008",
+                    "value": 2.06639525697196,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2007",
+                    "value": 4.4774071410819,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2006",
+                    "value": 4.47622798601941,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2005",
+                    "value": 4.04314225074009,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2004",
+                    "value": 4.49356217377881,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2003",
+                    "value": 3.15084653658894,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2002",
+                    "value": 2.32890492148626,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2021",
+                    "value": 5.84941976162474,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2020",
+                    "value": -6.24874822378281,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2019",
+                    "value": -6.14423631439116,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2018",
+                    "value": 4.82421053956361,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2017",
+                    "value": 4.70949217898975,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2016",
+                    "value": 0.755869250930601,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2015",
+                    "value": 1.77987270340299,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2014",
+                    "value": 2.37692932698003,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2013",
+                    "value": 1.98949276207208,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2012",
+                    "value": 16.6654287684679,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2011",
+                    "value": 14.1939129572162,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2010",
+                    "value": 19.6753231424645,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2009",
+                    "value": 12.0195599268985,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2008",
+                    "value": -17.6689462852054,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2007",
+                    "value": -3.6533268588292,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2006",
+                    "value": -3.46149519231606,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2005",
+                    "value": -5.71108367972599,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2004",
+                    "value": -5.80753805534708,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2003",
+                    "value": -16.9950746940262,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "ZW", "value": "Zimbabwe" },
+                    "countryiso3code": "ZWE",
+                    "date": "2002",
+                    "value": -8.89402363304285,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-indicator.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 20,
+                "total": 20,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2021",
+                    "value": 5.80205675748027,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2020",
+                    "value": -3.27121883332505,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2019",
+                    "value": 2.61488211866134,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2018",
+                    "value": 3.27664633561841,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2017",
+                    "value": 3.37948986402805,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2016",
+                    "value": 2.79889611375958,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2015",
+                    "value": 3.08105934971097,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2014",
+                    "value": 3.05591987112651,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2013",
+                    "value": 2.81983804269656,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2012",
+                    "value": 2.70716192149985,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2011",
+                    "value": 3.32102422120026,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2010",
+                    "value": 4.5322791954228,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2009",
+                    "value": -1.32583191395517,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2008",
+                    "value": 2.06639525697196,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2007",
+                    "value": 4.4774071410819,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2006",
+                    "value": 4.47622798601941,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2005",
+                    "value": 4.04314225074009,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2004",
+                    "value": 4.49356217377881,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2003",
+                    "value": 3.15084653658894,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "1W", "value": "World" },
+                    "countryiso3code": "WLD",
+                    "date": "2002",
+                    "value": 2.32890492148626,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-income.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 20,
+                "total": 20,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2021",
+                    "value": 3.01390015203684,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2020",
+                    "value": 0.104765269726428,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2019",
+                    "value": 3.82359506554897,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2018",
+                    "value": 3.1140588051592,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2017",
+                    "value": 2.96303550623374,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2016",
+                    "value": 2.36329312458223,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2015",
+                    "value": -0.174958386556341,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2014",
+                    "value": 4.34362891232793,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2013",
+                    "value": 3.24902351596322,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2012",
+                    "value": -4.10673312379164,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2011",
+                    "value": 0.606540017703665,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2010",
+                    "value": 6.77210865062072,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2009",
+                    "value": 3.5428858106368,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2008",
+                    "value": 5.40501396398783,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2007",
+                    "value": 6.17051792165948,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2006",
+                    "value": 5.96012200741995,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2005",
+                    "value": 6.49051449283149,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2004",
+                    "value": 6.01073303501067,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2003",
+                    "value": 4.96919123438531,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "XM", "value": "Low income" },
+                    "countryiso3code": "",
+                    "date": "2002",
+                    "value": 4.37905646060264,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-region.json":
+        [
+            {
+                "page": 1,
+                "pages": 1,
+                "per_page": 20,
+                "total": 20,
+                "sourceid": "2",
+                "sourcename": "World Development Indicators",
+                "lastupdated": "2022-09-16"
+            },
+            [
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2021",
+                    "value": 8.32248413075069,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2020",
+                    "value": -5.23983299024215,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2019",
+                    "value": 3.9138443956036,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2018",
+                    "value": 6.3732590431798,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2017",
+                    "value": 6.44478302549638,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2016",
+                    "value": 7.67146359572604,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2015",
+                    "value": 7.36869834772671,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2014",
+                    "value": 6.89691308507234,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2013",
+                    "value": 6.01577938863586,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2012",
+                    "value": 5.47662279472875,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2011",
+                    "value": 5.09907003747171,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2010",
+                    "value": 7.46578183832693,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2009",
+                    "value": 6.92888468114113,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2008",
+                    "value": 3.2602198466105,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2007",
+                    "value": 7.23186238643439,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2006",
+                    "value": 7.6264881408888,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2005",
+                    "value": 7.5183489858248,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2004",
+                    "value": 7.51203798098645,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2003",
+                    "value": 7.253383362267,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                },
+                {
+                    "indicator": {
+                        "id": "NY.GDP.MKTP.KD.ZG",
+                        "value": "GDP growth (annual %)"
+                    },
+                    "country": { "id": "8S", "value": "South Asia" },
+                    "countryiso3code": "SAS",
+                    "date": "2002",
+                    "value": 3.60186970387497,
+                    "unit": "",
+                    "obs_status": "",
+                    "decimal": 1
+                }
+            ]
+        ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-country.json": [
+        {
+            "page": 1,
+            "pages": 1,
+            "per_page": 20,
+            "total": 18,
+            "sourceid": "2",
+            "sourcename": "World Development Indicators",
+            "lastupdated": "2022-09-16"
+        },
+        [
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2020",
+                "value": -2.35110067344623,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2019",
+                "value": 3.911603419423,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2018",
+                "value": 1.18922812838034,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2017",
+                "value": 2.64700320195786,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2016",
+                "value": 2.26031420130452,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2015",
+                "value": 1.45131466009755,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2014",
+                "value": 2.72454336394854,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2013",
+                "value": 5.60074465808154,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2012",
+                "value": 12.752287088717,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2011",
+                "value": 0.426354784529209,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2010",
+                "value": 14.3624414692681,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2009",
+                "value": 21.3905283931066,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2008",
+                "value": 3.92498382161573,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2007",
+                "value": 13.8263195479763,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2006",
+                "value": 5.35740325126351,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2005",
+                "value": 11.2297148236429,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2004",
+                "value": 1.41411798058979,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2003",
+                "value": 8.83227781263571,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            }
+        ]
+    ],
+    "https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank.json": [
+        {
+            "page": 1,
+            "pages": 1,
+            "per_page": 80,
+            "total": 80,
+            "sourceid": "2",
+            "sourcename": "World Development Indicators",
+            "lastupdated": "2022-09-16"
+        },
+        [
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2021",
+                "value": null,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2020",
+                "value": -2.35110067344623,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2019",
+                "value": 3.911603419423,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2018",
+                "value": 1.18922812838034,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2017",
+                "value": 2.64700320195786,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2016",
+                "value": 2.26031420130452,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2015",
+                "value": 1.45131466009755,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2014",
+                "value": 2.72454336394854,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2013",
+                "value": 5.60074465808154,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2012",
+                "value": 12.752287088717,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2011",
+                "value": 0.426354784529209,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2010",
+                "value": 14.3624414692681,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2009",
+                "value": 21.3905283931066,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2008",
+                "value": 3.92498382161573,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2007",
+                "value": 13.8263195479763,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2006",
+                "value": 5.35740325126351,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2005",
+                "value": 11.2297148236429,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2004",
+                "value": 1.41411798058979,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2003",
+                "value": 8.83227781263571,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "AF", "value": "Afghanistan" },
+                "countryiso3code": "AFG",
+                "date": "2002",
+                "value": null,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2021",
+                "value": 3.01390015203684,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2020",
+                "value": 0.104765269726428,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2019",
+                "value": 3.82359506554897,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2018",
+                "value": 3.1140588051592,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2017",
+                "value": 2.96303550623374,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2016",
+                "value": 2.36329312458223,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2015",
+                "value": -0.174958386556341,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2014",
+                "value": 4.34362891232793,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2013",
+                "value": 3.24902351596322,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2012",
+                "value": -4.10673312379164,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2011",
+                "value": 0.606540017703665,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2010",
+                "value": 6.77210865062072,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2009",
+                "value": 3.5428858106368,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2008",
+                "value": 5.40501396398783,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2007",
+                "value": 6.17051792165948,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2006",
+                "value": 5.96012200741995,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2005",
+                "value": 6.49051449283149,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2004",
+                "value": 6.01073303501067,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2003",
+                "value": 4.96919123438531,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "XM", "value": "Low income" },
+                "countryiso3code": "",
+                "date": "2002",
+                "value": 4.37905646060264,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2021",
+                "value": 8.32248413075069,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2020",
+                "value": -5.23983299024215,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2019",
+                "value": 3.9138443956036,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2018",
+                "value": 6.3732590431798,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2017",
+                "value": 6.44478302549638,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2016",
+                "value": 7.67146359572604,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2015",
+                "value": 7.36869834772671,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2014",
+                "value": 6.89691308507234,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2013",
+                "value": 6.01577938863586,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2012",
+                "value": 5.47662279472875,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2011",
+                "value": 5.09907003747171,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2010",
+                "value": 7.46578183832693,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2009",
+                "value": 6.92888468114113,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2008",
+                "value": 3.2602198466105,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2007",
+                "value": 7.23186238643439,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2006",
+                "value": 7.6264881408888,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2005",
+                "value": 7.5183489858248,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2004",
+                "value": 7.51203798098645,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2003",
+                "value": 7.253383362267,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "8S", "value": "South Asia" },
+                "countryiso3code": "SAS",
+                "date": "2002",
+                "value": 3.60186970387497,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2021",
+                "value": 5.80205675748027,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2020",
+                "value": -3.27121883332505,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2019",
+                "value": 2.61488211866134,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2018",
+                "value": 3.27664633561841,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2017",
+                "value": 3.37948986402805,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2016",
+                "value": 2.79889611375958,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2015",
+                "value": 3.08105934971097,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2014",
+                "value": 3.05591987112651,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2013",
+                "value": 2.81983804269656,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2012",
+                "value": 2.70716192149985,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2011",
+                "value": 3.32102422120026,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2010",
+                "value": 4.5322791954228,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2009",
+                "value": -1.32583191395517,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2008",
+                "value": 2.06639525697196,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2007",
+                "value": 4.4774071410819,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2006",
+                "value": 4.47622798601941,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2005",
+                "value": 4.04314225074009,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2004",
+                "value": 4.49356217377881,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2003",
+                "value": 3.15084653658894,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            },
+            {
+                "indicator": {
+                    "id": "NY.GDP.MKTP.KD.ZG",
+                    "value": "GDP growth (annual %)"
+                },
+                "country": { "id": "1W", "value": "World" },
+                "countryiso3code": "WLD",
+                "date": "2002",
+                "value": 2.32890492148626,
+                "unit": "",
+                "obs_status": "",
+                "decimal": 1
+            }
+        ]
+    ],
+    "https://sheets.googleapis.com/v4/spreadsheets/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "Sheet1!A1:Q245",
         "majorDimension": "COLUMNS",
         "values": [
@@ -664,7 +4344,7 @@ window.JSONSources = {
             ]
         ]
     },
-    "https://sheets.googleapis.com/v4/spreadsheets/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://sheets.googleapis.com/v4/spreadsheets/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "Sheet1!A1:U90",
         "majorDimension": "COLUMNS",
         "values": [
@@ -1102,7 +4782,7 @@ window.JSONSources = {
             ]
         ]
     },
-    "https://sheets.googleapis.com/v4/spreadsheets/0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
+    "https://sheets.googleapis.com/v4/spreadsheets/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk": {
         "range": "'Fruit consumption'!A1:T1468",
         "majorDimension": "COLUMNS",
         "values": [

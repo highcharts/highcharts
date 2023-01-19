@@ -10,7 +10,7 @@ module.exports = {
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
-            'getting-started/how-to-create-custom-highcharts-files',
+            'getting-started/how-to-create-custom-highcharts-packages',
             'getting-started/optional-dependencies'
         ],
         'Chart concepts': [
@@ -31,6 +31,7 @@ module.exports = {
             'chart-concepts/security'
         ],
         'Stock': [
+            'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',

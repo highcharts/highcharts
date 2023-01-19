@@ -101,6 +101,7 @@ class PackedBubbleSeries extends BubbleSeries {
         SeriesClass: typeof SeriesType
     ): void {
         BubbleSeries.compose(AxisClass, ChartClass, LegendClass, SeriesClass);
+        DragNodesComposition.compose(ChartClass);
         PackedBubbleLayout.compose(ChartClass);
     }
 
@@ -484,23 +485,12 @@ class PackedBubbleSeries extends BubbleSeries {
      * @private
      */
     public drawDataLabels(): void {
-        const textPath = (this.options.dataLabels as any).textPath,
-            points = this.points;
-
-        // Render node labels:
-        seriesProto.drawDataLabels.apply(this, arguments as any);
+        seriesProto.drawDataLabels.call(this, this.points);
 
         // Render parentNode labels:
         if (this.parentNode) {
             this.parentNode.formatPrefix = 'parentNode';
-            this.points = [this.parentNode];
-            (this.options.dataLabels as any).textPath =
-                (this.options.dataLabels as any).parentNodeTextPath;
-            seriesProto.drawDataLabels.apply(this, arguments as any);
-
-            // Restore nodes
-            this.points = points;
-            (this.options.dataLabels as any).textPath = textPath;
+            seriesProto.drawDataLabels.call(this, [this.parentNode]);
         }
     }
 

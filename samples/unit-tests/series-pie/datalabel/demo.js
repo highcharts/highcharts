@@ -263,7 +263,7 @@ QUnit.test('Null points should not have data labels(#4641)', function (assert) {
                     data: [
                         {
                             name: 'Microsoft Internet Explorer',
-                            //y: 56.33,
+                            // y: 56.33,
                             y: null
                         },
                         {
@@ -617,7 +617,7 @@ QUnit.test('Connector color of individual point (#8864).', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].connector.stroke === '#bada55',
+        chart.series[0].points[0].connector.attr('stroke') === '#bada55',
         'Color applied to indiviudal connector.'
     );
 });

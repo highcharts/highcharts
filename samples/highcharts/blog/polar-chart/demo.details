@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo Polar Chart
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

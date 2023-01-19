@@ -6,7 +6,7 @@ QUnit.test('Automatic column width on log X axis (#4870)', function (assert) {
         series: [
             {
                 type: 'column',
-                //"pointWidth": 10,
+                // "pointWidth": 10,
                 data: [
                     {
                         x: 1,
@@ -49,8 +49,8 @@ QUnit.test(
                 .highcharts({
                     xAxis: {
                         // easier for tests - otherwise floating numbers in JS
-                        //gives error, for example: 0.9-0.3 = 0.6000000001 etc.
-                        //but we need to test strict numbers
+                        // gives error, for example: 0.9-0.3 = 0.6000000001 etc.
+                        // but we need to test strict numbers
                         minorTickInterval: 1
                     },
                     series: [

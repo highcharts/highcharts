@@ -96,7 +96,7 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
                 gui: {
                     enabled: true,
                     buttons: [
-                        "currentPriceIndicator"
+                        'currentPriceIndicator'
                     ]
                 }
             },

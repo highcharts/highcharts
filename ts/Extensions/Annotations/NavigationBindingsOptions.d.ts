@@ -22,7 +22,7 @@ import type AnnotationOptions from './AnnotationOptions';
  *
  * */
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         navigation?: LangNavigationOptions;
     }

@@ -180,7 +180,7 @@ QUnit.test('Null inside break (#4275)', function (assert) {
 });
 
 QUnit.test(
-    "pointBreak callback wasn't called for xAxis and different " +
+    'pointBreak callback wasn\'t called for xAxis and different ' +
         'series than column.(#4533)',
     function (assert) {
         var iteratorPB = 0,

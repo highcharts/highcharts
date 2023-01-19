@@ -45,8 +45,8 @@ const {
     getBoostClipRect,
     isChartSeriesBoosting
 } = BoostChart;
-import DefaultOptions from '../../Core/DefaultOptions.js';
-const { getOptions } = DefaultOptions;
+import D from '../../Core/Defaults.js';
+const { getOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -105,6 +105,7 @@ interface BoostPointMockup {
     plotX: number;
     plotY: number;
     i: number;
+    percentage: number;
 }
 
 interface BoostSeriesAdditions extends BoostTargetAdditions {
@@ -201,14 +202,6 @@ function compose<T extends typeof Series>(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-    const PointClass = SeriesClass.prototype.pointClass;
-
-    if (composedClasses.indexOf(PointClass) === -1) {
-        composedClasses.push(PointClass);
-
-        wrap(PointClass.prototype, 'haloPath', wrapPointHaloPath);
-    }
-
     if (composedClasses.indexOf(SeriesClass) === -1) {
         composedClasses.push(SeriesClass);
 
@@ -222,7 +215,6 @@ function compose<T extends typeof Series>(
         }
 
         wrap(seriesProto, 'getExtremes', wrapSeriesGetExtremes);
-        wrap(seriesProto, 'markerAttribs', wrapSeriesMarkerAttribs);
         wrap(seriesProto, 'processData', wrapSeriesProcessData);
         wrap(seriesProto, 'searchPoint', wrapSeriesSearchPoint);
 
@@ -303,12 +295,11 @@ function compose<T extends typeof Series>(
         ) {
             composedClasses.push(BubbleSeries);
 
-            const bubbleProto = BubbleSeries.prototype as
-                Partial<typeof BubbleSeries.prototype>;
+            const bubbleProto = BubbleSeries.prototype;
 
             // By default, the bubble series does not use the KD-tree, so force
             // it to.
-            delete bubbleProto.buildKDTree;
+            delete (bubbleProto as Partial<Series>).buildKDTree;
             // seriesTypes.bubble.prototype.directTouch = false;
 
             // Needed for markers to work correctly
@@ -863,8 +854,8 @@ function getPoint(
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
     point.index = boostPoint.i;
+    point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
-
     return point;
 }
 
@@ -968,7 +959,8 @@ function seriesRenderCanvas(this: Series): void {
         addKDPoint = (
             clientX: number,
             plotY: number,
-            i: number
+            i: number,
+            percentage: number
         ): void => {
 
             // We need to do ceil on the clientX to make things
@@ -995,7 +987,8 @@ function seriesRenderCanvas(this: Series): void {
                     clientX: clientX,
                     plotX: clientX,
                     plotY: plotY,
-                    i: cropStart + i
+                    i: cropStart + i,
+                    percentage: percentage
                 });
             }
         };
@@ -1024,6 +1017,7 @@ function seriesRenderCanvas(this: Series): void {
             y: number,
             clientX,
             plotY,
+            percentage,
             low: number = false as any,
             isYInside = true;
 
@@ -1051,6 +1045,7 @@ function seriesRenderCanvas(this: Series): void {
                 x = (d as any).x;
                 y = (d as any).stackY;
                 low = y - (d as any).y;
+                percentage = (d as any).percentage;
             }
 
             // Optimize for scatter zooming
@@ -1095,9 +1090,9 @@ function seriesRenderCanvas(this: Series): void {
                             yBottom =
                                 yAxis.toPixels(minVal as any, true);
 
-                            addKDPoint(clientX, plotY, maxI as any);
+                            addKDPoint(clientX, plotY, maxI as any, percentage);
                             if (yBottom !== plotY) {
-                                addKDPoint(clientX, yBottom, minI);
+                                addKDPoint(clientX, yBottom, minI, percentage);
                             }
                         }
 
@@ -1106,7 +1101,7 @@ function seriesRenderCanvas(this: Series): void {
                     }
                 } else {
                     plotY = Math.ceil(yAxis.toPixels(y, true));
-                    addKDPoint(clientX, plotY, i);
+                    addKDPoint(clientX, plotY, i, percentage);
                 }
             }
         }
@@ -1143,37 +1138,6 @@ function seriesRenderCanvas(this: Series): void {
             doneProcessing
         );
     }
-}
-
-/**
- * For inverted series, we need to swap X-Y values before running base
- * methods.
- * @private
- */
-function wrapPointHaloPath(
-    this: Point,
-    proceed: Function
-): SVGPath {
-    const point = this,
-        series = point.series,
-        chart = series.chart,
-        plotX: number = point.plotX || 0,
-        plotY: number = point.plotY || 0,
-        inverted = chart.inverted;
-
-    if (series.boosted && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    const halo: SVGPath = proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (series.boosted && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return halo;
 }
 
 /**
@@ -1289,36 +1253,6 @@ function wrapSeriesGetExtremes(
         return {};
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
-}
-
-/**
- * @private
- */
-function wrapSeriesMarkerAttribs(
-    this: Series,
-    proceed: Function,
-    point: Point
-): SVGAttributes {
-    const series = this,
-        chart = series.chart,
-        plotX: number = point.plotX || 0,
-        plotY: number = point.plotY || 0,
-        inverted = chart.inverted;
-
-    if (series.boosted && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    const attribs: SVGAttributes =
-        proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (series.boosted && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return attribs;
 }
 
 /**

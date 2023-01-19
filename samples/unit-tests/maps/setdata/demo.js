@@ -955,7 +955,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
         'rgb(229,234,245)',
-        `The point's color should be correct.`
+        'The point\'s color should be correct.'
     );
 
     // Remove ru point from data
@@ -973,7 +973,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
         series.options.nullColor,
-        `The ru null point's color should be correct.`
+        'The ru null point\'s color should be correct.'
     );
 
     // #17057

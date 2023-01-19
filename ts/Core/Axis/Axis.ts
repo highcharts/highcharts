@@ -50,7 +50,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
@@ -695,11 +695,7 @@ class Axis {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.stacking) {
-                axis.stacking.buildStacks();
-            }
-
-            // loop through this axis' series
+            // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
                 if (
@@ -977,7 +973,7 @@ class Axis {
          * @private
          */
         function between(x: number, a: number, b: number): number {
-            if (force !== 'pass' && x < a || x > b) {
+            if (force !== 'pass' && (x < a || x > b)) {
                 if (force) {
                     x = clamp(x, a, b);
                 } else {
@@ -987,42 +983,43 @@ class Axis {
             return x;
         }
 
-        const evt: Event = {
+        const evt: Partial<Axis.PlotLinePathOptions> = {
             value: value,
             lineWidth: lineWidth,
             old: old,
             force: force,
             acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
-        } as any;
-        fireEvent(this, 'getPlotLinePath', evt, function (e: Event): void {
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (
+            e:(Axis.PlotLinePathOptions)
+        ): void {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, void 0, void 0, old)
+                axis.translate(value as number, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round((cHeight as any) - translatedValue - transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
             if (!isNumber(translatedValue)) { // no min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
-                y1 = axisTop as any;
-                y2 = (cHeight as any) - (axis.bottom as any);
-                x1 = x2 = between(
-                    x1, axisLeft as any, (axisLeft as any) + axis.width
-                );
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+
             } else {
-                x1 = axisLeft as any;
-                x2 = (cWidth as any) - (axis.right as any);
-                y1 = y2 = between(
-                    y1, axisTop as any, (axisTop as any) + axis.height
-                );
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
             (e as any).path = skip && !force ?
                 null :
@@ -1857,7 +1854,8 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
-            const hasExtemesChanged = axis.min !== (axis.old && axis.old.min) ||
+            const hasExtremesChanged = axis.min !==
+                (axis.old && axis.old.min) ||
                 axis.max !== (axis.old && axis.old.max);
 
             // First process all series assigned to that axis.
@@ -1867,13 +1865,13 @@ class Axis {
                     series.forceCropping &&
                     series.forceCropping()
                 );
-                series.processData(hasExtemesChanged);
+                series.processData(hasExtremesChanged);
             });
 
-            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // Then apply grouping if needed. The hasExtremesChanged helps to
             // decide if the data grouping should be skipped in the further
             // calculations #16319.
-            fireEvent(this, 'postProcessData', { hasExtemesChanged });
+            fireEvent(this, 'postProcessData', { hasExtremesChanged });
         }
 
         // set the translation factor used in translate function
@@ -2542,6 +2540,7 @@ class Axis {
 
             if (axis.stacking) {
                 axis.stacking.resetStacks();
+                axis.stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -2961,12 +2960,11 @@ class Axis {
 
         let newTickInterval = tickInterval,
             rotation: (number|undefined),
-            step: number,
             bestScore = Number.MAX_VALUE,
             autoRotation: (Array<number>|undefined);
 
         if (horiz) {
-            if (!labelOptions.staggerLines && !labelOptions.step) {
+            if (!labelOptions.staggerLines) {
                 if (isNumber(rotationOption)) {
                     autoRotation = [rotationOption];
                 } else if (slotSize < labelOptions.autoRotationLimit) {
@@ -2975,14 +2973,14 @@ class Axis {
             }
 
             if (autoRotation) {
+                let step,
+                    score;
 
-                // Loop over the given autoRotation options, and determine
-                // which gives the best score. The best score is that with
-                // the lowest number of steps and a rotation closest
-                // to horizontal.
-                autoRotation.forEach(function (rot: number): void {
-                    let score;
 
+                // Loop over the given autoRotation options, and determine which
+                // gives the best score. The best score is that with the lowest
+                // number of steps and a rotation closest to horizontal.
+                for (const rot of autoRotation) {
                     if (
                         rot === rotationOption ||
                         (rot && rot >= -90 && rot <= 90)
@@ -3000,10 +2998,10 @@ class Axis {
                             newTickInterval = step;
                         }
                     }
-                });
+                }
             }
 
-        } else if (!labelOptions.step) { // #4411
+        } else { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
@@ -3013,7 +3011,7 @@ class Axis {
             isNumber(rotationOption) ? rotationOption : 0
         );
 
-        return newTickInterval;
+        return labelOptions.step ? tickInterval : newTickInterval;
     }
 
     /**
@@ -3819,7 +3817,7 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = (options as YAxisOptions).stackLabels,
+            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
@@ -4553,6 +4551,10 @@ export default Axis;
  * @name Highcharts.AxisLabelsFormatterContextObject#chart
  * @type {Highcharts.Chart}
  *//**
+ * Default formatting of date/time labels.
+ * @name Highcharts.AxisLabelsFormatterContextObject#dateTimeLabelFormat
+ * @type {string|undefined}
+ *//**
  * Whether the label belongs to the first tick on the axis.
  * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
  * @type {boolean}
@@ -4571,7 +4573,7 @@ export default Axis;
  * dates will be formatted as strings, and numbers with language-specific comma
  * separators, thousands separators and numeric symbols like `k` or `M`.
  * @name Highcharts.AxisLabelsFormatterContextObject#text
- * @type {string}
+ * @type {string|undefined}
  *//**
  * The Tick instance.
  * @name Highcharts.AxisLabelsFormatterContextObject#tick

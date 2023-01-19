@@ -39,7 +39,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../FormatUtilities.js';
 const { format } = F;
@@ -125,18 +125,15 @@ class Point {
 
     public color?: ColorType;
 
-    /**
-     * The point's current color index, used in styled mode instead of
-     * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number}
-     */
-    public colorIndex?: number = void 0;
+    public colorIndex?: number;
 
     public dataLabels?: Array<SVGLabel>;
 
     public formatPrefix: string = 'point';
+
+    public graphic?: SVGElement;
+
+    public graphics?: Array<SVGElement|undefined>;
 
     public id: string = void 0 as any;
 
@@ -347,10 +344,7 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = pick(
-            point.isValid && !point.isValid(),
-            point.x === null || !isNumber(point.y)
-        ); // #3571, check for NaN
+        point.isNull = this.isValid && !this.isValid();
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
@@ -426,7 +420,8 @@ class Point {
             }
         }
 
-        if (point.legendItem) { // pies have legend items
+        if (point.legendItem) {
+            // pies have legend items
             chart.legend.destroyItem(point);
         }
 
@@ -471,7 +466,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
+                if (item && item.element) {
                     item.destroy();
                 }
             });
@@ -734,9 +729,13 @@ class Point {
     }
 
     /**
+     * Determine if point is valid.
      * @private
+     * @function Highcharts.Point#isValid
      */
-    public isValid?(): boolean;
+    public isValid(): boolean {
+        return this.x !== null && isNumber(this.y);
+    }
 
     /**
      * Transform number or array configs into objects. Also called for object
@@ -815,6 +814,30 @@ class Point {
     }
 
     /**
+     * Get the pixel position of the point relative to the plot area.
+     * @private
+     * @function Highcharts.Point#pos
+     */
+    public pos(
+        chartCoordinates?: boolean,
+        plotY: number|undefined = this.plotY
+    ): [number, number]|undefined {
+        const { plotX, series } = this,
+            { chart, xAxis, yAxis } = series;
+        let posX = 0,
+            posY = 0;
+        if (isNumber(plotX) && isNumber(plotY)) {
+            if (chartCoordinates) {
+                posX = xAxis ? xAxis.pos : chart.plotLeft;
+                posY = yAxis ? yAxis.pos : chart.plotTop;
+            }
+            return chart.inverted && xAxis && yAxis ?
+                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                [plotX + posX, plotY + posY];
+        }
+    }
+
+    /**
      * @private
      * @function Highcharts.Point#resolveColor
      */
@@ -850,6 +873,13 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
+        /**
+         * The point's current color index, used in styled mode instead of
+         * `color`. The color index is inserted in class names used for styling.
+         *
+         * @name Highcharts.Point#colorIndex
+         * @type {number|undefined}
+         */
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
         /**
@@ -931,6 +961,7 @@ class Point {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+
         // Replace default point style with class name
         if (series.chart.styledMode) {
             pointFormat =
@@ -942,6 +973,7 @@ class Point {
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
+
                 pointFormat = pointFormat.replace(
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
@@ -1013,14 +1045,14 @@ class Point {
             point.applyOptions(options);
 
             // Update visuals, #4146
-            // Handle dummy graphic elements for a11y, #12718
-            const hasDummyGraphic = graphic && point.hasDummyGraphic;
+            // Handle mock graphic elements for a11y, #12718
+            const hasMockGraphic = graphic && point.hasMockGraphic;
             const shouldDestroyGraphic = point.y === null ?
-                !hasDummyGraphic :
-                hasDummyGraphic;
+                !hasMockGraphic :
+                hasMockGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasDummyGraphic;
+                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1369,8 +1401,8 @@ class Point {
         }
 
         // Apply hover styles to the existing point
-        // Prevent from dummy null points (#14966)
-        if (point.graphic && !point.hasDummyGraphic) {
+        // Prevent from mocked null points (#14966)
+        if (point.graphic && !point.hasMockGraphic) {
 
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);
@@ -1389,7 +1421,7 @@ class Point {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // opacity also for their labels
-                if (isNumber(opacity)) {
+                if (series.options.inactiveOtherPoints && isNumber(opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1555,15 +1587,14 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        const series = this.series,
-            chart = series.chart;
+        const pos = this.pos();
 
-        return chart.renderer.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            (this.plotY as any) - size,
+        return pos ? this.series.chart.renderer.symbols.circle(
+            Math.floor(pos[0]) - size,
+            pos[1] - size,
             size * 2,
             size * 2
-        );
+        ) : [];
     }
 
 }

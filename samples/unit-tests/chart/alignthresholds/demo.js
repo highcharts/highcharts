@@ -202,4 +202,32 @@ QUnit.test('alignThresholds', function (assert) {
         'Panes, two axes of different pane, thresholds should not be aligned'
     );
 
+    chart.series[2].remove(false);
+    chart.update({
+        chart: {
+            animation: false
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                animation: false
+            }
+        },
+        yAxis: [{
+            height: void 0,
+            top: void 0
+        }, {
+            top: void 0,
+            height: void 0
+        }]
+    });
+
+    const point1Box = chart.series[0].points[0].shapeArgs,
+        point2Box = chart.series[1].points[0].shapeArgs;
+
+    assert.strictEqual(
+        point1Box.y + point1Box.height,
+        point2Box.y + point2Box.height,
+        '#17314: alignThresholds and stacking should place columns correctly.'
+    );
 });

@@ -747,12 +747,9 @@ class BubbleSeries extends ScatterSeries {
                     height: 2 * radius
                 };
             } else { // below zThreshold
-                point.shapeArgs = point.dlBox = void 0; // #1691
-                point.plotY = 0; // #17281
-                point.marker = {
-                    width: 0,
-                    height: 0
-                };
+                // #1691
+                point.shapeArgs = point.plotY = point.dlBox = void 0;
+                point.isInside = false; // #17281
             }
         }
 
@@ -819,7 +816,7 @@ interface BubbleSeries {
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
-    specialGroup: string;
+    specialGroup: 'group'|'markerGroup';
     zoneAxis: string;
 }
 

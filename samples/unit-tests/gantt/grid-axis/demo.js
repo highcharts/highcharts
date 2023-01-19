@@ -125,7 +125,7 @@ QUnit.test('dateFormats', function (assert) {
         assert.equal(
             Highcharts.dateFormat('%E', date.valueOf()),
             expectedDay,
-            `Single character week day format produces correct output`
+            'Single character week day format produces correct output'
         );
     });
 
@@ -2146,7 +2146,7 @@ QUnit.test(
 );
 
 QUnit.test('slotWidth', assert => {
-    const chart = Highcharts.ganttChart("container", {
+    const chart = Highcharts.ganttChart('container', {
         chart: {
             width: 600
         },

@@ -276,11 +276,11 @@ class Tick {
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
-            dateTimeLabelFormat: dateTimeLabelFormat as any,
+            dateTimeLabelFormat: dateTimeLabelFormat,
             isFirst,
             isLast,
             pos,
-            tick: tick as any,
+            tick: tick,
             tickPositionInfo,
             value
         };
@@ -300,7 +300,7 @@ class Tick {
                 return labelOptions.formatter.call(ctx, ctx);
             }
             if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                ctx.text = axis.defaultLabelFormatter.call(ctx, ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
             return axis.defaultLabelFormatter.call(ctx, ctx);
@@ -916,7 +916,8 @@ class Tick {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
                     force: 'pass',
-                    old: old
+                    old: old,
+                    acrossPanes: false // #18025
                 }
             );
 

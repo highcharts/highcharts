@@ -84,7 +84,7 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                     true,
                     'Animate should be finished - dataLabels should be visible'
                 );
-                //check second series with fixed defer time
+                // check second series with fixed defer time
                 dlOpacity = chart.series[1].dataLabelsGroup.attr('opacity');
                 assert.strictEqual(
                     dlOpacity === 0,

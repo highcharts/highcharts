@@ -2,7 +2,7 @@ Highcharts.getJSON(
     'https://code.highcharts.com/mapdata/custom/europe.topo.json',
     topology => {
 
-        // Create a dummy data value for each feature
+        // Create a data value for each feature
         const data = topology.objects.default.geometries.map((f, i) => i % 5);
 
         // Initialize the chart

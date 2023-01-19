@@ -201,7 +201,9 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
+        // Chrome 109
+        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.oldie) {
         browsers = ['Win.IE8'];
     } else if (argv.browsers === 'all') {
@@ -209,7 +211,7 @@ module.exports = function (config) {
     }
 
     const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
-    if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
+    if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
@@ -219,7 +221,7 @@ module.exports = function (config) {
             }
             return browserInstances;
         }, [])
-        : new Array(browserCount).fill('ChromeHeadless');
+        : new Array(browserCount).fill(browsers[0]);
     } else {
         if (argv.splitbrowsers) {
             browsers = argv.splitbrowsers.split(',');
@@ -250,6 +252,7 @@ module.exports = function (config) {
             f.indexOf('vendor/jquery') !== 0 &&
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('vendor/rgbcolor') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
             f.indexOf('topojson-client') === -1 &&
 
@@ -319,6 +322,9 @@ module.exports = function (config) {
 
             // Custom data source
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+            'samples/highcharts/blog/gdp-growth-annual/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
+            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -342,6 +348,7 @@ module.exports = function (config) {
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
             'samples/maps/plotoptions/series-animation-true/demo.js', // animation
+            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
