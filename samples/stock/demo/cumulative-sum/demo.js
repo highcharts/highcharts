@@ -2,11 +2,13 @@
 Highcharts.stockChart('container', {
 
     title: {
-        text: 'Cumulative Sum'
+        text: 'Cumulative Sum',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Displays the sum of all the previous values and the current value (only within visible range)'
+        text: 'Displays the sum of all the previous values and the current value (only within visible range)',
+        align: 'left'
     },
 
     plotOptions: {

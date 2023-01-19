@@ -13,7 +13,6 @@
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
- * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  *
  * https://jsfiddle.net/highcharts/L2u9rpwr/
@@ -396,22 +395,41 @@ function compose(
 function drawSeriesLabels(chart: Chart): void {
 
     // console.time('drawSeriesLabels');
-
-    const labelSeries = chart.labelSeries || [];
-
     chart.boxesToAvoid = [];
+
+    const labelSeries = chart.labelSeries || [],
+        boxesToAvoid = chart.boxesToAvoid;
+
+    // Avoid data labels
+    chart.series.forEach((s): void =>
+        (s.points || []).forEach((p): void =>
+            (p.dataLabels || []).forEach((label): void => {
+                const { width, height } = label.getBBox(),
+                    left = label.translateX + (
+                        s.xAxis ? s.xAxis.pos : s.chart.plotLeft
+                    ),
+                    top = label.translateY + (
+                        s.yAxis ? s.yAxis.pos : s.chart.plotTop
+                    );
+
+                boxesToAvoid.push({
+                    left,
+                    top,
+                    right: left + width,
+                    bottom: top + height
+                });
+            })
+        )
+    );
 
     // Build the interpolated points
     labelSeries.forEach(function (series): void {
 
-        const seriesLabelOptions = series.options.label || {},
-            boxesToAvoid = chart.boxesToAvoid;
+        const seriesLabelOptions = series.options.label || {};
 
         series.interpolatedPoints = getPointsOnGraph(series);
 
-        if (boxesToAvoid) {
-            boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
-        }
+        boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
     });
 
     chart.series.forEach(function (series): void {
@@ -852,56 +870,60 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                { plotX = 0, plotY = 0 } = point;
+                { plotX, plotY } = point;
 
-            // Absolute coordinates so we can compare different panes
-            const controlPoint: ControlPoint = {
-                chartX: paneLeft + plotX,
-                chartY: paneTop + plotY,
-                plotX,
-                plotY
-            };
+            if (isNumber(plotX) && isNumber(plotY)) {
 
-            if (onArea) {
-                // Vertically centered inside area
-                controlPoint.chartCenterY = paneTop + (
-                    plotY + pick(point.yBottom, translatedThreshold)
-                ) / 2;
-            }
+                const ctlPoint: ControlPoint = {
+                    plotX,
+                    plotY,
+                    // Absolute coordinates so we can compare different panes
+                    chartX: paneLeft + plotX,
+                    chartY: paneTop + plotY
+                };
 
-            // Add interpolated points
-            if (last) {
-                deltaX = Math.abs(controlPoint.chartX - last.chartX);
-                deltaY = Math.abs(controlPoint.chartY - last.chartY);
-                delta = Math.max(deltaX, deltaY);
-                if (delta > distance) {
+                if (onArea) {
+                    // Vertically centered inside area
+                    ctlPoint.chartCenterY = paneTop + (
+                        plotY + pick(point.yBottom, translatedThreshold)
+                    ) / 2;
+                }
 
-                    n = Math.ceil(delta / distance);
+                // Add interpolated points
+                if (last) {
+                    deltaX = Math.abs(ctlPoint.chartX - last.chartX);
+                    deltaY = Math.abs(ctlPoint.chartY - last.chartY);
+                    delta = Math.max(deltaX, deltaY);
+                    if (delta > distance) {
 
-                    for (j = 1; j < n; j += 1) {
-                        pushDiscrete({
-                            chartX: last.chartX +
-                                (controlPoint.chartX - last.chartX) * (j / n),
-                            chartY: last.chartY +
-                                (controlPoint.chartY - last.chartY) * (j / n),
-                            chartCenterY: (last.chartCenterY || 0) +
-                                ((controlPoint.chartCenterY || 0) -
-                                (last.chartCenterY || 0)) * (j / n),
-                            plotX: (last.plotX || 0) +
-                                (plotX - (last.plotX || 0)) * (j / n),
-                            plotY: (last.plotY || 0) +
-                                (plotY - (last.plotY || 0)) * (j / n)
-                        });
+                        n = Math.ceil(delta / distance);
+
+                        for (j = 1; j < n; j += 1) {
+                            pushDiscrete({
+                                chartX: last.chartX +
+                                    (ctlPoint.chartX - last.chartX) * (j / n),
+                                chartY: last.chartY +
+                                    (ctlPoint.chartY - last.chartY) * (j / n),
+                                chartCenterY: (last.chartCenterY || 0) +
+                                    ((ctlPoint.chartCenterY || 0) -
+                                    (last.chartCenterY || 0)) * (j / n),
+                                plotX: (last.plotX || 0) +
+                                    (plotX - (last.plotX || 0)) * (j / n),
+                                plotY: (last.plotY || 0) +
+                                    (plotY - (last.plotY || 0)) * (j / n)
+                            });
+                        }
                     }
                 }
+
+                // Add the real point in order to find positive and negative
+                // peaks
+                pushDiscrete(ctlPoint);
+
+
+                last = ctlPoint;
             }
 
-            // Add the real point in order to find positive and negative peaks
-            if (isNumber(plotY)) {
-                pushDiscrete(controlPoint);
-            }
-
-            last = controlPoint;
         }
     }
 

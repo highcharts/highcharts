@@ -153,7 +153,7 @@ const editor = function () {
                 }
             },
             series: [
-                //0 bottom
+                // 0 bottom
                 {
                     type: 'arearange',
                     className: 'bottom',
@@ -170,7 +170,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //1 water
+                // 1 water
                 {
                     type: 'arearange',
                     className: 'water',
@@ -187,7 +187,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //2 water cover
+                // 2 water cover
                 {
                     type: 'arearange',
                     className: 'bottom',
@@ -204,7 +204,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //3 bottom menu line
+                // 3 bottom menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -220,7 +220,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //4 middle menu line
+                // 4 middle menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -236,7 +236,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //5 top menu line
+                // 5 top menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -252,7 +252,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //6 scatter
+                // 6 scatter
                 {
                     type: 'scatter',
                     data: [{
@@ -296,7 +296,7 @@ const editor = function () {
                         }
                     }]
                 },
-                //7 columns
+                // 7 columns
                 {
                     type: 'column',
                     colorByPoint: 'true',

@@ -15,11 +15,31 @@
                 'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
             title: {
-                text: 'Population density by country (/km²)'
+                text: 'Population density by country (/km²)',
+                align: 'left'
             },
 
             mapNavigation: {
-                enabled: true
+                enabled: true,
+                buttonOptions: {
+                    align: 'right'
+                }
+            },
+
+            mapView: {
+                fitToGeometry: {
+                    type: 'MultiPoint',
+                    coordinates: [
+                        // Alaska west
+                        [-164, 54],
+                        // Greenland north
+                        [-35, 84],
+                        // New Zealand east
+                        [179, -38],
+                        // Chile south
+                        [-68, -55]
+                    ]
+                }
             },
 
             legend: {

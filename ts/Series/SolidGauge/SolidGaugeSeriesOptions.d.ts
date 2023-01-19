@@ -26,7 +26,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
     innerRadius?: string;
-    linecap?: 'round'|'square';
+    linecap?: ('butt'|'round'|'square');
     overshoot?: number;
     radius?: string;
     rounded?: boolean;

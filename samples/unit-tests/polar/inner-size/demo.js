@@ -29,13 +29,13 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
     assert.strictEqual(
         series.points[0].rectPlotY,
         yAxis.len,
-        "The first point's is in a correct place."
+        'The first point\'s is in a correct place.'
     );
 
     assert.strictEqual(
         series.points[5].rectPlotY,
         0,
-        "The sixth point's is in a correct place."
+        'The sixth point\'s is in a correct place.'
     );
 
     chart.pane[0].update({

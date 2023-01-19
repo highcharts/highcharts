@@ -263,7 +263,7 @@ QUnit.test('Null points should not have data labels(#4641)', function (assert) {
                     data: [
                         {
                             name: 'Microsoft Internet Explorer',
-                            //y: 56.33,
+                            // y: 56.33,
                             y: null
                         },
                         {

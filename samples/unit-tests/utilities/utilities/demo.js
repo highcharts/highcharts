@@ -767,7 +767,7 @@
         assert.strictEqual(
             isNumber('0'),
             false,
-            "single quoted number ('0') returns false"
+            'single quoted number (\'0\') returns false'
         );
         assert.strictEqual(
             isNumber('0'),

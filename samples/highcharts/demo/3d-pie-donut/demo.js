@@ -8,10 +8,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Beijing 2022 gold medals by country'
+        text: 'Beijing 2022 gold medals by country',
+        align: 'left'
     },
     subtitle: {
-        text: '3D donut in Highcharts'
+        text: '3D donut in Highcharts',
+        align: 'left'
     },
     plotOptions: {
         pie: {

@@ -21,9 +21,11 @@ import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
 import U from '../Utilities.js';
 const {
+    extend,
     merge,
     pick
 } = U;
@@ -159,7 +161,7 @@ namespace LegendSymbol {
                     verticalCenter - radius,
                     2 * radius,
                     2 * radius,
-                    markerOptions
+                    extend<SymbolOptions>({ context: 'legend' }, markerOptions)
                 )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
