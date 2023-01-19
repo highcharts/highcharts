@@ -28,6 +28,7 @@ let temperatureScale = 'C';
 async function setupDashboard() {
 
     citiesData = await buildCitiesData();
+    buildSymbols();
 
     const defaultCityStore = await dataPool.getStore(defaultCity);
 
@@ -68,6 +69,12 @@ async function setupDashboard() {
                 }],
                 navigator: {
                     enabled: true,
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    },
                     series: [{
                         name: defaultCity,
                         data: defaultCityStore.table.modified.getRows(
@@ -75,20 +82,33 @@ async function setupDashboard() {
                             void 0,
                             ['time', dataScope]
                         )
-                    }]
+                    }],
+                    xAxis: {
+                        endOnTick: true,
+                        gridZIndex: 4,
+                        labels: {
+                            x: 1,
+                            y: 22
+                        },
+                        opposite: true,
+                        showFirstLabel: true,
+                        showLastLabel: true,
+                        startOnTick: true,
+                        tickPosition: 'inside'
+                    },
+                    yAxis: {
+                        maxPadding: 0.5
+                    }
                 },
                 scrollbar: {
                     enabled: true,
-                    barBackgroundColor: 'gray',
-                    barBorderRadius: 7,
+                    barBorderRadius: 0,
                     barBorderWidth: 0,
-                    buttonBackgroundColor: 'gray',
                     buttonBorderWidth: 0,
-                    buttonBorderRadius: 7,
-                    trackBackgroundColor: 'none',
-                    trackBorderWidth: 1,
-                    trackBorderRadius: 8,
-                    trackBorderColor: '#CCC'
+                    buttonBorderRadius: 0,
+                    height: 14,
+                    trackBorderWidth: 0,
+                    trackBorderRadius: 0
                 },
                 xAxis: {
                     visible: false,
@@ -470,6 +490,10 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
+            store: defaultCityStore,
+            sync: {
+                tooltip: true
+            },
             chartOptions: {
                 chart: {
                     spacing: 40,
@@ -529,9 +553,13 @@ async function setupDashboard() {
         {
             cell: 'selection-grid',
             type: 'DataGrid',
+            dataGridOptions: {
+                editable: false
+            },
             store: defaultCityStore,
-            editable: true,
-            // syncEvents: ['tooltip'],
+            sync: {
+                tooltip: true
+            },
             title: 'Selection Grid',
             events: {
                 mount: function () {
@@ -848,6 +876,23 @@ function buildDates() {
     }
 
     return dates;
+}
+
+function buildSymbols() {
+    // left arrow
+    Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
+        'M', x + w / 2 - 1, y,
+        'L', x + w / 2 - 1, y + h,
+        x - w / 2 - 1, y + h / 2,
+        'Z'
+    ];
+    // right arrow
+    Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
+        'M', x + w / 2 + 1, y,
+        'L', x + w / 2 + 1, y + h,
+        x + w + w / 2 + 1, y + h / 2,
+        'Z'
+    ];
 }
 
 function labelFormatter(value) {

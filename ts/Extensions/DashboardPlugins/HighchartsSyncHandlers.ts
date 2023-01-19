@@ -339,12 +339,10 @@ const configs: {
                             chart.tooltip.refresh(match);
                         }
                     }
-                    if (hoverRow && hoverRow.firstChild) {
-                        const cell = hoverRow.firstChild as HTMLElement,
-                            cellName = cell.innerHTML;
 
+                    if (hoverRow && hoverRow.dataset.rowXIndex) {
                         chart.series[0].points.forEach((point): void => {
-                            if (point.name === cellName) {
+                            if (String(point.x) === hoverRow.dataset.rowXIndex) {
                                 chart.tooltip && chart.tooltip.refresh(point);
                             }
                         });
