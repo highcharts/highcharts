@@ -141,7 +141,7 @@ async function setupDashboard() {
                                         data: chartData
                                     });
 
-                                    worldDate = chartData[0][0];
+                                    worldDate = lastPoint[0];
                                     const startIndex = data.indexOf(
                                         chartData[0]
                                     );
