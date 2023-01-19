@@ -277,7 +277,7 @@ async function setupDashboard() {
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.name, point.y)
+                                tooltipFormatter(point.y, point.name)
                             );
                         }
                     }
@@ -896,14 +896,18 @@ function buildSymbols() {
     ];
 }
 
-function tooltipFormatter(city, value) {
-    const cities = citiesTable.modified;
-    const elevation = cities.getCell(
-        'elevation',
-        cities.getRowIndexBy('city', city)
-    );
+function tooltipFormatter(value, city) {
+    let tooltip = '';
 
-    let tooltip = `Elevation: ${elevation}m<br>`;
+    if (city) {
+        const cities = citiesTable.modified;
+        const elevation = cities.getCell(
+            'elevation',
+            cities.getRowIndexBy('city', city)
+        );
+
+        tooltip += `Elevation: ${elevation}m<br>`;
+    }
 
     // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {
