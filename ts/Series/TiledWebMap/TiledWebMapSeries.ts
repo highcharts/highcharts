@@ -15,10 +15,6 @@
  *
  * */
 
-import type {
-    AnimationOptions,
-    AnimationStepCallbackFunction
-} from '../../Core/Animation/AnimationOptions';
 import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -423,7 +419,8 @@ class TiledWebMapSeries extends MapSeries {
 addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
     const twm: TiledWebMapSeriesOptions =
         (e.seriesOptions || []).filter(
-            (s: any): boolean => s.type === 'tiledwebmap')[0];
+            (s: any): boolean => s.type === 'tiledwebmap')[0],
+        { geoBounds } = e;
 
     if (twm && twm.provider && twm.provider.type) {
         const ProviderDefinition =
@@ -431,9 +428,23 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
             def = new ProviderDefinition(),
             providerProjectionName: string = def.getProjectionName();
 
-        this.recommendedProjection = {
-            name: providerProjectionName
-        };
+        if (geoBounds) {
+            const { x1, y1, x2, y2 } = geoBounds;
+            this.recommendedMapView = {
+                projection: {
+                    name: providerProjectionName,
+                    parallels: [y1, y2],
+                    rotation: [-(x1 + x2) / 2]
+                }
+            };
+        } else {
+            this.recommendedMapView = {
+                projection: {
+                    name: providerProjectionName
+                }
+            };
+        }
+
         return false;
     }
 

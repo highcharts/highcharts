@@ -245,23 +245,24 @@ class MapView {
                 }
             });
 
+            // Get the composite bounds
+            const geoBounds = (
+                allGeoBounds.length &&
+                MapView.compositeBounds(allGeoBounds)
+            );
+
+            // Provide a best-guess recommended projection if not set in
+            // the map or in user options
+
             fireEvent(
                 this,
                 'beforeMapViewInit',
                 {
-                    seriesOptions: chart.options.series
+                    seriesOptions: chart.options.series,
+                    geoBounds
                 },
                 function (): void {
-                    // Get the composite bounds
-                    const geoBounds = (
-                        allGeoBounds.length &&
-                        MapView.compositeBounds(allGeoBounds)
-                    );
-
-                    // Provide a best-guess recommended projection if not set in
-                    // the map or in user options
                     if (geoBounds) {
-
                         const { x1, y1, x2, y2 } = geoBounds;
                         this.recommendedProjection =
                             (x2 - x1 > 180 && y2 - y1 > 90) ?
@@ -277,11 +278,10 @@ class MapView {
                                     rotation: [-(x1 + x2) / 2]
                                 };
                     }
-
-                    // Register the main geo map (from options.chart.map) if set
-                    this.geoMap = geoMaps[0];
                 }
             );
+            // Register the main geo map (from options.chart.map) if set
+            this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
