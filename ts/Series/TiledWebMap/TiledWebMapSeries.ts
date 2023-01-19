@@ -15,6 +15,10 @@
  *
  * */
 
+import type {
+    AnimationOptions,
+    AnimationStepCallbackFunction
+} from '../../Core/Animation/AnimationOptions';
 import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -183,8 +187,13 @@ class TiledWebMapSeries extends MapSeries {
             provider = options.provider,
             mapView: any = chart.mapView,
             { zoom } = mapView,
-            zoomCeil = Math.ceil(zoom),
-            maxTile = Math.pow(2, zoom);
+            zoomFloor = zoom < 0 ? 0 : Math.floor(zoom),
+            maxTile = Math.pow(2, zoomFloor),
+            worldSize = 400.979322,
+            tileSize = 256,
+            scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
+                ((tileSize / worldSize) * Math.pow(2, zoomFloor)),
+            scaledTileSize = scale * 256;
 
         if (provider && (provider.type || provider.url)) {
             if (provider.type) {
@@ -234,14 +243,14 @@ class TiledWebMapSeries extends MapSeries {
                 mapView.projection.hasCoordinates = true;
             }
 
-            if (!transformGroups[zoomCeil]) {
-                transformGroups[zoomCeil] = chart.renderer.g().add(this.group);
+            if (!transformGroups[zoomFloor]) {
+                transformGroups[zoomFloor] = chart.renderer.g().add(this.group);
             }
             const origin = mapView.lonLatToPixels({
                 lon: -180,
                 lat: 85.0511287798
             });
-            transformGroups[zoomCeil].attr({
+            transformGroups[zoomFloor].attr({
                 translateX: origin.x,
                 translateY: origin.y
             });
@@ -274,8 +283,10 @@ class TiledWebMapSeries extends MapSeries {
 
                         tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                             url,
-                            x * 256,
-                            y * 256
+                            x * scaledTileSize,
+                            y * scaledTileSize,
+                            scaledTileSize,
+                            scaledTileSize
                         )
                             .attr({
                                 zIndex: 2
@@ -285,9 +296,11 @@ class TiledWebMapSeries extends MapSeries {
                                     provider.onload.apply(this);
                                 }
                             })
-                            .add(transformGroups[zoomCeil]);
+                            .add(transformGroups[zoomFloor]);
 
                         tiles[`${zoom},${x},${y}`].originalURL = url;
+                        tiles[`${zoom},${x},${y}`].posX = x;
+                        tiles[`${zoom},${x},${y}`].posY = y;
                     }
                 }
                 tiles[`${zoom},${x},${y}`].isActive = true;
@@ -333,12 +346,22 @@ class TiledWebMapSeries extends MapSeries {
                 bottomRight.lon += Math.floor(count) * 360;
             }
 
-            const startPos = this.lonLatToTile(topLeft, zoom),
-                endPos = this.lonLatToTile(bottomRight, zoom);
+            // do not support vertical looping
+            if (
+                topLeft.lat > mapView.projection.maxLatitude ||
+                bottomRight.lat < -1 * mapView.projection.maxLatitude
+            ) {
+                topLeft.lat = topLeft.lat % mapView.projection.maxLatitude;
+                bottomRight.lat =
+                    bottomRight.lat % mapView.projection.maxLatitude;
+            }
+
+            const startPos = this.lonLatToTile(topLeft, zoomFloor),
+                endPos = this.lonLatToTile(bottomRight, zoomFloor);
 
             for (let x = startPos.x; x <= endPos.x; x++) {
                 for (let y = startPos.y; y <= endPos.y; y++) {
-                    addTile(x, y, zoom);
+                    addTile(x, y, zoomFloor);
                 }
             }
 
@@ -346,6 +369,13 @@ class TiledWebMapSeries extends MapSeries {
             Object.keys(tiles).forEach((key): any => {
                 if (tiles[key].isActive) {
                     tiles[key].isActive = false;
+                    const { posX, posY } = tiles[key];
+                    tiles[key].attr({
+                        x: posX * scaledTileSize,
+                        y: posY * scaledTileSize,
+                        width: scaledTileSize,
+                        height: scaledTileSize
+                    });
                 } else {
                     tiles[key].destroy();
                     delete tiles[key];
