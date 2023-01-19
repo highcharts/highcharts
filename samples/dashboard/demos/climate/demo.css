@@ -170,3 +170,7 @@
 .hd-edit-menu.hd-edit-toolbar-row {
     background: #646479;
 }
+
+.highcharts-dashboard > .hd-edit-drop-pointer {
+    background: #ff8d64;
+}
