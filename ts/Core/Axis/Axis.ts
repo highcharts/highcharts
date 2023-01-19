@@ -683,7 +683,7 @@ class Axis {
      */
     public getSeriesExtremes(): void {
         const axis = this,
-            { chart, stacking } = axis;
+            chart = axis.chart;
 
         let xExtremes;
 
@@ -695,13 +695,7 @@ class Axis {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (stacking) {
-                // #17314 clear stacks before new build
-                stacking.cleanStacks();
-                stacking.buildStacks();
-            }
-
-            // loop through this axis' series
+            // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
                 if (
@@ -2546,6 +2540,7 @@ class Axis {
 
             if (axis.stacking) {
                 axis.stacking.resetStacks();
+                axis.stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
