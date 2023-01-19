@@ -124,10 +124,6 @@ const dashboard = new Dashboard.Dashboard('container', {
                 }, {
                     id: 'kpi-13'
                 }]
-            }, {
-                cells: [{
-                    id: 'kpi-20' // for threshold
-                }]
             }]
         }]
     }
@@ -157,52 +153,3 @@ dashboard.mountedComponents.forEach(element => {
         setValues(element);
     }, 1000);
 });
-
-
-// const threshold = [{
-//     component: HTMLComponent,
-//     options: {
-//         elements: [{
-//             tagName: 'img',
-//             attributes: {
-//                 src: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/ok-hand_1f44c.png'
-//             }
-//         }]
-//     },
-//     value: 69,
-//     thresholds: [{
-//         min: 50,
-//         component: KPIComponent,
-//         options: {
-//             title: 'Errors'
-//         }
-//     }, {
-//         min: 1000,
-//         options: {
-//             title: 'Tons of errors!'
-//         }
-//     }, {
-//         min: 9001,
-//         options: {
-//             title: {
-//                 text: 'Its over 9000!!!',
-//                 style: {
-//                     fontWeight: 700
-//                 }
-//             },
-//             style: {
-//                 color: 'red',
-//                 background: 'black'
-//             }
-//         }
-//     }]
-// }].map(config => {
-//     const parentElement = document.createElement('div');
-//     parents.push(parentElement);
-//     container.appendChild(parentElement);
-//     resize(parentElement);
-//     return new ThresholdComponent({
-//         parentElement,
-//         ...config
-//     }).render();
-// });
