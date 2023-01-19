@@ -976,18 +976,18 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         data
     });
 
-    // Update the main chart
-    Highcharts.fireEvent(
-        navigatorSeries.chart.xAxis[0],
-        'afterSetExtremes'
-    );
-
     // update chart
     citySeries.chart.update({
         title: {
             text: cityScope
         }
     });
+
+    // Update the main chart
+    Highcharts.fireEvent(
+        navigatorSeries.chart.xAxis[0],
+        'afterSetExtremes'
+    );
 
     // update colorAxis
     citiesMap.chart.update({
