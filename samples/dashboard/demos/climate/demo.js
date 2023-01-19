@@ -849,8 +849,8 @@ function buildColorAxis() {
         min: 0,
         visible: false,
         stops: [
-            [0.0, '#B8C4F3'],
-            [1.0, '#C2CAEB']
+            [0.0, '#C2CAEB'],
+            [1.0, '#162870']
         ]
     };
 }
