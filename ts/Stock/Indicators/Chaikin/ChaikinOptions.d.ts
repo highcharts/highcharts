@@ -18,10 +18,10 @@ import type {
 } from '../EMA/EMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface ChaikinOptions extends EMAOptions {
     params?: ChaikinParamsOptions;
@@ -33,9 +33,9 @@ export interface ChaikinParamsOptions extends EMAParamsOptions {
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default ChaikinOptions;

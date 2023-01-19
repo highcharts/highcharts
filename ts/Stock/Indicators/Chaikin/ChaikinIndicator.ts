@@ -122,7 +122,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
-    getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
