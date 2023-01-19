@@ -456,7 +456,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Stack labels styles options #13330', function (assert) {
+QUnit.test('Stack labels various', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -493,6 +493,7 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         ]
     });
 
+    // Styles options (#13330)
     const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
 
     assert.strictEqual(
@@ -522,6 +523,26 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         'This stack-label box r atribute should be same as ' +
             'set in options #13330'
     );
+
+    // Verify labels are not orphaned or duplicated (#2336)
+    assert.strictEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-stack-labels .highcharts-label'
+        ).length,
+        2,
+        'There should be two labels initially'
+    );
+
+    chart.setSize(300, undefined, false);
+
+    assert.strictEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-stack-labels .highcharts-label'
+        ).length,
+        2,
+        'There should still be two labels after redraw'
+    );
+
 });
 
 QUnit.test(
