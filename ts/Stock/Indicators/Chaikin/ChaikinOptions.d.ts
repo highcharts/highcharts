@@ -27,15 +27,15 @@ export interface ChaikinOptions extends EMAOptions {
     params?: ChaikinParamsOptions;
 }
 
+export interface ChaikinParamsOptions extends EMAParamsOptions {
+    periods?: Array<number>;
+    volumeSeriesID?: string;
+}
+
 /* *
 *
 *  Default Export
 *
 * */
-
-export interface ChaikinParamsOptions extends EMAParamsOptions {
-    periods?: Array<number>;
-    volumeSeriesID?: string;
-}
 
 export default ChaikinOptions;
