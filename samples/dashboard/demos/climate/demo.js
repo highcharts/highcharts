@@ -282,7 +282,7 @@ async function setupDashboard() {
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.name, point.y)
+                                tooltipFormatter(point.y, point.name)
                             );
                         }
                     }
@@ -503,6 +503,10 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
+            store: defaultCityStore,
+            sync: {
+                tooltip: true
+            },
             chartOptions: {
                 chart: {
                     spacing: [40, 40, 40, 10],
@@ -571,14 +575,19 @@ async function setupDashboard() {
         {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: defaultCityStore,
+            dataGridOptions: {
+                editable: false
+            },
             editable: true,
-            // syncEvents: ['tooltip'],
             events: {
                 mount: function () {
                     // call action
                     cityGrid = this.dataGrid;
                 }
+            },
+            store: defaultCityStore,
+            sync: {
+                tooltip: true
             }
         }],
         editMode: {
@@ -909,14 +918,18 @@ function buildSymbols() {
     ];
 }
 
-function tooltipFormatter(city, value) {
-    const cities = citiesTable.modified;
-    const elevation = cities.getCell(
-        'elevation',
-        cities.getRowIndexBy('city', city)
-    );
+function tooltipFormatter(value, city) {
+    let tooltip = '';
 
-    let tooltip = `Elevation: ${elevation}m<br>`;
+    if (city) {
+        const cities = citiesTable.modified;
+        const elevation = cities.getCell(
+            'elevation',
+            cities.getRowIndexBy('city', city)
+        );
+
+        tooltip += `Elevation: ${elevation}m<br>`;
+    }
 
     // temperature values (original Kelvin)
     if (dataScope[0] === 'T') {

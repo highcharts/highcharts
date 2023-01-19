@@ -8,6 +8,7 @@ module.exports = {
     unlisted: [
         'dashboards/components',
         'dashboards/sync',
+        'dashboards/your-first-dashboard',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon',
