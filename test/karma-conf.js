@@ -322,6 +322,9 @@ module.exports = function (config) {
 
             // Custom data source
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+            'samples/highcharts/blog/gdp-growth-annual/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
+            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
