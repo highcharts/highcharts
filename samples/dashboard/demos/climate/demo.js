@@ -27,7 +27,7 @@ let citySeries;
 let dataScope = defaultData;
 let navigatorSeries;
 let worldDate = new Date(Date.UTC(2010, 11, 25));
-let kpi = {};
+let kpis = {};
 let darkMode = false;
 let temperatureScale = 'C';
 
@@ -417,7 +417,7 @@ async function setupDashboard() {
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TX = this;
+                    kpis.TX = this;
                 },
                 click: function () {
                     dataScope = 'TX' + temperatureScale;
@@ -455,7 +455,7 @@ async function setupDashboard() {
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
                 mount: function () {
-                    kpi.TN = this;
+                    kpis.TN = this;
                 },
                 click: function () {
                     dataScope = 'TN' + temperatureScale;
@@ -486,7 +486,7 @@ async function setupDashboard() {
             valueFormatter: v => `${v} days`,
             events: {
                 mount: function () {
-                    kpi.FD = this;
+                    kpis.FD = this;
                 },
                 click: function () {
                     dataScope = 'FD';
@@ -517,7 +517,7 @@ async function setupDashboard() {
             valueFormatter: v => `${v} days`,
             events: {
                 mount: function () {
-                    kpi.ID = this;
+                    kpis.ID = this;
                 },
                 click: function () {
                     dataScope = 'ID';
@@ -548,7 +548,7 @@ async function setupDashboard() {
             valueFormatter: v => `${v} days`,
             events: {
                 mount: function () {
-                    kpi.RR1 = this;
+                    kpis.RR1 = this;
                 },
                 click: function () {
                     dataScope = 'RR1';
@@ -577,7 +577,7 @@ async function setupDashboard() {
             value: cityScope,
             events: {
                 mount: function () {
-                    kpi.data = this;
+                    kpis.data = this;
                     updateKPIData();
                 }
             }
@@ -645,11 +645,13 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         id: 'time-range-selector',
+                        height: 80,
                         width: '100%'
                     }]
                 }, {
                     cells: [{
                         id: 'world-map',
+                        height: 400,
                         width: '50%'
                     }, {
                         id: 'kpi-layout',
@@ -658,43 +660,42 @@ async function setupDashboard() {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    height: '50%',
                                     width: '33.333%'
                                 }, {
                                     id: 'kpi-temperature',
-                                    height: '50%',
                                     width: '33.333%'
                                 }, {
                                     id: 'kpi-max-temperature',
-                                    height: '50%',
                                     width: '33.333%'
                                 }]
                             }, {
                                 cells: [{
                                     id: 'kpi-rain',
-                                    height: '50%',
                                     width: '33.333%'
                                 }, {
                                     id: 'kpi-ice',
-                                    height: '50%',
                                     width: '33.333%'
                                 }, {
                                     id: 'kpi-fog',
-                                    height: '50%',
                                     width: '33.333%'
                                 }]
-                            }]
+                            }],
+                            style: {
+                                height: '204px'
+                            }
                         }
                     }]
                 }, {
                     cells: [{
                         id: 'selection-grid',
-                        height: 400,
                         width: '50%'
                     }, {
                         id: 'city-chart',
                         width: '50%'
-                    }]
+                    }],
+                    style: {
+                        height: '414px'
+                    }
                 }]
             }]
         }
@@ -963,14 +964,14 @@ function tooltipFormatter(value, city) {
 
 function updateKPI(table, time) {
     for (
-        const [key, ind] of Object.entries(kpi)
+        const [key, kpi] of Object.entries(kpis)
     ) {
         // set active state on current temperature KPI
         if (key === 'TNC') {
-            ind.parentCell.setActiveState();
+            kpi.parentCell.setActiveState();
         }
 
-        ind.update({
+        kpi.update({
             value: table.getCellAsNumber(
                 key + (key[0] === 'T' ? temperatureScale : ''),
                 table.getRowIndexBy('time', time),
@@ -984,7 +985,7 @@ function updateKPIData(city) {
     const data = citiesData[city];
 
     // update KPI data
-    kpi.data.update({
+    kpis.data.update({
         value: (
             `<div><span>📍</span>${data.name}</div>` +
             `<div>${data.country}</div>`

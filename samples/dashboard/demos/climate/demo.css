@@ -194,8 +194,12 @@
  * */
 
 #selection-grid .hd-component {
-    border: 1px solid var(--color-border);
     padding: 14px;
+}
+
+#selection-grid .hc-dg-container {
+    height: 372px;
+    overflow: auto;
 }
 
 #selection-grid .hc-dg-column-header {
