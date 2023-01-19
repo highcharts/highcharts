@@ -24,10 +24,15 @@ export default class OpenStreetMap implements ProviderDefinition {
 
     credits = {
         standard: `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
-            OpenStreetMap</a>`
+            OpenStreetMap</a>`,
+        bicycle: `Maps \u00a9 <a href="https://www.thunderforest.com">Thunderforest</a>,
+            Data \u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`
     };
 
     getCredits(theme: string | undefined): string {
+        if (theme === 'bicycle') {
+            return this.credits.bicycle;
+        }
         return this.credits.standard;
     }
 
