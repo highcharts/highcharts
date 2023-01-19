@@ -490,6 +490,10 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
+            store: defaultCityStore,
+            sync: {
+                tooltip: true
+            },
             chartOptions: {
                 chart: {
                     spacing: 40,
@@ -549,9 +553,13 @@ async function setupDashboard() {
         {
             cell: 'selection-grid',
             type: 'DataGrid',
+            dataGridOptions: {
+                editable: false
+            },
             store: defaultCityStore,
-            editable: true,
-            // syncEvents: ['tooltip'],
+            sync: {
+                tooltip: true
+            },
             title: 'Selection Grid',
             events: {
                 mount: function () {
