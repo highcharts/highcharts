@@ -574,7 +574,6 @@ async function setupDashboard() {
             store: defaultCityStore,
             editable: true,
             // syncEvents: ['tooltip'],
-            title: 'Selection Grid',
             events: {
                 mount: function () {
                     // call action

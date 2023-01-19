@@ -13,6 +13,36 @@
     --color-title: #f0f0f0;
 }
 
+#selection-grid {
+    --color-background: #fff;
+    --color-border: #e0e0e0;
+    --color-header-background: #dadae2;
+    --color-header-border: #f7f7f7;
+    --color-header-text: #20202c;
+    --color-hover-background: #5352be;
+    --color-hover-border: #e7e7ec;
+    --color-hover-text: #e7e7ec;
+    --color-input-background: #fff;
+    --color-input-border: #5352be;
+    --color-input-text: #20202c;
+    --color-row-border: #e7e7ec;
+    --color-row-text: #20202c;
+    --color-row1-background: #fff;
+    --color-row2-background: #f7f7f7;
+}
+
+.highcharts-dashboard.hd-dark-mode #selection-grid {
+    --color-background: #20202c;
+    --color-border: #4a4a53;
+    --color-header-background: #20202c;
+    --color-header-border: #dadae2;
+    --color-header-text: #dadae2;
+    --color-row-border: #838394;
+    --color-row-text: #e7e7ec;
+    --color-row1-background: #0d0d0d;
+    --color-row2-background: #20202c;
+}
+
 #time-range-selector {
     --color-axis-labels: #646479;
     --color-background: #fafafa;
@@ -67,6 +97,18 @@
         --color-dashboard: #46475d;
     }
 
+    #selection-grid {
+        --color-background: #20202c;
+        --color-border: #4a4a53;
+        --color-header-background: #20202c;
+        --color-header-border: #dadae2;
+        --color-header-text: #dadae2;
+        --color-row-border: #838394;
+        --color-row-text: #e7e7ec;
+        --color-row1-background: #0d0d0d;
+        --color-row2-background: #20202c;
+    }
+
     #time-range-selector {
         --color-axis-labels: #e7e7ec;
         --color-background: #0d0d0d;
@@ -107,6 +149,10 @@
  *
  * */
 
+#city-chart .hd-component-content {
+    background: var(--color-background);
+}
+
 #city-chart .highcharts-background {
     fill: var(--color-background);
 }
@@ -143,7 +189,52 @@
 
 /* *
  *
- *  Navigator
+ *  Selection Grid
+ *
+ * */
+
+#selection-grid .hd-component {
+    border: 1px solid var(--color-border);
+    padding: 14px;
+}
+
+#selection-grid .hc-dg-column-header {
+    background-color: var(--color-header-background);
+    border-color: var(--color-header-border);
+    color: var(--color-header-text);
+}
+
+#selection-grid .hc-dg-outer-container {
+    background-color: var(--color-background);
+    color: var(--color-row-text);
+    position: relative;
+    top: 0 !important;
+}
+
+#selection-grid .hc-dg-row {
+    background-color: var(--color-row1-background);
+    border-color: var(--color-row-border);
+}
+
+#selection-grid .hc-dg-row:nth-child(even) {
+    background-color: var(--color-row2-background);
+}
+
+#selection-grid .hc-dg-row.hovered {
+    background-color: var(--color-hover-background);
+    border-color: var(--color-hover-border);
+    color: var(--color-hover-text);
+}
+
+#selection-grid .hc-dg-cell-input {
+    background: var(--color-input-background);
+    border: 2px solid var(--color-input-border);
+    color: var(--color-input-text);
+}
+
+/* *
+ *
+ *  Time Range Selector
  *
  * */
 
