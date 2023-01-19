@@ -1,12 +1,12 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
-// const dataScopes = {
-//     FD: 'Days with fog',
-//     ID: 'Days with ice',
-//     RR1: 'Days with rain',
-//     TN: 'Average temperature',
-//     TX: 'Maximal temperature'
-// };
 const dataPool = new Dashboard.DataOnDemand();
+const dataScopes = {
+    FD: 'Days with fog',
+    ID: 'Days with ice',
+    RR: 'Days with rain',
+    TN: 'Average temperature',
+    TX: 'Maximal temperature'
+};
 const initialMin = Date.UTC(2010);
 const minRange = 30 * 24 * 3600 * 1000;
 const maxRange = 365 * 24 * 3600 * 1000;
@@ -120,7 +120,7 @@ async function setupDashboard() {
                         afterSetExtremes: async function (e) {
                             const min = e.min || e.target.min,
                                 max = e.max || e.target.max,
-                                city = citySeries.chart.title.textStr;
+                                city = cityScope;
 
                             dataPool
                                 .getStore(city)
@@ -530,17 +530,23 @@ async function setupDashboard() {
                     }
                 }],
                 title: {
-                    text: defaultCity
+                    text: dataScopes[dataScope.substring(0, 2)]
                 },
                 tooltip: {
                     enabled: true
                 },
                 xAxis: {
                     type: 'datetime',
-                    visible: false,
                     labels: {
-                        format: '{value:%Y-%m-%d}'
-                    }
+                        formatter: function () {
+                            return Highcharts.time.dateFormat(
+                                '%e. %b',
+                                this.value
+                            );
+                        }
+                    },
+                    tickAmount: 36,
+                    tickInterval: 365 * 24 * 3600 * 1000 / 4
                 },
                 yAxis: {
                     title: {
@@ -995,7 +1001,10 @@ function syncRefreshCharts(store, dataScope, cityScope) {
     });
 
     citySeries.chart.update({
-        colorAxis: buildColorAxis()
+        colorAxis: buildColorAxis(),
+        title: {
+            text: dataScopes[dataScope.substring(0, 2)]
+        }
     });
 
     buildCitiesMap().then(data => {

@@ -6,8 +6,15 @@
  *
  * */
 
+#city-chart {
+    --color-axis: #f7f7f7;
+    --color-axis-labels: #e7e7ec;
+    --color-background: #5352be;
+    --color-title: #f0f0f0;
+}
+
 #time-range-selector {
-    --color-axis: #646479;
+    --color-axis-labels: #646479;
     --color-background: #fafafa;
     --color-grid: #9a92ce;
     --color-handle: #5352be;
@@ -21,7 +28,7 @@
 }
 
 .highcharts-dashboard.hd-dark-mode #time-range-selector {
-    --color-axis: #e7e7ec;
+    --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
     --color-handle: #838394;
@@ -61,7 +68,7 @@
     }
 
     #time-range-selector {
-        --color-axis: #e7e7ec;
+        --color-axis-labels: #e7e7ec;
         --color-background: #0d0d0d;
         --color-grid: #838394;
         --color-mask: #dddbef66;
@@ -101,15 +108,19 @@
  * */
 
 #city-chart .highcharts-background {
-    fill: #46475d;
+    fill: var(--color-background);
 }
 
 #city-chart .highcharts-title {
-    fill: #fff;
+    fill: var(--color-title);
+}
+
+#city-chart .highcharts-axis {
+    fill: var(--color-axis);
 }
 
 #city-chart .highcharts-axis-labels {
-    fill: #fff;
+    fill: var(--color-axis-labels);
 }
 
 /* *
@@ -192,8 +203,8 @@
     stroke: var(--color-scroll-line);
 }
 
-#time-range-selector .highcharts-xaxis-labels {
-    fill: var(--color-axis);
+#time-range-selector .highcharts-axis-labels {
+    fill: var(--color-axis-labels);
 }
 
 /* *
