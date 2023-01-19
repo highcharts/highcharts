@@ -113,13 +113,15 @@
 
 #city-chart .highcharts-title {
     fill: var(--color-title);
+    font-size: 1.2em;
 }
 
 #city-chart .highcharts-axis {
     fill: var(--color-axis);
 }
 
-#city-chart .highcharts-axis-labels {
+#city-chart .highcharts-axis-labels,
+#city-chart .highcharts-axis-title {
     fill: var(--color-axis-labels);
 }
 

@@ -7,6 +7,11 @@ const dataScopes = {
     TN: 'Average temperature',
     TX: 'Maximal temperature'
 };
+const dataTemperatures = {
+    C: 'Celsius',
+    F: 'Farenheit',
+    K: 'Kelvin'
+};
 const initialMin = Date.UTC(2010);
 const minRange = 30 * 24 * 3600 * 1000;
 const maxRange = 365 * 24 * 3600 * 1000;
@@ -500,7 +505,7 @@ async function setupDashboard() {
             type: 'Highcharts',
             chartOptions: {
                 chart: {
-                    spacing: 40,
+                    spacing: [40, 40, 40, 10],
                     styledMode: true
                 },
                 credits: {
@@ -530,7 +535,10 @@ async function setupDashboard() {
                     }
                 }],
                 title: {
-                    text: dataScopes[dataScope.substring(0, 2)]
+                    margin: 20,
+                    text: dataScopes[dataScope.substring(0, 2)],
+                    x: 15,
+                    y: 5
                 },
                 tooltip: {
                     enabled: true
@@ -550,7 +558,7 @@ async function setupDashboard() {
                 },
                 yAxis: {
                     title: {
-                        text: ''
+                        text: dataTemperatures[dataScope[2] || 'K']
                     }
                 }
             },
@@ -1004,6 +1012,15 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         colorAxis: buildColorAxis(),
         title: {
             text: dataScopes[dataScope.substring(0, 2)]
+        },
+        yAxis: {
+            title: {
+                text: (
+                    dataScope[0] === 'T' ?
+                        dataTemperatures[dataScope[2] || 'K'] :
+                        'Days'
+                )
+            }
         }
     });
 
