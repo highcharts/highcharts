@@ -1,11 +1,11 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
-    FD: 'Days with fog',
-    ID: 'Days with ice',
-    RR: 'Days with rain',
-    TN: 'Average temperature',
-    TX: 'Maximal temperature'
+    FD: 'Days with Fog',
+    ID: 'Days with Ice',
+    RR: 'Days with Rain',
+    TN: 'Average Temperature',
+    TX: 'Maximal Temperature'
 };
 const dataTemperatures = {
     C: 'Celsius',
@@ -124,11 +124,10 @@ async function setupDashboard() {
                     events: {
                         afterSetExtremes: async function (e) {
                             const min = e.min || e.target.min,
-                                max = e.max || e.target.max,
-                                city = cityScope;
+                                max = e.max || e.target.max;
 
                             dataPool
-                                .getStore(city)
+                                .getStore(cityScope)
                                 .then(store => {
                                     const data = store.table.modified
                                             .getRows(
@@ -158,7 +157,7 @@ async function setupDashboard() {
                                     );
 
                                     updateKPI(store.table, lastPoint[0]);
-                                    updateKPIData(city);
+                                    updateKPIData();
                                 });
                         }
                     }
@@ -253,7 +252,7 @@ async function setupDashboard() {
                                     cityGrid.dataTable = store.table;
                                     cityGrid.update(); // force redraw
 
-                                    updateKPIData(city);
+                                    updateKPIData();
                                 });
                         }
                     },
@@ -403,9 +402,59 @@ async function setupDashboard() {
                 tooltip: true
             }
         }, {
+            cell: 'kpi-data',
+            type: 'kpi',
+            dimensions: {
+                height: 150
+            },
+            title: cityScope,
+            value: 10,
+            valueFormatter: v => `${v.toFixed(0)}m`,
+            events: {
+                mount: function () {
+                    kpis.data = this;
+                    updateKPIData();
+                }
+            }
+        }, {
+            cell: 'kpi-temperature',
+            type: 'kpi',
+            subtitle: dataScopes.TN,
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber(
+                    'TN' + temperatureScale,
+                    table.getRowIndexBy('time', worldDate.getTime()),
+                    true
+                );
+            })(),
+            valueFormatter: v => `${v.toFixed(0)}°`,
+            events: {
+                mount: function () {
+                    kpis.TN = this;
+                },
+                click: function () {
+                    dataScope = 'TN' + temperatureScale;
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
             cell: 'kpi-max-temperature',
             type: 'kpi',
-            title: 'Maximum temperature',
+            subtitle: dataScopes.TX,
             value: (() => {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber(
@@ -441,111 +490,13 @@ async function setupDashboard() {
                 }
             }
         }, {
-            cell: 'kpi-temperature',
-            type: 'kpi',
-            title: 'Average temperature',
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'TN' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate.getTime()),
-                    true
-                );
-            })(),
-            valueFormatter: v => `${v.toFixed(0)}°`,
-            events: {
-                mount: function () {
-                    kpis.TN = this;
-                },
-                click: function () {
-                    dataScope = 'TN' + temperatureScale;
-
-                    syncRefreshCharts(
-                        citiesData[cityScope].store,
-                        dataScope,
-                        cityScope
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
-            cell: 'kpi-fog',
-            type: 'kpi',
-            title: 'Fog',
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
-            })(),
-            valueFormatter: v => `${v} days`,
-            events: {
-                mount: function () {
-                    kpis.FD = this;
-                },
-                click: function () {
-                    dataScope = 'FD';
-
-                    syncRefreshCharts(
-                        citiesData[cityScope].store,
-                        dataScope,
-                        cityScope
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
-            cell: 'kpi-ice',
-            type: 'kpi',
-            title: 'Ice',
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
-            })(),
-            valueFormatter: v => `${v} days`,
-            events: {
-                mount: function () {
-                    kpis.ID = this;
-                },
-                click: function () {
-                    dataScope = 'ID';
-
-                    syncRefreshCharts(
-                        citiesData[cityScope].store,
-                        dataScope,
-                        cityScope
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
             cell: 'kpi-rain',
             type: 'kpi',
-            title: 'Rain',
+            subtitle: dataScopes.RR,
             value: (() => {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate.getTime()), true);
             })(),
-            valueFormatter: v => `${v} days`,
             events: {
                 mount: function () {
                     kpis.RR1 = this;
@@ -569,16 +520,63 @@ async function setupDashboard() {
                 }
             }
         }, {
-            cell: 'kpi-data',
+            cell: 'kpi-ice',
             type: 'kpi',
-            dimensions: {
-                height: 150
-            },
-            value: cityScope,
+            subtitle: dataScopes.ID,
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
             events: {
                 mount: function () {
-                    kpis.data = this;
-                    updateKPIData();
+                    kpis.ID = this;
+                },
+                click: function () {
+                    dataScope = 'ID';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'kpi-fog',
+            type: 'kpi',
+            subtitle: dataScopes.FD,
+            value: (() => {
+                const table = defaultCityStore.table.modified;
+                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
+            })(),
+            events: {
+                mount: function () {
+                    kpis.FD = this;
+                },
+                click: function () {
+                    dataScope = 'FD';
+
+                    syncRefreshCharts(
+                        citiesData[cityScope].store,
+                        dataScope,
+                        cityScope
+                    );
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
                 }
             }
         }],
@@ -645,13 +643,11 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         id: 'time-range-selector',
-                        height: 80,
                         width: '100%'
                     }]
                 }, {
                     cells: [{
                         id: 'world-map',
-                        height: 400,
                         width: '50%'
                     }, {
                         id: 'kpi-layout',
@@ -981,19 +977,14 @@ function updateKPI(table, time) {
     }
 }
 
-function updateKPIData(city) {
-    const data = citiesData[city];
+function updateKPIData() {
+    const data = citiesData[cityScope];
 
     // update KPI data
     kpis.data.update({
-        value: (
-            `<div><span>📍</span>${data.name}</div>` +
-            `<div>${data.country}</div>`
-        ),
-        subtitle: (
-            `<div><span>🏔</span> ${data.elevation}</div>` +
-            '<div>Elevation</div>'
-        )
+        title: data.name,
+        value: data.elevation,
+        subtitle: 'Elevation'
     });
 }
 
