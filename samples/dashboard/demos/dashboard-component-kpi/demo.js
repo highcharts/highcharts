@@ -129,27 +129,29 @@ const dashboard = new Dashboard.Dashboard('container', {
     }
 });
 
-function setValues(element) {
-    const chart = element.component.chart,
-        randomValue = random(1000);
+function setValues() {
+    dashboard.mountedComponents.forEach(element => {
+        const chart = element.component.chart,
+            randomValue = random(1000);
 
-    if (chart && chart.options.chart.type !== 'solidgauge') {
-        chart.series[0].addPoint(
-            randomValue,
-            true,
-            true
-        );
-    } else if (chart) {
-        chart.series[0].setData([randomValue]);
-    }
-    element.component.update({
-        value: randomValue
+        if (chart && chart.options.chart.type !== 'solidgauge') {
+            chart.series[0].addPoint(
+                randomValue,
+                true,
+                true
+            );
+        } else if (chart) {
+            chart.series[0].setData([randomValue]);
+        }
+        element.component.update({
+            value: randomValue
+        });
     });
 }
+// Set some initial data
+setValues();
 
-dashboard.mountedComponents.forEach(element => {
-    setValues(element);
-    setInterval(() => {
-        setValues(element);
-    }, 1000);
-});
+// Update the data every second
+setInterval(() => {
+    setValues();
+}, 1000);
