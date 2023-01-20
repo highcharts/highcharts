@@ -11,6 +11,7 @@ module.exports = {
         'dashboards/sync',
         'dashboards/installation',
         'dashboards/your-first-dashboard',
+        'dashboards/edit-mode',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon',
