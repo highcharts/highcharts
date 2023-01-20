@@ -20,6 +20,8 @@
 #kpi-rain,
 #kpi-temperature {
     --color-background: #fff;
+    --color-hover: #5352be;
+    --color-hover-text: #fff;
     --color-text: #2f2b38;
 }
 
@@ -57,7 +59,7 @@
     --color-header-background: #20202c;
     --color-header-border: #dadae2;
     --color-header-text: #dadae2;
-    --color-row-border: #838394;
+    --color-row-border: #4a4a53;
     --color-row-text: #e7e7ec;
     --color-row1-background: #0d0d0d;
     --color-row2-background: #20202c;
@@ -133,7 +135,7 @@
         --color-header-background: #20202c;
         --color-header-border: #dadae2;
         --color-header-text: #dadae2;
-        --color-row-border: #838394;
+        --color-row-border: #4a4a53;
         --color-row-text: #e7e7ec;
         --color-row1-background: #0d0d0d;
         --color-row2-background: #20202c;
@@ -207,16 +209,6 @@
  *
  * */
 
-/* .hd-cell.hd-cell-state-hover:hover > .hd-component,
-.hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #5352be;
-    color: #fff;
-}
-
-.hd-cell.hd-cell-state-hover {
-    cursor: pointer;
-} */
-
 .hd-component-kpi,
 .hd-component-kpi-value-wrap {
     display: flex;
@@ -252,6 +244,16 @@
 
 #kpi-data .hd-component-kpi-value::before {
     content: "🏔 ";
+}
+
+.hd-cell.hd-cell-state-hover {
+    cursor: pointer;
+}
+
+.hd-cell.hd-cell-state-hover:hover > .hd-component,
+.hd-cell.hd-cell-state-active > .hd-component {
+    background-color: var(--color-hover) !important;
+    color: var(--color-hover-text) !important;
 }
 
 /* *
