@@ -103,17 +103,18 @@ namespace LegendSymbol {
         let attr: SVGAttributes = {},
             legendSymbol,
             markerOptions = options.marker,
-            lineSizer;
+            lineSizer = 0;
 
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': Math.min(options.lineWidth || 0, 24),
-                'stroke-linecap': options.linecap || 'round'
+                'stroke-width': Math.min(options.lineWidth || 0, 24)
             };
 
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
+            } else if (options.linecap !== 'square') {
+                attr['stroke-linecap'] = 'round';
             }
         }
 
@@ -123,10 +124,12 @@ namespace LegendSymbol {
             .attr(attr)
             .add(legendItemGroup);
 
-        lineSizer = Math.min(
-            legendItem.line.strokeWidth(),
-            symbolWidth
-        ) / 2;
+        if (attr['stroke-linecap']) {
+            lineSizer = Math.min(
+                legendItem.line.strokeWidth(),
+                symbolWidth
+            ) / 2;
+        }
 
         legendItem.line
             .attr({

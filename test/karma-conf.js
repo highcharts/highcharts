@@ -38,16 +38,7 @@ function getProperties() {
                 }
             });
         }
-
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
-        throw new Error(
-            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
-        );
-    }
+    } catch (e) {}
     return properties;
 }
 
@@ -572,8 +563,16 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 30000; // default 2000
     }
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
+
+        if (!properties['browserstack.username']) {
+            throw new Error(
+                'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
+                'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
+            );
+        }
+
         const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {

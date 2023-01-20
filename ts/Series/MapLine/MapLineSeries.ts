@@ -71,7 +71,7 @@ class MapLineSeries extends MapSeries {
          * Pixel width of the mapline line.
          *
          * @type      {number}
-         * @since     next
+         * @since 10.3.3
          * @product   highmaps
          * @default   1
          * @apioption plotOptions.mapline.lineWidth
@@ -255,7 +255,7 @@ export default MapLineSeries;
  * Pixel width of the mapline line.
  *
  * @type      {number|undefined}
- * @since     next
+ * @since 10.3.3
  * @product   highmaps
  * @apioption series.mapline.data.lineWidth
  */
