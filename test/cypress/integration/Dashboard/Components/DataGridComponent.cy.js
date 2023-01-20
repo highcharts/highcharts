@@ -1,6 +1,6 @@
 describe('layout resize on window changes', () => {
     before(()=>{
-        cy.visit('/dashboard/demos/dashboard-datagrid-component');
+        cy.visit('/dashboard/cypress/dashboard-datagrid-component');
     });
 
     it('Chart and DataGridComponent should have synced hover events.', () => {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,12 +27,24 @@ import type Point from '../../Core/Series/Point';
 import type SharedState from '../../Dashboard/Component/SharedComponentState';
 import type Sync from '../../Dashboard/Component/Sync/Sync';
 
-import HighchartsComponent from './HighchartsComponent.js';
+import ComponentTypes from '../../Dashboard/Component/ComponentType';
 import ComponentGroup from '../../Dashboard/Component/ComponentGroup.js';
+import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
-import ComponentTypes from '../../Dashboard/Component/ComponentType';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare global {
+    interface Window {
+        HighchartsComponent?: typeof HighchartsComponent;
+    }
+}
 
 
 function getAxisMinMaxMap(chart: Chart): Array<{
@@ -94,7 +106,7 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof HighchartsComponent) {
+                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const { chart, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
@@ -155,7 +167,7 @@ const configs: {
         seriesVisibilityEmitter: [
             'seriesVisibilityEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof HighchartsComponent) {
+                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const component = this;
                     return addEvent(component.chart, 'redraw', function (): void {
                         const { chart, store, id, activeGroup } = component;
@@ -186,7 +198,7 @@ const configs: {
         panEmitter: [
             'panEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof HighchartsComponent) {
+                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const { store, chart, id } = this;
                     if (store && chart) {
                         const ticks: number[] = [];
@@ -223,7 +235,7 @@ const configs: {
         selectionEmitter: [
             'selectionEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof HighchartsComponent) {
+                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const {
                         chart,
                         store,
@@ -327,12 +339,10 @@ const configs: {
                             chart.tooltip.refresh(match);
                         }
                     }
-                    if (hoverRow && hoverRow.firstChild) {
-                        const cell = hoverRow.firstChild as HTMLElement,
-                            cellName = cell.innerHTML;
 
+                    if (hoverRow && hoverRow.dataset.rowXIndex) {
                         chart.series[0].points.forEach((point): void => {
-                            if (point.name === cellName) {
+                            if (String(point.x) === hoverRow.dataset.rowXIndex) {
                                 chart.tooltip && chart.tooltip.refresh(point);
                             }
                         });
