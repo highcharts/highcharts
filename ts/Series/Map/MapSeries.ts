@@ -173,8 +173,11 @@ class MapSeries extends ScatterSeries {
          * the map borders. Round means that borders are rounded in the ends and
          * bends.
          *
-         * @type       {Highcharts.SeriesLinecapValue}
-         * @since      next
+         * @sample maps/demo/mappoint-mapmarker/
+         *         Backdrop coastline with round linecap
+         *
+         * @type   {Highcharts.SeriesLinecapValue}
+         * @since  10.3.3
          */
         linecap: 'butt',
 
@@ -1513,9 +1516,9 @@ export default MapSeries;
  *
  * @see [series colors](#plotOptions.map.colors)
  *
- * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-false/
+ * @sample {highmaps} maps/plotoptions/mapline-colorbypoint-false/
  *         Mapline colorByPoint set to false by default
- * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-true/
+ * @sample {highmaps} maps/plotoptions/mapline-colorbypoint-true/
  *         Mapline colorByPoint set to true
  *
  * @type      {boolean}

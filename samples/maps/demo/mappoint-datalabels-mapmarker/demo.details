@@ -3,6 +3,7 @@ name: Data labels as map markers
 authors:
   - Torstein Hønsi
 js_wrap: b
+new_until: 2023-03-20
 tags:
   - Highcharts Maps demo
 categories:

@@ -921,7 +921,7 @@ export default PlotLineOrBand;
  *
  * @type      {boolean}
  * @default   false
- * @since     next
+ * @since 10.3.3
  * @apioption xAxis.plotLines.labels.clip
  */
 
