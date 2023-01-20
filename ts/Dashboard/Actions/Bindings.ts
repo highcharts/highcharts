@@ -13,7 +13,6 @@ import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
 import KPIComponent from '../Component/KPIComponent.js';
-import ThresholdComponent from '../Component/ThresholdComponent.js';
 import Globals from '../Globals.js';
 
 const {
@@ -93,14 +92,6 @@ class Bindings {
                     break;
                 case 'kpi':
                     component = new KPIComponent(merge(
-                        options,
-                        {
-                            parentElement: compontentContainer as HTMLDOMElement
-                        })
-                    )
-                    break;
-                case 'threshold':
-                    component =  new ThresholdComponent(merge(
                         options,
                         {
                             parentElement: compontentContainer as HTMLDOMElement
