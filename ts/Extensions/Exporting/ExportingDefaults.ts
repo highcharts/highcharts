@@ -60,7 +60,7 @@ const exporting: ExportingOptions = {
     /**
      * Allows the end user to sort the data table by clicking on column headers.
      *
-     * @since next
+     * @since 10.3.3
      * @apioption exporting.allowTableSorting
      */
     allowTableSorting: true,
