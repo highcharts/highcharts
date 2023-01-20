@@ -1,12 +1,12 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
+// const dataScopes = {
+//     FD: 'Days with fog',
+//     ID: 'Days with ice',
+//     RR1: 'Days with rain',
+//     TN: 'Average temperature',
+//     TX: 'Maximal temperature'
+// };
 const dataPool = new Dashboard.DataOnDemand();
-const dataScopes = {
-    FD: 'Days with fog',
-    ID: 'Days with ice',
-    RR1: 'Days with rain',
-    TN: 'Average temperature',
-    TX: 'Maximal temperature'
-};
 const initialMin = Date.UTC(2010);
 const minRange = 30 * 24 * 3600 * 1000;
 const maxRange = 365 * 24 * 3600 * 1000;
@@ -15,6 +15,7 @@ const defaultData = 'TXC';
 
 let citiesData;
 let citiesMap;
+let citiesTable;
 let cityGrid;
 let cityScope = defaultCity;
 let citySeries;
@@ -140,7 +141,7 @@ async function setupDashboard() {
                                         data: chartData
                                     });
 
-                                    worldDate = chartData[0][0];
+                                    worldDate = lastPoint[0];
                                     const startIndex = data.indexOf(
                                         chartData[0]
                                     );
@@ -183,12 +184,15 @@ async function setupDashboard() {
                     enabled: false
                 },
                 mapNavigation: {
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    },
                     enabled: true,
                     enableMouseWheelZoom: false
                 },
                 mapView: {
                     maxZoom: 4,
-                    zoom: 1.6
+                    zoom: 1.3
                 },
                 series: [{
                     type: 'map',
@@ -199,20 +203,21 @@ async function setupDashboard() {
                     data: await buildCitiesMap(),
                     allowPointSelect: true,
                     dataLabels: [{
-                        align: 'center',
+                        align: 'left',
                         animation: false,
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
                         padding: 0,
                         verticalAlign: 'top',
+                        x: -2,
                         y: 2
                     }, {
                         animation: false,
                         crop: false,
                         enabled: true,
                         formatter: function () {
-                            return labelFormatter(this.y);
+                            return Math.round(this.y);
                         },
                         inside: true,
                         padding: 0,
@@ -233,7 +238,6 @@ async function setupDashboard() {
                             dataPool
                                 .getStore(city)
                                 .then(store => {
-                                    dataScope = 'TXC';
 
                                     syncRefreshCharts(
                                         store,
@@ -251,13 +255,16 @@ async function setupDashboard() {
                     },
                     marker: {
                         enabled: true,
+                        lineWidth: 2,
                         radius: 12,
-                        state: {
+                        states: {
                             hover: {
+                                lineWidthPlus: 4,
                                 radiusPlus: 0
                             },
                             select: {
-                                radius: 12
+                                lineWidthPlus: 4,
+                                radiusPlus: 0
                             }
                         },
                         symbol: 'mapmarker'
@@ -270,7 +277,7 @@ async function setupDashboard() {
 
                             return (
                                 `<b>${point.name}</b><br>` +
-                                tooltipFormatter(point.y)
+                                tooltipFormatter(point.y, point.name)
                             );
                         }
                     }
@@ -284,15 +291,16 @@ async function setupDashboard() {
                         return {
                             x: (
                                 axisInfo.plotX -
-                                width / 2 +
                                 this.options.padding
                             ),
                             y: (
                                 axisInfo.plotY +
-                                this.options.padding * 2
+                                this.options.padding +
+                                5
                             )
                         };
                     },
+                    shape: 'rect',
                     useHTML: true
                 }
             },
@@ -694,9 +702,9 @@ async function setupDataPool() {
         storeType: 'CSVStore'
     });
 
-    let csvReferences = await dataPool.getStoreTable('cities');
+    citiesTable = await dataPool.getStoreTable('cities');
 
-    for (const row of csvReferences.getRowObjects()) {
+    for (const row of citiesTable.getRowObjects()) {
         dataPool.setStoreOptions({
             name: row.city,
             storeOptions: {
@@ -745,7 +753,7 @@ main().catch(e => console.error(e));
  * */
 
 async function buildCitiesData() {
-    const cities = (await dataPool.getStoreTable('cities')).modified;
+    const cities = citiesTable.modified;
     const initialCity = defaultCity;
     const tables = {};
 
@@ -834,9 +842,11 @@ function buildColorAxis() {
             min: 32,
             visible: false,
             stops: [
-                [0.0, '#39F'],
-                [0.4, '#6C0'],
-                [0.8, '#F00']
+                [0.0, '#4CAFFE'],
+                [0.3, '#53BB6C'],
+                [0.5, '#DDCE16'],
+                [0.6, '#DF7642'],
+                [0.7, '#DD2323']
             ]
         };
     }
@@ -847,9 +857,8 @@ function buildColorAxis() {
         min: 0,
         visible: false,
         stops: [
-            [0.0, '#F00'],
-            [0.4, '#6C0'],
-            [0.8, '#39F']
+            [0.0, '#C2CAEB'],
+            [1.0, '#162870']
         ]
     };
 }
@@ -895,49 +904,48 @@ function buildSymbols() {
     ];
 }
 
-function labelFormatter(value) {
+function tooltipFormatter(value, city) {
+    let tooltip = '';
 
-    return Highcharts.correctFloat(value, 0);
-}
+    if (city) {
+        const cities = citiesTable.modified;
+        const elevation = cities.getCell(
+            'elevation',
+            cities.getRowIndexBy('city', city)
+        );
 
-function tooltipFormatter(value) {
-
-
-    if (dataScope[2] === 'C') {
-        return [
-            value + '˚C',
-            Highcharts.correctFloat(
-                (value * (9 / 5) + 32), 3
-            ) + '˚F'
-        ].join('<br>');
+        tooltip += `Elevation: ${elevation}m<br>`;
     }
 
-    if (dataScope[2] === 'F') {
-        return [
-            Highcharts.correctFloat(
-                (value  - 32) * (5 / 9), 3
-            ) + '˚C',
-            value + '˚F'
-        ].join('<br>');
-    }
+    // temperature values (original Kelvin)
+    if (dataScope[0] === 'T') {
+
+        if (dataScope[2] === 'C') {
+            tooltip += value + '˚C<br>';
+        }
+
+        if (dataScope[2] === 'F') {
+            tooltip += value + '˚F<br>';
+        }
 
     // rain days
-    if (dataScope === 'RR1') {
-        return Highcharts.correctFloat(value, 0) + ' rainy days';
-    }
+    } else if (dataScope === 'RR1') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' rainy days';
 
     // ice days
-    if (dataScope === 'ID') {
-        return Highcharts.correctFloat(value, 0) + ' icy days';
-    }
+    } else if (dataScope === 'ID') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' icy days';
 
     // fog days
-    if (dataScope === 'FD') {
-        return Highcharts.correctFloat(value, 0) + ' foggy days';
-    }
+    } else if (dataScope === 'FD') {
+        tooltip += Highcharts.correctFloat(value, 0) + ' foggy days';
 
     // fallback
-    return '' + Highcharts.correctFloat(value, 4);
+    } else {
+        tooltip += Highcharts.correctFloat(value, 4);
+    }
+
+    return tooltip;
 }
 
 function updateKPI(table, time) {
@@ -980,18 +988,18 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         data
     });
 
-    // Update the main chart
-    Highcharts.fireEvent(
-        navigatorSeries.chart.xAxis[0],
-        'afterSetExtremes'
-    );
-
     // update chart
     citySeries.chart.update({
         title: {
             text: cityScope
         }
     });
+
+    // Update the main chart
+    Highcharts.fireEvent(
+        navigatorSeries.chart.xAxis[0],
+        'afterSetExtremes'
+    );
 
     // update colorAxis
     citiesMap.chart.update({

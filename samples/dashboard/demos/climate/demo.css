@@ -20,10 +20,6 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboard.hd-dark-mode {
-    background-color: #46475d;
-}
-
 .highcharts-dashboard.hd-dark-mode #time-range-selector {
     --color-axis: #e7e7ec;
     --color-background: #0d0d0d;
@@ -38,7 +34,32 @@
     --color-thumb-line: #838394;
 }
 
+#world-map {
+    --color-background: #5352be;
+    --color-map: #dddbef;
+    --color-marker-border: #fff;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-navigation: #f7f7f7;
+    --color-navigation-line: #838393;
+    --color-navigation-text: #20202b;
+    --color-text: #000;
+    --color-text-border: #fff;
+}
+
+.highcharts-dashboard.hd-dark-mode #world-map {
+    --color-navigation: #20202b;
+    --color-navigation-line: #646478;
+    --color-navigation-text: #838393;
+}
+
 @media (prefers-color-scheme: dark) {
+    /* dark mode */
+
+    .highcharts-dashboard {
+        --color-dashboard: #46475d;
+    }
+
     #time-range-selector {
         --color-axis: #e7e7ec;
         --color-background: #0d0d0d;
@@ -51,6 +72,26 @@
         --color-thumb: #5352be;
         --color-thumb-line: #838394;
     }
+
+    #world-map {
+        --color-navigation: #20202b;
+        --color-navigation-line: #646478;
+        --color-navigation-text: #838393;
+    }
+}
+
+/* *
+ *
+ *  Dashboard
+ *
+ * */
+
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
+
+.highcharts-dashboard.hd-dark-mode .hd-edit-context-menu-btn {
+    filter: invert(1);
 }
 
 /* *
@@ -93,7 +134,7 @@
  *
  * */
 
-#time-range-selector > div > div {
+#time-range-selector .hd-component-content {
     background: var(--color-background);
 }
 
@@ -161,37 +202,101 @@
  *
  * */
 
+#world-map .hd-component-content {
+    background: var(--color-background);
+}
+
 #world-map .highcharts-background {
-    fill: #46475d;
+    fill: var(--color-background);
+}
+
+#world-map .highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map .highcharts-halo {
+    display: none;
+}
+
+#world-map .highcharts-map-navigation {
+    fill: var(--color-navigation);
+    font-size: 20px;
+    stroke: var(--color-navigation-line);
+}
+
+#world-map .highcharts-map-navigation text {
+    fill: var(--color-navigation-text);
 }
 
 #world-map .highcharts-series-0 .highcharts-point {
-    fill: #c93 !important;
-    stroke: #986;
+    fill: var(--color-map) !important;
+    stroke: var(--color-background);
+}
+
+#world-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.6;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
+    font-size: 9px;
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
     paint-order: stroke;
-    stroke: #fff;
+    stroke: var(--color-text-border);
     stroke-width: 2px;
 }
 
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
+    pointer-events: none;
+}
+
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
-    fill: #fff;
-    stroke: #000;
-    stroke-width: 1px;
+    fill: var(--color-marker-text);
+    stroke: var(--color-marker-text-border);
+    stroke-width: 1.5px;
 }
 
 #world-map .highcharts-series-1 .highcharts-point {
-    stroke: #fff;
+    paint-order: stroke;
+    stroke: var(--color-marker-border);
+    stroke-width: 2;
 }
 
+#world-map .highcharts-series-1 .highcharts-point:hover,
 #world-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 3px;
+    stroke-width: 6;
 }
 
 #world-map .highcharts-tooltip {
-    text-align: right;
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#world-map div.highcharts-tooltip {
+    color: var(--color-marker-text);
+}
+
+#world-map .highcharts-tooltip-box {
+    fill: var(--color-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+#world-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#world-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
+}
+
+/* Safari fix for manual dark mode */
+.highcharts-dashboard.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke-width: 2px;
 }
 
 /* *
