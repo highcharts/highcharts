@@ -690,7 +690,6 @@ async function setupDashboard() {
             }]
         }
     });
-    dashboard.editMode.activateEditMode();
 }
 
 async function setupDataPool() {
