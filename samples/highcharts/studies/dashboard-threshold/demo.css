@@ -1,8 +1,27 @@
 @import "https://code.highcharts.com/css/dashboard/gui.css";
 
+img {
+    display: block;
+    margin: 0.5em auto;
+    height: calc(100% - 1em);
+}
+
+.hd-component-kpi {
+    box-shadow: 0 5px 20px 3px rgb(0 0 0 / 10%);
+    margin: 0.5em;
+}
+
+.hd-component-kpi h1 {
+    font-weight: 400;
+}
+
 .hd-component-kpi-content {
     display: flex;
     flex-direction: column;
+}
+
+.hd-component-title {
+    margin-bottom: 0;
 }
 
 .hd-component-kpi-value-wrap {

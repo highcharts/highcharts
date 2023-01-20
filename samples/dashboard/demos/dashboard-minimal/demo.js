@@ -1,20 +1,10 @@
-// Bring in other forms of Highcharts
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
+const { CSVStore } = Dashboard;
 
-const { CSVStore, PluginHandler } = Dashboard;
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
-
-DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
-PluginHandler.addPlugin(DataGridPlugin);
-
-const csvData = document.getElementById('csv').innerText;
-
-const store = new CSVStore(void 0, {
-    csv: csvData,
-    firstRowAsNames: true
-});
+const csvData = document.getElementById('csv').innerText,
+    store = new CSVStore(void 0, {
+        csv: csvData,
+        firstRowAsNames: true
+    });
 
 store.load();
 
@@ -30,11 +20,10 @@ const dashboard = new Dashboard.Dashboard('container', {
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            cellClassName: 'custom-cell', // optional
+            id: 'layout-1',
+            rowClassName: 'custom-row',
+            cellClassName: 'custom-cell',
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0',
                     width: '50%'
@@ -70,15 +59,6 @@ const dashboard = new Dashboard.Dashboard('container', {
             chartOptions: {
                 chart: {
                     type: 'pie'
-                }
-            },
-            events: {
-                mount: function () {
-                    // call action
-                    console.log('dashboard-col-0 mount event');
-                },
-                unmount: function () {
-                    console.log('dashboard-col-0 unmount event');
                 }
             }
         }, {

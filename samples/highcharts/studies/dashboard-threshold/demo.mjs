@@ -51,81 +51,6 @@ function resizeAll() {
     parents.forEach(resize);
 }
 
-const kpi = [{
-    title: 'Cake',
-    value: 1337,
-    threshold: [20000, 200000],
-    thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
-}, {
-    title: 'Pie',
-    value: 911,
-    subtitle: {
-        type: 'diff'
-    }
-}, {
-    title: 'Stuff',
-    value: 1881,
-    valueFormatter: v => `${(v / 10000).toFixed(1)}%`
-}, {
-    title: 'Average stuff',
-    value: 69
-}, {
-    title: 'Beans',
-    value: 7,
-    subtitle: 'Consumed daily',
-    chartOptions: {
-        series: [{
-            data: [1, 20, 3, 15, 9, 32, 2, 15]
-        }]
-    }
-}, {
-    title: 'Cash',
-    value: 88,
-    valueFormat: '${value:,.2f}',
-    subtitle: {
-        type: 'diffpercent'
-    }
-}, {
-    title: 'Progress',
-    chartOptions: {
-        chart: {
-            type: 'solidgauge'
-        },
-        yAxis: {
-            min: 0,
-            max: 100
-        },
-        series: [{
-            data: [{
-                color: Highcharts.getOptions().colors[0],
-                y: 70,
-                innerRadius: '88%',
-                outerRadius: '112%'
-            }]
-        }]
-    }
-}, {
-    title: 'Infected last 24 hours',
-    chartOptions: {
-        yAxis: {
-            visible: true
-        },
-        series: [{
-            data: [1, 2, 3, 10, 100, 1000, 9001],
-            clip: false
-        }]
-    }
-}].map(config => {
-    const parentElement = document.createElement('div');
-    parents.push(parentElement);
-    container.appendChild(parentElement);
-    resize(parentElement);
-    return new KPIComponent({
-        parentElement,
-        ...config
-    }).render();
-});
-
 const threshold = [{
     component: HTMLComponent,
     options: {
@@ -181,16 +106,6 @@ function random(max, min = 0) {
 }
 
 function update() {
-    kpi[random(kpi.length - 2)].update({
-        value: random(1000) ** 2
-    });
-
-    if (random(2)) {
-        kpi[6].chart.series[0].setData([{
-            y: random(101)
-        }]);
-    }
-
     threshold[random(threshold.length)].update({
         value: random(130) ** 2
     });
