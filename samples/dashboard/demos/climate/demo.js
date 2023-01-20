@@ -578,52 +578,6 @@ async function setupDashboard() {
         }],
         editMode: {
             enabled: true,
-            toolbars: {
-                row: {
-                    menu: {
-                        items: [
-                            'drag',
-                            {
-                                id: 'hide-items',
-                                events: {
-                                    click() {
-                                        const { settings, destroy } =
-                                            this.menu.items;
-                                        settings[!settings.isActive ? 'activate' : 'deactivate']();
-                                        destroy[!destroy.isActive ? 'activate' : 'deactivate']();
-                                    }
-                                },
-                                type: 'icon',
-                                icon: 'https://code.highcharts.com/gfx/stock-icons/annotations-hidden.svg'
-                            },
-                            'settings',
-                            'destroy'
-                        ]
-                    }
-                },
-                cell: {
-                    menu: {
-                        items: [
-                            'drag',
-                            {
-                                id: 'hide-items',
-                                events: {
-                                    click() {
-                                        const { settings, destroy } =
-                                            this.menu.items;
-                                        settings[!settings.isActive ? 'activate' : 'deactivate']();
-                                        destroy[!destroy.isActive ? 'activate' : 'deactivate']();
-                                    }
-                                },
-                                type: 'icon',
-                                icon: 'https://code.highcharts.com/gfx/stock-icons/annotations-hidden.svg'
-                            },
-                            'settings',
-                            'destroy'
-                        ]
-                    }
-                }
-            },
             contextMenu: {
                 enabled: true,
                 icon: (
