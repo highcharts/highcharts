@@ -1,7 +1,7 @@
 FAQ
 ===
 ### How to connect store to the other components
-First you need to create the correct type of the store using correct constructor, and pass the data reference. More about this topic in the DataStore
+First, you need to create the correct type of store using the right constructor, and pass the data reference. More about this topic in the DataStore
 <LINK TO THE DATA STORE>
 After that, you need to pass the store to the component config, and that’s it.
 [Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
