@@ -225,8 +225,6 @@
 }
 
 .hd-component-kpi {
-    background-color: var(--color-background) !important;
-    color: var(--color-text) !important;
     text-align: center;
 }
 
@@ -246,14 +244,32 @@
     content: "🏔 ";
 }
 
+#kpi-data .hd-component,
+#kpi-fog .hd-component,
+#kpi-ice .hd-component,
+#kpi-max-temperature .hd-component,
+#kpi-rain .hd-component,
+#kpi-temperature .hd-component {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
 .hd-cell.hd-cell-state-hover {
     cursor: pointer;
 }
 
-.hd-cell.hd-cell-state-hover:hover > .hd-component,
-.hd-cell.hd-cell-state-active > .hd-component {
-    background-color: var(--color-hover) !important;
-    color: var(--color-hover-text) !important;
+#kpi-fog.hd-cell-state-hover:hover .hd-component,
+#kpi-fog.hd-cell-state-active .hd-component,
+#kpi-ice.hd-cell-state-hover:hover .hd-component,
+#kpi-ice.hd-cell-state-active .hd-component,
+#kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
+#kpi-max-temperature.hd-cell-state-active .hd-component,
+#kpi-rain.hd-cell-state-hover:hover .hd-component,
+#kpi-rain.hd-cell-state-active .hd-component,
+#kpi-temperature.hd-cell-state-hover:hover .hd-component,
+#kpi-temperature.hd-cell-state-active .hd-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
 }
 
 /* *
