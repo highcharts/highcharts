@@ -29,7 +29,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 
-import Component from '../../Dashboard/Component/Component.js';
+import Component from '../../Dashboards/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';

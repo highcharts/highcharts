@@ -19,7 +19,7 @@
  *
  * */
 
-import type PluginHandler from '../../Dashboard/PluginHandler';
+import type PluginHandler from '../../Dashboards/PluginHandler';
 import type G from '../../Core/Globals';
 
 import HighchartsComponent from './HighchartsComponent.js';

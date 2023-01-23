@@ -19,7 +19,7 @@
  *
  * */
 
-import type PluginHandler from '../../Dashboard/PluginHandler';
+import type PluginHandler from '../../Dashboards/PluginHandler';
 
 import DataGridComponent from './DataGridComponent.js';
 import DataGrid from '../../DataGrid/DataGrid';

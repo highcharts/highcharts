@@ -21,11 +21,11 @@
  *
  * */
 
-import type SharedState from '../../Dashboard/Component/SharedComponentState';
-import type Sync from '../../Dashboard/Component/Sync/Sync';
+import type SharedState from '../../Dashboards/Component/SharedComponentState';
+import type Sync from '../../Dashboards/Component/Sync/Sync';
 
-import ComponentGroup from '../../Dashboard/Component/ComponentGroup.js';
-import ComponentTypes from '../../Dashboard/Component/ComponentType';
+import ComponentGroup from '../../Dashboards/Component/ComponentGroup.js';
+import ComponentTypes from '../../Dashboards/Component/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 const {

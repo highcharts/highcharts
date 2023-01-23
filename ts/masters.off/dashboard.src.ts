@@ -8,11 +8,11 @@
 
 'use strict';
 
-import _Dashboard from '../Dashboard/Dashboard.js';
-import _Globals from '../Dashboard/Globals.js';
-import _PluginHandler from '../Dashboard/PluginHandler.js';
-import _Sync from '../Dashboard/Component/Sync/Sync.js';
-import _Utilities from '../Dashboard/Utilities.js';
+import _Dashboard from '../Dashboards/Dashboard.js';
+import _Globals from '../Dashboards/Globals.js';
+import _PluginHandler from '../Dashboards/PluginHandler.js';
+import _Sync from '../Dashboards/Component/Sync/Sync.js';
+import _Utilities from '../Dashboards/Utilities.js';
 
 export const classNamePrefix = _Globals.classNamePrefix;
 export const guiElementType = _Globals.guiElementType;

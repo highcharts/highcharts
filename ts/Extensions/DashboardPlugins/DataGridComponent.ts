@@ -23,7 +23,7 @@ import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type DataTable from '../../Data/DataTable';
 
-import Component from '../../Dashboard/Component/Component.js';
+import Component from '../../Dashboards/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';

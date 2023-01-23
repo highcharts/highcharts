@@ -19,7 +19,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-import type Component from './../Component/Component.js';
+import type Component from '../Component/Component.js';
 import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
 import type LayoutType from './Layout.js';
@@ -31,7 +31,7 @@ import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import EditGlobals from './../EditMode/EditGlobals.js';
+import EditGlobals from '../EditMode/EditGlobals.js';
 
 const {
     merge,

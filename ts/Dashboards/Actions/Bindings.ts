@@ -23,7 +23,7 @@ import type Serializable from '../Serializable';
 
 import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
-import HTMLComponent from './../Component/HTMLComponent.js';
+import HTMLComponent from '../Component/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';

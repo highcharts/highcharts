@@ -15,21 +15,21 @@
  * */
 
 import U from '../../Core/Utilities.js';
-import Dashboard from './../Dashboard.js';
-import EditGlobals from '../EditMode/EditGlobals.js';
+import Dashboard from '../Dashboard.js';
+import EditGlobals from './EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
-import type Layout from './../Layout/Layout.js';
+import type Layout from '../Layout/Layout.js';
 import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
-import DragDrop from './../Actions/DragDrop.js';
-import Resizer from './../Actions/Resizer.js';
+import DragDrop from '../Actions/DragDrop.js';
+import Resizer from '../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-import ContextDetection from './../Actions/ContextDetection.js';
+import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
 
 const {
