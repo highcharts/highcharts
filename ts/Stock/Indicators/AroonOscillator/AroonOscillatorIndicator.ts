@@ -103,16 +103,15 @@ class AroonOscillatorIndicator extends AroonIndicator {
         params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         // 0- date, 1- Aroon Oscillator
-        let ARO: Array<Array<number>> = [],
+        const ARO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            aroon: IndicatorValuesObject<TLinkedSeries>,
-            aroonUp: number,
+            yData: Array<number> = [];
+        let aroonUp: number,
             aroonDown: number,
             oscillator: number,
             i: number;
 
-        aroon = (
+        const aroon: IndicatorValuesObject<TLinkedSeries> = (
             super.getValues.call(
                 this, series, params
             ) as IndicatorValuesObject<TLinkedSeries>);

@@ -166,12 +166,18 @@ class LineSeries extends Series {
                     'fill': (series.fillGraph && series.color) || 'none'
                 };
 
+                // Apply dash style
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
+
+                // The reason for the `else if` is that linecaps don't mix well
+                // with dashstyle. The gaps get partially filled by the
+                // linecap.
                 } else if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
                 }
+
                 graph[verb](attribs)
                     // Add shadow to normal series (0) or to first
                     // zone (1) #3932

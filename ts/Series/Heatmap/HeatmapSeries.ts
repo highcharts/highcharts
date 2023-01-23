@@ -657,25 +657,6 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
-        const { chart, markerGroup } = this;
-
-        super.setClip();
-        if (
-            markerGroup &&
-            (this.options.clip !== false || animation)
-        ) {
-            markerGroup.clip(
-                (animation || this.clipBox) && this.sharedClipKey ?
-                    chart.sharedClips[this.sharedClipKey] :
-                    chart.clipRect
-            );
-        }
-    }
-
-    /**
-     * @private
-     */
     public translate(): void {
         const series = this,
             options = series.options,
@@ -767,6 +748,8 @@ extend(HeatmapSeries.prototype, {
     pointArrayMap: ['y', 'value'],
 
     pointClass: HeatmapPoint,
+
+    specialGroup: 'group',
 
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
