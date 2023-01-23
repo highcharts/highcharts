@@ -34,7 +34,7 @@ The `Add` button allows the user to add the new component. When clicked, the sid
 
 ![edit-mode-sidebar.png](edit-mode-sidebar.png)
 
-the `contextMenu` option also allows you to edit, what should be inside the menu, which shows after clicking on the burger menu.  The items can either be a string like `editMode` if it is a default button, or an object, which defines the button name, `onclick` event and some more options. Here is the example snippet of context menu button configuration:
+The `contextMenu` option also allows you to edit, what should be inside the menu, which shows after clicking on the burger menu.  The items can either be a string like `editMode` if it is a default button, or an object, which defines the button name, `onclick` event and some more options. Here is the example snippet of context menu button configuration:
 ```js
     items: [{
         id: 'custom-id',
