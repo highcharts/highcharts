@@ -34,7 +34,10 @@ const drilldown = async function (e) {
         // Apply the recommended map view if any
         chart.mapView.update(
             Highcharts.merge(
-                { insets: undefined },
+                {
+                    insets: undefined,
+                    padding: 0
+                },
                 topology.objects.default['hc-recommended-mapview']
             )
         );
