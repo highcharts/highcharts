@@ -727,20 +727,23 @@ async function setupDataPool() {
 async function convertTemperature(city) {
     const cityDataTable = (await dataPool.getStoreTable(city)).modified,
         columns = ['TN', 'TX'], // Average, Maximal temperature
-        metric = ['C', 'F'];
+        scales = ['C', 'F'];
 
     columns.forEach(column => {
-        metric.forEach(metric => {
-            const newColumn = column + metric;
+        scales.forEach(scale => {
+            const newColumn = column + scale;
             let temperatureColumn = cityDataTable.getColumn(newColumn);
 
             if (!temperatureColumn) {
                 cityDataTable.setColumns({
-                    [newColumn]: cityDataTable.getColumn(column).map(el => (
-                        Highcharts.correctFloat(
-                            metric === 'C' ? (el - 273.15) : (el * (9 / 5) - 459.67),
-                            3)
-                    ))
+                    [newColumn]: cityDataTable
+                        .getColumn(column)
+                        .map(kelvin => Highcharts.correctFloat(
+                            scale === 'C' ?
+                                (kelvin - 273.15) :
+                                (kelvin * 1.8 - 459.67),
+                            3
+                        ))
                 });
             }
         });
@@ -840,22 +843,10 @@ async function buildCitiesMap() {
 function buildColorAxis() {
 
     // temperature
-    if (dataScope[2] === 'C') {
+    if (dataScope[0] === 'T') {
         return {
-            max: 50,
-            min: 0,
-            visible: false,
-            stops: [
-                [0.0, '#39F'],
-                [0.4, '#6C0'],
-                [0.8, '#F00']
-            ]
-        };
-    }
-    if (dataScope[2] === 'F') {
-        return {
-            max: 122,
-            min: 32,
+            max: dataScope[2] === 'C' ? 50 : 122,
+            min: dataScope[2] === 'C' ? 0 : 32,
             visible: false,
             stops: [
                 [0.0, '#4CAFFE'],
