@@ -1,16 +1,23 @@
-FAQ
+Frequently asked questions
 ===
-### How to connect store to the other components
-First, you need to create the correct type of store using the right constructor, and pass the data reference. More about this topic in the DataStore
-<LINK TO THE DATA STORE>
+
+* * *
+How to connect store to the other components?
+---------------------------------------------
+
+First, you need to create the correct type of store using the right constructor, and pass the data reference. More about this topic [in the DataStore section](https://www.highcharts.com/docs/dashboards/data-store)
+
 After that, you need to pass the store to the component config, and that’s it.
 [Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
 
-### How to connect component to a cell
+* * *
+
+How to connect component to a cell?
+----------------------------------
 Each cell has a field called id. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
 
 ```js
-  gui: {
+    gui: {
         enabled: true,
         layouts: [{
             id: 'layout-1',
@@ -36,69 +43,74 @@ Each cell has a field called id. The same id must be passed in the component con
 
 [Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-highcharts).
 
+* * *
 
-
-
-### Synchronization of components
+How to synchronize the components?
+-----------------------------
 To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same store.
 
 Example of synchronized components
 
 ```js
-components: [
-        {
-            store,
-            sync: {
-                visibility: true,
-                tooltip: true,
-                selection: true
-            },
-            cell: 'dashboard-col-0',
-            isResizable: true,
-            type: 'Highcharts',
-            tableAxisMap: {
-                Food: 'x',
-                'Vitamin A': 'value'
-            },
-            chartOptions: {
-                chart: {
-                    type: 'pie'
-                }
-            },
-        }, {
-            cell: 'dashboard-col-1',
-            store,
-            sync: {
-                visibility: true,
-                tooltip: true,
-                selection: true
-            },
-            type: 'Highcharts',
-            tableAxisMap: {
-                Food: 'x',
-                'Vitamin A': 'y'
-            },
-            chartOptions: {
-                xAxis: {
-                    type: 'category'
-                },
-                chart: {
-                    animation: false,
-                    type: 'column'
-                }
-            }
-        }]
+components: [{
+    store,
+    sync: {
+        visibility: true,
+        tooltip: true,
+        selection: true
+    },
+    cell: 'dashboard-col-0',
+    isResizable: true,
+    type: 'Highcharts',
+    tableAxisMap: {
+        Food: 'x',
+        'Vitamin A': 'value'
+    },
+    chartOptions: {
+        chart: {
+            type: 'pie'
+        }
+    },
+}, {
+    cell: 'dashboard-col-1',
+    store,
+    sync: {
+        visibility: true,
+        tooltip: true,
+        selection: true
+    },
+    type: 'Highcharts',
+    tableAxisMap: {
+        Food: 'x',
+        'Vitamin A': 'y'
+    },
+    chartOptions: {
+        xAxis: {
+            type: 'category'
+        },
+        chart: {
+            animation: false,
+            type: 'column'
+        }
+    }
+}]
 ```
 
 
 
 You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
 
-### Browser support
+* * *
+
+What browsers are supported?
+---------------
 The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
 In particular, those are Chrome, Edge, Firefox, and Safari.
 
-### syncEvents
+* * *
+
+What are the synchronization events available in Highcharts Dashboards?
+-----------------------------------------------------------------------
 You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
 
 The events, that can be synchronized between components are:
