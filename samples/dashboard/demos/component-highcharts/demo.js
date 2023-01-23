@@ -4,6 +4,8 @@ const dashboard = new Dashboard.Dashboard('container', {
             rows: [{
                 cells: [{
                     id: 'cell-id'
+                }, {
+                    id: 'cell-id-2'
                 }]
             }]
         }]
@@ -13,6 +15,15 @@ const dashboard = new Dashboard.Dashboard('container', {
         cell: 'cell-id',
         chartOptions: {
             series: [{
+                data: [1, 2, 3, 2, 3]
+            }]
+        }
+    }, {
+        type: 'Highcharts',
+        cell: 'cell-id-2',
+        chartOptions: {
+            series: [{
+                type: 'pie',
                 data: [1, 2, 3, 2, 3]
             }]
         }
