@@ -6,8 +6,4 @@ js_wrap: b
 alt_text: >-
   Highcharts pictorial chart JavaScript example visualizes
   Caffeine depending on the type of coffee bean.
-tags:
-  - Highcharts demo
-categories:
-  - More chart types
 ...

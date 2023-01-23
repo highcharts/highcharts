@@ -310,12 +310,13 @@ function renderStackShadow(
 
     // Get first pictorial series
     const stackKeys = Object
-        .keys(stack.points)
-        .filter((p): boolean => p.split(',').length > 1);
-    let allSeries = stack.axis.chart.series,
+            .keys(stack.points)
+            .filter((p): boolean => p.split(',').length > 1),
+        allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
-            parseFloat(key.split(',')[0])),
-        seriesIndex = -1;
+            parseFloat(key.split(',')[0]));
+
+    let seriesIndex = -1;
 
     seriesIndexes.forEach((index): void => {
         if (allSeries[index] && allSeries[index].visible) {
@@ -494,7 +495,7 @@ interface AfterSetOffsetEvent {
 
 addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     if (this.shadow) {
-        let { chart, len } = this.axis,
+        const { chart, len } = this.axis,
             { xOffset, width } = e,
             translateX =
                 chart.inverted ? xOffset - chart.xAxis[0].len : xOffset,
@@ -681,10 +682,11 @@ export default PictorialSeries;
  */
 
 /**
- * The `stackShadow` forms the background of stacked points. Requires the `series.stacking` to be defined.
+ * Relevant only for pictorial series. The `stackShadow` forms the background of
+ * stacked points. Requires `series.stacking` to be defined.
  *
- * @sample {highcharts} highcharts/demo/pictorial-stackshadow/
- *         Pictorial stackShadow option
+ * @sample {highcharts} highcharts/demo/pictorial-stackshadow/ Pictorial
+ *         stackShadow option
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {*}
