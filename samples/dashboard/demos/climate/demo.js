@@ -369,9 +369,7 @@ async function setupDashboard() {
                                 this.value
                             );
                         }
-                    },
-                    tickAmount: 36,
-                    tickInterval: 365 * 24 * 3600 * 1000 / 4
+                    }
                 },
                 yAxis: {
                     title: {
