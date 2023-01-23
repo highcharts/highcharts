@@ -845,9 +845,11 @@ function buildColorAxis() {
     // temperature
     if (dataScope[0] === 'T') {
         return {
+            visible: false,
+            startOnTick: false,
+            endOnTick: false,
             max: dataScope[2] === 'C' ? 50 : 122,
             min: dataScope[2] === 'C' ? 0 : 32,
-            visible: false,
             stops: [
                 [0.0, '#4CAFFE'],
                 [0.3, '#53BB6C'],
