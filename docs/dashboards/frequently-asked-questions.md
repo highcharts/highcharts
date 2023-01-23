@@ -1,0 +1,108 @@
+FAQ
+===
+### How to connect store to the other components
+First you need to create the correct type of the store using correct constructor, and pass the data reference. More about this topic in the DataStore
+<LINK TO THE DATA STORE>
+After that, you need to pass the store to the component config, and that’s it.
+[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
+
+### How to connect component to a cell
+Each cell has a field called id. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
+
+```js
+  gui: {
+        enabled: true,
+        layouts: [{
+            id: 'layout-1',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }]
+            }]
+        }]
+    },
+    components: [
+        {
+            cell: 'dashboard-col-0',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    type: 'pie'
+                },
+                series: [{data: [1,2,3]}]
+            },
+        }]
+```
+
+[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-highcharts).
+
+
+
+
+### Synchronization of components
+To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same store.
+
+Example of synchronized components
+
+```js
+components: [
+        {
+            store,
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
+            cell: 'dashboard-col-0',
+            isResizable: true,
+            type: 'Highcharts',
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'value'
+            },
+            chartOptions: {
+                chart: {
+                    type: 'pie'
+                }
+            },
+        }, {
+            cell: 'dashboard-col-1',
+            store,
+            sync: {
+                visibility: true,
+                tooltip: true,
+                selection: true
+            },
+            type: 'Highcharts',
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'y'
+            },
+            chartOptions: {
+                xAxis: {
+                    type: 'category'
+                },
+                chart: {
+                    animation: false,
+                    type: 'column'
+                }
+            }
+        }]
+```
+
+
+
+You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
+
+### Browser support
+The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
+In particular, those are Chrome, Edge, Firefox, and Safari.
+
+### syncEvents
+You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
+
+The events, that can be synchronized between components are:
+* 'visibility’
+* 'selection'
+* 'tooltip'
+* ‘panning'
