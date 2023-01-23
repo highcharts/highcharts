@@ -56,10 +56,10 @@
 .highcharts-dashboard.hd-dark-mode #selection-grid {
     --color-background: #20202c;
     --color-border: #4a4a53;
-    --color-header-background: #20202c;
-    --color-header-border: #dadae2;
+    --color-header-background: #0d0d0d;
+    --color-header-border: #20202c;
     --color-header-text: #dadae2;
-    --color-row-border: #4a4a53;
+    --color-row-border: #838394;
     --color-row-text: #e7e7ec;
     --color-row1-background: #0d0d0d;
     --color-row2-background: #20202c;
@@ -132,10 +132,10 @@
     #selection-grid {
         --color-background: #20202c;
         --color-border: #4a4a53;
-        --color-header-background: #20202c;
-        --color-header-border: #dadae2;
+        --color-header-background: #0d0d0d;
+        --color-header-border: #20202c;
         --color-header-text: #dadae2;
-        --color-row-border: #4a4a53;
+        --color-row-border: #838394;
         --color-row-text: #e7e7ec;
         --color-row1-background: #0d0d0d;
         --color-row2-background: #20202c;
@@ -284,6 +284,7 @@
 }
 
 #selection-grid .hc-dg-container {
+    border: none;
     height: 372px;
     overflow: auto;
 }
@@ -292,6 +293,7 @@
     background-color: var(--color-header-background);
     border-color: var(--color-header-border);
     color: var(--color-header-text);
+    padding: 0 12px;
 }
 
 #selection-grid .hc-dg-outer-container {
@@ -299,6 +301,10 @@
     color: var(--color-row-text);
     position: relative;
     top: 0 !important;
+}
+
+#selection-grid .hc-dg-cell {
+    border-color: inherit;
 }
 
 #selection-grid .hc-dg-row {

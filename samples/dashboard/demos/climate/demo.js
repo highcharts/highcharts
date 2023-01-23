@@ -388,6 +388,7 @@ async function setupDashboard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             dataGridOptions: {
+                cellHeight: 38,
                 editable: false
             },
             editable: true,
