@@ -1,0 +1,9 @@
+---
+name: Pictorial max option chart
+author:
+  - Magdalena Gut
+js_wrap: b
+alt_text: >-
+  Highcharts pictorial chart JavaScript example visualizes
+  Caffeine depending on the type of coffee bean.
+...
