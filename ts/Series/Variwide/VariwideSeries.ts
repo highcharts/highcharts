@@ -311,11 +311,12 @@ class VariwideSeries extends ColumnSeries {
                 pointStack = stack[xValue as any];
                 if (pointStack && !point.isNull) {
                     pointStack.setOffset(
-                        -(pointWidth / 2) || 0,
+                        series.chart.plotLeft - ((pointWidth / 2) || 0),
                         pointWidth || 0,
                         void 0,
                         void 0,
-                        point.plotX
+                        point.plotX,
+                        series.xAxis
                     );
                 }
             }

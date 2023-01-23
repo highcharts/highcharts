@@ -15,6 +15,67 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-v10.3.3"></a>
+              <span>Highcharts v10.3.3 (2023-01-20)</span>
+              <a class="release-header-hashtag" href="#highcharts-v10.3.3">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-10.3.3.zip" title="Download the zip archive for Highcharts v10.3.3"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added <code>/es5</code> path for legacy script files on <a href="https://code.highcharts.com">code.highcharts.com</a> and in the npm package, see <a href="https://github.com/highcharts/highcharts/issues/18070">#18070</a>.</li>
+              <li>Added new option, <a href="https://api.highcharts.com/highcharts/exporting.allowTableSorting">exporting.allowTableSorting</a>, to allow turning off sorting of the data table. See <a href="https://github.com/highcharts/highcharts/issues/18007">#18007</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="heading-10-3-3-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts v10.3.3" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upgrade-notes-10-3-3"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-10-3-3" class="collapse" aria-labelledby="heading-10-3-3-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>In Highcharts version 11, released at the earliest March 1 2023, the main script files at <a href="https://code.highcharts.com">code.highcharts.com</a> and npm will be compiled for evergreen browsers. This includes files like <a href="https://code.highcharts.com/highcharts.js">highcharts.js</a>, <a href="https://code.highcharts.com/modules/exporting.js">modules/exporting.js</a>, <a href="https://code.highcharts.com/modules/accessibility.js">accessibility.js</a> etc. Should you need to continue supporting browsers more than three years old, like IE11, we will provide legacy script files in the <code>/es5</code> folder. These files are now available, and we recommend you do the switch before the release of version 11. See a <a href="https://jsfiddle.net/highcharts/Lxz6pent/">live example</a>, or read the details at <a href="https://github.com/highcharts/highcharts/issues/18070">#18070</a>.</li>
+                      <li>Lollipop series data values should now be given as <code>y</code>, not as <code>low</code>. See <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/lollipop/">live demo</a>.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="heading-10-3-3-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts v10.3.3">
+                    <button aria-label="Bug Fixes Highcharts v10.3.3" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-10-3-3"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-10-3-3" class="collapse" aria-labelledby="heading-10-3-3-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Inheritance refactor of Lollipop series, <a href="https://github.com/highcharts/highcharts/issues/14103">#14103</a>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17888">#17888</a>, plot line labels with <code>align: &#39;right&#39;</code> and <code>textAlign: &#39;left&#39;</code> weren&#39;t displayed. Added <a href="https://api.highcharts.com/highcharts/plotOptions.series.clip">clip</a> option for labels to allow displaying outside the plot area.</li>
+                      <li>Refactored how the position of stack labels is calculated. Closed <a href="https://github.com/highcharts/highcharts/issues/16764">#16764</a>, <a href="https://github.com/highcharts/highcharts/issues/12133">#12133</a>, <a href="https://github.com/highcharts/highcharts/issues/15129">#15129</a> and <a href="https://github.com/highcharts/highcharts/issues/17116">#17116</a>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17998">#17998</a>, setting <a href="https://api.highcharts.com/highcharts/plotOptions.series.linecap">linecap</a> wasn&#39;t reflected in legend items.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/14114">#14114</a>, color axis marker color did not get applied to most series in styled mode.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/16274">#16274</a>, custom marker symbol size was not being updated.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18212">#18212</a>, long treemap data labels with <code>useHTML</code> set to <code>true</code> were wrongly positioned.</li>
+                      <li>Fixes <a href="https://github.com/highcharts/highcharts/issues/18147">#18147</a>, some data labels weren&#39;t rendered correctly in polar charts.</li>
+                      <li>Fixed issue with series label overlapping data labels.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/16944">#16944</a>, wrong tooltip position when using the <code>positioner</code> callback and <code>outside: true</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18168">#18168</a>, legend item was mispositioned if the related series was located at the top of the chart and proximate layout was enabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17948">#17948</a>, the tooltip position was bad when <a href="https://api.highcharts.com/highcharts/yAxis.reversedStacks">yAxis.reversedStacks</a> was set to <code>false</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17314">#17314</a>, <a href="https://api.highcharts.com/highcharts/chart.alignThresholds">chart.alignThresholds</a> and stacking were not working correctly together.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18116">#18116</a>, the central data label in sunburst series was too short.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18080">#18080</a>, hovering over area range points after zoom reset was throwing errors.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18145">#18145</a>, boost module couldn&#39;t render series with colour set to grey.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18127">#18127</a>, a regression causing an unintended border on data labels when setting <code>backgroundColor</code> and <code>borderColor</code> but no explicit <code>borderWidth</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17856">#17856</a>, line color in hover state did not work as expected in heatmap.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17933">#17933</a>, x axis labels had incorrect styling after drilling down.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17963">#17963</a>, breadcrumbs&#39; position and display were incorrect when <a href="https://api.highcharts.com/highcharts/chart.scrollablePlotArea">scrollablePlotArea</a> was enabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17970">#17970</a>, wrong color on heatmap point when updating from <code>null</code> to a valid number.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-v10.3.2"></a>
               <span>Highcharts v10.3.2 (2022-11-28)</span>
               <a class="release-header-hashtag" href="#highcharts-v10.3.2">#</a>
@@ -5514,7 +5575,7 @@
                   <div class="card-body">
                     <ul>
                       <li>Fixed JS error in IE7. #1214.</li>
-                      <li>Fixed JS error on zooming in to an arearange series in IE9. Prevented arearange data labels from being orphaned when zooming in below cropThreshold. &lt;ahref=&quot;<a href="https://github.com/highcharts/highcharts/issues/1209&quot;&gt;Issue">https://github.com/highcharts/highcharts/issues/1209&quot;&gt;Issue</a> #1209.</li>
+                      <li>Fixed JS error on zooming in to an arearange series in IE9. Prevented arearange data labels from being orphaned when zooming in below cropThreshold. &lt;ahref=&quot;<a href="https://github.com/highcharts/highcharts/issues/1209%22%3EIssue">https://github.com/highcharts/highcharts/issues/1209&quot;&gt;Issue</a> #1209.</li>
                       <li>Fixed issue with data labels appearing outside plot area on initial load.</li>
                       <li>Fixed 2.3 regression regarding unstable sorting in Chrome. #337.</li>
                       <li>Fixed auto connect calculation in polar charts when category values are skipped. #1197.</li>
@@ -6183,7 +6244,7 @@
               <li>Better positioning options for legends.</li>
               <li>Dramatic speed improvements in Internet Explorer for series with many points.</li>
               <li>Release notes:.</li>
-              <li>series.dataURL and series.dataParser are deprecated. Use jQuery ajax instead. Example can be seen at the <a href="/demo/?example=line-ajax&amp;theme=default">ajax loaded data</a> example.</li>
+              <li>series.dataURL and series.dataParser are deprecated. Use jQuery ajax instead. Example can be seen at the <a href="/demo/?example=line-ajax&theme=default">ajax loaded data</a> example.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
@@ -6545,6 +6606,39 @@
             <h2 id="highcharts-stock">Highcharts Stock</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-stock-v10.3.3"></a>
+              <span>Highcharts Stock v10.3.3 (2023-01-20)</span>
+              <a class="release-header-hashtag" href="#highcharts-stock-v10.3.3">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-10.3.3.zip" title="Download the zip archive for Highcharts Stock v10.3.3"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.3.3 above also apply to Highcharts Stock 10.3.3.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hs-heading-10-3-3-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-stock v10.3.3">
+                    <button aria-label="Bug Fixes Highcharts-stock v10.3.3" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-hs-10-3-3"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hs-10-3-3" class="collapse" aria-labelledby="hs-heading-10-3-3-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18176">#18176</a> and <a href="https://github.com/highcharts/highcharts/issues/18178">#18178</a>, indicators didn&#39;t work with an empty dataset.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18025">#18025</a>, grid lines were rendered across panes.</li>
+                      <li>Fixes <a href="https://github.com/highcharts/highcharts/issues/17190">#17190</a>, indicator linked to another indicator didn&#39;t update when data was added to main series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17114">#17114</a>, chart with data grouping had errors if the plot width was zero.</li>
+                      <li>Fixes <a href="https://github.com/highcharts/highcharts/issues/16753">#16753</a>, when adding a custom indicator, if the parameter name contained any digits, the stock tools pop-up did not display it.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18088">#18088</a>, color for Heikin-Ashi candles was set incorrectly.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17995">#17995</a>, measure&#39;s control points were positioned incorrectly when <a href="https://api.highcharts.com/highstock/yAxis.min">yAxis.min</a> wasn&#39;t equal to 0.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-stock-v10.3.2"></a>
               <span>Highcharts Stock v10.3.2 (2022-11-28)</span>
@@ -10141,6 +10235,38 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-maps-v10.3.3"></a>
+              <span>Highcharts Maps v10.3.3 (2023-01-20)</span>
+              <a class="release-header-hashtag" href="#highcharts-maps-v10.3.3">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-10.3.3.zip" title="Download the zip archive for Highcharts Maps v10.3.3"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.3.3 above also apply to Highcharts Maps 10.3.3.</li>
+              <li>Added new <code>linecap</code> option for maps.</li>
+              <li>Added new option, <a href="https://api.highcharts.com/highmaps/mapView.fitToGeometry">mapView.fitToGeometry</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hm-heading-10-3-3-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-maps v10.3.3">
+                    <button aria-label="Bug Fixes Highcharts-maps v10.3.3" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-hm-10-3-3"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hm-10-3-3" class="collapse" aria-labelledby="hm-heading-10-3-3-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18137">#18137</a>, border width was not resetting after hover.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/18166">#18166</a>, border or line width set on point was not scaling on zoom in <code>map</code> and <code>mapline</code> series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17925">#17925</a>, zooming issues with Maps on mobile.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/17238">#17238</a>, panning on y axis was inverted in maps using custom SVG path as map data.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-maps-v10.3.2"></a>
               <span>Highcharts Maps v10.3.2 (2022-11-28)</span>
               <a class="release-header-hashtag" href="#highcharts-maps-v10.3.2">#</a>
@@ -11838,6 +11964,15 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-gantt-v10.3.3"></a>
+              <span>Highcharts Gantt v10.3.3 (2023-01-20)</span>
+              <a class="release-header-hashtag" href="#highcharts-gantt-v10.3.3">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-10.3.3.zip" title="Download the zip archive for Highcharts Gantt v10.3.3"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 10.3.3 above also apply to Highcharts Gantt 10.3.3.</li>
+            </ul>
             <h3 class="release-header">
               <a id="highcharts-gantt-v10.3.2"></a>
               <span>Highcharts Gantt v10.3.2 (2022-11-28)</span>
