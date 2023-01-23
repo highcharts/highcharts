@@ -298,3 +298,61 @@
     paint-order: stroke;
     stroke-width: 2px;
 }
+
+/* *
+ *
+ * Edit mode
+ *
+ */
+.hd-edit-button.hd-edit-tools-btn {
+    background-position: top left;
+    background-color: #e7e7ec;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.hd-edit-button.hd-edit-tools-btn:hover {
+    background-color: #646479;
+    color: #fff;
+}
+
+.hd-edit-enabled.highcharts-dashboard {
+    background-color: rgba(36, 29, 58, 0.2);
+}
+
+.hd-edit-toolbar-cell > .hd-edit-menu-item.hd-edit-toolbar-item {
+    background: #241d3a;
+    border-radius: 2px;
+}
+
+.hd-edit-toolbar-row > .hd-edit-menu-item.hd-edit-toolbar-item {
+    background: #646479;
+    border-radius: 2px;
+}
+
+.hd-layout > .hd-row.hd-edit-row-context-highlight {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #9491a1,
+            #9895a4 10px,
+            rgb(169 167 188) 10px,
+            rgb(169 167 188) 12px
+        );
+}
+
+.hd-edit-toolbar > .hd-edit-toolbar-cell-outline {
+    border: 2px solid #241d3a;
+}
+
+.hd-edit-toolbar > .hd-edit-toolbar-row-outline {
+    border: 2px solid #646479;
+}
+
+.hd-edit-menu.hd-edit-toolbar-row {
+    background: #646479;
+}
+
+.highcharts-dashboard > .hd-edit-drop-pointer {
+    background: #ff8d64;
+}
