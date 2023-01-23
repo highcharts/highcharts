@@ -178,7 +178,12 @@ namespace ColorAxisComposition {
                 }
             );
 
-            addEvent(SeriesClass, 'afterTranslate', onSeriesAfterTranslate);
+            addEvent(
+                SeriesClass,
+                'afterTranslate',
+                onSeriesAfterTranslate,
+                { order: 1 }
+            );
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
     }

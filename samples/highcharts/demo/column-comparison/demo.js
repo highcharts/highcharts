@@ -227,7 +227,7 @@ const chart = Highcharts.chart('container', {
         showFirstLabel: false
     }],
     series: [{
-        color: 'rgb(158, 159, 163)',
+        color: 'rgba(158, 159, 163, 0.5)',
         pointPlacement: -0.2,
         linkedTo: 'main',
         data: dataPrev[2020].slice(),
@@ -300,7 +300,7 @@ locations.forEach(location => {
                 name: location.year - 4,
                 data: dataPrev[location.year].slice()
             }, {
-                name: location,
+                name: location.year,
                 data: getData(data[location.year]).slice()
             }]
         }, true, false, {
