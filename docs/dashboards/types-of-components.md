@@ -1,7 +1,7 @@
 Types of components
 ===
 
-Components are the building blocks of the dashboard layout. There are numbers of types of components, which you can use out of the box. Some of them have come with some default configuration, and some components which leave you some flexibility so that you can configure them all by yourself.  You define which type of the component you want to use by defining its “type” property in the configuration object.
+Components are the building blocks of the dashboard layout. There are numbers of types of components, which you can use out of the box. Some of them have come with some default configuration (KPI, Highcharts, DataGrid), and some components which leave you some flexibility so that you can configure them all by yourself (HTMLComponent). You define which type of the component you want to use by defining its `type` property in the configuration object.
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboard-plugin.js` module.
 
 Here is the overview of most important parameters, that can be defined for a component:
@@ -13,7 +13,7 @@ Here is the overview of most important parameters, that can be defined for a com
 * Sync - list of events, which should be synchronized between components.
 
 ### HTML Component
-The most basic and generic component type. Lets you add everything which could be defiend as HTML, as well as add some custom events, but require the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-html)
+The most basic and generic component type. Allows you to add everything which could be defiend as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-html)
 
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
@@ -37,6 +37,6 @@ The if you connect this component to the store, the content of the component wil
 
 ### KPI Component
 Another type of component type, that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from basic dashboards package needs to be imported.
-It. You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
+You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
 
 [Here is the example](http://utils.highcharts.local/samples/#view/dashboard/demos/dashboard-component-kpi)
