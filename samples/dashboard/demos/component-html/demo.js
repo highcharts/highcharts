@@ -8,6 +8,10 @@ const dashboard = new Dashboard.Dashboard('container', {
                 }, {
                     id: 'dashboard-2'
                 }]
+            }, {
+                cells: [{
+                    id: 'dashboard-3'
+                }]
             }]
         }]
     },
@@ -28,6 +32,14 @@ const dashboard = new Dashboard.Dashboard('container', {
             attributes: {
                 src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png'
             }
+        }]
+    }, {
+        type: 'html',
+        cell: 'dashboard-3',
+        elements: [{
+            tagName: 'div',
+            style: { 'text-align': 'center' },
+            textContent: 'Placeholder text'
         }]
     }]
 });
