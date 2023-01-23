@@ -2,12 +2,10 @@
 @import "https://code.highcharts.com/css/datagrid.css";
 @import "https://code.highcharts.com/css/dashboard/gui.css";
 
-#datagrid {
-    height: 180px;
-    width: 100%;
-    margin: 0 auto;
-}
-
 #csv {
     display: none;
+}
+
+#dashboard-row-1 {
+    height: 200px;
 }
