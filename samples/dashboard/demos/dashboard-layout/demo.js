@@ -1,35 +1,8 @@
-import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
-import PluginHandler from  '../../../../code/es-modules/Dashboard/PluginHandler.js';
-import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
-
-// Bring in other forms of Highcharts
-import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
-
 let exportedLayoutId;
-
-const chartDemo = {
-    type: 'Highcharts',
-    chartOptions: {
-        type: 'line',
-        series: [{
-            name: 'Series from options',
-            data: [1, 2, 3, 4]
-        }],
-        chart: {
-            animation: false,
-            height: 150
-        }
-    }
-};
-
-let dashboard = new Dashboard('container', {
+let dashboard = new Dashboard.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: ['editMode', 'viewFullscreen', {
                 id: 'export-dashboard',
@@ -85,68 +58,9 @@ let dashboard = new Dashboard('container', {
                 }
             }]
         },
-        toolbars: {
-            cell: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    },
-                    // {
-                    //     id: 'my-option-1',
-                    //     text: 't1',
-                    //     events: {
-                    //         click: function() {
-                    //             console.log('hello world!');
-                    //         }
-                    //     }
-                    // },
-                    {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            row: {
-                menu: {
-                    items: [{
-                        id: 'drag',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-                    }, {
-                        id: 'settings',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
-                    }, {
-                        id: 'destroy',
-                        icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
-                    }]
-                }
-            },
-            settings: {
-                closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
-                dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
-            }
-        },
         lang: {
             editMode: 'My edit mode',
             chartOptions: 'Chart options EN'
-        },
-        tools: {
-            addComponentBtn: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
-            },
-            rwdIcons: {
-                small: 'https://code.highcharts.com/gfx/dashboard-icons/smartphone.svg',
-                medium: 'https://code.highcharts.com/gfx/dashboard-icons/tablet.svg',
-                large: 'https://code.highcharts.com/gfx/dashboard-icons/computer.svg'
-            }
-        },
-        confirmationPopup: {
-            close: {
-                icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
-            }
         },
         resize: {
             enabled: true,
@@ -163,43 +77,18 @@ let dashboard = new Dashboard('container', {
     },
     gui: {
         enabled: true,
-        // layoutOptions: {
-        //     resize: {
-        //         cells: true,
-        //         rows: true,
-        //         snap: {
-        //             width: 20
-        //         }
-        //     }
-        // },
         layouts: [{
-            id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            cellClassName: 'custom-cell', // optional
-            style: {
-            // fontSize: '1.5em',
-            // color: 'blue'
-            },
+            id: 'layout-1',
+            rowClassName: 'custom-row',
+            cellClassName: 'custom-cell',
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
-                    id: 'dashboard-col-0',
-                    width: '50%',
-                    style: {
-                        color: 'yellow'
-                    }
+                    id: 'dashboard-col-0'
                 }, {
-                    id: 'dashboard-col-1',
-                    width: '1/2',
-                    style: {
-                    // color: 'orange'
-                    }
+                    id: 'dashboard-col-1'
                 }]
             }, {
                 id: 'dashboard-row-1',
-                style: {
-                    // color: 'red'
-                },
                 cells: [{
                     id: 'dashboard-col-2',
                     width: '2/3',
@@ -235,9 +124,6 @@ let dashboard = new Dashboard('container', {
                 }]
             }, {
                 id: 'dashboard-row-3',
-                style: {
-                    // color: 'red'
-                },
                 cells: [{
                     id: 'dashboard-col-3'
                 }, {
@@ -252,7 +138,7 @@ let dashboard = new Dashboard('container', {
                 }]
             }]
         }, {
-            id: 'layout-2', // mandatory
+            id: 'layout-2',
             rows: [{
                 id: 'dashboard-row-2',
                 cells: [{
@@ -275,10 +161,6 @@ let dashboard = new Dashboard('container', {
                 type: 'pie'
             }
         },
-        /*dimensions: {
-            width: 400,
-            height: 400
-        },*/
         events: {
             mount: function () {
                 // call action
@@ -314,9 +196,6 @@ let dashboard = new Dashboard('container', {
                 animation: false
             }
         },
-        dimensions: {
-            // width: '100%'
-        },
         events: {
             mount: function () {
                 // call action
@@ -337,9 +216,6 @@ let dashboard = new Dashboard('container', {
                 type: 'pie'
             }
         },
-        dimensions: {
-            // width: '100%'
-        },
         events: {
             mount: function () {
                 // call action
@@ -359,9 +235,6 @@ let dashboard = new Dashboard('container', {
                 animation: false,
                 type: 'column'
             }
-        },
-        dimensions: {
-            // width: '100%'
         },
         events: {
             mount: function () {
@@ -428,92 +301,11 @@ let dashboard = new Dashboard('container', {
                 animation: false
             }
         },
-        dimensions: {
-            // width: '100%'
-            //height:  400
-        },
         events: {
             mount: function () {
                 // call action
                 console.log('dashboard-col-3 mount event');
             }
         }
-    }]
-});
-
-console.log(dashboard);
-
-console.group('Bindings get GUI element by ID or HTML element (getcell, getRow, getLayout)');
-console.log('cell: ', Bindings.getCell('dashboard-col-0'));
-console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
-console.log('layout: ', Bindings.getLayout('layout-1'));
-console.groupEnd();
-
-
-const dashboardBootstrap = new Dashboard('container-bootstrap', {
-    gui: {
-        enabled: false,
-        layoutOptions: {
-            rowClassName: 'row', // optional
-            cellClassName: 'col' // optional
-        },
-        layouts: [{
-            id: 'layout-bt-1' // mandatory
-        }, {
-            id: 'layout-bt-2', // mandatory
-            rowClassName: 'row-test', // optional
-            cellClassName: 'col-test' // optional
-        }]
-    },
-    components: [{
-        cell: 'chart-1',
-        type: 'Highcharts',
-        chartOptions: {
-            type: 'cell',
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }],
-            chart: {
-                animation: false
-            }
-        },
-        events: {
-            mount: function () {
-                // call action
-                console.log('chart-1 mount event');
-            }
-        }
-    }, {
-        cell: 'chart-2',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png',
-                title: 'I heard you like components'
-            }
-        }]
-    }, {
-        cell: 'chart-3',
-        ...chartDemo
-    }, {
-        cell: 'title-1',
-        ...chartDemo
-    }, {
-        cell: 'title-2',
-        ...chartDemo
-    }, {
-        cell: 'chart-4',
-        ...chartDemo
-    }, {
-        cell: 'chart-5',
-        ...chartDemo
-    }, {
-        cell: 'chart-6',
-        ...chartDemo
-    }, {
-        cell: 'chart-7',
-        ...chartDemo
     }]
 });

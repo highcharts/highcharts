@@ -365,6 +365,7 @@ class DataGrid {
 
             const cellElements = rowElement.childNodes;
 
+
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
                 const cell = cellElements[k] as HTMLElement;
                 const value = this.dataTable
@@ -376,6 +377,11 @@ class DataGrid {
                 cell.dataset.columnName = columnsInPresentationOrder[k];
                 // TODO: get this from the store if set?
                 cell.dataset.dataType = typeof value;
+
+                if (k === 0) { // first column, that is x
+                    rowElement.dataset.rowXIndex =
+                        String(isNumber(value) ? value : i);
+                }
             }
         }
 

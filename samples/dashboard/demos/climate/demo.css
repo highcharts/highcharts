@@ -2,6 +2,100 @@
 
 /* *
  *
+ *  Colors
+ *
+ * */
+
+#time-range-selector {
+    --color-axis: #646479;
+    --color-background: #fafafa;
+    --color-grid: #9a92ce;
+    --color-handle: #5352be;
+    --color-mask: #41378233;
+    --color-mask-line: #9a92ce;
+    --color-scroll: #f7f7f7;
+    --color-scroll-line: #9a92ce;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #f7f7f7;
+}
+
+.highcharts-dashboard.hd-dark-mode #time-range-selector {
+    --color-axis: #e7e7ec;
+    --color-background: #0d0d0d;
+    --color-grid: #838394;
+    --color-handle: #838394;
+    --color-mask: #dddbef66;
+    --color-mask-line: #838394;
+    --color-scroll: #20202c;
+    --color-scroll-line: #646479;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #838394;
+}
+
+#world-map {
+    --color-background: #5352be;
+    --color-map: #dddbef;
+    --color-marker-border: #fff;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-navigation: #f7f7f7;
+    --color-navigation-line: #838393;
+    --color-navigation-text: #20202b;
+    --color-text: #000;
+    --color-text-border: #fff;
+}
+
+.highcharts-dashboard.hd-dark-mode #world-map {
+    --color-navigation: #20202b;
+    --color-navigation-line: #646478;
+    --color-navigation-text: #838393;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+
+    .highcharts-dashboard {
+        --color-dashboard: #46475d;
+    }
+
+    #time-range-selector {
+        --color-axis: #e7e7ec;
+        --color-background: #0d0d0d;
+        --color-grid: #838394;
+        --color-mask: #dddbef66;
+        --color-mask-line: #838394;
+        --color-scroll: #20202c;
+        --color-scroll-line: #646479;
+        --color-series: #5352be;
+        --color-thumb: #5352be;
+        --color-thumb-line: #838394;
+    }
+
+    #world-map {
+        --color-navigation: #20202b;
+        --color-navigation-line: #646478;
+        --color-navigation-text: #838393;
+    }
+}
+
+/* *
+ *
+ *  Dashboard
+ *
+ * */
+
+.highcharts-dashboard.hd-dark-mode {
+    background-color: #46475d;
+}
+
+.highcharts-dashboard.hd-dark-mode .hd-edit-context-menu-btn {
+    filter: invert(1);
+}
+
+/* *
+ *
  *  City Chart
  *
  * */
@@ -20,86 +114,13 @@
 
 /* *
  *
- *  Navigator
+ *  KPI
  *
  * */
-
-.highcharts-grid.highcharts-xaxis-grid.highcharts-navigator-xaxis .highcharts-grid-line {
-    stroke: #df8fa1;
-}
-
-.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-navigator-xaxis {
-    fill: #fff;
-}
-
-.highcharts-navigator-series {
-    fill: #c3c6ed;
-    stroke: #df8fa1;
-    fill-opacity: 1;
-}
-
-.highcharts-navigator-series .highcharts-area {
-    fill-opacity: 1;
-}
-
-.highcharts-navigator-mask-inside {
-    fill: #000;
-    fill-opacity: 0.5;
-    stroke-width: 0;
-}
-
-.highcharts-navigator-outline {
-    display: none;
-}
-
-/* *
- *
- *  World Map
- *
- * */
-
-#world-map .highcharts-background {
-    fill: #46475d;
-}
-
-#world-map .highcharts-series-0 .highcharts-point {
-    fill: #c93 !important;
-    stroke: #986;
-}
-
-#world-map .highcharts-series-1 .highcharts-data-label text {
-    paint-order: stroke;
-    stroke: #fff;
-    stroke-width: 2px;
-}
-
-#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
-    fill: #fff;
-    stroke: #000;
-    stroke-width: 1px;
-}
-
-#world-map .highcharts-series-1 .highcharts-point {
-    stroke: #fff;
-}
-
-#world-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 3px;
-}
-
-#world-map .highcharts-tooltip {
-    text-align: right;
-}
-
-/* *
- *
- * KPI
- *
- */
 
 .hd-cell.hd-cell-state-hover:hover > .hd-component,
 .hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #46475d;
+    background-color: #5352be;
     color: #fff;
 }
 
@@ -109,10 +130,171 @@
 
 /* *
  *
- * Dark mode
+ *  Navigator
  *
- */
+ * */
 
-.highcharts-dashboard.hd-dark-mode {
-    background-color: #46475d;
+#time-range-selector .hd-component-content {
+    background: var(--color-background);
+}
+
+#time-range-selector .highcharts-background {
+    fill: var(--color-background);
+}
+
+#time-range-selector .highcharts-grid-line {
+    stroke: var(--color-grid);
+}
+
+#time-range-selector .highcharts-navigator-handle {
+    fill: var(--color-thumb);
+    stroke: var(--color-thumb);
+}
+
+#time-range-selector .highcharts-navigator-mask-inside {
+    fill: var(--color-mask);
+    fill-opacity: 1;
+    stroke: var(--color-mask-line);
+    transform: translate(-1px, 0);
+}
+
+#time-range-selector .highcharts-navigator-outline {
+    display: none;
+}
+
+#time-range-selector .highcharts-navigator-series {
+    fill: none;
+    stroke: var(--color-series);
+}
+
+#time-range-selector .highcharts-scrollbar-arrow {
+    fill: var(--color-scroll-line);
+    stroke: var(--color-scroll-line);
+}
+
+#time-range-selector .highcharts-scrollbar-button {
+    fill: none;
+    stroke: none;
+}
+
+#time-range-selector .highcharts-scrollbar-thumb {
+    fill: var(--color-thumb);
+    stroke-width: 0;
+    transform: translate(-1px, 0);
+}
+
+#time-range-selector .highcharts-scrollbar-thumb + path {
+    stroke: var(--color-thumb-line);
+}
+
+#time-range-selector .highcharts-scrollbar-track {
+    fill: var(--color-scroll);
+    stroke: var(--color-scroll-line);
+}
+
+#time-range-selector .highcharts-xaxis-labels {
+    fill: var(--color-axis);
+}
+
+/* *
+ *
+ *  World Map
+ *
+ * */
+
+#world-map .hd-component-content {
+    background: var(--color-background);
+}
+
+#world-map .highcharts-background {
+    fill: var(--color-background);
+}
+
+#world-map .highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map .highcharts-halo {
+    display: none;
+}
+
+#world-map .highcharts-map-navigation {
+    fill: var(--color-navigation);
+    font-size: 20px;
+    stroke: var(--color-navigation-line);
+}
+
+#world-map .highcharts-map-navigation text {
+    fill: var(--color-navigation-text);
+}
+
+#world-map .highcharts-series-0 .highcharts-point {
+    fill: var(--color-map) !important;
+    stroke: var(--color-background);
+}
+
+#world-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.6;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
+    font-size: 9px;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
+    paint-order: stroke;
+    stroke: var(--color-text-border);
+    stroke-width: 2px;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
+    pointer-events: none;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
+    fill: var(--color-marker-text);
+    stroke: var(--color-marker-text-border);
+    stroke-width: 1.5px;
+}
+
+#world-map .highcharts-series-1 .highcharts-point {
+    paint-order: stroke;
+    stroke: var(--color-marker-border);
+    stroke-width: 2;
+}
+
+#world-map .highcharts-series-1 .highcharts-point:hover,
+#world-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 6;
+}
+
+#world-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#world-map div.highcharts-tooltip {
+    color: var(--color-marker-text);
+}
+
+#world-map .highcharts-tooltip-box {
+    fill: var(--color-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+#world-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#world-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
+}
+
+/* Safari fix for manual dark mode */
+.highcharts-dashboard.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke-width: 2px;
 }

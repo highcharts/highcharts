@@ -1,21 +1,12 @@
 /* eslint-disable require-jsdoc */
 /**
- * @license Highcharts JS v@product.version@ (@product.date@)
+ * @license Highcharts Dashboards v0.0.1 (@product.date@)
  * @module highcharts/modules/dashboard-component
  * @requires highcharts
  *
- * Highcharts Dashboard Component
- *
- * (c) 2012-2021 Highsoft AS
+ * (c) 2009-2023 Highsoft AS
  *
  * License: www.highcharts.com/license
- *
- *  Authors:
- *  - Gøran Slettemark
- *  - Wojciech Chmiel
- *  - Sebastian Bochan
- *  - Sophie Bremer
- *
  * */
 
 'use strict';

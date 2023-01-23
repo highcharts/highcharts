@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2012-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -28,7 +28,9 @@ import ComponentGroup from '../../Dashboard/Component/ComponentGroup.js';
 import ComponentTypes from '../../Dashboard/Component/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
-const { addEvent } = U;
+const {
+    addEvent
+} = U;
 
 /* *
  *
@@ -89,14 +91,21 @@ const configs: {
             'afterHoverPointChange',
             function (this: DataGridComponent, e: SharedState.PointHoverEvent): void {
                 const { dataGrid } = this;
-
                 if (dataGrid) {
                     if (e.hoverPoint) {
-                        const point = e.hoverPoint,
-                            pointIndex = point.index || point.x || 0;
+                        const point = e.hoverPoint;
+                        let highlightedDataRow;
 
-                        dataGrid.toggleRowHighlight(dataGrid.rowElements[pointIndex]);
-                        dataGrid.hoveredRow = dataGrid.rowElements[pointIndex];
+                        for (let i = 0, iEnd = dataGrid.rowElements.length; i < iEnd; ++i) {
+                            if (dataGrid.rowElements[i].dataset.rowXIndex === String(point.x || 0)) {
+                                highlightedDataRow = dataGrid.rowElements[i];
+                            }
+                        }
+
+                        if (highlightedDataRow) {
+                            dataGrid.toggleRowHighlight(highlightedDataRow);
+                            dataGrid.hoveredRow = highlightedDataRow;
+                        }
                     }
                 }
             }
