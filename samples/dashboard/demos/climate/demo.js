@@ -55,7 +55,7 @@ async function setupDashboard() {
                     enabled: false
                 },
                 series: [{
-                    type: 'scatter',
+                    type: 'spline',
                     name: 'Timeline',
                     data: buildDates(),
                     showInNavigator: false,
@@ -511,7 +511,6 @@ async function setupDashboard() {
                 },
                 colorAxis: buildColorAxis(),
                 series: [{
-                    type: 'scatter',
                     name: defaultCity,
                     data: defaultCityStore.table.modified.getRows(
                         void 0,
@@ -540,7 +539,6 @@ async function setupDashboard() {
                 },
                 xAxis: {
                     type: 'datetime',
-                    visible: false,
                     labels: {
                         format: '{value:%Y-%m-%d}'
                     }
@@ -980,11 +978,21 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         void 0, void 0,
         ['time', dataScope]
     );
+    const isColumnSeries = ['RR1', 'FD', 'ID'].indexOf(dataScope) >= 0;
+    const columnSeriesOptions = {
+        type: isColumnSeries ? 'column' : 'spline',
+        threshold: isColumnSeries ? 0 : null
+    };
 
     // update navigator
     navigatorSeries.update({
         name: cityScope,
-        data
+        minPointLength: 1, // workaround
+        pointPadding: 0,
+        groupPadding: 0,
+        crisp: false,
+        data,
+        ...columnSeriesOptions
     });
 
     // update chart
@@ -992,7 +1000,9 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         title: {
             text: cityScope
         }
-    });
+    }, false);
+
+    citySeries.update(columnSeriesOptions);
 
     // Update the main chart
     Highcharts.fireEvent(
