@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
-    FD: 'Days with Fog',
+    FD: 'Days with Frost',
     ID: 'Days with Ice',
     RR: 'Days with Rain',
     TN: 'Average Temperature',
@@ -549,7 +549,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            cell: 'kpi-fog',
+            cell: 'kpi-frost',
             type: 'kpi',
             subtitle: dataScopes.FD,
             value: (() => {
@@ -671,7 +671,7 @@ async function setupDashboard() {
                                     id: 'kpi-ice',
                                     width: '33.333%'
                                 }, {
-                                    id: 'kpi-fog',
+                                    id: 'kpi-frost',
                                     width: '33.333%'
                                 }]
                             }],
@@ -938,9 +938,9 @@ function tooltipFormatter(value, city) {
     } else if (dataScope === 'ID') {
         tooltip += Highcharts.correctFloat(value, 0) + ' icy days';
 
-    // fog days
+    // frost days
     } else if (dataScope === 'FD') {
-        tooltip += Highcharts.correctFloat(value, 0) + ' foggy days';
+        tooltip += Highcharts.correctFloat(value, 0) + ' frosty days';
 
     // fallback
     } else {
