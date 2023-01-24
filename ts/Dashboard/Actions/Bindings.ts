@@ -106,13 +106,15 @@ class Bindings {
                         ) as DataGridComponent;
                     }
                     break;
-                case 'kpi':
-                    component = new KPIComponent(merge(
-                        options,
-                        {
-                            parentElement: compontentContainer as HTMLDOMElement
-                        })
-                    )
+                case 'KPI':
+                    if (ComponentClass) {
+                        (component as any) = new ComponentClass(merge(
+                            options,
+                            {
+                                parentElement: compontentContainer as HTMLDOMElement
+                            }) as any
+                        )
+                    }
                     break;
                 default:
                     return;
