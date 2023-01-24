@@ -303,7 +303,11 @@ class TiledWebMapSeries extends MapSeries {
             };
 
             // calculate topLeft and bottomRight corners without normalize
-            const lambda = mapView.projection.options.rotation[0],
+            const lambda = pick(
+                    (
+                        mapView.projection.options.rotation &&
+                        mapView.projection.options.rotation[0]
+                    ), 0),
                 topLeftUnits = mapView.pixelsToProjectedUnits({
                     x: 0,
                     y: 0
@@ -392,9 +396,8 @@ class TiledWebMapSeries extends MapSeries {
         const series = this,
             chart = this.chart,
             mapView = chart.mapView,
-            provider = series.options.provider;
-
-        super.update.apply(series, arguments);
+            options = arguments[0],
+            { provider } = options;
 
         if (
             mapView &&
@@ -416,6 +419,8 @@ class TiledWebMapSeries extends MapSeries {
                 });
             }
         }
+
+        super.update.apply(series, arguments);
     }
 }
 
