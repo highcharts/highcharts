@@ -53,6 +53,9 @@ import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
+import SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
+import DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import TreemapPoint from '../Treemap/TreemapPoint.js';
 
 /* *
  *
@@ -118,8 +121,6 @@ class TreegraphSeries extends TreemapSeries {
     public layoutAlgorythm: TreegraphLayout = void 0 as any;
 
     public links: Array<TreegraphLink> = [];
-
-    public forceDLCalculation = true;
 
     public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
 
@@ -459,6 +460,29 @@ class TreegraphSeries extends TreemapSeries {
         }
 
         seriesProto.drawDataLabels.call(this, points);
+    }
+
+    /**
+     * Override alignDataLabel so that position is always calculated and the
+     * label is faded in and out instead of hidden/shown when collapsing and
+     * expanding nodes.
+     */
+    public alignDataLabel(
+        point: TreemapPoint,
+        dataLabel: SVGLabel
+    ): void {
+        const visible = point.visible;
+
+        // Force position calculation and visibility
+        point.visible = true;
+
+        super.alignDataLabel.apply(this, arguments);
+
+        // Fade in or out
+        dataLabel.animate({ opacity: visible === false ? 0 : 1 });
+
+        // Reset
+        point.visible = visible;
     }
 
     /**

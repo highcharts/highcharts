@@ -258,9 +258,8 @@ namespace DataLabel {
                     )
                 );
 
-        const forceCalculation = series.forceDLCalculation;
         const pos = point.pos();
-        if ((forceCalculation || visible) && pos) {
+        if (visible && pos) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -395,18 +394,11 @@ namespace DataLabel {
             dataLabel.placed = false;
         }
         // Show or hide based on the final aligned position
-        const shouldHide = !visible && (!enabledDataSorting || justify);
-        if (forceCalculation) {
-            dataLabel.animate({
-                opacity: shouldHide ? 0 : 1
-            });
+        if (!visible && (!enabledDataSorting || justify)) {
+            dataLabel.hide();
+            dataLabel.placed = false; // don't animate back in
         } else {
-            if (shouldHide) {
-                dataLabel.hide();
-                dataLabel.placed = false; // don't animate back in
-            } else {
-                dataLabel.show();
-            }
+            dataLabel.show();
         }
     }
 
