@@ -149,7 +149,6 @@ Highcharts.chart('container', {
                 pointFormat: '{point.id}',
                 style: {
                     color: '#000000',
-                    textOverflow: 'none',
                     textOutline: '3px #ffffff',
                     whiteSpace: 'nowrap'
                 },

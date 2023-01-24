@@ -238,7 +238,10 @@ const TreegraphSeriesDefaults = {
             }
         },
         enabled: true,
-        linkFormatter: (): string => ''
+        linkFormatter: (): string => '',
+        style: {
+            textOverflow: 'none'
+        }
     }
 } as TreegraphSeriesOptions;
 

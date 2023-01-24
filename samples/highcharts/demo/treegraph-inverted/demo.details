@@ -1,0 +1,11 @@
+---
+name: Inverted treegraph
+authors:
+  - Pawel Lysy, Torstein Hønsi
+js_wrap: b
+new_until: 2023-03-31
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

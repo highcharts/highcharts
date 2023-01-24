@@ -1,5 +1,5 @@
 ---
-name: Treegraph Phylogenetic Tree
+name: Treegraph with boxes
 authors:
   - Torstein Hønsi
 js_wrap: b
