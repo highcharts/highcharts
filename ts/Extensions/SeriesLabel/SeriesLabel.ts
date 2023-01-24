@@ -13,7 +13,6 @@
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
- * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  *
  * https://jsfiddle.net/highcharts/L2u9rpwr/
@@ -396,22 +395,41 @@ function compose(
 function drawSeriesLabels(chart: Chart): void {
 
     // console.time('drawSeriesLabels');
-
-    const labelSeries = chart.labelSeries || [];
-
     chart.boxesToAvoid = [];
+
+    const labelSeries = chart.labelSeries || [],
+        boxesToAvoid = chart.boxesToAvoid;
+
+    // Avoid data labels
+    chart.series.forEach((s): void =>
+        (s.points || []).forEach((p): void =>
+            (p.dataLabels || []).forEach((label): void => {
+                const { width, height } = label.getBBox(),
+                    left = label.translateX + (
+                        s.xAxis ? s.xAxis.pos : s.chart.plotLeft
+                    ),
+                    top = label.translateY + (
+                        s.yAxis ? s.yAxis.pos : s.chart.plotTop
+                    );
+
+                boxesToAvoid.push({
+                    left,
+                    top,
+                    right: left + width,
+                    bottom: top + height
+                });
+            })
+        )
+    );
 
     // Build the interpolated points
     labelSeries.forEach(function (series): void {
 
-        const seriesLabelOptions = series.options.label || {},
-            boxesToAvoid = chart.boxesToAvoid;
+        const seriesLabelOptions = series.options.label || {};
 
         series.interpolatedPoints = getPointsOnGraph(series);
 
-        if (boxesToAvoid) {
-            boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
-        }
+        boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
     });
 
     chart.series.forEach(function (series): void {

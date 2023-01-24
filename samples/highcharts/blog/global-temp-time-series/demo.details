@@ -1,0 +1,6 @@
+---
+ name: Highcharts global temperatures time series
+ authors:
+   - Joshua Kunst
+ js_wrap: b
+...

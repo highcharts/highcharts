@@ -118,6 +118,24 @@ QUnit.test('General dataGrouping options', function (assert) {
         calledWithNaN,
         'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
     );
+
+    chart.update({
+        chart: {
+            width: 10
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    units: void 0
+                }
+            }
+        }
+    });
+
+    assert.ok(
+        true,
+        'No errors when plotSizeX of the chart is zero (#17114).'
+    );
 });
 
 QUnit.test('dataGrouping and keys', function (assert) {

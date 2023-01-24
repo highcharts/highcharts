@@ -364,7 +364,9 @@ class WaterfallSeries extends ColumnSeries {
                             series.pointXOffset || 0,
                             series.barW || 0,
                             series.stackedYNeg[i],
-                            series.stackedYPos[i]
+                            series.stackedYPos[i],
+                            void 0,
+                            this.xAxis
                         );
                     }
                 }
