@@ -6,7 +6,7 @@ const ResolveTypeScriptPlugin = require("resolve-typescript-plugin").default;
 
 module.exports = {
     devtool: false,
-    entry: path.resolve(projectPath, 'ts', 'masters.off', 'dashboard.src.ts'),
+    entry: path.resolve(projectPath, 'ts', 'masters.off', 'dashboards.src.ts'),
     mode: 'development',
     module: {
         rules: [
@@ -26,11 +26,11 @@ module.exports = {
     },
     output: {
         chunkFormat: 'module',
-        filename: 'dashboard.src.js',
+        filename: 'dashboards.src.js',
         path: path.resolve(projectPath, 'code'),
-        uniqueName: 'dashboard',
+        uniqueName: 'dashboards',
         library: {
-            name: 'Dashboard',
+            name: 'Dashboards',
             type: 'umd',
         }
     },

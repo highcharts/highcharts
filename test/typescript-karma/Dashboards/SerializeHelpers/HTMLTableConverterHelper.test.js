@@ -1,4 +1,4 @@
-import HTMLTableConverterHelper from '/base/code/es-modules/Dashboard/SerializeHelper/HTMLTableConverterHelper.js';
+import HTMLTableConverterHelper from '/base/code/es-modules/Dashboards/SerializeHelper/HTMLTableConverterHelper.js';
 import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableConverter.js';
 
 QUnit.test('JSON serializer for HTMLTableConverter', function (assert) {

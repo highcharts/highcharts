@@ -1,4 +1,4 @@
-import CSVConverterHelper from '/base/code/es-modules/Dashboard/SerializeHelper/CSVConverterHelper.js';
+import CSVConverterHelper from '/base/code/es-modules/Dashboards/SerializeHelper/CSVConverterHelper.js';
 import CSVConverter from '/base/code/es-modules/Data/Converters/CSVConverter.js';
 
 QUnit.test('JSON serializer for CSVConverter', function (assert) {

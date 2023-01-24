@@ -1,4 +1,4 @@
-import GoogleSheetsConverterHelper from '/base/code/es-modules/Dashboard/SerializeHelper/GoogleSheetsConverterHelper.js';
+import GoogleSheetsConverterHelper from '/base/code/es-modules/Dashboards/SerializeHelper/GoogleSheetsConverterHelper.js';
 import GoogleSheetsConverter from '/base/code/es-modules/Data/Converters/GoogleSheetsConverter.js';
 
 QUnit.test('JSON serializer for GoogleSheetsConverter', function (assert) {
