@@ -330,7 +330,7 @@ async function setupDashboard() {
                 },
                 colorAxis: buildColorAxis(),
                 series: [{
-                    type: 'scatter',
+                    type: 'spline',
                     name: defaultCity,
                     data: defaultCityStore.table.modified.getRows(
                         void 0,
