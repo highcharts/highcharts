@@ -20,7 +20,7 @@
  * */
 
 import Component from './Component/Component.js';
-import Dashboard from './Dashboard.js';
+import Dashboard from './Dashboards.js';
 import Sync from './Component/Sync/Sync.js';
 
 /* *

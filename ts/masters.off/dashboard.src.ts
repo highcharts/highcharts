@@ -8,7 +8,7 @@
 
 'use strict';
 
-import _Dashboard from '../Dashboards/Dashboard.js';
+import _Dashboard from '../Dashboards/Dashboards.js';
 import _Globals from '../Dashboards/Globals.js';
 import _PluginHandler from '../Dashboards/PluginHandler.js';
 import _Sync from '../Dashboards/Component/Sync/Sync.js';

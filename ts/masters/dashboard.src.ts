@@ -17,7 +17,7 @@
  * */
 
 import CSVStore from '../Data/Stores/CSVStore.js';
-import Dashboard from '../Dashboards/Dashboard.js';
+import Dashboard from '../Dashboards/Dashboards.js';
 import DataOnDemand from '../Data/DataOnDemand.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';

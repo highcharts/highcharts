@@ -25,7 +25,7 @@
  * */
 
 import type GUIElement from './Layout/GUIElement';
-import type Dashboard from './Dashboard';
+import type Dashboard from './Dashboards';
 
 /* *
  *
