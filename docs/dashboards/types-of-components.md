@@ -5,12 +5,12 @@ Components are the building blocks of the dashboard layout. There are numbers of
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboard-plugin.js` module.
 
 Here is the overview of most important parameters, that can be defined for a component:
-* Id - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
-* Cell - id of the cell, in which the component should be placed
-* Class - CSS class
-* Type - the type of the component.
-* Events - object containing a pair of name of the event and callback function that should be called on a given event.
-* Sync - list of events, which should be synchronized between components.
+* `Id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
+* `Cell` - id of the cell, in which the component should be placed
+* `Class` - CSS class
+* `Type` - the type of the component.
+* `Events` - object containing a pair of name of the event and callback function that should be called on a given event.
+* `Sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
 The most basic and generic component type. Allows you to add everything which could be defiend as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-html)
