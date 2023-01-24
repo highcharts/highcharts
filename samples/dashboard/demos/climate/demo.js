@@ -332,11 +332,7 @@ async function setupDashboard() {
                 series: [{
                     type: 'scatter',
                     name: defaultCity,
-                    data: defaultCityStore.table.modified.getRows(
-                        void 0,
-                        void 0,
-                        ['time', dataScope]
-                    ),
+                    data: [],
                     legend: {
                         enabled: false
                     },
@@ -749,9 +745,43 @@ async function convertTemperature(city) {
     });
 }
 
+async function setupCitiesData() {
+    const cities = citiesTable.modified;
+    const data = citiesData;
+
+    const rows = cities.getRows(
+        void 0,
+        void 0,
+        ['lat', 'lon', 'city', 'country', 'elevation']
+    );
+
+    for (const row of rows) {
+        const city = row[2];
+
+        if (typeof data[city] === 'undefined') {
+            data[city] = {
+                country: row[3],
+                elevation: row[4],
+                lat: row[0],
+                lon: row[1],
+                name: row[2],
+                store: await dataPool.getStore(city)
+            };
+
+            await convertTemperature(city);
+
+            if (citiesMap) {
+                citiesMap.setData(await buildCitiesMap());
+            }
+        }
+    }
+}
+
 async function main() {
     await setupDataPool();
     await setupDashboard();
+    await delay(750); // wait for animations to finish
+    await setupCitiesData();
 }
 
 main().catch(e => console.error(e));
@@ -764,17 +794,13 @@ main().catch(e => console.error(e));
 
 async function buildCitiesData() {
     const cities = citiesTable.modified;
-    const initialCity = defaultCity;
-    const tables = {};
-
+    const data = {};
     const initialRow = await cities.getRow(
-        cities.getRowIndexBy('city', defaultCity),
+        cities.getRowIndexBy('city', cityScope),
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
 
-    await convertTemperature(defaultCity);
-
-    tables[initialCity] = {
+    data[cityScope] = {
         country: initialRow[3],
         elevation: initialRow[4],
         lat: initialRow[0],
@@ -783,37 +809,9 @@ async function buildCitiesData() {
         store: await dataPool.getStore(initialRow[2])
     };
 
-    // lazy promise without leading await for the rest
-    (async function () {
-        const rows = cities.getRows(
-            void 0,
-            void 0,
-            ['lat', 'lon', 'city', 'country', 'elevation']
-        );
+    await convertTemperature(cityScope);
 
-        for (const row of rows) {
-            const city = row[2];
-
-            if (typeof tables[city] === 'undefined') {
-                await convertTemperature(city);
-
-                tables[city] = {
-                    country: row[3],
-                    elevation: row[4],
-                    lat: row[0],
-                    lon: row[1],
-                    name: row[2],
-                    store: await dataPool.getStore(city)
-                };
-
-                if (citiesMap) {
-                    citiesMap.setData(await buildCitiesMap());
-                }
-            }
-        }
-    }());
-
-    return tables;
+    return data;
 }
 
 async function buildCitiesMap() {
@@ -910,6 +908,10 @@ function buildSymbols() {
         x + w + w / 2 + 1, y + h / 2,
         'Z'
     ];
+}
+
+function delay(ms) {
+    return new Promise(resolve => window.setTimeout(resolve, ms));
 }
 
 function tooltipFormatter(value, city) {
