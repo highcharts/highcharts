@@ -397,7 +397,7 @@ namespace DataLabel {
         const shouldHide = !visible && (!enabledDataSorting || justify);
         if (forceCalculation) {
             dataLabel.animate({
-                visibility: shouldHide ? 'hidden' : 'inherit'
+                opacity: shouldHide ? 0 : 1
             });
         } else {
             if (shouldHide) {
