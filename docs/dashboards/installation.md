@@ -11,7 +11,7 @@ One of the ways of adding the Highcharts Dashboards to your web page is via npm 
 Include the JavaScript files in the `<head>` section of your web page as shown below.
 
 ```html
-    <script src="https://code.highcharts.com/dashboard.js"></script>
+    <script src="https://code.highcharts.com/dashboards.js"></script>
  ```
 
 
