@@ -37,7 +37,7 @@ const { createElement, merge, uniqueKey } = U;
  * */
 
 /**
- * DataGrid component for the Highsoft Dashboard.
+ * DataGrid component for the Highcharts Dashboards.
  * @private
  * @class
  * @name Highcharts.DashboardComponent

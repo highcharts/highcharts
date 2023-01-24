@@ -65,7 +65,7 @@ declare module '../../Core/GlobalsLike' {
  * */
 
 /**
- * Highcharts component for the Highsoft Dashboard.
+ * Highcharts component for the Highcharts Dashboards.
  * @private
  * @class
  * @name Highcharts.DashboardComponent

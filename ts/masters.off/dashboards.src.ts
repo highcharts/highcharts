@@ -1,7 +1,7 @@
 /**
- * @license "Highsoft Dashboard" v@product.version@ (@product.date@)
+ * @license "Highcharts Dashboards" v@product.version@ (@product.date@)
  *
- * Highsoft Dashboard
+ * Highcharts Dashboards
  *
  * License: www.highcharts.com/license
  */
