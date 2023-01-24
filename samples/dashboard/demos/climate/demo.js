@@ -191,8 +191,7 @@ async function setupDashboard() {
                     enableMouseWheelZoom: false
                 },
                 mapView: {
-                    maxZoom: 4,
-                    zoom: 1.3
+                    maxZoom: 4
                 },
                 series: [{
                     type: 'map',
