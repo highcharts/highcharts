@@ -52,63 +52,56 @@ To synchronize components you have to specify which event you want to synchroniz
 Example of synchronized components
 
 ```js
-components: [{
-    store,
-    sync: {
-        visibility: true,
-        tooltip: true,
-        selection: true
-    },
-    cell: 'dashboard-col-0',
-    isResizable: true,
-    type: 'Highcharts',
-    tableAxisMap: {
-        Food: 'x',
-        'Vitamin A': 'value'
-    },
-    chartOptions: {
-        chart: {
-            type: 'pie'
-        }
-    },
-}, {
-    cell: 'dashboard-col-1',
-    store,
-    sync: {
-        visibility: true,
-        tooltip: true,
-        selection: true
-    },
-    type: 'Highcharts',
-    tableAxisMap: {
-        Food: 'x',
-        'Vitamin A': 'y'
-    },
-    chartOptions: {
-        xAxis: {
-            type: 'category'
+    components: [{
+        store,
+        sync: {
+            visibility: true,
+            tooltip: true,
+            selection: true
         },
-        chart: {
-            animation: false,
-            type: 'column'
+        cell: 'dashboard-col-0',
+        isResizable: true,
+        type: 'Highcharts',
+        tableAxisMap: {
+            Food: 'x',
+            'Vitamin A': 'value'
+        },
+        chartOptions: {
+            chart: {
+                type: 'pie'
+            }
+        },
+    }, {
+        cell: 'dashboard-col-1',
+        store,
+        sync: {
+            visibility: true,
+            tooltip: true,
+            selection: true
+        },
+        type: 'Highcharts',
+        tableAxisMap: {
+            Food: 'x',
+            'Vitamin A': 'y'
+        },
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            chart: {
+                animation: false,
+                type: 'column'
+            }
         }
-    }
-}]
+    }]
 ```
 
 
 
 You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
+See the next question for possible syncrhonization events.
 
 * * *
-
-What browsers are supported?
----------------
-The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
-In particular, those are Chrome, Edge, Firefox, and Safari.
-
-* * *
-
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
 You can check how this synchronization works in our [minimal dashboards demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-minimal).
@@ -118,3 +111,11 @@ The events, that can be synchronized between components are:
 * 'selection'
 * 'tooltip'
 * ‘panning'
+
+* * *
+What browsers are supported?
+---------------
+The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
+In particular, those are Chrome, Edge, Firefox, and Safari.
+
+* * *
