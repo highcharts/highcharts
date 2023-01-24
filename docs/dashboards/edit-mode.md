@@ -1,13 +1,13 @@
 Edit mode
 ===
 
-Edit mode is a mode, in which the user can change the appearance of the dashboard through the UI. To turn on this feature, you need to add the class to main dashboard div:
+Edit mode is a mode, in which the user can change the appearance of the dashboard through the User Interface (UI). To turn on this feature, you need to add the class to main dashboard div:
 ```html
     <div id="container" class="highcharts-dashboard"></div>
 ```
 
 
-Also in the dashboard config, this option needs to be enabled:
+In addition this option has to be enabled in the dashboard config:
 ```javascript
     editMode: {
             enabled: true,
@@ -18,11 +18,11 @@ Also in the dashboard config, this option needs to be enabled:
         },
 ```
 
-Then, the edit mode option can be enabled by the context menu in the upper right corner.
+Then the edit mode option can be enabled by the context menu in the upper right corner.
 
 ![edit-mode-context-menu.png](edit-mode-context-menu.png)
 
-When edit mode is enabled, the appearance of the dashboard changes. When a cell is hovered it gets blue border and the row, in which the cell is, gets green border. Additionally both row and cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
+When edit mode is enabled, the appearance of the dashboard changes. When a cell is hovered it gets blue border and the row, containing the cell, gets green border. Additionally both row and cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
