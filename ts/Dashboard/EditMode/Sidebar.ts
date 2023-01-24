@@ -27,6 +27,7 @@ import EditRenderer from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
+import DataTable from '../../Data/DataTable.js';
 
 const {
     merge,
@@ -220,14 +221,28 @@ class Sidebar {
                 sidebar: Sidebar,
                 dropContext: Cell | Row
             ): Cell|void {
+                const headers = ['Apples', 'Pears', 'Plums'];
+                const columns = ((): Record<string, Array<string>> => {
+                    const makeRandomRows = (): Array<string> =>
+                        (Array as any)
+                            .from(
+                                { length: 40 },
+                                (): string => (10 * Math.random()).toFixed(2)
+                            );
+                    const cols: Record<string, Array<string>> = {};
+                    for (let i = 0; i < headers.length; ++i) {
+                        cols[headers[i]] = makeRandomRows();
+                    }
+                    return cols;
+                })();
 
-                // TODO: Add datagrid through the drag&drop
-                // if (sidebar && dropContext) {
-                //     return sidebar.onDropNewComponent(dropContext, {
-                //         cell: '',
-                //         type: 'datagrid'
-                //     });
-                // }
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'DataGrid',
+                        store: new Dashboard.CSVStore(new DataTable(columns))
+                    } as any);
+                }
             }
         }
     ];

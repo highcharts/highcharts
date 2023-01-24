@@ -30,6 +30,7 @@ import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
 import KPIComponent from '../Component/KPIComponent.js';
 import Globals from '../Globals.js';
+import DataTable from '../../Data/DataTable';
 
 const {
     fireEvent,

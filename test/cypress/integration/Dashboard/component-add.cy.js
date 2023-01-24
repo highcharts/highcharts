@@ -85,9 +85,18 @@ describe('Add component through UI', () => {
         });
     });
 
-    // // TODO: add after the datagrid component is added
-    // it('should be able to add a Data grid component', function() {
-    //     grabComponent('datagrid');
-    //     dropComponent('#dashboard-col-0')
-    // });
+    it('should be able to add a Data grid component', function() {
+        grabComponent('datagrid');
+        dropComponent('#dashboard-col-0')
+        cy.dashboard().then((dashboard) => {
+            const m = dashboard.mountedComponents,
+                component =  m[m.length - 1].component;
+            assert.equal(
+                component.type,
+                'datagrid',
+                `New component's type should be Highcharts.`
+            );
+
+        });
+    });
 });
