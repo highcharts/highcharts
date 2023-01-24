@@ -173,8 +173,11 @@ class MapSeries extends ScatterSeries {
          * the map borders. Round means that borders are rounded in the ends and
          * bends.
          *
-         * @type       {Highcharts.SeriesLinecapValue}
-         * @since      next
+         * @sample maps/demo/mappoint-mapmarker/
+         *         Backdrop coastline with round linecap
+         *
+         * @type   {Highcharts.SeriesLinecapValue}
+         * @since  10.3.3
          */
         linecap: 'butt',
 
@@ -768,8 +771,24 @@ class MapSeries extends ScatterSeries {
             transform properties, it should induce a single updateTransform and
             symbolAttr call.
             */
-            const scale = svgTransform.scaleX;
-            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            const scale = svgTransform.scaleX,
+                flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            const animatePoints = (scale: number): void => { // #18166
+                (series.points || []).forEach((point): void => {
+                    const graphic = point.graphic;
+                    let strokeWidth;
+
+                    if (
+                        graphic &&
+                        graphic['stroke-width'] &&
+                        (strokeWidth = this.getStrokeWidth(point.options))
+                    ) {
+                        graphic.attr({
+                            'stroke-width': strokeWidth / scale
+                        });
+                    }
+                });
+            };
             if (renderer.globalAnimation && chart.hasRendered) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')
@@ -797,13 +816,12 @@ class MapSeries extends ScatterSeries {
                             ) * fx.pos
                         ),
                         scaleX: scaleStep,
-                        scaleY: scaleStep * flipFactor
+                        scaleY: scaleStep * flipFactor,
+                        'stroke-width': strokeWidth / scaleStep
                     });
 
-                    transformGroup.element.setAttribute(
-                        'stroke-width',
-                        strokeWidth / scaleStep
-                    );
+                    animatePoints(scaleStep); // #18166
+
                 };
 
                 transformGroup
@@ -812,16 +830,11 @@ class MapSeries extends ScatterSeries {
 
             // When dragging or first rendering, animation is off
             } else {
-                transformGroup.attr(svgTransform);
+                transformGroup.attr(merge(
+                    svgTransform, { 'stroke-width': strokeWidth / scale }
+                ));
 
-                // Set the stroke-width directly on the group element so the
-                // children inherit it. We need to use setAttribute directly,
-                // because the stroke-widthSetter method expects a stroke color
-                // also to be set.
-                transformGroup.element.setAttribute(
-                    'stroke-width',
-                    strokeWidth / scale
-                );
+                animatePoints(scale); // #18166
             }
         });
 
@@ -1503,9 +1516,9 @@ export default MapSeries;
  *
  * @see [series colors](#plotOptions.map.colors)
  *
- * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-false/
+ * @sample {highmaps} maps/plotoptions/mapline-colorbypoint-false/
  *         Mapline colorByPoint set to false by default
- * @sample {highmaps} highcharts/plotoptions/mapline-colorbypoint-true/
+ * @sample {highmaps} maps/plotoptions/mapline-colorbypoint-true/
  *         Mapline colorByPoint set to true
  *
  * @type      {boolean}

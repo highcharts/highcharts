@@ -356,11 +356,7 @@ class Tooltip {
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
-        let ret: number[],
-            yAxis: (Axis|undefined),
-            xAxis: (Axis|undefined),
-            plotX = 0,
-            plotY = 0;
+        let ret: number[];
 
         points = splat(points);
 
@@ -391,49 +387,31 @@ class Tooltip {
 
         // Calculate the average position and adjust for axis positions
         } else {
+            let chartX = 0,
+                chartY = 0;
             points.forEach(function (point): void {
-                yAxis = point.series.yAxis;
-                xAxis = point.series.xAxis;
-                plotX += point.plotX || 0;
-                plotY += (
-                    point.plotLow ?
-                        (point.plotLow + (point.plotHigh || 0)) / 2 :
-                        (point.plotY || 0)
-                );
-
-                // Adjust position for positioned axes (top/left settings)
-                if (xAxis && yAxis) {
-                    if (!inverted) { // #1151
-                        plotX += xAxis.pos - plotLeft;
-                        plotY += yAxis.pos - plotTop;
-                    } else { // #14771
-                        plotX += (
-                            plotTop + chart.plotHeight - xAxis.len - xAxis.pos
-                        );
-                        plotY += (
-                            plotLeft + chart.plotWidth - yAxis.len - yAxis.pos
-                        );
-                    }
+                const pos = point.pos(true);
+                if (pos) {
+                    chartX += pos[0];
+                    chartY += pos[1];
                 }
             });
 
-            plotX /= points.length;
-            plotY /= points.length;
-
-            // Use the average position for multiple points
-            ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
-                inverted ? chart.plotHeight - plotX : plotY
-            ];
+            chartX /= points.length;
+            chartY /= points.length;
 
             // When shared, place the tooltip next to the mouse (#424)
             if (this.shared && points.length > 1 && mouseEvent) {
                 if (inverted) {
-                    ret[0] = mouseEvent.chartX - plotLeft;
+                    chartX = mouseEvent.chartX;
                 } else {
-                    ret[1] = mouseEvent.chartY - plotTop;
+                    chartY = mouseEvent.chartY;
                 }
             }
+
+            // Use the average position for multiple points
+            ret = [chartX - plotLeft, chartY - plotTop];
+
         }
         return ret.map(Math.round);
 

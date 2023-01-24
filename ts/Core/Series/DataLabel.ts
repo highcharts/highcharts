@@ -259,7 +259,8 @@ namespace DataLabel {
                 );
 
         const forceCalculation = series.forceDLCalculation;
-        if ((forceCalculation || visible) && defined(plotX) && defined(plotY)) {
+        const pos = point.pos();
+        if ((forceCalculation || visible) && pos) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -274,8 +275,8 @@ namespace DataLabel {
 
             // The alignment box is a singular point
             alignTo = extend({
-                x: inverted ? this.yAxis.len - plotY : plotX,
-                y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
+                x: pos[0],
+                y: Math.round(pos[1]),
                 width: 0,
                 height: 0
             }, alignTo);
@@ -384,8 +385,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ? chart.plotWidth - plotY : plotX,
-                    anchorY: inverted ? chart.plotHeight - plotX : plotY
+                    anchorX: pos[0],
+                    anchorY: pos[1]
                 });
             }
         }

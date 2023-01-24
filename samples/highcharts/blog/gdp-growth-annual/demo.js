@@ -1,5 +1,5 @@
 var lenght = 20;
-var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank.json';
+var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank.json';
 
 
 var arrayString = [],
