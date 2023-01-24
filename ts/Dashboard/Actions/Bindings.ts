@@ -20,6 +20,7 @@ import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Serializable from '../Serializable';
+import type KPIComponent from '../Component/KPIComponent';
 
 import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
@@ -28,7 +29,6 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import U from '../../Core/Utilities.js';
-import KPIComponent from '../Component/KPIComponent.js';
 import Globals from '../Globals.js';
 
 const {
@@ -63,7 +63,7 @@ class Bindings {
         options: Bindings.ComponentOptions,
         cell?: Cell
     ): ComponentTypes | undefined {
-        const compontentContainer = document.getElementById(options.cell);
+        const componentContainer = document.getElementById(options.cell);
         const optionsStates = options.states;
         const optionsEvents = options.events;
 
@@ -71,7 +71,7 @@ class Bindings {
         let component: ComponentTypes|undefined;
 
         // add elements to containers
-        if (compontentContainer) {
+        if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
 
             switch (options.type) {
@@ -79,7 +79,7 @@ class Bindings {
                     component = new HTMLComponent(merge(
                         options,
                         {
-                            parentElement: compontentContainer as HTMLDOMElement,
+                            parentElement: componentContainer as HTMLDOMElement,
                             elements: options.elements
                         })
                     );
@@ -89,7 +89,7 @@ class Bindings {
                         component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: compontentContainer as HTMLDOMElement,
+                                parentElement: componentContainer as HTMLDOMElement,
                                 chartOptions: options.chartOptions,
                                 dimensions: options.dimensions
                             }
@@ -101,19 +101,19 @@ class Bindings {
                         component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: compontentContainer as HTMLDOMElement
+                                parentElement: componentContainer as HTMLDOMElement
                             })
                         ) as DataGridComponent;
                     }
                     break;
                 case 'KPI':
                     if (ComponentClass) {
-                        (component as any) = new ComponentClass(merge(
+                        component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: compontentContainer as HTMLDOMElement
-                            }) as any
-                        )
+                                parentElement: componentContainer as HTMLDOMElement
+                            })
+                        ) as KPIComponent;
                     }
                     break;
                 default:
@@ -145,13 +145,13 @@ class Bindings {
 
             // events
             if (optionsEvents && optionsEvents.click) {
-                addEvent(compontentContainer, 'click', () => {
+                addEvent(componentContainer, 'click', () => {
                     optionsEvents.click();
 
                     if (
                         cell &&
                         component &&
-                        compontentContainer &&
+                        componentContainer &&
                         optionsStates &&
                         optionsStates.active
                     ) {
@@ -162,11 +162,11 @@ class Bindings {
 
             // states
             if (
-                compontentContainer &&
+                componentContainer &&
                 optionsStates &&
                 optionsStates.hover
             ) {
-                compontentContainer.classList.add(
+                componentContainer.classList.add(
                     Globals.classNames.cellHover
                 );
             }
