@@ -1,4 +1,4 @@
-import Dashboard from '../../../../code/es-modules/masters/dashboard.src.js';
+import Dashboard from '../../../../code/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';

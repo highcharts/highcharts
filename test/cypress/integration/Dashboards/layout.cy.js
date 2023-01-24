@@ -1,6 +1,6 @@
 describe('Components in layout', () => {
     before(() => {
-        cy.visit('/cypress/dashboard/chart-interaction/');
+        cy.visit('/cypress/dashboards/chart-interaction/');
     })
 
     it('should resize properly ', () => {
@@ -77,7 +77,7 @@ describe('Chart synchronized series state', () => {
 
 describe('Chart sync selection and panning', () => {
     before(() => {
-        cy.visit('/cypress/dashboard/chart-interaction-selection/')
+        cy.visit('/cypress/dashboards/chart-interaction-selection/')
     });
 
     it('should sync selection', () => {

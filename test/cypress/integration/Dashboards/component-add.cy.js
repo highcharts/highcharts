@@ -15,7 +15,7 @@ function dropComponent(elementName) {
 
 describe('Add component through UI', () => {
     beforeEach(() => {
-        cy.visit('/dashboard/cypress/add-layout');
+        cy.visit('/dashboards/cypress/add-layout');
         cy.viewport(1200, 1000);
         cy.get('.hd-edit-context-menu-btn').click();
         cy.get('.hd-edit-toggle-slider').click();

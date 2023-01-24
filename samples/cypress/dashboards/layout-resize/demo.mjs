@@ -1,4 +1,4 @@
-import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboards.js';
 
 let dashboard = new Dashboard('container', {
     editMode: {

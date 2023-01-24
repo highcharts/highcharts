@@ -23,7 +23,7 @@ function checkRowsAndCells() {
 
 describe('layout resize on window changes', () => {
     before(() => {
-        cy.visit('/cypress/dashboard/chart-interaction/');
+        cy.visit('/cypress/dashboards/chart-interaction/');
     });
     it('should resize rows and cells correctly on horizontal window changes', () => {
         cy.viewport(1200, 1000);

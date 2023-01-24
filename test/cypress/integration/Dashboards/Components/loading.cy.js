@@ -1,6 +1,6 @@
 describe('Component loading', () => {
   before(() => {
-    cy.visit('/cypress/dashboard/component-loading/', {
+    cy.visit('/cypress/dashboards/component-loading/', {
     });
   })
 
