@@ -447,20 +447,38 @@ class HeatmapSeries extends ScatterSeries {
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis) {
-                const pixels =
+                const image = heatmap.image,
+                    pixels =
                     ctx.createImageData(canvas.width, canvas.height),
-                    image = heatmap.image;
+                    { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
+                    {
+                        min: xMin,
+                        max: xMax
+                    } = heatmap.getXExtremes(this.xData || []),
+                    col = Math.floor(canvas.width / (yMax as number)),
+                    row = Math.floor(canvas.height / (col - 1));
 
-                let pixelPos = 0,
-                    color,
-                    rgb;
-
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                let pixelPos = 0;
                 heatmap.data.forEach((p: HeatmapPoint): void => {
-                    color = colorAxis.toColor(
+                    const color = colorAxis.toColor(
                         (p as HeatmapPoint).value || 0, p
                     );
+                    const pointX = heatmap.scaleValue(
+                            p.x,
+                            [xMin, xMax],
+                            [0, canvas.width - col]
+                        ),
+                        pointY = heatmap.scaleValue(
+                            p.y,
+                            [
+                                yMin as number,
+                                yMax as number
+                            ],
+                            [0, canvas.height - row]
+                        );
 
-                    rgb = color && color
+                    const rgb = color && color
                         .toString()
                         .replace('rgb(', '')
                         .replace(')', '')
@@ -473,8 +491,6 @@ class HeatmapSeries extends ScatterSeries {
                         pixels.data[pixelPos++] = 255;
                     }
                 });
-
-                ctx.putImageData(pixels, 0, 0);
 
                 heatmap.image = !image ?
                     chart.renderer.image(
@@ -517,15 +533,8 @@ class HeatmapSeries extends ScatterSeries {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
             series.canvas = doc.createElement('canvas');
-            series.canvas.width = ((
-                (series.xAxis.dataMax || 0) - (series.xAxis.dataMin || 0)) /
-                (series.options.colsize || 1)
-            ) + 1;
-            series.canvas.height = ((
-                (series.yAxis.dataMax || 0) - (series.yAxis.dataMin || 0)) /
-                (series.options.rowsize || 1)
-            ) + 1;
-
+            series.canvas.width = series.xData && series.xData.length || 1;
+            series.canvas.height = series.yData && series.yData.length || 1;
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
         }
@@ -738,6 +747,15 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         return attr;
+    }
+
+    /**
+     * @private
+     */
+    public scaleValue(value: number, from: number[], to: number[]): number {
+        const scale = (to[1] - to[0]) / (from[1] - from[0]);
+        const capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+        return ~~(capped * scale + to[0]);
     }
 
     /**
