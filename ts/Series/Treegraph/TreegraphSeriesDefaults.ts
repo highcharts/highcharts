@@ -238,10 +238,7 @@ const TreegraphSeriesDefaults = {
             }
         },
         enabled: true,
-        linkFormatter: (): string => '',
-        formatter: function (this: Point.PointLabelObject): string {
-            return this.point.id;
-        }
+        linkFormatter: (): string => ''
     }
 } as TreegraphSeriesOptions;
 
