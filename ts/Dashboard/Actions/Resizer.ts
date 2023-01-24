@@ -419,6 +419,13 @@ class Resizer {
         //         addEvent(rowContainer, 'touchend', mouseUpSnap);
         //     }
         // }
+
+        // Update snaps, when resize the window
+        addEvent(window, 'resize', (): void => {
+            if (resizer.currentCell) {
+                resizer.setSnapPositions(resizer.currentCell);
+            }
+        });
     }
     /**
      * General method used on resizing.
