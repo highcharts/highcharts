@@ -299,8 +299,6 @@
 #selection-grid .hc-dg-outer-container {
     background-color: var(--color-background);
     color: var(--color-row-text);
-    position: relative;
-    top: 0 !important;
 }
 
 #selection-grid .hc-dg-cell {
@@ -429,7 +427,7 @@
 }
 
 #world-map .highcharts-series-0 .highcharts-point {
-    fill: var(--color-map) !important;
+    fill: var(--color-map);
     stroke: var(--color-background);
 }
 
