@@ -203,16 +203,16 @@ class CMFIndicator extends SMAIndicator {
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        let len: number = (seriesYData as any).length,
+        const len: number = (seriesYData as any).length,
             moneyFlowVolume: Array<(number|null)> = [],
-            sumVolume = 0,
-            sumMoneyFlowVolume = 0,
             moneyFlowXData: Array<number> = [],
             moneyFlowYData: Array<(number|null)> = [],
-            values: Array<Array<(number|null)>> = [],
-            i: number,
+            values: Array<Array<(number|null)>> = [];
+        let i: number,
             point: [number, (number|null)],
-            nullIndex = -1;
+            nullIndex = -1,
+            sumVolume = 0,
+            sumMoneyFlowVolume = 0;
 
         /**
          * Calculates money flow volume, changes i, nullIndex vars from
