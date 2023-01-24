@@ -302,45 +302,28 @@ class TiledWebMapSeries extends MapSeries {
                 tiles[`${zoom},${x},${y}`].isActive = true;
             };
 
-            const topLeft = mapView.pixelsToLonLat({
+            // calculate topLeft and bottomRight corners without normalize
+            const lambda = mapView.projection.options.rotation[0],
+                topLeftUnits = mapView.pixelsToProjectedUnits({
                     x: 0,
                     y: 0
                 }),
-                bottomRight = mapView.pixelsToLonLat({
+                topLeftArr = mapView.projection.def.inverse(
+                    [topLeftUnits.x, topLeftUnits.y]),
+                topLeft = {
+                    lon: topLeftArr[0] - Math.abs(lambda),
+                    lat: topLeftArr[1]
+                },
+                bottomRightUnits = mapView.pixelsToProjectedUnits({
                     x: chart.plotWidth,
                     y: chart.plotHeight
-                });
-
-            // increase range when plotbox is bigger than mappbox
-            // and for support for rotation and center
-            // e.g. rotation: [100], center: [100, 0] and negatives
-            if (
-                topLeft.lon > bottomRight.lon ||
-                Math.abs(topLeft.lon - bottomRight.lon) < 180
-            ) {
-                topLeft.lon -= 360;
-                bottomRight.lon += 360;
-            }
-
-            // support for rotation - looping tiles for Lambda
-            if (
-                mapView &&
-                defined(mapView.projection.options.rotation) &&
-                (mapView.projection.options.rotation[0] > 360 ||
-                mapView.projection.options.rotation[0] < 0)
-            ) {
-                let count = mapView.projection.options.rotation[0] / 360;
-
-                if (
-                    mapView.projection.options.rotation[0] > 360 &&
-                    count % 1 === 0
-                ) {
-                    count--;
-                }
-
-                topLeft.lon += Math.floor(count) * 360;
-                bottomRight.lon += Math.floor(count) * 360;
-            }
+                }),
+                bottomRightArr = mapView.projection.def.inverse(
+                    [bottomRightUnits.x, bottomRightUnits.y]),
+                bottomRight = {
+                    lon: bottomRightArr[0] + Math.abs(lambda),
+                    lat: bottomRightArr[1]
+                };
 
             // do not support vertical looping
             if (
@@ -354,6 +337,26 @@ class TiledWebMapSeries extends MapSeries {
 
             const startPos = this.lonLatToTile(topLeft, zoomFloor),
                 endPos = this.lonLatToTile(bottomRight, zoomFloor);
+
+
+            // calculate group translations based on first loaded tile
+            const firstTileLonLat = this.tileToLonLat(
+                    startPos.x,
+                    startPos.y,
+                    zoomFloor
+                ),
+                units = mapView.projection.def.forward([
+                    firstTileLonLat.lon + lambda,
+                    firstTileLonLat.lat
+                ]),
+                firstTilePx = mapView.projectedUnitsToPixels({
+                    x: units[0], y: units[1]
+                });
+
+            transformGroups[zoomFloor].attr({
+                translateX: -1 * (startPos.x * scaledTileSize - firstTilePx.x),
+                translateY: -1 * (startPos.y * scaledTileSize - firstTilePx.y)
+            });
 
             for (let x = startPos.x; x <= endPos.x; x++) {
                 for (let y = startPos.y; y <= endPos.y; y++) {
