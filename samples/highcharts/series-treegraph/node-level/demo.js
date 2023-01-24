@@ -9,6 +9,9 @@ Highcharts.chart('container', {
             ['A'],
             ['D', 'A', 3],
             ['B', 'A']
-        ]
+        ],
+        dataLabels: {
+            format: '{point.id}'
+        }
     }]
 });
