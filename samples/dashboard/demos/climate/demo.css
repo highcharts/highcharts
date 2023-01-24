@@ -22,6 +22,7 @@
     --color-background: #fff;
     --color-hover: #5352be;
     --color-hover-text: #fff;
+    --color-symbol: #9a92ce;
     --color-text: #2f2b38;
 }
 
@@ -32,6 +33,7 @@
 .highcharts-dashboard.hd-dark-mode #kpi-rain,
 .highcharts-dashboard.hd-dark-mode #kpi-temperature {
     --color-background: #0d0d0d;
+    --color-symbol: #9a92ce;
     --color-text: #dadae2;
 }
 
@@ -126,6 +128,7 @@
     #kpi-rain,
     #kpi-temperature {
         --color-background: #0d0d0d;
+        --color-symbol: #9a92ce;
         --color-text: #dadae2;
     }
 
@@ -237,11 +240,15 @@
 }
 
 #kpi-data .hd-component-title::before {
+    color: transparent;
     content: "📍 ";
+    text-shadow: 0 0 0 var(--color-symbol);
 }
 
 #kpi-data .hd-component-kpi-value::before {
+    color: transparent;
     content: "🏔 ";
+    text-shadow: 0 0 0 var(--color-symbol);
 }
 
 #kpi-data .hd-component,
@@ -499,9 +506,10 @@
 
 /* *
  *
- * Edit mode
+ *  Edit mode
  *
- */
+ * */
+
 .hd-edit-button.hd-edit-tools-btn {
     background-position: top left;
     background-color: #e7e7ec;
