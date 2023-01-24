@@ -27,10 +27,15 @@ The last thing that you have to do is to specify the `type: 'Highcharts'` in the
 [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/component-highcharts)
 
 ### DataGrid Component
-To visualize data in a row column format you can use the datagrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
+To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
 ```html
     <script src="https://code.highcharts.com/dashboard.js"></script>
     <script src="https://code.highcharts.com/modules/dashboard-plugin.js"></script>
+```
+
+Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.
+```css
+    @import "https://code.highcharts.com/css/datagrid.css";
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
 The if you connect this component to the store, the content of the component will be automatically filled with data, and will allow the user to change the data in the store and automatically in all components that also are connected to this store, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/dashboard-datagrid-component)
