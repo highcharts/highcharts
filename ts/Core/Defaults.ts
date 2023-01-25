@@ -2592,9 +2592,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '12px',
-            /** @internal */
-            whiteSpace: 'nowrap'
+            fontSize: '12px'
         },
 
         /**

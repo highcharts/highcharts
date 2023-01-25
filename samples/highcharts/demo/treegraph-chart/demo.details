@@ -1,9 +1,9 @@
 ---
-name: EXPERIMENTAL - Treegraph chart
+name: Treegraph with boxes
 authors:
-  - Pawel Lysy
+  - Torstein Hønsi
 js_wrap: b
-new_until: 2022-06-31
+new_until: 2023-03-31
 tags:
   - Highcharts demo
 categories:
