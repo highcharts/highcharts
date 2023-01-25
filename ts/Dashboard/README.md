@@ -38,3 +38,82 @@ In the component [documentation](https://highcharts.com/docs/dashboards/types-of
 
 ## Working with Data
 
+You can import your data from multiple sources for example CSV and Google Spreadsheet. They are going to be handled by the Stores and distributed as DataTables.<br>
+
+More about this concept in the Data [documentation](https://highcharts.com/docs/dashboards/data).
+
+## GUI
+The GUI is a part of the dashboard that allows you to create a layout of the dashboard. You can add rows and cells to the layout. The layout is a grid where you can place your components. <br>
+An example of how the GUI configuration might look like:
+``` JS
+    gui: {
+        layouts: [{
+            id: 'layout-1',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }, {
+                    id: 'dashboard-col-1'
+                }]
+            }]
+        }]
+    }
+```
+More about the GUI in the [documentation](https://highcharts.com/docs/dashboards/gui).
+
+
+## Edit Mode
+The Edit Mode is a part of the dashboard that allows you to edit the dashboard. You can add, remove and edit components. <br>
+To enable the Edit Mode you have to add the `highcharts-dashboard` class to the div where the dashboard is placed. <br>
+
+More about the Edit Mode in the [documentation](https://highcharts.com/docs/dashboards/edit-mode).
+
+## Your first dashboard
+To create your first dashboard you have to import the Dashboards package and create a new dashboard. <br>
+You also need a placeholder for that dashboard. In this example we will use a div with the id `container`.
+```html
+    <script src="https://code.highcharts.com/dashboards.js"></script>
+
+    <div id="container" class="highcharts-dashboard"></div>
+```
+Than the dashboard can be created:
+``` JS
+    const dashboard = new Dashboard.Dashboard('container', {
+        gui: {
+            layouts: [{
+                id: 'layout-1',
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-0'
+                    }, {
+                        id: 'dashboard-col-1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'html',
+            cell: 'dashboard-col-0',
+            elements: [
+                {
+                    tagName: 'h1',
+                    style: {
+                        height: '400px',
+                        'text-align': 'center'
+                    },
+                    textContent: 'Your first dashboard'
+                }
+            ]
+        }, {
+            cell: 'dashboard-col-1',
+            type: 'Highcharts',
+            chartOptions: {
+                series: [{
+                    data: [1, 2, 3, 4]
+                }]
+            }
+        }]
+    });
+```
+
+See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/your-first-dashboard).

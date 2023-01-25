@@ -10,7 +10,7 @@ Sub-folders:
 * Converters - create a table from an input format, and an output format from a
   table
 
-* Modifiers - modify table data into a second table, accessibile via the
+* Modifiers - modify table data into a second table, accessible via the
   `DataTable.modified` property.
 
 * Stores - make data sources accessible via a managed table
@@ -28,7 +28,7 @@ cost.
 
 ### Creating A Table
 
-A table can be created with predefined columns and a manual ID to differenciate
+A table can be created with predefined columns and a manual ID to differentiate
 between table instances.
 
 ```TypeScript
@@ -275,7 +275,7 @@ store.table.getRowCount() > 0;
 ### Saving Data
 
 How to save a table depends on the store type and use case. In a strict
-server-less situation, instead of the save function you usally use the
+server-less situation, instead of the save function you usually use the
 related converter.
 
 ```TypeScript
