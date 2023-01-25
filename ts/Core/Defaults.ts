@@ -2667,10 +2667,7 @@ const defaultOptions: Options = {
 /*= } =*/
 '';
 
-const defaultTime = new Time(merge(
-    defaultOptions.global,
-    defaultOptions.time
-));
+const defaultTime = new Time(defaultOptions.time);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions

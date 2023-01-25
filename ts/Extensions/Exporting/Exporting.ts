@@ -1780,11 +1780,6 @@ namespace Exporting {
             .replace(/&nbsp;/g, '\u00A0') // no-break space
             .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
-        // Further sanitize for oldIE
-        if (this.ieSanitizeSVG) {
-            svg = this.ieSanitizeSVG(svg);
-        }
-
         return svg;
     }
 

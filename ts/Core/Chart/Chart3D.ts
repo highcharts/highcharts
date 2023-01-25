@@ -1883,8 +1883,7 @@ namespace Chart3D {
             (options.series || []).forEach(function (s): void {
                 const type = (
                     s.type ||
-                    options.chart.type ||
-                    options.chart.defaultSeriesType
+                    options.chart.type
                 );
 
                 if (type === 'scatter') {

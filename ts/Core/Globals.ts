@@ -61,6 +61,21 @@ declare global {
         ): TReturn;
     }
 
+    interface Document {
+        /** @deprecated */
+        exitFullscreen: () => Promise<void>;
+        /** @deprecated */
+        mozCancelFullScreen: Function;
+        /** @deprecated */
+        msExitFullscreen: Function;
+        /** @deprecated */
+        msHidden: boolean;
+        /** @deprecated */
+        webkitExitFullscreen: Function;
+        /** @deprecated */
+        webkitHidden: boolean;
+    }
+
     interface Element {
         /**
          * @private
