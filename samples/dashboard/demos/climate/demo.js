@@ -149,7 +149,7 @@ async function setupDashboard() {
                             );
                             const lastPoint = data[data.length - 1];
                             const startIndex =
-                                table.getRowIndexBy('time', data[0]);
+                                table.getRowIndexBy('time', data[0][0]);
 
                             worldDate = lastPoint[0];
 
@@ -717,33 +717,6 @@ async function setupDataPool() {
     }
 }
 
-// Calculate the average and max temperature in C and F from K.
-async function convertTemperature(city) {
-    const cityDataTable = (await dataPool.getStoreTable(city)).modified,
-        columns = ['TN', 'TX'], // Average, Maximal temperature
-        scales = ['C', 'F'];
-
-    columns.forEach(column => {
-        scales.forEach(scale => {
-            const newColumn = column + scale;
-            let temperatureColumn = cityDataTable.getColumn(newColumn);
-
-            if (!temperatureColumn) {
-                cityDataTable.setColumns({
-                    [newColumn]: cityDataTable
-                        .getColumn(column)
-                        .map(kelvin => Highcharts.correctFloat(
-                            scale === 'C' ?
-                                (kelvin - 273.15) :
-                                (kelvin * 1.8 - 459.67),
-                            3
-                        ))
-                });
-            }
-        });
-    });
-}
-
 async function setupCitiesData() {
     const cities = citiesTable.modified;
     const data = citiesData;
@@ -754,20 +727,24 @@ async function setupCitiesData() {
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
 
+    let store;
+
     for (const row of rows) {
         const city = row[2];
 
         if (typeof data[city] === 'undefined') {
+            store = await dataPool.getStore(city);
+
+            await decorateCityTable(store.table);
+
             data[city] = {
                 country: row[3],
                 elevation: row[4],
                 lat: row[0],
                 lon: row[1],
                 name: row[2],
-                store: await dataPool.getStore(city)
+                store
             };
-
-            await convertTemperature(city);
 
             if (citiesMap) {
                 citiesMap.setData(await buildCitiesMap());
@@ -797,6 +774,9 @@ async function buildCitiesData() {
         cities.getRowIndexBy('city', cityScope),
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
+    const store = await dataPool.getStore(initialRow[2]);
+
+    await decorateCityTable(store.table);
 
     data[cityScope] = {
         country: initialRow[3],
@@ -804,10 +784,8 @@ async function buildCitiesData() {
         lat: initialRow[0],
         lon: initialRow[1],
         name: initialRow[2],
-        store: await dataPool.getStore(initialRow[2])
+        store
     };
-
-    await convertTemperature(cityScope);
 
     return data;
 }
@@ -906,6 +884,52 @@ function buildSymbols() {
         x + w + w / 2 + 1, y + h / 2,
         'Z'
     ];
+}
+
+function decorateCityTable(table) {
+    const columns = ['TN', 'TX'], // Average, Maximal temperature
+        scales = ['C', 'F'];
+
+    columns.forEach(column => {
+        scales.forEach(scale => {
+            const newColumn = column + scale;
+            let temperatureColumn = table.getColumn(newColumn);
+
+            if (!temperatureColumn) {
+                table.setColumns({
+                    [newColumn]: table
+                        .getColumn(column)
+                        .map(kelvin => Highcharts.correctFloat(
+                            scale === 'C' ?
+                                (kelvin - 273.15) :
+                                (kelvin * 1.8 - 459.67),
+                            3
+                        ))
+                });
+            }
+        });
+    });
+
+    table.setColumn(
+        'Date',
+        table
+            .getColumn('time')
+            .map(timestamp => new Date(timestamp)
+                .toISOString()
+                .substring(0, 10)
+            )
+    );
+
+    table.setColumnAlias('avg. ˚C', 'TNC');
+    table.setColumnAlias('avg. ˚F', 'TNF');
+    table.setColumnAlias('avg. ˚K', 'TN');
+    table.setColumnAlias('max ˚C', 'TXC');
+    table.setColumnAlias('max ˚F', 'TXF');
+    table.setColumnAlias('max ˚K', 'TX');
+    table.setColumnAlias('Frost', 'FD');
+    table.setColumnAlias('Ice', 'ID');
+    table.setColumnAlias('Rain', 'RR1');
+
 }
 
 function tooltipFormatter(value, city) {
