@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
 const dataPool = new Dashboard.DataOnDemand();
 const dataScopes = {
-    FD: 'Days with Fog',
+    FD: 'Days with Frost',
     ID: 'Days with Ice',
     RR: 'Days with Rain',
     TN: 'Average Temperature',
@@ -64,7 +64,7 @@ async function setupDashboard() {
                     enabled: false
                 },
                 series: [{
-                    type: 'scatter',
+                    type: 'spline',
                     name: 'Timeline',
                     data: buildDates(),
                     showInNavigator: false,
@@ -328,7 +328,7 @@ async function setupDashboard() {
                 },
                 colorAxis: buildColorAxis(),
                 series: [{
-                    type: 'scatter',
+                    type: 'spline',
                     name: defaultCity,
                     data: [],
                     events: {
@@ -546,7 +546,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            cell: 'kpi-fog',
+            cell: 'kpi-frost',
             type: 'kpi',
             subtitle: dataScopes.FD,
             value: (() => {
@@ -668,7 +668,7 @@ async function setupDashboard() {
                                     id: 'kpi-ice',
                                     width: '33.333%'
                                 }, {
-                                    id: 'kpi-fog',
+                                    id: 'kpi-frost',
                                     width: '33.333%'
                                 }]
                             }],
@@ -934,9 +934,9 @@ function tooltipFormatter(value, city) {
     } else if (dataScope === 'ID') {
         tooltip += Highcharts.correctFloat(value, 0) + ' icy days';
 
-    // fog days
+    // frost days
     } else if (dataScope === 'FD') {
-        tooltip += Highcharts.correctFloat(value, 0) + ' foggy days';
+        tooltip += Highcharts.correctFloat(value, 0) + ' frosty days';
 
     // fallback
     } else {
@@ -981,11 +981,21 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         void 0, void 0,
         ['time', dataScope]
     );
+    const isColumnSeries = ['RR1', 'FD', 'ID'].indexOf(dataScope) >= 0;
+    const columnSeriesOptions = {
+        type: isColumnSeries ? 'column' : 'spline',
+        threshold: isColumnSeries ? 0 : null
+    };
 
     // update navigator
     navigatorSeries.update({
         name: cityScope,
-        data
+        minPointLength: 1, // workaround
+        pointPadding: 0,
+        groupPadding: 0,
+        crisp: false,
+        data,
+        ...columnSeriesOptions
     });
 
     // update chart
@@ -993,7 +1003,9 @@ function syncRefreshCharts(store, dataScope, cityScope) {
         title: {
             text: cityScope
         }
-    });
+    }, false);
+
+    citySeries.update(columnSeriesOptions);
 
     // Update the main chart
     Highcharts.fireEvent(

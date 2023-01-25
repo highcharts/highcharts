@@ -1,0 +1,6 @@
+---
+ name: Highcharts Dashboards Demo
+ author:
+   - Pawel Lysy
+ js_wrap: b
+...

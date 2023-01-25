@@ -24,7 +24,7 @@ import F from '../../Core/FormatUtilities.js';
 const {
     format
 } = F;
-import Highcharts from '../../masters/highcharts.src.js';
+import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -37,6 +37,8 @@ const {
 } = U;
 
 class KPIComponent extends Component {
+    public static charter?: typeof G;
+
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -185,9 +187,10 @@ class KPIComponent extends Component {
 
     public render(): this {
         super.render();
+        const charter = (KPIComponent.charter || G);
 
         if (this.options.chartOptions && !this.chart) {
-            this.chart = Highcharts.chart(this.chartContainer, merge(
+            this.chart = charter.chart(this.chartContainer, merge(
                 KPIComponent.defaultChartOptions,
                 this.options.chartOptions
             ));

@@ -365,6 +365,10 @@
     stroke: var(--color-series);
 }
 
+#time-range-selector .highcharts-navigator-series.highcharts-column-series .highcharts-point {
+    fill: var(--color-series);
+}
+
 #time-range-selector .highcharts-scrollbar-arrow {
     fill: var(--color-scroll-line);
     stroke: var(--color-scroll-line);
