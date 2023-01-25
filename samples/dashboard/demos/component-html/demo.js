@@ -18,10 +18,13 @@ const dashboard = new Dashboard.Dashboard('container', {
     components: [{
         type: 'html',
         cell: 'dashboard-1',
+        dimentions: {
+            height: 500
+        },
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://www.highcharts.com/docs/assets/images/hollow-candlestick-89ede73673a823ad1e222f9280da27e8.png'
+                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
             }
         }]
     }, {
@@ -30,15 +33,18 @@ const dashboard = new Dashboard.Dashboard('container', {
         elements: [{
             tagName: 'img',
             attributes: {
-                src: 'https://www.highcharts.com/docs/assets/images/axis_description-a5a5c48c754b2eb89d105edfb07b24f2.png'
+                src: 'https://www.highcharts.com/samples/graphics/maps-dark.svg'
             }
         }]
     }, {
         type: 'html',
         cell: 'dashboard-3',
         elements: [{
-            tagName: 'div',
-            style: { 'text-align': 'center' },
+            tagName: 'h1',
+            style: {
+                height: '400px',
+                'text-align': 'center'
+            },
             textContent: 'Placeholder text'
         }]
     }]
