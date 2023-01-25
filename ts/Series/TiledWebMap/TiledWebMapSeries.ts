@@ -20,6 +20,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
 import MapView from '../../Maps/MapView.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 const {
     seriesTypes: {
@@ -48,6 +49,13 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
 
     }
+}
+
+interface TileItem extends SVGElement {
+    posX?: number,
+    posY?: number,
+    originalURL?: string,
+    isActive?: boolean
 }
 
 /**
@@ -94,7 +102,7 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
-    tiles: any;
+    tiles: Record<string, TileItem> = {};
     public static TilesProvidersRegistry = TilesProvidersRegistry;
 
     /**
@@ -163,25 +171,28 @@ class TiledWebMapSeries extends MapSeries {
         return { lon, lat };
     }
 
-    public drawPoints(): any {
+    public drawPoints(): void {
+        const {
+                chart
+            } = this,
+            mapView = chart.mapView;
+
         if (!this.tiles) {
             this.tiles = {};
         }
         if (!this.transformGroups) {
             this.transformGroups = [];
         }
-        if (!this.chart.mapView) {
+        if (!mapView) {
             return;
         }
 
         const {
-                chart,
                 tiles,
                 transformGroups
             } = this,
             options = this.options,
             provider = options.provider,
-            mapView: any = chart.mapView,
             { zoom } = mapView,
             zoomFloor = zoom < 0 ? 0 : Math.floor(zoom),
             maxTile = Math.pow(2, zoomFloor),
@@ -209,7 +220,7 @@ class TiledWebMapSeries extends MapSeries {
 
                 // Add as credits.text, to prevent changing the default mapText
                 const creditsText = pick(
-                    (chart.userOptions.credits as any).text,
+                    chart.userOptions.credits && chart.userOptions.credits.text,
                     'Highcharts.com ' + def.getCredits(provider.theme)
                 );
 
@@ -234,151 +245,143 @@ class TiledWebMapSeries extends MapSeries {
                 }
             }
 
-            if (mapView.projection) {
+            if (mapView.projection && mapView.projection.def) {
                 // Always true for tile maps
                 mapView.projection.hasCoordinates = true;
-            }
 
-            if (!transformGroups[zoomFloor]) {
-                transformGroups[zoomFloor] = chart.renderer.g().add(this.group);
-            }
-            const origin = mapView.lonLatToPixels({
-                lon: -180,
-                lat: 85.0511287798
-            });
-            transformGroups[zoomFloor].attr({
-                translateX: origin.x,
-                translateY: origin.y
-            });
-
-            const replaceVariables = (
-                url: string,
-                x: number,
-                y: number,
-                zoom: number
-            ): string => url
-                .replace('{x}', x.toString())
-                .replace('{y}', y.toString())
-                .replace('{zoom}', zoom.toString())
-                .replace('{z}', zoom.toString());
-
-            const addTile = (x: number, y: number, zoom: number): void => {
-                const modX = x % maxTile,
-                    modY = y % maxTile,
-                    tileX = modX < 0 ? modX + maxTile : modX,
-                    tileY = modY < 0 ? modY + maxTile : modY;
-
-                if (!tiles[`${zoom},${x},${y}`]) {
-                    if (provider.url) {
-                        const url = replaceVariables(
-                            provider.url,
-                            tileX,
-                            tileY,
-                            zoom
-                        );
-
-                        tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                            url,
-                            x * scaledTileSize,
-                            y * scaledTileSize,
-                            scaledTileSize,
-                            scaledTileSize
-                        )
-                            .attr({
-                                zIndex: 2
-                            })
-                            .on('load', function (this: SVGElement): void {
-                                if (provider.onload) {
-                                    provider.onload.apply(this);
-                                }
-                            })
-                            .add(transformGroups[zoomFloor]);
-
-                        tiles[`${zoom},${x},${y}`].originalURL = url;
-                        tiles[`${zoom},${x},${y}`].posX = x;
-                        tiles[`${zoom},${x},${y}`].posY = y;
-                    }
+                if (!transformGroups[zoomFloor]) {
+                    transformGroups[zoomFloor] =
+                        chart.renderer.g().add(this.group);
                 }
-                tiles[`${zoom},${x},${y}`].isActive = true;
-            };
 
-            // calculate topLeft and bottomRight corners without normalize
-            const lambda = pick(
-                    (
-                        mapView.projection.options.rotation &&
-                        mapView.projection.options.rotation[0]
-                    ), 0),
-                topLeftUnits = mapView.pixelsToProjectedUnits({
-                    x: 0,
-                    y: 0
-                }),
-                topLeftArr = mapView.projection.def.inverse(
-                    [topLeftUnits.x, topLeftUnits.y]),
-                topLeft = {
-                    lon: topLeftArr[0] - Math.abs(lambda),
-                    lat: topLeftArr[1]
-                },
-                bottomRightUnits = mapView.pixelsToProjectedUnits({
-                    x: chart.plotWidth,
-                    y: chart.plotHeight
-                }),
-                bottomRightArr = mapView.projection.def.inverse(
-                    [bottomRightUnits.x, bottomRightUnits.y]),
-                bottomRight = {
-                    lon: bottomRightArr[0] + Math.abs(lambda),
-                    lat: bottomRightArr[1]
+                const replaceVariables = (
+                    url: string,
+                    x: number,
+                    y: number,
+                    zoom: number
+                ): string => url
+                    .replace('{x}', x.toString())
+                    .replace('{y}', y.toString())
+                    .replace('{zoom}', zoom.toString())
+                    .replace('{z}', zoom.toString());
+
+                const addTile = (x: number, y: number, zoom: number): void => {
+                    const modX = x % maxTile,
+                        modY = y % maxTile,
+                        tileX = modX < 0 ? modX + maxTile : modX,
+                        tileY = modY < 0 ? modY + maxTile : modY;
+
+                    if (!tiles[`${zoom},${x},${y}`]) {
+                        if (provider.url) {
+                            const url = replaceVariables(
+                                provider.url,
+                                tileX,
+                                tileY,
+                                zoom
+                            );
+
+                            tiles[`${zoom},${x},${y}`] = chart.renderer.image(
+                                url,
+                                x * scaledTileSize,
+                                y * scaledTileSize,
+                                scaledTileSize,
+                                scaledTileSize
+                            )
+                                .attr({
+                                    zIndex: 2
+                                })
+                                .add(transformGroups[zoomFloor]);
+
+                            tiles[`${zoom},${x},${y}`].posX = x;
+                            tiles[`${zoom},${x},${y}`].posY = y;
+                            tiles[`${zoom},${x},${y}`].originalURL = url;
+                        }
+                    }
+                    tiles[`${zoom},${x},${y}`].isActive = true;
                 };
 
-            // do not support vertical looping
-            if (
-                topLeft.lat > mapView.projection.maxLatitude ||
-                bottomRight.lat < -1 * mapView.projection.maxLatitude
-            ) {
-                topLeft.lat = topLeft.lat % mapView.projection.maxLatitude;
-                bottomRight.lat =
-                    bottomRight.lat % mapView.projection.maxLatitude;
-            }
+                // calculate topLeft and bottomRight corners without normalize
+                const lambda = pick(
+                        (
+                            mapView.projection.options.rotation &&
+                            mapView.projection.options.rotation[0]
+                        ), 0),
+                    topLeftUnits = mapView.pixelsToProjectedUnits({
+                        x: 0,
+                        y: 0
+                    }),
+                    topLeftArr = mapView.projection.def.inverse(
+                        [topLeftUnits.x, topLeftUnits.y]),
+                    topLeft = {
+                        lon: topLeftArr[0] - Math.abs(lambda),
+                        lat: topLeftArr[1]
+                    },
+                    bottomRightUnits = mapView.pixelsToProjectedUnits({
+                        x: chart.plotWidth,
+                        y: chart.plotHeight
+                    }),
+                    bottomRightArr = mapView.projection.def.inverse(
+                        [bottomRightUnits.x, bottomRightUnits.y]),
+                    bottomRight = {
+                        lon: bottomRightArr[0] + Math.abs(lambda),
+                        lat: bottomRightArr[1]
+                    };
 
-            const startPos = this.lonLatToTile(topLeft, zoomFloor),
-                endPos = this.lonLatToTile(bottomRight, zoomFloor);
+                // do not support vertical looping
+                if (
+                    topLeft.lat > mapView.projection.maxLatitude ||
+                    bottomRight.lat < -1 * mapView.projection.maxLatitude
+                ) {
+                    topLeft.lat = topLeft.lat % mapView.projection.maxLatitude;
+                    bottomRight.lat =
+                        bottomRight.lat % mapView.projection.maxLatitude;
+                }
+
+                const startPos = this.lonLatToTile(topLeft, zoomFloor),
+                    endPos = this.lonLatToTile(bottomRight, zoomFloor);
 
 
-            // calculate group translations based on first loaded tile
-            const firstTileLonLat = this.tileToLonLat(
-                    startPos.x,
-                    startPos.y,
-                    zoomFloor
-                ),
-                units = mapView.projection.def.forward([
-                    firstTileLonLat.lon + lambda,
-                    firstTileLonLat.lat
-                ]),
-                firstTilePx = mapView.projectedUnitsToPixels({
-                    x: units[0], y: units[1]
+                // calculate group translations based on first loaded tile
+                const firstTileLonLat = this.tileToLonLat(
+                        startPos.x,
+                        startPos.y,
+                        zoomFloor
+                    ),
+                    units = mapView.projection.def.forward([
+                        firstTileLonLat.lon + lambda,
+                        firstTileLonLat.lat
+                    ]),
+                    firstTilePx = mapView.projectedUnitsToPixels({
+                        x: units[0], y: units[1]
+                    });
+
+                transformGroups[zoomFloor].attr({
+                    translateX:
+                        -1 * (startPos.x * scaledTileSize - firstTilePx.x),
+                    translateY:
+                        -1 * (startPos.y * scaledTileSize - firstTilePx.y)
                 });
 
-            transformGroups[zoomFloor].attr({
-                translateX: -1 * (startPos.x * scaledTileSize - firstTilePx.x),
-                translateY: -1 * (startPos.y * scaledTileSize - firstTilePx.y)
-            });
-
-            for (let x = startPos.x; x <= endPos.x; x++) {
-                for (let y = startPos.y; y <= endPos.y; y++) {
-                    addTile(x, y, zoomFloor);
+                for (let x = startPos.x; x <= endPos.x; x++) {
+                    for (let y = startPos.y; y <= endPos.y; y++) {
+                        addTile(x, y, zoomFloor);
+                    }
                 }
             }
 
             // Destroy old and unused
-            Object.keys(tiles).forEach((key): any => {
+            Object.keys(tiles).forEach((key): void => {
                 if (tiles[key].isActive) {
                     tiles[key].isActive = false;
                     const { posX, posY } = tiles[key];
-                    tiles[key].attr({
-                        x: posX * scaledTileSize,
-                        y: posY * scaledTileSize,
-                        width: scaledTileSize,
-                        height: scaledTileSize
-                    });
+                    if (defined(posX) && defined(posY)) {
+                        tiles[key].attr({
+                            x: posX * scaledTileSize,
+                            y: posY * scaledTileSize,
+                            width: scaledTileSize,
+                            height: scaledTileSize
+                        });
+                    }
                 } else {
                     tiles[key].destroy();
                     delete tiles[key];
@@ -392,7 +395,7 @@ class TiledWebMapSeries extends MapSeries {
         }
     }
 
-    public update(): any {
+    public update(): void {
         const series = this,
             chart = this.chart,
             mapView = chart.mapView,

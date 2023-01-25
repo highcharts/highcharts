@@ -39,10 +39,22 @@ QUnit.test('Tiled Web Map on the chart', assert => {
                 zoom: 2
             },
             series: [{
-                type: 'tiledwebmap'
+                type: 'tiledwebmap',
+                provider: {
+                    type: 'OpenStreetMap'
+                }
             }]
         }),
         series = chart.series[0];
+
+    assert.ok(
+        Object.keys(series.tiles).length > 0,
+        'If the provider is defined there should be tiles shown.'
+    );
+
+    series.update({
+        provider: void 0
+    });
 
     assert.strictEqual(
         Object.keys(series.tiles).length,
@@ -76,18 +88,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
 
     series.update({
         provider: {
-            type: 'OpenStreetMap'
-        }
-    });
-
-    // TO DO change tests for using HC provider - not external
-    // assert.ok(
-    //     Object.keys(series.tiles).length > 0,
-    //     'If the provider is defined there should be tiles shown.'
-    // );
-
-    series.update({
-        provider: {
+            type: 'OpenStreetMap',
             theme: 'BadTheme'
         }
     });
