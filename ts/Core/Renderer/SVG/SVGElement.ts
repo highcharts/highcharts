@@ -531,7 +531,7 @@ class SVGElement implements SVGElementLike {
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
-        if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
+        if (pick(doc.hidden, false)) {
             animOptions.duration = 0;
         }
 

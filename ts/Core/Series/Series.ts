@@ -3158,30 +3158,6 @@ class Series {
                     }
                 }
 
-                // VML SUPPPORT
-                if (inverted && renderer.isVML) {
-                    if (axis.isXAxis) {
-                        clipAttr = {
-                            x: 0,
-                            y: reversed ? pxPosMin : pxPosMax,
-                            height: clipAttr.width,
-                            width: chart.chartWidth
-                        };
-                    } else {
-                        clipAttr = {
-                            x: (
-                                clipAttr.y -
-                                chart.plotLeft -
-                                chart.spacingBox.x
-                            ),
-                            y: 0,
-                            width: clipAttr.height,
-                            height: chart.chartHeight
-                        };
-                    }
-                }
-                // END OF VML SUPPORT
-
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
                 } else {

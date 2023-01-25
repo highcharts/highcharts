@@ -705,11 +705,6 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-        ['catch'](function (error) { // to avoid IE8 failure
-            console.log(error && error.message);
-            resolve(error && error.message); // skip and continue processing
-        });
-
     });
 }
 

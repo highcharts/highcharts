@@ -928,7 +928,7 @@ class Pointer {
      */
     public onTrackerMouseOut(e: PointerEvent): void {
         const chart = this.chart;
-        const relatedTarget = e.relatedTarget || e.toElement;
+        const relatedTarget = e.relatedTarget;
         const series = chart.hoverSeries;
 
         this.isDirectTouch = false;
@@ -1183,10 +1183,7 @@ class Pointer {
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (
-            chart &&
-            (e.relatedTarget || (e as PointerEvent).toElement)
-        ) {
+        if (chart && e.relatedTarget) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;

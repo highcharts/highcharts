@@ -42,6 +42,17 @@ declare global {
         [K in keyof T as T[K] extends Function ? K : never]: T[K];
     };
 
+    interface Array<T> {
+        forEach<TScope = any>(
+            callbackfn: ArrayForEachCallbackFunction<T, TScope>,
+            thisArg?: TScope
+        ): void;
+    }
+
+    interface ArrayForEachCallbackFunction<T, TScope = any> {
+        (this: TScope, value: T, index: number, array: Array<T>): void;
+    }
+
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,

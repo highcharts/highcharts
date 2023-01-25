@@ -537,12 +537,6 @@ class TextBuilder {
                     } catch (e) {
                         '';
                     }
-
-                // Legacy
-                } else if (renderer.getSpanWidth) { // #9058 jsdom
-                    textNode.textContent = getString(text || words, charEnd);
-                    lengths[end] = startAt +
-                        renderer.getSpanWidth(svgElement, textNode as any);
                 }
             }
             return lengths[end];

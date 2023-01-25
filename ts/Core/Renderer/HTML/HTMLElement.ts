@@ -283,13 +283,6 @@ class HTMLElement extends SVGElement {
             });
         }
 
-        // apply inversion
-        if (wrapper.inverted) { // wrapper is a group
-            [].forEach.call(elem.childNodes, function (child: ChildNode): void {
-                renderer.invertChild(child as any, elem);
-            });
-        }
-
         if (elem.tagName === 'SPAN') {
             const rotation = wrapper.rotation,
                 textWidth = wrapper.textWidth && pInt(wrapper.textWidth),

@@ -1641,9 +1641,7 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener = (el as any).addEventListener;
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -1712,9 +1710,7 @@ function removeEvent<T>(
         type: string,
         fn: (EventCallback<T>|Function)
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener = (el as any).removeEventListener;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
