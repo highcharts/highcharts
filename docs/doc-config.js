@@ -9,6 +9,7 @@ module.exports = {
         'dashboards/components',
         'dashboards/layout-description',
         'dashboards/sync',
+        'dashboards/frequently-asked-questions',
         'dashboards/installation',
         'dashboards/your-first-dashboard',
         'dashboards/edit-mode',
