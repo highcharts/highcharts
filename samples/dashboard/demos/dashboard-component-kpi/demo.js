@@ -5,14 +5,14 @@ function random(max, min = 0) {
 const dashboard = new Dashboard.Dashboard('container', {
     components: [{
         cell: 'kpi-00',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Average revenue',
         value: 888,
         threshold: [200, 800],
         thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
     }, {
         cell: 'kpi-01',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Earnings',
         value: 900,
         subtitle: {
@@ -20,7 +20,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }
     },  {
         cell: 'kpi-02',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Cakes',
         value: 7,
         subtitle: 'Consumed daily',
@@ -31,18 +31,18 @@ const dashboard = new Dashboard.Dashboard('container', {
         }
     }, {
         cell: 'kpi-03',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Active users',
         value: 70
     }, {
         cell: 'kpi-10',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Change',
         value: 222,
         valueFormatter: v => `${(v / 10).toFixed(1)}%`
     }, {
         cell: 'kpi-11',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Cash',
         value: 88,
         valueFormat: '${value:,.2f}',
@@ -51,7 +51,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }
     }, {
         cell: 'kpi-12',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Progress',
         chartOptions: {
             chart: {
@@ -86,7 +86,7 @@ const dashboard = new Dashboard.Dashboard('container', {
         }
     }, {
         cell: 'kpi-13',
-        type: 'kpi',
+        type: 'KPI',
         title: 'Visits last 24 hours',
         chartOptions: {
             yAxis: {
