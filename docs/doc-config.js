@@ -7,6 +7,7 @@ module.exports = {
      */
     unlisted: [
         'dashboards/components',
+        'dashboards/types-of-components',
         'dashboards/layout-description',
         'dashboards/sync',
         'dashboards/frequently-asked-questions',
