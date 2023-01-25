@@ -1,0 +1,31 @@
+figure {
+    width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    font-family: sans-serif;
+}
+
+#container {
+    height: 500px;
+}
+
+#legend {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 10;
+}
+
+#legend label {
+    cursor: pointer;
+}
+
+#play {
+    display: block;
+    margin: 1rem auto;
+    width: 7rem;
+}
+
+pre {
+    display: none;
+}
