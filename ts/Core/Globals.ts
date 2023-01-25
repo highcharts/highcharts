@@ -109,6 +109,66 @@ declare global {
         changedTouches: Array<Touch>;
     }
 
+    class MSPointerEvent implements Partial<PointerEvent> {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+        readonly pointerType: undefined;
+    }
+
+    interface Window {
+        /** @deprecated */
+        MSBlobBuilder?: typeof MSBlobBuilder;
+        /** @deprecated */
+        MSPointerEvent?: typeof MSPointerEvent;
+        /** @deprecated */
+        createObjectURL?: (typeof URL)['createObjectURL'];
+        /** @deprecated */
+        opera?: unknown;
+        /** @deprecated */
+        webkitAudioContext?: typeof AudioContext;
+        /** @deprecated */
+        webkitURL?: typeof URL;
+    }
+
+    interface Element {
+        /** @deprecated */
+        currentStyle?: ElementCSSInlineStyle;
+        /** @deprecated */
+        mozRequestFullScreen: Function;
+        /** @deprecated */
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
+        msRequestFullscreen: Function;
+        /** @deprecated */
+        webkitMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
+    }
+
+    interface PointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+        /** @deprecated */
+        readonly toElement: Element;
+    }
+
+    interface HTMLCanvasElement {
+        /** @deprecated */
+        msToBlob: Function;
+    }
+
+    class MSBlobBuilder extends Blob {
+        /** @deprecated */
+        append: Function;
+        /** @deprecated */
+        getBlob: Function;
+    }
+
+    interface Navigator {
+        /** @deprecated */
+        msSaveOrOpenBlob: Function;
+    }
+
     namespace Intl {
 
         interface DateTimeFormat {
