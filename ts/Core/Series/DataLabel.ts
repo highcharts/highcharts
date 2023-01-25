@@ -471,8 +471,9 @@ namespace DataLabel {
             pointOptions: Array<DataLabelOptions&AnyRecord>,
             dataLabelsGroup: SVGElement;
 
-        const dataLabelAnim = (seriesDlOptions as any).animation,
-            animationConfig = (seriesDlOptions as any).defer ?
+        const firstDLOptions = splat(seriesDlOptions)[0],
+            dataLabelAnim = firstDLOptions.animation,
+            animationConfig = firstDLOptions.defer ?
                 getDeferredAnimation(chart, dataLabelAnim, series) :
                 { defer: 0, duration: 0 };
 

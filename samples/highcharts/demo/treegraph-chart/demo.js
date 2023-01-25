@@ -1,40 +1,13 @@
 Highcharts.chart('container', {
     chart: {
-        spacingBottom: 30
+        spacingBottom: 30,
+        marginRight: 120
     },
     title: {
         text: 'Phylogenetic language tree'
     },
     series: [
         {
-            dataLabels: {
-                allowOverlap: true,
-                style: {
-                    fontWeight: 'normal',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis'
-                }
-            },
-            marker: {
-                width: '12%',
-                symbol: 'rect'
-            },
-            levels: [{
-                level: 6,
-                dataLabels: {
-                    align: 'left',
-                    crop: false,
-                    overflow: 'allow',
-                    style: {
-                        fontWeight: 'bold',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis'
-                    }
-                },
-                marker: {
-                    width: '16%'
-                }
-            }],
             type: 'treegraph',
             keys: ['parent', 'id', 'level'],
             clip: false,
@@ -164,6 +137,57 @@ Highcharts.chart('container', {
                 ['South Slavic', 'Ukrainian', 6],
                 ['South Slavic', 'Belarusian', 6],
                 ['South Slavic', 'Rusyn', 6]
+            ],
+            marker: {
+                symbol: 'circle',
+                radius: 6,
+                fillColor: '#ffffff',
+                lineWidth: 3
+            },
+            dataLabels: {
+                align: 'left',
+                pointFormat: '{point.id}',
+                style: {
+                    color: '#000000',
+                    textOutline: '3px #ffffff',
+                    whiteSpace: 'nowrap'
+                },
+                x: 24,
+                crop: false,
+                overflow: 'none'
+            },
+            levels: [
+                {
+                    level: 1,
+                    levelIsConstant: false
+                },
+                {
+                    level: 2,
+                    colorByPoint: true
+                },
+                {
+                    level: 3,
+                    colorVariation: {
+                        key: 'brightness',
+                        to: -0.5
+                    }
+                },
+                {
+                    level: 4,
+                    colorVariation: {
+                        key: 'brightness',
+                        to: 0.5
+                    }
+                },
+                {
+                    level: 6,
+                    dataLabels: {
+                        x: 10
+                    },
+                    marker: {
+                        radius: 4
+                    }
+                }
             ]
         }
     ]

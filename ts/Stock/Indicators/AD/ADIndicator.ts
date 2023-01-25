@@ -131,7 +131,7 @@ class ADIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ADParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<(number|null|undefined)> = (series.yData as any),
             volumeSeriesID: string = (params.volumeSeriesID as any),
@@ -140,8 +140,8 @@ class ADIndicator extends SMAIndicator {
             yValLen = yVal ? yVal.length : 0,
             AD: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            len: (number|undefined),
+            yData: Array<number> = [];
+        let len: (number|undefined),
             i: (number|undefined),
             ADPoint: Array<number>;
 
