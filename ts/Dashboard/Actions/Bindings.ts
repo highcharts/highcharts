@@ -20,6 +20,7 @@ import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
 import type KPIComponent from '../Component/KPIComponent';
+import type DataStore from '../../Data/Stores/DataStore';
 
 import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
@@ -238,6 +239,7 @@ namespace Bindings {
     }
 
     export interface ComponentOptions {
+        store?: DataStore;
         cell: string;
         type: string;
         chartOptions?: any;

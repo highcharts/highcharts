@@ -85,7 +85,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('should be able to add a Data grid component', function() {
+    it('DataGrid component should be added.', function() {
         grabComponent('datagrid');
         dropComponent('#dashboard-col-0')
         cy.dashboard().then((dashboard) => {
@@ -93,7 +93,7 @@ describe('Add component through UI', () => {
                 component =  m[m.length - 1].component;
             assert.equal(
                 component.type,
-                'datagrid',
+                'DataGrid',
                 `New component's type should be Highcharts.`
             );
 

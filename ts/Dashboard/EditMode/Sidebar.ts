@@ -224,11 +224,9 @@ class Sidebar {
                 const headers = ['Apples', 'Pears', 'Plums'];
                 const columns = ((): Record<string, Array<string>> => {
                     const makeRandomRows = (): Array<string> =>
-                        (Array as any)
-                            .from(
-                                { length: 40 },
-                                (): string => (10 * Math.random()).toFixed(2)
-                            );
+                        new Array(40).map(
+                            (): string => (10 * Math.random()).toFixed(2)
+                        );
                     const cols: Record<string, Array<string>> = {};
                     for (let i = 0; i < headers.length; ++i) {
                         cols[headers[i]] = makeRandomRows();
@@ -241,7 +239,7 @@ class Sidebar {
                         cell: '',
                         type: 'DataGrid',
                         store: new Dashboard.CSVStore(new DataTable(columns))
-                    } as any);
+                    });
 
                     setTimeout((): void => {
                         component && sidebar.show(component);
