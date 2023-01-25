@@ -23,6 +23,7 @@ import type PluginHandler from '../../Dashboards/PluginHandler';
 import type G from '../../Core/Globals';
 
 import HighchartsComponent from './HighchartsComponent.js';
+import KPIComponent from '../../Dashboard/Component/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 
 /* *
@@ -41,6 +42,7 @@ function connectHighcharts(
     highcharts: typeof G
 ): void {
     HighchartsComponent.charter = highcharts;
+    KPIComponent.charter = highcharts;
 }
 
 /**
@@ -58,6 +60,7 @@ function onRegister(
     } = e;
 
     Component.addComponent(HighchartsComponent);
+    Component.addComponent(KPIComponent);
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,
