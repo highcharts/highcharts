@@ -256,8 +256,6 @@ class Series {
 
     public animationTimeout?: number;
 
-    public forceDLCalculation?: boolean;
-
     public area?: SVGElement;
 
     public basePointRange?: number;
