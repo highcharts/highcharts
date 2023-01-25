@@ -6,8 +6,67 @@
  *
  * */
 
+#city-chart {
+    --color-axis: #f7f7f7;
+    --color-axis-labels: #e7e7ec;
+    --color-background: #5352be;
+    --color-title: #f0f0f0;
+}
+
+#kpi-data,
+#kpi-fog,
+#kpi-ice,
+#kpi-max-temperature,
+#kpi-rain,
+#kpi-temperature {
+    --color-background: #fff;
+    --color-hover: #5352be;
+    --color-hover-text: #fff;
+    --color-text: #2f2b38;
+}
+
+.highcharts-dashboard.hd-dark-mode #kpi-data,
+.highcharts-dashboard.hd-dark-mode #kpi-fog,
+.highcharts-dashboard.hd-dark-mode #kpi-ice,
+.highcharts-dashboard.hd-dark-mode #kpi-max-temperature,
+.highcharts-dashboard.hd-dark-mode #kpi-rain,
+.highcharts-dashboard.hd-dark-mode #kpi-temperature {
+    --color-background: #0d0d0d;
+    --color-text: #dadae2;
+}
+
+#selection-grid {
+    --color-background: #fff;
+    --color-border: #e0e0e0;
+    --color-header-background: #dadae2;
+    --color-header-border: #f7f7f7;
+    --color-header-text: #20202c;
+    --color-hover-background: #5352be;
+    --color-hover-border: #e7e7ec;
+    --color-hover-text: #e7e7ec;
+    --color-input-background: #fff;
+    --color-input-border: #5352be;
+    --color-input-text: #20202c;
+    --color-row-border: #e7e7ec;
+    --color-row-text: #20202c;
+    --color-row1-background: #fff;
+    --color-row2-background: #f7f7f7;
+}
+
+.highcharts-dashboard.hd-dark-mode #selection-grid {
+    --color-background: #20202c;
+    --color-border: #4a4a53;
+    --color-header-background: #0d0d0d;
+    --color-header-border: #20202c;
+    --color-header-text: #dadae2;
+    --color-row-border: #838394;
+    --color-row-text: #e7e7ec;
+    --color-row1-background: #0d0d0d;
+    --color-row2-background: #20202c;
+}
+
 #time-range-selector {
-    --color-axis: #646479;
+    --color-axis-labels: #646479;
     --color-background: #fafafa;
     --color-grid: #9a92ce;
     --color-handle: #5352be;
@@ -21,7 +80,7 @@
 }
 
 .highcharts-dashboard.hd-dark-mode #time-range-selector {
-    --color-axis: #e7e7ec;
+    --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
     --color-handle: #838394;
@@ -60,8 +119,30 @@
         --color-dashboard: #46475d;
     }
 
+    #kpi-data,
+    #kpi-fog,
+    #kpi-ice,
+    #kpi-max-temperature,
+    #kpi-rain,
+    #kpi-temperature {
+        --color-background: #0d0d0d;
+        --color-text: #dadae2;
+    }
+
+    #selection-grid {
+        --color-background: #20202c;
+        --color-border: #4a4a53;
+        --color-header-background: #0d0d0d;
+        --color-header-border: #20202c;
+        --color-header-text: #dadae2;
+        --color-row-border: #838394;
+        --color-row-text: #e7e7ec;
+        --color-row1-background: #0d0d0d;
+        --color-row2-background: #20202c;
+    }
+
     #time-range-selector {
-        --color-axis: #e7e7ec;
+        --color-axis-labels: #e7e7ec;
         --color-background: #0d0d0d;
         --color-grid: #838394;
         --color-mask: #dddbef66;
@@ -100,16 +181,26 @@
  *
  * */
 
+#city-chart .hd-component-content {
+    background: var(--color-background);
+}
+
 #city-chart .highcharts-background {
-    fill: #46475d;
+    fill: var(--color-background);
 }
 
 #city-chart .highcharts-title {
-    fill: #fff;
+    fill: var(--color-title);
+    font-size: 1.2em;
 }
 
-#city-chart .highcharts-axis-labels {
-    fill: #fff;
+#city-chart .highcharts-axis {
+    fill: var(--color-axis);
+}
+
+#city-chart .highcharts-axis-labels,
+#city-chart .highcharts-axis-title {
+    fill: var(--color-axis-labels);
 }
 
 /* *
@@ -118,19 +209,126 @@
  *
  * */
 
-.hd-cell.hd-cell-state-hover:hover > .hd-component,
-.hd-cell.hd-cell-state-active > .hd-component {
-    background-color: #5352be;
-    color: #fff;
+.hd-component-kpi,
+.hd-component-kpi-value-wrap {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.hd-component-kpi > *,
+.hd-component-kpi-value-wrap > * {
+    align-self: center;
+    flex: none;
+    margin: auto;
+}
+
+.hd-component-kpi {
+    text-align: center;
+}
+
+.hd-component-kpi-content {
+    background: none;
+}
+
+.hd-component-kpi-value-wrap {
+    height: 100%;
+}
+
+#kpi-data .hd-component-title::before {
+    content: "📍 ";
+}
+
+#kpi-data .hd-component-kpi-value::before {
+    content: "🏔 ";
+}
+
+#kpi-data .hd-component,
+#kpi-fog .hd-component,
+#kpi-ice .hd-component,
+#kpi-max-temperature .hd-component,
+#kpi-rain .hd-component,
+#kpi-temperature .hd-component {
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 .hd-cell.hd-cell-state-hover {
     cursor: pointer;
 }
 
+#kpi-fog.hd-cell-state-hover:hover .hd-component,
+#kpi-fog.hd-cell-state-active .hd-component,
+#kpi-ice.hd-cell-state-hover:hover .hd-component,
+#kpi-ice.hd-cell-state-active .hd-component,
+#kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
+#kpi-max-temperature.hd-cell-state-active .hd-component,
+#kpi-rain.hd-cell-state-hover:hover .hd-component,
+#kpi-rain.hd-cell-state-active .hd-component,
+#kpi-temperature.hd-cell-state-hover:hover .hd-component,
+#kpi-temperature.hd-cell-state-active .hd-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
 /* *
  *
- *  Navigator
+ *  Selection Grid
+ *
+ * */
+
+#selection-grid .hd-component {
+    background-color: var(--color-background);
+    padding: 14px;
+}
+
+#selection-grid .hc-dg-container {
+    border: none;
+    height: 372px;
+    overflow: auto;
+}
+
+#selection-grid .hc-dg-column-header {
+    background-color: var(--color-header-background);
+    border-color: var(--color-header-border);
+    color: var(--color-header-text);
+    padding: 0 12px;
+}
+
+#selection-grid .hc-dg-outer-container {
+    background-color: var(--color-background);
+    color: var(--color-row-text);
+}
+
+#selection-grid .hc-dg-cell {
+    border-color: inherit;
+}
+
+#selection-grid .hc-dg-row {
+    background-color: var(--color-row1-background);
+    border-color: var(--color-row-border);
+}
+
+#selection-grid .hc-dg-row:nth-child(even) {
+    background-color: var(--color-row2-background);
+}
+
+#selection-grid .hc-dg-row.hovered {
+    background-color: var(--color-hover-background);
+    border-color: var(--color-hover-border);
+    color: var(--color-hover-text);
+}
+
+#selection-grid .hc-dg-cell-input {
+    background: var(--color-input-background);
+    border: 2px solid var(--color-input-border);
+    color: var(--color-input-text);
+}
+
+/* *
+ *
+ *  Time Range Selector
  *
  * */
 
@@ -167,6 +365,10 @@
     stroke: var(--color-series);
 }
 
+#time-range-selector .highcharts-navigator-series.highcharts-column-series .highcharts-point {
+    fill: var(--color-series);
+}
+
 #time-range-selector .highcharts-scrollbar-arrow {
     fill: var(--color-scroll-line);
     stroke: var(--color-scroll-line);
@@ -192,8 +394,8 @@
     stroke: var(--color-scroll-line);
 }
 
-#time-range-selector .highcharts-xaxis-labels {
-    fill: var(--color-axis);
+#time-range-selector .highcharts-axis-labels {
+    fill: var(--color-axis-labels);
 }
 
 /* *
@@ -229,7 +431,7 @@
 }
 
 #world-map .highcharts-series-0 .highcharts-point {
-    fill: var(--color-map) !important;
+    fill: var(--color-map);
     stroke: var(--color-background);
 }
 
