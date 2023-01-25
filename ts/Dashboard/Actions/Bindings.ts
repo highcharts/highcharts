@@ -18,7 +18,6 @@
 import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Serializable from '../Serializable';
 import type KPIComponent from '../Component/KPIComponent';
 
@@ -28,14 +27,14 @@ import HTMLComponent from './../Component/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
-import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-
+import U from '../../Core/Utilities.js';
 const {
     fireEvent,
     addEvent,
     merge
 } = U;
+
 class Bindings {
     /* *
      *
@@ -79,7 +78,7 @@ class Bindings {
                     component = new HTMLComponent(merge(
                         options,
                         {
-                            parentElement: componentContainer as HTMLDOMElement,
+                            parentElement: componentContainer,
                             elements: options.elements
                         })
                     );
@@ -89,7 +88,7 @@ class Bindings {
                         component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: componentContainer as HTMLDOMElement,
+                                parentElement: componentContainer,
                                 chartOptions: options.chartOptions,
                                 dimensions: options.dimensions
                             }
@@ -101,7 +100,7 @@ class Bindings {
                         component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: componentContainer as HTMLDOMElement
+                                parentElement: componentContainer
                             })
                         ) as DataGridComponent;
                     }
@@ -111,7 +110,7 @@ class Bindings {
                         component = new ComponentClass(merge(
                             options,
                             {
-                                parentElement: componentContainer as HTMLDOMElement
+                                parentElement: componentContainer
                             })
                         ) as KPIComponent;
                     }
@@ -181,7 +180,7 @@ class Bindings {
 
     public static componentFromJSON(
         json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
-        cellContainer: HTMLDOMElement|undefined
+        cellContainer: HTMLElement|undefined
     ): (Component|undefined) {
         let component: (Component|undefined);
 
@@ -189,16 +188,16 @@ class Bindings {
             case 'HTML':
                 component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
                 break;
-            case 'Highcharts': 
+            case 'Highcharts':
                 const componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
                     component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
                 }
                 break;
-            case 'DataGrid': 
+            case 'DataGrid':
                 component = DataGridComponent.fromJSON(json as DataGridComponent.ClassJSON);
                 break;
-            // case 'kpi': 
+            // case 'kpi':
             //     component = KPIComponent.fromJSON(json as KPIComponent.ClassJSON);
             //     break;
             default:
