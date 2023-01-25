@@ -237,11 +237,17 @@ class Sidebar {
                 })();
 
                 if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
+                    const component = sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid',
                         store: new Dashboard.CSVStore(new DataTable(columns))
                     } as any);
+
+                    setTimeout((): void => {
+                        component && sidebar.show(component);
+                    });
+
+                    return component;
                 }
             }
         }
