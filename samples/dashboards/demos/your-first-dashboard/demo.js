@@ -1,4 +1,4 @@
-const dashboard = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboards.Dashboard('container', {
     gui: {
         layouts: [{
             id: 'layout-1',

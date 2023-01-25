@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
-const dataPool = new Dashboard.DataOnDemand();
+const dataPool = new Dashboards.DataOnDemand();
 const dataScopes = {
     FD: 'Days with Frost',
     ID: 'Days with Ice',
@@ -38,7 +38,7 @@ async function setupDashboard() {
 
     const defaultCityStore = await dataPool.getStore(defaultCity);
 
-    const dashboard = new Dashboard.Dashboard('container', {
+    const dashboard = new Dashboards.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
@@ -596,7 +596,7 @@ async function setupDashboard() {
                             click: function () {
                                 const dashboard = this.menu.editMode.dashboard,
                                     darModeClass =
-                                        Dashboard.classNamePrefix + 'dark-mode';
+                                        Dashboards.classNamePrefix + 'dark-mode';
 
                                 darkMode = !darkMode;
 

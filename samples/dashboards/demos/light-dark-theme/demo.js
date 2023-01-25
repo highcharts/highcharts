@@ -1,4 +1,4 @@
-const { CSVStore } = Dashboard;
+const { CSVStore } = Dashboards;
 const csvData = document.getElementById('csv').innerText;
 
 const store = new CSVStore(void 0, {
@@ -18,7 +18,7 @@ Highcharts.setOptions({
 });
 
 
-const dashboard = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboards.Dashboard('container', {
     store: store,
     gui: {
         layouts: [{

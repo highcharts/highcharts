@@ -1,5 +1,5 @@
 let exportedLayoutId;
-let dashboard = new Dashboard.Dashboard('container', {
+let dashboard = new Dashboards.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -25,7 +25,7 @@ let dashboard = new Dashboard.Dashboard('container', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Dashboard.importLocal();
+                        dashboard = Dashboards.importLocal();
                     }
                 }
             }, {

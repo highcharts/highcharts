@@ -1,4 +1,4 @@
-const { CSVStore } = Dashboard;
+const { CSVStore } = Dashboards;
 
 const csvData = document.getElementById('csv').innerText,
     store = new CSVStore(void 0, {
@@ -8,7 +8,7 @@ const csvData = document.getElementById('csv').innerText,
 
 store.load();
 
-const dashboard = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboards.Dashboard('container', {
     store: store,
     editMode: {
         enabled: true,

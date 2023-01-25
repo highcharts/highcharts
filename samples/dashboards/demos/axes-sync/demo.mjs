@@ -1,4 +1,4 @@
-const { CSVStore } = Dashboard;
+const { CSVStore } = Dashboards;
 
 // Set global chart options.
 Highcharts.setOptions({
@@ -55,7 +55,7 @@ const csvData = document.getElementById('csv').innerText,
 store1.load();
 store2.load();
 
-const dashboard = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboards.Dashboard('container', {
     gui: {
         layouts: [{
             id: 'layout-1',

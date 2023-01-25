@@ -5,7 +5,7 @@ globals:
     $: true
     ADBE: true
     CallAnalyzer: true
-    Dashboard: true
+    Dashboards: true
     DataGrid: true
     GOOGL: true
     Highcharts: true

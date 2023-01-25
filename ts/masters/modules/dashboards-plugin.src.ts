@@ -21,13 +21,13 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 const G: AnyRecord = Highcharts;
 G.DashboardPlugin = HighchartsPlugin;
 
-if (G.win.Dashboard) {
+if (G.win.Dashboards) {
     G.win.HighchartsComponent = HighchartsComponent;
     G.win.DataGridComponent = DataGridComponent;
 
     HighchartsPlugin.custom.connectHighcharts(Highcharts);
-    G.win.Dashboard.PluginHandler.addPlugin(HighchartsPlugin);
+    G.win.Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
 
     DataGridPlugin.custom.connectDataGrid(DataGrid);
-    G.win.Dashboard.PluginHandler.addPlugin(DataGridPlugin);
+    G.win.Dashboards.PluginHandler.addPlugin(DataGridPlugin);
 }

@@ -13,7 +13,7 @@ const chartComponentOptions = {
     }
 };
 
-const dashboard = new Dashboard.Dashboard('container', {
+const dashboard = new Dashboards.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {

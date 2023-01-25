@@ -38,7 +38,7 @@ import DataGrid from '../DataGrid/DataGrid.js';
 
 declare global {
     interface Window {
-        Dashboard: typeof D;
+        Dashboards: typeof D;
         Highcharts: typeof Highcharts & { Dashboard: typeof D };
     }
     let Dashboard: typeof D;
@@ -73,8 +73,8 @@ const D = {
  *
  * */
 
-if (!D.win.Dashboard) {
-    D.win.Dashboard = D;
+if (!D.win.Dashboards) {
+    D.win.Dashboards = D;
 }
 
 export default D;
