@@ -14,7 +14,7 @@ After that, you need to pass the store to the component config, and that’s it.
 
 How to connect component to a cell?
 ----------------------------------
-Each cell has a field called id. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
+Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
 
 ```js
     gui: {
