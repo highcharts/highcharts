@@ -207,8 +207,6 @@ class Legend {
 
     public totalItemWidth: number = 0;
 
-    public unchartrender?: Function;
-
     public up?: SVGElement;
 
     public upTracker?: SVGElement;
@@ -257,6 +255,19 @@ class Legend {
             addEvent(this.chart, 'endResize', function (): void {
                 this.legend.positionCheckboxes();
             });
+
+            // On Legend.init and Legend.update, make sure that proximate layout
+            // events are either added or removed (#18362).
+            addEvent(
+                this.chart,
+                'render',
+                (): void => {
+                    if (this.proximate) {
+                        this.proximatePositions();
+                        this.positionItems();
+                    }
+                }
+            );
         }
     }
 
@@ -296,20 +307,6 @@ class Legend {
         // #12705: baseline has to be reset on every update
         this.baseline = void 0;
 
-        // On Legend.init and Legend.update, make sure that proximate layout
-        // events are either added or removed (#18362).
-        if (this.proximate) {
-            this.unchartrender = addEvent(
-                this.chart,
-                'render',
-                function (): void {
-                    this.legend.proximatePositions();
-                    this.legend.positionItems();
-                }
-            );
-        } else if (this.unchartrender) {
-            this.unchartrender();
-        }
     }
 
     /**
