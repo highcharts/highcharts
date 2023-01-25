@@ -1,5 +1,5 @@
 ---
-name: Treegraph chart
+name: Treegraph box layout
 authors:
   - Pawel Lysy, Torstein Hønsi
 js_wrap: b
