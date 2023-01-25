@@ -29,4 +29,10 @@ export interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
     yData: NonNullable<TLinkedSeries['yData']>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default IndicatorValuesObject;
