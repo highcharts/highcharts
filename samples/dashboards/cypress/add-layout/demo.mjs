@@ -1,14 +1,14 @@
 
 // Bring in other forms of Highcharts
-import Dashboard from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
-const { PluginHandler } = Dashboard;
+const { PluginHandler } = Dashboards;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-new Dashboard.Dashboard('container', {
+const dashoard = new Dashboards.Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
