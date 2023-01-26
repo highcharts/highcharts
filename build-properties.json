@@ -18,9 +18,9 @@
       "cdnpath": "/gantt",
       "distpath": "/gantt"
     },
-    "Highsoft Dashboard": {
-      "cdnpath": "/dashboard",
-      "distpath": "/dashboard"
+    "Highcharts Dashboards": {
+      "cdnpath": "/dashboards",
+      "distpath": "/dashboards"
     }
   }
 }
