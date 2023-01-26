@@ -3,10 +3,10 @@ Your first dashboard
 
 If you are ready to create your first simple dashboard please follow the steps:
 
-1. Add a div to your webpage with a specific id. Additionally, if you are planning to use the Edit Mode, please add the class `highcharts-dashboard` to that div (more on that in a dedicated chapter).
+1. Add a div to your webpage with a specific id. Additionally, if you are planning to use the Edit Mode, please add the class `highcharts-dashboards` to that div (more on that in a dedicated chapter).
 
     ```html
-        <div id="container" class="highcharts-dashboard">
+        <div id="container" class="highcharts-dashboards">
     ```
 
 2. In this basic example we are going to create a dashboard with two cells. One will contain a static HTML and the other will contain a chart created with the Highcharts.

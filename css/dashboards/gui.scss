@@ -15,7 +15,7 @@ body {
 }
 
 .hd,
-.highcharts-dashboard {
+.highcharts-dashboards {
     background-color: #F3F3F3;
     padding: 20px 10px;
     position: relative;
@@ -62,7 +62,7 @@ body {
     user-drag: none;
 }
 
-.highcharts-dashboard.hd-edit-enabled.hd-edit-cell-highlight-active {
+.highcharts-dashboards.hd-edit-enabled.hd-edit-cell-highlight-active {
     pointer-events: none;
 
     .hd-edit-sidebar {

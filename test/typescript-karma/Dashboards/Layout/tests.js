@@ -170,10 +170,10 @@ test('Components and rows in layout with set height', function (assert) {
     //     assert.strictEqual(window.getComputedStyle(row).height, '400px')
     // }
 
-    // const columns = document.querySelectorAll('.highcharts-dashboard-column')
+    // const columns = document.querySelectorAll('.highcharts-dashboards-column')
     // assert.strictEqual(columns.length, 2)
     // for (const column of columns) {
-    //     const components = column.querySelectorAll('.highcharts-dashboard-component');
+    //     const components = column.querySelectorAll('.highcharts-dashboards-component');
     //     assert.strictEqual(column.style.width, '800px');
     //     for (const component of components) {
     //         assert.strictEqual(component.style.height, '', 'Height should be unset')
