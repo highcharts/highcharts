@@ -238,6 +238,7 @@ class IKHIndicator extends SMAIndicator {
      * @requires     stock/indicators/ichimoku-kinko-hyo
      * @optionparent plotOptions.ikh
      */
+
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {

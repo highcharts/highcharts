@@ -6,6 +6,7 @@ Highcharts.chart('container', {
     series: [{
         type: 'treemap',
         layoutAlgorithm: 'squarified',
+        clip: false,
         data: [{
             name: 'A',
             value: 6,
