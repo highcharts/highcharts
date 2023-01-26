@@ -1,4 +1,4 @@
-import Dashboard from '../../../../code/es-modules/Dashboards/Dashboards.js';
+import Dashboard from '../../../../code/es-modules/Dashboards/Dashboard.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';

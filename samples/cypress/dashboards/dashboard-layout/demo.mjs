@@ -1,6 +1,5 @@
-import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboards.js';
+import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
-import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';

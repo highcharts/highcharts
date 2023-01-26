@@ -53,7 +53,7 @@ const {
  * @class
  * @name Dashboard.Dashboard
  */
-class Dashboards implements Serializable<Dashboards, Dashboard.JSON> {
+class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
     /* *
      *
@@ -308,10 +308,10 @@ class Dashboards implements Serializable<Dashboards, Dashboard.JSON> {
      */
     public fromJSON(
         json: Dashboard.JSON
-    ): Dashboards {
+    ): Dashboard {
         const options = json.options;
 
-        return new Dashboards(
+        return new Dashboard(
             options.containerId,
             {
                 layoutsJSON: options.layouts,
@@ -446,7 +446,7 @@ namespace Dashboard {
      * @return {Dashboard.Dashboard|undefined}
      * The Dashboard
      */
-    export function importLocal(): (Dashboards|undefined) {
+    export function importLocal(): (Dashboard|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
             Globals.classNamePrefix + '1' // temporary for demo test
@@ -455,7 +455,7 @@ namespace Dashboard {
         if (dashboardJSON) {
             try {
                 return Serializable
-                    .fromJSON(JSON.parse(dashboardJSON)) as Dashboards;
+                    .fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
             } catch (e) {
                 // nothing to do
             }
@@ -470,7 +470,7 @@ namespace Dashboard {
  *
  * */
 
-Serializable.registerClassPrototype('Dashboard', Dashboards.prototype);
+Serializable.registerClassPrototype('Dashboard', Dashboard.prototype);
 
 /* *
  *
@@ -478,4 +478,4 @@ Serializable.registerClassPrototype('Dashboard', Dashboards.prototype);
  *
  * */
 
-export default Dashboards;
+export default Dashboard;

@@ -16,7 +16,7 @@
 
 /* eslint-disable */
 import type CSSJSONObject from '../CSSJSONObject';
-import type Dashboards from '../Dashboards.js';
+import type Dashboard from '../Dashboard.js';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
@@ -42,7 +42,7 @@ class Layout extends GUIElement {
 
     public static fromJSON(
         json: Layout.JSON,
-        dashboard: Dashboards
+        dashboard: Dashboard
     ): Layout|undefined {
         const options = json.options,
             // Check if layout container exists.
@@ -69,7 +69,7 @@ class Layout extends GUIElement {
 
     public static importLocal(
         id: string,
-        dashboard: Dashboards
+        dashboard: Dashboard
     ): Layout|undefined {
         const layoutOptions = localStorage.getItem(
             Globals.classNamePrefix + id
@@ -100,7 +100,7 @@ class Layout extends GUIElement {
      * Options for the layout.
      */
     public constructor(
-        dashboard: Dashboards,
+        dashboard: Dashboard,
         options: Layout.Options,
         parentCell?: Cell
     ) {
@@ -169,7 +169,7 @@ class Layout extends GUIElement {
     /**
      * Reference to the dashboard instance.
      */
-    public dashboard: Dashboards;
+    public dashboard: Dashboard;
 
     /**
      * Array of the layout rows.

@@ -1,4 +1,4 @@
-import Dashboard from '/base/code/es-modules/Dashboards/Dashboards.js';
+import Dashboard from '/base/code/es-modules/Dashboards/Dashboard.js';
 import DashboardGlobals from '/base/code/es-modules/Dashboards/Globals.js';
 const { test, only, skip } = QUnit;
 

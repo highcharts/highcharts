@@ -15,7 +15,7 @@
  * */
 
 import U from '../../Core/Utilities.js';
-import Dashboard from '../Dashboards.js';
+import Dashboard from '../Dashboard.js';
 import EditGlobals from './EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';

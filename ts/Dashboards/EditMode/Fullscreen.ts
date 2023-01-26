@@ -14,7 +14,7 @@
  *
  * */
 
-import Dashboard from '../Dashboards.js';
+import Dashboard from '../Dashboard.js';
 import U from '../../Core/Utilities.js';
 
 const { addEvent } = U;

@@ -17,7 +17,7 @@
  * */
 
 import CSVStore from '../Data/Stores/CSVStore.js';
-import Dashboard from '../Dashboards/Dashboards.js';
+import Dashboard from '../Dashboards/Dashboard.js';
 import DataOnDemand from '../Data/DataOnDemand.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
@@ -41,7 +41,7 @@ declare global {
         Dashboards: typeof D;
         Highcharts: typeof Highcharts & { Dashboard: typeof D };
     }
-    let Dashboard: typeof D;
+    let Dashboards: typeof D;
 }
 
 /* *
