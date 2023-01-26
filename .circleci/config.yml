@@ -559,6 +559,10 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [lint]
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires: ["generate_ts_declarations"]
+          browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
