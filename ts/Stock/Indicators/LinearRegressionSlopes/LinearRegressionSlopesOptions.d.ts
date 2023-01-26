@@ -24,4 +24,10 @@ export interface LinearRegressionSlopesOptions extends LinearRegressionOptions {
     // for inheritance
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default LinearRegressionSlopesOptions;
