@@ -239,7 +239,7 @@ class Sidebar {
                         cell: '',
                         type: 'DataGrid',
                         store: new Dashboard.CSVStore(new DataTable(columns))
-                    });
+                    } as any); // necessary for now
 
                     setTimeout((): void => {
                         component && sidebar.show(component);

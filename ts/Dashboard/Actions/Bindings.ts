@@ -239,7 +239,6 @@ namespace Bindings {
     }
 
     export interface ComponentOptions {
-        store?: DataStore;
         cell: string;
         type: string;
         chartOptions?: any;
