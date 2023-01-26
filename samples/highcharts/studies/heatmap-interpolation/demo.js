@@ -34,6 +34,8 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
+console.log(chart.series[0]);
+
 document.getElementById('interpolation-toggle').addEventListener('click', e => {
     chart.series[0].update({
         interpolation: e.target.checked

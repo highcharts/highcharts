@@ -448,49 +448,42 @@ class HeatmapSeries extends ScatterSeries {
 
             if (canvas && ctx && colorAxis) {
                 const image = heatmap.image,
-                    pixels =
-                    ctx.createImageData(canvas.width, canvas.height),
+                    data = heatmap.data,
                     { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
                     {
                         min: xMin,
                         max: xMax
-                    } = heatmap.getXExtremes(this.xData || []),
-                    col = Math.floor(canvas.width / (yMax as number)),
-                    row = Math.floor(canvas.height / (col - 1));
+                    } = heatmap.getXExtremes(heatmap.xData || []),
+                    xPointScale = [xMin, xMax],
+                    yPointScale = [
+                        yMin as number,
+                        yMax as number
+                    ],
+                    xPixelScale = [0, canvas.width - 1],
+                    yPixelScale = [0, canvas.height - 1];
 
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                let pixelPos = 0;
-                heatmap.data.forEach((p: HeatmapPoint): void => {
-                    const color = colorAxis.toColor(
+                while (data.length) {
+                    const p = data.pop() as HeatmapPoint;
+
+                    ctx.fillStyle = colorAxis.toColor(
                         (p as HeatmapPoint).value || 0, p
-                    );
-                    const pointX = heatmap.scaleValue(
+                    ) as string;
+
+                    ctx.fillRect(
+                        heatmap.scaleValue(
                             p.x,
-                            [xMin, xMax],
-                            [0, canvas.width - col]
+                            xPointScale,
+                            xPixelScale
                         ),
-                        pointY = heatmap.scaleValue(
+                        heatmap.scaleValue(
                             p.y,
-                            [
-                                yMin as number,
-                                yMax as number
-                            ],
-                            [0, canvas.height - row]
-                        );
-
-                    const rgb = color && color
-                        .toString()
-                        .replace('rgb(', '')
-                        .replace(')', '')
-                        .split(',');
-
-                    if (rgb) {
-                        pixels.data[pixelPos++] = pInt(rgb[0]);
-                        pixels.data[pixelPos++] = pInt(rgb[1]);
-                        pixels.data[pixelPos++] = pInt(rgb[2]);
-                        pixels.data[pixelPos++] = 255;
-                    }
-                });
+                            yPointScale,
+                            yPixelScale
+                        ),
+                        1,
+                        1
+                    );
+                }
 
                 heatmap.image = !image ?
                     chart.renderer.image(
@@ -533,8 +526,17 @@ class HeatmapSeries extends ScatterSeries {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
             series.canvas = doc.createElement('canvas');
-            series.canvas.width = series.xData && series.xData.length || 1;
-            series.canvas.height = series.yData && series.yData.length || 1;
+
+            series.canvas.width = ((
+                (series.xAxis.dataMax || 0) - (series.xAxis.dataMin || 0)) /
+                (series.options.colsize || 1)
+            ) + 1;
+
+            series.canvas.height = ((
+                (series.yAxis.dataMax || 0) - (series.yAxis.dataMin || 0)) /
+                (series.options.rowsize || 1)
+            ) + 1;
+
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
         }
