@@ -188,6 +188,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                 }, 0),
             xMean: number = xSum / xData.length,
             yMean: number = ySum / yData.length;
+
         let xError: number,
             yError: number,
             i: number,
@@ -308,6 +309,7 @@ class LinearRegressionIndicator extends SMAIndicator {
             } as any,
             xAxisUnit: number = (this.options.params as any).xAxisUnit ||
             this.findClosestDistance(xData);
+
         let lineParameters: RegressionLineParametersObject,
             i: number,
             periodStart: number,
@@ -358,6 +360,7 @@ class LinearRegressionIndicator extends SMAIndicator {
  *  Class Prototype
  *
  * */
+
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -368,11 +371,11 @@ extend(LinearRegressionIndicator.prototype, {
 });
 
 
-/**
+/* *
  *
  * Registry
  *
- */
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
