@@ -422,9 +422,8 @@ async function setupDashboard() {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber(
                     'TN' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate),
-                    true
-                );
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -457,9 +456,8 @@ async function setupDashboard() {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber(
                     'TX' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate),
-                    true
-                );
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -493,7 +491,10 @@ async function setupDashboard() {
             subtitle: dataScopes.RR,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate), true);
+                return table.getCellAsNumber(
+                    'RR1',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -523,7 +524,10 @@ async function setupDashboard() {
             subtitle: dataScopes.ID,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate), true);
+                return table.getCellAsNumber(
+                    'ID',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -553,7 +557,10 @@ async function setupDashboard() {
             subtitle: dataScopes.FD,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate), true);
+                return table.getCellAsNumber(
+                    'FD',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -733,19 +740,19 @@ async function setupCitiesData() {
         const city = row[2];
 
         if (!data[city]) {
+            data[city] = {
+                country: row[3],
+                elevation: row[4],
+                lat: row[0],
+                lon: row[1],
+                name: row[2]
+            };
             promises.push(
                 dataPool
                     .getStore(city)
                     .then(store => {
                         decorateCityTable(store.table);
-                        data[city] = {
-                            country: row[3],
-                            elevation: row[4],
-                            lat: row[0],
-                            lon: row[1],
-                            name: row[2],
-                            store
-                        };
+                        data[city].store = store;
                     })
             );
         }
@@ -803,9 +810,8 @@ async function buildCitiesMap() {
             const table = data.store.table.modified;
             const y = table.getCellAsNumber(
                 dataScope,
-                table.getRowIndexBy('time', worldDate),
-                true
-            );
+                table.getRowIndexBy('time', worldDate)
+            ) || 0;
 
             return {
                 lat: data.lat,
@@ -987,9 +993,8 @@ function updateKPI(table, time) {
         kpi.update({
             value: table.getCellAsNumber(
                 key + (key[0] === 'T' ? temperatureScale : ''),
-                table.getRowIndexBy('time', time),
-                true
-            )
+                table.getRowIndexBy('time', time)
+            ) || 0
         });
     }
 }
