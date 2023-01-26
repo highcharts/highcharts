@@ -358,7 +358,7 @@ class LineSeries extends Series {
                     (zone.className || '')
             ];
 
-            if (this.chart.styledMode) {
+            if (!this.chart.styledMode) {
                 propset.push(
                     (zone.color || this.color) as any,
                     (zone.dashStyle || this.options.dashStyle) as any
