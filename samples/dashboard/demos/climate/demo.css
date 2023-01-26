@@ -14,7 +14,7 @@
 }
 
 #kpi-data,
-#kpi-fog,
+#kpi-frost,
 #kpi-ice,
 #kpi-max-temperature,
 #kpi-rain,
@@ -26,7 +26,7 @@
 }
 
 .highcharts-dashboard.hd-dark-mode #kpi-data,
-.highcharts-dashboard.hd-dark-mode #kpi-fog,
+.highcharts-dashboard.hd-dark-mode #kpi-frost,
 .highcharts-dashboard.hd-dark-mode #kpi-ice,
 .highcharts-dashboard.hd-dark-mode #kpi-max-temperature,
 .highcharts-dashboard.hd-dark-mode #kpi-rain,
@@ -120,7 +120,7 @@
     }
 
     #kpi-data,
-    #kpi-fog,
+    #kpi-frost,
     #kpi-ice,
     #kpi-max-temperature,
     #kpi-rain,
@@ -255,7 +255,7 @@
 }
 
 #kpi-data .hd-component,
-#kpi-fog .hd-component,
+#kpi-frost .hd-component,
 #kpi-ice .hd-component,
 #kpi-max-temperature .hd-component,
 #kpi-rain .hd-component,
@@ -268,8 +268,8 @@
     cursor: pointer;
 }
 
-#kpi-fog.hd-cell-state-hover:hover .hd-component,
-#kpi-fog.hd-cell-state-active .hd-component,
+#kpi-frost.hd-cell-state-hover:hover .hd-component,
+#kpi-frost.hd-cell-state-active .hd-component,
 #kpi-ice.hd-cell-state-hover:hover .hd-component,
 #kpi-ice.hd-cell-state-active .hd-component,
 #kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
@@ -373,6 +373,10 @@
 #time-range-selector .highcharts-navigator-series {
     fill: none;
     stroke: var(--color-series);
+}
+
+#time-range-selector .highcharts-navigator-series.highcharts-column-series .highcharts-point {
+    fill: var(--color-series);
 }
 
 #time-range-selector .highcharts-scrollbar-arrow {
