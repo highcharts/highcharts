@@ -402,7 +402,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-data',
-            type: 'kpi',
+            type: 'KPI',
             dimensions: {
                 height: 150
             },
@@ -417,7 +417,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-temperature',
-            type: 'kpi',
+            type: 'KPI',
             subtitle: dataScopes.TN,
             value: (() => {
                 const table = defaultCityStore.table.modified;
@@ -452,7 +452,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-max-temperature',
-            type: 'kpi',
+            type: 'KPI',
             subtitle: dataScopes.TX,
             value: (() => {
                 const table = defaultCityStore.table.modified;
@@ -490,7 +490,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-rain',
-            type: 'kpi',
+            type: 'KPI',
             subtitle: dataScopes.RR,
             value: (() => {
                 const table = defaultCityStore.table.modified;
@@ -520,7 +520,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-ice',
-            type: 'kpi',
+            type: 'KPI',
             subtitle: dataScopes.ID,
             value: (() => {
                 const table = defaultCityStore.table.modified;
@@ -550,7 +550,7 @@ async function setupDashboard() {
             }
         }, {
             cell: 'kpi-frost',
-            type: 'kpi',
+            type: 'KPI',
             subtitle: dataScopes.FD,
             value: (() => {
                 const table = defaultCityStore.table.modified;
