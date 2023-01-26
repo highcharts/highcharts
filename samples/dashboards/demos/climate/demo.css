@@ -14,7 +14,7 @@
 }
 
 #kpi-data,
-#kpi-fog,
+#kpi-frost,
 #kpi-ice,
 #kpi-max-temperature,
 #kpi-rain,
@@ -26,7 +26,7 @@
 }
 
 .highcharts-dashboard.hd-dark-mode #kpi-data,
-.highcharts-dashboard.hd-dark-mode #kpi-fog,
+.highcharts-dashboard.hd-dark-mode #kpi-frost,
 .highcharts-dashboard.hd-dark-mode #kpi-ice,
 .highcharts-dashboard.hd-dark-mode #kpi-max-temperature,
 .highcharts-dashboard.hd-dark-mode #kpi-rain,
@@ -120,7 +120,7 @@
     }
 
     #kpi-data,
-    #kpi-fog,
+    #kpi-frost,
     #kpi-ice,
     #kpi-max-temperature,
     #kpi-rain,
@@ -236,16 +236,26 @@
     height: 100%;
 }
 
+#kpi-data .hd-component-title {
+    margin: 1em;
+}
+
 #kpi-data .hd-component-title::before {
-    content: "📍 ";
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjczNTIgMzEuODU0NEM1LjQyMTIzIDE4LjY4OTQgMy42OTIzOCAxNy4zMzgzIDMuNjkyMzggMTIuNUMzLjY5MjM4IDUuODcyNTYgOS4yMDI3IDAuNSAxNi4wMDAxIDAuNUMyMi43OTc0IDAuNSAyOC4zMDc4IDUuODcyNTYgMjguMzA3OCAxMi41QzI4LjMwNzggMTcuMzM4MyAyNi41Nzg5IDE4LjY4OTQgMTcuMjY0OSAzMS44NTQ0QzE2LjY1MzcgMzIuNzE1MiAxNS4zNDY0IDMyLjcxNTIgMTQuNzM1MiAzMS44NTQ0Wk0xNi4wMDAxIDE3LjVDMTguODMyMyAxNy41IDIxLjEyODMgMTUuMjYxNCAyMS4xMjgzIDEyLjVDMjEuMTI4MyA5LjczODU2IDE4LjgzMjMgNy41IDE2LjAwMDEgNy41QzEzLjE2NzggNy41IDEwLjg3MTkgOS43Mzg1NiAxMC44NzE5IDEyLjVDMTAuODcxOSAxNS4yNjE0IDEzLjE2NzggMTcuNSAxNi4wMDAxIDE3LjVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
 }
 
 #kpi-data .hd-component-kpi-value::before {
-    content: "🏔 ";
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
 }
 
 #kpi-data .hd-component,
-#kpi-fog .hd-component,
+#kpi-frost .hd-component,
 #kpi-ice .hd-component,
 #kpi-max-temperature .hd-component,
 #kpi-rain .hd-component,
@@ -258,8 +268,8 @@
     cursor: pointer;
 }
 
-#kpi-fog.hd-cell-state-hover:hover .hd-component,
-#kpi-fog.hd-cell-state-active .hd-component,
+#kpi-frost.hd-cell-state-hover:hover .hd-component,
+#kpi-frost.hd-cell-state-active .hd-component,
 #kpi-ice.hd-cell-state-hover:hover .hd-component,
 #kpi-ice.hd-cell-state-active .hd-component,
 #kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
@@ -503,9 +513,10 @@
 
 /* *
  *
- * Edit mode
+ *  Edit mode
  *
- */
+ * */
+
 .hd-edit-button.hd-edit-tools-btn {
     background-position: top left;
     background-color: #e7e7ec;
