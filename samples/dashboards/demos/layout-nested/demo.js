@@ -37,6 +37,7 @@ const dashboard = new Dashboards.Dashboard('container', {
                                 width: '1/2'
                             }, {
                                 id: 'dashboard-col-layout-2',
+                                width: '1/2',
                                 layout: {
                                     rows: [{
                                         cells: [{

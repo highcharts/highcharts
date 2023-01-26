@@ -13,7 +13,6 @@
  *  - Sophie Bremer
  *
  * */
-/* eslint-disable */
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
@@ -81,10 +80,7 @@ class Resizer {
      * @param {Resizer.Options} options
      * Options for the Resizer.
      */
-    public constructor(
-        editMode: EditMode,
-        options?: Resizer.Options
-    ) {
+    public constructor(editMode: EditMode, options?: Resizer.Options) {
         this.editMode = editMode;
         this.options = merge(
             {},
@@ -180,9 +176,7 @@ class Resizer {
      * Reference to options of snaps
      *
      */
-    public addSnaps(
-        options: Resizer.Options
-    ): void {
+    public addSnaps(options: Resizer.Options): void {
         const minWidth = options.styles.minWidth;
         const minHeight = options.styles.minHeight;
         const snapWidth = this.options.snap.width || 0;
@@ -245,11 +239,9 @@ class Resizer {
      *
      * @param {PointerEvent} e
      * Mouse event.
-     * 
+     *
      */
-    public setSnapPositions(
-        cell: Cell
-    ): void {
+    public setSnapPositions(cell: Cell): void {
         // set current cell
         this.currentCell = cell;
 
@@ -293,7 +285,8 @@ class Resizer {
             const currentRwdMode = this.editMode.rwdMode,
                 cellOffsets = GUIElement.getOffsets(currentCell),
                 rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top),
-                rowLevelCells = rowLevelInfo && rowLevelInfo.rowLevel.cells || [];
+                rowLevelCells =
+                    (rowLevelInfo && rowLevelInfo.rowLevel.cells) || [];
 
             let cellContainer, cell, optionsWidth;
 
@@ -301,7 +294,8 @@ class Resizer {
                 cell = rowLevelCells[i];
                 cellContainer = cell.container;
                 optionsWidth = pick(
-                    ((cell.options.responsive || {})[currentRwdMode] || {}).width,
+                    ((cell.options.responsive || {})[currentRwdMode] || {})
+                        .width,
                     cell.options.width
                 );
 
@@ -310,8 +304,12 @@ class Resizer {
                     break;
                 }
 
-                if (cellContainer && (!optionsWidth || optionsWidth === 'auto')) {
-                    cellContainer.style.flex = '0 0 ' + cellContainer.offsetWidth + 'px';
+                if (
+                    cellContainer &&
+                    (!optionsWidth || optionsWidth === 'auto')
+                ) {
+                    cellContainer.style.flex =
+                        '0 0 ' + cellContainer.offsetWidth + 'px';
                     this.tempSiblingsWidth.push(cell);
                 }
             }
@@ -339,8 +337,13 @@ class Resizer {
 
         // Call cellResize dashboard event.
         if (cellResize) {
-            fireEvent(this.editMode.dashboard, 'cellResize', { cell: cellResize });
-            fireEvent(cellResize.row, 'cellChange', { cell: cellResize, row: cellResize.row });
+            fireEvent(this.editMode.dashboard, 'cellResize', {
+                cell: cellResize
+            });
+            fireEvent(cellResize.row, 'cellChange', {
+                cell: cellResize,
+                row: cellResize.row
+            });
         }
     }
 
@@ -434,20 +437,18 @@ class Resizer {
      * A mouse event.
      *
      */
-    public onMouseMove(
-        e: PointerEvent
-    ): void {
+    public onMouseMove(e: PointerEvent): void {
         const currentCell = this.currentCell as Resizer.ResizedCell;
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
         const sidebar = this.editMode.sidebar;
         const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
-        const cellRwd = (currentCell.options.responsive || {})[currentRwdMode || 'large'];
 
         if (
             currentCell &&
             cellContainer &&
-            !((currentCell.row.layout.dashboard.editMode || {}).dragDrop || {}).isActive
+            !((currentCell.row.layout.dashboard.editMode || {}).dragDrop || {})
+                .isActive
         ) {
             const cellOffsets = GUIElement.getOffsets(currentCell);
             const { width: parentRowWidth } = GUIElement.getDimFromOffsets(
@@ -455,10 +456,11 @@ class Resizer {
             );
             // resize width
             if (currentDimension === 'x') {
-                const newWidth = (
-                    Math.min(e.clientX - cellOffsets.left, parentRowWidth) /
-                    parentRowWidth
-                ) * 100 + '%';
+                const newWidth =
+                    (Math.min(e.clientX - cellOffsets.left, parentRowWidth) /
+                        parentRowWidth) *
+                        100 +
+                    '%';
 
                 currentCell.setSize(newWidth);
                 currentCell.updateSize(newWidth, currentRwdMode);
@@ -468,14 +470,16 @@ class Resizer {
 
             // resize height
             if (currentDimension === 'y') {
-                cellContainer.style.height =
-                    (
-                        e.clientY - cellOffsets.top
-                    ) + 'px';
+                cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
             }
             // Call cellResize dashboard event.
-            fireEvent(this.editMode.dashboard, 'cellResize', { cell: currentCell });
-            fireEvent(currentCell.row, 'cellChange', { cell: currentCell, row: currentCell.row });
+            fireEvent(this.editMode.dashboard, 'cellResize', {
+                cell: currentCell
+            });
+            fireEvent(currentCell.row, 'cellChange', {
+                cell: currentCell,
+                row: currentCell.row
+            });
 
             this.setSnapPositions(currentCell);
         }
@@ -503,7 +507,7 @@ class Resizer {
 
             // destroy snap
             snap.remove();
-        };
+        }
     }
     /**
      * Converts the class instance to a class JSON.
@@ -520,7 +524,7 @@ class Resizer {
                 enabled: options.enabled,
                 styles: {
                     minWidth: options.styles.minWidth,
-                    minHeight: options.styles.minHeight,
+                    minHeight: options.styles.minHeight
                 },
                 type: options.type,
                 snap: {
