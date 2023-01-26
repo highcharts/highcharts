@@ -509,11 +509,11 @@ class MapSeries extends ScatterSeries {
 
         if (chart.renderer.isSVG) {
             // Initialize the animation
-            if (init) {
+            if (init && chart.mapView) {
                 group.attr({
                     opacity: 0.01
                 });
-                chart.disableTransform = true;
+                chart.mapView.allowTransformAnimation = false;
                 // stop duplicating and overriding animations
                 series.options.inactiveOtherPoints = true;
                 series.options.enableMouseTracking = false;
@@ -546,7 +546,9 @@ class MapSeries extends ScatterSeries {
         const series = this,
             chart = this.chart;
 
-        chart.disableTransform = true;
+        if (chart.mapView) {
+            chart.mapView.allowTransformAnimation = false;
+        }
         // stop duplicating and overriding animations
         series.options.inactiveOtherPoints = true;
     }
@@ -807,7 +809,7 @@ class MapSeries extends ScatterSeries {
             if (
                 renderer.globalAnimation &&
                 chart.hasRendered &&
-                !chart.disableTransform
+                mapView.allowTransformAnimation
             ) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')

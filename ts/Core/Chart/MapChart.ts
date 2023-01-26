@@ -39,18 +39,13 @@ import MapSeries from '../../Series/Map/MapSeries';
 import type {
     AnimationOptions
 } from '../../Core/Animation/AnimationOptions';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 
 
 declare module './ChartLike'{
     interface ChartLike {
-        disableTransform: boolean;
         mapView?: MapView;
-    }
-}
-
-declare module '../Options'{
-    interface Options {
-        isMapChart?: boolean;
     }
 }
 
@@ -113,10 +108,7 @@ class MapChart extends Chart {
                     followTouchMove: false
                 }
             },
-            userOptions, // user's options
-            { // forced options
-                isMapChart: true // internal flag
-            }
+            userOptions // user's options
         );
 
         super.init(options, callback);
@@ -234,7 +226,8 @@ addEvent(MapChart, 'addSeriesAsDrilldown', function (e): boolean {
     if (
         chart.options.drilldown &&
         chart.options.drilldown.animation &&
-        chart.options.drilldown.mapZooming
+        chart.options.drilldown.mapZooming &&
+        chart.mapView
     ) {
         // hide and disable dataLabels
         if (point.series.dataLabelsGroup) {
@@ -243,22 +236,18 @@ addEvent(MapChart, 'addSeriesAsDrilldown', function (e): boolean {
         }
 
         // first zoomTo then crossfade series
-        chart.disableTransform = false;
+        chart.mapView.allowTransformAnimation = true;
 
-        let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
-
-        if (chart.options.drilldown) {
-            animOptions = merge({}, chart.options.drilldown.animation);
-        }
+        const animOptions = animObject(chart.options.drilldown.animation);
 
         if (typeof animOptions !== 'boolean') {
             const userComplete = animOptions.complete,
                 drilldownComplete = function (
                     obj?: { applyDrilldown?: boolean }): void {
-                    if (obj && obj.applyDrilldown) {
+                    if (obj && obj.applyDrilldown && chart.mapView) {
                         chart.addSingleSeriesAsDrilldown(point, options);
                         chart.applyDrilldown();
-                        chart.disableTransform = true;
+                        chart.mapView.allowTransformAnimation = false;
                     }
                 };
             animOptions.complete =
@@ -354,7 +343,7 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
 
 // to prevent default function from fireEvent
 addEvent(MapChart, 'midDrillUp', function (): boolean {
-    return !this.options.isMapChart;
+    return !(this instanceof MapChart);
 });
 
 addEvent(MapChart, 'finishDrillUp', function (e): boolean {
@@ -381,72 +370,80 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
             delete oldSeries.dataLabelsGroup;
         }
 
-        if (zoomingDrill && chart.mapView) {
-            // stop hovering while drilling down
-            oldSeries.isDrilling = true;
-            chart.redraw(false);
-            // Fit to previous bounds
-            chart.mapView.fitToBounds(
-                (oldSeries as any).bounds,
-                void 0,
-                true,
-                false
-            );
-        }
+        if (chart.mapView) {
+            if (zoomingDrill) {
+                // stop hovering while drilling down
+                oldSeries.isDrilling = true;
+                chart.redraw(false);
+                // Fit to previous bounds
+                chart.mapView.fitToBounds(
+                    (oldSeries as any).bounds,
+                    void 0,
+                    true,
+                    false
+                );
+            }
 
-        chart.disableTransform = false;
+            chart.mapView.allowTransformAnimation = true;
 
-        fireEvent(chart, 'afterDrillUp', {
-            seriesOptions: newSeries ? newSeries.userOptions : void 0
-        });
-
-        const removeMapSeries = (): void => {
-            oldSeries.remove(false);
-            chart.series.forEach((series): void => {
-                // ensures to redraw series to get correct colors
-                if (series.colorAxis) {
-                    series.isDirtyData = true;
-                }
-                series.options.inactiveOtherPoints = false;
+            fireEvent(chart, 'afterDrillUp', {
+                seriesOptions: newSeries ? newSeries.userOptions : void 0
             });
-            chart.redraw();
-        };
 
-        if (zoomingDrill && chart.mapView) {
-            // Fit to natural bounds
-            chart.mapView.setView(void 0, 1, true, {
-                complete: function (): void {
-                    // fire it only on complete in this place (once)
-                    if (
-                        Object.prototype.hasOwnProperty.call(this, 'complete')
-                    ) {
-                        removeMapSeries();
+            const removeMapSeries = (): void => {
+                oldSeries.remove(false);
+                chart.series.forEach((series): void => {
+                    // ensures to redraw series to get correct colors
+                    if (series.colorAxis) {
+                        series.isDirtyData = true;
                     }
-                }
-            });
-        } else {
-            // When user don't want to zoom into region only fade out
-            chart.disableTransform = true;
-            if (oldSeries.group) {
-                oldSeries.group.animate({
-                    opacity: 0
-                },
-                (chart.options.drilldown as any).animation,
-                function (): void {
-                    removeMapSeries();
-                    chart.disableTransform = false;
+                    series.options.inactiveOtherPoints = false;
+                });
+                chart.redraw();
+            };
+
+            if (zoomingDrill) {
+                // Fit to natural bounds
+                chart.mapView.setView(void 0, 1, true, {
+                    complete: function (): void {
+                        // fire it only on complete in this place (once)
+                        if (
+                            Object.prototype.hasOwnProperty.call(
+                                this,
+                                'complete'
+                            )
+                        ) {
+                            removeMapSeries();
+                        }
+                    }
                 });
             } else {
-                removeMapSeries();
-                chart.disableTransform = false;
+                // When user don't want to zoom into region only fade out
+                chart.mapView.allowTransformAnimation = false;
+                if (oldSeries.group) {
+                    oldSeries.group.animate({
+                        opacity: 0
+                    },
+                    (chart.options.drilldown as any).animation,
+                    function (): void {
+                        removeMapSeries();
+                        if (chart.mapView) {
+                            chart.mapView.allowTransformAnimation = true;
+                        }
+                    });
+                } else {
+                    removeMapSeries();
+                    chart.mapView.allowTransformAnimation = true;
+                }
             }
-        }
 
-        if (chart.ddDupes) {
-            chart.ddDupes.length = 0; // #3315
-        } // #8324
-        // Fire a once-off event after all series have been drilled up (#5158)
-        fireEvent(chart, 'drillupall');
+            if (chart.ddDupes) {
+                chart.ddDupes.length = 0; // #3315
+            } // #8324
+            // Fire a once-off event after all series have been drilled up
+            // (#5158)
+            fireEvent(chart, 'drillupall');
+        }
     }
 
     return false; // to prevent default function from fireEvent

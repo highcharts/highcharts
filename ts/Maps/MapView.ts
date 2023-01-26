@@ -129,6 +129,7 @@ const mergeCollections = <
  */
 class MapView {
 
+    public allowTransformAnimation: boolean = true;
     public center: LonLatArray;
     public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
