@@ -17,8 +17,8 @@ To fully utilize the Dashboards potential, there might be a need to load additio
 In the [documentation](https://highcharts.com/docs/dashboards/instalation), you can find more information on how to do that and what are the other ways of importing the Dashboards.
 
 ## Components
-Each dashboard is built with different components. You can add the most basic HTMLComponent where you can add some text, image etc.
-To create a chart you can add ChartComponent. If you would like to show your data in a tabular way use the DataGridComponent. Also useful might be to show some individual numbers/indications, for that use the KPIComponent.
+Each dashboard is built with different components. You can add the most basic `HTMLComponent` where you can add some text, image etc.
+To create a chart you can add `HighchartsComponent`. If you would like to show your data in a tabular way use the `DataGridComponent`. Also useful might be to show some individual numbers/indications, for that use the `KPIComponent`.
 
 To properly show the component you have to declare the `id` of a cell where it should be placed and the `type` of that component.
 An example of how the component might look like:
@@ -117,3 +117,7 @@ Than the dashboard can be created:
 ```
 
 See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/your-first-dashboard).
+
+## FAQ
+How to connect data or how to add components and synchronize them together. <br>
+Answers to those and other similar questions can be found on the dedicated [FAQ page](https://highcharts.com/docs/dashboards/frequently-asked-questions).
