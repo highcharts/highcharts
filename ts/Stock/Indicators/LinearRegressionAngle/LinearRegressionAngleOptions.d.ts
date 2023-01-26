@@ -12,7 +12,8 @@
  *
  * */
 
-import type LinearRegressionOptions from '../LinearRegression/LinearRegressionOptions';
+import type LinearRegressionOptions from
+    '../LinearRegression/LinearRegressionOptions';
 
 /* *
  *
