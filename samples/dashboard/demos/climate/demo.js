@@ -331,6 +331,8 @@ async function setupDashboard() {
                     type: 'spline',
                     name: defaultCity,
                     data: [],
+                    animation: false,
+                    animationLimit: 0,
                     events: {
                         afterAnimate: () => resolve()
                     },
@@ -720,36 +722,39 @@ async function setupDataPool() {
 async function setupCitiesData() {
     const cities = citiesTable.modified;
     const data = citiesData;
-
+    const promises = [];
     const rows = cities.getRows(
         void 0,
         void 0,
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
 
-    let store;
-
     for (const row of rows) {
         const city = row[2];
 
-        if (typeof data[city] === 'undefined') {
-            store = await dataPool.getStore(city);
-
-            await decorateCityTable(store.table);
-
-            data[city] = {
-                country: row[3],
-                elevation: row[4],
-                lat: row[0],
-                lon: row[1],
-                name: row[2],
-                store
-            };
-
-            if (citiesMap) {
-                citiesMap.setData(await buildCitiesMap());
-            }
+        if (!data[city]) {
+            promises.push(
+                dataPool
+                    .getStore(city)
+                    .then(store => {
+                        decorateCityTable(store.table);
+                        data[city] = {
+                            country: row[3],
+                            elevation: row[4],
+                            lat: row[0],
+                            lon: row[1],
+                            name: row[2],
+                            store
+                        };
+                    })
+            );
         }
+    }
+
+    await Promise.all(promises);
+
+    if (citiesMap) {
+        citiesMap.setData(await buildCitiesMap());
     }
 }
 
