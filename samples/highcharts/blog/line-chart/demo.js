@@ -147,22 +147,5 @@ Highcharts.chart('container', {
             data: [5, 5, 5, null],
             showInLegend: false
         }
-    ],
-
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }
-        ]
-    }
+    ]
 });

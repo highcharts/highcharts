@@ -1,5 +1,5 @@
 ---
- name: Line chart to replace a chart race
+ name: Line chart with layout set to proximate
  authors:
    - Mustapha Mekhatria
  js_wrap: b
