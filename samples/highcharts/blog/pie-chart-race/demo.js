@@ -48,10 +48,6 @@ function getSubtitle() {
             series: {
                 borderWidth: 0,
                 colorByPoint: true,
-                dataSorting: {
-                    enabled: true,
-                    matchByName: true
-                },
                 type: 'pie',
                 size: '100%',
                 innerSize: '80%',
@@ -81,12 +77,6 @@ function getSubtitle() {
                         maxWidth: 550
                     },
                     chartOptions: {
-                        xAxis: {
-                            visible: false
-                        },
-                        subtitle: {
-                            x: 0
-                        },
                         plotOptions: {
                             series: {
                                 dataLabels: [
