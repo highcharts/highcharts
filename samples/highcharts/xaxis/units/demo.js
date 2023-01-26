@@ -7,7 +7,7 @@ Highcharts.chart('container', {
                 const info = this.xAxis[0].tickPositions.info;
 
                 if (info) {
-                    this.title.attr({
+                    this.setTitle({
                         text: `Current tick every: ${info.count + ' ' +
                             info.unitName + (info.count !== 1 ? 's' : '')}`
                     });
