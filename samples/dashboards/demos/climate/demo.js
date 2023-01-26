@@ -26,7 +26,7 @@ let cityScope = defaultCity;
 let citySeries;
 let dataScope = defaultData;
 let navigatorSeries;
-let worldDate = Date.UTC(2010, 12, 25);
+let worldDate = Date.UTC(2010, 11, 25); // months start with 0
 let kpis = {};
 let darkMode = false;
 let temperatureScale = 'C';
@@ -740,19 +740,19 @@ async function setupCitiesData() {
         const city = row[2];
 
         if (!data[city]) {
-            data[city] = {
-                country: row[3],
-                elevation: row[4],
-                lat: row[0],
-                lon: row[1],
-                name: row[2]
-            };
             promises.push(
                 dataPool
                     .getStore(city)
                     .then(store => {
                         decorateCityTable(store.table);
-                        data[city].store = store;
+                        data[city] = {
+                            country: row[3],
+                            elevation: row[4],
+                            lat: row[0],
+                            lon: row[1],
+                            name: row[2],
+                            store
+                        };
                     })
             );
         }
