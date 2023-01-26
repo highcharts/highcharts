@@ -1,5 +1,5 @@
 ---
- name: A pie chart race to display nuclear enegery production
+ name: Donut chart race
  authors:
    - author:Mustapha Mekhatria
  js_wrap: b
