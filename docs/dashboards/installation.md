@@ -15,7 +15,7 @@ Then import the package in your project:
 Include the JavaScript files in the `<head>` section of your web page as shown below.
 
 ```html
-    <script src="https://code.highcharts.com/dashboard.js"></script>
+    <script src="https://code.highcharts.com/dashboards.js"></script>
  ```
 
 
@@ -26,10 +26,10 @@ In the example above the Javascript files are loaded from [code.highcharts.com](
     <script src="../code/dashboard.js"></script>
 ```
 ### Load additional modules
-There are some additional modules that you might want to include in your webpage, that are not included in the basic `dashboard.js` module. The basic module lets you create the elementary dashboard with `HTMLComponents`, but if you would like to use some predefined component types, you need to add some other modules e.g. to use Highcharts component, you need to add following scripts:
+There are some additional modules that you might want to include in your webpage, that are not included in the basic `dashboards.js` module. The basic module lets you create the elementary dashboard with `HTMLComponents`, but if you would like to use some predefined component types, you need to add some other modules e.g. to use Highcharts component, you need to add following scripts:
 ```html
-    ../dashboard.js
-    ../dashboard-plugin.js
+    ../dashboards.js
+    ../dashboards-plugin.js
     ../highcharts.js
 ```
 

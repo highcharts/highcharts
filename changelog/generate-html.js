@@ -37,8 +37,8 @@ function generateHTML() {
             changelogId: 'hg-changelog',
             offset: 'hg-'
         }, {
-            header: 'Highsoft Dashboard',
-            name: 'highsoft-dashboard',
+            header: 'Highcharts Dashboards',
+            name: 'highcharts-dashboards',
             cangelogId: 'hd-changelog',
             offset: 'hd-'
         }];
