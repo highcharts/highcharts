@@ -86,13 +86,13 @@ class FlowMapSeries extends MapLineSeries {
         animation: true,
 
         /**
-         * The `curveFactor` option for all links. Value higher than 0 will curve the
-         * link clockwise. A negative value will curve it counter clockwise. If
-         * the value is 0 the link will be a straight line. By default undefined
-         * curveFactor get an automatic curve.
+         * The `curveFactor` option for all links. Value higher than 0 will
+         * curve the link clockwise. A negative value will curve it counter
+         * clockwise. If the value is 0 the link will be a straight line. By
+         * default undefined curveFactor get an automatic curve.
          *
-         * @sample {highmaps} maps/series-flowmap/curve-factor
-         *         Setting different values for curveFactor
+         * @sample {highmaps} maps/series-flowmap/curve-factor Setting different
+         *         values for curveFactor
          *
          * @type      {number}
          * @default   undefined
@@ -122,12 +122,12 @@ class FlowMapSeries extends MapLineSeries {
         fillOpacity: 0.5,
 
         /**
-         * The [id](#series.id) of another series to link to. Additionally,
-         * the value can be ":previous" to link to the previous series. When
-         * two series are linked, only the first one appears in the legend.
-         * Toggling the visibility of this also toggles the linked series,
-         * which is necessary for operations such as zoom or updates on the
-         * flowmap series.
+         * The [id](#series.id) of another series to link to. Additionally, the
+         * value can be ":previous" to link to the previous series. When two
+         * series are linked, only the first one appears in the legend. Toggling
+         * the visibility of this also toggles the linked series, which is
+         * necessary for operations such as zoom or updates on the flowmap
+         * series.
          *
          * @type      {string}
          * @apioption plotOptions.flowmap.linkedTo
@@ -150,15 +150,15 @@ class FlowMapSeries extends MapLineSeries {
              */
             enabled: true,
             /**
-             * Height of the `markerEnd`. Can be a number in pixels
-             * or a percentage based on the weight of the link.
+             * Height of the `markerEnd`. Can be a number in pixels or a
+             * percentage based on the weight of the link.
              *
              * @type  {number|string}
              */
             height: '40%',
             /**
-             * Width of the `markerEnd`. Can be a number in pixels
-             * or a percentage based on the weight of the link.
+             * Width of the `markerEnd`. Can be a number in pixels or a
+             * percentage based on the weight of the link.
              *
              * @type  {number|string}
              */
@@ -182,16 +182,16 @@ class FlowMapSeries extends MapLineSeries {
         width: 1,
 
         /**
-         * Maximum width of a link expressed in pixels. The weight of a link
-         * is mapped between `maxWidth` and `minWidth`.
+         * Maximum width of a link expressed in pixels. The weight of a link is
+         * mapped between `maxWidth` and `minWidth`.
          *
          * @type  {number}
          */
         maxWidth: 25,
 
         /**
-         * Minimum width of a link expressed in pixels. The weight of a link
-         * is mapped between `maxWidth` and `minWidth`.
+         * Minimum width of a link expressed in pixels. The weight of a link is
+         * mapped between `maxWidth` and `minWidth`.
          *
          * @type  {number}
          */
@@ -214,12 +214,10 @@ class FlowMapSeries extends MapLineSeries {
          */
 
         /**
-         * The weight for all links with unspecified weights.
-         * The weight of a link determines its thickness compared to
-         * other links.
+         * The weight for all links with unspecified weights. The weight of a
+         * link determines its thickness compared to other links.
          *
-         * @sample {highmaps} maps/series-flowmap/ship-route/
-         *         Example ship route
+         * @sample {highmaps} maps/series-flowmap/ship-route/ Example ship route
          *
          * @type      {number}
          * @product   highmaps
@@ -228,8 +226,8 @@ class FlowMapSeries extends MapLineSeries {
 
         tooltip: {
             /**
-             * The HTML for the flowmaps' route description in the tooltip.
-             * It consists of the `headerFormat` and `pointFormat`, which can be
+             * The HTML for the flowmaps' route description in the tooltip. It
+             * consists of the `headerFormat` and `pointFormat`, which can be
              * edited. Variables are enclosed by curly brackets. Available
              * variables are `series.name`, `point.options.from`,
              * `point.options.to`, `point.weight` and other properties in the
@@ -275,7 +273,7 @@ class FlowMapSeries extends MapLineSeries {
         topCorner: [number, number],
         options: MarkerEndOptions
     ): SVGPath {
-        let width = relativeLength(
+        const width = relativeLength(
             options.width || 0,
             this.getLength(
                 rCorner[0] - lCorner[0],
@@ -289,7 +287,7 @@ class FlowMapSeries extends MapLineSeries {
                 rCorner[1] - lCorner[1]
             );
 
-        let path: SVGPath = [];
+        const path: SVGPath = [];
 
         // For arrow head calculation.
         if (type === 'arrow') {
@@ -383,7 +381,7 @@ class FlowMapSeries extends MapLineSeries {
                     // same as target, but element should be visible, so we
                     // insert array elements with start (M) values
                     if (x && y) {
-                        let start: SVGPath = [];
+                        const start: SVGPath = [];
 
                         for (let i = 0; i < path.length; i++) {
                             start.push([...path[i]]);
@@ -511,8 +509,8 @@ class FlowMapSeries extends MapLineSeries {
     }
 
     /**
-     * Draw shapeArgs based on from/to options. Run translation operations.
-     * We need two loops: first loop to calculate data, like smallest/greatest
+     * Draw shapeArgs based on from/to options. Run translation operations. We
+     * need two loops: first loop to calculate data, like smallest/greatest
      * weights and centerOfPoints, which needs the calculated positions, second
      * loop for calculating shapes of points based on previous calculations.
      * @private
@@ -523,8 +521,8 @@ class FlowMapSeries extends MapLineSeries {
             this.generatePoints();
         }
 
-        let weights: Array<number|undefined> = [],
-            averageX = 0,
+        const weights: Array<number|undefined> = [];
+        let averageX = 0,
             averageY = 0;
 
         this.points.forEach((point): void => {
@@ -683,12 +681,12 @@ class FlowMapSeries extends MapLineSeries {
             dY *= 0.5;
 
             // Vector points exactly between the points.
-            let mX = fromX + dX,
+            const mX = fromX + dX,
                 mY = fromY + dY;
 
             // Rotating the halfway distance by 90 anti-clockwise.
             // We can then use this to create an arc.
-            let tmp = dX;
+            const tmp = dX;
             dX = dY;
             dY = -tmp;
 
@@ -715,7 +713,7 @@ class FlowMapSeries extends MapLineSeries {
         dY *= 0.5;
 
         // Vector points exactly between the points.
-        let mX = fromX + dX,
+        const mX = fromX + dX,
             mY = fromY + dY;
 
         // Rotating the halfway distance by 90 anti-clockwise.
@@ -733,7 +731,7 @@ class FlowMapSeries extends MapLineSeries {
         wY *= finalWidth * fineTune;
 
         // Calculate the arc strength.
-        let arcPointX = (mX + dX * curveFactor),
+        const arcPointX = (mX + dX * curveFactor),
             arcPointY = (mY + dY * curveFactor);
 
         // Calculate edge vectors in the from-point.
