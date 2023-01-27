@@ -95,7 +95,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         },
         sync: Sync.defaultHandlers,
         editableOptions: [
-            'id',
+            // 'id',
             'store',
             'style',
             'title',
@@ -515,13 +515,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             // and possibly configurable
             const optionNamesToSkip = ['chartOptions'];
 
-            // TODO: do a while / foreach to break early
-            Object.keys(newOptions).forEach((optionName): void => {
+            const newOptionKeys = Object.keys(newOptions);
+            for (let i = 0; i < newOptionKeys.length; i++) {
+                const optionName = newOptionKeys[i];
                 if (
-                    optionNamesToSkip.indexOf(optionName) > -1 ||
-                  shouldForceRedraw
+                    optionNamesToSkip.indexOf(optionName) > -1
                 ) {
-                    return;
+                    continue;
                 }
 
                 if (optionName in currentOptions) {
@@ -533,7 +533,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     // If the type has changed, redraw
                     if (typeof oldOptionValue !== typeof newOptionValue) {
                         shouldForceRedraw = true;
-                        return;
+                        break;
                     }
 
                     // If both are objects, do a quick comparison
@@ -541,20 +541,19 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     // so might want to do a deeper comparison
                     if (
                         typeof oldOptionValue === 'object' &&
-              JSON.stringify(oldOptionValue) !==
-            JSON.stringify(newOptionValue)
+                          JSON.stringify(oldOptionValue) !==
+                          JSON.stringify(newOptionValue)
                     ) {
                         shouldForceRedraw = true;
-                        return;
+                        break;
                     }
 
                     if (oldOptionValue !== newOptionValue) {
                         shouldForceRedraw = true;
-                        return;
+                        break;
                     }
                 }
-
-            });
+            }
         }
 
         this.options = merge(this.options, newOptions);
