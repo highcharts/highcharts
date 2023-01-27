@@ -16,6 +16,7 @@
 
 import Dashboard from '../Dashboard.js';
 import U from '../../Core/Utilities.js';
+import Globals from '../Globals.js';
 
 const { addEvent } = U;
 
@@ -26,13 +27,14 @@ class Fullscreen {
     *  Constructor
     *
     * */
-
     constructor(DashboardClass: Dashboard) {
         this.isOpen = false;
         this.dashboard = DashboardClass;
 
         // add class to allow scroll element
-        this.dashboard.dashboardWrapper.classList.add('hd-dashboard-fullscreen');
+        this.dashboard.dashboardWrapper.classList.add(
+            Globals.classNamePrefix + '-dashboards-fullscreen'
+        );
     }
 
     /* *

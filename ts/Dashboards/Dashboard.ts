@@ -176,7 +176,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         // add wrapper
         dashboard.container = createElement(
             'div', {
-                className: Globals.classNames.dashboardContainer
+                className: Globals.classNames.dashboardsContainer
             }, {},
             this.dashboardWrapper
         );

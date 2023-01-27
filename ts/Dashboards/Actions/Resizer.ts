@@ -181,7 +181,7 @@ class Resizer {
         const minHeight = options.styles.minHeight;
         const snapWidth = this.options.snap.width || 0;
         const snapHeight = this.options.snap.height || 0;
-        const dashboardContainer = this.editMode.dashboard.container;
+        const dashboardsContainer = this.editMode.dashboard.container;
 
         // right snap
         this.snapXR = createElement(
@@ -194,7 +194,7 @@ class Resizer {
                 width: snapWidth + 'px',
                 left: -9999 + 'px'
             },
-            dashboardContainer
+            dashboardsContainer
         );
 
         // bottom snap
@@ -209,7 +209,7 @@ class Resizer {
                 top: -9999 + 'px',
                 left: '0px'
             },
-            dashboardContainer
+            dashboardsContainer
         );
 
         this.addResizeEvents();
