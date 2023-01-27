@@ -1,5 +1,5 @@
 ---
-name: tiledwebmap
+name: MapPoint on TiledWebMap Series
 authors:
   - Kamil Musialowski
 js_wrap: b

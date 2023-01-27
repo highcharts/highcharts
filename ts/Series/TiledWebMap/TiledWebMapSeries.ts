@@ -90,9 +90,10 @@ class TiledWebMapSeries extends MapSeries {
     public static defaultOptions: TiledWebMapSeriesOptions = merge(MapSeries.defaultOptions, {
         states: {
             inactive: {
-                enabled: true
+                enabled: false
             }
-        }
+        },
+        zIndex: -1
     });
 
     /* *
