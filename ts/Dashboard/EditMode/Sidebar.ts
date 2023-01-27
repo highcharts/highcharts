@@ -978,12 +978,12 @@ class Sidebar {
                     ) {
                         (updatedSettings as any).chartOptions =
                             merge(
+                                (updatedSettings as any).chartOptions,
                                 {
                                     chart: {
                                         type: (chartType[0] as any).value
                                     }
-                                },
-                                (updatedSettings as any).chartOptions
+                                }
                             );
                     }
                 } catch {

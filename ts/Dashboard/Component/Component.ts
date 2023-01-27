@@ -510,6 +510,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     return;
                 }
 
+
                 if (optionName in currentOptions) {
                     const oldOptionValue =
                       (currentOptions as AnyRecord)[optionName];
