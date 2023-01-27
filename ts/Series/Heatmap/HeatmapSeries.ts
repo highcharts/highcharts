@@ -447,38 +447,38 @@ class HeatmapSeries extends ScatterSeries {
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis) {
-                const image = heatmap.image,
-                    data = heatmap.data,
+                const { image, data, scaleValue } = heatmap,
+                    { min: xMin, max: xMax } = heatmap.getXExtremes(
+                        heatmap.xData || []
+                    ),
                     { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
-                    {
-                        min: xMin,
-                        max: xMax
-                    } = heatmap.getXExtremes(heatmap.xData || []),
-                    xPointScale = [xMin, xMax],
-                    yPointScale = [
-                        yMin as number,
-                        yMax as number
-                    ],
-                    xPixelScale = [0, canvas.width - 1],
-                    yPixelScale = [0, canvas.height - 1];
+                    xSpan = xMax - xMin,
+                    ySpan = (yMax as number) - (yMin as number),
+                    width = canvas.width - 1,
+                    height = canvas.height - 1;
 
                 while (data.length) {
-                    const p = data.pop() as HeatmapPoint;
+                    const p = data.pop() as HeatmapPoint,
+                        { value, x, y } = p;
 
                     ctx.fillStyle = colorAxis.toColor(
-                        (p as HeatmapPoint).value || 0, p
+                        value || 0, p
                     ) as string;
 
                     ctx.fillRect(
-                        heatmap.scaleValue(
-                            p.x,
-                            xPointScale,
-                            xPixelScale
+                        scaleValue(
+                            x,
+                            xSpan,
+                            width,
+                            xMin as number,
+                            0
                         ),
-                        heatmap.scaleValue(
-                            p.y,
-                            yPointScale,
-                            yPixelScale
+                        scaleValue(
+                            ((yMax as number) - y),
+                            ySpan,
+                            height,
+                            yMin as number,
+                            0
                         ),
                         1,
                         1
@@ -754,10 +754,14 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public scaleValue(value: number, from: number[], to: number[]): number {
-        const scale = (to[1] - to[0]) / (from[1] - from[0]);
-        const capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-        return ~~(capped * scale + to[0]);
+    public scaleValue(
+        value: number,
+        fromDist: number,
+        toDist:number,
+        fromMin:number,
+        toMin: number
+    ): number {
+        return (((value - fromMin) * toDist) / (fromDist)) + toMin;
     }
 
     /**
