@@ -5,6 +5,7 @@
 'use strict';
 
 import type ProviderDefinition from '../ProviderDefinition';
+import { minMaxZoomObject } from '../ProviderDefinition';
 
 import U from '../../Core/Utilities.js';
 
@@ -33,6 +34,9 @@ export default class Stamen implements ProviderDefinition {
         Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
         <a href="https://www.openstreetmap.org/copyright">ODbL</a>`
     };
+
+    minZoom = 0;
+    maxZoom = 16.99999;
 
     getCredits(theme: string | undefined): string {
         if (theme === 'watercolor') {
@@ -90,5 +94,12 @@ export default class Stamen implements ProviderDefinition {
 
     getProjectionName(): String {
         return this.initialProjectionName;
+    }
+
+    getMinMaxZoom(): minMaxZoomObject {
+        return {
+            minZoom: this.minZoom,
+            maxZoom: this.maxZoom
+        };
     }
 }

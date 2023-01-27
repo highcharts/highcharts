@@ -5,6 +5,7 @@
 'use strict';
 
 import type ProviderDefinition from '../ProviderDefinition';
+import { minMaxZoomObject } from '../ProviderDefinition';
 
 import U from '../../Core/Utilities.js';
 
@@ -28,6 +29,9 @@ export default class OpenStreetMap implements ProviderDefinition {
         bicycle: `Maps \u00a9 <a href="https://www.thunderforest.com">Thunderforest</a>,
             Data \u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`
     };
+
+    minZoom = 0;
+    maxZoom = 19.99999;
 
     getCredits(theme: string | undefined): string {
         if (theme === 'bicycle') {
@@ -85,5 +89,12 @@ export default class OpenStreetMap implements ProviderDefinition {
 
     getProjectionName(): String {
         return this.initialProjectionName;
+    }
+
+    getMinMaxZoom(): minMaxZoomObject {
+        return {
+            minZoom: this.minZoom,
+            maxZoom: this.maxZoom
+        };
     }
 }

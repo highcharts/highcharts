@@ -104,6 +104,8 @@ class TiledWebMapSeries extends MapSeries {
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
     tiles: Record<string, TileItem> = {};
+    tilesOffsetX: number = 0;
+    tilesOffsetY: number = 0;
     public static TilesProvidersRegistry = TilesProvidersRegistry;
 
     /**
@@ -266,7 +268,13 @@ class TiledWebMapSeries extends MapSeries {
                     .replace('{zoom}', zoom.toString())
                     .replace('{z}', zoom.toString());
 
-                const addTile = (x: number, y: number, zoom: number): void => {
+                const addTile = (
+                    x: number,
+                    y: number,
+                    zoom: number,
+                    translateX: number,
+                    translateY: number
+                ): void => {
                     const modX = x % maxTile,
                         modY = y % maxTile,
                         tileX = modX < 0 ? modX + maxTile : modX,
@@ -283,8 +291,8 @@ class TiledWebMapSeries extends MapSeries {
 
                             tiles[`${zoom},${x},${y}`] = chart.renderer.image(
                                 url,
-                                x * scaledTileSize,
-                                y * scaledTileSize,
+                                (x * scaledTileSize) - translateX,
+                                (y * scaledTileSize) - translateY,
                                 scaledTileSize,
                                 scaledTileSize
                             )
@@ -324,7 +332,7 @@ class TiledWebMapSeries extends MapSeries {
                     bottomRightArr = mapView.projection.def.inverse(
                         [bottomRightUnits.x, bottomRightUnits.y]),
                     bottomRight = {
-                        lon: bottomRightArr[0] + Math.abs(lambda),
+                        lon: bottomRightArr[0] - lambda,
                         lat: bottomRightArr[1]
                     };
 
@@ -354,22 +362,23 @@ class TiledWebMapSeries extends MapSeries {
                     ]),
                     firstTilePx = mapView.projectedUnitsToPixels({
                         x: units[0], y: units[1]
-                    });
-
-                transformGroups[zoomFloor].attr({
-                    translateX:
-                        -1 * (startPos.x * scaledTileSize - firstTilePx.x),
-                    translateY:
-                        -1 * (startPos.y * scaledTileSize - firstTilePx.y)
-                });
+                    }),
+                    translateX = (startPos.x * scaledTileSize - firstTilePx.x),
+                    translateY = (startPos.y * scaledTileSize - firstTilePx.y);
+                this.tilesOffsetX = translateX;
+                this.tilesOffsetY = translateY;
 
                 for (let x = startPos.x; x <= endPos.x; x++) {
                     for (let y = startPos.y; y <= endPos.y; y++) {
-                        addTile(x, y, zoomFloor);
+                        addTile(x, y, zoomFloor, translateX, translateY);
                     }
                 }
             }
 
+            const {
+                tilesOffsetX,
+                tilesOffsetY
+            } = this;
             // Destroy old and unused
             Object.keys(tiles).forEach((key): void => {
                 if (tiles[key].isActive) {
@@ -377,8 +386,8 @@ class TiledWebMapSeries extends MapSeries {
                     const { posX, posY } = tiles[key];
                     if (defined(posX) && defined(posY)) {
                         tiles[key].attr({
-                            x: posX * scaledTileSize,
-                            y: posY * scaledTileSize,
+                            x: (posX * scaledTileSize) - tilesOffsetX,
+                            y: (posY * scaledTileSize) - tilesOffsetY,
                             width: scaledTileSize,
                             height: scaledTileSize
                         });
@@ -438,7 +447,8 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
         const ProviderDefinition =
             TilesProvidersRegistry[twm.provider.type],
             def = new ProviderDefinition(),
-            providerProjectionName: string = def.getProjectionName();
+            providerProjectionName: string = def.getProjectionName(),
+            { minZoom, maxZoom } = def.getMinMaxZoom();
 
         if (geoBounds) {
             const { x1, y1, x2, y2 } = geoBounds;
@@ -447,13 +457,17 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
                     name: providerProjectionName,
                     parallels: [y1, y2],
                     rotation: [-(x1 + x2) / 2]
-                }
+                },
+                minZoom: minZoom,
+                maxZoom: maxZoom
             };
         } else {
             this.recommendedMapView = {
                 projection: {
                     name: providerProjectionName
-                }
+                },
+                minZoom: minZoom,
+                maxZoom: maxZoom
             };
         }
 

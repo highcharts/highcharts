@@ -5,6 +5,7 @@
 'use strict';
 
 import type ProviderDefinition from '../ProviderDefinition';
+import { minMaxZoomObject } from '../ProviderDefinition';
 
 import U from '../../Core/Utilities.js';
 
@@ -25,6 +26,9 @@ export default class Gaode implements ProviderDefinition {
     credits = {
         standard: 'Map data \u00a92023 <a href="https://www.gaode.com/">Gaode</a>'
     };
+
+    minZoom = 3;
+    maxZoom = 9.99999;
 
     getCredits(theme: string | undefined): string {
         return this.credits.standard;
@@ -79,5 +83,12 @@ export default class Gaode implements ProviderDefinition {
 
     getProjectionName(): String {
         return this.initialProjectionName;
+    }
+
+    getMinMaxZoom(): minMaxZoomObject {
+        return {
+            minZoom: this.minZoom,
+            maxZoom: this.maxZoom
+        };
     }
 }
