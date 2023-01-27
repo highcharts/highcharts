@@ -14,6 +14,7 @@
 }
 
 #kpi-layout {
+    --color-axis-labels: #a7a4b0;
     --color-background: #fff;
     --color-gauge: #4caffe;
     --color-hover: #5352be;
@@ -24,6 +25,7 @@
 }
 
 .highcharts-dashboards.hd-dark-mode #kpi-layout {
+    --color-axis-labels: #838394;
     --color-background: #0d0d0d;
     --color-pane: #20202c;
     --color-pane-line: #838394;
@@ -115,6 +117,7 @@
     }
 
     #kpi-layout {
+        --color-axis-labels: #838394;
         --color-background: #0d0d0d;
         --color-pane: #20202c;
         --color-pane-line: #838394;
@@ -220,6 +223,10 @@
     fill: var(--color-text);
 }
 
+#kpi-layout .hd-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis);
+}
+
 #kpi-layout .hd-component-kpi-chart-container .highcharts-background {
     fill: none;
     stroke: none;
@@ -253,6 +260,11 @@
 
 #kpi-layout .hd-cell-state-hover:hover text,
 #kpi-layout .hd-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-layout .hd-cell-state-hover:hover .highcharts-axis-labels text,
+#kpi-layout .hd-cell-state-active .highcharts-axis-labels text {
     fill: var(--color-hover-text);
 }
 

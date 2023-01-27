@@ -898,6 +898,10 @@ function buildKPIChartOptions(dataScope) {
             widthAdjust: 0
         },
         yAxis: {
+            labels: {
+                distance: 4,
+                y: 12
+            },
             max: (
                 dataScope[0] === 'T' ?
                     dataScope[2] === 'C' ? 50 : 122 :
@@ -908,7 +912,10 @@ function buildKPIChartOptions(dataScope) {
                     dataScope[2] === 'C' ? -10 : 14 :
                     0
             ),
-            stops: buildColorStops(dataScope)
+            minorTickInterval: null,
+            stops: buildColorStops(dataScope),
+            tickAmount: 2,
+            visible: true
         }
     };
 }
