@@ -95,6 +95,7 @@
 
 #world-map {
     --color-background: #5352be;
+    --color-tooltip-background: #464646;
     --color-map: #dddbef;
     --color-marker-border: #fff;
     --color-marker-text: #fff;
@@ -474,6 +475,7 @@
     paint-order: stroke;
     stroke: var(--color-marker-border);
     stroke-width: 2;
+    cursor: pointer;
 }
 
 #world-map .highcharts-series-1 .highcharts-point:hover,
@@ -492,7 +494,7 @@
 }
 
 #world-map .highcharts-tooltip-box {
-    fill: var(--color-background);
+    fill: var(--color-tooltip-background);
     fill-opacity: 1;
     stroke: none;
 }

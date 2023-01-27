@@ -12,9 +12,9 @@ const dataTemperatures = {
     F: 'Farenheit',
     K: 'Kelvin'
 };
-const initialMin = Date.UTC(2010);
-const minRange = 30 * 24 * 3600 * 1000;
-const maxRange = 365 * 24 * 3600 * 1000;
+const initialMin = Date.UTC(2009);
+const minRange = 30 * 24 * 3600 * 1000; // 30 days
+const maxRange = 2 * 365 * 24 * 3600 * 1000; // 2 years
 const defaultCity = 'New York';
 const defaultData = 'TXC';
 
