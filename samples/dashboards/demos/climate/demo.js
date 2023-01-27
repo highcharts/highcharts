@@ -239,6 +239,10 @@ async function setupDashboard() {
                             const point = e.point;
                             const city = point.name;
 
+                            if (cityScope === city) {
+                                return; // already selected
+                            }
+
                             cityScope = city;
                             const store = await dataPool.getStore(city);
 
