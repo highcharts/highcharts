@@ -59,7 +59,8 @@ namespace Globals {
         cellHover: classNamePrefix + 'cell-state-hover',
         cellActive: classNamePrefix + 'cell-state-active',
         row: classNamePrefix + 'row',
-        layoutsWrapper: classNamePrefix + 'layouts-wrapper'
+        layoutsWrapper: classNamePrefix + 'layouts-wrapper',
+        dashboardContainer: classNamePrefix + 'dashboard-wrapper'
     };
 
     export const guiElementType: Record<string, GUIElement.GUIElementType> = {

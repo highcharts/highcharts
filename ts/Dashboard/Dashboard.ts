@@ -123,6 +123,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
      * */
 
     public container: globalThis.HTMLElement = void 0 as any;
+    public dashboardWrapper: globalThis.HTMLElement = void 0 as any;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -160,7 +161,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         const dashboard = this;
 
         if (isString(renderTo)) {
-            dashboard.container = renderTo =
+            dashboard.dashboardWrapper = renderTo =
                 window.document.getElementById(renderTo as any) as any;
         }
 
@@ -170,7 +171,15 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         }
 
         // Clear the container from any content.
-        dashboard.container.innerHTML = '';
+        dashboard.dashboardWrapper.innerHTML = '';
+
+        // add wrapper
+        dashboard.container = createElement(
+            'div', {
+                className: Globals.classNames.dashboardContainer
+            }, {},
+            this.dashboardWrapper
+        );
     }
 
     public setLayouts(guiOptions: Dashboard.GUIOptions): void {
