@@ -14,6 +14,7 @@
  *
  * */
 
+import type ColorString from '../../../Core/Color/ColorString';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -36,7 +37,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import ColorString from '../../../Core/Color/ColorString';
 const {
     extend,
     correctFloat,
@@ -300,11 +300,10 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public drawGraph(): void {
-        let indicator = this,
+        const indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
             )> = indicator.points,
-            pointsLength: number = mainLinePoints.length,
             mainLineOptions: MACDOptions =
             indicator.options,
             histogramZones: Array<(SeriesZonesOptions)> = indicator.zones,
@@ -315,8 +314,9 @@ class MACDIndicator extends SMAIndicator {
             },
             otherSignals: Array<(
                 Array<MACDPoint>
-            )> = [[], []],
-            point: MACDPoint;
+            )> = [[], []];
+        let point: MACDPoint,
+            pointsLength: number = mainLinePoints.length;
 
         // Generate points for top and bottom lines:
         while (pointsLength--) {
@@ -370,9 +370,9 @@ class MACDIndicator extends SMAIndicator {
     public getZonesGraphs(
         props: Array<Array<string>>
     ): Array<Array<string>> {
-        let allZones: Array<Array<string>> =
-        super.getZonesGraphs(props),
-            currentZones: Array<Array<string>> = allZones;
+        const allZones: Array<Array<string>> =
+        super.getZonesGraphs(props);
+        let currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
             currentZones = allZones.splice(
@@ -412,17 +412,17 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indexToShift: number = (
+        const indexToShift: number = (
                 (params.longPeriod as any) - (params.shortPeriod as any)
             ), // #14197
-            j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
-            yMACD: Array<Array<(number|null)>> = [],
-            signalLine: Array<Array<number>> = [],
-            shortEMA: Array<Array<number>>,
+            yMACD: Array<Array<(number|null)>> = [];
+        let shortEMA: Array<Array<number>>,
             longEMA: Array<Array<number>>,
-            i;
+            i,
+            j = 0,
+            signalLine: Array<Array<number>> = [];
 
         if ((series.xData as any).length <
             (params.longPeriod as any) + params.signalPeriod
