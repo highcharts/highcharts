@@ -26,7 +26,7 @@ let cityScope = defaultCity;
 let citySeries;
 let dataScope = defaultData;
 let navigatorSeries;
-let worldDate = new Date(Date.UTC(2010, 11, 25));
+let worldDate = Date.UTC(2010, 11, 25); // months start with 0
 let kpis = {};
 let darkMode = false;
 let temperatureScale = 'C';
@@ -37,8 +37,12 @@ async function setupDashboard() {
     buildSymbols();
 
     const defaultCityStore = await dataPool.getStore(defaultCity);
+    const map = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+    const mapPoints = await buildCitiesMap();
 
-    const dashboard = new Dashboards.Dashboard('container', {
+    return new Promise(resolve => new Dashboards.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
@@ -87,7 +91,9 @@ async function setupDashboard() {
                             void 0,
                             void 0,
                             ['time', dataScope]
-                        )
+                        ),
+                        animation: false,
+                        animationLimit: 0
                     }],
                     xAxis: {
                         endOnTick: true,
@@ -123,42 +129,39 @@ async function setupDashboard() {
                     maxRange: maxRange,
                     events: {
                         afterSetExtremes: async function (e) {
-                            const min = e.min || e.target.min,
-                                max = e.max || e.target.max;
+                            const minValue = e.min || e.target.min;
+                            const maxValue = e.max || e.target.max;
+                            const table =
+                                await dataPool.getStoreTable(cityScope);
 
-                            dataPool
-                                .getStore(cityScope)
-                                .then(store => {
-                                    const data = store.table.modified
-                                            .getRows(
-                                                void 0,
-                                                void 0,
-                                                ['time', dataScope]
-                                            ),
-                                        chartData = data.filter(el =>
-                                            el[0] >= min && el[0] <= max
-                                        ),
-                                        lastPoint =
-                                            chartData[chartData.length - 1];
+                            table.setModifier(new Dashboards.RangeModifier({
+                                ranges: [{
+                                    column: 'time',
+                                    minValue,
+                                    maxValue
+                                }]
+                            }));
 
-                                    citySeries.update({
-                                        data: chartData
-                                    });
+                            const data = table.modified.getRows(
+                                void 0,
+                                void 0,
+                                ['time', dataScope]
+                            );
+                            const lastPoint = data[data.length - 1];
+                            const startIndex =
+                                table.getRowIndexBy('time', data[0][0]);
 
-                                    worldDate = lastPoint[0];
-                                    const startIndex = data.indexOf(
-                                        chartData[0]
-                                    );
+                            worldDate = lastPoint[0];
 
-                                    cityGrid.scrollToRow(startIndex);
-                                    cityGrid.update(); // Force redraw;
-                                    buildCitiesMap().then(
-                                        data => citiesMap.setData(data)
-                                    );
+                            citiesMap.setData(await buildCitiesMap());
 
-                                    updateKPI(store.table, lastPoint[0]);
-                                    updateKPIData();
-                                });
+                            updateKPI(table.modified, worldDate);
+                            updateKPIData();
+
+                            cityGrid.scrollToRow(startIndex);
+                            cityGrid.update(); // Force redraw;
+
+                            citySeries.update({ data });
                         }
                     }
                 },
@@ -177,10 +180,7 @@ async function setupDashboard() {
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    map: await fetch(
-                        'https://code.highcharts.com/mapdata/' +
-                        'custom/world.topo.json'
-                    ).then(response => response.json()),
+                    map,
                     styledMode: true
                 },
                 colorAxis: buildColorAxis(),
@@ -203,7 +203,9 @@ async function setupDashboard() {
                 }, {
                     type: 'mappoint',
                     name: 'Cities',
-                    data: await buildCitiesMap(),
+                    data: mapPoints,
+                    animation: false,
+                    animationLimit: 0,
                     allowPointSelect: true,
                     dataLabels: [{
                         align: 'left',
@@ -228,7 +230,7 @@ async function setupDashboard() {
                         y: -16
                     }],
                     events: {
-                        click: function (e) {
+                        click: async function (e) {
 
                             if (!cityGrid || !citySeries) {
                                 return; // not ready
@@ -238,22 +240,19 @@ async function setupDashboard() {
                             const city = point.name;
 
                             cityScope = city;
-                            dataPool
-                                .getStore(city)
-                                .then(store => {
+                            const store = await dataPool.getStore(city);
 
-                                    syncRefreshCharts(
-                                        store,
-                                        dataScope,
-                                        city
-                                    );
+                            syncRefreshCharts(
+                                store,
+                                dataScope,
+                                city
+                            );
 
-                                    // Update DataGrid
-                                    cityGrid.dataTable = store.table;
-                                    cityGrid.update(); // force redraw
+                            // Update DataGrid
+                            cityGrid.dataTable = store.table;
+                            cityGrid.update(); // force redraw
 
-                                    updateKPIData();
-                                });
+                            updateKPIData();
                         }
                     },
                     marker: {
@@ -316,7 +315,6 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
-            store: defaultCityStore,
             sync: {
                 tooltip: true
             },
@@ -332,11 +330,12 @@ async function setupDashboard() {
                 series: [{
                     type: 'spline',
                     name: defaultCity,
-                    data: defaultCityStore.table.modified.getRows(
-                        void 0,
-                        void 0,
-                        ['time', dataScope]
-                    ),
+                    data: [],
+                    animation: false,
+                    animationLimit: 0,
+                    events: {
+                        afterAnimate: () => resolve()
+                    },
                     legend: {
                         enabled: false
                     },
@@ -423,9 +422,8 @@ async function setupDashboard() {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber(
                     'TN' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate.getTime()),
-                    true
-                );
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -458,9 +456,8 @@ async function setupDashboard() {
                 const table = defaultCityStore.table.modified;
                 return table.getCellAsNumber(
                     'TX' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate.getTime()),
-                    true
-                );
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             valueFormatter: v => `${v.toFixed(0)}°`,
             events: {
@@ -494,7 +491,10 @@ async function setupDashboard() {
             subtitle: dataScopes.RR,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('RR1', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber(
+                    'RR1',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -524,7 +524,10 @@ async function setupDashboard() {
             subtitle: dataScopes.ID,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('ID', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber(
+                    'ID',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -554,7 +557,10 @@ async function setupDashboard() {
             subtitle: dataScopes.FD,
             value: (() => {
                 const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber('FD', table.getRowIndexBy('time', worldDate.getTime()), true);
+                return table.getCellAsNumber(
+                    'FD',
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
             })(),
             events: {
                 mount: function () {
@@ -694,9 +700,7 @@ async function setupDashboard() {
                 }]
             }]
         }
-    });
-
-    console.log(dashboard);
+    }));
 }
 
 async function setupDataPool() {
@@ -722,36 +726,49 @@ async function setupDataPool() {
     }
 }
 
-// Calculate the average and max temperature in C and F from K.
-async function convertTemperature(city) {
-    const cityDataTable = (await dataPool.getStoreTable(city)).modified,
-        columns = ['TN', 'TX'], // Average, Maximal temperature
-        scales = ['C', 'F'];
+async function setupCitiesData() {
+    const cities = citiesTable.modified;
+    const data = citiesData;
+    const promises = [];
+    const rows = cities.getRows(
+        void 0,
+        void 0,
+        ['lat', 'lon', 'city', 'country', 'elevation']
+    );
 
-    columns.forEach(column => {
-        scales.forEach(scale => {
-            const newColumn = column + scale;
-            let temperatureColumn = cityDataTable.getColumn(newColumn);
+    for (const row of rows) {
+        const city = row[2];
 
-            if (!temperatureColumn) {
-                cityDataTable.setColumns({
-                    [newColumn]: cityDataTable
-                        .getColumn(column)
-                        .map(kelvin => Highcharts.correctFloat(
-                            scale === 'C' ?
-                                (kelvin - 273.15) :
-                                (kelvin * 1.8 - 459.67),
-                            3
-                        ))
-                });
-            }
-        });
-    });
+        if (!data[city]) {
+            promises.push(
+                dataPool
+                    .getStore(city)
+                    .then(store => {
+                        decorateCityTable(store.table);
+                        data[city] = {
+                            country: row[3],
+                            elevation: row[4],
+                            lat: row[0],
+                            lon: row[1],
+                            name: row[2],
+                            store
+                        };
+                    })
+            );
+        }
+    }
+
+    await Promise.all(promises);
+
+    if (citiesMap) {
+        citiesMap.setData(await buildCitiesMap());
+    }
 }
 
 async function main() {
     await setupDataPool();
     await setupDashboard();
+    await setupCitiesData();
 }
 
 main().catch(e => console.error(e));
@@ -764,56 +781,25 @@ main().catch(e => console.error(e));
 
 async function buildCitiesData() {
     const cities = citiesTable.modified;
-    const initialCity = defaultCity;
-    const tables = {};
-
+    const data = {};
     const initialRow = await cities.getRow(
-        cities.getRowIndexBy('city', defaultCity),
+        cities.getRowIndexBy('city', cityScope),
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
+    const store = await dataPool.getStore(initialRow[2]);
 
-    await convertTemperature(defaultCity);
+    await decorateCityTable(store.table);
 
-    tables[initialCity] = {
+    data[cityScope] = {
         country: initialRow[3],
         elevation: initialRow[4],
         lat: initialRow[0],
         lon: initialRow[1],
         name: initialRow[2],
-        store: await dataPool.getStore(initialRow[2])
+        store
     };
 
-    // lazy promise without leading await for the rest
-    (async function () {
-        const rows = cities.getRows(
-            void 0,
-            void 0,
-            ['lat', 'lon', 'city', 'country', 'elevation']
-        );
-
-        for (const row of rows) {
-            const city = row[2];
-
-            if (typeof tables[city] === 'undefined') {
-                await convertTemperature(city);
-
-                tables[city] = {
-                    country: row[3],
-                    elevation: row[4],
-                    lat: row[0],
-                    lon: row[1],
-                    name: row[2],
-                    store: await dataPool.getStore(city)
-                };
-
-                if (citiesMap) {
-                    citiesMap.setData(await buildCitiesMap());
-                }
-            }
-        }
-    }());
-
-    return tables;
+    return data;
 }
 
 async function buildCitiesMap() {
@@ -824,9 +810,8 @@ async function buildCitiesMap() {
             const table = data.store.table.modified;
             const y = table.getCellAsNumber(
                 dataScope,
-                table.getRowIndexBy('time', worldDate),
-                true
-            );
+                table.getRowIndexBy('time', worldDate)
+            ) || 0;
 
             return {
                 lat: data.lat,
@@ -912,6 +897,52 @@ function buildSymbols() {
     ];
 }
 
+function decorateCityTable(table) {
+    const columns = ['TN', 'TX'], // Average, Maximal temperature
+        scales = ['C', 'F'];
+
+    columns.forEach(column => {
+        scales.forEach(scale => {
+            const newColumn = column + scale;
+            let temperatureColumn = table.getColumn(newColumn);
+
+            if (!temperatureColumn) {
+                table.setColumns({
+                    [newColumn]: table
+                        .getColumn(column)
+                        .map(kelvin => Highcharts.correctFloat(
+                            scale === 'C' ?
+                                (kelvin - 273.15) :
+                                (kelvin * 1.8 - 459.67),
+                            3
+                        ))
+                });
+            }
+        });
+    });
+
+    table.setColumn(
+        'Date',
+        table
+            .getColumn('time')
+            .map(timestamp => new Date(timestamp)
+                .toISOString()
+                .substring(0, 10)
+            )
+    );
+
+    table.setColumnAlias('avg. ˚C', 'TNC');
+    table.setColumnAlias('avg. ˚F', 'TNF');
+    table.setColumnAlias('avg. ˚K', 'TN');
+    table.setColumnAlias('max ˚C', 'TXC');
+    table.setColumnAlias('max ˚F', 'TXF');
+    table.setColumnAlias('max ˚K', 'TX');
+    table.setColumnAlias('Frost', 'FD');
+    table.setColumnAlias('Ice', 'ID');
+    table.setColumnAlias('Rain', 'RR1');
+
+}
+
 function tooltipFormatter(value, city) {
     let tooltip = '';
 
@@ -962,9 +993,8 @@ function updateKPI(table, time) {
         kpi.update({
             value: table.getCellAsNumber(
                 key + (key[0] === 'T' ? temperatureScale : ''),
-                table.getRowIndexBy('time', time),
-                true
-            )
+                table.getRowIndexBy('time', time)
+            ) || 0
         });
     }
 }
