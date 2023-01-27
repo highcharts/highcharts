@@ -1,5 +1,5 @@
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
-import PluginHandler from '/base/code/es-modules/Dashboard/PluginHandler.js';
+import PluginHandler from '/base/code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
 import HighchartsPlugin from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';

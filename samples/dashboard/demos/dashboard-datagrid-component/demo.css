@@ -1,7 +1,0 @@
-@import "https://code.highcharts.com/css/dashboard/gui.css";
-@import "https://code.highcharts.com/css/highcharts.css";
-@import "https://code.highcharts.com/css/datagrid.css";
-
-#csv {
-    display: none;
-}

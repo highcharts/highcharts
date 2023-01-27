@@ -44,6 +44,7 @@ const getFile = url => new Promise((resolve, reject) => {
 
     var fs = require('fs'),
         path = require('path'),
+        // eslint-disable-next-line node/no-missing-require
         tree = require('../tree.json');
 
     /**
@@ -183,7 +184,7 @@ const getFile = url => new Promise((resolve, reject) => {
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
                 'Highcharts Gantt': 'gantt',
-                'Highsoft Dashboard': 'dashboard'
+                'Highcharts Dashboards': 'dashboards'
             }[name];
 
         log = washPRLog(name, log);

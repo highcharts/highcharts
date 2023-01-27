@@ -1,4 +1,4 @@
-const { DataTable } = Dashboard;
+const { DataTable } = Dashboards;
 
 const headers = ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Potatoes'];
 
