@@ -81,7 +81,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         },
         sync: Sync.defaultHandlers,
         editableOptions: [
-            // 'id',
+            'id',
             'store',
             'style',
             'title',
@@ -492,12 +492,63 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    */
     public update(newOptions: Partial<Component.ComponentOptions>, redraw = true): this {
         // Update options
+        let shouldForceRedraw = false;
+
+        if (!redraw) {
+            const currentOptions = this.options;
+
+            // TODO: should be registered by each component type
+            // and possibly configurable
+            const optionNamesToSkip = ['chartOptions'];
+
+            // TODO: do a while / foreach to break early
+            Object.keys(newOptions).forEach((optionName): void => {
+                if (
+                    optionNamesToSkip.indexOf(optionName) > -1 ||
+                  shouldForceRedraw
+                ) {
+                    return;
+                }
+
+                if (optionName in currentOptions) {
+                    const oldOptionValue =
+                      (currentOptions as AnyRecord)[optionName];
+                    const newOptionValue =
+                      (newOptions as AnyRecord)[optionName];
+
+                    // If the type has changed, redraw
+                    if (typeof oldOptionValue !== typeof newOptionValue) {
+                        shouldForceRedraw = true;
+                        return;
+                    }
+
+                    // If both are objects, do a quick comparison
+                    // TODO: order should not really matter in a config
+                    // so might want to do a deeper comparison
+                    if (
+                        typeof oldOptionValue === 'object' &&
+              JSON.stringify(oldOptionValue) !==
+            JSON.stringify(newOptionValue)
+                    ) {
+                        shouldForceRedraw = true;
+                        return;
+                    }
+
+                    if (oldOptionValue !== newOptionValue) {
+                        shouldForceRedraw = true;
+                        return;
+                    }
+                }
+
+            });
+        }
+
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
             options: newOptions
         });
 
-        if (redraw) {
+        if (redraw || shouldForceRedraw) {
             this.redraw();
         }
 
