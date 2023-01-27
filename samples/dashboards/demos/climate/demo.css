@@ -13,25 +13,20 @@
     --color-title: #f0f0f0;
 }
 
-#kpi-data,
-#kpi-frost,
-#kpi-ice,
-#kpi-max-temperature,
-#kpi-rain,
-#kpi-temperature {
+#kpi-layout {
     --color-background: #fff;
+    --color-gauge: #4caffe;
     --color-hover: #5352be;
     --color-hover-text: #fff;
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
     --color-text: #2f2b38;
 }
 
-.highcharts-dashboards.hd-dark-mode #kpi-data,
-.highcharts-dashboards.hd-dark-mode #kpi-frost,
-.highcharts-dashboards.hd-dark-mode #kpi-ice,
-.highcharts-dashboards.hd-dark-mode #kpi-max-temperature,
-.highcharts-dashboards.hd-dark-mode #kpi-rain,
-.highcharts-dashboards.hd-dark-mode #kpi-temperature {
+.highcharts-dashboards.hd-dark-mode #kpi-layout {
     --color-background: #0d0d0d;
+    --color-pane: #20202c;
+    --color-pane-line: #838394;
     --color-text: #dadae2;
 }
 
@@ -119,13 +114,10 @@
         --color-dashboard: #46475d;
     }
 
-    #kpi-data,
-    #kpi-frost,
-    #kpi-ice,
-    #kpi-max-temperature,
-    #kpi-rain,
-    #kpi-temperature {
+    #kpi-layout {
         --color-background: #0d0d0d;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
         --color-text: #dadae2;
     }
 
@@ -209,31 +201,79 @@
  *
  * */
 
-.hd-component-kpi,
-.hd-component-kpi-value-wrap {
+#kpi-layout .hd-component {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+#kpi-layout .hd-component-kpi-content {
+    background: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container {
+    align-self: center;
+    margin: auto;
+}
+
+#kpi-layout .hd-component-kpi-chart-container text {
+    fill: var(--color-text);
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-label {
+    font-size: 32px;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-pane {
+    fill: var(--color-pane);
+    fill-opacity: 1;
+    stroke: var(--color-pane-line);
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-title {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#kpi-layout .hd-cell-state-hover:hover .hd-component,
+#kpi-layout .hd-cell-state-active .hd-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
+#kpi-layout .hd-cell-state-hover:hover text,
+#kpi-layout .hd-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-data .hd-component {
+    cursor: default;
+}
+
+#kpi-data .hd-component-kpi,
+#kpi-data .hd-component-kpi-value-wrap {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-evenly;
-}
-
-.hd-component-kpi > *,
-.hd-component-kpi-value-wrap > * {
-    align-self: center;
-    flex: none;
-    margin: auto;
-}
-
-.hd-component-kpi {
     text-align: center;
 }
 
-.hd-component-kpi-content {
-    background: none;
-}
-
-.hd-component-kpi-value-wrap {
-    height: 100%;
+#kpi-data .hd-component-kpi > *,
+#kpi-data .hd-component-kpi-value-wrap > * {
+    align-self: center;
+    flex: none;
+    margin: auto;
 }
 
 #kpi-data .hd-component-title {
@@ -247,39 +287,15 @@
     vertical-align: middle;
 }
 
+#kpi-data .hd-component-kpi-value-wrap {
+    height: 100%;
+}
+
 #kpi-data .hd-component-kpi-value::before {
     content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
     display: inline-block;
     margin-right: 0.25em;
     vertical-align: middle;
-}
-
-#kpi-data .hd-component,
-#kpi-frost .hd-component,
-#kpi-ice .hd-component,
-#kpi-max-temperature .hd-component,
-#kpi-rain .hd-component,
-#kpi-temperature .hd-component {
-    background-color: var(--color-background);
-    color: var(--color-text);
-}
-
-.hd-cell.hd-cell-state-hover {
-    cursor: pointer;
-}
-
-#kpi-frost.hd-cell-state-hover:hover .hd-component,
-#kpi-frost.hd-cell-state-active .hd-component,
-#kpi-ice.hd-cell-state-hover:hover .hd-component,
-#kpi-ice.hd-cell-state-active .hd-component,
-#kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
-#kpi-max-temperature.hd-cell-state-active .hd-component,
-#kpi-rain.hd-cell-state-hover:hover .hd-component,
-#kpi-rain.hd-cell-state-active .hd-component,
-#kpi-temperature.hd-cell-state-hover:hover .hd-component,
-#kpi-temperature.hd-cell-state-active .hd-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
 }
 
 /* *
