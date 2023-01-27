@@ -70,133 +70,133 @@
             },
             data: [{
                 id: 'Qatar',
-                lat: 25.3548,
-                lon: 51.1839,
+                lat: 25.35,
+                lon: 51.18,
                 color: '#550d65'
             }, {
                 id: 'Ecuador',
-                lat: -2.2038,
-                lon: -79.8974
+                lat: -2.20,
+                lon: -79.9
             }, {
                 id: 'Senegal',
-                lat: 14.4974,
-                lon: -14.4524
+                lat: 14.5,
+                lon: -14.5
             }, {
                 id: 'Netherlands',
-                lat: 52.1326,
-                lon: 5.2913
+                lat: 52.13,
+                lon: 5.29
             }, {
                 id: 'England',
-                lat: 52.3555,
-                lon: -1.1743
+                lat: 52.36,
+                lon: -1.17
             }, {
                 id: 'Iran',
-                lat: 32.4279,
-                lon: 53.6880
+                lat: 32.43,
+                lon: 53.69
             }, {
                 id: 'USA',
-                lat: 39.7947,
-                lon: -102.2567
+                lat: 39.79,
+                lon: -102.26
             }, {
                 id: 'Wales',
-                lat: 52.3304,
-                lon: -3.6992
+                lat: 52.33,
+                lon: -3.7
             }, {
                 id: 'Argentina',
-                lat: -35.2151,
-                lon: -65.1593
+                lat: -35.21,
+                lon: -65.16
             }, {
                 id: 'Saudi Arabia',
-                lat: 24.0252,
-                lon: 44.1760
+                lat: 24.03,
+                lon: 44.18
             }, {
                 id: 'Mexico',
-                lat: 24.4281,
-                lon: -102.3846
+                lat: 24.43,
+                lon: -102.38
             }, {
                 id: 'Poland',
-                lat: 51.9114,
-                lon: 19.4085
+                lat: 51.91,
+                lon: 19.41
             }, {
                 id: 'France',
-                lat: 46.6269,
-                lon: 2.3125
+                lat: 46.63,
+                lon: 2.31
             }, {
                 id: 'Australia',
-                lat: -24.8287,
-                lon: 133.7685
+                lat: -24.83,
+                lon: 133.77
             }, {
                 id: 'Denmark',
-                lat: 55.9402,
-                lon: 9.0500
+                lat: 55.94,
+                lon: 9.05
             }, {
                 id: 'Tunisia',
-                lat: 34.1712,
-                lon: 9.5809
+                lat: 34.17,
+                lon: 9.58
             }, {
                 id: 'Spain',
-                lat: 39.6294,
-                lon: -3.9216
+                lat: 39.63,
+                lon: -3.92
             }, {
                 id: 'Costa Rica',
-                lat: 9.9378,
-                lon: -84.0962
+                lat: 9.94,
+                lon: -84.1
             }, {
                 id: 'Germany',
-                lat: 51.0535,
-                lon: 10.2870
+                lat: 51.05,
+                lon: 10.29
             }, {
                 id: 'Japan',
-                lat: 36.1354,
-                lon: 138.5454
+                lat: 36.14,
+                lon: 138.55
             }, {
                 id: 'Belgium',
-                lat: 50.7111,
-                lon: 4.6716
+                lat: 50.71,
+                lon: 4.67
             }, {
                 id: 'Canada',
-                lat: 60.3501,
-                lon: -113.2265
+                lat: 60.35,
+                lon: -113.23
             }, {
                 id: 'Morocco',
-                lat: 32.0442,
-                lon: -6.2629
+                lat: 32.04,
+                lon: -6.26
             }, {
                 id: 'Croatia',
-                lat: 45.0958,
-                lon: 14.7933
+                lat: 45.1,
+                lon: 14.79
             }, {
                 id: 'Brazil',
-                lat: -8.3563,
-                lon: -56.1562
+                lat: -8.36,
+                lon: -56.16
             }, {
                 id: 'Serbia',
-                lat: 44.0942,
-                lon: 20.6894
+                lat: 44.09,
+                lon: 20.69
             }, {
                 id: 'Switzerland',
-                lat: 46.7638,
-                lon: 8.4819
+                lat: 46.76,
+                lon: 8.48
             }, {
                 id: 'Cameroon',
-                lat: 5.6662,
-                lon: 12.4790
+                lat: 5.67,
+                lon: 12.48
             }, {
                 id: 'Portugal',
-                lat: 39.6098,
-                lon: -8.1429
+                lat: 39.61,
+                lon: -8.14
             }, {
                 id: 'Ghana',
-                lat: 7.9239,
-                lon: -1.0211
+                lat: 7.92,
+                lon: -1.02
             }, {
                 id: 'Uruguay',
-                lat: -32.8146,
-                lon: -55.9933
+                lat: -32.81,
+                lon: -55.99
             }, {
                 id: 'South Korea',
-                lat: 36.5201,
-                lon: 127.8654
+                lat: 36.52,
+                lon: 127.87
             }]
         }, {
             type: 'flowmap',

@@ -52,24 +52,24 @@
             // Use id instead of name to allow for referencing points later using the flowmap series.
             data: [{
                 id: 'London',
-                lat: 51.507222,
-                lon: -0.1275
+                lat: 51.51,
+                lon: -0.13
             }, {
                 id: 'Birmingham',
-                lat: 52.483056,
-                lon: -1.893611
+                lat: 52.48,
+                lon: -1.89
             }, {
                 id: 'Leeds',
-                lat: 53.799722,
-                lon: -1.549167
+                lat: 53.8,
+                lon: -1.55
             }, {
                 id: 'Glasgow',
-                lat: 55.858,
-                lon: -4.259
+                lat: 55.86,
+                lon: -4.26
             }, {
                 id: 'Sheffield',
-                lat: 53.383611,
-                lon: -1.466944
+                lat: 53.38,
+                lon: -1.47
             }, {
                 id: 'Liverpool',
                 lat: 53.4,
@@ -77,15 +77,15 @@
             }, {
                 id: 'Bristol',
                 lat: 51.45,
-                lon: -2.583333
+                lon: -2.58
             }, {
                 id: 'Belfast',
-                lat: 54.597,
+                lat: 54.6,
                 lon: -5.93
             }, {
                 id: 'Lerwick',
-                lat: 60.155,
-                lon: -1.145,
+                lat: 60.16,
+                lon: -1.15,
                 dataLabels: {
                     align: 'left',
                     x: 5,
