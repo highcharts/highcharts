@@ -16,18 +16,18 @@ Cypress.Commands.add('pan', chartElement => {
 
 Cypress.Commands.add('dashboard', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
-        const D = win.Dashboard;
+        const D = win.Dashboards;
         if (D) {
             if (D.dashboards[0]) {
                  resolve(D.dashboards[0]);
             } else {
-                const unbind = D.addEvent(D.Dashboard, 'load', function() {
+                const unbind = D.addEvent(D.Dashboards, 'load', function() {
                     unbind();
                     resolve(this);
                 });
             }
         } else {
-            reject(new Error('global Dashboard namespace is missing.'));
+            reject(new Error('global Dashboards namespace is missing.'));
         }
     }))
 );

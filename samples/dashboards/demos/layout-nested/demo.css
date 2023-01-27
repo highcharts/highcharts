@@ -1,0 +1,9 @@
+@import "https://code.highcharts.com/css/dashboards/gui.css";
+@import "https://code.highcharts.com/css/datagrid.css";
+
+.col,
+[class*="col-"] {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border: 1px solid rgb(26 54 126 / 12.5%);
+}

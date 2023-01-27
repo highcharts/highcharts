@@ -1,0 +1,810 @@
+/**
+ * @license Highcharts Dashboards v0.0.1
+ *
+ * (c) 2009-2023 Highsoft AS
+ *
+ * License: www.highcharts.com/license
+ */
+body {
+    background-color: #F1F4F6;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family:  Arial, sans-serif;
+}
+
+.hd,
+.highcharts-dashboards {
+    background-color: #F3F3F3;
+    padding: 20px 10px;
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    transition: 0.5s;
+    overflow-x: scroll;
+
+    &:fullscreen {
+        overflow: scroll;
+    }
+}
+
+.main-title {
+    margin-top: 50px;
+}
+
+.hd-row {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.hd-cell {
+    position: relative;
+    /*flex-shrink: 1;*/
+    /*flex-basis: auto;*/
+    flex: 1;
+    min-width: 20px;
+    /*flex: auto;*/
+}
+
+.hd-layouts-wrapper {
+    margin: 0px auto;
+    width: 100%;
+    /* transition: 0.5s; */
+}
+
+.hd-cell img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+.highcharts-dashboards.hd-edit-enabled.hd-edit-cell-highlight-active {
+    pointer-events: none;
+
+    .hd-edit-sidebar {
+        pointer-events: auto;
+    }
+}
+
+.hd-layout {
+    position: relative;
+}
+
+.hd-row,
+.hd-row .hd-cell {
+    box-sizing: border-box;
+    border: 1px dashed rgba(0, 0, 0, 0);
+}
+
+.hd-edit-enabled {
+    .hd-row {
+        border-color: #4B4B4D;
+    }
+
+    .hd-edit-row-context-highlight {
+        background: repeating-linear-gradient(
+            -45deg,
+            rgba(224, 239, 173, 0.7),
+            rgba(224, 239, 173, 0.7) 5px,
+            rgba(235, 235, 235, 0.5) 5px,
+            rgba(235, 235, 235, 0.5) 10px
+        );
+    }
+
+    .hd-edit-cell-highlight {
+        box-shadow: 0 0 0 99998px rgba(0, 0, 0, 0.6);
+        position: relative;
+        z-index: 100;
+        pointer-events: auto;
+        transition: all 0.5s ease;
+        border-color: #1879BA;
+        box-sizing: border-box;
+    }
+}
+
+.hd-edit-menu {
+    overflow: hidden;
+}
+
+.hd-edit-menu.hd-edit-toolbar-row .hd-edit-menu-item {
+    float: left;
+}
+
+.hd-edit-drop-pointer {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(3, 104, 8, 0.58),
+        rgba(3, 104, 8, 0.58) 10px,
+        rgba(4, 134, 11, 0.2) 10px,
+        rgba(4, 134, 11, 0.2) 20px
+    );
+    opacity: 0.5;
+    transition: 0.1s;
+    border-radius: 2px;
+}
+
+.hd-edit-drag-mock {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    height: 50px;
+    width: 50px;
+    z-index: 99999;
+    display: none;
+    cursor: grab;
+    pointer-events: none;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.hd-edit-resize-pointer {
+    position: absolute;
+    z-index: 100;
+    display: none;
+    pointer-events: none;
+    border: 4px solid #2196F3;
+    opacity: 0.5;
+}
+
+.hd-edit-ctx-detection-pointer {
+    position: absolute;
+    z-index: 101;
+    display: none;
+    pointer-events: none;
+    border: 2px solid rgb(128, 133, 232);
+}
+
+.w-1-5 {
+    width: 20%;
+}
+
+.w-1-4 {
+    width: 25%;
+}
+
+.w-1-3 {
+    width: 33.333%;
+}
+
+.w-1-2 {
+    width: 50%;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.hd-cell > .hd-component {
+    position: relative;
+    margin: 5px;
+    background-color: #fff;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    background-clip: border-box;
+    overflow: auto;
+}
+
+.hd-component img {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.hd-edit-resize-snap {
+    position: absolute;
+    background: #fff;
+    border-radius: 9999px;
+    border: 1px solid gray;
+    z-index: 10;
+}
+
+.hd-edit-resize-snap-x {
+    cursor: col-resize;
+    width: 20px;
+    height: 20px;
+    right: 0px;
+    top: 0px;
+}
+
+.hd-edit-resize-snap-y {
+    cursor: row-resize;
+    width: 20px;
+    height: 20px;
+    left: 0px;
+    bottom: 0px;
+}
+
+.hd-edit-resizer-menu-btn-active {
+    color: #2196F3;
+}
+
+.hd-cell > .hd-component .title-wrapper {
+    margin: 0px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(26, 54, 126, 0.125);
+}
+
+.hd-toolbar {
+    position: absolute;
+    z-index: 10;
+    top: 0px;
+    left: 15px;
+    display: none;
+    font-weight: bold;
+}
+
+.hd-toolbar .tools-row {
+    display: inline-block;
+    float: left;
+    background-color: #839bc4;
+    padding: 0px 10px;
+}
+
+.hd-toolbar .tools-cell {
+    display: inline-block;
+    background-color: #c3cad8;
+    padding: 0px 10px;
+}
+
+.hd-toolbar .drag-drop {
+    display: inline-block;
+    cursor: move;
+    text-indent: -9999px;
+    background: url("https://code.highcharts.com/gfx/dashboard-icons/drag.svg") no-repeat 50% 50%;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.hd-toolbar .edit-col,
+.hd-toolbar .edit-row {
+    background: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg") no-repeat 50% 50%;
+    background-size: cover;
+    font-size: 0px;
+    text-indent: -9999px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    float: right;
+    margin-left: 10px;
+}
+
+.hd-edit-toggle-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 43px;
+    height: 23px;
+    float: right;
+    margin-top: -4px;
+}
+
+.hd-edit-toggle-wrapper input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.hd-edit-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.hd-edit-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.hd-edit-toggle-wrapper input:checked + .hd-edit-toggle-slider {
+    background-color: #2196F3;
+}
+
+.hd-edit-toggle-wrapper input:focus + .hd-edit-toggle-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.hd-edit-toggle-wrapper input:checked + .hd-edit-toggle-slider:before {
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
+}
+
+.add-item {
+    text-align: center;
+    font-size: 2em;
+    display: none;
+    background: #bbd1ed;
+}
+
+.hidden,
+.hidden-edit {
+    display: none;
+}
+
+.block,
+.show-edit
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
+h1 {
+    margin-left: 15px;
+}
+
+#popup {
+    position: absolute;
+    width: 250px;
+    border: 1px solid rgba(26, 54, 126, 0.125);
+    border-radius: 2px;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    left: calc(50% - 126px);
+    z-index: 1000;
+    padding: 20px;
+    background: #fff;
+    top: 30%;
+}
+
+#popup #close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+
+// Edit Mode
+.hd-edit-context-menu {
+    /*border: 1px solid #555;*/
+    background-color: #fff;
+    margin-left: auto;
+    border-radius: 3px;
+    position: absolute;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.hd-edit-context-menu-btn {
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    padding: 5px;
+    border-color: transparent;
+    border-radius: 3px;
+    float: right;
+    div {
+        height: 4px;
+        background-color: #555;
+        margin: 0px 0px 4px 0px;
+    }
+}
+
+.hd-edit-context-menu-btn:hover {
+    border: 1px solid #4B4B4D;
+}
+
+.hd-edit-menu-item {
+    display: none;
+}
+
+.hd-edit-tools {
+    overflow:hidden;
+    width: 100%;
+}
+
+.hd-edit-context-menu-item {
+    padding: 10px 15px;
+    color: #555;
+    font-size: 0.876em;
+    line-height: 1em;
+    cursor: pointer;
+}
+
+.hd-edit-context-menu-item:hover {
+    color: #000;
+}
+
+.hd-edit-separator {
+    background-color: #eee;
+    height: 1px;
+    margin: 5px 0px 5px 0px;
+    padding: 0px;
+    cursor: default;
+}
+
+.hd-edit-toolbar {
+    color:#a6a6a6;
+    position: absolute;
+    z-index: 99;
+    border-radius: 3px;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+}
+
+.hd-edit-toolbar-item div {
+    min-width: 35px;
+    min-height: 30px;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 15px 10px;
+    background-size: 17px 17px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    cursor: pointer;
+}
+
+.hd-edit-toolbar-row {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background: #6da944;
+    padding-left: 3px;
+    padding-right: 3px;
+    .hd-edit-toolbar-item {
+        div {
+            min-width: 25px;
+            min-height: 25px;
+            background-size: 17px 17px;
+        }
+    }
+    .hd-edit-toolbar-item:hover {
+        background-color: #1A5E20;
+    }
+}
+
+.hd-edit-toolbar-cell .hd-edit-toolbar-item div {
+    min-width: 30px;
+}
+
+.hd-edit-toolbar-cell {
+    background: #1779BA;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: #fff;
+    .hd-edit-toolbar-item:hover {
+        background-color: #0d47a1;
+    }
+}
+
+.hd-edit-toolbar-cell-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    border: 2px solid #1779BA;
+    opacity: 1;
+}
+
+.hd-edit-toolbar-row-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    border: 2px solid #7BB343;
+    opacity: 1;
+}
+
+.hd-edit-menu-vertical-separator {
+    height: 1px;
+    background-color: #E2E4E8;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 0px;
+    cursor: default;
+}
+
+.hd-edit-sidebar {
+    top: 0px;
+    left: -340px; // width + paddings
+    transition: 0.5s;
+    width: 300px;
+    background: #fff;
+    color:#a6a6a6;
+    position: absolute;
+    z-index: 1000;
+    min-height: 500px;
+    height: 100%;
+    padding: 10px 20px;
+}
+
+.hd-edit-sidebar-right {
+    left: auto;
+    right: -310px;
+}
+
+.hd-edit-sidebar-tab-btn,
+.hd-edit-sidebar .hd-edit-button.hd-edit-sidebar-tab-btn {
+    margin-top: 10px;
+}
+
+.hd-edit-tools-btn {
+    border: none;
+    display: inline-block;
+    padding: 4px 10px 4px 30px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    background-repeat: no-repeat;
+    background-size: 22px;
+    background-position-y: 4px;
+    float: right;
+}
+
+.hd-edit-tools-btn:hover {
+    border: 1px solid #4B4B4D;
+}
+
+.hd-edit-sidebar-item {
+    font-size: 0.876em;
+}
+
+.hd-edit-sidebar-item input,
+.hd-edit-sidebar-item textarea,
+.hd-edit-sidebar-item select {
+    width: 100%;
+    color: #8C8C8C;
+    border: 1px solid #8C8C8C;
+    border-radius: 3px;
+}
+
+.hd-edit-sidebar .hd-edit-button,
+.hd-edit-sidebar-item button {
+    background: #1779BA;
+    color: #fff;
+    padding: 5px 10px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 3px;
+    background-size: 20px;
+}
+
+.hd-edit-sidebar .hd-edit-button:hover,
+.hd-edit-sidebar-item button:hover {
+    background-color: #0d47a1;
+}
+
+.hd-edit-button.hd-edit-sidebar-button-nav {
+    min-width: 34px;
+    min-height: 34px;
+    background-position: 50% 50%;
+    background-color: #fff;
+}
+
+.hd-edit-sidebar-button-nav.hd-edit-close-btn {
+    background-size: 15px;
+    margin-right: -10px;
+}
+
+.hd-edit-sidebar-button-nav.hd-edit-close-btn:hover {
+    background-color: #fff;
+    border: 1px solid #0d47a1;
+}
+
+.hd-edit-sidebar .hd-edit-button {
+    background-repeat: no-repeat;
+    float: right;
+    margin-top: 0px;
+}
+
+.hd-edit-sidebar-show {
+    left: 0;
+    transition: left 0.5s;
+}
+
+.hd-edit-sidebar-right-show {
+    right: 0;
+    transition: left 0.5s;
+}
+
+.hd-edit-label-text {
+    display: inline-block;
+}
+
+.hd-edit-sidebar .hd-edit-label-text {
+    background: #EAF1F8;
+    border: 1px solid #EBEBEB;
+    width: 100%;
+    color: #000;
+    font-weight: bold;
+    padding: 3px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.hd-edit-sidebar-title {
+    color: #424242;
+    padding: 5px 5px 5px 30px;
+    text-transform: uppercase;
+    position: relative;
+    font-weight: bold;
+    width: 75%;
+}
+
+.hd-edit-sidebar-title::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    display: block;
+    width: 24px;
+    height: 20px;
+    background-size: 20px;
+    background-color: #1779BA;
+    -webkit-mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
+    mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.hd-edit-sidebar-tab-wrapper {
+    display: none;
+}
+
+.hd-edit-sidebar-tab-wrapper.current {
+    display: block;
+}
+
+.hd-edit-grid-items div {
+    width: calc(50% - 20px);
+    clear: both;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    display: inline-block;
+    background-color: #efefef;
+    cursor: grab;
+}
+
+.hd-edit-grid-items div:hover {
+    background-color :#dedede; 
+}
+
+.hd-edit-sidebar-tabs {
+    display: flex;
+    font-size: 0.876em;
+    text-transform: uppercase;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.hd-edit-sidebar-tab {
+    text-align: left;
+    padding: 5px;
+    border-bottom: 3px solid transparent;
+    transition: 0.3s;
+    font-size: 0.876em;
+    color: #000;
+    margin-left: 25px;
+}
+
+.hd-edit-sidebar-tab:first-child {
+    margin-left: 20px;
+}
+
+.hd-edit-sidebar-tab-content {
+    display: none;
+    padding: 10px;
+}
+
+.hd-edit-sidebar-tab:hover,
+.hd-edit-toolbar-tab-active {
+    cursor: pointer;
+    opacity: 1;
+    border-color: #1779BA;
+    color: #1779BA
+}
+
+.hd-edit-tabs-buttons-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.hd-edit-sidebar .hd-edit-tabs-buttons-wrapper button.hd-edit-button {
+    float: none;
+}
+
+.hd-edit-tabs-buttons-wrapper button:first-child {
+    margin-right: 10px;
+}
+
+.hd-edit-mask {
+    opacity: 0.3
+}
+
+// popup
+@import '../annotations/popup.scss';
+
+.highcharts-popup {
+    min-height: 160px;
+    width: 200px;
+    left: calc(50% - 150px);
+}
+
+.highcharts-popup .hd-edit-popup-content {
+    padding-top: 60px;
+    clear: both;
+    text-align: center;
+}
+
+.highcharts-popup .hd-edit-popup-content button {
+    float: none;
+}
+
+.highcharts-popup .hd-edit-popup-content.hd-edit-label-text {
+    width: 100%;
+    padding: 10px 0px;
+}
+
+.highcharts-popup .hd-edit-popup-content button.hd-edit-popup-confirm-btn {
+    background-color: #e01d5a;
+    color: #000;
+}
+
+.hd-edit-overlay {
+    background:rgba(0, 0, 0, 0.5);
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 20;
+    left: 0px;
+    top: 0px;
+    transition: 0.3s;
+}
+
+.hd-edit-overlay-active {
+    display: block;
+}
+
+@media (max-width: 728px) {
+
+    .w-1-2,
+    .w-1-3,
+    .w-1-4,
+    .w-1-5 {
+        width: 100%;
+    }
+
+    .hd-row {
+        flex-direction: cell;
+    }
+
+    .hd-cell {
+        flex: 1;
+    }
+
+    .hd-component {
+        flex: 1;
+    }
+}
+
+/* 
+ * A11Y
+*/
+
+.hd-edit-context-menu-btn:focus,
+.hd-row .hd-cell:focus {
+    outline: 5px auto -webkit-focus-ring-color;
+}
