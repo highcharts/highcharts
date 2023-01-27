@@ -553,13 +553,13 @@ class VBPIndicator extends SMAIndicator {
 
         // Checks if volume series exists and if it has data
         if (!volumeSeries || !volumeSeries.data.length) {
-            const emptyDataMessage = volumeSeries && !volumeSeries.data.length ?
+            const errorMessage = volumeSeries && !volumeSeries.data.length ?
                 ' does not contain any data.' :
                 ' not found! Check `volumeSeriesID`.';
 
             error(
                 'Series ' +
-                params.volumeSeriesID + emptyDataMessage,
+                params.volumeSeriesID + errorMessage,
                 true,
                 chart
             );
