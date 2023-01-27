@@ -417,15 +417,7 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
-            subtitle: dataScopes.TN,
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'TN' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate)
-                ) || 0;
-            })(),
-            valueFormatter: v => `${v.toFixed(0)}°`,
+            chartOptions: buildKPIChartOptions('TN' + temperatureScale),
             events: {
                 mount: function () {
                     kpis.TN = this;
@@ -451,15 +443,7 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-max-temperature',
             type: 'KPI',
-            subtitle: dataScopes.TX,
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'TX' + temperatureScale,
-                    table.getRowIndexBy('time', worldDate)
-                ) || 0;
-            })(),
-            valueFormatter: v => `${v.toFixed(0)}°`,
+            chartOptions: buildKPIChartOptions('TX' + temperatureScale),
             events: {
                 mount: function () {
                     kpis.TX = this;
@@ -488,14 +472,7 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-rain',
             type: 'KPI',
-            subtitle: dataScopes.RR,
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'RR1',
-                    table.getRowIndexBy('time', worldDate)
-                ) || 0;
-            })(),
+            chartOptions: buildKPIChartOptions('RR1'),
             events: {
                 mount: function () {
                     kpis.RR1 = this;
@@ -521,14 +498,7 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-ice',
             type: 'KPI',
-            subtitle: dataScopes.ID,
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'ID',
-                    table.getRowIndexBy('time', worldDate)
-                ) || 0;
-            })(),
+            chartOptions: buildKPIChartOptions('ID'),
             events: {
                 mount: function () {
                     kpis.ID = this;
@@ -554,14 +524,7 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-frost',
             type: 'KPI',
-            subtitle: dataScopes.FD,
-            value: (() => {
-                const table = defaultCityStore.table.modified;
-                return table.getCellAsNumber(
-                    'FD',
-                    table.getRowIndexBy('time', worldDate)
-                ) || 0;
-            })(),
+            chartOptions: buildKPIChartOptions('FD'),
             events: {
                 mount: function () {
                     kpis.FD = this;
@@ -834,13 +797,7 @@ function buildColorAxis() {
             endOnTick: false,
             max: dataScope[2] === 'C' ? 50 : 122,
             min: dataScope[2] === 'C' ? 0 : 32,
-            stops: [
-                [0.0, '#4CAFFE'],
-                [0.3, '#53BB6C'],
-                [0.5, '#DDCE16'],
-                [0.6, '#DF7642'],
-                [0.7, '#DD2323']
-            ]
+            stops: buildColorStops(dataScope)
         };
     }
 
@@ -849,11 +806,28 @@ function buildColorAxis() {
         max: 10,
         min: 0,
         visible: false,
-        stops: [
-            [0.0, '#C2CAEB'],
-            [1.0, '#162870']
-        ]
+        stops: buildColorStops(dataScope)
     };
+}
+
+function buildColorStops(dataScope) {
+
+    // temperature
+    if (dataScope[0] === 'T') {
+        return [
+            [0.0, '#4CAFFE'],
+            [0.3, '#53BB6C'],
+            [0.5, '#DDCE16'],
+            [0.6, '#DF7642'],
+            [0.7, '#DD2323']
+        ];
+    }
+
+    // days
+    return [
+        [0.0, '#C2CAEB'],
+        [1.0, '#162870']
+    ];
 }
 
 function buildDates() {
@@ -878,6 +852,72 @@ function buildDates() {
     }
 
     return dates;
+}
+
+function buildKPIChartOptions(dataScope) {
+    return {
+        chart: {
+            height: 166,
+            margin: [8, 8, 16, 8],
+            spacing: [8, 8, 8, 8],
+            styledMode: true,
+            type: 'solidgauge'
+        },
+        pane: {
+            background: {
+                innerRadius: '90%',
+                outerRadius: '120%',
+                shape: 'arc'
+            },
+            center: ['50%', '70%'],
+            endAngle: 90,
+            startAngle: -90
+        },
+        series: [{
+            data: [(() => {
+                const table = citiesData[cityScope].store.table.modified;
+                return table.getCellAsNumber(
+                    dataScope,
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0;
+            })()],
+            dataLabels: {
+                formatter: function () {
+                    return Math.round(this.y);
+                },
+                y: -34
+            },
+            enableMouseTracking: false,
+            innerRadius: '90%',
+            radius: '120%'
+        }],
+        title: {
+            margin: 0,
+            text: dataScopes[dataScope.substring(0, 2)],
+            verticalAlign: 'bottom',
+            widthAdjust: 0
+        },
+        yAxis: {
+            labels: {
+                distance: 4,
+                y: 12
+            },
+            max: (
+                dataScope[0] === 'T' ?
+                    dataScope[2] === 'C' ? 50 : 122 :
+                    10
+            ),
+            min: (
+                dataScope[0] === 'T' ?
+                    dataScope[2] === 'C' ? -10 : 14 :
+                    0
+            ),
+            minorTickInterval: null,
+            stops: buildColorStops(dataScope),
+            tickAmount: 2,
+            visible: true
+        }
+    };
 }
 
 function buildSymbols() {
@@ -985,16 +1025,20 @@ function updateKPI(table, time) {
     for (
         const [key, kpi] of Object.entries(kpis)
     ) {
-        // set active state on current temperature KPI
-        if (key === 'TNC') {
-            kpi.parentCell.setActiveState();
+        if (key === 'data') {
+            continue;
         }
-
         kpi.update({
-            value: table.getCellAsNumber(
-                key + (key[0] === 'T' ? temperatureScale : ''),
-                table.getRowIndexBy('time', time)
-            ) || 0
+            chartOptions: {
+                series: [{
+                    data: [
+                        table.getCellAsNumber(
+                            key + (key[0] === 'T' ? temperatureScale : ''),
+                            table.getRowIndexBy('time', time)
+                        ) || 0
+                    ]
+                }]
+            }
         });
     }
 }
@@ -1011,7 +1055,7 @@ function updateKPIData() {
 }
 
 function syncRefreshCharts(store, dataScope, cityScope) {
-    const data = store.table.modified.getRows(
+    const data = store.table.getRows(
         void 0, void 0,
         ['time', dataScope]
     );
