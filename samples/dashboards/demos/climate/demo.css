@@ -11,6 +11,8 @@
     --color-axis-labels: #e7e7ec;
     --color-background: #5352be;
     --color-title: #f0f0f0;
+    --color-text: #000;
+    --color-tooltip-background: #dadae2;
 }
 
 #kpi-data,
@@ -95,7 +97,6 @@
 
 #world-map {
     --color-background: #5352be;
-    --color-tooltip-background: #464646;
     --color-map: #dddbef;
     --color-marker-border: #fff;
     --color-marker-text: #fff;
@@ -105,6 +106,7 @@
     --color-navigation-text: #20202b;
     --color-text: #000;
     --color-text-border: #fff;
+    --color-tooltip-background: #dadae2;
 }
 
 .highcharts-dashboards.hd-dark-mode #world-map {
@@ -202,6 +204,22 @@
 #city-chart .highcharts-axis-labels,
 #city-chart .highcharts-axis-title {
     fill: var(--color-axis-labels);
+}
+
+#city-chart .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#city-chart div.highcharts-tooltip {
+    color: var(--color-text);
+}
+
+#city-chart .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
 }
 
 /* *
@@ -490,7 +508,7 @@
 }
 
 #world-map div.highcharts-tooltip {
-    color: var(--color-marker-text);
+    color: var(--color-text);
 }
 
 #world-map .highcharts-tooltip-box {
