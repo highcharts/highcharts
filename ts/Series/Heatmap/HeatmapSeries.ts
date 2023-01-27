@@ -447,15 +447,15 @@ class HeatmapSeries extends ScatterSeries {
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis) {
-                const { image, data, scaleValue } = heatmap,
+                const width = canvas.width - 1,
+                    height = canvas.height - 1,
+                    { image, data, scaleValue } = heatmap,
                     { min: xMin, max: xMax } = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
                     { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
                     xSpan = xMax - xMin,
-                    ySpan = (yMax as number) - (yMin as number),
-                    width = canvas.width - 1,
-                    height = canvas.height - 1;
+                    ySpan = (yMax as number) - (yMin as number);
 
                 while (data.length) {
                     const p = data.pop() as HeatmapPoint,
@@ -470,15 +470,13 @@ class HeatmapSeries extends ScatterSeries {
                             x,
                             xSpan,
                             width,
-                            xMin as number,
-                            0
+                            xMin as number
                         ),
                         scaleValue(
                             ((yMax as number) - y),
                             ySpan,
                             height,
-                            yMin as number,
-                            0
+                            yMin as number
                         ),
                         1,
                         1
@@ -519,8 +517,7 @@ class HeatmapSeries extends ScatterSeries {
      */
     public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
-            canvas = series.canvas,
-            context = series.context;
+            { canvas, context } = series;
 
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -758,10 +755,9 @@ class HeatmapSeries extends ScatterSeries {
         value: number,
         fromDist: number,
         toDist:number,
-        fromMin:number,
-        toMin: number
+        fromMin:number
     ): number {
-        return (((value - fromMin) * toDist) / (fromDist)) + toMin;
+        return (((value - fromMin) * toDist) / (fromDist));
     }
 
     /**
