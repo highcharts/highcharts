@@ -49,7 +49,8 @@ async function setupDashboard() {
             chartOptions: {
                 chart: {
                     height: '80px',
-                    styledMode: true
+                    styledMode: true,
+                    type: 'spline'
                 },
                 credits: {
                     enabled: false
@@ -64,7 +65,7 @@ async function setupDashboard() {
                     enabled: false
                 },
                 series: [{
-                    type: 'spline',
+                    // type: 'spline',
                     name: 'Timeline',
                     data: buildDates(),
                     showInNavigator: false,
@@ -321,14 +322,15 @@ async function setupDashboard() {
             chartOptions: {
                 chart: {
                     spacing: [40, 40, 40, 10],
-                    styledMode: true
+                    styledMode: true,
+                    type: 'spline'
                 },
                 credits: {
                     enabled: false
                 },
                 colorAxis: buildColorAxis(),
                 series: [{
-                    type: 'spline',
+                    // type: 'spline',
                     name: defaultCity,
                     data: [],
                     animation: false,
@@ -1017,7 +1019,6 @@ function syncRefreshCharts(store, dataScope, cityScope) {
     );
     const isColumnSeries = ['RR1', 'FD', 'ID'].indexOf(dataScope) >= 0;
     const columnSeriesOptions = {
-        type: isColumnSeries ? 'column' : 'spline',
         threshold: isColumnSeries ? 0 : null
     };
 
@@ -1065,6 +1066,9 @@ function syncRefreshCharts(store, dataScope, cityScope) {
                         'Days'
                 )
             }
+        },
+        chart: {
+            type: isColumnSeries ? 'column' : 'spline'
         }
     });
 
