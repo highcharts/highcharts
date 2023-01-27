@@ -101,9 +101,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                   Component.defaultOptions.editableOptions.concat(
                       [
                           'chartOptions',
-                          'chartType'
-                          // 'chartClassName',
-                          // 'chartID'
+                          'chartType',
+                          'chartClassName',
+                          'chartID'
                       ]
                   ),
             syncHandlers: HighchartsSyncHandlers,
@@ -177,16 +177,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             true
         );
 
-        // Todo: this.setOptions?
-        if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
-        }
-        if (this.options.chartID) {
-            this.chartContainer.id = this.options.chartID;
-        }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
-
         this.sync = new HighchartsComponent.Sync(
             this,
             this.syncHandlers
@@ -195,6 +185,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this.options.chartOptions ||
             { chart: {} } as Partial<Options>
         );
+        this.setOptions();
 
         if (this.store) {
             this.on('tableChanged', (): void => this.updateSeries());
@@ -212,6 +203,18 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
         // Add the component instance to the registry
         Component.addInstance(this);
+    }
+
+    public setOptions(): void {
+        if (this.options.chartClassName) {
+            this.chartContainer.classList.add(this.options.chartClassName);
+        }
+
+        if (this.options.chartID) {
+            this.chartContainer.id = this.options.chartID;
+        }
+
+        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
     }
 
     /* *
@@ -304,6 +307,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     public update(options: Partial<HighchartsComponent.ComponentOptions>): this {
         super.update(options);
+        this.setOptions();
         if (this.chart) {
             this.chart.update(this.options.chartOptions || {});
         }
