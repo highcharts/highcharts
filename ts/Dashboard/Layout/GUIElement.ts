@@ -23,6 +23,8 @@ import type {
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
+import Row from './Row';
+import Cell from './Cell';
 
 const {
     addEvent,
